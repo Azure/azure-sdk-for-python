@@ -9,42 +9,15 @@
 import os
 import asyncio
 from datetime import datetime, timedelta
-try:
-    import settings_real as settings
-except ImportError:
-    import blob_settings_fake as settings
-
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record
-)
 
 SOURCE_FILE = 'SampleSource.txt'
 
-
-class TestContainerSamplesAsync(StorageTestCase):
-    connection_string = settings.BLOB_CONNECTION_STRING
-
-    def setUp(self):
-        data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-        with open(SOURCE_FILE, 'wb') as stream:
-            stream.write(data)
-
-        super(TestContainerSamplesAsync, self).setUp()
-
-    def tearDown(self):
-        if os.path.isfile(SOURCE_FILE):
-            try:
-                os.remove(SOURCE_FILE)
-            except:
-                pass
-
-        return super(TestContainerSamplesAsync, self).tearDown()
+class ContainerSamplesAsync(object):
+    connection_string = os.getenv("CONNECTION_STRING")
 
     # --Begin Blob Samples-----------------------------------------------------------------
 
-    async def _test_container_sample_async(self):
+    async def container_sample_async(self):
 
         # [START create_container_client_from_service]
         # Instantiate a BlobServiceClient using a connection string
@@ -70,21 +43,13 @@ class TestContainerSamplesAsync(StorageTestCase):
             # [START get_container_properties]
             properties = await container_client.get_container_properties()
             # [END get_container_properties]
-            assert properties is not None
 
         finally:
             # [START delete_container]
             await container_client.delete_container()
             # [END delete_container]
 
-    @record
-    def test_container_sample_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_container_sample_async())
-
-    async def _test_acquire_lease_on_container_async(self):
+    async def acquire_lease_on_container_async(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
@@ -104,14 +69,7 @@ class TestContainerSamplesAsync(StorageTestCase):
         await container_client.delete_container(lease=lease)
         # [END acquire_lease_on_container]
 
-    @record
-    def test_acquire_lease_on_container_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_acquire_lease_on_container_async())
-
-    async def _test_set_metadata_on_container_async(self):
+    async def set_metadata_on_container_async(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
@@ -135,20 +93,11 @@ class TestContainerSamplesAsync(StorageTestCase):
             # Get container properties
             properties = (await container_client.get_container_properties()).metadata
 
-            assert properties == metadata
-
         finally:
             # Delete container
             await container_client.delete_container()
 
-    @record
-    def test_set_metadata_on_container_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_metadata_on_container_async())
-
-    async def _test_container_access_policy_async(self):
+    async def container_access_policy_async(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -206,14 +155,7 @@ class TestContainerSamplesAsync(StorageTestCase):
             # Delete container
             await container_client.delete_container()
 
-    @record
-    def test_container_access_policy_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_container_access_policy_async())
-
-    async def _test_list_blobs_in_container_async(self):
+    async def list_blobs_in_container_async(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
@@ -227,7 +169,7 @@ class TestContainerSamplesAsync(StorageTestCase):
 
         # [START upload_blob_to_container]
         with open(SOURCE_FILE, "rb") as data:
-            blob_client = await container_client.upload_blob(name="blobby", data=data)
+            blob_client = await container_client.upload_blob(name="myblob", data=data)
 
         properties = await blob_client.get_blob_properties()
         # [END upload_blob_to_container]
@@ -238,19 +180,10 @@ class TestContainerSamplesAsync(StorageTestCase):
             blobs_list.append(blob)
         # [END list_blobs_in_container]
 
-        assert blobs_list is not None
-
         # Delete container
         await container_client.delete_container()
 
-    @record
-    def test_list_blobs_in_container_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_blobs_in_container_async())
-
-    async def _test_get_blob_client_from_container_async(self):
+    async def get_blob_client_from_container_async(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
@@ -269,10 +202,3 @@ class TestContainerSamplesAsync(StorageTestCase):
 
         # Delete container
         await container_client.delete_container()
-
-    @record
-    def test_get_blob_client_from_container_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_blob_client_from_container_async())

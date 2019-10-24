@@ -105,14 +105,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_blob_samples_authentication.py
+        .. literalinclude:: ../samples/blob_samples_authentication.py
             :start-after: [START create_blob_client]
             :end-before: [END create_blob_client]
             :language: python
             :dedent: 8
             :caption: Creating the BlobClient from a URL to a public blob (no auth needed).
 
-        .. literalinclude:: ../tests/test_blob_samples_authentication.py
+        .. literalinclude:: ../samples/blob_samples_authentication.py
             :start-after: [START create_blob_client_sas_url]
             :end-before: [END create_blob_client_sas_url]
             :language: python
@@ -255,7 +255,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_authentication.py
+            .. literalinclude:: ../samples/blob_samples_authentication.py
                 :start-after: [START auth_from_connection_string_blob]
                 :end-before: [END auth_from_connection_string_blob]
                 :language: python
@@ -463,7 +463,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_hello_world.py
+            .. literalinclude:: ../samples/blob_samples_hello_world.py
                 :start-after: [START upload_a_blob]
                 :end-before: [END upload_a_blob]
                 :language: python
@@ -585,7 +585,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_hello_world.py
+            .. literalinclude:: ../samples/blob_samples_hello_world.py
                 :start-after: [START download_a_blob]
                 :end-before: [END download_a_blob]
                 :language: python
@@ -669,7 +669,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_hello_world.py
+            .. literalinclude:: ../samples/blob_samples_hello_world.py
                 :start-after: [START delete_blob]
                 :end-before: [END delete_blob]
                 :language: python
@@ -696,7 +696,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common.py
+            .. literalinclude:: ../samples/blob_samples_common.py
                 :start-after: [START undelete_blob]
                 :end-before: [END undelete_blob]
                 :language: python
@@ -747,7 +747,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common.py
+            .. literalinclude:: ../samples/blob_samples_common.py
                 :start-after: [START get_blob_properties]
                 :end-before: [END get_blob_properties]
                 :language: python
@@ -1201,7 +1201,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common.py
+            .. literalinclude:: ../samples/blob_samples_common.py
                 :start-after: [START create_blob_snapshot]
                 :end-before: [END create_blob_snapshot]
                 :language: python
@@ -1372,7 +1372,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common.py
+            .. literalinclude:: ../samples/blob_samples_common.py
                 :start-after: [START copy_blob_from_url]
                 :end-before: [END copy_blob_from_url]
                 :language: python
@@ -1424,7 +1424,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common.py
+            .. literalinclude:: ../samples/blob_samples_common.py
                 :start-after: [START abort_copy_blob_from_url]
                 :end-before: [END abort_copy_blob_from_url]
                 :language: python
@@ -1478,7 +1478,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common.py
+            .. literalinclude:: ../samples/blob_samples_common.py
                 :start-after: [START acquire_lease_on_blob]
                 :end-before: [END acquire_lease_on_blob]
                 :language: python

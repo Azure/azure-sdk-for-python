@@ -9,44 +9,17 @@
 import os
 from datetime import datetime, timedelta
 
-try:
-    import settings_real as settings
-except ImportError:
-    import blob_settings_fake as settings
-
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record
-)
 
 SOURCE_FILE = 'SampleSource.txt'
 
 
-class TestContainerSamples(StorageTestCase):
+class ContainerSamples(object):
 
-    connection_string = settings.CONNECTION_STRING
-
-    def setUp(self):
-        data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-        with open(SOURCE_FILE, 'wb') as stream:
-            stream.write(data)
-
-        super(TestContainerSamples, self).setUp()
-
-    def tearDown(self):
-        if os.path.isfile(SOURCE_FILE):
-            try:
-                os.remove(SOURCE_FILE)
-            except:
-                pass
-
-        return super(TestContainerSamples, self).tearDown()
+    connection_string = os.getenv("CONNECTION_STRING")
 
     #--Begin Blob Samples-----------------------------------------------------------------
 
-    @record
-    def test_container_sample(self):
+    def container_sample(self):
 
         # [START create_container_client_from_service]
         # Instantiate a BlobServiceClient using a connection string
@@ -72,15 +45,13 @@ class TestContainerSamples(StorageTestCase):
             # [START get_container_properties]
             properties = container_client.get_container_properties()
             # [END get_container_properties]
-            assert properties is not None
 
         finally:
             # [START delete_container]
             container_client.delete_container()
             # [END delete_container]
 
-    @record
-    def test_acquire_lease_on_container(self):
+    def acquire_lease_on_container(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -100,8 +71,7 @@ class TestContainerSamples(StorageTestCase):
         container_client.delete_container(lease=lease)
         # [END acquire_lease_on_container]
 
-    @record
-    def test_set_metadata_on_container(self):
+    def set_metadata_on_container(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -125,13 +95,11 @@ class TestContainerSamples(StorageTestCase):
             # Get container properties
             properties = container_client.get_container_properties().metadata
 
-            assert properties == metadata
-
         finally:
             # Delete container
             container_client.delete_container()
 
-    def test_container_access_policy(self):
+    def container_access_policy(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -189,8 +157,7 @@ class TestContainerSamples(StorageTestCase):
             # Delete container
             container_client.delete_container()
 
-    @record
-    def test_list_blobs_in_container(self):
+    def list_blobs_in_container(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -204,7 +171,7 @@ class TestContainerSamples(StorageTestCase):
 
         # [START upload_blob_to_container]
         with open(SOURCE_FILE, "rb") as data:
-            blob_client = container_client.upload_blob(name="blobby", data=data)
+            blob_client = container_client.upload_blob(name="myblob", data=data)
         
         properties = blob_client.get_blob_properties()
         # [END upload_blob_to_container]
@@ -215,13 +182,10 @@ class TestContainerSamples(StorageTestCase):
             print(blob.name + '\n')
         # [END list_blobs_in_container]
 
-        assert blobs_list is not None
-
         # Delete container
         container_client.delete_container()
 
-    @record
-    def test_get_blob_client_from_container(self):
+    def get_blob_client_from_container(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient

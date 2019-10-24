@@ -6,38 +6,24 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import pytest
 
-try:
-    import settings_real as settings
-except ImportError:
-    import blob_settings_fake as settings
-
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record
-)
-
-
-class TestAuthSamples(StorageTestCase):
+class AuthSamples(object):
     url = "{}://{}.blob.core.windows.net".format(
-        settings.PROTOCOL,
-        settings.STORAGE_ACCOUNT_NAME
+        os.getenv("PROTOCOL"),
+        os.getenv("STORAGE_ACCOUNT_NAME")
     )
     oauth_url = "{}://{}.blob.core.windows.net".format(
-        settings.PROTOCOL,
-        settings.OAUTH_STORAGE_ACCOUNT_NAME
+        os.getenv("PROTOCOL"),
+        os.getenv("OAUTH_STORAGE_ACCOUNT_NAME")
     )
 
-    connection_string = settings.CONNECTION_STRING
-    shared_access_key = settings.STORAGE_ACCOUNT_KEY
-    active_directory_application_id = settings.ACTIVE_DIRECTORY_APPLICATION_ID
-    active_directory_application_secret = settings.ACTIVE_DIRECTORY_APPLICATION_SECRET
-    active_directory_tenant_id = settings.ACTIVE_DIRECTORY_TENANT_ID
+    connection_string = os.getenv("CONNECTION_STRING")
+    shared_access_key = os.getenv("STORAGE_ACCOUNT_KEY")
+    active_directory_application_id = os.getenv("ACTIVE_DIRECTORY_APPLICATION_ID")
+    active_directory_application_secret = os.getenv("ACTIVE_DIRECTORY_APPLICATION_SECRET")
+    active_directory_tenant_id = os.getenv("ACTIVE_DIRECTORY_TENANT_ID")
 
-    @record
-    def test_auth_connection_string(self):
+    def auth_connection_string(self):
         # [START auth_from_connection_string]
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -57,10 +43,8 @@ class TestAuthSamples(StorageTestCase):
 
         # Get account information for the Blob Service
         account_info = blob_service_client.get_account_information()
-        assert account_info is not None
 
-    @record
-    def test_auth_shared_key(self):
+    def auth_shared_key(self):
         # [START create_blob_service_client]
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient(account_url=self.url, credential=self.shared_access_key)
@@ -68,9 +52,8 @@ class TestAuthSamples(StorageTestCase):
 
         # Get account information for the Blob Service
         account_info = blob_service_client.get_account_information()
-        assert account_info is not None
 
-    def test_auth_blob_url(self):
+    def auth_blob_url(self):
         # [START create_blob_client]
         from azure.storage.blob import BlobClient
         blob_client = BlobClient.from_blob_url(blob_url="https://account.blob.core.windows.net/container/blob-name")
@@ -83,8 +66,7 @@ class TestAuthSamples(StorageTestCase):
         blob_client = BlobClient.from_blob_url(sas_url)
         # [END create_blob_client_sas_url]
 
-    @record
-    def test_auth_active_directory(self):
+    def auth_active_directory(self):
         # [START create_blob_service_client_oauth]
         # Get a token credential for authentication
         from azure.identity import ClientSecretCredential
@@ -101,9 +83,8 @@ class TestAuthSamples(StorageTestCase):
 
         # Get account information for the Blob Service
         account_info = blob_service_client.get_service_properties()
-        assert account_info is not None
 
-    def test_auth_shared_access_signature(self):
+    def auth_shared_access_signature(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -125,5 +106,3 @@ class TestAuthSamples(StorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         # [END create_sas_token]
-        assert sas_token is not None
-

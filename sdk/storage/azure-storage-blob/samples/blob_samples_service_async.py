@@ -8,23 +8,12 @@
 
 import asyncio
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
-try:
-    import settings_real as settings
-except ImportError:
-    import blob_settings_fake as settings
 
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record
-)
+class TestBlobServiceSamplesAsync(object):
 
+    connection_string = os.getenv("CONNECTION_STRING")
 
-class TestBlobServiceSamplesAsync(StorageTestCase):
-
-    connection_string = settings.BLOB_CONNECTION_STRING
-
-    async def _test_get_storage_account_information_async(self):
+    async def get_storage_account_information_async(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
@@ -34,16 +23,8 @@ class TestBlobServiceSamplesAsync(StorageTestCase):
         account_info = await blob_service_client.get_account_information()
         print('Using Storage SKU: {}'.format(account_info['sku_name']))
         # [END get_blob_service_account_info]
-        assert account_info is not None
 
-    @record
-    def test_get_storage_account_information_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_storage_account_information_async())
-
-    async def _test_blob_service_properties_async(self):
+    async def blob_service_properties_async(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
@@ -72,16 +53,8 @@ class TestBlobServiceSamplesAsync(StorageTestCase):
         # [START get_blob_service_properties]
         properties = await blob_service_client.get_service_properties()
         # [END get_blob_service_properties]
-        assert properties is not None
 
-    @record
-    def test_blob_service_properties_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_blob_service_properties_async())
-
-    async def _test_blob_service_stats_async(self):
+    async def blob_service_stats_async(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
@@ -90,16 +63,8 @@ class TestBlobServiceSamplesAsync(StorageTestCase):
         # [START get_blob_service_stats]
         stats = await blob_service_client.get_service_stats()
         # [END get_blob_service_stats]
-        assert stats is not None
 
-    @record
-    def test_blob_service_stats_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_blob_service_stats_async())
-
-    async def _test_container_operations_async(self):
+    async def container_operations_async(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
@@ -131,7 +96,6 @@ class TestBlobServiceSamplesAsync(StorageTestCase):
             for container in test_containers:
                 await blob_service_client.delete_container(container)
             # [END bsc_list_containers]
-            assert test_containers is not None
 
         finally:
             # [START bsc_delete_container]
@@ -142,14 +106,7 @@ class TestBlobServiceSamplesAsync(StorageTestCase):
                 print("Container already deleted.")
             # [END bsc_delete_container]
 
-    @record
-    def test_container_operations_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_container_operations_async())
-
-    async def _test_get_blob_and_container_clients_async(self):
+    async def get_blob_and_container_clients_async(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
@@ -181,16 +138,6 @@ class TestBlobServiceSamplesAsync(StorageTestCase):
                 print("No blob found.")
             # [END bsc_get_blob_client]
 
-            assert container_client is not None
-            assert blob_client is not None
-
         finally:
             # Delete the container
             await blob_service_client.delete_container("containertestasync")
-
-    @record
-    def test_get_blob_and_container_clients_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_blob_and_container_clients_async())

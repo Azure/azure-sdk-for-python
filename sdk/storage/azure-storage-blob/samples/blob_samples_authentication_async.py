@@ -5,38 +5,25 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
 
-import asyncio
-
-try:
-    import settings_real as settings
-except ImportError:
-    import blob_settings_fake as settings
-
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record
-)
-
-
-class TestAuthSamplesAsync(StorageTestCase):
+class AuthSamplesAsync(object):
     url = "{}://{}.blob.core.windows.net".format(
-        settings.PROTOCOL,
-        settings.BLOB_STORAGE_ACCOUNT_NAME
+        os.getenv("PROTOCOL"),
+        os.getenv("BLOB_STORAGE_ACCOUNT_NAME")
     )
     oauth_url = "{}://{}.blob.core.windows.net".format(
-        settings.PROTOCOL,
-        settings.OAUTH_STORAGE_ACCOUNT_NAME
+        os.getenv("PROTOCOL"),
+        os.getenv("OAUTH_STORAGE_ACCOUNT_NAME")
     )
 
-    connection_string = settings.BLOB_CONNECTION_STRING
-    shared_access_key = settings.STORAGE_ACCOUNT_KEY
-    active_directory_application_id = settings.ACTIVE_DIRECTORY_APPLICATION_ID
-    active_directory_application_secret = settings.ACTIVE_DIRECTORY_APPLICATION_SECRET
-    active_directory_tenant_id = settings.ACTIVE_DIRECTORY_TENANT_ID
+    connection_string = os.getenv("CONNECTION_STRING")
+    shared_access_key = os.getenv("STORAGE_ACCOUNT_KEY")
+    active_directory_application_id = os.getenv("ACTIVE_DIRECTORY_APPLICATION_ID")
+    active_directory_application_secret = os.getenv("ACTIVE_DIRECTORY_APPLICATION_SECRET")
+    active_directory_tenant_id = os.getenv("ACTIVE_DIRECTORY_TENANT_ID")
 
-    async def _test_auth_connection_string_async(self):
+    async def auth_connection_string_async(self):
         # [START auth_from_connection_string]
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -56,16 +43,8 @@ class TestAuthSamplesAsync(StorageTestCase):
 
         # Get account information for the Blob Service
         account_info = await blob_service_client.get_account_information()
-        assert account_info is not None
 
-    @record
-    def test_auth_connection_string_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_auth_connection_string_async())
-
-    async def _test_auth_shared_key_async(self):
+    async def auth_shared_key_async(self):
         # [START create_blob_service_client]
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient(account_url=self.url, credential=self.shared_access_key)
@@ -73,16 +52,8 @@ class TestAuthSamplesAsync(StorageTestCase):
 
         # Get account information for the Blob Service
         account_info = await blob_service_client.get_account_information()
-        assert account_info is not None
 
-    @record
-    def test_auth_shared_key_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_auth_shared_key_async())
-
-    async def _test_auth_blob_url_async(self):
+    async def auth_blob_url_async(self):
         # [START create_blob_client]
         from azure.storage.blob.aio import BlobClient
         blob_client = BlobClient.from_blob_url(blob_url="https://account.blob.core.windows.net/container/blob-name")
@@ -95,14 +66,7 @@ class TestAuthSamplesAsync(StorageTestCase):
         blob_client = BlobClient.from_blob_url(sas_url)
         # [END create_blob_client_sas_url]
 
-    @record
-    def test_auth_blob_url_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_auth_blob_url_async())
-
-    async def _test_auth_active_directory_async(self):
+    async def auth_active_directory_async(self):
         # [START create_blob_service_client_oauth]
         # Get a token credential for authentication
         from azure.identity.aio import ClientSecretCredential
@@ -116,16 +80,8 @@ class TestAuthSamplesAsync(StorageTestCase):
 
         # Get account information for the Blob Service
         account_info = await blob_service_client.get_service_properties()
-        assert account_info is not None
 
-    @record
-    def test_auth_active_directory_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_auth_active_directory_async())
-
-    async def _test_auth_shared_access_signature_async(self):
+    async def auth_shared_access_signature_async(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -147,11 +103,3 @@ class TestAuthSamplesAsync(StorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         # [END create_sas_token]
-        assert sas_token is not None
-
-    @record
-    def test_auth_shared_access_signature_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self. _test_auth_shared_access_signature_async())

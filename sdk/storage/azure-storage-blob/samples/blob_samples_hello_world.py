@@ -8,50 +8,18 @@
 
 import os
 
-try:
-    import settings_real as settings
-except ImportError:
-    import blob_settings_fake as settings
 
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record
-)
-
+# set up
 SOURCE_FILE = 'SampleSource.txt'
 DEST_FILE = 'BlockDestination.txt'
 
+class BlobSamples(object):
 
-class TestBlobSamples(StorageTestCase):
-
-    connection_string = settings.CONNECTION_STRING
-
-    def setUp(self):
-        data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-        with open(SOURCE_FILE, 'wb') as stream:
-            stream.write(data)
-
-        super(TestBlobSamples, self).setUp()
-
-    def tearDown(self):
-        if os.path.isfile(SOURCE_FILE):
-            try:
-                os.remove(SOURCE_FILE)
-            except:
-                pass
-        if os.path.isfile(DEST_FILE):
-            try:
-                os.remove(DEST_FILE)
-            except:
-                pass
-
-        return super(TestBlobSamples, self).tearDown()
+    connection_string = os.getenv("CONNECTION_STRING")
 
     #--Begin Blob Samples-----------------------------------------------------------------
 
-    @record
-    def test_create_container_sample(self):
+    def create_container_sample(self):
 
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -71,8 +39,7 @@ class TestBlobSamples(StorageTestCase):
             # Delete the container
             container_client.delete_container()
 
-    @record
-    def test_block_blob_sample(self):
+    def block_blob_sample(self):
 
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -108,8 +75,7 @@ class TestBlobSamples(StorageTestCase):
             # Delete the container
             container_client.delete_container()
 
-    @record
-    def test_page_blob_sample(self):
+    def page_blob_sample(self):
 
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -141,8 +107,7 @@ class TestBlobSamples(StorageTestCase):
             # Delete container
             container_client.delete_container()
 
-    @record
-    def test_append_blob_sample(self):
+    def append_blob_sample(self):
 
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient

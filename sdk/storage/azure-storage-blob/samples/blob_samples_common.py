@@ -11,51 +11,16 @@ import os
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.blob import BlobServiceClient
 
-try:
-    import settings_real as settings
-except ImportError:
-    import blob_settings_fake as settings
-
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record
-)
-
 SOURCE_FILE = 'SampleSource.txt'
 
 
-class TestCommonBlobSamples(StorageTestCase):
+class CommonBlobSamples(object):
 
-    connection_string = settings.CONNECTION_STRING
-
-    def setUp(self):
-        data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-        with open(SOURCE_FILE, 'wb') as stream:
-            stream.write(data)
-
-        super(TestCommonBlobSamples, self).setUp()
-
-    def tearDown(self):
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
-        for container in ['containerformyblobs', 'containerfordeletedblobs', 'leasemyblobscontainer']:
-            try:
-                blob_service_client.delete_container(container)
-            except HttpResponseError:
-                pass
-
-        if os.path.isfile(SOURCE_FILE):
-            try:
-                os.remove(SOURCE_FILE)
-            except:
-                pass
-
-        return super(TestCommonBlobSamples, self).tearDown()
+    connection_string = os.getenv("CONNECTION_STRING")
 
     #--Begin Blob Samples-----------------------------------------------------------------
 
-    @record
-    def test_blob_snapshots(self):
+    def blob_snapshots(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -88,8 +53,7 @@ class TestCommonBlobSamples(StorageTestCase):
         # Delete container
         blob_service_client.delete_container("containerformyblobs")
 
-    @record
-    def test_soft_delete_and_undelete_blob(self):
+    def soft_delete_and_undelete_blob(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -128,13 +92,10 @@ class TestCommonBlobSamples(StorageTestCase):
         properties = blob_client.get_blob_properties()
         # [END get_blob_properties]
 
-        assert properties is not None
-
         # Delete container
         blob_service_client.delete_container("containerfordeletedblobs")
 
-    @record
-    def test_acquire_lease_on_blob(self):
+    def acquire_lease_on_blob(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -164,8 +125,7 @@ class TestCommonBlobSamples(StorageTestCase):
         # Delete container
         blob_service_client.delete_container("leasemyblobscontainer")
 
-    @record
-    def test_start_copy_blob_from_url_and_abort_copy(self):
+    def start_copy_blob_from_url_and_abort_copy(self):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
