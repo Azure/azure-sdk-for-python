@@ -6,8 +6,8 @@ import six
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
-from . import DecryptResult, EncryptResult, SignResult, VerifyResult, WrapResult, UnwrapResult
-from ._internal import EllipticCurveKey, RsaKey
+from . import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
+from ._internal import EllipticCurveKey, RsaKey, SymmetricKey
 from .._models import KeyVaultKey
 from .._shared import KeyVaultClientBase, parse_vault_id
 
@@ -137,10 +137,15 @@ class CryptographyClient(KeyVaultClientBase):
             if not key:
                 return None
 
-            if key.key_type.lower().startswith("ec"):
+            kty = key.key_type.lower()
+            if kty.startswith("ec"):
                 self._internal_key = EllipticCurveKey.from_jwk(key.key)
-            else:
+            elif kty.startswith("rsa"):
                 self._internal_key = RsaKey.from_jwk(key.key)
+            elif kty == "oct":
+                self._internal_key = SymmetricKey.from_jwk(key.key)
+            else:
+                raise ValueError("Unsupported key type '{}'".format(key.key_type))
 
         return self._internal_key
 
@@ -284,16 +289,21 @@ class CryptographyClient(KeyVaultClientBase):
             key = result.key
 
         """
-
-        result = self._client.unwrap_key(
-            vault_base_url=self._key_id.vault_endpoint,
-            key_name=self._key_id.name,
-            key_version=self._key_id.version,
-            algorithm=algorithm,
-            value=encrypted_key,
-            **kwargs
-        )
-        return UnwrapResult(key_id=self.key_id, algorithm=algorithm, key=result.result)
+        local_key = self._get_local_key(**kwargs)
+        if local_key and local_key.is_private_key():
+            if "unwrapKey" not in self._allowed_ops:
+                raise AzureError("This client doesn't have 'keys/unwrapKey' permission")
+            result = local_key.unwrap_key(encrypted_key, **kwargs)
+        else:
+            result = self._client.unwrap_key(
+                vault_base_url=self._key_id.vault_endpoint,
+                key_name=self._key_id.name,
+                key_version=self._key_id.version,
+                algorithm=algorithm,
+                value=encrypted_key,
+                **kwargs
+            ).result
+        return UnwrapResult(key_id=self._key_id, algorithm=algorithm, key=result)
 
     @distributed_trace
     def sign(self, algorithm, digest, **kwargs):
@@ -357,6 +367,7 @@ class CryptographyClient(KeyVaultClientBase):
             assert verified.is_valid
 
         """
+
         local_key = self._get_local_key(**kwargs)
         if local_key:
             if "verify" not in self._allowed_ops:
