@@ -12,16 +12,14 @@ logging.basicConfig(level=logging.INFO)
 
 
 def do_operation(event):
-    pass
-    # do some sync or async operations. If the operation is i/o intensive, async will have better performance
-    #print(event)
+    print(event)
 
 
 def process_events(partition_context, events):
     if events:
         print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
-        # for event in events:
-        #     do_operation(event)
+        for event in events:
+            do_operation(event)
 
         partition_context.update_checkpoint(events[-1])
     else:
@@ -29,21 +27,20 @@ def process_events(partition_context, events):
 
 
 if __name__ == '__main__':
-    partition_manager = FileBasedPartitionManager('test_file_name')
-    #partition_manager = InMemoryPartitionManager()
+    partition_manager = FileBasedPartitionManager('consumer_pm_store')
+    # partition_manager = InMemoryPartitionManager()
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR, partition_manager=partition_manager, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL
     )
-    work_thread_0 = threading.Thread(target=client.receive, args=(process_events, '$Default'), kwargs={'partition_id': '0'})
-    work_thread_1 = threading.Thread(target=client.receive, args=(process_events, '$Default'),
-                                   kwargs={'partition_id': '1'})
+    work_thread_0 = threading.Thread(target=client.receive,
+                                     args=(process_events, '$Default'), kwargs={'partition_id': '0'})
+    work_thread_1 = threading.Thread(target=client.receive,
+                                     args=(process_events, '$Default'), kwargs={'partition_id': '1'})
     try:
-        #client.receive(process_events, '$Default')
 
         work_thread_0.start()
         work_thread_1.start()
         time.sleep(5)
-        print('############################## 5 seconds ##############################')
         client.close()
         work_thread_0.join()
         work_thread_1.join()
