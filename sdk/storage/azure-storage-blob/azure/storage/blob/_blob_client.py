@@ -156,6 +156,17 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
 
+    def _format_url(self, hostname):
+        container_name = self.container_name
+        if isinstance(container_name, six.text_type):
+            container_name = container_name.encode('UTF-8')
+        return "{}://{}/{}/{}{}".format(
+            self.scheme,
+            hostname,
+            quote(container_name),
+            quote(self.blob_name, safe='~'),
+            self._query_str)
+
     @classmethod
     def from_blob_url(cls, blob_url, credential=None, snapshot=None, **kwargs):
         # type: (str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> BlobClient
@@ -185,9 +196,17 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(blob_url))
-        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
-        path_blob = parsed_url.path.lstrip('/').partition('/')
-        container_name, blob_name = unquote(path_blob[0]), unquote(path_blob[2])
+
+        path_blob = parsed_url.path.lstrip('/').split('/')
+        account_path = ""
+        if len(path_blob) > 2:
+            account_path = "/" + "/".join(path_blob[:-2])
+        account_url = "{}://{}{}?{}".format(
+            parsed_url.scheme,
+            parsed_url.netloc.rstrip('/'),
+            account_path,
+            parsed_url.query)
+        container_name, blob_name = unquote(path_blob[-2]), unquote(path_blob[-1])
         if not container_name or not blob_name:
             raise ValueError("Invalid URL. Provide a blob_url with a valid blob and container name.")
 
@@ -205,17 +224,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             account_url, container_name=container_name, blob_name=blob_name,
             snapshot=path_snapshot, credential=credential, **kwargs
         )
-
-    def _format_url(self, hostname):
-        container_name = self.container_name
-        if isinstance(container_name, six.text_type):
-            container_name = container_name.encode('UTF-8')
-        return "{}://{}/{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(container_name),
-            quote(self.blob_name, safe='~'),
-            self._query_str)
 
     @classmethod
     def from_connection_string(

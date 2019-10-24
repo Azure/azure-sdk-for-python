@@ -81,7 +81,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         if service not in ["blob", "queue", "file"]:
             raise ValueError("Invalid service: {}".format(service))
         account = parsed_url.netloc.split(".{}.core.".format(service))
-        self.account_name = account[0]
+        self.account_name = account[0] if len(account) > 1 else None
         secondary_hostname = None
 
         self.credential = format_shared_key_credential(account, credential)
@@ -96,7 +96,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 secondary_hostname = parsed_url.netloc.replace(account[0], account[0] + "-secondary")
             if kwargs.get("secondary_hostname"):
                 secondary_hostname = kwargs["secondary_hostname"]
-            self._hosts = {LocationMode.PRIMARY: parsed_url.netloc, LocationMode.SECONDARY: secondary_hostname}
+            primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip('/')
+            self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
         self.require_encryption = kwargs.get("require_encryption", False)
         self.key_encryption_key = kwargs.get("key_encryption_key")
@@ -353,7 +354,7 @@ def create_configuration(**kwargs):
 def parse_query(query_str):
     sas_values = QueryStringConstants.to_list()
     parsed_query = {k: v[0] for k, v in parse_qs(query_str).items()}
-    sas_params = ["{}={}".format(k, quote(v)) for k, v in parsed_query.items() if k in sas_values]
+    sas_params = ["{}={}".format(k, quote(v, safe='')) for k, v in parsed_query.items() if k in sas_values]
     sas_token = None
     if sas_params:
         sas_token = "&".join(sas_params)
