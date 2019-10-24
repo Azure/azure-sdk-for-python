@@ -216,7 +216,7 @@ class AuthnClient(AuthnClientBase):
         token = self._deserialize_and_cache_token(response=response, scopes=scopes, request_time=request_time)
         return token
 
-    def obtain_token_by_refresh_token(self, scopes, username):
+    def obtain_token_by_refresh_token(self, scopes, username=None):
         # type: (Iterable[str], Optional[str]) -> AccessToken
         """Acquire an access token using a cached refresh token. Raises ClientAuthenticationError if that fails.
         This is only used by SharedTokenCacheCredential and isn't robust enough for anything else."""

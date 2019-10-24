@@ -68,7 +68,9 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
         token = self._deserialize_and_cache_token(response=response, scopes=scopes, request_time=request_time)
         return token
 
-    async def obtain_token_by_refresh_token(self, scopes: "Iterable[str]", username: "Optional[str]") -> "AccessToken":
+    async def obtain_token_by_refresh_token(
+        self, scopes: "Iterable[str]", username: "Optional[str]" = None
+    ) -> "AccessToken":
         """Acquire an access token using a cached refresh token. Raises ClientAuthenticationError if that fails.
         This is only used by SharedTokenCacheCredential and isn't robust enough for anything else."""
 
