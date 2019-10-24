@@ -12,7 +12,6 @@ __all__ = [
     "EventHubConsumerClient",
     "EventHubProducerClient",
     "PartitionManager",
-    "InMemoryPartitionManager",
     "FileBasedPartitionManager",
     "OwnershipLostError",
 ]
