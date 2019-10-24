@@ -24,8 +24,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
        value for the environment variable ``AZURE_USERNAME``. See :class:`~azure.identity.SharedTokenCacheCredential`
        for more details.
 
-    Keyword arguments
-        - **authority** (str): Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
           defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
     """
