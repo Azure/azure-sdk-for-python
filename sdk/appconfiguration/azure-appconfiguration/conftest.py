@@ -27,4 +27,4 @@ import sys
 
 # Ignore collection of async tests for Python 2
 collect_ignore = []
-collect_ignore.append("test_example_configurationservice.py")
+collect_ignore.append("samples")
