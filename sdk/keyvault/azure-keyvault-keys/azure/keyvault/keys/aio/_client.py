@@ -50,14 +50,14 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :param str name: The name of the new key. Key Vault will generate the key's version.
         :param key_type: The type of key to create
-        :type key_type: str or ~azure.keyvault.keys.KeyType
+        :type key_type: ~azure.keyvault.keys.KeyType or str
         :keyword int size: RSA key size in bits, for example 2048, 3072, or 4096. Applies only to RSA keys. To
          create an RSA key, consider using :func:`create_rsa_key` instead.
         :keyword curve: Elliptic curve name. Applies only to elliptic curve keys. Defaults to the NIST P-256
          elliptic curve. To create an elliptic curve key, consider using :func:`create_ec_key` instead.
         :paramtype curve: ~azure.keyvault.keys.KeyCurveName or str
         :keyword key_operations: Allowed key operations
-        :paramtype key_operations: list[str or ~azure.keyvault.keys.KeyOperation]
+        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
         :keyword bool enabled: Whether the key is enabled for use.
         :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
         :keyword datetime.datetime not_before: Not before date of the key in UTC
@@ -104,7 +104,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :keyword bool hardware_protected: Whether the key should be created in a hardware security module.
          Defaults to ``False``.
         :keyword key_operations: Allowed key operations
-        :paramtype key_operations: list[str or ~azure.keyvault.keys.KeyOperation]
+        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
         :keyword bool enabled: Whether the key is enabled for use.
         :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
         :keyword datetime.datetime not_before: Not before date of the key in UTC
@@ -135,7 +135,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :keyword key_operations: Allowed key operations
         :keyword bool hardware_protected: Whether the key should be created in a hardware security module.
          Defaults to ``False``.
-        :paramtype key_operations: list[str or ~azure.keyvault.keys.KeyOperation]
+        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
         :keyword bool enabled: Whether the key is enabled for use.
         :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
         :keyword datetime.datetime not_before: Not before date of the key in UTC
@@ -371,7 +371,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str name: The name of key to update
         :param str version: (optional) The version of the key to update. If unspecified, the latest version is updated.
         :keyword key_operations: Allowed key operations
-        :paramtype key_operations: list[str or ~azure.keyvault.keys.KeyOperation]
+        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
         :keyword bool enabled: Whether the key is enabled for use.
         :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
         :keyword datetime.datetime not_before: Not before date of the key in UTC
