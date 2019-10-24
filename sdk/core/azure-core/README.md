@@ -1,7 +1,7 @@
 
 # Azure Core Library
 
-zure core library defines basic exceptions and shared modules that is needed when you use client libraries. If you are a client library developer, please reference [client library develop doc](CLIENT_LIBRARY_DEVELOPER.md) for more information.
+Azure core library defines basic exceptions and shared modules those are needed when you use client libraries. If you are a client library developer, please reference [client library develop doc](CLIENT_LIBRARY_DEVELOPER.md) for more information.
 
 ## Azure Core Library Exceptions
 
