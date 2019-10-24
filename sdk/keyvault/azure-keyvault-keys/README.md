@@ -120,7 +120,7 @@ from azure.keyvault.keys import KeyClient
 
 credential = DefaultAzureCredential()
 
-key_client = KeyClient(vault_url=<your-vault-url>, credential=credential)
+key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 ```
 
 ## Key concepts
@@ -218,7 +218,7 @@ from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm
 
 credential = DefaultAzureCredential()
-key_client = KeyClient(vault_url=vault_url, credential=credential)
+key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
 key = key_client.get_key("mykey")
 crypto_client = CryptographyClient(key, credential=credential)
@@ -247,7 +247,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.keys.aio import KeyClient
 
 credential = DefaultAzureCredential()
-key_client = KeyClient(vault_url=vault_url, credential=credential)
+key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
 # Create an RSA key
 rsa_key = await key_client.create_rsa_key("rsa-key-name", size=2048)
@@ -294,6 +294,8 @@ can configure logging to print debugging information to stdout or write it
 to a file:
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.keys import KeyClient
 import sys
 import logging
 
@@ -305,12 +307,10 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-# Configure a file output
-file_handler = logging.FileHandler(filename)
-logger.addHandler(file_handler)
+credential = DefaultAzureCredential()
 
 # Enable network trace logging. Each HTTP request will be logged at DEBUG level.
-client = KeyClient(vault_url=url, credential=credential, logging_enable=True)
+client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential, logging_enable=True)
 ```
 
 Network trace logging can also be enabled for any single operation:
