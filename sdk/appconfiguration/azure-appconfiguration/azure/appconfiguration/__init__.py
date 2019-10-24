@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_appconfiguration_client import AzureAppConfigurationClient
+from ._azure_appconfiguration_client import AzureAppConfigurationClient
 from ._models import ConfigurationSetting
 from ._version import VERSION
 from ._azure_appconfiguration_error import ResourceReadOnlyError

@@ -51,9 +51,9 @@ class DeletedWebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeletedSite
         :rtype:
-         ~azure.mgmt.web.models.DeletedSitePaged[~azure.mgmt.web.models.DeletedSite]
+         ~azure.mgmt.web.v2018_02_01.models.DeletedSitePaged[~azure.mgmt.web.v2018_02_01.models.DeletedSite]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -120,9 +120,9 @@ class DeletedWebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeletedSite
         :rtype:
-         ~azure.mgmt.web.models.DeletedSitePaged[~azure.mgmt.web.models.DeletedSite]
+         ~azure.mgmt.web.v2018_02_01.models.DeletedSitePaged[~azure.mgmt.web.v2018_02_01.models.DeletedSite]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -191,10 +191,10 @@ class DeletedWebAppsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DeletedSite or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.DeletedSite or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.DeletedSite or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_deleted_web_app_by_location.metadata['url']

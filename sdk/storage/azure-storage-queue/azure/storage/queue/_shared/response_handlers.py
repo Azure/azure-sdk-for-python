@@ -20,7 +20,7 @@ from azure.core.exceptions import (
     DecodeError)
 
 from .parser import _to_utc_datetime
-from .models import StorageErrorCode, UserDelegationKey
+from .models import StorageErrorCode, UserDelegationKey, get_enum_value
 
 
 if TYPE_CHECKING:
@@ -29,6 +29,19 @@ if TYPE_CHECKING:
 
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class PartialBatchErrorException(HttpResponseError):
+    """There is a partial failure in batch operations.
+
+    :param str message: The message of the exception.
+    :param response: Server response to be deserialized.
+    :param list parts: A list of the parts in multipart response.
+    """
+
+    def __init__(self, message, response, parts):
+        self.parts = parts
+        super(PartialBatchErrorException, self).__init__(message=message, response=response)
 
 
 def parse_length_from_content_range(content_range):
@@ -49,7 +62,7 @@ def normalize_headers(headers):
     for key, value in headers.items():
         if key.startswith('x-ms-'):
             key = key[5:]
-        normalized[key.lower().replace('-', '_')] = value
+        normalized[key.lower().replace('-', '_')] = get_enum_value(value)
     return normalized
 
 

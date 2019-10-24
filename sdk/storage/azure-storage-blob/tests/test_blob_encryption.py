@@ -25,7 +25,7 @@ from azure.storage.blob._shared.encryption import (
     _generate_AES_CBC_cipher,
     _ERROR_OBJECT_INVALID,
 )
-from azure.storage.blob.blob_client import _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
+from azure.storage.blob._blob_client import _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from cryptography.hazmat.primitives.padding import PKCS7
 
 from azure.storage.blob import (
@@ -71,7 +71,9 @@ class StorageBlobEncryptionTest(StorageTestCase):
             credential=credential,
             max_single_put_size=32 * 1024,
             max_block_size=4 * 1024,
-            max_page_size=4 * 1024)
+            max_page_size=4 * 1024,
+            max_single_get_size=1024,
+            max_chunk_get_size=1024)
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
         self.blob_types = (BlobType.BlockBlob, BlobType.PageBlob, BlobType.AppendBlob)
@@ -222,7 +224,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         content = blob.download_blob()
 
         # Assert
-        self.assertEqual(b"".join(list(content)), self.bytes)
+        self.assertEqual(b"".join(list(content.chunks())), self.bytes)
         
 
     @record
@@ -257,7 +259,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         content = blob.download_blob()
 
         # Assert
-        self.assertEqual(b"".join(list(content)), self.bytes)
+        self.assertEqual(b"".join(list(content.chunks())), self.bytes)
 
     @record
     def test_get_blob_nonmatching_kid(self):
@@ -710,12 +712,12 @@ class StorageBlobEncryptionTest(StorageTestCase):
         blob = self._create_small_blob(BlobType.BlockBlob)
 
         # Act
-        iter_blob = b"".join(list(blob.download_blob()))
+        iter_blob = b"".join(list(blob.download_blob().chunks()))
         bytes_blob = blob.download_blob().content_as_bytes()
         stream_blob = BytesIO()
         blob.download_blob().download_to_stream(stream_blob)
         stream_blob.seek(0)
-        text_blob = blob.download_blob().content_as_text()
+        text_blob = blob.download_blob(encoding='UTF-8').readall()
 
         # Assert
         self.assertEqual(self.bytes, iter_blob)

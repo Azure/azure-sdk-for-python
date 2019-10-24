@@ -3,6 +3,19 @@
 Release History
 ===============
 
+8.0.0 (2019-10-24)
+++++++++++++++++++
+
+**Features**
+
+- Model OpenShiftManagedCluster has a new parameter monitor_profile
+- Model ManagedCluster has a new parameter private_fqdn
+- Added operation ManagedClustersOperations.rotate_cluster_certificates
+
+**Breaking changes**
+
+- Operation AgentPoolsOperations.get_available_agent_pool_versions has a new signature
+
 7.0.0 (2019-08-30)
 ++++++++++++++++++
   

@@ -10,7 +10,6 @@ parameters:
   BuildTargetingString: 'azure-*'
   ToxTestEnv: ""
   RunCoverage: ne(variables['CoverageArg'], '--disablecov')
-  RunMyPy: and(ne(variables['PythonVersion'], '2.7'), ne(variables['PythonVersion'], 'pypy3'))
 
 steps:
   - pwsh: |
@@ -49,6 +48,10 @@ steps:
     inputs:
       testResultsFiles: '**/*test*.xml'
       testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
+
+  - template: publish-coverage.yml
+    parameters: 
+      RunCoverage: ${{ parameters.RunCoverage }}
   
   - task: PythonScript@0
     displayName: 'Install Packages (Global)'
@@ -70,7 +73,3 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Build.Reason'], 'PullRequest'))
-
-  - template: publish-coverage.yml
-    parameters: 
-      RunCoverage: ${{ parameters.RunCoverage }}

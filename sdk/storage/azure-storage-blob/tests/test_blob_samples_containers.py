@@ -166,7 +166,12 @@ class TestContainerSamples(StorageTestCase):
 
             # [START generate_sas_token]
             # Use access policy to generate a sas token
-            sas_token = container_client.generate_shared_access_signature(
+            from azure.storage.blob import generate_container_sas
+            
+            sas_token = generate_container_sas(
+                container_client.account_name,
+                container_client.container_name,
+                account_key=container_client.credential.account_key,
                 policy_id='my-access-policy-id'
             )
             # [END generate_sas_token]

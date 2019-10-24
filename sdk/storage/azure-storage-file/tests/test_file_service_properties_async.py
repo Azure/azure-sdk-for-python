@@ -11,12 +11,12 @@ import asyncio
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from azure.storage.file.aio import (
-    FileServiceClient,
+from azure.storage.file import (
     Metrics,
     CorsRule,
     RetentionPolicy,
 )
+from azure.storage.file.aio import FileServiceClient
 
 from filetestcase import (
     FileTestCase,
@@ -88,9 +88,9 @@ class FileServicePropertiesTest(FileTestCase):
         # Assert
         self.assertIsNone(resp)
         props = await self.fsc.get_service_properties()
-        self._assert_metrics_equal(props.hour_metrics, Metrics())
-        self._assert_metrics_equal(props.minute_metrics, Metrics())
-        self._assert_cors_equal(props.cors, list())
+        self._assert_metrics_equal(props['hour_metrics'], Metrics())
+        self._assert_metrics_equal(props['minute_metrics'], Metrics())
+        self._assert_cors_equal(props['cors'], list())
 
     @record
     def test_file_service_properties_async(self):
@@ -107,7 +107,7 @@ class FileServicePropertiesTest(FileTestCase):
 
         # Assert
         received_props = await self.fsc.get_service_properties()
-        self._assert_metrics_equal(received_props.hour_metrics, hour_metrics)
+        self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
     @record
     def test_set_hour_metrics_async(self):
@@ -124,7 +124,7 @@ class FileServicePropertiesTest(FileTestCase):
 
         # Assert
         received_props = await self.fsc.get_service_properties()
-        self._assert_metrics_equal(received_props.minute_metrics, minute_metrics)
+        self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
     @record
     def test_set_minute_metrics_async(self):
@@ -154,7 +154,7 @@ class FileServicePropertiesTest(FileTestCase):
 
         # Assert
         received_props = await self.fsc.get_service_properties()
-        self._assert_cors_equal(received_props.cors, cors)
+        self._assert_cors_equal(received_props['cors'], cors)
 
     @record
     def test_set_cors_async(self):
@@ -172,7 +172,7 @@ class FileServicePropertiesTest(FileTestCase):
 
         # Assert
         with self.assertRaises(HttpResponseError):
-            await self.fsc.set_service_properties(None, None, cors)       
+            await self.fsc.set_service_properties(None, None, cors)
 
     @record
     def test_too_many_cors_rules_async(self):

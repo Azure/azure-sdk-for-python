@@ -61,7 +61,7 @@ names):
     }
     ```
 
-    > The `"vaultUri"` property is the `vault_endpoint` used by `SecretClient`
+    > The `"vaultUri"` property is the `vault_url` used by `SecretClient`
 
 ### Authenticate the client
 In order to interact with a Key Vault's secrets, you'll need an instance of the
@@ -120,7 +120,7 @@ After setting the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
 
     credential = DefaultAzureCredential()
 
-    secret_client = SecretClient(vault_endpoint=<your-vault-url>, credential=credential)
+    secret_client = SecretClient(vault_url=<your-vault-url>, credential=credential)
 ```
 
 ## Key concepts
@@ -185,11 +185,13 @@ value; use [`set_secret`](#create-a-secret) to set a secret's value.
 ```
 
 ### Delete a Secret
-`delete_secret` deletes a secret. If [soft-delete][soft_delete] is not enabled
-for the vault, this permanently deletes the secret.
+`begin_delete_secret` requests Key Vault delete a secret, returning a poller which allows you to
+wait for the deletion to finish. Waiting is helpful when the vault has [soft-delete][soft_delete]
+enabled, and you want to purge (permanently delete) the secret as soon as possible.
+When [soft-delete][soft_delete] is disabled, deletion is always permanent.
 
 ```python
-    deleted_secret = secret_client.delete_secret("secret-name")
+    deleted_secret = secret_client.begin_delete_secret("secret-name").result()
 
     print(deleted_secret.name)
     print(deleted_secret.properties.deleted_date)
@@ -221,7 +223,7 @@ This example creates a secret in the Key Vault with the specified optional argum
     from azure.keyvault.secrets.aio import SecretClient
 
     credential = DefaultAzureCredential()
-    secret_client = SecretClient(vault_endpoint=vault_endpoint, credential=credential)
+    secret_client = SecretClient(vault_url=vault_url, credential=credential)
 
     secret = await secret_client.set_secret("secret-name", "secret-value")
 
@@ -251,7 +253,7 @@ For example, if you try to get a key that doesn't exist in the vault,
 ```python
 from azure.core.exceptions import ResourceNotFoundError
 
-secret_client.delete_secret("my-secret")
+secret_client.begin_delete_secret("my-secret").wait()
 
 try:
     secret_client.get_secret("my-secret")
@@ -282,7 +284,7 @@ file_handler = logging.FileHandler(filename)
 logger.addHandler(file_handler)
 
 # Enable network trace logging. Each HTTP request will be logged at DEBUG level.
-client = SecretClient(vault_endpoint=url, credential=credential, logging_enable=True)
+client = SecretClient(vault_url=url, credential=credential, logging_enable=True)
 ```
 
 Network trace logging can also be enabled for any single operation:

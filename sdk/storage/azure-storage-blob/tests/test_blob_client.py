@@ -44,6 +44,7 @@ class StorageClientTest(StorageTestCase):
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, url_type):
         self.assertIsNotNone(service)
+        self.assertEqual(service.account_name, self.account_name)
         self.assertEqual(service.credential.account_name, self.account_name)
         self.assertEqual(service.credential.account_key, self.account_key)
         self.assertTrue('{}.{}.core.windows.net'.format(self.account_name, url_type) in service.url)
@@ -71,6 +72,8 @@ class StorageClientTest(StorageTestCase):
         self.assertEqual(service.scheme, 'https')
         self.assertEqual(service.container_name, 'foo')
         self.assertEqual(service.blob_name, 'bar')
+        self.assertEqual(service.account_name, self.account_name)
+
 
     def test_create_service_with_connection_string(self):
 
@@ -93,6 +96,7 @@ class StorageClientTest(StorageTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertTrue(service.url.startswith('https://' + self.account_name + '.blob.core.windows.net'))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
@@ -109,6 +113,7 @@ class StorageClientTest(StorageTestCase):
             self.assertEqual(service.credential, self.token_credential)
             self.assertFalse(hasattr(service.credential, 'account_key'))
             self.assertTrue(hasattr(service.credential, 'get_token'))
+            self.assertEqual(service.account_name, self.account_name)
 
     def test_create_service_with_token_and_http(self):
         for service_type in SERVICES:
@@ -128,6 +133,7 @@ class StorageClientTest(StorageTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertEqual(service.credential.account_name, self.account_name)
             self.assertEqual(service.credential.account_key, self.account_key)
             self.assertTrue(service.primary_endpoint.startswith(
@@ -158,6 +164,7 @@ class StorageClientTest(StorageTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertTrue(service.url.startswith('https://' + self.account_name + '.blob.core.windows.net'))
             self.assertIsNone(service.credential)
 
@@ -175,6 +182,7 @@ class StorageClientTest(StorageTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertEqual(service.credential.account_name, self.account_name)
             self.assertEqual(service.credential.account_key, self.account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
@@ -226,6 +234,7 @@ class StorageClientTest(StorageTestCase):
             self.assertTrue(service.url.startswith('https://' + self.account_name + '.blob.core.windows.net'))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
+            self.assertEqual(service.account_name, self.account_name)
 
     def test_create_service_with_connection_string_endpoint_protocol(self):
         # Arrange
@@ -238,6 +247,7 @@ class StorageClientTest(StorageTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertEqual(service.credential.account_name, self.account_name)
             self.assertEqual(service.credential.account_key, self.account_key)
             self.assertTrue(
@@ -267,6 +277,7 @@ class StorageClientTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(service)
+        self.assertEqual(service.account_name, None)
         self.assertIsNone(service.credential)
         self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
         with self.assertRaises(ValueError):
@@ -283,6 +294,7 @@ class StorageClientTest(StorageTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertEqual(service.credential.account_name, self.account_name)
             self.assertEqual(service.credential.account_key, self.account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
@@ -299,11 +311,11 @@ class StorageClientTest(StorageTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertEqual(service.credential.account_name, self.account_name)
             self.assertEqual(service.credential.account_key, self.account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
             self.assertTrue(service.secondary_endpoint.startswith('https://' + self.account_name + '-secondary.blob.core.windows.net'))
-
 
     def test_create_service_with_connection_string_custom_domain_secondary_override(self):
         # Arrange
@@ -317,11 +329,11 @@ class StorageClientTest(StorageTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertEqual(service.credential.account_name, self.account_name)
             self.assertEqual(service.credential.account_key, self.account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
             self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com/'))
-
 
     def test_create_service_with_connection_string_fails_if_secondary_without_primary(self):
         for service_type in SERVICES.items():
@@ -350,10 +362,65 @@ class StorageClientTest(StorageTestCase):
 
             # Assert
             self.assertIsNotNone(service)
+            self.assertEqual(service.account_name, self.account_name)
             self.assertEqual(service.credential.account_name, self.account_name)
             self.assertEqual(service.credential.account_key, self.account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
             self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com/'))
+
+    def test_create_service_with_custom_account_endpoint_path(self):
+        custom_account_url = "http://local-machine:11002/custom/account/path/" + self.sas_token
+        for service_type in SERVICES.items():
+            conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};BlobEndpoint={};'.format(
+                self.account_name, self.account_key, custom_account_url)
+
+            # Act
+            service = service_type[0].from_connection_string(
+                conn_string, container_name="foo", blob_name="bar")
+
+            # Assert
+            self.assertEqual(service.account_name, self.account_name)
+            self.assertEqual(service.credential.account_name, self.account_name)
+            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        
+        service = BlobServiceClient(account_url=custom_account_url)
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/?'))
+
+        service = ContainerClient(account_url=custom_account_url, container_name="foo")
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.container_name, "foo")
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo?'))
+
+        service = ContainerClient.from_container_url("http://local-machine:11002/custom/account/path/foo?query=value")
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.container_name, "foo")
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertEqual(service.url, 'http://local-machine:11002/custom/account/path/foo')
+
+        service = BlobClient(account_url=custom_account_url, container_name="foo", blob_name="bar", snapshot="baz")
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.container_name, "foo")
+        self.assertEqual(service.blob_name, "bar")
+        self.assertEqual(service.snapshot, "baz")
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo/bar?snapshot=baz&'))
+
+        service = BlobClient.from_blob_url("http://local-machine:11002/custom/account/path/foo/bar?snapshot=baz&query=value")
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.container_name, "foo")
+        self.assertEqual(service.blob_name, "bar")
+        self.assertEqual(service.snapshot, "baz")
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertEqual(service.url, 'http://local-machine:11002/custom/account/path/foo/bar?snapshot=baz')
 
     @record
     def test_request_callback_signed_header(self):
@@ -392,6 +459,7 @@ class StorageClientTest(StorageTestCase):
 
     def test_client_request_id_echo(self):
         # client request id is different for every request, so it will never match the recorded one
+        pytest.skip("Issue tracked here: https://github.com/Azure/azure-sdk-for-python/issues/8098")
         if TestMode.need_recording_file(self.test_mode):
             return
 

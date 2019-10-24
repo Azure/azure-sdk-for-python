@@ -23,9 +23,27 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
     # incorporate md5 hashing of run identifier into resource group name for uniqueness
     name_prefix = "kv-test-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
 
+    def _assert_jwks_equal(self, jwk1, jwk2):
+        assert jwk1.kid == jwk2.kid
+        assert jwk1.kty == jwk2.kty
+        assert jwk1.key_ops == jwk2.key_ops
+        assert jwk1.n == jwk2.n
+        assert jwk1.e == jwk2.e
+        assert jwk1.d == jwk2.d
+        assert jwk1.dp == jwk2.dp
+        assert jwk1.dq == jwk2.dq
+        assert jwk1.qi == jwk2.qi
+        assert jwk1.p == jwk2.p
+        assert jwk1.q == jwk2.q
+        assert jwk1.k == jwk2.k
+        assert jwk1.t == jwk2.t
+        assert jwk1.crv == jwk2.crv
+        assert jwk1.x == jwk2.x
+        assert jwk1.y == jwk2.y
+
     def _assert_key_attributes_equal(self, k1, k2):
         self.assertEqual(k1.name, k2.name)
-        self.assertEqual(k1.vault_endpoint, k2.vault_endpoint)
+        self.assertEqual(k1.vault_url, k2.vault_url)
         self.assertEqual(k1.enabled, k2.enabled)
         self.assertEqual(k1.not_before, k2.not_before)
         self.assertEqual(k1.expires_on, k2.expires_on)
@@ -45,7 +63,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertTrue(created_key.properties.tags, "Missing the optional key attributes.")
         self.assertEqual(tags, created_key.properties.tags)
         key_type = "RSA-HSM" if hsm else "RSA"
-        self._validate_rsa_key_bundle(created_key, client.vault_endpoint, key_name, key_type, key_ops)
+        self._validate_rsa_key_bundle(created_key, client.vault_url, key_name, key_type, key_ops)
         return created_key
 
     async def _create_ec_key(self, client, key_name, hsm=False):
@@ -57,7 +75,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertEqual(enabled, created_key.properties.enabled)
         self.assertEqual(tags, created_key.properties.tags)
         key_type = "EC-HSM" if hsm else "EC"
-        self._validate_ec_key_bundle(created_key, client.vault_endpoint, key_name, key_type)
+        self._validate_ec_key_bundle(created_key, client.vault_url, key_name, key_type)
         return created_key
 
     def _validate_ec_key_bundle(self, key_attributes, vault, key_name, kty):
@@ -135,7 +153,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             ),
         )
         imported_key = await client.import_key(name, key)
-        self._validate_rsa_key_bundle(imported_key, client.vault_endpoint, name, "RSA", key.key_ops)
+        self._validate_rsa_key_bundle(imported_key, client.vault_url, name, "RSA", key.key_ops)
         return imported_key
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
@@ -174,17 +192,17 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         await self._update_key_properties(client, created_rsa_key)
 
         # delete the new key
-        deleted_key = await client.delete_key(created_rsa_key.name)
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
+        deleted_key = await client.delete_key(created_rsa_key.name, _polling_interval=polling_interval)
         self.assertIsNotNone(deleted_key)
-        self.assertEqual(created_rsa_key.key, deleted_key.key)
+        self._assert_jwks_equal(created_rsa_key.key, deleted_key.key)
         self.assertEqual(deleted_key.id, created_rsa_key.id)
         self.assertTrue(
             deleted_key.recovery_id and deleted_key.deleted_date and deleted_key.scheduled_purge_date,
             "Missing required deleted key attributes.",
-        )
-
-        await self._poll_until_no_exception(
-            client.get_deleted_key, created_rsa_key.name, expected_exception=ResourceNotFoundError
         )
 
         # get the deleted key when soft deleted enabled
@@ -232,7 +250,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             key = await client.create_key(key_name, "RSA")
             expected[key.id] = key
 
-        result = client.list_key_versions(key_name)
+        result = client.list_properties_of_key_versions(key_name)
 
         # validate list key versions with attributes
         async for key in result:
@@ -257,12 +275,12 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             expected[key_name] = await client.create_key(key_name, key_type)
 
         # delete all keys
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
         for key_name in expected.keys():
-            await client.delete_key(key_name)
-
-        await self._poll_until_no_exception(
-            client.get_deleted_key, *expected.keys(), expected_exception=ResourceNotFoundError
-        )
+            await client.delete_key(key_name, _polling_interval=polling_interval)
 
         # validate list deleted keys with attributes
         async for deleted_key in client.list_deleted_keys():
@@ -295,7 +313,11 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertIsNotNone(key_backup, "key_backup")
 
         # delete key
-        await client.delete_key(created_bundle.name)
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
+        await client.delete_key(created_bundle.name, _polling_interval=polling_interval)
         # can add test case to see if we do get_deleted should return error
 
         # restore key
@@ -317,22 +339,21 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             keys[key_name] = await client.create_key(key_name, "RSA")
 
         # delete them
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
         for key_name in keys.keys():
-            await client.delete_key(key_name)
-        await self._poll_until_no_exception(
-            client.get_deleted_key, *keys.keys(), expected_exception=ResourceNotFoundError
-        )
+            await client.delete_key(key_name, _polling_interval=polling_interval)
 
         # recover them
         for key_name in keys.keys():
-            recovered_key = await client.recover_deleted_key(key_name)
+            recovered_key = await client.recover_deleted_key(key_name, _polling_interval=polling_interval)
             expected_key = keys[key_name]
             self._assert_key_attributes_equal(expected_key.properties, recovered_key.properties)
 
         # validate the recovered keys
         expected = {k: v for k, v in keys.items()}
-        await self._poll_until_no_exception(client.get_key, *expected.keys(), expected_exception=ResourceNotFoundError)
-
         actual = {}
         for k in expected.keys():
             actual[k] = await client.get_key(k)
@@ -354,11 +375,12 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             keys[key_name] = await client.create_key(key_name, "RSA")
 
         # delete them
+        if self.is_playback:
+            polling_interval = 0
+        else:
+            polling_interval = None
         for key_name in keys.keys():
-            await client.delete_key(key_name)
-        await self._poll_until_no_exception(
-            client.get_deleted_key, *keys.keys(), expected_exception=ResourceNotFoundError
-        )
+            await client.delete_key(key_name, _polling_interval=polling_interval)
 
         # purge them
         for key_name in keys.keys():
