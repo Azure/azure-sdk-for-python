@@ -143,6 +143,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         `secondary_hostname` keyword argument on instantiation.
 
         :type: str
+        :raise ValueError:
         """
         if not self._hosts[LocationMode.SECONDARY]:
             raise ValueError("No secondary host configured.")
@@ -155,7 +156,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         If not available this will be None. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
 
-        :type: str
+        :type: str or None
         """
         return self._hosts[LocationMode.SECONDARY]
 
