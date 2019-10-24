@@ -27,11 +27,10 @@ class KeyClient(AsyncKeyVaultClientBase):
     :param str vault_endpoint: URL of the vault the client will access
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
-
-    Keyword arguments
-        - **api_version**: version of the Key Vault API to use. Defaults to the most recent.
-        - **transport**: :class:`~azure.core.pipeline.transport.AsyncHttpTransport` to use. Defaults to
-          :class:`~azure.core.pipeline.transport.AioHttpTransport`.
+    :keyword str api_version: version of the Key Vault API to use. Defaults to the most recent.
+    :keyword transport: transport to use. Defaults to
+     :class:`~azure.core.pipeline.transport.AioHttpTransport`.
+    :paramtype transport: ~azure.core.pipeline.transport.AsyncHttpTransport
 
     Example:
         .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -52,21 +51,20 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str name: The name of the new key. Key Vault will generate the key's version.
         :param key_type: The type of key to create
         :type key_type: str or ~azure.keyvault.keys.KeyType
+        :keyword int size: RSA key size in bits, for example 2048, 3072, or 4096. Applies only to RSA keys. To
+         create an RSA key, consider using :func:`create_rsa_key` instead.
+        :keyword curve: Elliptic curve name. Applies only to elliptic curve keys. Defaults to the NIST P-256
+         elliptic curve. To create an elliptic curve key, consider using :func:`create_ec_key` instead.
+        :paramtype curve: ~azure.keyvault.keys.KeyCurveName or str
+        :keyword key_operations: Allowed key operations
+        :paramtype key_operations: list[str or ~azure.keyvault.keys.KeyOperation]
+        :keyword bool enabled: Whether the key is enabled for use.
+        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword datetime.datetime not_before: Not before date of the key in UTC
+        :keyword datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
-
-        Keyword arguments
-            - **size** (int): RSA key size in bits, for example 2048, 3072, or 4096. Applies only to RSA keys.
-              To create an RSA key, consider using :func:`create_rsa_key` instead.
-            - **curve** (:class:`~azure.keyvault.keys.KeyCurveName` or str):
-              Elliptic curve name. Applies only to elliptic curve keys. Defaults to the NIST P-256 elliptic curve.
-              To create an elliptic curve key, consider using :func:`create_ec_key` instead.
-            - **key_operations** (list[str or :class:`~azure.keyvault.keys.KeyOperation`]): Allowed key operations
-            - **enabled** (bool): Whether the key is enabled for use.
-            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
-            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
-            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -102,19 +100,18 @@ class KeyClient(AsyncKeyVaultClientBase):
         keys/create permission.
 
         :param str name: The name for the new key
+        :keyword int size: Key size in bits, for example 2048, 3072, or 4096.
+        :keyword bool hardware_protected: Whether the key should be created in a hardware security module.
+         Defaults to ``False``.
+        :keyword key_operations: Allowed key operations
+        :paramtype key_operations: list[str or ~azure.keyvault.keys.KeyOperation]
+        :keyword bool enabled: Whether the key is enabled for use.
+        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword datetime.datetime not_before: Not before date of the key in UTC
+        :keyword datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
-
-        Keyword arguments
-            - **size** (int): Key size in bits, for example 2048, 3072, or 4096.
-            - **hardware_protected** (bool): Whether the key should be created in a hardware security module.
-              Defaults to ``False``.
-            - **key_operations** (list[str or :class:`~azure.keyvault.keys.KeyOperation`]): Allowed key operations
-            - **enabled** (bool): Whether the key is enabled for use.
-            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
-            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
-            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -133,20 +130,19 @@ class KeyClient(AsyncKeyVaultClientBase):
         the keys/create permission.
 
         :param str name: The name for the new key. Key Vault will generate the key's version.
+        :keyword curve: Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
+        :paramtype curve: ~azure.keyvault.keys.KeyCurveName or str
+        :keyword key_operations: Allowed key operations
+        :keyword bool hardware_protected: Whether the key should be created in a hardware security module.
+         Defaults to ``False``.
+        :paramtype key_operations: list[str or ~azure.keyvault.keys.KeyOperation]
+        :keyword bool enabled: Whether the key is enabled for use.
+        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword datetime.datetime not_before: Not before date of the key in UTC
+        :keyword datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
-
-        Keyword arguments
-            - **curve** (:class:`~azure.keyvault.keys.KeyCurveName` or str):
-              Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
-            - **hardware_protected** (bool): Whether the key should be created in a hardware security module.
-              Defaults to ``False``.
-            - **key_operations** (list[str or :class:`~azure.keyvault.keys.KeyOperation`]): Allowed key operations
-            - **enabled** (bool): Whether the key is enabled for use.
-            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
-            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
-            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -374,18 +370,17 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :param str name: The name of key to update
         :param str version: (optional) The version of the key to update. If unspecified, the latest version is updated.
+        :keyword key_operations: Allowed key operations
+        :paramtype key_operations: list[str or ~azure.keyvault.keys.KeyOperation]
+        :keyword bool enabled: Whether the key is enabled for use.
+        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword datetime.datetime not_before: Not before date of the key in UTC
+        :keyword datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The updated key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
-
-        Keyword arguments
-            - **enabled** (bool): Whether the key is enabled for use.
-            - **key_operations** (list[str or :class:`~azure.keyvault.keys.KeyOperation`]): Allowed key operations
-            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
-            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
-            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -473,16 +468,14 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str name: Name for the imported key
         :param key: The JSON web key to import
         :type key: ~azure.keyvault.keys.JsonWebKey
+        :keyword bool hardware_protected: Whether the key should be backed by a hardware security module
+        :keyword bool enabled: Whether the key is enabled for use.
+        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword datetime.datetime not_before: Not before date of the key in UTC
+        :keyword datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The imported key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
-
-        Keyword arguments
-            - **enabled** (bool): Whether the key is enabled for use.
-            - **hardware_protected** (bool): Whether the key should be backed by a hardware security module
-            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
-            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
-            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
         """
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
