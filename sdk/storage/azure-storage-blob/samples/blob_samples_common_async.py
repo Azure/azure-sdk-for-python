@@ -11,11 +11,7 @@ import asyncio
 from azure.core.exceptions import ResourceExistsError
 
 
-# set up
 SOURCE_FILE = 'SampleSource.txt'
-data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-with open(SOURCE_FILE, 'wb') as stream:
-    stream.write(data)
 
 
 class CommonBlobSamplesAsync(object):

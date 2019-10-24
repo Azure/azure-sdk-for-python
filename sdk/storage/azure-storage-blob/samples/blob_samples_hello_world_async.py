@@ -10,11 +10,8 @@ import os
 import asyncio
 
 # set up
-SOURCE_FILE = 'SampleSource.txt'
 DEST_FILE = 'BlockDestination.txt'
-data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-with open(SOURCE_FILE, 'wb') as stream:
-    stream.write(data)
+SOURCE_FILE = 'SampleSource.txt'
 
 class BlobSamplesAsync(object):
 

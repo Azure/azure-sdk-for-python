@@ -10,11 +10,7 @@ import os
 import asyncio
 from datetime import datetime, timedelta
 
-# set up
 SOURCE_FILE = 'SampleSource.txt'
-data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-with open(SOURCE_FILE, 'wb') as stream:
-    stream.write(data)
 
 class ContainerSamplesAsync(object):
     connection_string = os.getenv(CONNECTION_STRING)
