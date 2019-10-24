@@ -151,15 +151,21 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         :return: None
 
         """
+        if not self._running:
+            log.info("EventProcessor %r has already been stopped.", self._id)
+            return
+
         self._running = False
-        for partition_id, thread in self._working_threads.items():
+
+        for _ in range(len(self._working_threads)):
+            partition_id, thread = self._working_threads.popitem()
             self._threads_stop_flags[partition_id] = True
             thread.join()
 
         self._working_threads.clear()
         self._threads_stop_flags.clear()
 
-        log.info("EventProcessor %r has been stopped", self._id)
+        log.info("EventProcessor %r has been stopped.", self._id)
 
     def get_last_enqueued_event_properties(self, partition_id):
         if partition_id in self._working_threads and partition_id in self._last_enqueued_event_properties:
@@ -300,5 +306,3 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             else:
                 close(CloseReason.OWNERSHIP_LOST)
             partition_consumer.close()
-            if partition_id in self._working_threads:
-                del self._working_threads[partition_id]

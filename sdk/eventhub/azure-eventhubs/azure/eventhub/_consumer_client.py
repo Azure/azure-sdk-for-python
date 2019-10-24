@@ -67,7 +67,8 @@ class EventHubConsumerClient(EventHubClient):
             event_processor.start()
         finally:
             with self._lock:
-                event_processor.stop()
+                if event_processor._running:
+                    event_processor.stop()
                 if partition_id and partition_id in self._event_processors:
                     del self._event_processors[partition_id]
                 elif 'all' in self._event_processors:
