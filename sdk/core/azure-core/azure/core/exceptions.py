@@ -103,6 +103,10 @@ class HttpResponseError(AzureError):
     :type message: string
     :param response: The response that triggered the exception.
     :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
+    :ivar status_code: HttpResponse's status code
+    :type status_code: int
+    :ivar response: The response that triggered the exception.
+    :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
     """
 
     def __init__(self, message=None, response=None, **kwargs):
