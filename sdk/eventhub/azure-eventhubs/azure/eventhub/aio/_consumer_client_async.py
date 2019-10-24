@@ -168,10 +168,10 @@ class EventHubConsumerClient(EventHubClient):
         the client is created with `track_last_enqueued_event_properties` being `True`.
         The dict includes following information of the partition:
 
-            - `sequence_number`
-            - `offset`
-            - `enqueued_time`
-            - `retrieval_time`
+            * `sequence_number`
+            * `offset`
+            * `enqueued_time`
+            * `retrieval_time`
 
         :rtype: dict or None
         :raises: ValueError

@@ -27,10 +27,14 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     partition_manager = FileBasedPartitionManager("consumer_pm_store")
     client = EventHubConsumerClient.from_connection_string(
-        CONNECTION_STR, partition_manager=partition_manager, retry_total=RETRY_TOTAL
+        CONNECTION_STR,
+        partition_manager=partition_manager,  # For load balancing and checkpointing. Leave None for no load balancing
+        retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
     )
     try:
-        loop.run_until_complete(client.receive(process_events, consumer_group="$default"))
+        loop.run_until_complete(
+            client.receive(process_events, consumer_group="$default")
+        )
     except KeyboardInterrupt:
         loop.run_until_complete(client.close())
     finally:
