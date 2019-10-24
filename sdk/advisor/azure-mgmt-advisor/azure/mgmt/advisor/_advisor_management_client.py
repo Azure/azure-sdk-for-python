@@ -11,45 +11,14 @@
 
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
-from .version import VERSION
-from .operations.configurations_operations import ConfigurationsOperations
-from .operations.recommendations_operations import RecommendationsOperations
-from .operations.operations import Operations
-from .operations.suppressions_operations import SuppressionsOperations
+
+from ._configuration import AdvisorManagementClientConfiguration
+from .operations import RecommendationMetadataOperations
+from .operations import ConfigurationsOperations
+from .operations import RecommendationsOperations
+from .operations import Operations
+from .operations import SuppressionsOperations
 from . import models
-
-
-class AdvisorManagementClientConfiguration(AzureConfiguration):
-    """Configuration for AdvisorManagementClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: The Azure subscription ID.
-    :type subscription_id: str
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
-
-        super(AdvisorManagementClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-mgmt-advisor/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
-        self.subscription_id = subscription_id
 
 
 class AdvisorManagementClient(SDKClient):
@@ -58,6 +27,8 @@ class AdvisorManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: AdvisorManagementClientConfiguration
 
+    :ivar recommendation_metadata: RecommendationMetadata operations
+    :vartype recommendation_metadata: azure.mgmt.advisor.operations.RecommendationMetadataOperations
     :ivar configurations: Configurations operations
     :vartype configurations: azure.mgmt.advisor.operations.ConfigurationsOperations
     :ivar recommendations: Recommendations operations
@@ -86,6 +57,8 @@ class AdvisorManagementClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.recommendation_metadata = RecommendationMetadataOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.configurations = ConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.recommendations = RecommendationsOperations(
