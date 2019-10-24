@@ -29,7 +29,7 @@ class JsonWebKey(object):
     :param kty: Key Type (kty), as defined in https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
     :type kty: ~azure.keyvault.keys.KeyType or str
     :param key_ops: Allowed operations for the key
-    :type key_ops: list(~azure.keyvault.keys.KeyOperation)
+    :type key_ops: list[str or ~azure.keyvault.keys.KeyOperation]
     :param bytes n: RSA modulus.
     :param bytes e: RSA public exponent.
     :param bytes d: RSA private exponent, or the D component of an EC private key.
@@ -93,25 +93,37 @@ class KeyProperties(object):
     @property
     def id(self):
         # type: () -> str
-        """:rtype: str"""
+        """The key's id
+
+        :rtype: str
+        """
         return self._id
 
     @property
     def name(self):
         # type: () -> str
-        """:rtype: str"""
+        """The key's name
+
+        :rtype: str
+        """
         return self._vault_id.name
 
     @property
     def version(self):
         # type: () -> str
-        """:rtype: str"""
+        """The key's version
+
+        :rtype: str
+        """
         return self._vault_id.version
 
     @property
     def enabled(self):
         # type: () -> bool
-        """:rtype: bool"""
+        """Whether the key is enabled for use
+
+        :rtype: bool
+        """
         return self._attributes.enabled
 
     @property
@@ -248,13 +260,19 @@ class KeyVaultKey(object):
     @property
     def id(self):
         # type: () -> str
-        """:rtype: str"""
+        """The key's id
+
+        :rtype: str
+        """
         return self._properties.id
 
     @property
     def name(self):
         # type: () -> str
-        """:rtype: str"""
+        """The key's name
+
+        :rtype: str
+        """
         return self._properties.name
 
     @property
@@ -353,7 +371,7 @@ class DeletedKey(KeyVaultKey):
     @property
     def recovery_id(self):
         # type: () -> str
-        """An identifier used to recover the deleted key. Returns None if soft-delete is disabled.
+        """An identifier used to recover the deleted key. Returns ``None`` if soft-delete is disabled.
 
         :rtype: str
         """
@@ -362,7 +380,7 @@ class DeletedKey(KeyVaultKey):
     @property
     def scheduled_purge_date(self):
         # type: () -> datetime
-        """When the key is scheduled to be purged, in UTC. Returns None if soft-delete is disabled.
+        """When the key is scheduled to be purged, in UTC. Returns ``None`` if soft-delete is disabled.
 
         :rtype: datetime.datetime
         """

@@ -61,7 +61,8 @@ class KeyClient(KeyVaultClientBase):
         :keyword key_operations: Allowed key operations
         :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
         :keyword bool enabled: Whether the key is enabled for use.
-        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
         :keyword datetime.datetime not_before: Not before date of the key in UTC
         :keyword datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The created key
@@ -108,7 +109,8 @@ class KeyClient(KeyVaultClientBase):
         :keyword key_operations: Allowed key operations
         :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
         :keyword bool enabled: Whether the key is enabled for use.
-        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
         :keyword datetime.datetime not_before: Not before date of the key in UTC
         :keyword datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The created key
@@ -140,7 +142,8 @@ class KeyClient(KeyVaultClientBase):
          Defaults to ``False``.
         :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
         :keyword bool enabled: Whether the key is enabled for use.
-        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
         :keyword datetime.datetime not_before: Not before date of the key in UTC
         :keyword datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The created key
@@ -348,7 +351,7 @@ class KeyClient(KeyVaultClientBase):
         # type: (str, **Any) -> KeyVaultKey
         """Recover a deleted key to its latest version. This is only possible in vaults with soft-delete enabled.
         If a vault does not have soft-delete enabled, :func:`begin_delete_key` is permanent, and this method will
-        return an error. Attempting to recover an non-deleted key will also return an error.
+        return an error. Attempting to recover a non-deleted key will also return an error.
 
         Requires the keys/recover permission. The poller requires the keys/get permission to function properly.
 
@@ -392,7 +395,8 @@ class KeyClient(KeyVaultClientBase):
         :keyword key_operations: Allowed key operations
         :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
         :keyword bool enabled: Whether the key is enabled for use.
-        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
         :keyword datetime.datetime not_before: Not before date of the key in UTC
         :keyword datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The updated key
@@ -492,7 +496,8 @@ class KeyClient(KeyVaultClientBase):
         :type key: ~azure.keyvault.keys.JsonWebKey
         :keyword bool hardware_protected: Whether the key should be backed by a hardware security module
         :keyword bool enabled: Whether the key is enabled for use.
-        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
         :keyword datetime.datetime not_before: Not before date of the key in UTC
         :keyword datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The imported key

@@ -67,7 +67,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         :param str name: The name of the secret
         :param str value: The value of the secret
         :keyword bool enabled: Whether the secret is enabled for use.
-        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
         :keyword str content_type: An arbitrary string indicating the type of the secret, e.g. 'password'
         :keyword datetime.datetime not_before: Not before date of the secret in UTC
         :keyword datetime.datetime expires_on: Expiry date of the secret in UTC
@@ -105,7 +106,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         :param str name: Name of the secret
         :param str version: (optional) Version of the secret to update. If unspecified, the latest version is updated.
         :keyword bool enabled: Whether the secret is enabled for use.
-        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
         :keyword str content_type: An arbitrary string indicating the type of the secret, e.g. 'password'
         :keyword datetime.datetime not_before: Not before date of the secret in UTC
         :keyword datetime.datetime expires_on: Expiry date of the secret in UTC
@@ -320,7 +322,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         Requires the secrets/purge permission.
 
         :param str name: Name of the secret
-        :returns: None
+        :returns: ``None``
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:

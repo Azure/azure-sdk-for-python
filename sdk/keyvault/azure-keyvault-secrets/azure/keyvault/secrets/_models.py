@@ -61,13 +61,19 @@ class SecretProperties(object):
     @property
     def content_type(self):
         # type: () -> str
-        """:rtype: str"""
+        """An arbitrary string indicating the type of the secret
+
+        :rtype: str
+        """
         return self._content_type
 
     @property
     def id(self):
         # type: () -> str
-        """:rtype: str"""
+        """The secret's id
+
+        :rtype: str
+        """
         return self._id
 
     @property
@@ -82,7 +88,10 @@ class SecretProperties(object):
     @property
     def enabled(self):
         # type: () -> bool
-        """:rtype: bool"""
+        """Whether the secret is enabled for use
+
+        :rtype: bool
+        """
         return self._attributes.enabled
 
     @property
@@ -142,13 +151,19 @@ class SecretProperties(object):
     @property
     def name(self):
         # type: () -> str
-        """:rtype: str"""
+        """The secret's name
+
+        :rtype: str
+        """
         return self._vault_id.name
 
     @property
     def version(self):
         # type: () -> str
-        """:rtype: str"""
+        """The secret's version
+
+        :rtype: str
+        """
         return self._vault_id.version
 
     @property
@@ -184,13 +199,19 @@ class KeyVaultSecret(object):
     @property
     def name(self):
         # type: () -> str
-        """:rtype: str"""
+        """The secret's name
+
+        :rtype: str
+        """
         return self._properties.name
 
     @property
     def id(self):
         # type: () -> str
-        """:rtype: str"""
+        """The secret's id
+
+        :rtype: str
+        """
         return self._properties.id
 
     @property
@@ -258,13 +279,19 @@ class DeletedSecret(object):
     @property
     def name(self):
         # type: () -> str
-        """:rtype: str"""
+        """The secret's name
+
+        :rtype: str
+        """
         return self._properties.name
 
     @property
     def id(self):
         # type: () -> str
-        """:rtype: str"""
+        """The secret's id
+
+        :rtype: str
+        """
         return self._properties.id
 
     @property
@@ -288,7 +315,7 @@ class DeletedSecret(object):
     @property
     def recovery_id(self):
         # type: () -> str
-        """An identifier used to recover the deleted secret. Returns None if soft-delete is disabled.
+        """An identifier used to recover the deleted secret. Returns ``None`` if soft-delete is disabled.
 
         :rtype: str
         """
@@ -297,7 +324,7 @@ class DeletedSecret(object):
     @property
     def scheduled_purge_date(self):
         # type: () -> datetime
-        """When the secret is scheduled to be purged, in UTC. Returns None if soft-delete is disabled.
+        """When the secret is scheduled to be purged, in UTC. Returns ``None`` if soft-delete is disabled.
 
         :rtype: datetime.datetime
         """

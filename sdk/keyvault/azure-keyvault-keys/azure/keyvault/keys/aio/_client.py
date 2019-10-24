@@ -59,7 +59,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         :keyword key_operations: Allowed key operations
         :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
         :keyword bool enabled: Whether the key is enabled for use.
-        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
         :keyword datetime.datetime not_before: Not before date of the key in UTC
         :keyword datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The created key
@@ -106,7 +107,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         :keyword key_operations: Allowed key operations
         :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
         :keyword bool enabled: Whether the key is enabled for use.
-        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
         :keyword datetime.datetime not_before: Not before date of the key in UTC
         :keyword datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The created key
@@ -137,7 +139,8 @@ class KeyClient(AsyncKeyVaultClientBase):
          Defaults to ``False``.
         :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
         :keyword bool enabled: Whether the key is enabled for use.
-        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
         :keyword datetime.datetime not_before: Not before date of the key in UTC
         :keyword datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The created key
@@ -373,7 +376,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         :keyword key_operations: Allowed key operations
         :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
         :keyword bool enabled: Whether the key is enabled for use.
-        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
         :keyword datetime.datetime not_before: Not before date of the key in UTC
         :keyword datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The updated key
@@ -470,7 +474,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         :type key: ~azure.keyvault.keys.JsonWebKey
         :keyword bool hardware_protected: Whether the key should be backed by a hardware security module
         :keyword bool enabled: Whether the key is enabled for use.
-        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
         :keyword datetime.datetime not_before: Not before date of the key in UTC
         :keyword datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The imported key
