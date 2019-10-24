@@ -87,8 +87,8 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             self._running = True
             while self._running:
                 try:
-                    claimed_partition_ids = await ownership_manager.claim_ownership()
                     checkpoints = await ownership_manager.get_checkpoints() if self._partition_manager else None
+                    claimed_partition_ids = await ownership_manager.claim_ownership()
                     if claimed_partition_ids:
                         to_cancel_list = self._tasks.keys() - claimed_partition_ids
                         self._create_tasks_for_claimed_ownership(claimed_partition_ids, checkpoints)
@@ -100,7 +100,18 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     log.warning("An exception (%r) occurred during balancing and claiming ownership for "
                                 "eventhub %r consumer group %r. Retrying after %r seconds",
                                 err, self._eventhub_name, self._consumer_group_name, self._polling_interval)
-                    raise
+                    '''
+                    ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
+                    when there are load balancing and/or checkpointing (partition_manager isn't None).
+                    They're swallowed here to retry every self._polling_interval seconds. Meanwhile this event processor
+                    won't lose the partitions it has claimed before.
+                    If it keeps failing, other EventProcessors will start to claim ownership of the partitions 
+                    that this EventProcessor is working on. So two or multiple EventProcessors may be working 
+                    on the same partition.
+                    
+                    Should we raise this exception out to users?
+                    '''
+                    # TODO: This exception handling requires more thinking
                 await asyncio.sleep(self._polling_interval)
 
     async def stop(self):
@@ -245,7 +256,6 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                         partition_consumer.last_enqueued_event_properties
                     with self._context(events):
                         await self._event_handler(partition_context, events)
-
                 except asyncio.CancelledError:
                     log.info(
                         "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
@@ -256,12 +266,11 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                         consumer_group_name
                     )
                     raise
-                except EventHubError as eh_err:  # Keep retrying forever
-                    await process_error(eh_err)
-                    continue
-                except Exception as other_error:  # pylint:disable=broad-except
-                    await process_error(other_error)
-                    continue
+                except Exception as error:  # pylint:disable=broad-except
+                    await process_error(error)
+                    break
+                # Go to finally to stop this partition processor.
+                # Later an EventProcessor(this one or another one) will pick up this partition again
         finally:
             if self._running is False:
                 await close(CloseReason.SHUTDOWN)
