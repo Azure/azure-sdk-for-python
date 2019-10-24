@@ -7,96 +7,68 @@
 # --------------------------------------------------------------------------
 
 import os
+import sys
 
 try:
-    import settings_real as settings
-except ImportError:
-    import file_settings_fake as settings
-
-from filetestcase import (
-    FileTestCase,
-    TestMode,
-    record
-)
+    CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+except KeyError:
+    print("AZURE_STORAGE_CONNECTION_STRING must be set.")
+    sys.exit(1)
 
 SOURCE_FILE = 'SampleSource.txt'
 DEST_FILE = 'SampleDestination.txt'
+data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+with open(SOURCE_FILE, 'wb') as stream:
+    stream.write(data)
 
 
-class TestFileSamples(FileTestCase):
+class FileSamples(object):
 
-    connection_string = settings.CONNECTION_STRING
-
-    def setUp(self):
-        data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-        with open(SOURCE_FILE, 'wb') as stream:
-            stream.write(data)
-
-        super(TestFileSamples, self).setUp()
-
-    def tearDown(self):
-        if os.path.isfile(SOURCE_FILE):
-            try:
-                os.remove(SOURCE_FILE)
-            except:
-                pass
-        if os.path.isfile(DEST_FILE):
-            try:
-                os.remove(DEST_FILE)
-            except:
-                pass
-
-        return super(TestFileSamples, self).tearDown()
-
-    #--Begin File Samples-----------------------------------------------------------------
-
-    @record
-    def test_file_operations(self):
+    def simple_file_operations(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "filesshare")
+        share = ShareClient.from_connection_string(CONNECTION_STRING, "myshare")
 
         # Create the share
         share.create_share()
 
         try:
             # Get a file client
-            file = share.get_file_client("myfile")
-            file2 = share.get_file_client("myfile2")
+            my_file = share.get_file_client("myfile")
+            my_file2 = share.get_file_client("myfile2")
 
             # [START create_file]
             # Create and allocate bytes for the file (no content added yet)
-            file.create_file(size=100)
+            my_file.create_file(size=200)
             # [END create_file]
 
             # Or upload a file directly
             # [START upload_file]
             with open(SOURCE_FILE, "rb") as source:
-                file2.upload_file(source)
+                my_file2.upload_file(source)
             # [END upload_file]
 
             # Download the file
             # [START download_file]
             with open(DEST_FILE, "wb") as data:
-                stream = file2.download_file()
+                stream = my_file2.download_file()
                 data.write(stream.readall())
             # [END download_file]
 
             # Delete the files
-            file.delete_file()
             # [START delete_file]
-            file2.delete_file()
+            my_file.delete_file()
             # [END delete_file]
+            my_file2.delete_file()
 
         finally:
             # Delete the share
             share.delete_share()
 
-    @record
-    def test_copy_from_url(self):
+    def copy_file_from_url(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "filesfromurl")
+        share = ShareClient.from_connection_string(CONNECTION_STRING, "myshare")
 
         # Create the share
         share.create_share()
@@ -108,15 +80,10 @@ class TestFileSamples(FileTestCase):
                 source_file.upload_file(source)
 
             # Create another file client which will copy the file from url
-            destination_file = share.get_file_client("destfile")
+            destination_file = share.get_file_client("destinationfile")
 
             # Build the url from which to copy the file
-            source_url = "{}://{}.file.core.windows.net/{}/{}".format(
-                settings.PROTOCOL,
-                settings.STORAGE_ACCOUNT_NAME,
-                "filesfromurl",
-                "sourcefile"
-            )
+            source_url = "https://mystoragename.file.core.windows.net/myshare/sourcefile"
 
             # Copy the sample source file from the url to the destination file
             # [START copy_file_from_url]

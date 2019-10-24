@@ -7,26 +7,27 @@
 # --------------------------------------------------------------------------
 
 import asyncio
+import os
+import sys
+
 try:
-    import settings_real as settings
-except ImportError:
-    import file_settings_fake as settings
+    CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+except KeyError:
+    print("AZURE_STORAGE_CONNECTION_STRING must be set.")
+    sys.exit(1)
 
-from filetestcase import (
-    FileTestCase,
-    TestMode,
-    record
-)
+SOURCE_FILE = 'SampleSource.txt'
+data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+with open(SOURCE_FILE, 'wb') as stream:
+    stream.write(data)
 
 
-class TestFileServiceSamples(FileTestCase):
+class FileServiceSamples(object):
 
-    connection_string = settings.CONNECTION_STRING
-
-    async def _test_file_service_properties(self):
+    async def file_service_properties(self):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file.aio import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        file_service = FileServiceClient.from_connection_string(CONNECTION_STRING)
 
         # [START set_service_properties]
         # Create service properties
@@ -61,16 +62,10 @@ class TestFileServiceSamples(FileTestCase):
         properties = await file_service.get_service_properties()
         # [END get_service_properties]
 
-    def test_file_service_properties(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_file_service_properties())
-
-    async def _test_share_operations(self):
+    async def list_share(self):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file.aio import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        file_service = FileServiceClient.from_connection_string(CONNECTION_STRING)
 
         # [START fsc_create_shares]
         await file_service.create_share(share_name="testshare")
@@ -92,23 +87,11 @@ class TestFileServiceSamples(FileTestCase):
             await file_service.delete_share(share_name="testshare")
             # [END fsc_delete_shares]
 
-    def test_share_operations(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_share_operations())
-
-    async def _test_get_share_client(self):
+    async def get_share_client(self):
         # [START get_share_client]
         from azure.storage.file.aio import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        file_service = FileServiceClient.from_connection_string(CONNECTION_STRING)
 
         # Get a share client to interact with a specific share
         share = file_service.get_share_client("fileshare")
         # [END get_share_client]
-
-    def test_get_share_client(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_share_client())

@@ -6,26 +6,27 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import os
+import sys
+
 try:
-    import settings_real as settings
-except ImportError:
-    import file_settings_fake as settings
+    CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+except KeyError:
+    print("AZURE_STORAGE_CONNECTION_STRING must be set.")
+    sys.exit(1)
 
-from filetestcase import (
-    FileTestCase,
-    record
-)
+SOURCE_FILE = 'SampleSource.txt'
+data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+with open(SOURCE_FILE, 'wb') as stream:
+    stream.write(data)
 
 
-class TestFileServiceSamples(FileTestCase):
+class FileServiceSamples(object):
 
-    connection_string = settings.CONNECTION_STRING
-
-    @record
-    def test_file_service_properties(self):
+    def file_service_properties(self):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        file_service = FileServiceClient.from_connection_string(CONNECTION_STRING)
 
         # [START set_service_properties]
         # Create service properties
@@ -60,11 +61,10 @@ class TestFileServiceSamples(FileTestCase):
         properties = file_service.get_service_properties()
         # [END get_service_properties]
 
-    @record
-    def test_share_operations(self):
+    def list_share(self):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        file_service = FileServiceClient.from_connection_string(CONNECTION_STRING)
 
         # [START fsc_create_shares]
         file_service.create_share(share_name="testshare")
@@ -84,11 +84,10 @@ class TestFileServiceSamples(FileTestCase):
             file_service.delete_share(share_name="testshare")
             # [END fsc_delete_shares]
 
-    @record
-    def test_get_share_client(self):
+    def get_share_client(self):
         # [START get_share_client]
         from azure.storage.file import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        file_service = FileServiceClient.from_connection_string(CONNECTION_STRING)
 
         # Get a share client to interact with a specific share
         share = file_service.get_share_client("fileshare")

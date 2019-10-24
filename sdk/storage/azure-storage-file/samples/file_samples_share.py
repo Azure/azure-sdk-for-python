@@ -7,51 +7,26 @@
 # --------------------------------------------------------------------------
 
 import os
+import sys
 
 try:
-    import settings_real as settings
-except ImportError:
-    import file_settings_fake as settings
-
-from filetestcase import (
-    FileTestCase,
-    TestMode,
-    record
-)
+    CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+except KeyError:
+    print("AZURE_STORAGE_CONNECTION_STRING must be set.")
+    sys.exit(1)
 
 SOURCE_FILE = 'SampleSource.txt'
+data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+with open(SOURCE_FILE, 'wb') as stream:
+    stream.write(data)
 
 
-class TestShareSamples(FileTestCase):
-    url = "{}://{}.file.core.windows.net".format(
-        settings.PROTOCOL,
-        settings.STORAGE_ACCOUNT_NAME
-    )
-    connection_string = settings.CONNECTION_STRING
+class ShareSamples(object):
 
-    def setUp(self):
-        data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-        with open(SOURCE_FILE, 'wb') as stream:
-            stream.write(data)
-
-        super(TestShareSamples, self).setUp()
-
-    def tearDown(self):
-        if os.path.isfile(SOURCE_FILE):
-            try:
-                os.remove(SOURCE_FILE)
-            except:
-                pass
-
-        return super(TestShareSamples, self).tearDown()
-
-    #--Begin File Samples-----------------------------------------------------------------
-
-    @record
-    def test_create_share_snapshot(self):
+    def create_share_snapshot(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "sharesnapshot")
+        share = ShareClient.from_connection_string(CONNECTION_STRING, "sharesnapshot")
 
         # [START create_share]
         share.create_share()
@@ -65,11 +40,10 @@ class TestShareSamples(FileTestCase):
             share.delete_share(delete_snapshots=True)
             # [END delete_share]
 
-    @record
-    def test_set_share_quota_and_metadata(self):
+    def set_share_quota_and_metadata(self):
         # [START create_share_client_from_conn_string]
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "fileshare")
+        share = ShareClient.from_connection_string(CONNECTION_STRING, "fileshare")
         # [END create_share_client_from_conn_string]
 
         # Create the share
@@ -88,17 +62,15 @@ class TestShareSamples(FileTestCase):
 
             # Get the metadata for the share
             props = share.get_share_properties().metadata
-            assert props == data
 
         finally:
             # Delete the share
             share.delete_share()
 
-    @record
-    def test_list_directories_and_files(self):
+    def list_directories_and_files(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "listshare")
+        share = ShareClient.from_connection_string(CONNECTION_STRING, "myshare")
 
         # Create the share
         share.create_share()
@@ -120,11 +92,10 @@ class TestShareSamples(FileTestCase):
             # Delete the share
             share.delete_share()
 
-    @record
-    def test_get_directory_or_file_client(self):
+    def get_directory_or_file_client(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "testfiles")
+        share = ShareClient.from_connection_string(CONNECTION_STRING, "myshare")
 
         # Get the directory client to interact with a specific directory
         my_dir = share.get_directory_client("dir1")
