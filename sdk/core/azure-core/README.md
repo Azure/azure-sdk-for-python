@@ -14,7 +14,6 @@ The Python implementation of the pipeline has some mechanisms specific to Python
 When constructing an SDK, a developer may consume the pipeline like so:
 
 ```python
-from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.transport import RequestsTransport, HttpRequest
 from azure.core.pipeline.policies import (
@@ -30,32 +29,17 @@ from azure.core.pipeline.policies import (
 
 class FooServiceClient:
 
-    @staticmethod
-    def _create_config(credential, scopes, **kwargs):
-        # Here the SDK developer would define the default
-        # config to interact with the service
-        config = Configuration(**kwargs)
-        config.headers_policy = kwargs.get('headers_policy', HeadersPolicy({"CustomHeader": "Value"}, **kwargs))
-        config.user_agent_policy = kwargs.get('user_agent_policy', UserAgentPolicy("ServiceUserAgentValue", **kwargs))
-        config.authentication_policy = kwargs.get('authentication_policy', BearerTokenCredentialPolicy(credential, scopes, **kwargs))
-        config.retry_policy = kwargs.get('retry_policy', RetryPolicy(**kwargs))
-        config.redirect_policy = kwargs.get('redirect_policy', RedirectPolicy(**kwargs))
-        config.logging_policy = kwargs.get('logging_policy', NetworkTraceLoggingPolicy(**kwargs))
-        config.proxy_policy = kwargs.get('proxy_policy', ProxyPolicy(**kwargs))
-        return config
-
     def __init__(self, **kwargs):
         transport = kwargs.get('transport', RequestsTransport(**kwargs))
-        config = FooServiceClient._create_config(**kwargs)
         policies = [
-            config.user_agent_policy,
-            config.headers_policy,
-            config.authentication_policy,
+            kwargs.get('user_agent_policy', UserAgentPolicy("ServiceUserAgentValue", **kwargs)),
+            kwargs.get('headers_policy', HeadersPolicy({"CustomHeader": "Value"}, **kwargs)),
+            kwargs.get('authentication_policy', BearerTokenCredentialPolicy(credential, scopes, **kwargs)),
             ContentDecodePolicy(),
-            config.proxy_policy,
-            config.redirect_policy,
-            config.retry_policy,
-            config.logging_policy,
+            kwargs.get('proxy_policy', ProxyPolicy(**kwargs)),
+            kwargs.get('redirect_policy', RedirectPolicy(**kwargs)),
+            kwargs.get('retry_policy', RetryPolicy(**kwargs)),
+            kwargs.get('logging_policy', NetworkTraceLoggingPolicy(**kwargs)),
         ]
         self._pipeline = Pipeline(transport, policies=policies)
 
@@ -103,46 +87,6 @@ client = FooServiceClient(
     logging_enable=True
 )
 response = client.get_foo_properties()
-```
-
-### Configuration
-
-The Configuration object is the home of all the configurable policies in the pipeline.
-A new Configuration object provides *no default policies*.
-It is up to the SDK developer to specify each of the policy defaults as required by the service.
-
-*Configuration should not be exposed as part of the public API of the resulting SDK.*
-
-This can be seen in the above code sample as implemented in a staticmethod on the client class.
-The Configuration object does not specify in what order the policies will be added to the pipeline.
-It is up to the SDK developer to use the policies in the Configuration to construct the pipeline correctly, as well
-as inserting any unexposed/non-configurable policies.
-```python
-transport = RequestsTransport(**kwargs)
-
-# SDK developer needs to build the policy order for the pipeline.
-config = FooServiceClient._create_config(**kwargs)
-policies = [
-    config.headers_policy,
-    config.user_agent_policy,
-    config.authentication_policy,  # Authentication policy needs to be inserted after all request mutation to accommodate signing.
-    ContentDecodePolicy(),
-    config.redirect_policy,
-    config.retry_policy,
-    config.logging_policy,  # Logger should come last to accurately record the request/response as they are on the wire
-]
-self._pipeline = Pipeline(transport, policies=policies)
-```
-The policies that should currently be defined on the Configuration object are as follows:
-```python
-- Configuration.headers_policy  # HeadersPolicy
-- Configuration.retry_policy  # RetryPolicy
-- Configuration.redirect_policy  # RedirectPolicy
-- Configuration.logging_policy  # NetworkTraceLoggingPolicy
-- Configuration.user_agent_policy  # UserAgentPolicy
-- Configuration.proxy_policy  # While this is a ProxyPolicy object, current implementation is transport configuration.
-- Configuration.authentication_policy  # BearerTokenCredentialPolicy
-
 ```
 
 ### Transport
@@ -365,6 +309,10 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,  # Add a custom user agent header
     NetworkTraceLoggingPolicy,  # Log request and response contents
     ContentDecodePolicy,  # Mandatory policy for decoding unstreamed response content
+    HttpLoggingPolicy,  # Handles logging of HTTP requests and responses
+    ProxyPolicy,    # Enable proxy settings
+    CustomHookPolicy,   # Enable the given callback with the response
+    DistributedTracingPolicy    # Create spans for Azure calls
 )
 ```
 
