@@ -40,7 +40,6 @@ azure.core.exceptions module
 .. automodule:: azure.core.exceptions
    :members:
    :undoc-members:
-   :inherited-members:
 
 azure.core.paging module
 ------------------------
