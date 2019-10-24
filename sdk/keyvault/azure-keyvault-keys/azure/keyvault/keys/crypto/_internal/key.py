@@ -45,6 +45,10 @@ class Key(with_metaclass(ABCMeta, object)):
         return self._kid
 
     @abstractmethod
+    def is_private_key(self):
+        pass
+
+    @abstractmethod
     def decrypt(self, cipher_text, **kwargs):
         raise NotImplementedError()
 

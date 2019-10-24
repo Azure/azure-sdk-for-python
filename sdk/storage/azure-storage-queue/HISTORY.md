@@ -27,6 +27,10 @@ to `inserted_on`, `next_visible_on`, `expires_on`, respectively.
  
 - `ResourceTypes`, and `Services` now have method `from_string` which takes parameters as a string.
 
+**Fixes and improvements**
+
+- Fixed an issue where XML is being double encoded and double decoded.
+
 ## Version 12.0.0b4:
 
 **Breaking changes**
