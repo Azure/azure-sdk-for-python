@@ -4,7 +4,6 @@ import os
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.aio import FileBasedPartitionManager
 
-RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
 RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 
@@ -28,7 +27,7 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     partition_manager = FileBasedPartitionManager("consumer_pm_store")
     client = EventHubConsumerClient.from_connection_string(
-        CONNECTION_STR, partition_manager=partition_manager, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL
+        CONNECTION_STR, partition_manager=partition_manager, retry_total=RETRY_TOTAL
     )
     try:
         loop.run_until_complete(client.receive(process_events, consumer_group="$default"))

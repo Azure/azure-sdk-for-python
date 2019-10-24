@@ -43,24 +43,23 @@ class BlobPartitionManager(PartitionManager):
             etag_match = {"if_match": etag}
         else:
             etag_match = {"if_none_match": '*'}
-        blob_name = "{}/{}/{}/ownership/{}".format(ownership["namespace"], ownership["eventhub_name"],
+        blob_name = "{}/{}/{}/ownership/{}".format(ownership["fully_qualified_namespace"], ownership["eventhub_name"],
                                      ownership["consumer_group_name"], ownership["partition_id"])
         uploaded_blob_properties = await self._get_blob_client(blob_name).upload_blob(
             data=UPLOAD_DATA, overwrite=True, metadata=metadata, **etag_match
         )
         ownership["etag"] = uploaded_blob_properties["etag"]
         ownership["last_modified_time"] = uploaded_blob_properties["last_modified"].timestamp()
-        ownership.update(metadata)
 
-    async def list_ownership(self, namespace: str, eventhub_name: str, consumer_group_name: str) -> Iterable[Dict[str, Any]]:
+    async def list_ownership(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group_name: str) -> Iterable[Dict[str, Any]]:
         try:
             blobs = self._container_client.list_blobs(
-                name_starts_with="{}/{}/{}/ownership".format(namespace, eventhub_name, consumer_group_name),
+                name_starts_with="{}/{}/{}/ownership".format(fully_qualified_namespace, eventhub_name, consumer_group_name),
                 include=['metadata'])
             result = []
             async for b in blobs:
                 ownership = {
-                    "namespace": namespace,
+                    "fully_qualified_namespace": fully_qualified_namespace,
                     "eventhub_name": eventhub_name,
                     "consumer_group_name": consumer_group_name,
                     "partition_id": b.name.split("/")[-1],
@@ -73,12 +72,12 @@ class BlobPartitionManager(PartitionManager):
         except Exception as err:  # pylint:disable=broad-except
             logger.warning("An exception occurred during list_ownership for "
                            "namespace %r eventhub %r consumer group %r. "
-                           "Exception is %r", namespace, eventhub_name, consumer_group_name, err)
+                           "Exception is %r", fully_qualified_namespace, eventhub_name, consumer_group_name, err)
             raise
 
     async def _claim_one_partition(self, ownership):
         partition_id = ownership["partition_id"]
-        namespace = ownership["namespace"]
+        namespace = ownership["fully_qualified_namespace"]
         eventhub_name = ownership["eventhub_name"]
         consumer_group_name = ownership["consumer_group_name"]
         owner_id = ownership["owner_id"]
@@ -103,27 +102,27 @@ class BlobPartitionManager(PartitionManager):
         return [claimed_ownership for claimed_ownership in gathered_results
                 if not isinstance(claimed_ownership, Exception)]
 
-    async def update_checkpoint(self, namespace, eventhub_name, consumer_group_name, partition_id,
+    async def update_checkpoint(self, fully_qualified_namespace, eventhub_name, consumer_group_name, partition_id,
                                 offset, sequence_number) -> None:
         metadata = {
             "Offset": offset,
             "SequenceNumber": str(sequence_number),
         }
-        blob_name = "{}/{}/{}/checkpoint/{}".format(namespace, eventhub_name,
+        blob_name = "{}/{}/{}/checkpoint/{}".format(fully_qualified_namespace, eventhub_name,
                                      consumer_group_name, partition_id)
         await self._get_blob_client(blob_name).upload_blob(
             data=UPLOAD_DATA, overwrite=True, metadata=metadata
         )
 
-    async def list_checkpoints(self, namespace, eventhub_name, consumer_group_name):
+    async def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
         blobs = self._container_client.list_blobs(
-            name_starts_with="{}/{}/{}/checkpoint".format(namespace, eventhub_name, consumer_group_name),
+            name_starts_with="{}/{}/{}/checkpoint".format(fully_qualified_namespace, eventhub_name, consumer_group_name),
             include=['metadata'])
         result = []
         async for b in blobs:
             metadata = b.metadata
             checkpoint = {
-                "namespace": namespace,
+                "fully_qualified_namespace": fully_qualified_namespace,
                 "eventhub_name": eventhub_name,
                 "consumer_group_name": consumer_group_name,
                 "partition_id": b.name.split("/")[-1],

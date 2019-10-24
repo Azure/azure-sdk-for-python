@@ -110,7 +110,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                 checkpoints = await ownership_manager.get_checkpoints() if self._partition_manager else None
                 if self._partition_id is not None:
                     ownership = [{
-                        "namespace": self._namespace,
+                        "fully_qualified_namespace": self._namespace,
                         "partition_id": self._partition_id,
                         "eventhub_name": self._eventhub_name,
                         "consumer_group_name": self._consumer_group_name,
@@ -122,7 +122,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     for pid in partition_ids:
                         ownership.append(
                             {
-                                "namespace": self._namespace,
+                                "fully_qualified_namespace": self._namespace,
                                 "partition_id": pid,
                                 "eventhub_name": self._eventhub_name,
                                 "consumer_group_name": self._consumer_group_name,
@@ -190,7 +190,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
 
     async def _receive(self, ownership, checkpoint=None):  # pylint: disable=too-many-statements
         log.info("start ownership %r, checkpoint %r", ownership, checkpoint)
-        namespace = ownership["namespace"]
+        namespace = ownership["fully_qualified_namespace"]
         partition_id = ownership["partition_id"]
         eventhub_name = ownership["eventhub_name"]
         consumer_group_name = ownership["consumer_group_name"]

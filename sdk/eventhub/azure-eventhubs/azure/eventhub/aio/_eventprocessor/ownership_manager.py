@@ -27,7 +27,7 @@ class OwnershipManager(object):
     ):
         self.cached_parition_ids = []  # type: List[str]
         self.eventhub_client = eventhub_client
-        self.namespace = eventhub_client._address.hostname
+        self.fully_qualified_namespace = eventhub_client._address.hostname
         self.eventhub_name = eventhub_client.eh_name
         self.consumer_group_name = consumer_group_name
         self.owner_id = owner_id
@@ -84,7 +84,7 @@ class OwnershipManager(object):
         :return: List[Dict[str, Any]], A list of ownership.
         """
         ownership_list = await self.partition_manager.list_ownership(
-            self.namespace, self.eventhub_name, self.consumer_group_name
+            self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name
         )
         now = time.time()
         ownership_dict = {x["partition_id"]: x for x in ownership_list}  # put the list to dict for fast lookup
@@ -97,7 +97,7 @@ class OwnershipManager(object):
                 p["owner_id"] = self.owner_id
             for pid in not_owned_partition_ids:
                 to_claim.append(
-                    {"namespace": self.namespace,
+                    {"fully_qualified_namespace": self.fully_qualified_namespace,
                      "partition_id": pid,
                      "eventhub_name": self.eventhub_name,
                      "consumer_group_name": self.consumer_group_name,
@@ -133,7 +133,7 @@ class OwnershipManager(object):
             if claimable_partition_ids:  # claim an inactive partition if there is
                 random_partition_id = random.choice(claimable_partition_ids)
                 random_chosen_to_claim = ownership_dict.get(random_partition_id,
-                                                            {"namespace": self.namespace,
+                                                            {"fully_qualified_namespace": self.fully_qualified_namespace,
                                                              "partition_id": random_partition_id,
                                                              "eventhub_name": self.eventhub_name,
                                                              "consumer_group_name": self.consumer_group_name,
@@ -152,5 +152,5 @@ class OwnershipManager(object):
 
     async def get_checkpoints(self):
         checkpoints = await self.partition_manager.list_checkpoints(
-            self.namespace, self.eventhub_name, self.consumer_group_name)
+            self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name)
         return {x["partition_id"]: x for x in checkpoints}
