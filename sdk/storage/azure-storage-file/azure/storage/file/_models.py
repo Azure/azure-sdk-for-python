@@ -858,3 +858,13 @@ class NTFSAttributes(object):
                      no_scrub_data)
         parsed._str = string  # pylint: disable = protected-access
         return parsed
+
+
+def service_properties_deserialize(generated):
+    """Deserialize a ServiceProperties objects into a dict.
+    """
+    return {
+        'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
+        'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
+        'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
+    }

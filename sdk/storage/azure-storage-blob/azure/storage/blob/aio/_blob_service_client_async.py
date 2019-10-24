@@ -28,12 +28,8 @@ from ._container_client_async import ContainerClient
 from ._blob_client_async import BlobClient
 from .._models import (
     ContainerProperties,
-    BlobAnalyticsLogging,
-    Metrics,
-    CorsRule,
-    RetentionPolicy,
-    StaticWebsite,
-    service_stats_deserialize
+    service_stats_deserialize,
+    service_properties_deserialize,
 )
 from ._models import ContainerPropertiesPaged
 
@@ -46,6 +42,11 @@ if TYPE_CHECKING:
     from .._models import (
         BlobProperties,
         PublicAccess,
+        BlobAnalyticsLogging,
+        Metrics,
+        CorsRule,
+        RetentionPolicy,
+        StaticWebsite,
     )
 
 
@@ -238,15 +239,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         timeout = kwargs.pop('timeout', None)
         try:
             service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
-            return {
-                'analytics_logging': BlobAnalyticsLogging._from_generated(service_props.logging),  # pylint: disable=protected-access
-                'hour_metrics': Metrics._from_generated(service_props.hour_metrics),  # pylint: disable=protected-access
-                'minute_metrics': Metrics._from_generated(service_props.minute_metrics),  # pylint: disable=protected-access
-                'cors': [CorsRule._from_generated(cors) for cors in service_props.cors],  # pylint: disable=protected-access
-                'target_version': service_props.default_service_version,  # pylint: disable=protected-access
-                'delete_retention_policy': RetentionPolicy._from_generated(service_props.delete_retention_policy),  # pylint: disable=protected-access
-                'static_website': StaticWebsite._from_generated(service_props.static_website),  # pylint: disable=protected-access
-            }
+            return service_properties_deserialize(service_props)
         except StorageErrorException as error:
             process_storage_error(error)
 

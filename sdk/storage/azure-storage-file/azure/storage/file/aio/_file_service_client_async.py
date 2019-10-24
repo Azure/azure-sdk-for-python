@@ -24,12 +24,16 @@ from .._generated.version import VERSION
 from .._file_service_client import FileServiceClient as FileServiceClientBase
 from ._share_client_async import ShareClient
 from ._models import SharePropertiesPaged
-from .._models import Metrics, CorsRule
+from .._models import service_properties_deserialize
 
 if TYPE_CHECKING:
     from datetime import datetime
     from .._shared.models import ResourceTypes, AccountSasPermissions
-    from .._models import ShareProperties
+    from .._models import (
+        ShareProperties,
+        Metrics,
+        CorsRule,
+    )
 
 
 class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
@@ -118,11 +122,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         timeout = kwargs.pop('timeout', None)
         try:
             service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
-            return {
-                'hour_metrics': Metrics._from_generated(service_props.hour_metrics),  # pylint: disable=protected-access
-                'minute_metrics': Metrics._from_generated(service_props.minute_metrics),  # pylint: disable=protected-access
-                'cors': [CorsRule._from_generated(cors) for cors in service_props.cors],  # pylint: disable=protected-access
-            }
+            return service_properties_deserialize(service_props)
         except StorageErrorException as error:
             process_storage_error(error)
 

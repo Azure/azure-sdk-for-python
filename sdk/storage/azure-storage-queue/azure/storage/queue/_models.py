@@ -422,3 +422,14 @@ def service_stats_deserialize(generated):
             'last_sync_time': generated.geo_replication.last_sync_time,
         }
     }
+
+
+def service_properties_deserialize(generated):
+    """Deserialize a ServiceProperties objects into a dict.
+    """
+    return {
+        'analytics_logging': QueueAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
+        'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
+        'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
+        'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
+    }

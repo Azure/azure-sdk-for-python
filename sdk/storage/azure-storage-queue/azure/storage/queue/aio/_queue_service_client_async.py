@@ -29,17 +29,20 @@ from .._generated.models import StorageServiceProperties, StorageErrorException
 from ._models import QueuePropertiesPaged
 from ._queue_client_async import QueueClient
 from .._models import (
-    QueueAnalyticsLogging,
-    Metrics,
-    CorsRule,
     service_stats_deserialize,
+    service_properties_deserialize,
 )
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.configuration import Configuration
     from azure.core.pipeline.policies import HTTPPolicy
-    from .._models import QueueProperties
+    from .._models import (
+        QueueProperties,
+        QueueAnalyticsLogging,
+        Metrics,
+        CorsRule,
+    )
 
 
 class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
@@ -168,12 +171,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         timeout = kwargs.pop('timeout', None)
         try:
             service_props = await self._client.service.get_properties(timeout=timeout, **kwargs) # type: ignore
-            return {
-                'analytics_logging': QueueAnalyticsLogging._from_generated(service_props.logging),  # pylint: disable=protected-access
-                'hour_metrics': Metrics._from_generated(service_props.hour_metrics),  # pylint: disable=protected-access
-                'minute_metrics': Metrics._from_generated(service_props.minute_metrics),  # pylint: disable=protected-access
-                'cors': [CorsRule._from_generated(cors) for cors in service_props.cors],  # pylint: disable=protected-access
-            }
+            return service_properties_deserialize(service_props)
         except StorageErrorException as error:
             process_storage_error(error)
 
