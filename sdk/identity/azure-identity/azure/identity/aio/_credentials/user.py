@@ -45,11 +45,7 @@ class SharedTokenCacheCredential(SyncSharedTokenCacheCredential):
         if not self._client:
             raise ClientAuthenticationError(message="Shared token cache unavailable")
 
-        token = await self._client.obtain_token_by_refresh_token(scopes, self._username)
-        if not token:
-            raise ClientAuthenticationError(message="No cached token found for '{}'".format(self._username))
-
-        return token
+        return await self._client.obtain_token_by_refresh_token(scopes, self._username)
 
     @staticmethod
     def _get_auth_client(cache: "msal_extensions.FileTokenCache") -> "AuthnClientBase":
