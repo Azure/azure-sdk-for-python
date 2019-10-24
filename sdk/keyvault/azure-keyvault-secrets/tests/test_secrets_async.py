@@ -17,6 +17,15 @@ from secrets_async_test_case import AsyncKeyVaultTestCase
 from dateutil import parser as date_parse
 
 
+# used for logging tests
+class MockHandler(logging.Handler):
+    def __init__(self):
+        super(MockHandler, self).__init__()
+        self.messages = []
+    def emit(self, record):
+        self.messages.append(record)
+
+
 class KeyVaultSecretTest(AsyncKeyVaultTestCase):
 
     # incorporate md5 hashing of run identifier into resource group name for uniqueness
@@ -308,12 +317,6 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer(client_kwargs={'logging_enable': True})
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_logging_enabled(self, vault_client, **kwargs):
-        class MockHandler(logging.Handler):
-            def __init__(self):
-                super(MockHandler, self).__init__()
-                self.messages = []
-            def emit(self, record):
-                self.messages.append(record)
         client = vault_client.secrets
         mock_handler = MockHandler()
 
@@ -330,6 +333,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                     if body['value'] == 'secret-value':
                         return
                 except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
                     pass
 
         assert False, "Expected request body wasn't logged"
@@ -338,12 +342,6 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_logging_disabled(self, vault_client, **kwargs):
-        class MockHandler(logging.Handler):
-            def __init__(self):
-                super(MockHandler, self).__init__()
-                self.messages = []
-            def emit(self, record):
-                self.messages.append(record)
         client = vault_client.secrets
         mock_handler = MockHandler()
 
@@ -359,4 +357,5 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                     body = json.loads(message.message)
                     assert body["value"] != "secret-value", "Client request body was logged"
                 except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
                     pass

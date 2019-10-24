@@ -16,6 +16,15 @@ from secrets_test_case import KeyVaultTestCase
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 
+# used for logging tests
+class MockHandler(logging.Handler):
+    def __init__(self):
+        super(MockHandler, self).__init__()
+        self.messages = []
+    def emit(self, record):
+        self.messages.append(record)
+
+
 class SecretClientTests(KeyVaultTestCase):
 
     # incorporate md5 hashing of run identifier into resource group name for uniqueness
@@ -313,12 +322,6 @@ class SecretClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(client_kwargs={'logging_enable': True})
     def test_logging_enabled(self, vault_client, **kwargs):
-        class MockHandler(logging.Handler):
-            def __init__(self):
-                super(MockHandler, self).__init__()
-                self.messages = []
-            def emit(self, record):
-                self.messages.append(record)
         client = vault_client.secrets
         mock_handler = MockHandler()
 
@@ -335,6 +338,7 @@ class SecretClientTests(KeyVaultTestCase):
                     if body['value'] == 'secret-value':
                         return
                 except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
                     pass
 
         assert False, "Expected request body wasn't logged"
@@ -342,12 +346,6 @@ class SecretClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_logging_disabled(self, vault_client, **kwargs):
-        class MockHandler(logging.Handler):
-            def __init__(self):
-                super(MockHandler, self).__init__()
-                self.messages = []
-            def emit(self, record):
-                self.messages.append(record)
         client = vault_client.secrets
         mock_handler = MockHandler()
 
@@ -363,4 +361,5 @@ class SecretClientTests(KeyVaultTestCase):
                     body = json.loads(message.message)
                     assert body["value"] != "secret-value", "Client request body was logged"
                 except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
                     pass

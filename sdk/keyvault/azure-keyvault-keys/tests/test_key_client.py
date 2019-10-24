@@ -19,6 +19,14 @@ from keys_test_case import KeyVaultTestCase
 from devtools_testutils import ResourceGroupPreparer
 
 
+# used for logging tests
+class MockHandler(logging.Handler):
+    def __init__(self):
+        super(MockHandler, self).__init__()
+        self.messages = []
+    def emit(self, record):
+        self.messages.append(record)
+
 class KeyClientTests(KeyVaultTestCase):
 
     # incorporate md5 hashing of run identifier into resource group name for uniqueness
@@ -366,12 +374,6 @@ class KeyClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(client_kwargs={'logging_enable': True})
     def test_logging_enabled(self, vault_client, **kwargs):
-        class MockHandler(logging.Handler):
-            def __init__(self):
-                super(MockHandler, self).__init__()
-                self.messages = []
-            def emit(self, record):
-                self.messages.append(record)
         client = vault_client.keys
         mock_handler = MockHandler()
 
@@ -388,6 +390,7 @@ class KeyClientTests(KeyVaultTestCase):
                     if body['kty'] == 'RSA':
                         return
                 except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
                     pass
 
         assert False, "Expected request body wasn't logged"
@@ -395,12 +398,6 @@ class KeyClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_logging_disabled(self, vault_client, **kwargs):
-        class MockHandler(logging.Handler):
-            def __init__(self):
-                super(MockHandler, self).__init__()
-                self.messages = []
-            def emit(self, record):
-                self.messages.append(record)
         client = vault_client.keys
         mock_handler = MockHandler()
 
@@ -416,4 +413,5 @@ class KeyClientTests(KeyVaultTestCase):
                     body = json.loads(message.message)
                     assert body["kty"] != "RSA", "Client request body was logged"
                 except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
                     pass
