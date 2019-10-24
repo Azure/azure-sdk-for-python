@@ -1,5 +1,5 @@
-azure.core.pipeline package
-===========================
+azure.core.pipeline
+===================
 
 .. automodule:: azure.core.pipeline
    :members:

@@ -1,5 +1,5 @@
-azure.core.polling package
-==========================
+azure.core.polling
+==================
 
 .. automodule:: azure.core.polling
    :members:

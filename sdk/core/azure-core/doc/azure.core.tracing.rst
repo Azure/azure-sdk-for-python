@@ -1,5 +1,5 @@
-azure.core.tracing package
-==========================
+azure.core.tracing
+==================
 
 .. automodule:: azure.core.tracing
    :members:
@@ -9,24 +9,24 @@ azure.core.tracing package
 Submodules
 ----------
 
-azure.core.tracing.common module
---------------------------------
+azure.core.tracing.common
+-------------------------
 
 .. automodule:: azure.core.tracing.common
    :members:
    :undoc-members:
    :inherited-members:
 
-azure.core.tracing.decorator module
------------------------------------
+azure.core.tracing.decorator
+----------------------------
 
 .. automodule:: azure.core.tracing.decorator
    :members:
    :undoc-members:
    :inherited-members:
 
-azure.core.tracing.decorator\_async module
-------------------------------------------
+azure.core.tracing.decorator\_async
+-----------------------------------
 
 .. automodule:: azure.core.tracing.decorator_async
    :members:

@@ -1,5 +1,5 @@
-azure.core.pipeline.transport package
-=====================================
+azure.core.pipeline.transport
+=============================
 
 .. automodule:: azure.core.pipeline.transport
    :members:

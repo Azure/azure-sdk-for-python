@@ -1,5 +1,5 @@
-azure.core.pipeline.policies package
-====================================
+azure.core.pipeline.policies
+============================
 
 .. automodule:: azure.core.pipeline.policies
    :members:
