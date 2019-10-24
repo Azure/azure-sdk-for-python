@@ -16,7 +16,7 @@ from ._shared.parser import _str
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.storage.file import (
+    from azure.storage.fileshare import (
         ResourceTypes,
         AccountSasPermissions,
         ShareSasPermissions,
