@@ -8,6 +8,7 @@ from .sqlite3_partition_manager import Sqlite3PartitionManager
 
 class InMemoryPartitionManager(Sqlite3PartitionManager):
     """A partition manager that stores checkpoint and load balancer partition ownership data in memory.
+    This is for mock test only.
 
     """
     def __init__(self):
@@ -16,6 +17,7 @@ class InMemoryPartitionManager(Sqlite3PartitionManager):
 
 class FileBasedPartitionManager(Sqlite3PartitionManager):
     """A partition manager that stores checkpoint and load balancer partition ownership data in a file.
+    Do not use this
 
     """
     def __init__(self, filename):
