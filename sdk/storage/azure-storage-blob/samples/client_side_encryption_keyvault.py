@@ -56,17 +56,17 @@ class KeyWrapper:
         automatic client-side encyrption and decryption routines. """
 
     def __init__(self, kek, credential):
+        self.algorithm = KeyWrapAlgorithm.aes_256
         self.kek = kek
         self.kid = kek.id
-        self.algorithm = KeyWrapAlgorithm.aes_256
         self.client = CryptographyClient(kek, credential)
 
     def wrap_key(self, key):
         wrapped = self.client.wrap_key(key=key, algorithm=self.algorithm)
         return wrapped.encrypted_key
 
-    def unwrap_key(self, key, algorithm):
-        unwrapped = self.client.unwrap_key(encrypted_key=key, algorithm=algorithm)
+    def unwrap_key(self, key, _):
+        unwrapped = self.client.unwrap_key(encrypted_key=key, algorithm=self.algorithm)
         return unwrapped.key
 
     def get_key_wrap_algorithm(self):
