@@ -23,7 +23,8 @@ class OwnershipManager(object):
     """
     def __init__(
             self, eventhub_client, consumer_group_name: str, owner_id: str,
-            partition_manager: PartitionManager, ownership_timeout: float
+            partition_manager: PartitionManager, ownership_timeout: float,
+            partition_id: str,
     ):
         self.cached_parition_ids = []  # type: List[str]
         self.eventhub_client = eventhub_client
@@ -33,6 +34,7 @@ class OwnershipManager(object):
         self.owner_id = owner_id
         self.partition_manager = partition_manager
         self.ownership_timeout = ownership_timeout
+        self.partition_id = partition_id
         self._initializing = True
 
     async def claim_ownership(self):
@@ -46,10 +48,22 @@ class OwnershipManager(object):
         """
         if not self.cached_parition_ids:
             await self._retrieve_partition_ids()
-        if self.partition_manager:
+
+        if self.partition_id is not None:
+            if self.partition_id in self.cached_parition_ids:
+                return [self.partition_id]
+            else:
+                raise ValueError(
+                    "Wrong partition id:{}. The eventhub has partitions: {}.".
+                        format(self.partition_id, self.cached_parition_ids))
+
+        if self.partition_manager is None:
+            return self.cached_parition_ids
+
+        else:
             to_claim = await self._balance_ownership(self.cached_parition_ids)
             claimed_list = await self.partition_manager.claim_ownership(to_claim) if to_claim else None
-            return claimed_list
+            return [x["partition_id"] for x in claimed_list]
 
     async def _retrieve_partition_ids(self):
         """List all partition ids of the event hub that the EventProcessor is working on.
@@ -83,6 +97,7 @@ class OwnershipManager(object):
 
         :return: List[Dict[str, Any]], A list of ownership.
         """
+
         ownership_list = await self.partition_manager.list_ownership(
             self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name
         )
@@ -93,16 +108,15 @@ class OwnershipManager(object):
                                 if x["last_modified_time"] + self.ownership_timeout < now]
         if self._initializing:  # greedily claim all available partitions when an EventProcessor is started.
             to_claim = timed_out_partitions
-            for p in to_claim:
-                p["owner_id"] = self.owner_id
             for pid in not_owned_partition_ids:
                 to_claim.append(
-                    {"fully_qualified_namespace": self.fully_qualified_namespace,
-                     "partition_id": pid,
-                     "eventhub_name": self.eventhub_name,
-                     "consumer_group_name": self.consumer_group_name,
-                     "owner_id": self.owner_id
-                     }
+                    {
+                        "fully_qualified_namespace": self.fully_qualified_namespace,
+                        "partition_id": pid,
+                        "eventhub_name": self.eventhub_name,
+                        "consumer_group_name": self.consumer_group_name,
+                        "owner_id": self.owner_id
+                    }
                 )
             self._initializing = False
             if to_claim:  # if no expired or unclaimed partitions, go ahead with balancing
@@ -132,12 +146,14 @@ class OwnershipManager(object):
             # Either claims an inactive partition, or steals from other owners
             if claimable_partition_ids:  # claim an inactive partition if there is
                 random_partition_id = random.choice(claimable_partition_ids)
-                random_chosen_to_claim = ownership_dict.get(random_partition_id,
-                                                            {"fully_qualified_namespace": self.fully_qualified_namespace,
-                                                             "partition_id": random_partition_id,
-                                                             "eventhub_name": self.eventhub_name,
-                                                             "consumer_group_name": self.consumer_group_name,
-                                                             })
+                random_chosen_to_claim = ownership_dict.get(
+                    random_partition_id,
+                    {"fully_qualified_namespace": self.fully_qualified_namespace,
+                     "partition_id": random_partition_id,
+                     "eventhub_name": self.eventhub_name,
+                     "consumer_group_name": self.consumer_group_name,
+                     }
+                )
                 random_chosen_to_claim["owner_id"] = self.owner_id
                 to_claim.append(random_chosen_to_claim)
             else:  # steal from another owner that has the most count
@@ -151,6 +167,9 @@ class OwnershipManager(object):
         return to_claim
 
     async def get_checkpoints(self):
-        checkpoints = await self.partition_manager.list_checkpoints(
-            self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name)
-        return {x["partition_id"]: x for x in checkpoints}
+        if self.partition_manager:
+            checkpoints = await self.partition_manager.list_checkpoints(
+                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name)
+            return {x["partition_id"]: x for x in checkpoints}
+        else:
+            return {}

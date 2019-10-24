@@ -82,56 +82,26 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         """
         log.info("EventProcessor %r is being started", self._id)
         ownership_manager = OwnershipManager(self._eventhub_client, self._consumer_group_name, self._id,
-                                             self._partition_manager, self._ownership_timeout)
+                                             self._partition_manager, self._ownership_timeout, self._partition_id)
         if not self._running:
             self._running = True
-            if self._partition_id is None and self._partition_manager is not None:
-                while self._running:
-                    try:
-                        claimed_ownership_list = await ownership_manager.claim_ownership()
-                        checkpoints = await ownership_manager.get_checkpoints() if self._partition_manager else None
-                        if claimed_ownership_list:
-                            claimed_partition_ids = [x["partition_id"] for x in claimed_ownership_list]
-                            to_cancel_list = self._tasks.keys() - claimed_partition_ids
-                            self._create_tasks_for_claimed_ownership(claimed_ownership_list, checkpoints)
-                        else:
-                            to_cancel_list = set(self._tasks.keys())
-                            log.info("EventProcessor %r hasn't claimed an ownership. It keeps claiming.", self._id)
-                        if to_cancel_list:
-                            self._cancel_tasks_for_partitions(to_cancel_list)
-                            log.info("EventProcesor %r has cancelled partitions %r", self._id, to_cancel_list)
-                    except Exception as err:  # pylint:disable=broad-except
-                        log.warning("An exception (%r) occurred during balancing and claiming ownership for "
-                                    "eventhub %r consumer group %r. Retrying after %r seconds",
-                                    err, self._eventhub_name, self._consumer_group_name, self._polling_interval)
-                        raise
-                    await asyncio.sleep(self._polling_interval)
-            else:
-                checkpoints = await ownership_manager.get_checkpoints() if self._partition_manager else None
-                if self._partition_id is not None:
-                    ownership = [{
-                        "fully_qualified_namespace": self._namespace,
-                        "partition_id": self._partition_id,
-                        "eventhub_name": self._eventhub_name,
-                        "consumer_group_name": self._consumer_group_name,
-                        "owner_id": self._id
-                    }]
-                else:  # partition_id is None and partition_manager is None
-                    partition_ids = await self._eventhub_client.get_partition_ids()
-                    ownership = []
-                    for pid in partition_ids:
-                        ownership.append(
-                            {
-                                "fully_qualified_namespace": self._namespace,
-                                "partition_id": pid,
-                                "eventhub_name": self._eventhub_name,
-                                "consumer_group_name": self._consumer_group_name,
-                                "owner_id": self._id
-                            }
-                        )
-                self._create_tasks_for_claimed_ownership(ownership, checkpoints)
-                while self._tasks:  # keep it running. No load balancing.
-                    await asyncio.sleep(self._polling_interval)
+            while self._running:
+                try:
+                    claimed_partition_ids = await ownership_manager.claim_ownership()
+                    checkpoints = await ownership_manager.get_checkpoints() if self._partition_manager else None
+                    if claimed_partition_ids:
+                        to_cancel_list = self._tasks.keys() - claimed_partition_ids
+                        self._create_tasks_for_claimed_ownership(claimed_partition_ids, checkpoints)
+                    else:
+                        log.info("EventProcessor %r hasn't claimed an ownership. It keeps claiming.", self._id)
+                        to_cancel_list = set(self._tasks.keys())
+                    self._cancel_tasks_for_partitions(to_cancel_list)
+                except Exception as err:  # pylint:disable=broad-except
+                    log.warning("An exception (%r) occurred during balancing and claiming ownership for "
+                                "eventhub %r consumer group %r. Retrying after %r seconds",
+                                err, self._eventhub_name, self._consumer_group_name, self._polling_interval)
+                    raise
+                await asyncio.sleep(self._polling_interval)
 
     async def stop(self):
         """Stop the EventProcessor.
@@ -164,13 +134,14 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             if partition_id in self._tasks:
                 task = self._tasks.pop(partition_id)
                 task.cancel()
+        if to_cancel_partitions:
+            log.info("EventProcesor %r has cancelled partitions %r", self._id, to_cancel_partitions)
 
-    def _create_tasks_for_claimed_ownership(self, to_claim_ownership_list, checkpoints=None):
-        for ownership in to_claim_ownership_list:
-            partition_id = ownership["partition_id"]
+    def _create_tasks_for_claimed_ownership(self, claimed_partitions, checkpoints=None):
+        for partition_id in claimed_partitions:
             checkpoint = checkpoints.get(partition_id) if checkpoints else None
             if partition_id not in self._tasks or self._tasks[partition_id].done():
-                self._tasks[partition_id] = get_running_loop().create_task(self._receive(ownership, checkpoint))
+                self._tasks[partition_id] = get_running_loop().create_task(self._receive(partition_id, checkpoint))
 
     @contextmanager
     def _context(self, events):
@@ -188,13 +159,12 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             with child:
                 yield
 
-    async def _receive(self, ownership, checkpoint=None):  # pylint: disable=too-many-statements
-        log.info("start ownership %r, checkpoint %r", ownership, checkpoint)
-        namespace = ownership["fully_qualified_namespace"]
-        partition_id = ownership["partition_id"]
-        eventhub_name = ownership["eventhub_name"]
-        consumer_group_name = ownership["consumer_group_name"]
-        owner_id = ownership["owner_id"]
+    async def _receive(self, partition_id, checkpoint=None):  # pylint: disable=too-many-statements
+        log.info("start ownership %r, checkpoint %r", partition_id, checkpoint)
+        namespace = self._namespace
+        eventhub_name = self._eventhub_name
+        consumer_group_name = self._consumer_group_name
+        owner_id = self._id
         checkpoint_offset = checkpoint.get("offset") if checkpoint else None
         if checkpoint_offset:
             initial_event_position = EventPosition(checkpoint_offset)
