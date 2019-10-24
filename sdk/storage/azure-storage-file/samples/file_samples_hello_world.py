@@ -6,58 +6,37 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: file_samples_hello_world.py
+
+DESCRIPTION:
+    These samples demonstrate common scenarios like instantiating a client,
+    creating a file share, and uploading a file to a share.
+
+USAGE:
+    python file_samples_hello_world.py
+    Set the environment variables with your own values before running the sample.
+"""
+
 import os
 
-try:
-    import settings_real as settings
-except ImportError:
-    import file_settings_fake as settings
-
-from filetestcase import (
-    FileTestCase,
-    record
-)
-
-SOURCE_FILE = 'SampleSource.txt'
+SOURCE_FILE = './SampleSource.txt'
+DEST_FILE = './SampleDestination.txt'
 
 
-class TestHelloWorldSamples(FileTestCase):
+class HelloWorldSamples(object):
 
-    connection_string = settings.CONNECTION_STRING
+    connection_string = os.getenv('CONNECTION_STRING')
 
-    def setUp(self):
-        data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-        with open(SOURCE_FILE, 'wb') as stream:
-            stream.write(data)
-
-        super(TestHelloWorldSamples, self).setUp()
-
-    def tearDown(self):
-        if os.path.isfile(SOURCE_FILE):
-            try:
-                os.remove(SOURCE_FILE)
-            except:
-                pass
-
-        return super(TestHelloWorldSamples, self).tearDown()
-
-    #--Begin File Samples-----------------------------------------------------------------
-
-    @record
-    def test_create_client_with_connection_string(self):
+    def create_client_with_connection_string(self):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file import FileServiceClient
         file_service = FileServiceClient.from_connection_string(self.connection_string)
 
-        # Get queue service properties
-        properties = file_service.get_service_properties()
-        assert properties is not None
-
-    @record
-    def test_create_file_share(self):
+    def create_file_share(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, share_name="myshare")
+        share = ShareClient.from_connection_string(self.connection_string, share_name="helloworld1")
 
         # Create the share
         share.create_share()
@@ -66,17 +45,15 @@ class TestHelloWorldSamples(FileTestCase):
             # [START get_share_properties]
             properties = share.get_share_properties()
             # [END get_share_properties]
-            assert properties is not None
 
         finally:
             # Delete the share
             share.delete_share()
 
-    @record
-    def test_upload_file_to_share(self):
+    def upload_a_file_to_share(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, share_name="share")
+        share = ShareClient.from_connection_string(self.connection_string, share_name="helloworld2")
 
         # Create the share
         share.create_share()
@@ -85,7 +62,10 @@ class TestHelloWorldSamples(FileTestCase):
             # Instantiate the FileClient from a connection string
             # [START create_file_client]
             from azure.storage.file import FileClient
-            file = FileClient.from_connection_string(self.connection_string, share_name="share", file_path="myfile")
+            file = FileClient.from_connection_string(
+                self.connection_string,
+                share_name="helloworld2",
+                file_path="myfile")
             # [END create_file_client]
 
             # Upload a file
@@ -95,3 +75,10 @@ class TestHelloWorldSamples(FileTestCase):
         finally:
             # Delete the share
             share.delete_share()
+
+
+if __name__ == '__main__':
+    sample = HelloWorldSamples()
+    sample.create_client_with_connection_string()
+    sample.create_file_share()
+    sample.upload_a_file_to_share()

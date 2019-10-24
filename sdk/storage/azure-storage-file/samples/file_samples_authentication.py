@@ -6,64 +6,57 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: file_samples_authentication.py
+
+DESCRIPTION:
+    These samples demonstrate authenticating a client via a connection string,
+    shared access key, or by generating a sas token with which the returned signature
+    can be used with the credential parameter of any FileServiceClient,
+    ShareClient, DirectoryClient, or FileClient.
+
+USAGE:
+    python file_samples_authentication.py
+    Set the environment variables with your own values before running the sample.
+"""
+
+import os
 from datetime import datetime, timedelta
 
-try:
-    import settings_real as settings
-except ImportError:
-    import file_settings_fake as settings
 
-from filetestcase import (
-    FileTestCase,
-    TestMode,
-    record
-)
+class FileAuthSamples(object):
 
-
-class TestFileAuthSamples(FileTestCase):
-    url = "{}://{}.file.core.windows.net".format(
-        settings.PROTOCOL,
-        settings.STORAGE_ACCOUNT_NAME
+    connection_string = os.getenv('CONNECTION_STRING')
+    shared_access_key = os.getenv('STORAGE_ACCOUNT_KEY')
+    account_url = "{}://{}.blob.core.windows.net".format(
+        os.getenv('PROTOCOL'),
+        os.getenv('STORAGE_ACCOUNT_NAME')
     )
 
-    connection_string = settings.CONNECTION_STRING
-    shared_access_key = settings.STORAGE_ACCOUNT_KEY
-
-    @record
-    def test_auth_connection_string(self):
+    def authentication_connection_string(self):
         # Instantiate the FileServiceClient from a connection string
         # [START create_file_service_client_from_conn_string]
         from azure.storage.file import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        file_service_client = FileServiceClient.from_connection_string(self.connection_string)
         # [END create_file_service_client_from_conn_string]
 
-        # Get queue service properties
-        properties = file_service.get_service_properties()
-        assert properties is not None
-
-    @record
-    def test_auth_shared_key(self):
+    def authentication_shared_access_key(self):
         # Instantiate a FileServiceClient using a shared access key
         # [START create_file_service_client]
         from azure.storage.file import FileServiceClient
-        file_service_client = FileServiceClient(account_url=self.url, credential=self.shared_access_key)
+        file_service_client = FileServiceClient(
+            account_url=self.account_url,
+            credential=self.shared_access_key
+        )
         # [END create_file_service_client]
 
-        # Get account information for the File Service
-        account_info = file_service_client.get_service_properties()
-        assert account_info is not None
-
-    def test_auth_shared_access_signature(self):
-        # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
-            return
-
+    def authentication_shared_access_signature(self):
         # Instantiate a FileServiceClient using a connection string
+        # [START generate_sas_token]
         from azure.storage.file import FileServiceClient
         file_service_client = FileServiceClient.from_connection_string(self.connection_string)
 
         # Create a SAS token to use to authenticate a new client
-        # [START generate_sas_token]
         from azure.storage.file import generate_account_sas
 
         sas_token = generate_account_sas(
@@ -74,4 +67,11 @@ class TestFileAuthSamples(FileTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         # [END generate_sas_token]
-        assert sas_token is not None
+
+
+if __name__ == '__main__':
+    sample = FileAuthSamples()
+    sample.authentication_connection_string()
+    sample.authentication_shared_access_key()
+    sample.authentication_shared_access_signature()
+

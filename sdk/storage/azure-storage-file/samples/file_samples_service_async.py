@@ -6,24 +6,31 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: file_samples_service_async.py
+
+DESCRIPTION:
+    These samples demonstrate file share service operations like setting and getting
+    service properties, listing the shares within the service, and getting a share
+    client.
+
+USAGE:
+    python file_samples_service_async.py
+    Set the environment variables with your own values before running the sample.
+"""
+
 import asyncio
-try:
-    import settings_real as settings
-except ImportError:
-    import file_settings_fake as settings
+import os
 
-from filetestcase import (
-    FileTestCase,
-    TestMode,
-    record
-)
+SOURCE_FILE = './SampleSource.txt'
+DEST_FILE = './SampleDestination.txt'
 
 
-class TestFileServiceSamples(FileTestCase):
+class FileServiceSamplesAsync(object):
 
-    connection_string = settings.CONNECTION_STRING
+    connection_string = os.getenv('CONNECTION_STRING')
 
-    async def _test_file_service_properties(self):
+    async def file_service_properties_async(self):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file.aio import FileServiceClient
         file_service = FileServiceClient.from_connection_string(self.connection_string)
@@ -53,62 +60,56 @@ class TestFileServiceSamples(FileTestCase):
 
         cors = [cors_rule1, cors_rule2]
 
-        # Set the service properties
-        await file_service.set_service_properties(hour_metrics, minute_metrics, cors)
+        async with file_service:
+            # Set the service properties
+            await file_service.set_service_properties(hour_metrics, minute_metrics, cors)
         # [END set_service_properties]
 
-        # [START get_service_properties]
-        properties = await file_service.get_service_properties()
-        # [END get_service_properties]
+            # [START get_service_properties]
+            properties = await file_service.get_service_properties()
+            # [END get_service_properties]
 
-    def test_file_service_properties(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_file_service_properties())
-
-    async def _test_share_operations(self):
+    async def list_shares_in_service_async(self):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file.aio import FileServiceClient
         file_service = FileServiceClient.from_connection_string(self.connection_string)
 
-        # [START fsc_create_shares]
-        await file_service.create_share(share_name="testshare")
-        # [END fsc_create_shares]
-        try:
-            # [START fsc_list_shares]
-            # List the shares in the file service
-            my_shares = []
-            async for s in file_service.list_shares():
-                my_shares.append(s)
+        async with file_service:
+            # [START fsc_create_shares]
+            await file_service.create_share(share_name="fileshare1")
+            # [END fsc_create_shares]
+            try:
+                # [START fsc_list_shares]
+                # List the shares in the file service
+                my_shares = []
+                async for s in file_service.list_shares():
+                    my_shares.append(s)
 
-            # Print the shares
-            for share in my_shares:
-                print(share)
-            # [END fsc_list_shares]
+                # Print the shares
+                for share in my_shares:
+                    print(share)
+                # [END fsc_list_shares]
 
-        finally:
-            # [START fsc_delete_shares]
-            await file_service.delete_share(share_name="testshare")
-            # [END fsc_delete_shares]
+            finally:
+                # [START fsc_delete_shares]
+                await file_service.delete_share(share_name="fileshare1")
+                # [END fsc_delete_shares]
 
-    def test_share_operations(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_share_operations())
-
-    async def _test_get_share_client(self):
+    async def get_share_client_async(self):
         # [START get_share_client]
         from azure.storage.file.aio import FileServiceClient
         file_service = FileServiceClient.from_connection_string(self.connection_string)
 
         # Get a share client to interact with a specific share
-        share = file_service.get_share_client("fileshare")
+        share = file_service.get_share_client("fileshare2")
         # [END get_share_client]
 
-    def test_get_share_client(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_share_client())
+
+async def main():
+    sample = FileServiceSamplesAsync()
+    await sample.file_service_properties_async()
+    await sample.list_shares_in_service_async()
+    await sample.get_share_client_async()
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())

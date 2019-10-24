@@ -290,7 +290,7 @@ def generate_account_sas(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_file_samples_authentication.py
+        .. literalinclude:: ../samples/file_samples_authentication.py
             :start-after: [START generate_sas_token]
             :end-before: [END generate_sas_token]
             :language: python
