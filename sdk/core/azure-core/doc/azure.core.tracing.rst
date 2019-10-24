@@ -6,13 +6,6 @@ azure.core.tracing package
    :undoc-members:
    :inherited-members:
 
-Subpackages
------------
-
-.. toctree::
-
-   azure.core.tracing.ext
-
 Submodules
 ----------
 
