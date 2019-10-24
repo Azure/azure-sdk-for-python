@@ -53,7 +53,7 @@ class TestFileSamples(FileTestCase):
     async def _test_file_operations(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "filesshare-a")
+        share = ShareClient.from_connection_string(self.connection_string, "filesshare")
 
         # Create the share
         await share.create_share()
@@ -100,7 +100,7 @@ class TestFileSamples(FileTestCase):
     async def _test_copy_from_url(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "filesfromurl-a")
+        share = ShareClient.from_connection_string(self.connection_string, "filesfromurl")
 
         # Create the share
         await share.create_share()
@@ -118,7 +118,7 @@ class TestFileSamples(FileTestCase):
             source_url = "{}://{}.file.core.windows.net/{}/{}".format(
                 settings.PROTOCOL,
                 settings.STORAGE_ACCOUNT_NAME,
-                "filesfromurl-a",
+                "filesfromurl",
                 "sourcefile"
             )
 

@@ -69,7 +69,7 @@ class TestShareSamples(FileTestCase):
     def test_set_share_quota_and_metadata(self):
         # [START create_share_client_from_conn_string]
         from azure.storage.fileshare import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "metafileshare")
+        share = ShareClient.from_connection_string(self.connection_string, "fileshare")
         # [END create_share_client_from_conn_string]
 
         # Create the share

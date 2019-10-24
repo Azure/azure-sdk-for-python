@@ -73,7 +73,7 @@ class TestFileServiceSamples(FileTestCase):
         file_service = ShareServiceClient.from_connection_string(self.connection_string)
 
         # [START fsc_create_shares]
-        await file_service.create_share(share_name="testshare-a")
+        await file_service.create_share(share_name="testshare")
         # [END fsc_create_shares]
         try:
             # [START fsc_list_shares]
@@ -89,7 +89,7 @@ class TestFileServiceSamples(FileTestCase):
 
         finally:
             # [START fsc_delete_shares]
-            await file_service.delete_share(share_name="testshare-a")
+            await file_service.delete_share(share_name="testshare")
             # [END fsc_delete_shares]
 
     def test_share_operations(self):
@@ -104,7 +104,7 @@ class TestFileServiceSamples(FileTestCase):
         file_service = ShareServiceClient.from_connection_string(self.connection_string)
 
         # Get a share client to interact with a specific share
-        share = file_service.get_share_client("fileshare-a")
+        share = file_service.get_share_client("fileshare")
         # [END get_share_client]
 
     def test_get_share_client(self):

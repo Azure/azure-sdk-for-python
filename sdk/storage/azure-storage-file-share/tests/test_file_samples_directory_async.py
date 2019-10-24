@@ -47,7 +47,7 @@ class TestDirectorySamples(FileTestCase):
     async def _test_create_directory(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "dirshare-a")
+        share = ShareClient.from_connection_string(self.connection_string, "dirshare")
 
         # Create the share
         await share.create_share()
@@ -88,7 +88,7 @@ class TestDirectorySamples(FileTestCase):
     async def _test_create_subdirectories(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "subdirshare-a")
+        share = ShareClient.from_connection_string(self.connection_string, "subdirshare")
 
         # Create the share
         await share.create_share()
@@ -140,7 +140,7 @@ class TestDirectorySamples(FileTestCase):
     async def _test_get_subdirectory_client(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "dirtest-a")
+        share = ShareClient.from_connection_string(self.connection_string, "dirtest")
 
         # Create the share
         await share.create_share()
