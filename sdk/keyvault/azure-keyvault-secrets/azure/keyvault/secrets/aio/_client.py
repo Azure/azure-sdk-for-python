@@ -322,7 +322,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         Requires the secrets/purge permission.
 
         :param str name: Name of the secret
-        :returns: ``None``
+        :returns: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:

@@ -333,7 +333,7 @@ class KeyClient(KeyVaultClientBase):
         Requires the keys/purge permission.
 
         :param str name: The name of the key
-        :returns: ``None``
+        :returns: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
