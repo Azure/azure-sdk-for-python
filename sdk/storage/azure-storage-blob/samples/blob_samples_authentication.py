@@ -9,19 +9,19 @@
 
 class AuthSamples(object):
     url = "{}://{}.blob.core.windows.net".format(
-        os.getenv(PROTOCOL),
-        os.getenv(STORAGE_ACCOUNT_NAME)
+        os.getenv("PROTOCOL"),
+        os.getenv("STORAGE_ACCOUNT_NAME")
     )
     oauth_url = "{}://{}.blob.core.windows.net".format(
-        os.getenv(PROTOCOL),
-        os.getenv(OAUTH_STORAGE_ACCOUNT_NAME)
+        os.getenv("PROTOCOL"),
+        os.getenv("OAUTH_STORAGE_ACCOUNT_NAME")
     )
 
-    connection_string = os.getenv(CONNECTION_STRING)
-    shared_access_key = os.getenv(STORAGE_ACCOUNT_KEY)
-    active_directory_application_id = os.getenv(ACTIVE_DIRECTORY_APPLICATION_ID)
-    active_directory_application_secret = os.getenv(ACTIVE_DIRECTORY_APPLICATION_SECRET)
-    active_directory_tenant_id = os.getenv(ACTIVE_DIRECTORY_TENANT_ID)
+    connection_string = os.getenv("CONNECTION_STRING")
+    shared_access_key = os.getenv("STORAGE_ACCOUNT_KEY")
+    active_directory_application_id = os.getenv("ACTIVE_DIRECTORY_APPLICATION_ID")
+    active_directory_application_secret = os.getenv("ACTIVE_DIRECTORY_APPLICATION_SECRET")
+    active_directory_tenant_id = os.getenv("ACTIVE_DIRECTORY_TENANT_ID")
 
     def auth_connection_string(self):
         # [START auth_from_connection_string]

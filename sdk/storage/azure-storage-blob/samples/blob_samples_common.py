@@ -16,7 +16,7 @@ SOURCE_FILE = 'SampleSource.txt'
 
 class CommonBlobSamples(object):
 
-    connection_string = os.getenv(CONNECTION_STRING)
+    connection_string = os.getenv("CONNECTION_STRING")
 
     #--Begin Blob Samples-----------------------------------------------------------------
 

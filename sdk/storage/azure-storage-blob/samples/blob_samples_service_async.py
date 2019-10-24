@@ -11,7 +11,7 @@ from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 
 class TestBlobServiceSamplesAsync(object):
 
-    connection_string = os.getenv(CONNECTION_STRING)
+    connection_string = os.getenv("CONNECTION_STRING")
 
     async def get_storage_account_information_async(self):
 

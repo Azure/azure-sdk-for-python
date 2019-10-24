@@ -15,7 +15,7 @@ SOURCE_FILE = 'SampleSource.txt'
 
 class ContainerSamples(object):
 
-    connection_string = os.getenv(CONNECTION_STRING)
+    connection_string = os.getenv("CONNECTION_STRING")
 
     #--Begin Blob Samples-----------------------------------------------------------------
 
