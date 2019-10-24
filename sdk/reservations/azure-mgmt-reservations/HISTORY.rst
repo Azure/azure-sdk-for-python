@@ -3,6 +3,17 @@
 Release History
 ===============
 
+0.6.0 (2019-10-24)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fixed Catalog model structure not matching actual API
+
+**Breaking changes**
+
+- Removed CatalogBillingPlansItem that could be considered a breaking change
+
 0.5.0 (2019-10-04)
 ++++++++++++++++++
 

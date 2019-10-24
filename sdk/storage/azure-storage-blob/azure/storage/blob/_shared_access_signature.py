@@ -4,12 +4,25 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from typing import (  # pylint: disable=unused-import
+    Union, Optional, Any, TYPE_CHECKING
+)
+
 from azure.storage.blob._shared import sign_string, url_quote
 from azure.storage.blob._shared.constants import X_MS_VERSION
 from azure.storage.blob._shared.models import Services
 from azure.storage.blob._shared.shared_access_signature import SharedAccessSignature, _SharedAccessHelper, \
     QueryStringConstants
 
+if TYPE_CHECKING:
+    from datetime import datetime
+    from azure.storage.blob import (
+        ResourceTypes,
+        AccountSasPermissions,
+        UserDelegationKey,
+        ContainerSasPermissions,
+        BlobSasPermissions
+    )
 
 class BlobQueryStringConstants(object):
     SIGNED_TIMESTAMP = 'snapshot'
@@ -384,14 +397,14 @@ def generate_container_sas(
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: datetime or str
+    :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
-    :type start: datetime or str
+    :type start: ~datetime.datetime or str
     :param str policy_id:
         A unique value up to 64 characters in length that correlates to a
         stored access policy. To create a stored access policy, use
