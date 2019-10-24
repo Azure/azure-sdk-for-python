@@ -64,6 +64,7 @@ jobs:
 
     timeoutInMinutes: 120
     continueOnError: false
+    condition: succeededOrFailed()
 
     pool:
       vmImage: $(OSVmImage)
