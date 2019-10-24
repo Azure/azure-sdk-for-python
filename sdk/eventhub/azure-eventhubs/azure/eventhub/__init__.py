@@ -11,6 +11,7 @@ from ._error import EventHubError, EventDataError, ConnectError, \
     AuthenticationError, EventDataSendError, ConnectionLostError
 from ._client import EventHubClient
 from ._producer import EventHubProducer
+from ._producer_client import EventHubProducerClient
 from ._consumer import EventHubConsumer
 from ._consumer_client import EventHubConsumerClient
 from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
@@ -33,6 +34,8 @@ __all__ = [
     "EventHubClient",
     "EventHubProducer",
     "EventHubConsumer",
+    "EventHubProducerClient",
+    "EventHubConsumerClient",
     "TransportType",
     "EventHubSharedKeyCredential",
     "EventHubSASTokenCredential",

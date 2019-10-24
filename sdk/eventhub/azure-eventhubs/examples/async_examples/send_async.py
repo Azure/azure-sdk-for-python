@@ -15,34 +15,25 @@ import time
 import asyncio
 import os
 
-from azure.eventhub.aio import EventHubClient
-from azure.eventhub import EventData, EventHubSharedKeyCredential
+from azure.eventhub.aio import EventHubProducerClient
+from azure.eventhub import EventData
 
-HOSTNAME = os.environ['EVENT_HUB_HOSTNAME']  # <mynamespace>.servicebus.windows.net
+EVENT_HUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENT_HUB = os.environ['EVENT_HUB_NAME']
 
-USER = os.environ['EVENT_HUB_SAS_POLICY']
-KEY = os.environ['EVENT_HUB_SAS_KEY']
 
-
-async def run(client):
-    producer = client.create_producer()
-    await send(producer, 4)
-
-
-async def send(producer, count):
+async def run(producer):
     async with producer:
-        for i in range(count):
+        for i in range(5):
             print("Sending message: {}".format(i))
             data = EventData(str(i))
             await producer.send(data)
 
+
 loop = asyncio.get_event_loop()
-client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
-                        network_tracing=False)
+producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONNECTION_STR, event_hub_path=EVENT_HUB)
 tasks = asyncio.gather(
-    run(client),
-    run(client))
+    run(producer))
 start_time = time.time()
 loop.run_until_complete(tasks)
 print("Runtime: {} seconds".format(time.time() - start_time))
