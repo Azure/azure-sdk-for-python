@@ -19,6 +19,7 @@ jobs:
           versionSpec: '3.7'
 
       - script: |
+          sudo apt-get update
           sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
           cd ~/
           git clone https://github.com/python/cpython.git
@@ -26,12 +27,19 @@ jobs:
           mkdir debug
           cd debug
           ../configure --enable-optimizations --prefix=$HOME
+          make
           make install
+          export PATH=~/bin:$PATH
+          export PATH=~/lib:$PATH
+          export PATH=~/.local/bin:$PATH
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
+          python3 -m pip install setuptools wheel 
+          python3 -m pip install tox tox-monorepo packaging twine codecov beautifulsoup4
+          python3 --version
           cd $(Build.SourcesDirectory)
-          PATH=/home/vsts/bin:$PATH
-          python3 -m ensurepip
-          python ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(BuildTargetingString)" --junitxml="junit/test-results.xml"
-        displayName: 'Setup - Run Filtered Tests "Nightly" Python'
+          python3 ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results_38.xml" --toxenv="whl,sdist"
+        displayName: 'Setup - Run Filtered Tests "Nightly" using Python Edge'
         continueOnError: true
 
       - task: PublishTestResults@2

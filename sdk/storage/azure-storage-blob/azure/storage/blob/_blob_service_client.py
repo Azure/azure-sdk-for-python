@@ -28,7 +28,11 @@ from ._generated import AzureBlobStorage
 from ._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
 from ._container_client import ContainerClient
 from ._blob_client import BlobClient
-from ._models import ContainerPropertiesPaged
+from ._models import (
+    ContainerPropertiesPaged,
+    service_stats_deserialize,
+    service_properties_deserialize
+)
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -39,12 +43,12 @@ if TYPE_CHECKING:
     from ._models import (
         BlobProperties,
         ContainerProperties,
+        PublicAccess,
         BlobAnalyticsLogging,
         Metrics,
+        CorsRule,
         RetentionPolicy,
         StaticWebsite,
-        CorsRule,
-        PublicAccess
     )
 
 
@@ -252,8 +256,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.service.get_statistics( # type: ignore
+            stats = self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
+            return service_stats_deserialize(stats)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -280,7 +285,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.service.get_properties(timeout=timeout, **kwargs)
+            service_props = self._client.service.get_properties(timeout=timeout, **kwargs)
+            return service_properties_deserialize(service_props)
         except StorageErrorException as error:
             process_storage_error(error)
 

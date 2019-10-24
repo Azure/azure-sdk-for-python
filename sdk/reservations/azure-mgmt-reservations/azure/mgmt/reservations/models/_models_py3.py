@@ -188,8 +188,8 @@ class Catalog(Model):
     :ivar name: The name of SKU
     :vartype name: str
     :param billing_plans: The billing plan options available for this SKU.
-    :type billing_plans:
-     list[~azure.mgmt.reservations.models.CatalogBillingPlansItem]
+    :type billing_plans: dict[str, list[str or
+     ~azure.mgmt.reservations.models.ReservationBillingPlan]]
     :ivar terms: Available reservation terms for this resource
     :vartype terms: list[str or
      ~azure.mgmt.reservations.models.ReservationTerm]
@@ -214,7 +214,7 @@ class Catalog(Model):
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'billing_plans': {'key': 'billingPlans', 'type': '[CatalogBillingPlansItem]'},
+        'billing_plans': {'key': 'billingPlans', 'type': '{[str]}'},
         'terms': {'key': 'terms', 'type': '[str]'},
         'locations': {'key': 'locations', 'type': '[str]'},
         'sku_properties': {'key': 'skuProperties', 'type': '[SkuProperty]'},
@@ -230,29 +230,6 @@ class Catalog(Model):
         self.locations = None
         self.sku_properties = None
         self.restrictions = None
-
-
-class CatalogBillingPlansItem(Model):
-    """CatalogBillingPlansItem.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, list[str or
-     ~azure.mgmt.reservations.models.ReservationBillingPlan]]
-    :param name: The term for the billing SKU is available for. Possible
-     values include: 'P1Y', 'P3Y'
-    :type name: str or ~azure.mgmt.reservations.models.ReservationTerm
-    """
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{[str]}'},
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(self, *, additional_properties=None, name=None, **kwargs) -> None:
-        super(CatalogBillingPlansItem, self).__init__(**kwargs)
-        self.additional_properties = additional_properties
-        self.name = name
 
 
 class CloudError(Model):

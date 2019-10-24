@@ -23,11 +23,18 @@ from ._generated import AzureFileStorage
 from ._generated.models import StorageErrorException, StorageServiceProperties
 from ._generated.version import VERSION
 from ._share_client import ShareClient
-from ._models import SharePropertiesPaged
+from ._models import (
+    SharePropertiesPaged,
+    service_properties_deserialize,
+)
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ._models import Metrics, CorsRule, ShareProperties
+    from ._models import (
+        ShareProperties,
+        Metrics,
+        CorsRule,
+    )
 
 
 class ShareServiceClient(StorageAccountHostsMixin):
@@ -159,7 +166,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.service.get_properties(timeout=timeout, **kwargs)
+            service_props = self._client.service.get_properties(timeout=timeout, **kwargs)
+            return service_properties_deserialize(service_props)
         except StorageErrorException as error:
             process_storage_error(error)
 

@@ -23,17 +23,17 @@ class ServiceStatsTest(StorageTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_stats_default(self, stats):
         self.assertIsNotNone(stats)
-        self.assertIsNotNone(stats.geo_replication)
+        self.assertIsNotNone(stats['geo_replication'])
 
-        self.assertEqual(stats.geo_replication.status, 'live')
-        self.assertIsNotNone(stats.geo_replication.last_sync_time)
+        self.assertEqual(stats['geo_replication']['status'], 'live')
+        self.assertIsNotNone(stats['geo_replication']['last_sync_time'])
 
     def _assert_stats_unavailable(self, stats):
         self.assertIsNotNone(stats)
-        self.assertIsNotNone(stats.geo_replication)
+        self.assertIsNotNone(stats['geo_replication'])
 
-        self.assertEqual(stats.geo_replication.status, 'unavailable')
-        self.assertIsNone(stats.geo_replication.last_sync_time)
+        self.assertEqual(stats['geo_replication']['status'], 'unavailable')
+        self.assertIsNone(stats['geo_replication']['last_sync_time'])
 
     @staticmethod
     def override_response_body_with_unavailable_status(response):
