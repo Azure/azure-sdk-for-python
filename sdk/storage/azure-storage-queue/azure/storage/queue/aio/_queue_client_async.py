@@ -86,14 +86,14 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_queue_samples_message_async.py
+        .. literalinclude:: ../samples/queue_samples_message_async.py
             :start-after: [START async_create_queue_client]
             :end-before: [END async_create_queue_client]
             :language: python
             :dedent: 12
             :caption: Create the queue client with url and credential.
 
-        .. literalinclude:: ../tests/test_queue_samples_message_async.py
+        .. literalinclude:: ../samples/queue_samples_message_async.py
             :start-after: [START async_create_queue_client_from_connection_string]
             :end-before: [END async_create_queue_client_from_connection_string]
             :language: python
@@ -137,7 +137,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_hello_world_async.py
+            .. literalinclude:: ../samples/queue_samples_hello_world_async.py
                 :start-after: [START async_create_queue]
                 :end-before: [END async_create_queue]
                 :language: python
@@ -174,7 +174,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_hello_world_async.py
+            .. literalinclude:: ../samples/queue_samples_hello_world_async.py
                 :start-after: [START async_delete_queue]
                 :end-before: [END async_delete_queue]
                 :language: python
@@ -201,7 +201,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_get_queue_properties]
                 :end-before: [END async_get_queue_properties]
                 :language: python
@@ -234,7 +234,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_set_queue_metadata]
                 :end-before: [END async_set_queue_metadata]
                 :language: python
@@ -298,7 +298,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_set_access_policy]
                 :end-before: [END async_set_access_policy]
                 :language: python
@@ -368,7 +368,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_send_messages]
                 :end-before: [END async_send_messages]
                 :language: python
@@ -438,7 +438,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_receive_messages]
                 :end-before: [END async_receive_messages]
                 :language: python
@@ -513,7 +513,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_update_message]
                 :end-before: [END async_update_message]
                 :language: python
@@ -599,7 +599,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_peek_message]
                 :end-before: [END async_peek_message]
                 :language: python
@@ -635,7 +635,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_clear_messages]
                 :end-before: [END async_clear_messages]
                 :language: python
@@ -674,7 +674,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_delete_message]
                 :end-before: [END async_delete_message]
                 :language: python
