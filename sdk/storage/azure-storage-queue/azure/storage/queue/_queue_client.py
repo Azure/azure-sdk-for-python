@@ -107,6 +107,19 @@ class QueueClient(StorageAccountHostsMixin):
         self._config.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
 
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        queue_name = self.queue_name
+        if isinstance(queue_name, six.text_type):
+            queue_name = queue_name.encode('UTF-8')
+        return "{}://{}/{}{}".format(
+            self.scheme,
+            hostname,
+            quote(queue_name),
+            self._query_str)
+
     @classmethod
     def from_queue_url(cls, queue_url, credential=None, **kwargs):
         # type: (str, Optional[Any], Any) -> QueueClient
@@ -127,26 +140,20 @@ class QueueClient(StorageAccountHostsMixin):
 
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(queue_url))
-        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
-        try:
-            queue_name = unquote(parsed_url.path.lstrip('/'))
-        except AttributeError:
-            raise ValueError("Invalid URL: {}".format(queue_url))
 
+        queue_path = parsed_url.path.lstrip('/').split('/')
+        account_path = ""
+        if len(queue_path) > 1:
+            account_path = "/" + "/".join(queue_path[:-1])
+        account_url = "{}://{}{}?{}".format(
+            parsed_url.scheme,
+            parsed_url.netloc.rstrip('/'),
+            account_path,
+            parsed_url.query)
+        queue_name = unquote(queue_path[-1])
+        if not queue_name:
+            raise ValueError("Invalid URL. Please provide a URL with a valid queue name")
         return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
-
-    def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
-        queue_name = self.queue_name
-        if isinstance(queue_name, six.text_type):
-            queue_name = queue_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(queue_name),
-            self._query_str)
 
     @classmethod
     def from_connection_string(

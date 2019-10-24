@@ -134,6 +134,16 @@ class ContainerClient(StorageAccountHostsMixin):
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
 
+    def _format_url(self, hostname):
+        container_name = self.container_name
+        if isinstance(container_name, six.text_type):
+            container_name = container_name.encode('UTF-8')
+        return "{}://{}/{}{}".format(
+            self.scheme,
+            hostname,
+            quote(container_name),
+            self._query_str)
+
     @classmethod
     def from_container_url(cls, container_url, credential=None, **kwargs):
         # type: (str, Optional[Any], Any) -> ContainerClient
@@ -158,24 +168,20 @@ class ContainerClient(StorageAccountHostsMixin):
         parsed_url = urlparse(container_url.rstrip('/'))
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(container_url))
-        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
-        container_name = unquote(parsed_url.path.lstrip('/').partition('/')[0])
+
+        container_path = parsed_url.path.lstrip('/').split('/')
+        account_path = ""
+        if len(container_path) > 1:
+            account_path = "/" + "/".join(container_path[:-1])
+        account_url = "{}://{}{}?{}".format(
+            parsed_url.scheme,
+            parsed_url.netloc.rstrip('/'),
+            account_path,
+            parsed_url.query)
+        container_name = unquote(container_path[-1])
         if not container_name:
-            raise ValueError("Invalid URL. Please provide a  url with a valid container_name")
-
-        return cls(
-            account_url, container_name=container_name, credential=credential, **kwargs
-        )
-
-    def _format_url(self, hostname):
-        container_name = self.container_name
-        if isinstance(container_name, six.text_type):
-            container_name = container_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(container_name),
-            self._query_str)
+            raise ValueError("Invalid URL. Please provide a URL with a valid container name")
+        return cls(account_url, container_name=container_name, credential=credential, **kwargs)
 
     @classmethod
     def from_connection_string(
