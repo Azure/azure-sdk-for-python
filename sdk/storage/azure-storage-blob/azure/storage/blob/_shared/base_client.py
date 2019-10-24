@@ -90,7 +90,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, "account_name"):
             self.account_name = self.credential.account_name
-            secondary_hostname = "{}-secondary.{}.{}".format(self.credential.account_name, service_name, SERVICE_HOST_BASE)
+            secondary_hostname = "{}-secondary.{}.{}".format(
+                self.credential.account_name, service_name, SERVICE_HOST_BASE)
 
         if not self._hosts:
             if len(account) > 1:

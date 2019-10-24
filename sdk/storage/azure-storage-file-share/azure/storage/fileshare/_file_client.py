@@ -192,6 +192,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             The credential with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string or an account
             shared access key.
+        :returns: A File client.
+        :rtype: ~azure.storage.fileshare.ShareFileClient
         """
         try:
             if not file_url.lower().startswith('http'):
@@ -250,6 +252,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             The credential with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string or an account
             shared access key.
+        :returns: A File client.
+        :rtype: ~azure.storage.fileshare.ShareFileClient
 
         .. admonition:: Example:
 

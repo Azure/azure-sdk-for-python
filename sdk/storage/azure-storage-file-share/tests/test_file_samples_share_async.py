@@ -91,7 +91,7 @@ class TestShareSamples(FileTestCase):
             # [END set_share_metadata]
 
             # Get the metadata for the share
-            props = await share.get_share_properties().metadata
+            props = (await share.get_share_properties()).metadata
             assert props == data
 
         finally:

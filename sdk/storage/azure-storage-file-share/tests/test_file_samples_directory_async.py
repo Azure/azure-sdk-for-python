@@ -102,7 +102,7 @@ class TestDirectorySamples(FileTestCase):
             await parent_dir.create_directory()
 
             # Create a subdirectory
-            subdir = parent_dir.create_subdirectory("subdir")
+            subdir = await parent_dir.create_subdirectory("subdir")
             # [END create_subdirectory]
 
             # Upload a file to the parent directory

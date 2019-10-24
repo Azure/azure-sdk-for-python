@@ -140,6 +140,8 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             The credential with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string or an account
             shared access key.
+        :returns: A directory client.
+        :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
         try:
             if not directory_url.lower().startswith('http'):
@@ -200,6 +202,8 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             The credential with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string or an account
             shared access key.
+        :returns: A directory client.
+        :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'file')
         if 'secondary_hostname' not in kwargs:

@@ -119,6 +119,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
             The credential with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string or an account
             shared access key.
+        :returns: A File Share service client.
+        :rtype: ~azure.storage.fileshare.ShareServiceClient
 
         .. admonition:: Example:
 
