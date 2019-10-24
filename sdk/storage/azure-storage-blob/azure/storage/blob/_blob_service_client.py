@@ -86,14 +86,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_blob_samples_authentication.py
+        .. literalinclude:: ../samples/blob_samples_authentication.py
             :start-after: [START create_blob_service_client]
             :end-before: [END create_blob_service_client]
             :language: python
             :dedent: 8
             :caption: Creating the BlobServiceClient with account url and credential.
 
-        .. literalinclude:: ../tests/test_blob_samples_authentication.py
+        .. literalinclude:: ../samples/blob_samples_authentication.py
             :start-after: [START create_blob_service_client_oauth]
             :end-before: [END create_blob_service_client_oauth]
             :language: python
@@ -146,7 +146,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_authentication.py
+            .. literalinclude:: ../samples/blob_samples_authentication.py
                 :start-after: [START auth_from_connection_string]
                 :end-before: [END auth_from_connection_string]
                 :language: python
@@ -201,7 +201,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../samples/blob_samples_service.py
                 :start-after: [START get_blob_service_account_info]
                 :end-before: [END get_blob_service_account_info]
                 :language: python
@@ -241,7 +241,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../samples/blob_samples_service.py
                 :start-after: [START get_blob_service_stats]
                 :end-before: [END get_blob_service_stats]
                 :language: python
@@ -267,7 +267,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../samples/blob_samples_service.py
                 :start-after: [START get_blob_service_properties]
                 :end-before: [END get_blob_service_properties]
                 :language: python
@@ -331,7 +331,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../samples/blob_samples_service.py
                 :start-after: [START set_blob_service_properties]
                 :end-before: [END set_blob_service_properties]
                 :language: python
@@ -381,7 +381,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../samples/blob_samples_service.py
                 :start-after: [START bsc_list_containers]
                 :end-before: [END bsc_list_containers]
                 :language: python
@@ -432,7 +432,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../samples/blob_samples_service.py
                 :start-after: [START bsc_create_container]
                 :end-before: [END bsc_create_container]
                 :language: python
@@ -489,7 +489,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../samples/blob_samples_service.py
                 :start-after: [START bsc_delete_container]
                 :end-before: [END bsc_delete_container]
                 :language: python
@@ -519,7 +519,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../samples/blob_samples_service.py
                 :start-after: [START bsc_get_container_client]
                 :end-before: [END bsc_get_container_client]
                 :language: python
@@ -568,7 +568,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service.py
+            .. literalinclude:: ../samples/blob_samples_service.py
                 :start-after: [START bsc_get_blob_client]
                 :end-before: [END bsc_get_blob_client]
                 :language: python

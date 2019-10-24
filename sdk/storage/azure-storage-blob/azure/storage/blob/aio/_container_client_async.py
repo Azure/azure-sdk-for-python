@@ -88,14 +88,14 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_blob_samples_containers_async.py
+        .. literalinclude:: ../samples/blob_samples_containers_async.py
             :start-after: [START create_container_client_from_service]
             :end-before: [END create_container_client_from_service]
             :language: python
             :dedent: 8
             :caption: Get a ContainerClient from an existing BlobServiceClient.
 
-        .. literalinclude:: ../tests/test_blob_samples_containers_async.py
+        .. literalinclude:: ../samples/blob_samples_containers_async.py
             :start-after: [START create_container_client_sasurl]
             :end-before: [END create_container_client_sasurl]
             :language: python
@@ -137,7 +137,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
+            .. literalinclude:: ../samples/blob_samples_containers_async.py
                 :start-after: [START create_container]
                 :end-before: [END create_container]
                 :language: python
@@ -192,7 +192,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
+            .. literalinclude:: ../samples/blob_samples_containers_async.py
                 :start-after: [START delete_container]
                 :end-before: [END delete_container]
                 :language: python
@@ -255,7 +255,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
+            .. literalinclude:: ../samples/blob_samples_containers_async.py
                 :start-after: [START acquire_lease_on_container]
                 :end-before: [END acquire_lease_on_container]
                 :language: python
@@ -300,7 +300,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
+            .. literalinclude:: ../samples/blob_samples_containers_async.py
                 :start-after: [START get_container_properties]
                 :end-before: [END get_container_properties]
                 :language: python
@@ -351,7 +351,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
+            .. literalinclude:: ../samples/blob_samples_containers_async.py
                 :start-after: [START set_container_metadata]
                 :end-before: [END set_container_metadata]
                 :language: python
@@ -391,7 +391,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
+            .. literalinclude:: ../samples/blob_samples_containers_async.py
                 :start-after: [START get_container_access_policy]
                 :end-before: [END get_container_access_policy]
                 :language: python
@@ -453,7 +453,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
+            .. literalinclude:: ../samples/blob_samples_containers_async.py
                 :start-after: [START set_container_access_policy]
                 :end-before: [END set_container_access_policy]
                 :language: python
@@ -508,7 +508,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
+            .. literalinclude:: ../samples/blob_samples_containers_async.py
                 :start-after: [START list_blobs_in_container]
                 :end-before: [END list_blobs_in_container]
                 :language: python
@@ -671,7 +671,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
+            .. literalinclude:: ../samples/blob_samples_containers_async.py
                 :start-after: [START upload_blob_to_container]
                 :end-before: [END upload_blob_to_container]
                 :language: python
@@ -974,7 +974,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers_async.py
+            .. literalinclude:: ../samples/blob_samples_containers_async.py
                 :start-after: [START get_blob_client]
                 :end-before: [END get_blob_client]
                 :language: python
