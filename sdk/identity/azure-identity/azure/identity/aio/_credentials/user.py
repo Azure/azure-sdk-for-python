@@ -32,14 +32,12 @@ class SharedTokenCacheCredential(SyncSharedTokenCacheCredential):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises:
-            :class:`azure.core.exceptions.ClientAuthenticationError` when the cache is unavailable or no access token
+        :raises ~azure.core.exceptions.ClientAuthenticationError: when the cache is unavailable or no access token
             can be acquired from it
 
-        Keyword arguments
-            - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-              the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
-              defines authorities for other clouds.
+        :keyword str authority: Authority of an Azure Active Directory endpoint, for example
+              'login.microsoftonline.com', the authority for Azure Public Cloud (which is the default).
+              :class:`~azure.identity.KnownAuthorities` defines authorities for other clouds.
         """
 
         if not self._client:

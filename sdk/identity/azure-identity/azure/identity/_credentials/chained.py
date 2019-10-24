@@ -39,7 +39,7 @@ class ChainedTokenCredential(object):
         error message from each credential.
 
         :param str scopes: desired scopes for the token
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
         history = []
         for credential in self.credentials:
