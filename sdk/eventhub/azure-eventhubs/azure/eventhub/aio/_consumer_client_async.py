@@ -125,15 +125,20 @@ class EventHubConsumerClient(EventHubClient):
         :return: None
         """
         async with self._lock:
-            if 'all' in self._event_processors:
-                raise ValueError("This consumer client is already receiving events from all partitions. "
-                                 "Shouldn't receive from any other partitions again")
-            elif partition_id is None and self._event_processors:
-                raise ValueError("This consumer client is already receiving events. "
-                                 "Shouldn't receive from all partitions again")
-            elif partition_id in self._event_processors:
-                raise ValueError("This consumer is already receiving events from partition {}. "
-                                 "Shouldn't receive from it again.".format(partition_id))
+            error = None
+            if (consumer_group, '-1') in self._event_processors:
+                error = ValueError("This consumer client is already receiving events from all partitions for"
+                                 " consumer group {}. "
+                                 "Shouldn't receive from any other partitions again".format(consumer_group))
+            elif partition_id is None and [x for x in self._event_processors.keys() if x[0] == consumer_group]:
+                error = ValueError("This consumer client is already receiving events for consumer group {}. "
+                                 "Shouldn't receive from all partitions again".format(consumer_group))
+            elif (consumer_group, partition_id) in self._event_processors:
+                error = ValueError("This consumer is already receiving events from partition {} for consumer group {}. "
+                                 "Shouldn't receive from it again.".format(partition_id, consumer_group))
+            if error:
+                log.warning(error)
+                raise error
 
             event_processor = EventProcessor(
                 self, consumer_group, event_handler,
@@ -149,20 +154,20 @@ class EventHubConsumerClient(EventHubClient):
                 track_last_enqueued_event_properties=track_last_enqueued_event_properties,
             )
             if partition_id:
-                self._event_processors[partition_id] = event_processor
+                self._event_processors[(consumer_group, partition_id)] = event_processor
             else:
-                self._event_processors["all"] = event_processor
+                self._event_processors[(consumer_group, "-1")] = event_processor
         try:
             await event_processor.start()
         finally:
             async with self._lock:
                 await event_processor.stop()
-                if partition_id and partition_id in self._event_processors:
-                    del self._event_processors[partition_id]
-                elif 'all' in self._event_processors:
-                    del self._event_processors['all']
+                if partition_id and (consumer_group, partition_id) in self._event_processors:
+                    del self._event_processors[(consumer_group, partition_id)]
+                elif (consumer_group, '-1') in self._event_processors:
+                    del self._event_processors[(consumer_group, "-1")]
 
-    async def get_last_enqueued_event_properties(self, partition_id: str):
+    async def get_last_enqueued_event_properties(self, consumer_group: str, partition_id: str):
         """The latest enqueued event information of a partition.
         This property will be updated each time an event is received when
         the client is created with `track_last_enqueued_event_properties` being `True`.
@@ -176,10 +181,14 @@ class EventHubConsumerClient(EventHubClient):
         :rtype: dict or None
         :raises: ValueError
         """
-        if partition_id in self._event_processors or 'all' in self._event_processors:
-            return self._event_processors[partition_id].get_last_enqueued_event_properties(partition_id)
+        if (consumer_group, partition_id) in self._event_processors:
+            return self._event_processors[(consumer_group, partition_id)].get_last_enqueued_event_properties(partition_id)
+        elif (consumer_group, '-1') in self._event_processors:
+            return self._event_processors[(consumer_group, -1)].get_last_enqueued_event_properties(
+                partition_id)
         else:
-            raise ValueError("You're not receiving events from partition {}".format(partition_id))
+            raise ValueError("You're not receiving events from partition {} for consumer group {}".
+                             format(partition_id, consumer_group))
 
     async def close(self):
         # type: () -> None
