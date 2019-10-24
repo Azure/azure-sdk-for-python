@@ -48,13 +48,13 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
     :ivar str url:
         The full queue service endpoint URL, including SAS token if used. This could be
-        either the primary endpoint, or the secondard endpint depending on the current `location_mode`.
+        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
         The hostname of the primary endpoint.
     :ivar str secondary_endpoint:
-        The full secondard endpoint URL if configured. If not available
+        The full secondary endpoint URL if configured. If not available
         a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
     :ivar str secondary_hostname:
@@ -70,7 +70,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         authenticated with a SAS token.
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
 
     .. admonition:: Example:
@@ -131,7 +131,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, and account shared access
+            access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
 
         .. admonition:: Example:
@@ -150,7 +150,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace
-    def get_service_stats(self, **kwargs): # type: ignore
+    def get_service_stats(self, **kwargs):
         # type: (Optional[Any]) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Queue service.
 
@@ -173,7 +173,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: The queue service stats.
-        :rtype: dict
+        :rtype: Dict[str, Any]
         """
         timeout = kwargs.pop('timeout', None)
         try:
@@ -189,14 +189,16 @@ class QueueServiceClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_service_properties(self, **kwargs): # type: ignore
+    def get_service_properties(self, **kwargs):
         # type: (Optional[Any]) -> Dict[str, Any]
         """Gets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.queue.StorageServiceProperties
+        :returns: An object containing queue service properties such as
+            analytics logging, hour/minute metrics, cors rules, etc.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
