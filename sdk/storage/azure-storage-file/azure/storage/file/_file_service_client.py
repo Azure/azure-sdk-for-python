@@ -64,6 +64,7 @@ class FileServiceClient(StorageAccountHostsMixin):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
 
     .. admonition:: Example:
 

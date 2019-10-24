@@ -83,6 +83,12 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
+    :keyword encode_policy: The encoding policy to use on outgoing messages.
+        Default is not to encode messages. Other options include :class:`TextBase64EncodePolicy`,
+        :class:`BinaryBase64EncodePolicy` or `None`.
+    :keyword decode_policy: The decoding policy to use on incoming messages.
+        Default value is not to decode messages. Other options include :class:`TextBase64DecodePolicy`,
+        :class:`BinaryBase64DecodePolicy` or `None`.
 
     .. admonition:: Example:
 
