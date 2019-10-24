@@ -11,7 +11,7 @@ from .._shared.policies_async import ExponentialRetry, LinearRetry
 from ._blob_client_async import BlobClient
 from ._container_client_async import ContainerClient
 from ._blob_service_client_async import BlobServiceClient
-from ._lease_async import LeaseClient
+from ._lease_async import BlobLeaseClient
 
 
 async def upload_blob_to_url(
@@ -43,9 +43,8 @@ async def upload_blob_to_url(
     :keyword int length:
         Number of bytes to read from the stream. This is optional, but
         should be supplied for optimal performance.
-    :keyword metadata:
+    :keyword dict(str,str) metadata:
         Name-value pairs associated with the blob as metadata.
-    :type metadata: dict(str, str)
     :keyword bool validate_content:
         If true, calculates an MD5 hash for each chunk of the blob. The storage
         service checks the hash of the content that has arrived with the hash
@@ -83,7 +82,7 @@ async def download_blob_from_url(
     :param output:
         Where the data should be downloaded to. This could be either a file path to write to,
         or an open IO handle to write to.
-    :type output: str or writable stream.
+    :type output: str or writable stream
     :param credential:
         The credentials with which to authenticate. This is optional if the
         blob URL already has a SAS token or the blob is public. The value can be a SAS token string,
@@ -130,7 +129,7 @@ __all__ = [
     'BlobServiceClient',
     'ContainerClient',
     'BlobClient',
-    'LeaseClient',
+    'BlobLeaseClient',
     'ExponentialRetry',
     'LinearRetry'
 ]

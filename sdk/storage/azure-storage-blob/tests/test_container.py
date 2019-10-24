@@ -19,7 +19,7 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    LeaseClient,
+    BlobLeaseClient,
     ContainerSasPermissions,
     PublicAccess,
     ContainerSasPermissions,
@@ -56,7 +56,7 @@ class StorageContainerTest(StorageTestCase):
                     container.delete_container()
                 except HttpResponseError:
                     try:
-                        lease = LeaseClient(container)
+                        lease = BlobLeaseClient(container)
                         lease.break_lease(0)
                         container.delete_container()
                     except:

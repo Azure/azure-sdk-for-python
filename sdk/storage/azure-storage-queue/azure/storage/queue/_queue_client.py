@@ -24,7 +24,7 @@ from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
     return_headers_and_deserialized)
-from ._message_encoding import TextXMLEncodePolicy, TextXMLDecodePolicy, NoEncodePolicy, NoDecodePolicy
+from ._message_encoding import NoEncodePolicy, NoDecodePolicy
 from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
 from ._generated import AzureQueueStorage
 from ._generated.models import StorageErrorException, SignedIdentifier
@@ -42,13 +42,13 @@ class QueueClient(StorageAccountHostsMixin):
 
     :ivar str url:
         The full endpoint URL to the account, including SAS token if used. This could be
-        either the primary endpoint, or the secondard endpint depending on the current `location_mode`.
+        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
         The hostname of the primary endpoint.
     :ivar str secondary_endpoint:
-        The full secondard endpoint URL if configured. If not available
+        The full secondary endpoint URL if configured. If not available
         a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
     :ivar str secondary_hostname:
@@ -60,12 +60,12 @@ class QueueClient(StorageAccountHostsMixin):
         this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URL to the storage account. In order to create a client given the full URI to the queue,
-        use the from_queue_url classmethod.
+        use the :func:`from_queue_url` classmethod.
     :param queue_name: The name of the queue.
     :type queue_name: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
 
     .. admonition:: Example:
@@ -103,14 +103,8 @@ class QueueClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
 
-        if 'message_encode_policy' in kwargs:
-            self._config.message_encode_policy = kwargs['message_encode_policy'] or NoEncodePolicy()
-        else:
-            self._config.message_encode_policy = TextXMLEncodePolicy()
-        if 'message_decode_policy' in kwargs:
-            self._config.message_decode_policy = kwargs['message_decode_policy'] or NoDecodePolicy()
-        else:
-            self._config.message_decode_policy = TextXMLDecodePolicy()
+        self._config.message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
+        self._config.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -134,7 +128,7 @@ class QueueClient(StorageAccountHostsMixin):
         :param str queue_url: The full URI to the queue, including SAS token if used.
         :param credential:
             The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string, and account
+            account URL already has a SAS token. The value can be a SAS token string, an account
             shared access key, or an instance of a TokenCredentials class from azure.identity.
         """
         try:
@@ -173,13 +167,12 @@ class QueueClient(StorageAccountHostsMixin):
 
         :param str conn_str:
             A connection string to an Azure Storage account.
-        :param queue_name: The queue. This can either be the name of the queue,
-            or an instance of QueueProperties.
-        :type queue_name: str or ~azure.storage.queue.QueueProperties
+        :param queue_name: The queue name.
+        :type queue_name: str
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, and account shared access
+            access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
 
         .. admonition:: Example:
@@ -202,19 +195,18 @@ class QueueClient(StorageAccountHostsMixin):
         # type: (Optional[Any]) -> None
         """Creates a new queue in the storage account.
 
-        If a queue with the same name already exists, the operation fails.
+        If a queue with the same name already exists, the operation fails with
+        a `ResourceExistsError`.
 
-        :keyword metadata:
+        :keyword dict(str,str) metadata:
             A dict containing name-value pairs to associate with the queue as
             metadata. Note that metadata names preserve the case with which they
             were created, but are case-insensitive when set or read.
-        :type metadata: dict(str, str)
         :keyword int timeout:
             The server timeout, expressed in seconds.
         :return: None or the result of cls(response)
         :rtype: None
-        :raises:
-            ~azure.storage.queue.StorageErrorException
+        :raises: StorageErrorException
 
         .. admonition:: Example:
 
@@ -280,7 +272,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: Properties for the specified container within a container object.
+        :return: User-defined metadata for the queue.
         :rtype: ~azure.storage.queue.QueueProperties
 
         .. admonition:: Example:
@@ -377,8 +369,8 @@ class QueueClient(StorageAccountHostsMixin):
         :class:`HttpResponseError` until the access policy becomes active.
 
         :param signed_identifiers:
-            A list of SignedIdentifier access policies to associate with the queue.
-            The list may contain up to 5 elements. An empty list
+            SignedIdentifier access policies to associate with the queue.
+            This may contain up to 5 elements. An empty dict
             will clear the access policies set on the service.
         :type signed_identifiers: dict(str, ~azure.storage.queue.AccessPolicy)
         :keyword int timeout:
@@ -568,8 +560,9 @@ class QueueClient(StorageAccountHostsMixin):
         If the key-encryption-key field is set on the local service object, this method will
         encrypt the content before uploading.
 
-        :param str message:
+        :param message:
             The message object or id identifying the message to update.
+        :type message: str or ~azure.storage.queue.QueueMessage
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message` operation.
@@ -658,7 +651,7 @@ class QueueClient(StorageAccountHostsMixin):
         is set to 1. If it is not deleted and is subsequently retrieved again, the
         dequeue_count property is incremented. The client may use this value to
         determine how many times a message has been retrieved. Note that a call
-        to peek_messages does not increment the value of DequeueCount, but returns
+        to peek_messages does not increment the value of dequeue_count, but returns
         this value for the client to read.
 
         If the key-encryption-key or resolver field is set on the local service object,
@@ -743,8 +736,9 @@ class QueueClient(StorageAccountHostsMixin):
         pop_receipt returned from the :func:`~receive_messages` or :func:`~update_message`
         operation.
 
-        :param str message:
+        :param message:
             The message object or id identifying the message to delete.
+        :type message: str or ~azure.storage.queue.QueueMessage
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message`.

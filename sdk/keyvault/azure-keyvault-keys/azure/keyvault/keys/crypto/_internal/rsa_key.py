@@ -14,7 +14,6 @@ from cryptography.hazmat.primitives.asymmetric.rsa import (
     rsa_crt_dmp1,
     rsa_crt_dmq1,
     rsa_crt_iqmp,
-    RSAPrivateKey,
 )
 
 from azure.keyvault.keys._models import JsonWebKey
@@ -214,7 +213,10 @@ class RsaKey(Key):  # pylint:disable=too-many-public-methods
         return decryptor.transform(encrypted_key)
 
     def is_private_key(self):
-        return isinstance(self._rsa_impl, RSAPrivateKey)
+        # return isinstance(self._rsa_impl, RSAPrivateKey)
+        # TODO returning False here even if someone sneaked in private key material because
+        # currently we don't want to perform decrypt/unwrap/sign locally
+        return False
 
     def _public_key_material(self):
         return self.public_key.public_numbers()
