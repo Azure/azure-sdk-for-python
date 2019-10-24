@@ -159,4 +159,84 @@ interactions:
     status:
       code: 202
       message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - 7747f81c-ec78-11e9-b89b-b831b58100e8
+      x-ms-date:
+      - Fri, 11 Oct 2019 22:42:55 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/7d860a15?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 11 Oct 2019 22:42:55 GMT
+      ETag:
+      - '"0x8D74E9C5B7D4C43"'
+      Last-Modified:
+      - Fri, 11 Oct 2019 22:42:55 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - e1252138-201e-0048-4585-80d76b000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - 77696406-ec78-11e9-b716-b831b58100e8
+      x-ms-date:
+      - Fri, 11 Oct 2019 22:42:55 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://blobstoragename.blob.core.windows.net/7d860a15?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 11 Oct 2019 22:42:55 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - e1252187-201e-0048-0985-80d76b000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
 version: 1

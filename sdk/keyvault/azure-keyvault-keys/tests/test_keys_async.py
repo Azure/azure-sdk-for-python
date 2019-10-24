@@ -23,6 +23,24 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
     # incorporate md5 hashing of run identifier into resource group name for uniqueness
     name_prefix = "kv-test-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
 
+    def _assert_jwks_equal(self, jwk1, jwk2):
+        assert jwk1.kid == jwk2.kid
+        assert jwk1.kty == jwk2.kty
+        assert jwk1.key_ops == jwk2.key_ops
+        assert jwk1.n == jwk2.n
+        assert jwk1.e == jwk2.e
+        assert jwk1.d == jwk2.d
+        assert jwk1.dp == jwk2.dp
+        assert jwk1.dq == jwk2.dq
+        assert jwk1.qi == jwk2.qi
+        assert jwk1.p == jwk2.p
+        assert jwk1.q == jwk2.q
+        assert jwk1.k == jwk2.k
+        assert jwk1.t == jwk2.t
+        assert jwk1.crv == jwk2.crv
+        assert jwk1.x == jwk2.x
+        assert jwk1.y == jwk2.y
+
     def _assert_key_attributes_equal(self, k1, k2):
         self.assertEqual(k1.name, k2.name)
         self.assertEqual(k1.vault_url, k2.vault_url)
@@ -180,7 +198,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             polling_interval = None
         deleted_key = await client.delete_key(created_rsa_key.name, _polling_interval=polling_interval)
         self.assertIsNotNone(deleted_key)
-        self.assertEqual(created_rsa_key.key, deleted_key.key)
+        self._assert_jwks_equal(created_rsa_key.key, deleted_key.key)
         self.assertEqual(deleted_key.id, created_rsa_key.id)
         self.assertTrue(
             deleted_key.recovery_id and deleted_key.deleted_date and deleted_key.scheduled_purge_date,

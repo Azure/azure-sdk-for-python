@@ -34,8 +34,6 @@ from azure.storage.queue import (
     QueueClient,
     BinaryBase64EncodePolicy,
     BinaryBase64DecodePolicy,
-    NoEncodePolicy,
-    NoDecodePolicy
 )
 from encryption_test_helper import (
     KeyWrapper,
@@ -59,13 +57,13 @@ def _decode_base64_to_bytes(data):
 
 class StorageQueueEncryptionTest(QueueTestCase):
     # --Helpers-----------------------------------------------------------------
-    def _get_queue_reference(self, qsc, prefix=TEST_QUEUE_PREFIX):
+    def _get_queue_reference(self, qsc, prefix=TEST_QUEUE_PREFIX, **kwargs):
         queue_name = self.get_resource_name(prefix)
-        queue = qsc.get_queue_client(queue_name)
+        queue = qsc.get_queue_client(queue_name, **kwargs)
         return queue
 
-    def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX):
-        queue = self._get_queue_reference(qsc, prefix)
+    def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX, **kwargs):
+        queue = self._get_queue_reference(qsc, prefix, **kwargs)
         try:
             created = queue.create_queue()
         except ResourceExistsError:
@@ -81,7 +79,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         qsc.key_encryption_key = KeyWrapper('key1')
         queue = self._create_queue(qsc)
-        queue.enqueue_message(u'encrypted_message_2')
+        queue.send_message(u'encrypted_message_2')
 
         # Act
         li = next(queue.receive_messages())
@@ -96,7 +94,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         qsc.key_encryption_key = KeyWrapper('key1')
         queue = self._create_queue(qsc)
-        queue.enqueue_message(u'encrypted_message_2')
+        queue.send_message(u'encrypted_message_2')
         key_resolver = KeyResolver()
         key_resolver.put_key(qsc.key_encryption_key)
         queue.key_resolver_function = key_resolver.resolve_key
@@ -115,7 +113,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         qsc.key_encryption_key = KeyWrapper('key1')
         queue = self._create_queue(qsc)
-        queue.enqueue_message(u'encrypted_message_3')
+        queue.send_message(u'encrypted_message_3')
 
         # Act
         li = queue.peek_messages()
@@ -130,7 +128,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         qsc.key_encryption_key = KeyWrapper('key1')
         queue = self._create_queue(qsc)
-        queue.enqueue_message(u'encrypted_message_4')
+        queue.send_message(u'encrypted_message_4')
         key_resolver = KeyResolver()
         key_resolver.put_key(qsc.key_encryption_key)
         queue.key_resolver_function = key_resolver.resolve_key
@@ -155,7 +153,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         qsc.key_encryption_key = RSAKeyWrapper('key2')
         queue = self._create_queue(qsc)
-        queue.enqueue_message(u'encrypted_message_3')
+        queue.send_message(u'encrypted_message_3')
 
         # Act
         li = queue.peek_messages()
@@ -173,7 +171,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         queue = self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper('key1')
-        queue.enqueue_message(u'Update Me')
+        queue.send_message(u'Update Me')
 
         messages = queue.receive_messages()
         list_result1 = next(messages)
@@ -191,13 +189,11 @@ class StorageQueueEncryptionTest(QueueTestCase):
     def test_update_encrypted_binary_message(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
-        queue = self._create_queue(qsc)
+        queue = self._create_queue(qsc, message_encode_policy=BinaryBase64EncodePolicy(), message_decode_policy=BinaryBase64DecodePolicy())
         queue.key_encryption_key = KeyWrapper('key1')
-        queue._config.message_encode_policy = BinaryBase64EncodePolicy()
-        queue._config.message_decode_policy = BinaryBase64DecodePolicy()
 
         binary_message = self.get_random_bytes(100)
-        queue.enqueue_message(binary_message)
+        queue.send_message(binary_message)
         messages = []
         for m in queue.receive_messages():
             messages.append(m)
@@ -224,13 +220,11 @@ class StorageQueueEncryptionTest(QueueTestCase):
             return
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
-        queue = self._create_queue(qsc)
+        queue = self._create_queue(qsc, message_encode_policy=None, message_decode_policy=None)
         queue.key_encryption_key = KeyWrapper('key1')
-        queue._config.message_encode_policy = NoEncodePolicy()
-        queue._config.message_decode_policy = NoDecodePolicy()
 
         raw_text = u'Update Me'
-        queue.enqueue_message(raw_text)
+        queue.send_message(raw_text)
         messages = queue.receive_messages()
         list_result1 = next(messages)
 
@@ -252,14 +246,12 @@ class StorageQueueEncryptionTest(QueueTestCase):
             return
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
-        queue = self._create_queue(qsc)
+        queue = self._create_queue(qsc, message_encode_policy=None, message_decode_policy=None)
         queue.key_encryption_key = KeyWrapper('key1')
-        queue._config.message_encode_policy = NoEncodePolicy()
-        queue._config.message_decode_policy = NoDecodePolicy()
 
         message_dict = {'val1': 1, 'val2': '2'}
         json_text = dumps(message_dict)
-        queue.enqueue_message(json_text)
+        queue.send_message(json_text)
         messages = queue.receive_messages()
         list_result1 = next(messages)
 
@@ -285,19 +277,19 @@ class StorageQueueEncryptionTest(QueueTestCase):
         queue.key_encryption_key.get_kid = None
 
         with self.assertRaises(AttributeError) as e:
-            queue.enqueue_message(u'message')
+            queue.send_message(u'message')
 
         self.assertEqual(str(e.exception), _ERROR_OBJECT_INVALID.format('key encryption key', 'get_kid'))
 
         queue.key_encryption_key = KeyWrapper('key1')
         queue.key_encryption_key.get_kid = None
         with self.assertRaises(AttributeError):
-            queue.enqueue_message(u'message')
+            queue.send_message(u'message')
 
         queue.key_encryption_key = KeyWrapper('key1')
         queue.key_encryption_key.wrap_key = None
         with self.assertRaises(AttributeError):
-            queue.enqueue_message(u'message')
+            queue.send_message(u'message')
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -315,7 +307,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
         # No attribute wrap_key
         queue.key_encryption_key = invalid_key_1
         with self.assertRaises(AttributeError):
-            queue.enqueue_message(u'message')
+            queue.send_message(u'message')
 
         invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
         invalid_key_2.wrap_key = valid_key.wrap_key
@@ -323,7 +315,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
         # No attribute get_key_wrap_algorithm
         queue.key_encryption_key = invalid_key_2
         with self.assertRaises(AttributeError):
-            queue.enqueue_message(u'message')
+            queue.send_message(u'message')
 
         invalid_key_3 = lambda: None  # functions are objects, so this effectively creates an empty object
         invalid_key_3.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
@@ -331,7 +323,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
         # No attribute get_kid
         queue.key_encryption_key = invalid_key_3
         with self.assertRaises(AttributeError):
-            queue.enqueue_message(u'message')
+            queue.send_message(u'message')
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -340,7 +332,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         queue = self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper('key1')
-        queue.enqueue_message(u'message')
+        queue.send_message(u'message')
 
         # Act
         queue.key_encryption_key.unwrap_key = None
@@ -358,7 +350,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         queue = self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper('key1')
-        queue.enqueue_message(u'message')
+        queue.send_message(u'message')
 
         # Act
         valid_key = KeyWrapper('key1')
@@ -386,7 +378,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
         queue = self._create_queue(qsc)
         kek = KeyWrapper('key1')
         queue.key_encryption_key = kek
-        queue.enqueue_message(u'message')
+        queue.send_message(u'message')
 
         # Act
         queue.key_encryption_key = None  # Message will not be decrypted
@@ -448,12 +440,12 @@ class StorageQueueEncryptionTest(QueueTestCase):
         queue.key_encryption_key = kek
         queue.require_encryption = True
 
-        queue.enqueue_message(u'message')
+        queue.send_message(u'message')
         queue.key_encryption_key = None
 
         # Assert
         with self.assertRaises(ValueError) as e:
-            queue.enqueue_message(u'message')
+            queue.send_message(u'message')
 
         self.assertEqual(str(e.exception), "Encryption required but no key was provided.")
 
@@ -463,7 +455,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         queue = self._create_queue(qsc)
-        queue.enqueue_message(u'message')
+        queue.send_message(u'message')
 
         queue.require_encryption = True
         queue.key_encryption_key = KeyWrapper('key1')
@@ -481,12 +473,12 @@ class StorageQueueEncryptionTest(QueueTestCase):
         message = u'a' * 1024 * 64
 
         # Act
-        queue.enqueue_message(message)
+        queue.send_message(message)
 
         # Assert
         queue.key_encryption_key = KeyWrapper('key1')
         with self.assertRaises(HttpResponseError):
-            queue.enqueue_message(message)
+            queue.send_message(message)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -495,7 +487,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         queue = self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper('key1')
-        queue.enqueue_message(u'message')
+        queue.send_message(u'message')
 
         # Act
         queue.key_encryption_key.kid = 'Invalid'

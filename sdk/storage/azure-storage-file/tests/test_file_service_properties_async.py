@@ -11,12 +11,12 @@ import asyncio
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from azure.storage.file.aio import (
-    FileServiceClient,
+from azure.storage.file import (
     Metrics,
     CorsRule,
     RetentionPolicy,
 )
+from azure.storage.file.aio import FileServiceClient
 
 from filetestcase import (
     FileTestCase,
