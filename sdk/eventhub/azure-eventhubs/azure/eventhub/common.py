@@ -123,7 +123,7 @@ class EventData(object):
             current_span = parent_span or span_impl_type(span_impl_type.get_current_span())
             message_span = current_span.span(name="Azure.EventHubs.message")
             message_span.start()
-            app_prop = dict(self.application_properties)
+            app_prop = dict(self.application_properties) if self.application_properties else dict()
             app_prop.setdefault(b"Diagnostic-Id", message_span.get_trace_parent().encode('ascii'))
             self.application_properties = app_prop
             message_span.finish()
