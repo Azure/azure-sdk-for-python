@@ -3,8 +3,26 @@
 Release History
 ===============
 
+4.0.0 (2019-10-24)
+++++++++++++++++++
+
+**Features**
+
+- Model MigrationEligibilityInfo has a new parameter is_eligible_for_migration
+- Model ConnectToTargetSqlMITaskInput has a new parameter validate_ssis_catalog_only
+- Model ConnectToTargetSqlMITaskInput has a new parameter collect_logins
+- Model ConnectToTargetSqlMITaskInput has a new parameter collect_agent_jobs
+- Model ConnectToSourceSqlServerTaskInput has a new parameter collect_databases
+- Model ConnectToSourceSqlServerTaskInput has a new parameter validate_ssis_catalog_only
+- Model MigrateSqlServerSqlMITaskInput has a new parameter aad_domain_name
+- Model MigrateOracleAzureDbPostgreSqlSyncDatabaseInput has a new parameter case_manipulation
+
+**Breaking changes**
+
+- Model MigrationEligibilityInfo no longer has parameter is_eligibile_for_migration
+
 3.0.0 (2019-07-12)
-+++++:w+++++++++++++
+++++++++++++++++++
 
 **Features**
 

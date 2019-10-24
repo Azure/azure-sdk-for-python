@@ -33,10 +33,10 @@ class QueueServicePropertiesTest(QueueTestCase):
     def _assert_properties_default(self, prop):
         self.assertIsNotNone(prop)
 
-        self._assert_logging_equal(prop.logging, QueueAnalyticsLogging())
-        self._assert_metrics_equal(prop.hour_metrics, Metrics())
-        self._assert_metrics_equal(prop.minute_metrics, Metrics())
-        self._assert_cors_equal(prop.cors, list())
+        self._assert_logging_equal(prop['analytics_logging'], QueueAnalyticsLogging())
+        self._assert_metrics_equal(prop['hour_metrics'], Metrics())
+        self._assert_metrics_equal(prop['minute_metrics'], Metrics())
+        self._assert_cors_equal(prop['cors'], list())
 
     def _assert_logging_equal(self, log1, log2):
         if log1 is None or log2 is None:
@@ -106,7 +106,7 @@ class QueueServicePropertiesTest(QueueTestCase):
 
     # --Test cases per service ---------------------------------------
 
-    @ResourceGroupPreparer()     
+    @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_queue_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -125,7 +125,7 @@ class QueueServicePropertiesTest(QueueTestCase):
 
     # --Test cases per feature ---------------------------------------
 
-    @ResourceGroupPreparer()          
+    @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_logging(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -137,9 +137,9 @@ class QueueServicePropertiesTest(QueueTestCase):
 
         # Assert
         received_props = qsc.get_service_properties()
-        self._assert_logging_equal(received_props.logging, logging)
+        self._assert_logging_equal(received_props['analytics_logging'], logging)
 
-    @ResourceGroupPreparer()          
+    @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_hour_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -151,9 +151,9 @@ class QueueServicePropertiesTest(QueueTestCase):
 
         # Assert
         received_props = qsc.get_service_properties()
-        self._assert_metrics_equal(received_props.hour_metrics, hour_metrics)
+        self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-    @ResourceGroupPreparer()          
+    @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_minute_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -166,9 +166,9 @@ class QueueServicePropertiesTest(QueueTestCase):
 
         # Assert
         received_props = qsc.get_service_properties()
-        self._assert_metrics_equal(received_props.minute_metrics, minute_metrics)
+        self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-    @ResourceGroupPreparer()          
+    @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_cors(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -194,10 +194,10 @@ class QueueServicePropertiesTest(QueueTestCase):
 
         # Assert
         received_props = qsc.get_service_properties()
-        self._assert_cors_equal(received_props.cors, cors)
+        self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
-    @ResourceGroupPreparer()          
+    @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_retention_no_days(self, resource_group, location, storage_account, storage_account_key):
         # Assert
@@ -205,7 +205,7 @@ class QueueServicePropertiesTest(QueueTestCase):
                           RetentionPolicy,
                           True, None)
 
-    @ResourceGroupPreparer()          
+    @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_too_many_cors_rules(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -218,7 +218,7 @@ class QueueServicePropertiesTest(QueueTestCase):
         self.assertRaises(HttpResponseError,
                           qsc.set_service_properties, None, None, None, cors)
 
-    @ResourceGroupPreparer()          
+    @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_retention_too_long(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

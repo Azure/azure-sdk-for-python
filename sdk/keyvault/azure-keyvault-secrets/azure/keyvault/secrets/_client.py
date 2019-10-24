@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 class SecretClient(KeyVaultClientBase):
     """A high-level interface for managing a vault's secrets.
 
-    :param str vault_endpoint: URL of the vault the client will access
+    :param str vault_url: URL of the vault the client will access
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
     :keyword str api_version: version of the Key Vault API to use. Defaults to the most recent.
@@ -64,7 +64,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.get_secret(
-            vault_base_url=self._vault_endpoint,
+            vault_base_url=self._vault_url,
             secret_name=name,
             secret_version=version or "",
             error_map=_error_map,
@@ -107,7 +107,7 @@ class SecretClient(KeyVaultClientBase):
         else:
             attributes = None
         bundle = self._client.set_secret(
-            vault_base_url=self.vault_endpoint, secret_name=name, value=value, secret_attributes=attributes, **kwargs
+            vault_base_url=self.vault_url, secret_name=name, value=value, secret_attributes=attributes, **kwargs
         )
         return KeyVaultSecret._from_secret_bundle(bundle)
 
@@ -149,7 +149,7 @@ class SecretClient(KeyVaultClientBase):
         else:
             attributes = None
         bundle = self._client.update_secret(
-            self.vault_endpoint,
+            self.vault_url,
             name,
             secret_version=version or "",
             secret_attributes=attributes,
@@ -177,7 +177,7 @@ class SecretClient(KeyVaultClientBase):
 
         """
         return self._client.get_secrets(
-            self._vault_endpoint,
+            self._vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
             **kwargs
@@ -203,7 +203,7 @@ class SecretClient(KeyVaultClientBase):
 
         """
         return self._client.get_secret_versions(
-            self._vault_endpoint,
+            self._vault_url,
             name,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
@@ -231,7 +231,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        backup_result = self._client.backup_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        backup_result = self._client.backup_secret(self.vault_url, name, error_map=_error_map, **kwargs)
         return backup_result.value
 
     @distributed_trace
@@ -255,7 +255,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        bundle = self._client.restore_secret(self.vault_endpoint, backup, error_map=_error_map, **kwargs)
+        bundle = self._client.restore_secret(self.vault_url, backup, error_map=_error_map, **kwargs)
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace
@@ -285,7 +285,7 @@ class SecretClient(KeyVaultClientBase):
         """
         polling_interval = kwargs.pop("_polling_interval", 2)
         deleted_secret = DeletedSecret._from_deleted_secret_bundle(
-            self._client.delete_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+            self._client.delete_secret(self.vault_url, name, error_map=_error_map, **kwargs)
         )
         sd_disabled = deleted_secret.recovery_id is None
         command = partial(self.get_deleted_secret, name=name, **kwargs)
@@ -320,7 +320,7 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        bundle = self._client.get_deleted_secret(self.vault_endpoint, name, error_map=_error_map, **kwargs)
+        bundle = self._client.get_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     @distributed_trace
@@ -342,7 +342,7 @@ class SecretClient(KeyVaultClientBase):
 
         """
         return self._client.get_deleted_secrets(
-            self._vault_endpoint,
+            self._vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedSecret._from_deleted_secret_item(x) for x in objs],
             **kwargs
@@ -369,7 +369,7 @@ class SecretClient(KeyVaultClientBase):
                 secret_client.purge_deleted_secret("secret-name")
 
         """
-        self._client.purge_deleted_secret(self.vault_endpoint, name, **kwargs)
+        self._client.purge_deleted_secret(self.vault_url, name, **kwargs)
 
     @distributed_trace
     def begin_recover_deleted_secret(self, name, **kwargs):
@@ -398,7 +398,7 @@ class SecretClient(KeyVaultClientBase):
         """
         polling_interval = kwargs.pop("_polling_interval", 2)
         recovered_secret = SecretProperties._from_secret_bundle(
-            self._client.recover_deleted_secret(self.vault_endpoint, name, **kwargs)
+            self._client.recover_deleted_secret(self.vault_url, name, **kwargs)
         )
         command = partial(self.get_secret, name=name, **kwargs)
         recover_secret_polling_method = RecoverDeletedPollingMethod(

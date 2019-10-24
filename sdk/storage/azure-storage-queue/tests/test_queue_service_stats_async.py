@@ -39,17 +39,17 @@ class QueueServiceStatsTestAsync(AsyncQueueTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_stats_default(self, stats):
         self.assertIsNotNone(stats)
-        self.assertIsNotNone(stats.geo_replication)
+        self.assertIsNotNone(stats['geo_replication'])
 
-        self.assertEqual(stats.geo_replication.status, 'live')
-        self.assertIsNotNone(stats.geo_replication.last_sync_time)
+        self.assertEqual(stats['geo_replication']['status'], 'live')
+        self.assertIsNotNone(stats['geo_replication']['last_sync_time'])
 
     def _assert_stats_unavailable(self, stats):
         self.assertIsNotNone(stats)
-        self.assertIsNotNone(stats.geo_replication)
+        self.assertIsNotNone(stats['geo_replication'])
 
-        self.assertEqual(stats.geo_replication.status, 'unavailable')
-        self.assertIsNone(stats.geo_replication.last_sync_time)
+        self.assertEqual(stats['geo_replication']['status'], 'unavailable')
+        self.assertIsNone(stats['geo_replication']['last_sync_time'])
 
     @staticmethod
     def override_response_body_with_unavailable_status(response):
@@ -60,7 +60,7 @@ class QueueServiceStatsTestAsync(AsyncQueueTestCase):
         response.http_response.text = lambda: SERVICE_LIVE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
-    @ResourceGroupPreparer()     
+    @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS')
     @AsyncQueueTestCase.await_prepared_test
     async def test_queue_service_stats_f(self, resource_group, location, storage_account, storage_account_key):
@@ -72,11 +72,11 @@ class QueueServiceStatsTestAsync(AsyncQueueTestCase):
         # Assert
         self._assert_stats_default(stats)
 
-    @ResourceGroupPreparer()     
+    @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS')
     @AsyncQueueTestCase.await_prepared_test
     async def test_queue_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange        
+        # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
 
         # Act
