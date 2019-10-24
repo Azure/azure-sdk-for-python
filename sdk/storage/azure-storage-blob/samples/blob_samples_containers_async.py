@@ -176,7 +176,7 @@ class ContainerSamplesAsync(object):
 
         # [START upload_blob_to_container]
         with open(SOURCE_FILE, "rb") as data:
-            blob_client = await container_client.upload_blob(name="blobby", data=data)
+            blob_client = await container_client.upload_blob(name="myblob", data=data)
 
         properties = await blob_client.get_blob_properties()
         # [END upload_blob_to_container]
