@@ -21,11 +21,10 @@ class SecretClient(AsyncKeyVaultClientBase):
     :param str vault_endpoint: URL of the vault the client will access
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
-
-    Keyword arguments
-        - **api_version**: version of the Key Vault API to use. Defaults to the most recent.
-        - **transport**: :class:`~azure.core.pipeline.transport.AsyncHttpTransport` to use. Defaults to
-          :class:`~azure.core.pipeline.transport.AioHttpTransport`.
+    :keyword str api_version: version of the Key Vault API to use. Defaults to the most recent.
+    :keyword transport: transport to use. Defaults to
+     :class:`~azure.core.pipeline.transport.AioHttpTransport`.
+    :paramtype transport: ~azure.core.pipeline.transport.AsyncHttpTransport
 
     Example:
         .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -67,15 +66,13 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: The name of the secret
         :param str value: The value of the secret
+        :keyword bool enabled: Whether the secret is enabled for use.
+        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword str content_type: An arbitrary string indicating the type of the secret, e.g. 'password'
+        :keyword datetime.datetime not_before: Not before date of the secret in UTC
+        :keyword datetime.datetime expires_on: Expiry date of the secret in UTC
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
-
-        Keyword arguments
-            - **enabled** (bool): Whether the secret is enabled for use.
-            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
-            - **content_type** (str): An arbitrary string indicating the type of the secret, e.g. 'password'
-            - **not_before** (:class:`~datetime.datetime`): Not before date of the secret in UTC
-            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the secret in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -107,17 +104,15 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: Name of the secret
         :param str version: (optional) Version of the secret to update. If unspecified, the latest version is updated.
+        :keyword bool enabled: Whether the secret is enabled for use.
+        :keyword dict[str, str] tags: Application specific metadata in the form of key-value pairs.
+        :keyword str content_type: An arbitrary string indicating the type of the secret, e.g. 'password'
+        :keyword datetime.datetime not_before: Not before date of the secret in UTC
+        :keyword datetime.datetime expires_on: Expiry date of the secret in UTC
         :rtype: ~azure.keyvault.secrets.SecretProperties
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
-
-        Keyword arguments
-            - **enabled** (bool): Whether the secret is enabled for use.
-            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
-            - **content_type** (str): A descriptive string indicating the type of the secret, e.g. 'password'
-            - **not_before** (:class:`~datetime.datetime`): Not before date of the secret in UTC
-            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the secret in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
