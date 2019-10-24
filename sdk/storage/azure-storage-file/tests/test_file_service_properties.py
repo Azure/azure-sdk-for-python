@@ -77,9 +77,9 @@ class FileServicePropertiesTest(FileTestCase):
         # Assert
         self.assertIsNone(resp)
         props = self.fsc.get_service_properties()
-        self._assert_metrics_equal(props.hour_metrics, Metrics())
-        self._assert_metrics_equal(props.minute_metrics, Metrics())
-        self._assert_cors_equal(props.cors, list())
+        self._assert_metrics_equal(props['hour_metrics'], Metrics())
+        self._assert_metrics_equal(props['minute_metrics'], Metrics())
+        self._assert_cors_equal(props['cors'], list())
 
     # --Test cases per feature ---------------------------------------
     @record
@@ -92,7 +92,7 @@ class FileServicePropertiesTest(FileTestCase):
 
         # Assert
         received_props = self.fsc.get_service_properties()
-        self._assert_metrics_equal(received_props.hour_metrics, hour_metrics)
+        self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
     @record
     def test_set_minute_metrics(self):
@@ -105,7 +105,7 @@ class FileServicePropertiesTest(FileTestCase):
 
         # Assert
         received_props = self.fsc.get_service_properties()
-        self._assert_metrics_equal(received_props.minute_metrics, minute_metrics)
+        self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
     @record
     def test_set_cors(self):
@@ -131,7 +131,7 @@ class FileServicePropertiesTest(FileTestCase):
 
         # Assert
         received_props = self.fsc.get_service_properties()
-        self._assert_cors_equal(received_props.cors, cors)
+        self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
     @record

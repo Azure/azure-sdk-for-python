@@ -28,6 +28,10 @@ from .._generated.models import StorageServiceProperties, StorageErrorException
 
 from ._models import QueuePropertiesPaged
 from ._queue_client_async import QueueClient
+from .._models import (
+    service_stats_deserialize,
+    service_properties_deserialize,
+)
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -137,8 +141,9 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.service.get_statistics( # type: ignore
+            stats = await self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
+            return service_stats_deserialize(stats)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -165,7 +170,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.service.get_properties(timeout=timeout, **kwargs) # type: ignore
+            service_props = await self._client.service.get_properties(timeout=timeout, **kwargs) # type: ignore
+            return service_properties_deserialize(service_props)
         except StorageErrorException as error:
             process_storage_error(error)
 

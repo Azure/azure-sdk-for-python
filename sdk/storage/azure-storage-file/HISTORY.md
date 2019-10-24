@@ -38,7 +38,9 @@ the following APIs:
 - `StorageStreamDownloader` now has new functions:
   - `readall()`: Reads the complete download stream, returning bytes. This replaces the functions `content_as_bytes` and `content_as_text` which have been deprecated.
   - `readinto(stream)`: Download the complete stream into the supplied writable stream, returning the number of bytes written. This replaces the function `download_to_stream` which has been deprecated.
-- `FileClient.close_handles` and `DirectoryClient.close_handles` have both been replaced by two functions each; `close_handle(handle)` and `close_all_handles()`. These functions are blocking and return integers (the number of closed handles) rather than polling objects.
+- `FileClient.close_handles` and `DirectoryClient.close_handles` have both been replaced by two functions each; `close_handle(handle)` and `close_all_handles()`. These functions are blocking and return integer (the number of closed handles) rather than polling objects.
+- `get_service_properties` now returns a dict with keys consistent to `set_service_properties`
+
 
 **New features**
 
