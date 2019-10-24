@@ -6,8 +6,8 @@ import codecs
 import hashlib
 import os
 
-from azure.keyvault.keys import JsonWebKey, KeyCurveName
-from azure.keyvault.keys.crypto import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyVaultKey
+from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 from devtools_testutils import ResourceGroupPreparer
 from keys_preparer import VaultClientPreparer
@@ -69,7 +69,7 @@ class CryptoClientTests(KeyVaultTestCase):
             ),
         )
         imported_key = client.import_key(name, key)
-        self._validate_rsa_key_bundle(imported_key, client.vault_endpoint, name, key.kty, key.key_ops)
+        self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
         return imported_key
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
@@ -130,7 +130,19 @@ class CryptoClientTests(KeyVaultTestCase):
         result = crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
         self.assertEqual(key_bytes, result.key)
 
-    @ResourceGroupPreparer(name_prefix=name_prefix)
+    def test_symmetric_wrap_and_unwrap_local(self, **kwargs):
+        jwk = {"k": os.urandom(32), "kty": "oct", "key_ops": ("unwrapKey", "wrapKey")}
+        key = KeyVaultKey(key_id="http://fake.test.vault/keys/key/version", jwk=jwk)
+
+        crypto_client = CryptographyClient(key, credential=lambda *_: None)
+
+        # Wrap a key with the created key, then unwrap it. The wrapped key's bytes should round-trip.
+        key_bytes = os.urandom(32)
+        wrap_result = crypto_client.wrap_key(KeyWrapAlgorithm.aes_256, key_bytes)
+        unwrap_result = crypto_client.unwrap_key(wrap_result.algorithm, wrap_result.encrypted_key)
+        self.assertEqual(unwrap_result.key, key_bytes)
+
+    @ResourceGroupPreparer()
     @VaultClientPreparer()
     def test_encrypt_local(self, vault_client, **kwargs):
         """Encrypt locally, decrypt with Key Vault"""
@@ -155,7 +167,7 @@ class CryptoClientTests(KeyVaultTestCase):
         key = key_client.create_rsa_key("wrap-local", size=4096)
         crypto_client = vault_client.get_cryptography_client(key)
 
-        for wrap_algorithm in KeyWrapAlgorithm:
+        for wrap_algorithm in (algo for algo in KeyWrapAlgorithm if algo.value.startswith("RSA")):
             result = crypto_client.wrap_key(wrap_algorithm, self.plaintext)
             self.assertEqual(result.key_id, key.id)
 

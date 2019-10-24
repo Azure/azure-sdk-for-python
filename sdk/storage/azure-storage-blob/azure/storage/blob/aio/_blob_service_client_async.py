@@ -26,7 +26,11 @@ from .._generated.models import StorageErrorException, StorageServiceProperties,
 from .._blob_service_client import BlobServiceClient as BlobServiceClientBase
 from ._container_client_async import ContainerClient
 from ._blob_client_async import BlobClient
-from .._models import ContainerProperties
+from .._models import (
+    ContainerProperties,
+    service_stats_deserialize,
+    service_properties_deserialize,
+)
 from ._models import ContainerPropertiesPaged
 
 if TYPE_CHECKING:
@@ -34,15 +38,15 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
     from .._shared.models import AccountSasPermissions, ResourceTypes, UserDelegationKey
-    from ._lease_async import LeaseClient
+    from ._lease_async import BlobLeaseClient
     from .._models import (
         BlobProperties,
+        PublicAccess,
         BlobAnalyticsLogging,
         Metrics,
+        CorsRule,
         RetentionPolicy,
         StaticWebsite,
-        CorsRule,
-        PublicAccess,
     )
 
 
@@ -78,7 +82,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         authenticated with a SAS token.
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
@@ -192,7 +196,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: The blob service stats.
-        :rtype: ~azure.storage.blob._generated.models.StorageServiceStats
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -205,8 +209,9 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.service.get_statistics( # type: ignore
+            stats = await self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
+            return service_stats_deserialize(stats)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -218,7 +223,9 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.blob._generated.models.StorageServiceProperties
+        :returns: An object containing blob service properties such as
+            analytics logging, hour/minute metrics, cors rules, etc.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -231,7 +238,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.service.get_properties(timeout=timeout, **kwargs)
+            service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
+            return service_properties_deserialize(service_props)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -324,9 +332,9 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             Filters the results to return only containers whose names
             begin with the specified prefix.
         :param bool include_metadata:
-            Specifies that container metadata be returned in the response.
+            Specifies that container metadata to be returned in the response.
             The default value is `False`.
-        :param int results_per_page:
+        :keyword int results_per_page:
             The maximum number of container names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items.
         :keyword int timeout:
@@ -379,7 +387,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             container as metadata. Example: `{'Category':'test'}`
         :type metadata: dict(str, str)
         :param public_access:
-            Possible values include: container, blob.
+            Possible values include: 'container', 'blob'.
         :type public_access: str or ~azure.storage.blob.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -404,7 +412,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
     @distributed_trace_async
     async def delete_container(
             self, container,  # type: Union[ContainerProperties, str]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
+            lease=None,  # type: Optional[Union[BlobLeaseClient, str]]
             **kwargs
         ):
         # type: (...) -> None
@@ -417,10 +425,11 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             The container to delete. This can either be the name of the container,
             or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.ContainerProperties
-        :param ~azure.storage.blob.lease.LeaseClient lease:
+        :param lease:
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.
+        :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -436,7 +445,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword :class:`MatchConditions` match_condition:
+        :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -466,7 +475,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         The container need not already exist.
 
         :param container:
-            The container that the blob is in.
+            The container. This can either be the name of the container,
+            or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.ContainerProperties
         :returns: A ContainerClient.
         :rtype: ~azure.storage.blob.aio.ContainerClient
@@ -506,11 +516,13 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         The blob need not already exist.
 
         :param container:
-            The container that the blob is in.
-        :type container: str or ~azure.storage.ContainerProperties
+            The container that the blob is in. This can either be the name of the container,
+            or an instance of ContainerProperties.
+        :type container: str or ~azure.storage.blob.ContainerProperties
         :param blob:
-            The blob with which to interact.
-        :type blob: str or ~azure.storage.BlobProperties
+            The blob with which to interact. This can either be the name of the blob,
+            or an instance of BlobProperties.
+        :type blob: str or ~azure.storage.blob.BlobProperties
         :param snapshot:
             The optional blob snapshot on which to operate. This can either be the ID of the snapshot,
             or a dictionary output returned by

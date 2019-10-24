@@ -61,7 +61,7 @@ names):
     }
     ```
 
-    > The `"vaultUri"` property is the `vault_endpoint` used by `SecretClient`
+    > The `"vaultUri"` property is the `vault_url` used by `SecretClient`
 
 ### Authenticate the client
 In order to interact with a Key Vault's secrets, you'll need an instance of the
@@ -120,7 +120,7 @@ After setting the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
 
     credential = DefaultAzureCredential()
 
-    secret_client = SecretClient(vault_endpoint=<your-vault-url>, credential=credential)
+    secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 ```
 
 ## Key concepts
@@ -223,7 +223,7 @@ This example creates a secret in the Key Vault with the specified optional argum
     from azure.keyvault.secrets.aio import SecretClient
 
     credential = DefaultAzureCredential()
-    secret_client = SecretClient(vault_endpoint=vault_endpoint, credential=credential)
+    secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
     secret = await secret_client.set_secret("secret-name", "secret-value")
 
@@ -268,23 +268,23 @@ can configure logging to print debugging information to stdout or write it
 to a file:
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 import sys
 import logging
 
 # Create a logger for the 'azure' SDK
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('azure')
 logger.setLevel(logging.DEBUG)
 
 # Configure a console output
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-# Configure a file output
-file_handler = logging.FileHandler(filename)
-logger.addHandler(file_handler)
+credential = DefaultAzureCredential()
 
 # Enable network trace logging. Each HTTP request will be logged at DEBUG level.
-client = SecretClient(vault_endpoint=url, credential=credential, logging_enable=True)
+client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential, logging_enable=True)
 ```
 
 Network trace logging can also be enabled for any single operation:

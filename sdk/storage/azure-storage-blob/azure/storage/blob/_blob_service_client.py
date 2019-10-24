@@ -28,23 +28,27 @@ from ._generated import AzureBlobStorage
 from ._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
 from ._container_client import ContainerClient
 from ._blob_client import BlobClient
-from ._models import ContainerPropertiesPaged
+from ._models import (
+    ContainerPropertiesPaged,
+    service_stats_deserialize,
+    service_properties_deserialize
+)
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
     from ._shared.models import UserDelegationKey
-    from ._lease import LeaseClient
+    from ._lease import BlobLeaseClient
     from ._models import (
         BlobProperties,
         ContainerProperties,
+        PublicAccess,
         BlobAnalyticsLogging,
         Metrics,
+        CorsRule,
         RetentionPolicy,
         StaticWebsite,
-        CorsRule,
-        PublicAccess
     )
 
 
@@ -80,7 +84,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         authenticated with a SAS token.
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
 
@@ -140,7 +144,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, and account shared access
+            access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
 
@@ -237,7 +241,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: The blob service stats.
-        :rtype: ~azure.storage.blob._generated.models.StorageServiceStats
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -250,8 +254,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.service.get_statistics( # type: ignore
+            stats = self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
+            return service_stats_deserialize(stats)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -263,7 +268,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.blob._generated.models.StorageServiceProperties
+        :returns: An object containing blob service properties such as
+            analytics logging, hour/minute metrics, cors rules, etc.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -276,7 +283,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.service.get_properties(timeout=timeout, **kwargs)
+            service_props = self._client.service.get_properties(timeout=timeout, **kwargs)
+            return service_properties_deserialize(service_props)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -369,7 +377,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             Filters the results to return only containers whose names
             begin with the specified prefix.
         :param bool include_metadata:
-            Specifies that container metadata be returned in the response.
+            Specifies that container metadata to be returned in the response.
             The default value is `False`.
         :keyword int results_per_page:
             The maximum number of container names to retrieve per API
@@ -424,7 +432,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             container as metadata. Example: `{'Category':'test'}`
         :type metadata: dict(str, str)
         :param public_access:
-            Possible values include: container, blob.
+            Possible values include: 'container', 'blob'.
         :type public_access: str or ~azure.storage.blob.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -449,7 +457,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def delete_container(
             self, container,  # type: Union[ContainerProperties, str]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
+            lease=None,  # type: Optional[Union[BlobLeaseClient, str]]
             **kwargs
         ):
         # type: (...) -> None
@@ -462,10 +470,11 @@ class BlobServiceClient(StorageAccountHostsMixin):
             The container to delete. This can either be the name of the container,
             or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.ContainerProperties
-        :param ~azure.storage.blob.LeaseClient lease:
+        :param lease:
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
             Required if the container has an active lease.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -481,7 +490,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword :class:`MatchConditions` match_condition:
+        :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.

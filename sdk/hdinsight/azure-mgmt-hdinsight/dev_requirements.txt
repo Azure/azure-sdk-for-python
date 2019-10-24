@@ -1,5 +1,5 @@
-../../core/azure-core
-../../../tools/azure-sdk-tools
-../../keyvault/azure-keyvault-keys
-../../keyvault/azure-mgmt-keyvault
-../../resources/azure-mgmt-msi/
+-e ../../../tools/azure-sdk-tools
+-e ../../core/azure-core
+-e ../../keyvault/azure-keyvault-keys
+-e ../../keyvault/azure-mgmt-keyvault
+-e ../../resources/azure-mgmt-msi/

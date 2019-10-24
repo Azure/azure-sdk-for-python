@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 16 Oct 2019 06:56:45 GMT
+      - Tue, 22 Oct 2019 21:28:00 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -15,7 +15,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 16 Oct 2019 06:56:45 GMT
+      date: Tue, 22 Oct 2019 21:27:58 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -35,7 +35,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 16 Oct 2019 06:56:46 GMT
+      - Tue, 22 Oct 2019 21:28:00 GMT
       x-ms-meta-bar:
       - val2
       x-ms-meta-baz:
@@ -51,7 +51,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 16 Oct 2019 06:56:45 GMT
+      date: Tue, 22 Oct 2019 21:27:58 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -71,7 +71,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 16 Oct 2019 06:56:46 GMT
+      - Tue, 22 Oct 2019 21:28:00 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -82,7 +82,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Wed, 16 Oct 2019 06:56:45 GMT
+      date: Tue, 22 Oct 2019 21:27:58 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-approximate-messages-count: '0'
       x-ms-meta-bar: val2
@@ -106,7 +106,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 16 Oct 2019 06:56:46 GMT
+      - Tue, 22 Oct 2019 21:28:00 GMT
       x-ms-version:
       - '2018-03-28'
     method: DELETE
@@ -116,7 +116,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 16 Oct 2019 06:56:45 GMT
+      date: Tue, 22 Oct 2019 21:27:58 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:

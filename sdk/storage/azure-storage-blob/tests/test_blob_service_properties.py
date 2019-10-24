@@ -43,10 +43,10 @@ class ServicePropertiesTest(StorageTestCase):
     def _assert_properties_default(self, prop):
         self.assertIsNotNone(prop)
 
-        self._assert_logging_equal(prop.logging, BlobAnalyticsLogging())
-        self._assert_metrics_equal(prop.hour_metrics, Metrics())
-        self._assert_metrics_equal(prop.minute_metrics, Metrics())
-        self._assert_cors_equal(prop.cors, list())
+        self._assert_logging_equal(prop['analytics_logging'], BlobAnalyticsLogging())
+        self._assert_metrics_equal(prop['hour_metrics'], Metrics())
+        self._assert_metrics_equal(prop['minute_metrics'], Metrics())
+        self._assert_cors_equal(prop['cors'], list())
 
     def _assert_logging_equal(self, log1, log2):
         if log1 is None or log2 is None:
@@ -133,7 +133,7 @@ class ServicePropertiesTest(StorageTestCase):
         self.assertIsNone(resp)
         props = self.bsc.get_service_properties()
         self._assert_properties_default(props)
-        self.assertEqual('2014-02-14', props.default_service_version)
+        self.assertEqual('2014-02-14', props['target_version'])
 
     # --Test cases per feature ---------------------------------------
     @record
@@ -145,7 +145,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert
         received_props = self.bsc.get_service_properties()
-        self.assertEqual(received_props.default_service_version, '2014-02-14')
+        self.assertEqual(received_props['target_version'], '2014-02-14')
 
     @record
     def test_set_delete_retention_policy(self):
@@ -157,7 +157,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert
         received_props = self.bsc.get_service_properties()
-        self._assert_delete_retention_policy_equal(received_props.delete_retention_policy, delete_retention_policy)
+        self._assert_delete_retention_policy_equal(received_props['delete_retention_policy'], delete_retention_policy)
 
     @record
     def test_set_delete_retention_policy_edge_cases(self):
@@ -167,7 +167,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert
         received_props = self.bsc.get_service_properties()
-        self._assert_delete_retention_policy_equal(received_props.delete_retention_policy, delete_retention_policy)
+        self._assert_delete_retention_policy_equal(received_props['delete_retention_policy'], delete_retention_policy)
 
         # Should work with maximum settings
         delete_retention_policy = RetentionPolicy(enabled=True, days=365)
@@ -175,7 +175,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert
         received_props = self.bsc.get_service_properties()
-        self._assert_delete_retention_policy_equal(received_props.delete_retention_policy, delete_retention_policy)
+        self._assert_delete_retention_policy_equal(received_props['delete_retention_policy'], delete_retention_policy)
 
         # Should not work with 0 days
         delete_retention_policy = RetentionPolicy(enabled=True, days=0)
@@ -185,7 +185,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert
         received_props = self.bsc.get_service_properties()
-        self._assert_delete_retention_policy_not_equal(received_props.delete_retention_policy, delete_retention_policy)
+        self._assert_delete_retention_policy_not_equal(received_props['delete_retention_policy'], delete_retention_policy)
 
         # Should not work with 366 days
         delete_retention_policy = RetentionPolicy(enabled=True, days=366)
@@ -195,7 +195,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert
         received_props = self.bsc.get_service_properties()
-        self._assert_delete_retention_policy_not_equal(received_props.delete_retention_policy, delete_retention_policy)
+        self._assert_delete_retention_policy_not_equal(received_props['delete_retention_policy'], delete_retention_policy)
 
     @record
     def test_set_disabled_delete_retention_policy(self):
@@ -207,7 +207,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert
         received_props = self.bsc.get_service_properties()
-        self._assert_delete_retention_policy_equal(received_props.delete_retention_policy, delete_retention_policy)
+        self._assert_delete_retention_policy_equal(received_props['delete_retention_policy'], delete_retention_policy)
 
     @record
     def test_set_static_website_properties(self):
@@ -222,7 +222,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert
         received_props = self.bsc.get_service_properties()
-        self._assert_static_website_equal(received_props.static_website, static_website)
+        self._assert_static_website_equal(received_props['static_website'], static_website)
 
     @record
     def test_set_static_website_properties_missing_field(self):
@@ -234,7 +234,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert
         received_props = self.bsc.get_service_properties()
-        self._assert_static_website_equal(received_props.static_website, static_website)
+        self._assert_static_website_equal(received_props['static_website'], static_website)
 
         # Case2: Arrange index document missing
         static_website = StaticWebsite(enabled=True, error_document404_path="errors/error/404error.html")
@@ -244,7 +244,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert
         received_props = self.bsc.get_service_properties()
-        self._assert_static_website_equal(received_props.static_website, static_website)
+        self._assert_static_website_equal(received_props['static_website'], static_website)
 
         # Case3: Arrange error document missing
         static_website = StaticWebsite(enabled=True, index_document="index.html")
@@ -254,7 +254,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert
         received_props = self.bsc.get_service_properties()
-        self._assert_static_website_equal(received_props.static_website, static_website)
+        self._assert_static_website_equal(received_props['static_website'], static_website)
 
     @record
     def test_disabled_static_website_properties(self):
@@ -267,7 +267,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert
         received_props = self.bsc.get_service_properties()
-        self._assert_static_website_equal(received_props.static_website, StaticWebsite(enabled=False))
+        self._assert_static_website_equal(received_props['static_website'], StaticWebsite(enabled=False))
 
     @record
     def test_set_static_website_properties_does_not_impact_other_properties(self):
@@ -293,7 +293,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert cors is updated
         received_props = self.bsc.get_service_properties()
-        self._assert_cors_equal(received_props.cors, cors)
+        self._assert_cors_equal(received_props['cors'], cors)
 
         # Arrange to set static website properties
         static_website = StaticWebsite(enabled=True, index_document="index.html",
@@ -304,8 +304,8 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert static website was updated was cors was unchanged
         received_props = self.bsc.get_service_properties()
-        self._assert_static_website_equal(received_props.static_website, static_website)
-        self._assert_cors_equal(received_props.cors, cors)
+        self._assert_static_website_equal(received_props['static_website'], static_website)
+        self._assert_cors_equal(received_props['cors'], cors)
 
     @record
     def test_set_logging(self):
@@ -317,7 +317,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert
         received_props = self.bsc.get_service_properties()
-        self._assert_logging_equal(received_props.logging, logging)
+        self._assert_logging_equal(received_props['analytics_logging'], logging)
 
     @record
     def test_set_hour_metrics(self):
@@ -329,7 +329,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert
         received_props = self.bsc.get_service_properties()
-        self._assert_metrics_equal(received_props.hour_metrics, hour_metrics)
+        self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
     @record
     def test_set_minute_metrics(self):
@@ -342,7 +342,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert
         received_props = self.bsc.get_service_properties()
-        self._assert_metrics_equal(received_props.minute_metrics, minute_metrics)
+        self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
     @record
     def test_set_cors(self):
@@ -368,7 +368,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         # Assert
         received_props = self.bsc.get_service_properties()
-        self._assert_cors_equal(received_props.cors, cors)
+        self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
     @record
