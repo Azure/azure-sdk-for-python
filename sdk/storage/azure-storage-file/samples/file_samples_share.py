@@ -6,27 +6,33 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: file_samples_share.py
+
+DESCRIPTION:
+    These samples demonstrate share operations like creating a share snapshot,
+    setting share quota and metadata, listing directories and files in the
+    file share, and getting directory and file clients from a share client.
+
+USAGE:
+    python file_samples_share.py
+    Set the environment variables with your own values before running the sample.
+"""
+
 import os
-import sys
 
-try:
-    CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
-except KeyError:
-    print("AZURE_STORAGE_CONNECTION_STRING must be set.")
-    sys.exit(1)
-
-SOURCE_FILE = 'SampleSource.txt'
-data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-with open(SOURCE_FILE, 'wb') as stream:
-    stream.write(data)
+SOURCE_FILE = './SampleSource.txt'
+DEST_FILE = './SampleDestination.txt'
 
 
 class ShareSamples(object):
 
+    connection_string = os.getenv('CONNECTION_STRING')
+
     def create_share_snapshot(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(CONNECTION_STRING, "sharesnapshot")
+        share = ShareClient.from_connection_string(self.connection_string, "sharesamples1")
 
         # [START create_share]
         share.create_share()
@@ -43,7 +49,7 @@ class ShareSamples(object):
     def set_share_quota_and_metadata(self):
         # [START create_share_client_from_conn_string]
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(CONNECTION_STRING, "fileshare")
+        share = ShareClient.from_connection_string(self.connection_string, "sharesamples2")
         # [END create_share_client_from_conn_string]
 
         # Create the share
@@ -70,7 +76,7 @@ class ShareSamples(object):
     def list_directories_and_files(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(CONNECTION_STRING, "myshare")
+        share = ShareClient.from_connection_string(self.connection_string, "sharesamples3")
 
         # Create the share
         share.create_share()
@@ -95,10 +101,18 @@ class ShareSamples(object):
     def get_directory_or_file_client(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(CONNECTION_STRING, "myshare")
+        share = ShareClient.from_connection_string(self.connection_string, "sharesamples4")
 
         # Get the directory client to interact with a specific directory
         my_dir = share.get_directory_client("dir1")
 
         # Get the file client to interact with a specific file
         my_file = share.get_file_client("dir1/myfile")
+
+
+if __name__ == '__main__':
+    sample = ShareSamples()
+    sample.create_share_snapshot()
+    sample.set_share_quota_and_metadata()
+    sample.list_directories_and_files()
+    sample.get_directory_or_file_client()

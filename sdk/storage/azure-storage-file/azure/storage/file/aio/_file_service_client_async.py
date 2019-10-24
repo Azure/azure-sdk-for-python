@@ -70,7 +70,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_file_samples_authentication_async.py
+        .. literalinclude:: ../samples/file_samples_authentication_async.py
             :start-after: [START create_file_service_client]
             :end-before: [END create_file_service_client]
             :language: python
@@ -107,11 +107,11 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../samples/file_samples_service_async.py
                 :start-after: [START get_service_properties]
                 :end-before: [END get_service_properties]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Get file service properties.
         """
         timeout = kwargs.pop('timeout', None)
@@ -151,7 +151,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../samples/file_samples_service_async.py
                 :start-after: [START set_service_properties]
                 :end-before: [END set_service_properties]
                 :language: python
@@ -194,11 +194,11 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../samples/file_samples_service_async.py
                 :start-after: [START fsc_list_shares]
                 :end-before: [END fsc_list_shares]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: List shares in the file service.
         """
         timeout = kwargs.pop('timeout', None)
@@ -239,11 +239,11 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../samples/file_samples_service_async.py
                 :start-after: [START fsc_create_shares]
                 :end-before: [END fsc_create_shares]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Create a share in the file service.
         """
         metadata = kwargs.pop('metadata', None)
@@ -276,11 +276,11 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../samples/file_samples_service_async.py
                 :start-after: [START fsc_delete_shares]
                 :end-before: [END fsc_delete_shares]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Delete a share in the file service.
         """
         timeout = kwargs.pop('timeout', None)
@@ -306,7 +306,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../samples/file_samples_service_async.py
                 :start-after: [START get_share_client]
                 :end-before: [END get_share_client]
                 :language: python

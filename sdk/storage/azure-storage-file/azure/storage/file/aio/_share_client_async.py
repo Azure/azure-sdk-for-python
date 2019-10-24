@@ -150,11 +150,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share_async.py
+            .. literalinclude:: ../samples/file_samples_share_async.py
                 :start-after: [START create_share]
                 :end-before: [END create_share]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Creates a file share.
         """
         metadata = kwargs.pop('metadata', None)
@@ -199,11 +199,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share_async.py
+            .. literalinclude:: ../samples/file_samples_share_async.py
                 :start-after: [START create_share_snapshot]
                 :end-before: [END create_share_snapshot]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Creates a snapshot of the file share.
         """
         metadata = kwargs.pop('metadata', None)
@@ -236,11 +236,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share_async.py
+            .. literalinclude:: ../samples/file_samples_share_async.py
                 :start-after: [START delete_share]
                 :end-before: [END delete_share]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Deletes the share and any snapshots.
         """
         timeout = kwargs.pop('timeout', None)
@@ -270,11 +270,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_hello_world_async.py
+            .. literalinclude:: ../samples/file_samples_hello_world_async.py
                 :start-after: [START get_share_properties]
                 :end-before: [END get_share_properties]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Gets the share properties.
         """
         timeout = kwargs.pop('timeout', None)
@@ -305,11 +305,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share_async.py
+            .. literalinclude:: ../samples/file_samples_share_async.py
                 :start-after: [START set_share_quota]
                 :end-before: [END set_share_quota]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Sets the share quota.
         """
         timeout = kwargs.pop('timeout', None)
@@ -341,11 +341,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share_async.py
+            .. literalinclude:: ../samples/file_samples_share_async.py
                 :start-after: [START set_share_metadata]
                 :end-before: [END set_share_metadata]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Sets the share metadata.
         """
         timeout = kwargs.pop('timeout', None)
@@ -470,11 +470,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share_async.py
+            .. literalinclude:: ../samples/file_samples_share_async.py
                 :start-after: [START share_list_files_in_dir]
                 :end-before: [END share_list_files_in_dir]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: List directories and files in the share.
         """
         timeout = kwargs.pop('timeout', None)

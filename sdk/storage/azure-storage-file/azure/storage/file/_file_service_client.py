@@ -67,7 +67,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_file_samples_authentication.py
+        .. literalinclude:: ../samples/file_samples_authentication.py
             :start-after: [START create_file_service_client]
             :end-before: [END create_file_service_client]
             :language: python
@@ -122,7 +122,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_authentication.py
+            .. literalinclude:: ../samples/file_samples_authentication.py
                 :start-after: [START create_file_service_client_from_conn_string]
                 :end-before: [END create_file_service_client_from_conn_string]
                 :language: python
@@ -148,7 +148,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service.py
+            .. literalinclude:: ../samples/file_samples_service.py
                 :start-after: [START get_service_properties]
                 :end-before: [END get_service_properties]
                 :language: python
@@ -192,7 +192,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service.py
+            .. literalinclude:: ../samples/file_samples_service.py
                 :start-after: [START set_service_properties]
                 :end-before: [END set_service_properties]
                 :language: python
@@ -236,7 +236,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service.py
+            .. literalinclude:: ../samples/file_samples_service.py
                 :start-after: [START fsc_list_shares]
                 :end-before: [END fsc_list_shares]
                 :language: python
@@ -281,7 +281,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service.py
+            .. literalinclude:: ../samples/file_samples_service.py
                 :start-after: [START fsc_create_shares]
                 :end-before: [END fsc_create_shares]
                 :language: python
@@ -318,7 +318,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service.py
+            .. literalinclude:: ../samples/file_samples_service.py
                 :start-after: [START fsc_delete_shares]
                 :end-before: [END fsc_delete_shares]
                 :language: python
@@ -348,7 +348,7 @@ class FileServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service.py
+            .. literalinclude:: ../samples/file_samples_service.py
                 :start-after: [START get_share_client]
                 :end-before: [END get_share_client]
                 :language: python

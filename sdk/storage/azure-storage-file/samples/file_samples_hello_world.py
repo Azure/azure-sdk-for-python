@@ -6,32 +6,37 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: file_samples_hello_world.py
+
+DESCRIPTION:
+    These samples demonstrate common scenarios like instantiating a client,
+    creating a file share, and uploading a file to a share.
+
+USAGE:
+    python file_samples_hello_world.py
+    Set the environment variables with your own values before running the sample.
+"""
+
 import os
-import sys
 
-try:
-    CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
-except KeyError:
-    print("AZURE_STORAGE_CONNECTION_STRING must be set.")
-    sys.exit(1)
-
-SOURCE_FILE = 'SampleSource.txt'
-data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-with open(SOURCE_FILE, 'wb') as stream:
-    stream.write(data)
+SOURCE_FILE = './SampleSource.txt'
+DEST_FILE = './SampleDestination.txt'
 
 
-class TestHelloWorldSamples(object):
+class HelloWorldSamples(object):
+
+    connection_string = os.getenv('CONNECTION_STRING')
 
     def create_client_with_connection_string(self):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(CONNECTION_STRING)
+        file_service = FileServiceClient.from_connection_string(self.connection_string)
 
     def create_file_share(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(CONNECTION_STRING, share_name="myshare")
+        share = ShareClient.from_connection_string(self.connection_string, share_name="helloworld1")
 
         # Create the share
         share.create_share()
@@ -48,7 +53,7 @@ class TestHelloWorldSamples(object):
     def upload_a_file_to_share(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(CONNECTION_STRING, share_name="myshare")
+        share = ShareClient.from_connection_string(self.connection_string, share_name="helloworld2")
 
         # Create the share
         share.create_share()
@@ -57,7 +62,10 @@ class TestHelloWorldSamples(object):
             # Instantiate the FileClient from a connection string
             # [START create_file_client]
             from azure.storage.file import FileClient
-            file = FileClient.from_connection_string(CONNECTION_STRING, share_name="myshare", file_path="myfile")
+            file = FileClient.from_connection_string(
+                self.connection_string,
+                share_name="helloworld2",
+                file_path="myfile")
             # [END create_file_client]
 
             # Upload a file
@@ -67,3 +75,10 @@ class TestHelloWorldSamples(object):
         finally:
             # Delete the share
             share.delete_share()
+
+
+if __name__ == '__main__':
+    sample = HelloWorldSamples()
+    sample.create_client_with_connection_string()
+    sample.create_file_share()
+    sample.upload_a_file_to_share()

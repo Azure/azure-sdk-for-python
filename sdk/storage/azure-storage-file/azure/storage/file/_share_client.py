@@ -185,7 +185,7 @@ class ShareClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share.py
+            .. literalinclude:: ../samples/file_samples_share.py
                 :start-after: [START create_share_client_from_conn_string]
                 :end-before: [END create_share_client_from_conn_string]
                 :language: python
@@ -255,7 +255,7 @@ class ShareClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share.py
+            .. literalinclude:: ../samples/file_samples_share.py
                 :start-after: [START create_share]
                 :end-before: [END create_share]
                 :language: python
@@ -304,7 +304,7 @@ class ShareClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share.py
+            .. literalinclude:: ../samples/file_samples_share.py
                 :start-after: [START create_share_snapshot]
                 :end-before: [END create_share_snapshot]
                 :language: python
@@ -341,7 +341,7 @@ class ShareClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share.py
+            .. literalinclude:: ../samples/file_samples_share.py
                 :start-after: [START delete_share]
                 :end-before: [END delete_share]
                 :language: python
@@ -375,7 +375,7 @@ class ShareClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_hello_world.py
+            .. literalinclude:: ../samples/file_samples_hello_world.py
                 :start-after: [START get_share_properties]
                 :end-before: [END get_share_properties]
                 :language: python
@@ -410,7 +410,7 @@ class ShareClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share.py
+            .. literalinclude:: ../samples/file_samples_share.py
                 :start-after: [START set_share_quota]
                 :end-before: [END set_share_quota]
                 :language: python
@@ -446,7 +446,7 @@ class ShareClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share.py
+            .. literalinclude:: ../samples/file_samples_share.py
                 :start-after: [START set_share_metadata]
                 :end-before: [END set_share_metadata]
                 :language: python
@@ -574,7 +574,7 @@ class ShareClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share.py
+            .. literalinclude:: ../samples/file_samples_share.py
                 :start-after: [START share_list_files_in_dir]
                 :end-before: [END share_list_files_in_dir]
                 :language: python

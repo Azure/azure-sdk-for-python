@@ -6,66 +6,87 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: file_samples_hello_world_async.py
+
+DESCRIPTION:
+    These samples demonstrate common scenarios like instantiating a client,
+    creating a file share, and uploading a file to a share.
+
+USAGE:
+    python file_samples_hello_world_async.py
+    Set the environment variables with your own values before running the sample.
+"""
+
 import os
-import sys
 import asyncio
 
-try:
-    CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
-except KeyError:
-    print("AZURE_STORAGE_CONNECTION_STRING must be set.")
-    sys.exit(1)
-
-SOURCE_FILE = 'SampleSource.txt'
-data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-with open(SOURCE_FILE, 'wb') as stream:
-    stream.write(data)
+SOURCE_FILE = './SampleSource.txt'
+DEST_FILE = './SampleDestination.txt'
 
 
-class TestHelloWorldSamples(object):
+class HelloWorldSamplesAsync(object):
 
-    async def create_client_with_connection_string(self):
+    connection_string = os.getenv('CONNECTION_STRING')
+
+    async def create_client_with_connection_string_async(self):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file.aio import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(CONNECTION_STRING)
+        file_service = FileServiceClient.from_connection_string(self.connection_string)
 
-    async def create_file_share(self):
+    async def create_file_share_async(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file.aio import ShareClient
-        share = ShareClient.from_connection_string(CONNECTION_STRING, share_name="myshare")
+        share = ShareClient.from_connection_string(self.connection_string, share_name="helloworld1")
 
         # Create the share
-        await share.create_share()
+        async with share:
+            await share.create_share()
 
-        try:
-            # [START get_share_properties]
-            properties = await share.get_share_properties()
-            # [END get_share_properties]
+            try:
+                # [START get_share_properties]
+                properties = await share.get_share_properties()
+                # [END get_share_properties]
 
-        finally:
-            # Delete the share
-            await share.delete_share()
+            finally:
+                # Delete the share
+                await share.delete_share()
 
-    async def upload_a_file_to_share(self):
+    async def upload_a_file_to_share_async(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file.aio import ShareClient
-        share = ShareClient.from_connection_string(CONNECTION_STRING, share_name='myshare')
+        share = ShareClient.from_connection_string(self.connection_string, share_name='helloworld2')
 
         # Create the share
-        await share.create_share()
+        async with share:
+            await share.create_share()
 
-        try:
-            # Instantiate the FileClient from a connection string
-            # [START create_file_client]
-            from azure.storage.file.aio import FileClient
-            file = FileClient.from_connection_string(CONNECTION_STRING, share_name='myshare', file_path="myfile")
-            # [END create_file_client]
+            try:
+                # Instantiate the FileClient from a connection string
+                # [START create_file_client]
+                from azure.storage.file.aio import FileClient
+                file = FileClient.from_connection_string(
+                    self.connection_string,
+                    share_name='helloworld2',
+                    file_path="myfile")
+                # [END create_file_client]
 
-            # Upload a file
-            with open(SOURCE_FILE, "rb") as source_file:
-                await file.upload_file(source_file)
+                # Upload a file
+                async with file:
+                    with open(SOURCE_FILE, "rb") as source_file:
+                        await file.upload_file(source_file)
 
-        finally:
-            # Delete the share
-            await share.delete_share()
+            finally:
+                # Delete the share
+                await share.delete_share()
 
+
+async def main():
+    sample = HelloWorldSamplesAsync()
+    await sample.create_client_with_connection_string_async()
+    await sample.create_file_share_async()
+    await sample.upload_a_file_to_share_async()
+
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())

@@ -6,52 +6,58 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: file_samples_client.py
+
+DESCRIPTION:
+    These samples demonstrate simple file operations like creating a share or file,
+    uploading and downloading to a file, and copying a file from a URL.
+
+USAGE:
+    python file_samples_client.py
+    Set the environment variables with your own values before running the sample.
+"""
+
 import os
-import sys
 
-try:
-    CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
-except KeyError:
-    print("AZURE_STORAGE_CONNECTION_STRING must be set.")
-    sys.exit(1)
-
-SOURCE_FILE = 'SampleSource.txt'
-DEST_FILE = 'SampleDestination.txt'
-data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-with open(SOURCE_FILE, 'wb') as stream:
-    stream.write(data)
+SOURCE_FILE = './SampleSource.txt'
+DEST_FILE = './SampleDestination.txt'
 
 
 class FileSamples(object):
 
+    connection_string = os.getenv('CONNECTION_STRING')
+    protocol = os.getenv('PROTOCOL')
+    storage_account_name = os.getenv('STORAGE_ACCOUNT_NAME')
+
     def simple_file_operations(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(CONNECTION_STRING, "myshare")
+        share = ShareClient.from_connection_string(self.connection_string, "filesamples1")
 
         # Create the share
         share.create_share()
 
         try:
             # Get a file client
-            my_file = share.get_file_client("myfile")
-            my_file2 = share.get_file_client("myfile2")
+            my_allocated_file = share.get_file_client("my_allocated_file")
+            my_file = share.get_file_client("my_file")
 
             # [START create_file]
             # Create and allocate bytes for the file (no content added yet)
-            my_file.create_file(size=200)
+            my_allocated_file.create_file(size=100)
             # [END create_file]
 
             # Or upload a file directly
             # [START upload_file]
             with open(SOURCE_FILE, "rb") as source:
-                my_file2.upload_file(source)
+                my_file.upload_file(source)
             # [END upload_file]
 
             # Download the file
             # [START download_file]
             with open(DEST_FILE, "wb") as data:
-                stream = my_file2.download_file()
+                stream = my_file.download_file()
                 data.write(stream.readall())
             # [END download_file]
 
@@ -59,7 +65,7 @@ class FileSamples(object):
             # [START delete_file]
             my_file.delete_file()
             # [END delete_file]
-            my_file2.delete_file()
+            my_allocated_file.delete_file()
 
         finally:
             # Delete the share
@@ -68,7 +74,7 @@ class FileSamples(object):
     def copy_file_from_url(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(CONNECTION_STRING, "myshare")
+        share = ShareClient.from_connection_string(self.connection_string, "filesamples2")
 
         # Create the share
         share.create_share()
@@ -83,7 +89,12 @@ class FileSamples(object):
             destination_file = share.get_file_client("destinationfile")
 
             # Build the url from which to copy the file
-            source_url = "https://mystoragename.file.core.windows.net/myshare/sourcefile"
+            source_url = "{}://{}.file.core.windows.net/{}/{}".format(
+                self.protocol,
+                self.storage_account_name,
+                "filesamples2",
+                "sourcefile"
+            )
 
             # Copy the sample source file from the url to the destination file
             # [START copy_file_from_url]
@@ -92,3 +103,11 @@ class FileSamples(object):
         finally:
             # Delete the share
             share.delete_share()
+
+
+if __name__ == '__main__':
+    sample = FileSamples()
+    sample.simple_file_operations()
+    sample.copy_file_from_url()
+
+

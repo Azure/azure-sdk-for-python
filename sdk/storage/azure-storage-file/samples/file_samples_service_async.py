@@ -6,28 +6,34 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: file_samples_service_async.py
+
+DESCRIPTION:
+    These samples demonstrate file share service operations like setting and getting
+    service properties, listing the shares within the service, and getting a share
+    client.
+
+USAGE:
+    python file_samples_service_async.py
+    Set the environment variables with your own values before running the sample.
+"""
+
 import asyncio
 import os
-import sys
 
-try:
-    CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
-except KeyError:
-    print("AZURE_STORAGE_CONNECTION_STRING must be set.")
-    sys.exit(1)
-
-SOURCE_FILE = 'SampleSource.txt'
-data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-with open(SOURCE_FILE, 'wb') as stream:
-    stream.write(data)
+SOURCE_FILE = './SampleSource.txt'
+DEST_FILE = './SampleDestination.txt'
 
 
-class FileServiceSamples(object):
+class FileServiceSamplesAsync(object):
 
-    async def file_service_properties(self):
+    connection_string = os.getenv('CONNECTION_STRING')
+
+    async def file_service_properties_async(self):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file.aio import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(CONNECTION_STRING)
+        file_service = FileServiceClient.from_connection_string(self.connection_string)
 
         # [START set_service_properties]
         # Create service properties
@@ -54,44 +60,56 @@ class FileServiceSamples(object):
 
         cors = [cors_rule1, cors_rule2]
 
-        # Set the service properties
-        await file_service.set_service_properties(hour_metrics, minute_metrics, cors)
+        async with file_service:
+            # Set the service properties
+            await file_service.set_service_properties(hour_metrics, minute_metrics, cors)
         # [END set_service_properties]
 
-        # [START get_service_properties]
-        properties = await file_service.get_service_properties()
-        # [END get_service_properties]
+            # [START get_service_properties]
+            properties = await file_service.get_service_properties()
+            # [END get_service_properties]
 
-    async def list_share(self):
+    async def list_shares_in_service_async(self):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file.aio import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(CONNECTION_STRING)
+        file_service = FileServiceClient.from_connection_string(self.connection_string)
 
-        # [START fsc_create_shares]
-        await file_service.create_share(share_name="testshare")
-        # [END fsc_create_shares]
-        try:
-            # [START fsc_list_shares]
-            # List the shares in the file service
-            my_shares = []
-            async for s in file_service.list_shares():
-                my_shares.append(s)
+        async with file_service:
+            # [START fsc_create_shares]
+            await file_service.create_share(share_name="fileshare1")
+            # [END fsc_create_shares]
+            try:
+                # [START fsc_list_shares]
+                # List the shares in the file service
+                my_shares = []
+                async for s in file_service.list_shares():
+                    my_shares.append(s)
 
-            # Print the shares
-            for share in my_shares:
-                print(share)
-            # [END fsc_list_shares]
+                # Print the shares
+                for share in my_shares:
+                    print(share)
+                # [END fsc_list_shares]
 
-        finally:
-            # [START fsc_delete_shares]
-            await file_service.delete_share(share_name="testshare")
-            # [END fsc_delete_shares]
+            finally:
+                # [START fsc_delete_shares]
+                await file_service.delete_share(share_name="fileshare1")
+                # [END fsc_delete_shares]
 
-    async def get_share_client(self):
+    async def get_share_client_async(self):
         # [START get_share_client]
         from azure.storage.file.aio import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(CONNECTION_STRING)
+        file_service = FileServiceClient.from_connection_string(self.connection_string)
 
         # Get a share client to interact with a specific share
-        share = file_service.get_share_client("fileshare")
+        share = file_service.get_share_client("fileshare2")
         # [END get_share_client]
+
+
+async def main():
+    sample = FileServiceSamplesAsync()
+    await sample.file_service_properties_async()
+    await sample.list_shares_in_service_async()
+    await sample.get_share_client_async()
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())
