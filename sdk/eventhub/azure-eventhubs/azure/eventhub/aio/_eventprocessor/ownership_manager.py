@@ -61,7 +61,10 @@ class OwnershipManager(object):
             return self.cached_parition_ids
 
         else:
-            to_claim = await self._balance_ownership(self.cached_parition_ids)
+            ownership_list = await self.partition_manager.list_ownership(
+                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name
+            )
+            to_claim = await self._balance_ownership(ownership_list, self.cached_parition_ids)
             claimed_list = await self.partition_manager.claim_ownership(to_claim) if to_claim else None
             return [x["partition_id"] for x in claimed_list]
 
@@ -72,7 +75,7 @@ class OwnershipManager(object):
         """
         self.cached_parition_ids = await self.eventhub_client.get_partition_ids()
 
-    async def _balance_ownership(self, all_partition_ids):
+    async def _balance_ownership(self, ownership_list, all_partition_ids):
         """Balances and claims ownership of partitions for this EventProcessor.
         The balancing algorithm is:
         1. Find partitions with inactive ownership and partitions that haven never been claimed before
@@ -98,9 +101,6 @@ class OwnershipManager(object):
         :return: List[Dict[str, Any]], A list of ownership.
         """
 
-        ownership_list = await self.partition_manager.list_ownership(
-            self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name
-        )
         now = time.time()
         ownership_dict = {x["partition_id"]: x for x in ownership_list}  # put the list to dict for fast lookup
         not_owned_partition_ids = [pid for pid in all_partition_ids if pid not in ownership_dict]
