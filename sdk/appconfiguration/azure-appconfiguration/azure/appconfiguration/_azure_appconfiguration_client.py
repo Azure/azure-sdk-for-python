@@ -120,7 +120,7 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def list_configuration_settings(
         self, keys=None, labels=None, **kwargs
-    ):  # type: (list, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
+    ):  # type: (Optional[list], Optional[list], dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
 
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_datetime
@@ -180,7 +180,7 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def get_configuration_setting(
         self, key, label=None, etag='*', match_condition=MatchConditions.Unconditionally, **kwargs
-    ):  # type: (str, str, str, MatchConditions, dict) -> ConfigurationSetting
+    ):  # type: (str, Optional[str], Optional[str], Optional[MatchConditions], dict) -> ConfigurationSetting
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
@@ -288,7 +288,7 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def set_configuration_setting(
         self, configuration_setting, match_condition=MatchConditions.Unconditionally, **kwargs
-    ):  # type: (ConfigurationSetting, MatchConditions, dict) -> ConfigurationSetting
+    ):  # type: (ConfigurationSetting, Optional[MatchConditions], dict) -> ConfigurationSetting
 
         """Add or update a ConfigurationSetting.
         If the configuration setting identified by key and label does not exist, this is a create.
@@ -356,7 +356,7 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def delete_configuration_setting(
         self, key, label=None, **kwargs
-    ):  # type: (str, str, dict) -> ConfigurationSetting
+    ):  # type: (str, Optional[str], dict) -> ConfigurationSetting
 
         """Delete a ConfigurationSetting if it exists
 
@@ -412,7 +412,7 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def list_revisions(
         self, keys=None, labels=None, **kwargs
-    ):  # type: (list, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
+    ):  # type: (Optional[list], Optional[list], dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
 
         """
         Find the ConfigurationSetting revision history.

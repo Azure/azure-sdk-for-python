@@ -7,7 +7,7 @@
 
 ### Breaking changes
 
-- delete_configuration_setting does not take etag and match_condition anymore (use kwargs instead)  #8161
+- etag and match_condition of delete_configuration_setting are now keyword argument only #8161
 
 ## 2019-10-07 Version 1.0.0b4
 - Add conditional operation support
