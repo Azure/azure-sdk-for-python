@@ -68,9 +68,7 @@ jobs:
     pool:
       vmImage: $(OSVmImage)
 
-    dependsOn:
-    - ${{ each entry in parameters.Matrix }}:
-      - "${{ parameters.JobName }} ${{ entry.key }}"
+    dependsOn: ${{ parameters.JobName }}
 
     steps:
       - template: ../steps/build-test-python38.yml
