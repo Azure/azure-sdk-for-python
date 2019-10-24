@@ -26,7 +26,11 @@ from .._generated.models import StorageErrorException, StorageServiceProperties,
 from .._blob_service_client import BlobServiceClient as BlobServiceClientBase
 from ._container_client_async import ContainerClient
 from ._blob_client_async import BlobClient
-from .._models import ContainerProperties
+from .._models import (
+    ContainerProperties,
+    service_stats_deserialize,
+    service_properties_deserialize,
+)
 from ._models import ContainerPropertiesPaged
 
 if TYPE_CHECKING:
@@ -37,12 +41,12 @@ if TYPE_CHECKING:
     from ._lease_async import BlobLeaseClient
     from .._models import (
         BlobProperties,
+        PublicAccess,
         BlobAnalyticsLogging,
         Metrics,
+        CorsRule,
         RetentionPolicy,
         StaticWebsite,
-        CorsRule,
-        PublicAccess,
     )
 
 
@@ -205,8 +209,9 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.service.get_statistics( # type: ignore
+            stats = await self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
+            return service_stats_deserialize(stats)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -233,7 +238,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.service.get_properties(timeout=timeout, **kwargs)
+            service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
+            return service_properties_deserialize(service_props)
         except StorageErrorException as error:
             process_storage_error(error)
 
