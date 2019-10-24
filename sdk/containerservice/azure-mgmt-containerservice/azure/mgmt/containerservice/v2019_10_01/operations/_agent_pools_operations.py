@@ -27,7 +27,7 @@ class AgentPoolsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2019-06-01".
+    :ivar api_version: Client Api Version. Constant value: "2019-10-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class AgentPoolsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01"
+        self.api_version = "2019-10-01"
 
         self.config = config
 
@@ -59,7 +59,7 @@ class AgentPoolsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of AgentPool
         :rtype:
-         ~azure.mgmt.containerservice.v2019_06_01.models.AgentPoolPaged[~azure.mgmt.containerservice.v2019_06_01.models.AgentPool]
+         ~azure.mgmt.containerservice.v2019_10_01.models.AgentPoolPaged[~azure.mgmt.containerservice.v2019_10_01.models.AgentPool]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -135,7 +135,7 @@ class AgentPoolsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: AgentPool or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.containerservice.v2019_06_01.models.AgentPool or
+        :rtype: ~azure.mgmt.containerservice.v2019_10_01.models.AgentPool or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -251,7 +251,7 @@ class AgentPoolsOperations(object):
         :param parameters: Parameters supplied to the Create or Update an
          agent pool operation.
         :type parameters:
-         ~azure.mgmt.containerservice.v2019_06_01.models.AgentPool
+         ~azure.mgmt.containerservice.v2019_10_01.models.AgentPool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -260,9 +260,9 @@ class AgentPoolsOperations(object):
         :return: An instance of LROPoller that returns AgentPool or
          ClientRawResponse<AgentPool> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerservice.v2019_06_01.models.AgentPool]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerservice.v2019_10_01.models.AgentPool]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerservice.v2019_06_01.models.AgentPool]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerservice.v2019_10_01.models.AgentPool]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
@@ -398,7 +398,7 @@ class AgentPoolsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: AgentPoolUpgradeProfile or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.containerservice.v2019_06_01.models.AgentPoolUpgradeProfile
+         ~azure.mgmt.containerservice.v2019_10_01.models.AgentPoolUpgradeProfile
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -463,7 +463,7 @@ class AgentPoolsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: AgentPoolAvailableVersions or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.containerservice.v2019_06_01.models.AgentPoolAvailableVersions
+         ~azure.mgmt.containerservice.v2019_10_01.models.AgentPoolAvailableVersions
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
