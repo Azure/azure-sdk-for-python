@@ -68,6 +68,9 @@ jobs:
     pool:
       vmImage: $(OSVmImage)
 
+    dependsOn:
+      - '${{ parameters.JobName }}_Linux_PyPy3'
+
     steps:
       - template: ../steps/build-test-python38.yml
         parameters:
