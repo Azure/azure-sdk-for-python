@@ -7,22 +7,16 @@
 # --------------------------------------------------------------------------
 
 import asyncio
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+import os
 
-from asyncqueuetestcase import (
-    AsyncQueueTestCase
-)
+class QueueServiceSamplesAsync(object):
 
+    connection_string = os.getenv("CONNECTION_STRING")
 
-class TestQueueServiceSamples(AsyncQueueTestCase):
-
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
-    @AsyncQueueTestCase.await_prepared_test
-    async def test_queue_service_properties(self, resource_group, location, storage_account, storage_account_key):
+    async def queue_service_properties(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
-        queue_service = QueueServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
+        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START async_set_queue_service_properties]
         # Create service properties
@@ -33,8 +27,7 @@ class TestQueueServiceSamples(AsyncQueueTestCase):
 
         # Create metrics for requests statistics
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
-        minute_metrics = Metrics(enabled=True, include_apis=True,
-                                 retention_policy=RetentionPolicy(enabled=True, days=5))
+        minute_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Create CORS rules
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
@@ -48,7 +41,8 @@ class TestQueueServiceSamples(AsyncQueueTestCase):
             allowed_methods,
             max_age_in_seconds=max_age_in_seconds,
             exposed_headers=exposed_headers,
-            allowed_headers=allowed_headers)
+            allowed_headers=allowed_headers
+        )
 
         cors = [cors_rule1, cors_rule2]
 
@@ -60,16 +54,13 @@ class TestQueueServiceSamples(AsyncQueueTestCase):
         properties = await queue_service.get_service_properties()
         # [END async_get_queue_service_properties]
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
-    @AsyncQueueTestCase.await_prepared_test
-    async def test_queues_in_account(self, resource_group, location, storage_account, storage_account_key):
+    async def queues_in_account(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
-        queue_service = QueueServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
+        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START async_qsc_create_queue]
-        await queue_service.create_queue("asynctestqueue")
+        await queue_service.create_queue("my_queue")
         # [END async_qsc_create_queue]
 
         try:
@@ -79,26 +70,23 @@ class TestQueueServiceSamples(AsyncQueueTestCase):
             async for queue in list_queues:
                 print(queue)
 
-            # List the queues in the service that start with the name "test"
-            list_test_queues = queue_service.list_queues(name_starts_with="test")
-            async for queue in list_test_queues:
+            # List the queues in the service that start with the name "my_"
+            list_my_queues = queue_service.list_queues(name_starts_with="my_")
+            async for queue in list_my_queues:
                 print(queue)
             # [END async_qsc_list_queues]
 
         finally:
             # [START async_qsc_delete_queue]
-            await queue_service.delete_queue("asynctestqueue")
+            await queue_service.delete_queue("my_queue")
             # [END async_qsc_delete_queue]
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
-    @AsyncQueueTestCase.await_prepared_test
-    async def test_get_queue_client(self, resource_group, location, storage_account, storage_account_key):
+    async def get_queue_client(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient, QueueClient
-        queue_service = QueueServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
+        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START async_get_queue_client]
         # Get the queue client to interact with a specific queue
-        queue = queue_service.get_queue_client("myasyncqueue")
+        queue = queue_service.get_queue_client(queue_name="my_queue")
         # [END async_get_queue_client]
