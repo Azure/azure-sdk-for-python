@@ -370,33 +370,27 @@ class KeyClientTests(KeyVaultTestCase):
             def __init__(self):
                 super(MockHandler, self).__init__()
                 self.messages = []
-            def reset(self):
-                self.messages = []
             def emit(self, record):
                 self.messages.append(record)
-        self.assertIsNotNone(vault_client)
         client = vault_client.keys
         mock_handler = MockHandler()
 
-        # Configure a console output
         logger = logging.getLogger('azure')
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
         client.create_rsa_key("rsa-key-name", size=2048)
 
-        found_body = False
         for message in mock_handler.messages:
             if message.levelname == 'DEBUG' and message.funcName == 'on_request':
                 try:
                     body = json.loads(message.message)
-                    body['kty'] = 'RSA'
-                    found_body = True
-                    break
-                except ValueError:
+                    if body['kty'] == 'RSA':
+                        return
+                except (ValueError, KeyError):
                     pass
 
-        assert found_body
+        assert False, "Expected request body wasn't logged"
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
@@ -405,30 +399,21 @@ class KeyClientTests(KeyVaultTestCase):
             def __init__(self):
                 super(MockHandler, self).__init__()
                 self.messages = []
-            def reset(self):
-                self.messages = []
             def emit(self, record):
                 self.messages.append(record)
-        self.assertIsNotNone(vault_client)
         client = vault_client.keys
         mock_handler = MockHandler()
 
-        # Configure a console output
         logger = logging.getLogger('azure')
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
         client.create_rsa_key("rsa-key-name", size=2048)
 
-        found_body = False
         for message in mock_handler.messages:
             if message.levelname == 'DEBUG' and message.funcName == 'on_request':
                 try:
                     body = json.loads(message.message)
-                    body['kty'] = 'RSA'
-                    found_body = True
-                    break
-                except ValueError:
+                    assert body["kty"] != "RSA", "Client request body was logged"
+                except (ValueError, KeyError):
                     pass
-
-        assert not found_body

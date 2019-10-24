@@ -317,33 +317,27 @@ class SecretClientTests(KeyVaultTestCase):
             def __init__(self):
                 super(MockHandler, self).__init__()
                 self.messages = []
-            def reset(self):
-                self.messages = []
             def emit(self, record):
                 self.messages.append(record)
-        self.assertIsNotNone(vault_client)
         client = vault_client.secrets
         mock_handler = MockHandler()
 
-        # Configure a console output
         logger = logging.getLogger('azure')
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
         client.set_secret("secret-name", "secret-value")
 
-        found_body = False
         for message in mock_handler.messages:
             if message.levelname == 'DEBUG' and message.funcName == 'on_request':
                 try:
                     body = json.loads(message.message)
-                    body['value'] = 'secret-value'
-                    found_body = True
-                    break
-                except ValueError:
+                    if body['value'] == 'secret-value':
+                        return
+                except (ValueError, KeyError):
                     pass
 
-        assert found_body
+        assert False, "Expected request body wasn't logged"
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
@@ -352,30 +346,21 @@ class SecretClientTests(KeyVaultTestCase):
             def __init__(self):
                 super(MockHandler, self).__init__()
                 self.messages = []
-            def reset(self):
-                self.messages = []
             def emit(self, record):
                 self.messages.append(record)
-        self.assertIsNotNone(vault_client)
         client = vault_client.secrets
         mock_handler = MockHandler()
 
-        # Configure a console output
         logger = logging.getLogger('azure')
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
         client.set_secret("secret-name", "secret-value")
 
-        found_body = False
         for message in mock_handler.messages:
             if message.levelname == 'DEBUG' and message.funcName == 'on_request':
                 try:
                     body = json.loads(message.message)
-                    body['value'] = 'secret-value'
-                    found_body = True
-                    break
-                except ValueError:
+                    assert body["value"] != "secret-value", "Client request body was logged"
+                except (ValueError, KeyError):
                     pass
-
-        assert not found_body
