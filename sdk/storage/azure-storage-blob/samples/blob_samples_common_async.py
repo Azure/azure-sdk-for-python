@@ -94,8 +94,6 @@ class CommonBlobSamplesAsync(object):
         properties = await blob_client.get_blob_properties()
         # [END get_blob_properties]
 
-        assert properties is not None
-
         # Delete container
         await blob_service_client.delete_container("containerfordeletedblobsasync")
 

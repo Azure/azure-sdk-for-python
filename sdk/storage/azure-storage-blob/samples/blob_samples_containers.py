@@ -47,7 +47,6 @@ class ContainerSamples(object):
             # [START get_container_properties]
             properties = container_client.get_container_properties()
             # [END get_container_properties]
-            assert properties is not None
 
         finally:
             # [START delete_container]
@@ -97,8 +96,6 @@ class ContainerSamples(object):
 
             # Get container properties
             properties = container_client.get_container_properties().metadata
-
-            assert properties == metadata
 
         finally:
             # Delete container
@@ -186,8 +183,6 @@ class ContainerSamples(object):
         for blob in blobs_list:
             print(blob.name + '\n')
         # [END list_blobs_in_container]
-
-        assert blobs_list is not None
 
         # Delete container
         container_client.delete_container()

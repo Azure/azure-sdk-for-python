@@ -22,7 +22,6 @@ class BlobServiceSamples(object):
         account_info = blob_service_client.get_account_information()
         print('Using Storage SKU: {}'.format(account_info['sku_name']))
         # [END get_blob_service_account_info]
-        assert account_info is not None
 
     def blob_service_properties(self):
 
@@ -53,7 +52,6 @@ class BlobServiceSamples(object):
         # [START get_blob_service_properties]
         properties = blob_service_client.get_service_properties()
         # [END get_blob_service_properties]
-        assert properties is not None
 
     def blob_service_stats(self):
 
@@ -64,7 +62,6 @@ class BlobServiceSamples(object):
         # [START get_blob_service_stats]
         stats = blob_service_client.get_service_stats()
         # [END get_blob_service_stats]
-        assert stats is not None
 
     def container_operations(self):
 
@@ -92,7 +89,6 @@ class BlobServiceSamples(object):
             for container in test_containers:
                 blob_service_client.delete_container(container)
             # [END bsc_list_containers]
-            assert test_containers is not None
 
         finally:
             # [START bsc_delete_container]
@@ -129,9 +125,6 @@ class BlobServiceSamples(object):
             except ResourceNotFoundError:
                 print("No blob found.")
             # [END bsc_get_blob_client]
-
-            assert container_client is not None
-            assert blob_client is not None
 
         finally:
             # Delete the container

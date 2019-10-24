@@ -43,7 +43,6 @@ class AuthSamples(object):
 
         # Get account information for the Blob Service
         account_info = blob_service_client.get_account_information()
-        assert account_info is not None
 
     def auth_shared_key(self):
         # [START create_blob_service_client]
@@ -53,7 +52,6 @@ class AuthSamples(object):
 
         # Get account information for the Blob Service
         account_info = blob_service_client.get_account_information()
-        assert account_info is not None
 
     def auth_blob_url(self):
         # [START create_blob_client]
@@ -85,7 +83,6 @@ class AuthSamples(object):
 
         # Get account information for the Blob Service
         account_info = blob_service_client.get_service_properties()
-        assert account_info is not None
 
     def auth_shared_access_signature(self):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -109,5 +106,3 @@ class AuthSamples(object):
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         # [END create_sas_token]
-        assert sas_token is not None
-

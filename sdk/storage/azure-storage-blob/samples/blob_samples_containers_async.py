@@ -47,7 +47,6 @@ class ContainerSamplesAsync(object):
             # [START get_container_properties]
             properties = await container_client.get_container_properties()
             # [END get_container_properties]
-            assert properties is not None
 
         finally:
             # [START delete_container]
@@ -97,8 +96,6 @@ class ContainerSamplesAsync(object):
 
             # Get container properties
             properties = (await container_client.get_container_properties()).metadata
-
-            assert properties == metadata
 
         finally:
             # Delete container
@@ -186,8 +183,6 @@ class ContainerSamplesAsync(object):
         async for blob in container_client.list_blobs():
             blobs_list.append(blob)
         # [END list_blobs_in_container]
-
-        assert blobs_list is not None
 
         # Delete container
         await container_client.delete_container()

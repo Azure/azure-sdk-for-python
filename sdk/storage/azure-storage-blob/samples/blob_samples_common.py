@@ -95,8 +95,6 @@ class CommonBlobSamples(object):
         properties = blob_client.get_blob_properties()
         # [END get_blob_properties]
 
-        assert properties is not None
-
         # Delete container
         blob_service_client.delete_container("containerfordeletedblobs")
 

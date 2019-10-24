@@ -43,7 +43,6 @@ class AuthSamplesAsync(object):
 
         # Get account information for the Blob Service
         account_info = await blob_service_client.get_account_information()
-        assert account_info is not None
 
     async def auth_shared_key_async(self):
         # [START create_blob_service_client]
@@ -53,7 +52,6 @@ class AuthSamplesAsync(object):
 
         # Get account information for the Blob Service
         account_info = await blob_service_client.get_account_information()
-        assert account_info is not None
 
     async def auth_blob_url_async(self):
         # [START create_blob_client]
@@ -82,7 +80,6 @@ class AuthSamplesAsync(object):
 
         # Get account information for the Blob Service
         account_info = await blob_service_client.get_service_properties()
-        assert account_info is not None
 
     async def auth_shared_access_signature_async(self):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -106,4 +103,3 @@ class AuthSamplesAsync(object):
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         # [END create_sas_token]
-        assert sas_token is not None

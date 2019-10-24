@@ -23,7 +23,6 @@ class TestBlobServiceSamplesAsync(object):
         account_info = await blob_service_client.get_account_information()
         print('Using Storage SKU: {}'.format(account_info['sku_name']))
         # [END get_blob_service_account_info]
-        assert account_info is not None
 
     async def blob_service_properties_async(self):
 
@@ -54,7 +53,6 @@ class TestBlobServiceSamplesAsync(object):
         # [START get_blob_service_properties]
         properties = await blob_service_client.get_service_properties()
         # [END get_blob_service_properties]
-        assert properties is not None
 
     async def blob_service_stats_async(self):
 
@@ -65,7 +63,6 @@ class TestBlobServiceSamplesAsync(object):
         # [START get_blob_service_stats]
         stats = await blob_service_client.get_service_stats()
         # [END get_blob_service_stats]
-        assert stats is not None
 
     async def container_operations_async(self):
 
@@ -99,7 +96,6 @@ class TestBlobServiceSamplesAsync(object):
             for container in test_containers:
                 await blob_service_client.delete_container(container)
             # [END bsc_list_containers]
-            assert test_containers is not None
 
         finally:
             # [START bsc_delete_container]
@@ -141,9 +137,6 @@ class TestBlobServiceSamplesAsync(object):
             except ResourceNotFoundError:
                 print("No blob found.")
             # [END bsc_get_blob_client]
-
-            assert container_client is not None
-            assert blob_client is not None
 
         finally:
             # Delete the container
