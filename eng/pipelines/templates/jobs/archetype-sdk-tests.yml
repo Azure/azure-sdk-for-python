@@ -54,7 +54,7 @@ jobs:
           AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
-  - job: 'Test_Linux_Python38'
+  - job: '${{ parameters.JobName }}_Linux_Python38'
     variables:
       skipComponentGovernanceDetection: true
       CoverageArg: --disablecov
