@@ -48,6 +48,8 @@ class Metrics(GeneratedMetrics):
 
     @classmethod
     def _from_generated(cls, generated):
+        if not generated:
+            return cls()
         return cls(
             version=generated.version,
             enabled=generated.enabled,
@@ -77,6 +79,8 @@ class RetentionPolicy(GeneratedRetentionPolicy):
 
     @classmethod
     def _from_generated(cls, generated):
+        if not generated:
+            return cls()
         return cls(
             enabled=generated.enabled,
             days=generated.days,
