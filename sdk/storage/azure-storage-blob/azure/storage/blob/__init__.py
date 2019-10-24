@@ -83,9 +83,8 @@ def upload_blob_to_url(
     :keyword int length:
         Number of bytes to read from the stream. This is optional, but
         should be supplied for optimal performance.
-    :keyword metadata:
+    :keyword dict(str,str) metadata:
         Name-value pairs associated with the blob as metadata.
-    :type metadata: dict(str, str)
     :keyword bool validate_content:
         If true, calculates an MD5 hash for each chunk of the blob. The storage
         service checks the hash of the content that has arrived with the hash

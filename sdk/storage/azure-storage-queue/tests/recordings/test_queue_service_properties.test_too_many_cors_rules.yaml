@@ -23,7 +23,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 16 Oct 2019 06:57:28 GMT
+      - Tue, 22 Oct 2019 21:28:43 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -31,7 +31,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:62d7b310-f003-0032-14ee-83a97f000000\nTime:2019-10-16T06:57:28.8437466Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason
+        specified is not syntactically valid.\nRequestId:adad16db-c003-0094-451f-89c805000000\nTime:2019-10-22T21:28:42.5191415Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason
         /></Error>"
     headers:
       content-length:
@@ -39,7 +39,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Wed, 16 Oct 2019 06:57:28 GMT
+      - Tue, 22 Oct 2019 21:28:42 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
