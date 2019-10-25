@@ -12,6 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -109,30 +111,9 @@ class AppsOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}'}
 
-    def create_or_update(
-            self, resource_group_name, service_name, app_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Create a new App or update an exiting App.
 
-        :param resource_group_name: The name of the resource group that
-         contains the resource. You can obtain this value from the Azure
-         Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param service_name: The name of the Service resource.
-        :type service_name: str
-        :param app_name: The name of the App resource.
-        :type app_name: str
-        :param properties: Properties of the App resource
-        :type properties: ~azure.mgmt.appplatform.models.AppResourceProperties
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AppResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.appplatform.models.AppResource or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _create_or_update_initial(
+            self, resource_group_name, service_name, app_name, properties=None, custom_headers=None, raw=False, **operation_config):
         app_resource = None
         if properties is not None:
             app_resource = models.AppResource(properties=properties)
@@ -172,13 +153,16 @@ class AppsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
+            deserialized = self._deserialize('AppResource', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('AppResource', response)
 
         if raw:
@@ -186,6 +170,60 @@ class AppsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def create_or_update(
+            self, resource_group_name, service_name, app_name, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create a new App or update an exiting App.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param service_name: The name of the Service resource.
+        :type service_name: str
+        :param app_name: The name of the App resource.
+        :type app_name: str
+        :param properties: Properties of the App resource
+        :type properties: ~azure.mgmt.appplatform.models.AppResourceProperties
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns AppResource or
+         ClientRawResponse<AppResource> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.appplatform.models.AppResource]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.appplatform.models.AppResource]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            service_name=service_name,
+            app_name=app_name,
+            properties=properties,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('AppResource', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}'}
 
     def delete(
@@ -246,30 +284,9 @@ class AppsOperations(object):
             return client_raw_response
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}'}
 
-    def update(
-            self, resource_group_name, service_name, app_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Operation to update an exiting App.
 
-        :param resource_group_name: The name of the resource group that
-         contains the resource. You can obtain this value from the Azure
-         Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param service_name: The name of the Service resource.
-        :type service_name: str
-        :param app_name: The name of the App resource.
-        :type app_name: str
-        :param properties: Properties of the App resource
-        :type properties: ~azure.mgmt.appplatform.models.AppResourceProperties
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AppResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.appplatform.models.AppResource or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _update_initial(
+            self, resource_group_name, service_name, app_name, properties=None, custom_headers=None, raw=False, **operation_config):
         app_resource = None
         if properties is not None:
             app_resource = models.AppResource(properties=properties)
@@ -309,13 +326,16 @@ class AppsOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
+            deserialized = self._deserialize('AppResource', response)
+        if response.status_code == 202:
             deserialized = self._deserialize('AppResource', response)
 
         if raw:
@@ -323,6 +343,60 @@ class AppsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def update(
+            self, resource_group_name, service_name, app_name, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Operation to update an exiting App.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param service_name: The name of the Service resource.
+        :type service_name: str
+        :param app_name: The name of the App resource.
+        :type app_name: str
+        :param properties: Properties of the App resource
+        :type properties: ~azure.mgmt.appplatform.models.AppResourceProperties
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns AppResource or
+         ClientRawResponse<AppResource> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.appplatform.models.AppResource]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.appplatform.models.AppResource]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._update_initial(
+            resource_group_name=resource_group_name,
+            service_name=service_name,
+            app_name=app_name,
+            properties=properties,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('AppResource', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}'}
 
     def list(
