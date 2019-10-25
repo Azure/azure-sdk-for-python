@@ -61,8 +61,9 @@ class SecretClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def set_secret(self, name: str, value: str, **kwargs: "Any") -> KeyVaultSecret:
-        """Set a secret value. Create a new secret if ``name`` is not in use. If it is, create a new version of the
-        secret.
+        """Set a secret value. If `name` is in use, create a new version of the secret. If not, create a new secret.
+
+        Requires secrets/set permission.
 
         :param str name: The name of the secret
         :param str value: The value of the secret
@@ -99,9 +100,10 @@ class SecretClient(AsyncKeyVaultClientBase):
     async def update_secret_properties(
         self, name: str, version: "Optional[str]" = None, **kwargs: "Any"
     ) -> SecretProperties:
-        """Update a secret's attributes, such as its tags or whether it's enabled. Requires the secrets/set permission.
+        """Update properties of a secret other than its value. Requires secrets/set permission.
 
-        **This method can't change a secret's value.** Use :func:`set_secret` to change values.
+        This method updates properties of the secret, such as whether it's enabled, but can't change the secret's
+        value. Use :func:`set_secret` to change the secret's value.
 
         :param str name: Name of the secret
         :param str version: (optional) Version of the secret to update. If unspecified, the latest version is updated.
@@ -145,8 +147,9 @@ class SecretClient(AsyncKeyVaultClientBase):
 
     @distributed_trace
     def list_properties_of_secrets(self, **kwargs: "Any") -> AsyncIterable[SecretProperties]:
-        """List the latest identifier and attributes of all secrets in the vault, not including their values. Requires
-        the secrets/list permission.
+        """List identifiers and attributes of all secrets in the vault. Requires secrets/list permission.
+
+        List items don't include secret values. Use :func:`get_secret` to get a secret's value.
 
         :returns: An iterator of secrets
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.secrets.SecretProperties]
@@ -168,11 +171,12 @@ class SecretClient(AsyncKeyVaultClientBase):
 
     @distributed_trace
     def list_properties_of_secret_versions(self, name: str, **kwargs: "**Any") -> AsyncIterable[SecretProperties]:
-        """List all versions of a secret, including their identifiers and attributes but not their values. Requires the
-        secrets/list permission.
+        """List properties of all versions of a secret, excluding their values. Requires secrets/list permission.
+
+        List items don't include secret values. Use :func:`get_secret` to get a secret's value.
 
         :param str name: Name of the secret
-        :returns: An iterator of secrets
+        :returns: An iterator of secrets, excluding their values
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.secrets.SecretProperties]
 
         Example:
@@ -193,10 +197,9 @@ class SecretClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def backup_secret(self, name: str, **kwargs: "**Any") -> bytes:
-        """Get a backup of all versions of a secret. Requires the secrets/backup permission.
+        """Back up a secret in a protected form useable only by Azure Key Vault. Requires secrets/backup permission.
 
         :param str name: Name of the secret
-        :returns: The raw bytes of the secret backup
         :rtype: bytes
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
@@ -217,7 +220,7 @@ class SecretClient(AsyncKeyVaultClientBase):
     async def restore_secret_backup(self, backup: bytes, **kwargs: "Any") -> SecretProperties:
         """Restore a backed up secret. Requires the secrets/restore permission.
 
-        :param bytes backup: The raw bytes of the secret backup
+        :param bytes backup: A secret backup as returned by :func:`backup_secret`
         :returns: The restored secret
         :rtype: ~azure.keyvault.secrets.SecretProperties
         :raises:
@@ -237,13 +240,10 @@ class SecretClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def delete_secret(self, name: str, **kwargs: "**Any") -> DeletedSecret:
-        """Delete all versions of a secret.
+        """Delete all versions of a secret. Requires secrets/delete permission.
 
-        Requires the secrets/delete permission. The poller requires the secrets/get permission to function properly.
+        If the vault has soft-delete enabled, deletion may take several seconds to complete.
 
-        :returns: A coroutine for the deletion of the secret. Since deleting a secret is not instant, we poll
-         on the deletion of the secret. Awaiting this method returns the
-         :class:`~azure.keyvault.secrets.DeletedSecret`
         :rtype: ~azure.keyvault.secrets.DeletedSecret
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
@@ -271,10 +271,9 @@ class SecretClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def get_deleted_secret(self, name: str, **kwargs: "**Any") -> DeletedSecret:
-        """Get a deleted secret. This is only possible in vaults with soft-delete enabled. Requires the secrets/get
-        permission.
+        """Get a deleted secret. Possible only in vaults with soft-delete enabled. Requires secrets/get permission.
 
-        :param str name: Name of the secret
+        :param str name: Name of the deleted secret
         :rtype: ~azure.keyvault.secrets.DeletedSecret
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the deleted secret doesn't exist,
@@ -293,10 +292,11 @@ class SecretClient(AsyncKeyVaultClientBase):
 
     @distributed_trace
     def list_deleted_secrets(self, **kwargs: "**Any") -> AsyncIterable[DeletedSecret]:
-        """Lists all deleted secrets. This is only possible in vaults with soft-delete enabled. Requires the
-        secrets/list permission.
+        """Lists all deleted secrets. Possible only in vaults with soft-delete enabled.
 
-        :returns: An iterator of deleted secrets
+        Requires secrets/list permission.
+
+        :returns: An iterator of deleted secrets, excluding their values
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.secrets.DeletedSecret]
 
         Example:
@@ -316,12 +316,14 @@ class SecretClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def purge_deleted_secret(self, name: str, **kwargs: "**Any") -> None:
-        """Permanently delete a secret. This is only possible in vaults with soft-delete enabled. If a vault
-        doesn't have soft-delete enabled, :func:`delete_secret` is permanent, and this method will return an error.
+        """Permanently delete a deleted secret. Possible only in vaults with soft-delete enabled.
 
-        Requires the secrets/purge permission.
+        If the vault doesn't have soft-delete enabled, :func:`delete_secret` is permanent, and this method will raise
+        an error.
 
-        :param str name: Name of the secret
+        Requires secrets/purge permission.
+
+        :param str name: Name of the deleted secret to purge
         :returns: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -337,14 +339,14 @@ class SecretClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def recover_deleted_secret(self, name: str, **kwargs: "**Any") -> SecretProperties:
-        """Recover a deleted secret to its latest version. This is only possible in vaults with soft-delete enabled.
+        """Recover a deleted secret to its latest version. This is possible only in vaults with soft-delete enabled.
 
-        Requires the secrets/recover permission. The poller requires the secrets/get permission to function properly.
+        If the vault does not have soft-delete enabled, :func:`delete_secret` is permanent, and this method will raise
+        an error. Attempting to recover a non-deleted secret will also raise an error.
 
-        :param str name: Name of the secret
-        :returns: A coroutine for the recovery of the secret. Since recovering a secret is not instant, we poll on
-         the recovery of the secret. Awaiting this method returns the recovered
-         :class:`~azure.keyvault.secrets.SecretProperties`
+        Requires the secrets/recover permission.
+
+        :param str name: Name of the deleted secret to recover
         :rtype: ~azure.keyvault.secrets.SecretProperties
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
