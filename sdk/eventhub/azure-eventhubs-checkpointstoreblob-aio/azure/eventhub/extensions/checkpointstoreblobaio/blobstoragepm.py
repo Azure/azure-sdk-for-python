@@ -6,7 +6,8 @@ from typing import Iterable, Dict, Any
 import logging
 from collections import defaultdict
 import asyncio
-from azure.eventhub.aio import PartitionManager, OwnershipLostError  # type: ignore
+from azure.eventhub import OwnershipLostError
+from azure.eventhub.aio import PartitionManager  # type: ignore
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError  # type: ignore
 from azure.storage.blob.aio import ContainerClient, BlobClient  # type: ignore
 
