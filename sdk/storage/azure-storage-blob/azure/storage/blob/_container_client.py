@@ -931,7 +931,8 @@ class ContainerClient(StorageAccountHostsMixin):
         Soft deleted blobs or snapshots are accessible through :func:`list_blobs()` specifying `include=["deleted"]`
         Soft-deleted blobs or snapshots can be restored using :func:`~BlobClient.undelete()`
 
-        :param blobs: The blob names with which to interact.
+        :param blobs: The blobs to delete. This can be a single blob, or multiple values can
+            be supplied, where each value is either the name of the blob (str) or BlobProperties.
         :type blobs: str or ~azure.storage.blob.BlobProperties
         :keyword str delete_snapshots:
             Required if a blob has associated snapshots. Values include:
@@ -1044,7 +1045,8 @@ class ContainerClient(StorageAccountHostsMixin):
             tier is optimized for storing data that is rarely accessed and stored
             for at least six months with flexible latency requirements.
         :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
-        :param blobs: The blobs with which to interact.
+        :param blobs: The blobs with which to interact. This can be a single blob, or multiple values can
+            be supplied, where each value is either the name of the blob (str) or BlobProperties.
         :type blobs: str or ~azure.storage.blob.BlobProperties
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -1100,7 +1102,8 @@ class ContainerClient(StorageAccountHostsMixin):
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
         :type premium_page_blob_tier: ~azure.storage.blob.PremiumPageBlobTier
-        :param blobs: The blobs with which to interact.
+        :param blobs: The blobs with which to interact. This can be a single blob, or multiple values can
+            be supplied, where each value is either the name of the blob (str) or BlobProperties.
         :type blobs: str or ~azure.storage.blob.BlobProperties
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
