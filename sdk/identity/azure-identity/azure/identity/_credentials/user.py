@@ -28,11 +28,11 @@ if TYPE_CHECKING:
 class DeviceCodeCredential(PublicClientCredential):
     """Authenticates users through the device code flow.
 
-    When ``get_token`` is called, this credential acquires a verification URL and code from Azure Active Directory. A
-    user must browse to the URL, enter the code, and authenticate with Azure Active Directory. If the user
+    When :func:`get_token` is called, this credential acquires a verification URL and code from Azure Active Directory.
+    A user must browse to the URL, enter the code, and authenticate with Azure Active Directory. If the user
     authenticates successfully, the credential receives an access token.
 
-    This credential doesn't cache tokens--each ``get_token`` call begins a new authentication flow.
+    This credential doesn't cache tokens--each :func:`get_token` call begins a new authentication flow.
 
     For more information about the device code flow, see Azure Active Directory documentation:
     https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-device-code
