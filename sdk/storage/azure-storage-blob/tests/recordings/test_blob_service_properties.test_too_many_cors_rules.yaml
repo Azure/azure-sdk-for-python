@@ -21,91 +21,31 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 4d844c98-8ecc-11e9-aea5-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:46:13 GMT
+      - Fri, 25 Oct 2019 17:53:54 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/?restype=service&comp=properties
+    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=properties
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML\
-        \ specified is not syntactically valid.\nRequestId:10fd108d-901e-0004-4cd9-229182000000\n\
-        Time:2019-06-14T17:46:14.5923441Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason\
-        \ /></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:82e3fa03-601e-0009-3b5d-8b9cb9000000\nTime:2019-10-25T17:53:54.6874569Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason
+        /></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '294'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Fri, 14 Jun 2019 17:46:14 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 17:53:53 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - InvalidXmlDocument
-      x-ms-request-id:
-      - 10fd108d-901e-0004-4cd9-229182000000
       x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 400
-      message: XML specified is not syntactically valid.
-- request:
-    body: '<?xml version=''1.0'' encoding=''utf-8''?>
-
-      <StorageServiceProperties><Cors><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedMethods>GET</AllowedMethods><AllowedHeaders
-      /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule></Cors></StorageServiceProperties>'
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1143'
-      Content-Type:
-      - application/xml; charset=utf-8
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 946a0e1c-8ed5-11e9-8aed-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:52:38 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML\
-        \ specified is not syntactically valid.\nRequestId:9140b00b-e01e-0066-03e2-22d65a000000\n\
-        Time:2019-06-14T18:52:38.2457979Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason\
-        \ /></Error>"
-    headers:
-      Content-Length:
-      - '294'
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 18:52:38 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - InvalidXmlDocument
-      x-ms-request-id:
-      - 9140b00b-e01e-0066-03e2-22d65a000000
-      x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 400
       message: XML specified is not syntactically valid.
