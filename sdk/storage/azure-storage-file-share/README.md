@@ -51,7 +51,7 @@ service = ShareServiceClient(account_url="https://<my-storage-account-name>.file
 ```
 
 #### Looking up the endpoint URL
-You can find the storage account's service endpoint URL using the
+You can find the storage account's file service endpoint URL using the
 [Azure Portal](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview#storage-account-endpoints),
 [Azure PowerShell](https://docs.microsoft.com/en-us/powershell/module/az.storage/get-azstorageaccount),
 or [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show):
