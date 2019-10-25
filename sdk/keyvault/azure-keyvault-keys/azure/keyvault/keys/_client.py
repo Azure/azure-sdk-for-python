@@ -64,8 +64,8 @@ class KeyClient(KeyVaultClientBase):
         :keyword bool enabled: Whether the key is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
-        :keyword datetime.datetime not_before: Not before date of the key in UTC
-        :keyword datetime.datetime expires_on: Expiry date of the key in UTC
+        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
+        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -113,8 +113,8 @@ class KeyClient(KeyVaultClientBase):
         :keyword bool enabled: Whether the key is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
-        :keyword datetime.datetime not_before: Not before date of the key in UTC
-        :keyword datetime.datetime expires_on: Expiry date of the key in UTC
+        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
+        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -147,8 +147,8 @@ class KeyClient(KeyVaultClientBase):
         :keyword bool enabled: Whether the key is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
-        :keyword datetime.datetime not_before: Not before date of the key in UTC
-        :keyword datetime.datetime expires_on: Expiry date of the key in UTC
+        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
+        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -404,8 +404,8 @@ class KeyClient(KeyVaultClientBase):
         :keyword bool enabled: Whether the key is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
-        :keyword datetime.datetime not_before: Not before date of the key in UTC
-        :keyword datetime.datetime expires_on: Expiry date of the key in UTC
+        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
+        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The updated key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises:
@@ -506,8 +506,8 @@ class KeyClient(KeyVaultClientBase):
         :keyword bool enabled: Whether the key is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
-        :keyword datetime.datetime not_before: Not before date of the key in UTC
-        :keyword datetime.datetime expires_on: Expiry date of the key in UTC
+        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
+        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The imported key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`

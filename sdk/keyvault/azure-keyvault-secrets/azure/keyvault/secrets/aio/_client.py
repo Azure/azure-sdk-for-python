@@ -70,8 +70,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword str content_type: An arbitrary string indicating the type of the secret, e.g. 'password'
-        :keyword datetime.datetime not_before: Not before date of the secret in UTC
-        :keyword datetime.datetime expires_on: Expiry date of the secret in UTC
+        :keyword ~datetime.datetime not_before: Not before date of the secret in UTC
+        :keyword ~datetime.datetime expires_on: Expiry date of the secret in UTC
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -109,8 +109,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword str content_type: An arbitrary string indicating the type of the secret, e.g. 'password'
-        :keyword datetime.datetime not_before: Not before date of the secret in UTC
-        :keyword datetime.datetime expires_on: Expiry date of the secret in UTC
+        :keyword ~datetime.datetime not_before: Not before date of the secret in UTC
+        :keyword ~datetime.datetime expires_on: Expiry date of the secret in UTC
         :rtype: ~azure.keyvault.secrets.SecretProperties
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,

@@ -99,7 +99,7 @@ class SecretProperties(object):
         # type: () -> datetime
         """The time before which the secret can not be used, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.not_before
 
@@ -108,7 +108,7 @@ class SecretProperties(object):
         # type: () -> datetime
         """When the secret expires, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.expires
 
@@ -117,7 +117,7 @@ class SecretProperties(object):
         # type: () -> datetime
         """When the secret was created, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.created
 
@@ -126,7 +126,7 @@ class SecretProperties(object):
         # type: () -> datetime
         """When the secret was last updated, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.updated
 
@@ -308,7 +308,7 @@ class DeletedSecret(object):
         # type: () -> datetime
         """When the secret was deleted, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._deleted_date
 
@@ -326,6 +326,6 @@ class DeletedSecret(object):
         # type: () -> datetime
         """When the secret is scheduled to be purged, in UTC. Returns ``None`` if soft-delete is disabled.
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._scheduled_purge_date

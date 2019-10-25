@@ -131,7 +131,7 @@ class KeyProperties(object):
         # type: () -> datetime
         """The time before which the key can not be used, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.not_before
 
@@ -140,7 +140,7 @@ class KeyProperties(object):
         # type: () -> datetime
         """When the key will expire, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.expires
 
@@ -149,7 +149,7 @@ class KeyProperties(object):
         # type: () -> datetime
         """When the key was created, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.created
 
@@ -158,7 +158,7 @@ class KeyProperties(object):
         # type: () -> datetime
         """When the key was last updated, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.updated
 
@@ -366,7 +366,7 @@ class DeletedKey(KeyVaultKey):
         # type: () -> datetime
         """When the key was deleted, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._deleted_date
 
@@ -384,6 +384,6 @@ class DeletedKey(KeyVaultKey):
         # type: () -> datetime
         """When the key is scheduled to be purged, in UTC. Returns ``None`` if soft-delete is disabled.
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._scheduled_purge_date
