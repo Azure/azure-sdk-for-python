@@ -342,7 +342,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :param str name: The name of the deleted key
         :returns: A coroutine for the recovery of the key. Since recovering a key is not instant, we poll on the
-         recovering of the key. Awaiting this method returns the recovered
+         recovery of the key. Awaiting this method returns the recovered
          :class:`~azure.keyvault.keys.KeyVaultKey`
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
