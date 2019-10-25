@@ -35,11 +35,10 @@ class ChainedTokenCredential(object):
         # type: (*str, **Any) -> AccessToken
         """Request a token from each chained credential, in order, returning the first token received.
 
-        If none provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError` with an
-        error message from each credential.
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
         :param str scopes: desired scopes for the token
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
+        :raises ~azure.core.exceptions.ClientAuthenticationError: when no credential in the chain provides a token
         """
         history = []
         for credential in self.credentials:

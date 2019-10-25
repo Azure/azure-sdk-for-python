@@ -28,6 +28,8 @@ class ChainedTokenCredential(SyncChainedTokenCredential):
         If no credential provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError`
         with an error message from each credential.
 
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
         :param str scopes: desired scopes for the token
         :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
