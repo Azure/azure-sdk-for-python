@@ -14,18 +14,13 @@ from azure.core.tracing import SpanKind  # type: ignore
 from azure.core.settings import settings  # type: ignore
 
 from azure.eventhub import EventPosition, EventHubError, EventData
-# from ..consumer_client_async import EventHubConsumerClient
+from ..._eventprocessor.event_processor import CloseReason
 from .partition_context import PartitionContext
 from .partition_manager import PartitionManager, OwnershipLostError
 from .ownership_manager import OwnershipManager
 from .utils import get_running_loop
 
 log = logging.getLogger(__name__)
-
-
-class CloseReason(Enum):
-    SHUTDOWN = 0  # user call EventProcessor.stop()
-    OWNERSHIP_LOST = 1  # lose the ownership of a partition.
 
 
 class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
@@ -209,7 +204,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
 
         async def process_error(err):
             log.warning(
-                "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+                "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                 " has met an error. The exception is %r.",
                 owner_id, eventhub_name, partition_id, consumer_group_name, err
             )
@@ -218,7 +213,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     await self._error_handler(partition_context, err)
                 except Exception as err_again:  # pylint:disable=broad-except
                     log.warning(
-                        "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+                        "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                         " has another error during running process_error(). The exception is %r.",
                         owner_id, eventhub_name, partition_id, consumer_group_name, err_again
                     )
@@ -226,7 +221,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         async def close(reason):
             if self._partition_close_handler:
                 log.info(
-                    "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+                    "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                     " is being closed. Reason is: %r",
                     owner_id, eventhub_name, partition_id, consumer_group_name, reason
                 )
@@ -234,7 +229,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     await self._partition_close_handler(partition_context, reason)
                 except Exception as err:  # pylint:disable=broad-except
                     log.warning(
-                        "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+                        "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                         " has an error during running close(). The exception is %r.",
                         owner_id, eventhub_name, partition_id, consumer_group_name, err
                     )
@@ -245,7 +240,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     await self._partition_initialize_handler(partition_context)
                 except Exception as err:  # pylint:disable=broad-except
                     log.warning(
-                        "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+                        "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                         " has an error during running initialize(). The exception is %r.",
                         owner_id, eventhub_name, partition_id, consumer_group_name, err
                     )
@@ -258,7 +253,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                         await self._event_handler(partition_context, events)
                 except asyncio.CancelledError:
                     log.info(
-                        "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+                        "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                         " is cancelled",
                         owner_id,
                         eventhub_name,
