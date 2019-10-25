@@ -89,7 +89,7 @@ To authenticate as a service principal, provide configuration in
 [environment variables](#environment-variables) as described in the next section.
 
 Authenticating as a managed identity requires no configuration but is only
-possible on a supported platform. See Azure Active Directory's
+possible in a supported hosting environment. See Azure Active Directory's
 [managed identity documentation](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/services-support-managed-identities)
 for more information.
 
