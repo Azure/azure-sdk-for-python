@@ -39,12 +39,6 @@ class OwnershipManager(object):
 
     async def claim_ownership(self):
         """Claims ownership for this EventProcessor
-        1. Retrieves all partition ids of an event hub from azure event hub service
-        2. Retrieves current ownership list via this EventProcessor's PartitionManager.
-        3. Balances number of ownership. Refer to _balance_ownership() for details.
-        4. Claims the ownership for the balanced number of partitions.
-
-        :return: List[Dict[Any]]
         """
         if not self.cached_parition_ids:
             await self._retrieve_partition_ids()
@@ -70,35 +64,11 @@ class OwnershipManager(object):
 
     async def _retrieve_partition_ids(self):
         """List all partition ids of the event hub that the EventProcessor is working on.
-
-        :return: List[str]
         """
         self.cached_parition_ids = await self.eventhub_client.get_partition_ids()
 
     async def _balance_ownership(self, ownership_list, all_partition_ids):
         """Balances and claims ownership of partitions for this EventProcessor.
-        The balancing algorithm is:
-        1. Find partitions with inactive ownership and partitions that haven never been claimed before
-        2. Find the number of active owners, including this EventProcessor, for all partitions.
-        3. Calculate the average count of partitions that an owner should own.
-        (number of partitions // number of active owners)
-        4. Calculate the largest allowed count of partitions that an owner can own.
-        math.ceil(number of partitions / number of active owners).
-        This should be equal or 1 greater than the average count
-        5. Adjust the number of partitions owned by this EventProcessor (owner)
-            a. if this EventProcessor owns less than average count, add one from the inactive or unclaimed partitions,
-            or steal one from another owner that has the largest number of ownership among all owners (EventProcessors)
-            b. Otherwise, no change to the ownership
-
-        The balancing algorithm adjust one partition at a time to gradually build the balanced ownership.
-        Ownership must be renewed to keep it active. So the returned result includes both existing ownership and
-        the newly adjusted ownership.
-        This method balances but doesn't claim ownership. The caller of this method tries to claim the result ownership
-        list. But it may not successfully claim all of them because of concurrency. Other EventProcessors may happen to
-        claim a partition at that time. Since balancing and claiming are run in infinite repeatedly,
-        it achieves balancing among all EventProcessors after some time of running.
-
-        :return: List[Dict[str, Any]], A list of ownership.
         """
 
         now = time.time()
