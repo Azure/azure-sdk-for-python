@@ -15,7 +15,7 @@ from ._producer_client import EventHubProducerClient
 from ._consumer import EventHubConsumer
 from ._consumer_client import EventHubConsumerClient
 from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
-from ._eventprocessor.partition_manager import PartitionManager
+from ._eventprocessor.partition_manager import PartitionManager, OwnershipLostError
 from ._eventprocessor.local_partition_manager import FileBasedPartitionManager
 from ._eventprocessor.event_processor import CloseReason
 
@@ -42,4 +42,5 @@ __all__ = [
     "PartitionManager",
     "FileBasedPartitionManager",
     "CloseReason",
+    "OwnershipLostError",
 ]
