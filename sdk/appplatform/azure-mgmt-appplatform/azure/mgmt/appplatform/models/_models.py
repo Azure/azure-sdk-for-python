@@ -122,7 +122,7 @@ class AppResourceProperties(Model):
     :ivar url: URL of the App
     :vartype url: str
     :ivar provisioning_state: Provisioning state of the App. Possible values
-     include: 'Succeeded', 'Failed'
+     include: 'Succeeded', 'Failed', 'Creating', 'Updating'
     :vartype provisioning_state: str or
      ~azure.mgmt.appplatform.models.AppResourceProvisioningState
     :param active_deployment_name: Name of the active deployment of the App
@@ -547,16 +547,16 @@ class DeploymentResourceProperties(Model):
     :type source: ~azure.mgmt.appplatform.models.UserSourceInfo
     :ivar app_name: App name of the deployment
     :vartype app_name: str
+    :ivar provisioning_state: Provisioning state of the Deployment. Possible
+     values include: 'Creating', 'Updating', 'Succeeded', 'Failed'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.appplatform.models.DeploymentResourceProvisioningState
     :param deployment_settings: Deployment settings of the Deployment
     :type deployment_settings:
      ~azure.mgmt.appplatform.models.DeploymentSettings
-    :ivar provisioning_state: Provisioning state of the Deployment. Possible
-     values include: 'Creating', 'Processing', 'Succeeded', 'Failed'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.appplatform.models.DeploymentResourceProvisioningState
     :ivar status: Status of the Deployment. Possible values include:
-     'Unknown', 'Stopped', 'Running', 'Failed', 'Processing', 'Allocating',
-     'Upgrading', 'Compiling'
+     'Unknown', 'Stopped', 'Running', 'Failed', 'Allocating', 'Upgrading',
+     'Compiling'
     :vartype status: str or
      ~azure.mgmt.appplatform.models.DeploymentResourceStatus
     :ivar active: Indicates whether the Deployment is active
@@ -580,8 +580,8 @@ class DeploymentResourceProperties(Model):
     _attribute_map = {
         'source': {'key': 'source', 'type': 'UserSourceInfo'},
         'app_name': {'key': 'appName', 'type': 'str'},
-        'deployment_settings': {'key': 'deploymentSettings', 'type': 'DeploymentSettings'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'deployment_settings': {'key': 'deploymentSettings', 'type': 'DeploymentSettings'},
         'status': {'key': 'status', 'type': 'str'},
         'active': {'key': 'active', 'type': 'bool'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
@@ -592,8 +592,8 @@ class DeploymentResourceProperties(Model):
         super(DeploymentResourceProperties, self).__init__(**kwargs)
         self.source = kwargs.get('source', None)
         self.app_name = None
-        self.deployment_settings = kwargs.get('deployment_settings', None)
         self.provisioning_state = None
+        self.deployment_settings = kwargs.get('deployment_settings', None)
         self.status = None
         self.active = None
         self.created_time = None
