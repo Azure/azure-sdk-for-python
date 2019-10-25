@@ -6,85 +6,67 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: file_samples_directory.py
+
+DESCRIPTION:
+    These samples demonstrate directory operations like creating a directory
+    or subdirectory, and working on files within the directories.
+
+USAGE:
+    python file_samples_directory.py
+    Set the environment variables with your own values before running the sample.
+"""
+
 import os
 
-try:
-    import settings_real as settings
-except ImportError:
-    import file_settings_fake as settings
-
-from filetestcase import (
-    FileTestCase,
-    TestMode,
-    record
-)
-
-SOURCE_FILE = 'SampleSource.txt'
+SOURCE_FILE = './SampleSource.txt'
+DEST_FILE = './SampleDestination.txt'
 
 
-class TestDirectorySamples(FileTestCase):
+class DirectorySamples(object):
 
-    connection_string = settings.CONNECTION_STRING
+    connection_string = os.getenv('CONNECTION_STRING')
 
-    def setUp(self):
-        data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-        with open(SOURCE_FILE, 'wb') as stream:
-            stream.write(data)
-
-        super(TestDirectorySamples, self).setUp()
-
-    def tearDown(self):
-        if os.path.isfile(SOURCE_FILE):
-            try:
-                os.remove(SOURCE_FILE)
-            except:
-                pass
-
-        return super(TestDirectorySamples, self).tearDown()
-
-    #--Begin File Samples-----------------------------------------------------------------
-
-    @record
-    def test_create_directory(self):
+    def create_directory_and_file(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.fileshare import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "dirshare")
+        from azure.storage.file import ShareClient
+        share = ShareClient.from_connection_string(self.connection_string, "directorysamples1")
 
         # Create the share
         share.create_share()
 
         try:
             # Get the directory client
-            dir = share.get_directory_client(directory_path="mydirectory")
+            my_directory = share.get_directory_client(directory_path="mydirectory")
 
             # [START create_directory]
-            dir.create_directory()
+            my_directory.create_directory()
             # [END create_directory]
 
             # [START upload_file_to_directory]
             # Upload a file to the directory
             with open(SOURCE_FILE, "rb") as source:
-                dir.upload_file(file_name="sample", data=source)
+                my_directory.upload_file(file_name="sample", data=source)
             # [END upload_file_to_directory]
 
             # [START delete_file_in_directory]
             # Delete the file in the directory
-            dir.delete_file(file_name="sample")
+            my_directory.delete_file(file_name="sample")
             # [END delete_file_in_directory]
 
             # [START delete_directory]
-            dir.delete_directory()
+            my_directory.delete_directory()
             # [END delete_directory]
 
         finally:
             # Delete the share
             share.delete_share()
 
-    @record
-    def test_create_subdirectories(self):
+    def create_subdirectory_and_file(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.fileshare import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "subdirshare")
+        from azure.storage.file import ShareClient
+        share = ShareClient.from_connection_string(self.connection_string, "directorysamples2")
 
         # Create the share
         share.create_share()
@@ -125,11 +107,10 @@ class TestDirectorySamples(FileTestCase):
             # Delete the share
             share.delete_share()
 
-    @record
-    def test_get_subdirectory_client(self):
+    def get_subdirectory_client(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.fileshare import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "dirtest")
+        from azure.storage.file import ShareClient
+        share = ShareClient.from_connection_string(self.connection_string, "directorysamples3")
 
         # Create the share
         share.create_share()
@@ -147,3 +128,10 @@ class TestDirectorySamples(FileTestCase):
         finally:
             # Delete the share
             share.delete_share()
+
+
+if __name__ == '__main__':
+    sample = DirectorySamples()
+    sample.create_directory_and_file()
+    sample.create_subdirectory_and_file()
+    sample.get_subdirectory_client()
