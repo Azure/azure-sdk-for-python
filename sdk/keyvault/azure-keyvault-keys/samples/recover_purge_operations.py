@@ -48,12 +48,17 @@ try:
 
     print("\n.. Delete the keys")
     for key_name in (ec_key.name, rsa_key.name):
-        deleted_key = client.begin_delete_key(key_name).result()
-        print("Deleted key '{0}'".format(deleted_key.name))
+        client.begin_delete_key(key_name).wait()
+        print("Deleted key '{0}'".format(key_name))
 
     print("\n.. Recover a deleted key")
-    recovered_key = client.begin_recover_deleted_key(rsa_key.name).result()
+    recover_key_poller = client.begin_recover_deleted_key(rsa_key.name)
+    recovered_key = recover_key_poller.result()
     print("Recovered key '{0}'".format(recovered_key.name))
+
+    # This wait is just to ensure the key has been properly recovered before we delete it again
+    recover_key_poller.wait()
+
 
     # deleting the recovered key so it doesn't outlast this script
     client.begin_delete_key(recovered_key.name).wait()
