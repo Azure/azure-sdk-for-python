@@ -30,23 +30,23 @@ this [Azure CLI](https://docs.microsoft.com/cli/azure) snippet. Before using
 it, replace "http://my-application" with a more appropriate name for your
 service principal.
 
- * Create a service principal:
-    ```sh
-    az ad sp create-for-rbac --name http://my-application --skip-assignment
-    ```
-    Example output:
-    ```json
-    {
-        "appId": "generated-app-id",
-        "displayName": "app-name",
-        "name": "http://my-application",
-        "password": "random-password",
-        "tenant": "tenant-id"
-    }
-    ```
-  * Azure Identity can authenticate as this service principal using its tenant
-  id ("tenant" above), client id ("appId" above), and client secret ("password"
-  above).
+Create a service principal:
+```sh
+az ad sp create-for-rbac --name http://my-application --skip-assignment
+```
+
+Example output:
+```json
+{
+    "appId": "generated-app-id",
+    "displayName": "app-name",
+    "name": "http://my-application",
+    "password": "random-password",
+    "tenant": "tenant-id"
+}
+```
+Azure Identity can authenticate as this service principal using its tenant id
+("tenant" above), client id ("appId" above), and client secret ("password" above).
 
 
 # Key concepts
