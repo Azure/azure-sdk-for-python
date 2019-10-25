@@ -2,37 +2,33 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from .credentials import (
+from ._constants import KnownAuthorities
+from ._credentials import (
+    AuthorizationCodeCredential,
     CertificateCredential,
     ChainedTokenCredential,
     ClientSecretCredential,
+    DefaultAzureCredential,
+    DeviceCodeCredential,
     EnvironmentCredential,
+    InteractiveBrowserCredential,
     ManagedIdentityCredential,
+    SharedTokenCacheCredential,
+    UsernamePasswordCredential,
 )
 
 
-class DefaultAzureCredential(ChainedTokenCredential):
-    """
-    A default credential capable of handling most Azure SDK authentication scenarios.
-
-    When environment variable configuration is present, it authenticates as a service principal
-    using :class:`identity.EnvironmentCredential`.
-
-    When environment configuration is not present, it authenticates with a managed identity
-    using :class:`identity.ManagedIdentityCredential`.
-    """
-
-    def __init__(self, **kwargs):
-        super(DefaultAzureCredential, self).__init__(
-            EnvironmentCredential(**kwargs), ManagedIdentityCredential(**kwargs)
-        )
-
-
 __all__ = [
+    "AuthorizationCodeCredential",
     "CertificateCredential",
     "ChainedTokenCredential",
     "ClientSecretCredential",
     "DefaultAzureCredential",
+    "DeviceCodeCredential",
     "EnvironmentCredential",
+    "InteractiveBrowserCredential",
+    "KnownAuthorities",
     "ManagedIdentityCredential",
+    "SharedTokenCacheCredential",
+    "UsernamePasswordCredential",
 ]

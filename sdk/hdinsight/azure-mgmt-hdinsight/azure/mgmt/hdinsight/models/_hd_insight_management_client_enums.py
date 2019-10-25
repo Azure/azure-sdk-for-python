@@ -17,6 +17,17 @@ class DirectoryType(str, Enum):
     active_directory = "ActiveDirectory"
 
 
+class DaysOfWeek(str, Enum):
+
+    monday = "Monday"
+    tuesday = "Tuesday"
+    wednesday = "Wednesday"
+    thursday = "Thursday"
+    friday = "Friday"
+    saturday = "Saturday"
+    sunday = "Sunday"
+
+
 class OSType(str, Enum):
 
     windows = "Windows"
@@ -58,3 +69,9 @@ class AsyncOperationState(str, Enum):
     in_progress = "InProgress"
     succeeded = "Succeeded"
     failed = "Failed"
+
+
+class FilterMode(str, Enum):
+
+    exclude = "Exclude"
+    include = "Include"

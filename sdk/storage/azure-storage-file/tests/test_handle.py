@@ -13,10 +13,12 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError)
 
-from azure.storage.file.file_service_client import FileServiceClient
-from azure.storage.file.directory_client import DirectoryClient
-from azure.storage.file.file_client import FileClient
-from azure.storage.file.share_client import ShareClient
+from azure.storage.file import (
+    FileServiceClient,
+    DirectoryClient,
+    FileClient,
+    ShareClient
+)
 from filetestcase import (
     FileTestCase,
     record,
@@ -114,20 +116,21 @@ class StorageHandleTest(FileTestCase):
         root = share.get_directory_client()
 
         # Act
-        handle_generator = root.list_handles(recursive=True, results_per_page=1)
-        next(handle_generator)
+        handle_generator = root.list_handles(recursive=True, results_per_page=1).by_page()
+        handles = list(next(handle_generator))
 
         # Assert
-        self.assertIsNotNone(handle_generator.next_marker)
-        handles = handle_generator.current_page
+        self.assertIsNotNone(handle_generator.continuation_token)
         self._validate_handles(handles)
 
         # Note down a handle that we saw
         old_handle = handles[0]
 
         # Continue listing
-        remaining_handles = list(
-            root.list_handles(recursive=True, marker=handle_generator.next_marker))
+        remaining_handles = list(next(
+            root.list_handles(recursive=True).by_page(
+                continuation_token=handle_generator.continuation_token)
+        ))
         self._validate_handles(handles)
 
         # Make sure the old handle did not appear
@@ -185,10 +188,13 @@ class StorageHandleTest(FileTestCase):
         self._validate_handles(handles)
 
         # Act
-        num_closed = root.close_handles(handle=handles[0])
+        with self.assertRaises(ValueError):
+            root.close_handle('*')
+
+        num_closed = root.close_handle(handles[0])
 
         # Assert 1 handle has been closed
-        self.assertEqual(1, num_closed.result())
+        self.assertEqual(1, num_closed)
 
     @record
     def test_close_all_handle(self):
@@ -204,11 +210,10 @@ class StorageHandleTest(FileTestCase):
         self._validate_handles(handles)
 
         # Act
-        num_closed = root.close_handles()
-        total_num_handle_closed = num_closed.result()
+        num_closed = root.close_all_handles()
 
         # Assert at least 1 handle has been closed
-        self.assertTrue(total_num_handle_closed > 1)
+        self.assertTrue(num_closed > 1)
 
 
 # ------------------------------------------------------------------------------

@@ -4,16 +4,18 @@ import pytest
 from time import sleep
 
 from azure.cosmos.http_constants import ResourceType
-import azure.cosmos.cosmos_client_connection as cosmos_client_connection
+import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
-from azure.cosmos.request_object import _RequestObject
-from azure.cosmos.location_cache import LocationCache
+from azure.cosmos._request_object import RequestObject
+from azure.cosmos._location_cache import LocationCache
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
-import azure.cosmos.retry_utility as retry_utility
+from azure.cosmos import _retry_utility
+import test_config
 import six
 
 pytestmark = pytest.mark.cosmosEmulator
+
 
 class RefreshThread(threading.Thread):
     def __init__(self, group=None, target=None, name=None,
@@ -74,8 +76,8 @@ class LocationCacheTest(unittest.TestCase):
 
     def validate_retry_on_session_not_availabe_with_endpoint_discovery_disabled(self, is_preferred_locations_list_empty, use_multiple_write_locations, is_read_request):
         self.counter = 0
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunctionSessionReadFailureOnce
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunctionSessionReadFailureOnce
         self.original_get_database_account = cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount
         cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.mock_create_db_with_flag_enabled if use_multiple_write_locations else self.mock_create_db_with_flag_disabled
         enable_endpoint_discovery = False
@@ -87,7 +89,7 @@ class LocationCacheTest(unittest.TestCase):
             else:
                 client.CreateItem("dbs/mydb/colls/mycoll/", {'id':'1'})
             self.fail()
-        except errors.HTTPFailure as e:
+        except errors.CosmosHttpResponseError as e:
             # not retried
             self.assertEqual(self.counter, 1)
             self.counter = 0
@@ -95,11 +97,15 @@ class LocationCacheTest(unittest.TestCase):
             self.assertEqual(e.sub_status, SubStatusCodes.READ_SESSION_NOTAVAILABLE)
 
         cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.original_get_database_account
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunctionSessionReadFailureOnce(self, function, *args, **kwargs):
         self.counter += 1
-        raise errors.HTTPFailure(StatusCodes.NOT_FOUND, "Read Session not available", {HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
+        response = test_config.FakeResponse({HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
+        raise errors.CosmosHttpResponseError(
+            status_code=StatusCodes.NOT_FOUND,
+            message="Read Session not available",
+            response=response)
 
     def test_validate_retry_on_session_not_availabe_with_endpoint_discovery_enabled(self):
         # sequence of chosen endpoints: 
@@ -116,8 +122,8 @@ class LocationCacheTest(unittest.TestCase):
 
     def validate_retry_on_session_not_availabe(self, is_preferred_locations_list_empty, use_multiple_write_locations):
         self.counter = 0
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunctionSessionReadFailureTwice
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunctionSessionReadFailureTwice
         self.original_get_database_account = cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount
         cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.mock_create_db_with_flag_enabled if use_multiple_write_locations else self.mock_create_db_with_flag_disabled
 
@@ -128,7 +134,7 @@ class LocationCacheTest(unittest.TestCase):
 
         try:
             client.ReadItem("dbs/mydb/colls/mycoll/docs/1")
-        except errors.HTTPFailure as e:
+        except errors.CosmosHttpResponseError as e:
             # not retried
             self.assertEqual(self.counter, 4 if use_multiple_write_locations else 2)
             self.counter = 0
@@ -136,7 +142,7 @@ class LocationCacheTest(unittest.TestCase):
             self.assertEqual(e.sub_status, SubStatusCodes.READ_SESSION_NOTAVAILABLE)
 
         cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.original_get_database_account
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunctionSessionReadFailureTwice(self, function, *args, **kwargs):
         request = args[1]
@@ -160,7 +166,11 @@ class LocationCacheTest(unittest.TestCase):
             self.assertTrue(request.should_clear_session_token_on_session_read_failure)
         self.assertEqual(expected_endpoint, request.location_endpoint_to_route)
         self.counter += 1
-        raise errors.HTTPFailure(StatusCodes.NOT_FOUND, "Read Session not available", {HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
+        response = test_config.FakeResponse({HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
+        raise errors.CosmosHttpResponseError(
+            status_code=StatusCodes.NOT_FOUND,
+            message="Read Session not available",
+            response=response)
 
     def test_validate_location_cache(self):
         self.original_get_database_account = cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount
@@ -376,11 +386,11 @@ class LocationCacheTest(unittest.TestCase):
     def resolve_endpoint_for_read_request(self, master_resource_type):
         operation_type = documents._OperationType.Read
         resource_type = ResourceType.Database if master_resource_type else ResourceType.Document
-        request = _RequestObject(resource_type, operation_type)
+        request = RequestObject(resource_type, operation_type)
         return self.location_cache.resolve_service_endpoint(request)
 
     def resolve_endpoint_for_write_request(self, resource_type, use_alternate_write_endpoint):
         operation_type = documents._OperationType.Create
-        request = _RequestObject(resource_type, operation_type)
+        request = RequestObject(resource_type, operation_type)
         request.route_to_location_with_preferred_location_flag(1 if use_alternate_write_endpoint else 0, ResourceType.IsCollectionChild(resource_type))
         return self.location_cache.resolve_service_endpoint(request)

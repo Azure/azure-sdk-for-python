@@ -89,12 +89,19 @@ class DirectoryServiceOptions(str, Enum):
 
     none = "None"
     aadds = "AADDS"
+    ad = "AD"
 
 
 class AccessTier(str, Enum):
 
     hot = "Hot"
     cool = "Cool"
+
+
+class LargeFileSharesState(str, Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
 
 
 class GeoReplicationStatus(str, Enum):
@@ -218,3 +225,8 @@ class ImmutabilityPolicyUpdateType(str, Enum):
 class StorageAccountExpand(str, Enum):
 
     geo_replication_stats = "geoReplicationStats"
+
+
+class ListKeyExpand(str, Enum):
+
+    kerb = "kerb"

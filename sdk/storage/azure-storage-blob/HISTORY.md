@@ -1,5 +1,144 @@
 # Change Log azure-storage-blob
 
+## Version 12.0.0b5:
+
+**Breaking changes**
+
+- `set_container_access_policy` has required parameter `signed_identifiers`.
+- `NoRetry` policy has been removed. Use keyword argument `retry_total=0` for no retries.
+- `StorageStreamDownloader` is no longer iterable. To iterate over the blob data stream, use `StorageStreamDownloader.chunks`.
+- The public attributes of `StorageStreamDownloader` have been limited to:
+  - `name` (str): The name of the blob.
+  - `container` (str): The container the blob is being downloaded from.
+  - `properties` (`BlobProperties`): The properties of the blob.
+  - `size` (int): The size of the download. Either the total blob size, or the length of a subsection if sepcified. Previously called `download_size`.
+- `StorageStreamDownloader` now has new functions:
+  - `readall()`: Reads the complete download stream, returning bytes. This replaces the functions `content_as_bytes` and `content_as_text` which have been deprecated.
+  - `readinto(stream)`: Download the complete stream into the supplied writable stream, returning the number of bytes written. This replaces the function `download_to_stream` which has been deprecated.
+- Module level functions `upload_blob_to_url` and `download_blob_from_url` functions options are now keyword only:
+  - `overwrite`
+  - `max_concurrency`
+  - `encoding`
+- Removed types that were accidentally exposed from two modules. Only `BlobServiceClient`, `ContainerClient`,
+`BlobClient` and `BlobLeaseClient` should be imported from azure.storage.blob.aio
+- `Logging` has been renamed to `BlobAnalyticsLogging`.
+- Client and model files have been made internal. Users should import from the top level modules `azure.storage.blob` and `azure.storage.blob.aio` only.
+- All operations that take Etag conditional parameters (`if_match` and `if_none_match`) now take explicit `etag` and `match_condition` parameters, where `etag` is the Etag value, and `match_condition` is an instance of `azure.core.MatchConditions`.
+- The `generate_shared_access_signature` methods on each of `BlobServiceClient`, `ContainerClient` and `BlobClient` have been replaced by module level functions `generate_account_sas`, `generate_container_sas` and `generate_blob_sas`.
+- The batch APIs now have an additional keyword only argument `raise_on_any_failure` which defaults to True. This will raise an error even if there's a partial batch failure.
+- `LeaseClient` has been renamed to `BlobLeaseClient`.
+- `get_service_stats` now returns a dict
+- `get_service_properties` now returns a dict with keys consistent to `set_service_properties`
+
+**New features**
+
+- Added async module-level `upload_blob_to_url` and `download_blob_from_url` functions.
+- `ResourceTypes`, and `Services` now have method `from_string` which takes parameters as a string.
+
+## Version 12.0.0b4:
+
+**Breaking changes**
+
+- Permission models.
+  - `AccountPermissions`, `BlobPermissions` and `ContainerPermissions` have been renamed to
+  `AccountSasPermissions`, `BlobSasPermissions` and `ContainerSasPermissions` respectively.
+  - enum-like list parameters have been removed from all three of them.
+  - `__add__` and `__or__` methods are removed.
+- `max_connections` is now renamed to `max_concurrency`.
+- `ContainerClient` now accepts only `account_url` with a mandatory string param `container_name`.
+To use a container_url, the method `from_container_url` must be used.
+- `BlobClient` now accepts only `account_url` with mandatory string params `container_name` and
+`blob_name`. To use a blob_url, the method `from_blob_url` must be used.
+- Some parameters have become keyword only, rather than positional. Some examples include:
+  - `loop`
+  - `max_concurrency`
+  - `validate_content`
+  - `timeout` etc.
+- APIs now take in `offset` and `length` instead of `range_start` and `range_end` consistently.
+`length` is the number of bytes to take in starting from the `offset`. The APIs that have been
+changed include:
+  - `get_page_ranges`
+  - `upload_page`
+  - `upload_pages_from_url`
+  - `clear_page`
+  - `append_block_from_url`
+- `block_id` is not optional in `BlobBlock` model.
+
+**New features**
+
+- Add support for delete_blobs API to ContainerClient (Python 3 only)
+- Add support for set_standard_blob_tier_blobs to ContainerClient (Python 3 only)
+- Add support for set_premium_page_blob_tier_blobs to ContainerClient (Python 3 only)
+- Added support to set rehydrate blob priority for Block Blob, including Set Standard Blob Tier/Copy Blob APIs
+- Added blob tier support for Block Blob, including Upload Blob/Commit Block List/Copy Blob APIs.
+- `AccountSasPermissions`, `BlobSasPermissions`, `ContainerSasPermissions` now have method `from_string`
+which takes parameters as a string.
+
+**Fixes and improvements**
+- Downloading page blobs now take advantage of their sparseness.
+- The `length` param in `download_blob` now takes the number of bytes to take in starting from the `offset`
+instead of a harde set end value.
+
+**Dependency updates**
+- Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b4
+  - If you later want to revert to previous versions of azure-storage-blob, or another Azure SDK
+  library requiring azure-core 1.0.0b1 or azure-core 1.0.0b2, you must explicitly install
+  the specific version of azure-core as well. For example:
+
+  `pip install azure-core==1.0.0b2 azure-storage-blob==12.0.0b2`
+
+## Version 12.0.0b3:
+
+**New features**
+- Added SAS support for snapshot and identity.
+- Distributed tracing framework OpenCensus is now supported.
+- Added support for append_block_from_url API for append blobs.
+- Added support for upload_pages_from_url API for page blobs.
+- Added support for client provided encryption key to numerous APIs.
+
+**Dependency updates**
+- Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b3
+  - If you later want to revert to previous versions of azure-storage-blob, or another Azure SDK
+  library requiring azure-core 1.0.0b1 or azure-core 1.0.0b2, you must explicitly install
+  the specific version of azure-core as well. For example:
+
+  `pip install azure-core==1.0.0b2 azure-storage-blob==12.0.0b2`
+
+**Fixes and improvements**
+- Fix where content-type was being added in the request when not mentioned explicitly.
+
+
+## Version 12.0.0b2:
+
+**Breaking changes**
+- Renamed `copy_blob_from_url` to `start_copy_from_url` and changed behaviour to return a dictionary of copy properties rather than a polling object. Status of the copy operation can be retrieved with the `get_blob_properties` operation.
+- Added `abort_copy` operation to the `BlobClient` class. This replaces the previous abort operation on the copy status polling operation.
+- The behavior of listing operations has been modified:
+    - The previous `marker` parameter has been removed.
+    - The iterable response object now supports a `by_page` function that will return a secondary iterator of batches of results. This function supports a `continuation_token` parameter to replace the previous `marker` parameter.
+- Some parameters have become keyword only, rather than positional. Some examples include:
+    - `timeout`
+    - `lease`
+    - `encoding`
+    - Modification conditions, e.g. `if_modified_since`, `if_match` , `maxsize_condition`, etc
+
+**New features**
+- Added async APIs to subnamespace `azure.storage.blob.aio`.
+- Distributed tracing framework OpenCensus is now supported.
+
+**Dependency updates**
+- Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b2
+  - If you later want to revert to azure-storage-blob 12.0.0b1, or another Azure SDK
+  library requiring azure-core 1.0.0b1, you must explicitly install azure-core
+  1.0.0b1 as well. For example:
+
+  `pip install azure-core==1.0.0b1 azure-storage-blob==12.0.0b1`
+
+**Fixes and improvements**
+- Fix for SAS URL encoding (#6500)
+- General refactor of duplicate and shared code.
+
+
 ## Version 12.0.0b1:
 
 Version 12.0.0b1 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Storage Blobs. For more information about this, and preview releases of other Azure SDK libraries, please visit

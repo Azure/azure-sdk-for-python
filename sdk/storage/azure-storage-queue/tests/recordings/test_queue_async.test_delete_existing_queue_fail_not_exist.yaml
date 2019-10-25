@@ -1,0 +1,62 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 22 Oct 2019 21:21:31 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://pyacrstoragec37b1807.queue.core.windows.net/pythonqueuec37b1807
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 22 Oct 2019 21:21:29 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2018-03-28'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoragec37b1807.queue.core.windows.net
+        - /pythonqueuec37b1807
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 22 Oct 2019 21:21:31 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: DELETE
+    uri: https://pyacrstoragec37b1807.queue.core.windows.net/pythonqueuec37b1807
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 22 Oct 2019 21:21:29 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2018-03-28'
+    status:
+      code: 204
+      message: No Content
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoragec37b1807.queue.core.windows.net
+        - /pythonqueuec37b1807
+        - ''
+        - ''
+version: 1

@@ -9,53 +9,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 0adc1c74-9816-11e9-ade4-f45c89a7d159
+      - eaf25dd0-d9a6-11e9-918a-001a7dda7113
       x-ms-date:
-      - Wed, 26 Jun 2019 13:26:45 GMT
+      - Tue, 17 Sep 2019 23:57:34 GMT
       x-ms-version:
-      - '2018-11-09'
-    method: HEAD
-    uri: https://blobstoragename.file.core.windows.net/utsharea6d51786/filea6d51786
-  response:
-    body:
-      string: ''
-    headers:
-      Date:
-      - Wed, 26 Jun 2019 13:26:46 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - ResourceNotFound
-      x-ms-request-id:
-      - 995d25ad-a01a-0007-4222-2c9285000000
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 404
-      message: The specified resource does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - d77a0298-9819-11e9-a1b4-f45c89a7d159
-      x-ms-date:
-      - Wed, 26 Jun 2019 13:53:56 GMT
-      x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: HEAD
     uri: https://storagename.file.core.windows.net/utsharea6d51786/filea6d51786
   response:
@@ -63,19 +25,17 @@ interactions:
       string: ''
     headers:
       Date:
-      - Wed, 26 Jun 2019 13:53:56 GMT
+      - Tue, 17 Sep 2019 23:57:33 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
       - chunked
-      Vary:
-      - Origin
       x-ms-error-code:
       - ResourceNotFound
       x-ms-request-id:
-      - b84427be-101a-0051-7926-2c7af5000000
+      - f0545ca5-101a-00e0-11b3-6dd06d000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 404
       message: The specified resource does not exist.

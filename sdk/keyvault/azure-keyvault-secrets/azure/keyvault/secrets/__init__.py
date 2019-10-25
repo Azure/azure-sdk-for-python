@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from ._models import DeletedSecret, KeyVaultSecret, SecretProperties
 from ._client import SecretClient
-from ._models import Secret, SecretAttributes, DeletedSecret
 
-__all__ = ["SecretClient"]
+__all__ = ["SecretClient", "KeyVaultSecret", "SecretProperties", "DeletedSecret"]

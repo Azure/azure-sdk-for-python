@@ -8,10 +8,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
 from ._service_operations_async import ServiceOperations
 from ._container_operations_async import ContainerOperations
+from ._directory_operations_async import DirectoryOperations
 from ._blob_operations_async import BlobOperations
 from ._page_blob_operations_async import PageBlobOperations
 from ._append_blob_operations_async import AppendBlobOperations
@@ -20,6 +20,7 @@ from ._block_blob_operations_async import BlockBlobOperations
 __all__ = [
     'ServiceOperations',
     'ContainerOperations',
+    'DirectoryOperations',
     'BlobOperations',
     'PageBlobOperations',
     'AppendBlobOperations',

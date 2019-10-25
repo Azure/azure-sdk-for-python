@@ -3,6 +3,27 @@
 Release History
 ===============
 
+3.0.0rc7 (2019-10-23)
++++++++++++++++++++++
+
+**Bugfixes**
+
+- Minor fixes in ScopeMaps
+
+3.0.0rc6 (2019-10-03)
++++++++++++++++++++++
+
+**Features**
+
+- Added operation RegistriesOperations.generate_credentials
+
+3.0.0rc5 (2019-08-02)
++++++++++++++++++++++
+
+**Bugfixes**
+
+- Reverting API version back to 2019-05-01
+
 3.0.0rc4 (2019-07-10)
 +++++++++++++++++++++
 

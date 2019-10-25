@@ -1,5 +1,117 @@
 # Change Log azure-storage-file
 
+## Version 12.0.0b5:
+
+**Breaking changes**
+
+- `ShareClient` now accepts only `account_url` with mandatory a string param `share_name`.
+To use a share_url, the method `from_share_url` must be used.
+- `DirectoryClient` now accepts only `account_url` with mandatory string params `share_name` and `directory_path`.
+To use a directory_url, the method `from_directory_url` must be used.
+- `FileClient` now accepts only `account_url` with mandatory string params `share_name` and
+`file_path`. To use a file_url, the method `from_file_url` must be used.
+- `file_permission_key` parameter has been renamed to `permission_key`
+- `set_share_access_policy` has required parameter `signed_identifiers`.
+- NoRetry policy has been removed. Use keyword argument `retry_total=0` for no retries.
+- Removed types that were accidentally exposed from two modules. Only `FileServiceClient`, `ShareClient`, `DirectoryClient` and `FileClient` should be imported from azure.storage.file.aio
+- Some parameters have become keyword only, rather than positional. Some examples include:
+  - `loop`
+  - `max_concurrency`
+  - `validate_content`
+  - `timeout` etc.
+- Client and model files have been made internal. Users should import from the top level modules `azure.storage.file` and `azure.storage.file.aio` only.
+- The `generate_shared_access_signature` methods on each of `FileServiceClient`, `ShareClient` and `FileClient` have been replaced by module level functions `generate_account_sas`, `generate_share_sas` and `generate_file_sas`.
+- `start_range` and `end_range` params are now renamed to and behave like`offset` and `length` in
+the following APIs:
+  - download_file
+  - upload_range
+  - upload_range_from_url
+  - clear_range
+  - get_ranges
+- `StorageStreamDownloader` is no longer iterable. To iterate over the file data stream, use `StorageStreamDownloader.chunks`.
+- The public attributes of `StorageStreamDownloader` have been limited to:
+  - `name` (str): The name of the file.
+  - `path` (str): The full path of the file.
+  - `share` (str): The share the file will be downloaded from.
+  - `properties` (`FileProperties`): The properties of the file.
+  - `size` (int): The size of the download. Either the total file size, or the length of a subsection if sepcified. Previously called `download_size`.
+- `StorageStreamDownloader` now has new functions:
+  - `readall()`: Reads the complete download stream, returning bytes. This replaces the functions `content_as_bytes` and `content_as_text` which have been deprecated.
+  - `readinto(stream)`: Download the complete stream into the supplied writable stream, returning the number of bytes written. This replaces the function `download_to_stream` which has been deprecated.
+- `FileClient.close_handles` and `DirectoryClient.close_handles` have both been replaced by two functions each; `close_handle(handle)` and `close_all_handles()`. These functions are blocking and return integer (the number of closed handles) rather than polling objects.
+- `get_service_properties` now returns a dict with keys consistent to `set_service_properties`
+
+
+**New features**
+
+- `ResourceTypes`, `NTFSAttributes`, and `Services` now have method `from_string` which takes parameters as a string.
+
+
+## Version 12.0.0b4:
+
+**Breaking changes**
+
+- Permission models.
+  - `AccountPermissions`, `SharePermissions` and `FilePermissions` have been renamed to
+  `AccountSasPermissions`, `ShareSasPermissions` and `FileSasPermissions` respectively.
+  - enum-like list parameters have been removed from all three of them.
+  - `__add__` and `__or__` methods are removed.
+- `max_connections` is now renamed to `max_concurrency`.
+
+**New features**
+
+- `AccountSasPermissions`, `FileSasPermissions`, `ShareSasPermissions` now have method `from_string` which
+takes parameters as a string.
+
+## Version 12.0.0b3:
+
+**New features**
+- Added upload_range_from_url API to write the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
+- Added set_http_headers for directory_client, create_permission_for_share and get_permission_for_share APIs.
+- Added optional parameters for smb properties related parameters for create_file*, create_directory* related APIs and set_http_headers API.
+- Updated get_properties for directory and file so that the response has SMB properties.
+
+**Dependency updates**
+- Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b3
+  - If you later want to revert to previous versions of azure-storage-file, or another Azure SDK
+  library requiring azure-core 1.0.0b1 or azure-core 1.0.0b2, you must explicitly install
+  the specific version of azure-core as well. For example:
+
+  `pip install azure-core==1.0.0b2 azure-storage-file==12.0.0b2`
+
+**Fixes and improvements**
+- Fix where content-type was being added in the request when not mentioned explicitly.
+
+
+## Version 12.0.0b2:
+
+**Breaking changes**
+- Renamed `copy_file_from_url` to `start_copy_from_url` and changed behaviour to return a dictionary of copy properties rather than a polling object. Status of the copy operation can be retrieved with the `get_file_properties` operation.
+- Added `abort_copy` operation to the `FileClient` class. This replaces the previous abort operation on the copy status polling operation.
+- The behavior of listing operations has been modified:
+    - The previous `marker` parameter has been removed.
+    - The iterable response object now supports a `by_page` function that will return a secondary iterator of batches of results. This function supports a `continuation_token` parameter to replace the previous `marker` parameter.
+- The new listing behaviour is also adopted by the `receive_messages` operation:
+    - The receive operation returns a message iterator as before.
+    - The returned iterator supports a `by_page` operation to receive messages in batches.
+
+**New features**
+- Added async APIs to subnamespace `azure.storage.file.aio`.
+- Distributed tracing framework OpenCensus is now supported.
+
+**Dependency updates**
+- Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b2
+  - If you later want to revert to azure-storage-file 12.0.0b1, or another Azure SDK
+  library requiring azure-core 1.0.0b1, you must explicitly install azure-core
+  1.0.0b1 as well. For example:
+
+  `pip install azure-core==1.0.0b1 azure-storage-file==12.0.0b1`
+
+**Fixes and improvements**
+- Fix for closing file handles - continuation token was not being passed to subsequent calls.
+- General refactor of duplicate and shared code.
+
+
 ## Version 12.0.0b1:
 
 Version 12.0.0b1 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Storage Files. For more information about this, and preview releases of other Azure SDK libraries, please visit

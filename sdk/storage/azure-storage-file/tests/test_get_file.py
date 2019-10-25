@@ -62,7 +62,7 @@ class StorageGetFileTest(FileTestCase):
             byte_file = self.directory_name + '/' + self.byte_file
             file_client = FileClient(
                 self.get_file_url(),
-                share=self.share_name,
+                share_name=self.share_name,
                 file_path=byte_file,
                 credential=credential
             )
@@ -110,7 +110,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
                 self.get_file_url(),
-                share=self.share_name,
+                share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
                 credential=self.settings.STORAGE_ACCOUNT_KEY,
                 max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -118,7 +118,7 @@ class StorageGetFileTest(FileTestCase):
         file_client.upload_file(file_data)
 
         # Act
-        file_content = file_client.download_file().content_as_bytes()
+        file_content = file_client.download_file().readall()
 
         # Assert
         self.assertEqual(file_content, file_data)
@@ -132,7 +132,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
                 self.get_file_url(),
-                share=self.share_name,
+                share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
                 credential=self.settings.STORAGE_ACCOUNT_KEY,
                 max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -140,7 +140,7 @@ class StorageGetFileTest(FileTestCase):
         file_client.upload_file(binary_data)
 
         # Act
-        file_content = file_client.download_file().content_as_bytes()
+        file_content = file_client.download_file().readall()
 
         # Assert
         self.assertEqual(file_content, binary_data)
@@ -152,7 +152,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
                 self.get_file_url(),
-                share=self.share_name,
+                share_name=self.share_name,
                 file_path=self.directory_name + '/' + file_name,
                 credential=self.settings.STORAGE_ACCOUNT_KEY,
                 max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -163,7 +163,7 @@ class StorageGetFileTest(FileTestCase):
         file_output = file_client.download_file()
 
         # Assert
-        self.assertEqual(file_data, file_output.content_as_bytes())
+        self.assertEqual(file_data, file_output.readall())
         self.assertEqual(0, file_output.properties.size)
 
     def test_get_file_to_bytes(self):
@@ -174,14 +174,14 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
-        file_content = file_client.download_file().content_as_bytes(max_connections=2)
+        file_content = file_client.download_file(max_concurrency=2).readall()
 
         # Assert
         self.assertEqual(self.byte_data, file_content)
@@ -194,7 +194,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -208,7 +208,7 @@ class StorageGetFileTest(FileTestCase):
                 progress.append((current, total))
 
         # Act
-        file_content = file_client.download_file(raw_response_hook=callback).content_as_bytes(max_connections=2)
+        file_content = file_client.download_file(raw_response_hook=callback, max_concurrency=2).readall()
 
         # Assert
         self.assertEqual(self.byte_data, file_content)
@@ -223,7 +223,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -237,7 +237,7 @@ class StorageGetFileTest(FileTestCase):
                 progress.append((current, total))
 
         # Act
-        file_content = file_client.download_file(raw_response_hook=callback).content_as_bytes()
+        file_content = file_client.download_file(raw_response_hook=callback).readall()
 
         # Assert
         self.assertEqual(self.byte_data, file_content)
@@ -254,7 +254,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -269,7 +269,7 @@ class StorageGetFileTest(FileTestCase):
                 progress.append((current, total))
 
         # Act
-        file_content = file_client.download_file(raw_response_hook=callback).content_as_bytes()
+        file_content = file_client.download_file(raw_response_hook=callback).readall()
 
         # Assert
         self.assertEqual(file_data, file_content)
@@ -279,6 +279,29 @@ class StorageGetFileTest(FileTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
+    def test_get_file_with_iter(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        # Arrange
+        file_client = FileClient(
+            self.get_file_url(),
+            share_name=self.share_name,
+            file_path=self.directory_name + '/' + self.byte_file,
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_single_get_size=self.MAX_SINGLE_GET_SIZE,
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
+
+        # Act
+        with open(FILE_PATH, 'wb') as stream:
+            for data in file_client.download_file().chunks():
+                stream.write(data)
+        # Assert
+        with open(FILE_PATH, 'rb') as stream:
+            actual = stream.read()
+            self.assertEqual(self.byte_data, actual)
+
     def test_get_file_to_stream(self):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
@@ -287,7 +310,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -295,10 +318,10 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = file_client.download_file().download_to_stream(stream, max_connections=2)
+            bytes_read = file_client.download_file(max_concurrency=2).readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -311,7 +334,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -326,11 +349,10 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = file_client.download_file(raw_response_hook=callback).download_to_stream(
-                stream, max_connections=2)
+            bytes_read = file_client.download_file(raw_response_hook=callback, max_concurrency=2).readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -345,7 +367,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -360,11 +382,10 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = file_client.download_file(raw_response_hook=callback).download_to_stream(
-                stream, max_connections=1)
+            bytes_read = file_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -381,7 +402,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -397,11 +418,10 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = file_client.download_file(raw_response_hook=callback).download_to_stream(
-                stream, max_connections=1)
+            bytes_read = file_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(file_data, actual)
@@ -422,14 +442,14 @@ class StorageGetFileTest(FileTestCase):
         share_snapshot = share_client.create_snapshot()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         file_client.delete_file()
 
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -438,10 +458,10 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = snapshot_client.download_file().download_to_stream(stream, max_connections=2)
+            bytes_read = snapshot_client.download_file(max_concurrency=2).readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -457,14 +477,14 @@ class StorageGetFileTest(FileTestCase):
         share_snapshot = share_client.create_snapshot()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         file_client.delete_file()
 
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -480,11 +500,10 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = snapshot_client.download_file(raw_response_hook=callback).download_to_stream(
-                stream, max_connections=2)
+            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=2).readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -502,14 +521,14 @@ class StorageGetFileTest(FileTestCase):
         share_snapshot = share_client.create_snapshot()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         file_client.delete_file()
 
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -525,11 +544,10 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = snapshot_client.download_file(raw_response_hook=callback).download_to_stream(
-                stream, max_connections=1)
+            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -546,7 +564,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         file_client.upload_file(file_data)
@@ -558,7 +576,7 @@ class StorageGetFileTest(FileTestCase):
 
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             snapshot=share_snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -574,11 +592,10 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = snapshot_client.download_file(raw_response_hook=callback).download_to_stream(
-                stream, max_connections=1)
+            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(file_data, actual)
@@ -596,7 +613,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -605,11 +622,10 @@ class StorageGetFileTest(FileTestCase):
         # Act
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
         with open(FILE_PATH, 'wb') as stream:
-            props = file_client.download_file(offset=1, length=end_range).download_to_stream(
-                stream, max_connections=2)
+            bytes_read = file_client.download_file(offset=1, length=end_range, max_concurrency=2).readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[1:end_range + 1], actual)
@@ -622,7 +638,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -631,10 +647,10 @@ class StorageGetFileTest(FileTestCase):
         # Act
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
         with open(FILE_PATH, 'wb') as stream:
-            props = file_client.download_file(offset=0, length=0).download_to_stream(stream)
+            bytes_read = file_client.download_file(offset=0, length=1).readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(1, len(actual))
@@ -647,7 +663,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -657,10 +673,10 @@ class StorageGetFileTest(FileTestCase):
         # Act
         # the get request should fail in this case since the blob is empty and yet there is a range specified
         with self.assertRaises(HttpResponseError):
-            file_client.download_file(offset=0, length=5).content_as_bytes()
+            file_client.download_file(offset=0, length=5).readall()
 
         with self.assertRaises(HttpResponseError):
-            file_client.download_file(offset=3, length=5).content_as_bytes()
+            file_client.download_file(offset=3, length=5).readall()
 
     def test_ranged_get_file_to_path_with_progress(self):
         # parallel tests introduce random order of requests, can only run live
@@ -670,7 +686,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -687,12 +703,15 @@ class StorageGetFileTest(FileTestCase):
         start_range = 3
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
         with open(FILE_PATH, 'wb') as stream:
-            props = file_client.download_file(
-                offset=start_range, length=end_range, raw_response_hook=callback).download_to_stream(
-                    stream, max_connections=2)
+            length = end_range - start_range + 1
+            bytes_read = file_client.download_file(
+                offset=start_range,
+                length=length,
+                raw_response_hook=callback,
+                max_concurrency=2).readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[start_range:end_range + 1], actual)
@@ -707,7 +726,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -715,11 +734,10 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = file_client.download_file(
-                offset=1, length=4).download_to_stream(stream, max_connections=1)
+            bytes_read = file_client.download_file(offset=1, length=4, max_concurrency=1).readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[1:5], actual)
@@ -729,7 +747,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -737,11 +755,10 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = file_client.download_file(
-                offset=1, length=3).download_to_stream(stream, max_connections=1)
+            bytes_read = file_client.download_file(offset=1, length=3, max_concurrency=1).readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data[1:4], actual)
@@ -758,7 +775,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -766,16 +783,17 @@ class StorageGetFileTest(FileTestCase):
         file_client.upload_file(file_data)
 
         # Act
+        start = 3
         end_range = 2 * self.MAX_SINGLE_GET_SIZE
         with open(FILE_PATH, 'wb') as stream:
-            props = file_client.download_file(
-                offset=1, length=end_range).download_to_stream(stream, max_connections=2)
+            length = end_range - start + 1
+            bytes_read = file_client.download_file(offset=start, length=length, max_concurrency=2).readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
-            self.assertEqual(file_data[1:file_size], actual)
+            self.assertEqual(file_data[start:file_size], actual)
 
     @record
     def test_ranged_get_file_to_path_invalid_range_non_parallel(self):
@@ -786,7 +804,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -794,16 +812,17 @@ class StorageGetFileTest(FileTestCase):
         file_client.upload_file(file_data)
 
         # Act
+        start = 3
         end_range = 2 * self.MAX_SINGLE_GET_SIZE
         with open(FILE_PATH, 'wb') as stream:
-            props = file_client.download_file(
-                offset=1, length=end_range).download_to_stream(stream, max_connections=1)
+            length = end_range - start + 1
+            bytes_read = file_client.download_file(offset=start, length=length, max_concurrency=1).readinto(stream)
 
         # Assert
-        self.assertIsInstance(props, FileProperties)
+        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
-            self.assertEqual(file_data[1:file_size], actual)
+            self.assertEqual(file_data[start:file_size], actual)
 
     def test_get_file_to_text(self):
         # parallel tests introduce random order of requests, can only run live
@@ -815,7 +834,7 @@ class StorageGetFileTest(FileTestCase):
         text_data = self.get_random_text_data(self.MAX_SINGLE_GET_SIZE + 1)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -823,7 +842,7 @@ class StorageGetFileTest(FileTestCase):
         file_client.upload_file(text_data)
 
         # Act
-        file_content = file_client.download_file().content_as_text(max_connections=2)
+        file_content = file_client.download_file(max_concurrency=2, encoding='utf-8').readall()
 
         # Assert
         self.assertEqual(text_data, file_content)
@@ -838,7 +857,7 @@ class StorageGetFileTest(FileTestCase):
         text_data = self.get_random_text_data(self.MAX_SINGLE_GET_SIZE + 1)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -853,7 +872,8 @@ class StorageGetFileTest(FileTestCase):
                 progress.append((current, total))
 
         # Act
-        file_content = file_client.download_file(raw_response_hook=callback).content_as_text(max_connections=2)
+        file_content = file_client.download_file(
+            raw_response_hook=callback, max_concurrency=2, encoding='utf-8').readall()
 
         # Assert
         self.assertEqual(text_data, file_content)
@@ -870,7 +890,7 @@ class StorageGetFileTest(FileTestCase):
         text_data = self.get_random_text_data(self.MAX_SINGLE_GET_SIZE + 1)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + text_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -885,7 +905,8 @@ class StorageGetFileTest(FileTestCase):
                 progress.append((current, total))
 
         # Act
-        file_content = file_client.download_file(raw_response_hook=callback).content_as_text(max_connections=1)
+        file_content = file_client.download_file(
+            raw_response_hook=callback, max_concurrency=1, encoding='utf-8').readall()
 
         # Assert
         self.assertEqual(text_data, file_content)
@@ -902,7 +923,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -917,7 +938,7 @@ class StorageGetFileTest(FileTestCase):
                 progress.append((current, total))
 
         # Act
-        file_content = file_client.download_file(raw_response_hook=callback).content_as_text()
+        file_content = file_client.download_file(raw_response_hook=callback, encoding='utf-8').readall()
 
         # Assert
         self.assertEqual(file_data, file_content)
@@ -935,7 +956,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -943,7 +964,7 @@ class StorageGetFileTest(FileTestCase):
         file_client.upload_file(data)
 
         # Act
-        file_content = file_client.download_file().content_as_text(encoding='UTF-16')
+        file_content = file_client.download_file(encoding='UTF-16').readall()
 
         # Assert
         self.assertEqual(text, file_content)
@@ -956,7 +977,7 @@ class StorageGetFileTest(FileTestCase):
         file_name = self._get_file_reference()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -971,7 +992,7 @@ class StorageGetFileTest(FileTestCase):
             if current is not None:
                 progress.append((current, total))
 
-        file_content = file_client.download_file(raw_response_hook=callback).content_as_text(encoding='UTF-16')
+        file_content = file_client.download_file(raw_response_hook=callback, encoding='UTF-16').readall()
 
         # Assert
         self.assertEqual(text, file_content)
@@ -986,7 +1007,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -995,11 +1016,10 @@ class StorageGetFileTest(FileTestCase):
         # Act
         with open(FILE_PATH, 'wb') as stream:
             non_seekable_stream = StorageGetFileTest.NonSeekableFile(stream)
-            file_props = file_client.download_file().download_to_stream(
-                non_seekable_stream, max_connections=1)
+            bytes_read = file_client.download_file(max_concurrency=1).readinto(non_seekable_stream)
 
         # Assert
-        self.assertIsInstance(file_props, FileProperties)
+        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -1012,7 +1032,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1023,8 +1043,7 @@ class StorageGetFileTest(FileTestCase):
             non_seekable_stream = StorageGetFileTest.NonSeekableFile(stream)
 
             with self.assertRaises(ValueError):
-                file_client.download_file().download_to_stream(
-                    non_seekable_stream, max_connections=2)
+                file_client.download_file(max_concurrency=2).readinto(non_seekable_stream)
 
                 # Assert
 
@@ -1036,14 +1055,14 @@ class StorageGetFileTest(FileTestCase):
         share_snapshot = share_client.create_snapshot()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         file_client.delete_file()
 
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -1053,11 +1072,10 @@ class StorageGetFileTest(FileTestCase):
         # Act
         with open(FILE_PATH, 'wb') as stream:
             non_seekable_stream = StorageGetFileTest.NonSeekableFile(stream)
-            file_props = snapshot_client.download_file().download_to_stream(
-                    non_seekable_stream, max_connections=1)
+            bytes_read = snapshot_client.download_file(max_concurrency=1).readinto(non_seekable_stream)
 
         # Assert
-        self.assertIsInstance(file_props, FileProperties)
+        self.assertIsInstance(bytes_read, int)
         with open(FILE_PATH, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
@@ -1073,14 +1091,14 @@ class StorageGetFileTest(FileTestCase):
         share_snapshot = share_client.create_snapshot()
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY)
         file_client.delete_file()
 
         snapshot_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             snapshot=share_snapshot,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
@@ -1092,8 +1110,7 @@ class StorageGetFileTest(FileTestCase):
             non_seekable_stream = StorageGetFileTest.NonSeekableFile(stream)
 
             with self.assertRaises(ValueError):
-                snapshot_client.download_file().download_to_stream(
-                    non_seekable_stream, max_connections=2)
+                snapshot_client.download_file(max_concurrency=2).readinto(non_seekable_stream)
 
     @record
     def test_get_file_exact_get_size(self):
@@ -1102,7 +1119,7 @@ class StorageGetFileTest(FileTestCase):
         byte_data = self.get_random_bytes(self.MAX_SINGLE_GET_SIZE)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1120,7 +1137,7 @@ class StorageGetFileTest(FileTestCase):
         file_content = file_client.download_file(raw_response_hook=callback)
 
         # Assert
-        self.assertEqual(byte_data, file_content.content_as_bytes())
+        self.assertEqual(byte_data, file_content.readall())
         self.assert_download_progress(
             len(byte_data),
             self.MAX_CHUNK_GET_SIZE,
@@ -1137,7 +1154,7 @@ class StorageGetFileTest(FileTestCase):
         byte_data = self.get_random_bytes(self.MAX_SINGLE_GET_SIZE + self.MAX_CHUNK_GET_SIZE)
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + file_name,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1152,10 +1169,10 @@ class StorageGetFileTest(FileTestCase):
                 progress.append((current, total))
 
         # Act
-        file_content = file_client.download_file(raw_response_hook=callback)
+        file_content = file_client.download_file(raw_response_hook=callback, max_concurrency=2)
 
         # Assert
-        self.assertEqual(byte_data, file_content.content_as_bytes(max_connections=2))
+        self.assertEqual(byte_data, file_content.readall())
         self.assert_download_progress(
             len(byte_data),
             self.MAX_CHUNK_GET_SIZE,
@@ -1170,7 +1187,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1180,7 +1197,7 @@ class StorageGetFileTest(FileTestCase):
         file_content = file_client.download_file(validate_content=True)
 
         # Assert
-        self.assertEqual(self.byte_data, file_content.content_as_bytes())
+        self.assertEqual(self.byte_data, file_content.readall())
 
     def test_get_file_range_with_md5(self):
         # parallel tests introduce random order of requests, can only run live
@@ -1189,7 +1206,7 @@ class StorageGetFileTest(FileTestCase):
 
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1217,7 +1234,7 @@ class StorageGetFileTest(FileTestCase):
         #Arrange
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
@@ -1238,7 +1255,7 @@ class StorageGetFileTest(FileTestCase):
         # Arrange
         file_client = FileClient(
             self.get_file_url(),
-            share=self.share_name,
+            share_name=self.share_name,
             file_path=self.directory_name + '/' + self.byte_file,
             credential=self.settings.STORAGE_ACCOUNT_KEY,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,

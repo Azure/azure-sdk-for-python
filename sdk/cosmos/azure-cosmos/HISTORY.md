@@ -1,4 +1,65 @@
 # Change Log azure-cosmos
+
+## Version 4.0.0b4:
+
+- Added support for a `timeout` keyword argument to all operations to specify an absolute timeout in seconds
+  within which the operation must be completed. If the timeout value is exceeded, a `azure.cosmos.errors.CosmosClientTimeoutError` will be raised.
+- Added a new `ConnectionRetryPolicy` to manage retry behaviour during HTTP connection errors.
+- Added new constructor and per-operation configuration keyword arguments:
+    -`retry_total` - Maximum retry attempts.
+    -`retry_backoff_max` - Maximum retry wait time in seconds.
+    -`retry_fixed_interval` - Fixed retry interval in milliseconds.
+    -`retry_read` - Maximum number of socket read retry attempts.
+    -`retry_connect` - Maximum number of connection error retry attempts.
+    -`retry_status` - Maximum number of retry attempts on error status codes.
+    -`retry_on_status_codes` - A list of specific status codes to retry on.
+    -`retry_backoff_factor` - Factor to calculate wait time between retry attempts.
+
+## Version 4.0.0b3:
+
+- Added `create_database_if_not_exists()` and `create_container_if_not_exists` functionalities to CosmosClient and Database respectively.
+
+## Version 4.0.0b2:
+
+Version 4.0.0b2 is the second iteration in our efforts to build a more Pythonic client library.
+
+**Breaking changes**
+
+- The client connection has been adapted to consume the HTTP pipeline defined in `azure.core.pipeline`.
+- Interactive objects have now been renamed as proxies. This includes:
+    - `Database` -> `DatabaseProxy`
+    - `User` -> `UserProxy`
+    - `Container` -> `ContainerProxy`
+    - `Scripts` -> `ScriptsProxy`
+- The constructor of `CosmosClient` has been updated:
+    - The `auth` parameter has been renamed to `credential` and will now take an authentication type directly. This means the master key value, a dictionary of resource tokens, or a list of permissions can be passed in. However the old dictionary format is still supported.
+    - The `connection_policy` parameter has been made a keyword only parameter, and while it is still supported, each of the individual attributes of the policy can now be passed in as explicit keyword arguments:
+        - `request_timeout`
+        - `media_request_timeout`
+        - `connection_mode`
+        - `media_read_mode`
+        - `proxy_config`
+        - `enable_endpoint_discovery`
+        - `preferred_locations`
+        - `multiple_write_locations`
+- A new classmethod constructor has been added to `CosmosClient` to enable creation via a connection string retrieved from the Azure portal.
+- Some `read_all` operations have been renamed to `list` operations:
+    - `CosmosClient.read_all_databases` -> `CosmosClient.list_databases`
+    - `Container.read_all_conflicts` -> `ContainerProxy.list_conflicts`
+    - `Database.read_all_containers` -> `DatabaseProxy.list_containers`
+    - `Database.read_all_users` -> `DatabaseProxy.list_users`
+    - `User.read_all_permissions` -> `UserProxy.list_permissions`
+- All operations that take `request_options` or `feed_options` parameters, these have been moved to keyword only parameters. In addition, while these options dictionaries are still supported, each of the individual options within the dictionary are now supported as explicit keyword arguments.
+- The error heirarchy is now inherited from `azure.core.AzureError` instead of `CosmosError` which has been removed.
+    - `HTTPFailure` has been renamed to `CosmosHttpResponseError`
+    - `JSONParseFailure` has been removed and replaced by `azure.core.DecodeError`
+    - Added additional errors for specific response codes:
+        - `CosmosResourceNotFoundError` for status 404
+        - `CosmosResourceExistsError` for status 409
+        - `CosmosAccessConditionFailedError` for status 412
+- `CosmosClient` can now be run in a context manager to handle closing the client connection.
+- Iterable responses (e.g. query responses and list responses) are now of type `azure.core.paging.ItemPaged`. The method `fetch_next_block` has been replaced by a secondary iterator, accessed by the `by_page` method.
+
 ## Version 4.0.0b1:
 
 Version 4.0.0b1 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Cosmos. For more information about this, and preview releases of other Azure SDK libraries, please visit https://aka.ms/azure-sdk-preview1-python.

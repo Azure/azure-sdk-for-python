@@ -8,40 +8,44 @@ import uuid
 import logging
 import time
 from typing import List
+from distutils.version import StrictVersion
 
-from uamqp import types, errors
-from uamqp import compat
-from uamqp import ReceiveClient, Source
+import uamqp  # type: ignore
+from uamqp import types, errors, utils  # type: ignore
+from uamqp import ReceiveClient, Source  # type: ignore
 
 from azure.eventhub.common import EventData, EventPosition
-from azure.eventhub.error import EventHubError, AuthenticationError, ConnectError, ConnectionLostError, _error_handler
+from azure.eventhub.error import _error_handler
+from ._consumer_producer_mixin import ConsumerProducerMixin
 
 
 log = logging.getLogger(__name__)
 
 
-class EventHubConsumer(object):
+class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instance-attributes
     """
     A consumer responsible for reading EventData from a specific Event Hub
-     partition and as a member of a specific consumer group.
+    partition and as a member of a specific consumer group.
 
     A consumer may be exclusive, which asserts ownership over the partition for the consumer
-     group to ensure that only one consumer from that group is reading the from the partition.
-     These exclusive consumers are sometimes referred to as "Epoch Consumers."
+    group to ensure that only one consumer from that group is reading the from the partition.
+    These exclusive consumers are sometimes referred to as "Epoch Consumers."
 
     A consumer may also be non-exclusive, allowing multiple consumers from the same consumer
-     group to be actively reading events from the partition.  These non-exclusive consumers are
-     sometimes referred to as "Non-Epoch Consumers."
+    group to be actively reading events from the partition.  These non-exclusive consumers are
+    sometimes referred to as "Non-Epoch Consumers."
 
+    Please use the method `create_consumer` on `EventHubClient` for creating `EventHubConsumer`.
     """
-    timeout = 0
-    _epoch = b'com.microsoft:epoch'
+    _timeout = 0
+    _epoch_symbol = b'com.microsoft:epoch'
+    _timeout_symbol = b'com.microsoft:timeout'
+    _receiver_runtime_metric_symbol = b'com.microsoft:enable-receiver-runtime-metric'
 
-    def __init__(self, client, source, event_position=None, prefetch=300, owner_level=None,
-                 keep_alive=None, auto_reconnect=True):
+    def __init__(self, client, source, **kwargs):
         """
         Instantiate a consumer. EventHubConsumer should be instantiated by calling the `create_consumer` method
-         in EventHubClient.
+        in EventHubClient.
 
         :param client: The parent EventHubClient.
         :type client: ~azure.eventhub.client.EventHubClient
@@ -50,263 +54,156 @@ class EventHubConsumer(object):
         :param prefetch: The number of events to prefetch from the service
          for processing. Default is 300.
         :type prefetch: int
-        :param owner_level: The priority of the exclusive consumer. It will an exclusive
-         consumer if owner_level is set.
+        :param owner_level: The priority of the exclusive consumer. An exclusive
+         consumer will be created if owner_level is set.
         :type owner_level: int
+        :param track_last_enqueued_event_properties: Indicates whether or not the consumer should request information
+         on the last enqueued event on its associated partition, and track that information as events are received.
+         When information about the partition's last enqueued event is being tracked, each event received from the
+         Event Hubs service will carry metadata about the partition. This results in a small amount of additional
+         network bandwidth consumption that is generally a favorable trade-off when considered against periodically
+         making requests for partition properties using the Event Hub client.
+         It is set to `False` by default.
+        :type track_last_enqueued_event_properties: bool
         """
-        self.running = False
-        self.client = client
-        self.source = source
-        self.offset = event_position
-        self.messages_iter = None
-        self.prefetch = prefetch
-        self.owner_level = owner_level
-        self.keep_alive = keep_alive
-        self.auto_reconnect = auto_reconnect
-        self.retry_policy = errors.ErrorPolicy(max_retries=self.client.config.max_retries, on_error=_error_handler)
-        self.reconnect_backoff = 1
-        self.properties = None
-        self.redirected = None
-        self.error = None
-        partition = self.source.split('/')[-1]
-        self.name = "EHReceiver-{}-partition{}".format(uuid.uuid4(), partition)
-        source = Source(self.source)
-        if self.offset is not None:
-            source.set_filter(self.offset._selector())  # pylint: disable=protected-access
+        event_position = kwargs.get("event_position", None)
+        prefetch = kwargs.get("prefetch", 300)
+        owner_level = kwargs.get("owner_level", None)
+        keep_alive = kwargs.get("keep_alive", None)
+        auto_reconnect = kwargs.get("auto_reconnect", True)
+        track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
+
+        super(EventHubConsumer, self).__init__()
+        self._client = client
+        self._source = source
+        self._offset = event_position
+        self._messages_iter = None
+        self._prefetch = prefetch
+        self._owner_level = owner_level
+        self._keep_alive = keep_alive
+        self._auto_reconnect = auto_reconnect
+        self._retry_policy = errors.ErrorPolicy(max_retries=self._client._config.max_retries, on_error=_error_handler)  # pylint:disable=protected-access
+        self._reconnect_backoff = 1
+        self._link_properties = {}
+        self._error = None
+        partition = self._source.split('/')[-1]
+        self._partition = partition
+        self._name = "EHConsumer-{}-partition{}".format(uuid.uuid4(), partition)
         if owner_level:
-            self.properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(owner_level))}
-        self._handler = ReceiveClient(
-            source,
-            auth=self.client.get_auth(),
-            debug=self.client.config.network_tracing,
-            prefetch=self.prefetch,
-            link_properties=self.properties,
-            timeout=self.timeout,
-            error_policy=self.retry_policy,
-            keep_alive_interval=self.keep_alive,
-            client_name=self.name,
-            properties=self.client._create_properties(self.client.config.user_agent))  # pylint: disable=protected-access
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close(exc_val)
+            self._link_properties[types.AMQPSymbol(self._epoch_symbol)] = types.AMQPLong(int(owner_level))
+        link_property_timeout_ms = (self._client._config.receive_timeout or self._timeout) * 1000  # pylint:disable=protected-access
+        self._link_properties[types.AMQPSymbol(self._timeout_symbol)] = types.AMQPLong(int(link_property_timeout_ms))
+        self._handler = None
+        self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
+        self._last_enqueued_event_properties = {}
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        self._open()
-        max_retries = self.client.config.max_retries
-        connecting_count = 0
-        while True:
-            connecting_count += 1
+        retried_times = 0
+        last_exception = None
+        while retried_times < self._client._config.max_retries:  # pylint:disable=protected-access
             try:
-                if not self.messages_iter:
-                    self.messages_iter = self._handler.receive_messages_iter()
-                message = next(self.messages_iter)
-                event_data = EventData(message=message)
-                self.offset = EventPosition(event_data.offset, inclusive=False)
+                self._open()
+                if not self._messages_iter:
+                    self._messages_iter = self._handler.receive_messages_iter()
+                message = next(self._messages_iter)
+                event_data = EventData._from_message(message)  # pylint:disable=protected-access
+                event_data._trace_link_message()  # pylint:disable=protected-access
+                self._offset = EventPosition(event_data.offset, inclusive=False)
+                retried_times = 0
+                if self._track_last_enqueued_event_properties:
+                    self._last_enqueued_event_properties = event_data._get_last_enqueued_event_properties()  # pylint:disable=protected-access
                 return event_data
-            except errors.AuthenticationException as auth_error:
-                if connecting_count < max_retries:
-                    log.info("EventHubConsumer disconnected due to token error. Attempting reconnect.")
-                    self._reconnect()
-                else:
-                    log.info("EventHubConsumer authentication failed. Shutting down.")
-                    error = AuthenticationError(str(auth_error), auth_error)
-                    self.close(auth_error)
-                    raise error
-            except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
-                if shutdown.action.retry and self.auto_reconnect:
-                    log.info("EventHubConsumer detached. Attempting reconnect.")
-                    self._reconnect()
-                else:
-                    log.info("EventHubConsumer detached. Shutting down.")
-                    error = ConnectionLostError(str(shutdown), shutdown)
-                    self.close(exception=error)
-                    raise error
-            except errors.MessageHandlerError as shutdown:
-                if connecting_count < max_retries:
-                    log.info("EventHubConsumer detached. Attempting reconnect.")
-                    self._reconnect()
-                else:
-                    log.info("EventHubConsumer detached. Shutting down.")
-                    error = ConnectionLostError(str(shutdown), shutdown)
-                    self.close(error)
-                    raise error
-            except errors.AMQPConnectionError as shutdown:
-                if connecting_count < max_retries:
-                    log.info("EventHubConsumer connection lost. Attempting reconnect.")
-                    self._reconnect()
-                else:
-                    log.info("EventHubConsumer connection lost. Shutting down.")
-                    error = ConnectionLostError(str(shutdown), shutdown)
-                    self.close(error)
-                    raise error
-            except compat.TimeoutException as shutdown:
-                if connecting_count < max_retries:
-                    log.info("EventHubConsumer timed out receiving event data. Attempting reconnect.")
-                    self._reconnect()
-                else:
-                    log.info("EventHubConsumer timed out. Shutting down.")
-                    self.close(shutdown)
-                    raise ConnectionLostError(str(shutdown), shutdown)
-            except StopIteration:
-                raise
-            except KeyboardInterrupt:
-                log.info("EventHubConsumer stops due to keyboard interrupt")
-                self.close()
-                raise
-            except Exception as e:
-                log.error("Unexpected error occurred (%r). Shutting down.", e)
-                error = EventHubError("Receive failed: {}".format(e), e)
-                self.close(exception=error)
-                raise error
+            except Exception as exception:  # pylint:disable=broad-except
+                last_exception = self._handle_exception(exception)
+                self._client._try_delay(retried_times=retried_times, last_exception=last_exception,  # pylint:disable=protected-access
+                                        entity_name=self._name)
+                retried_times += 1
+        log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
+        raise last_exception
 
-    def _check_closed(self):
-        if self.error:
-            raise EventHubError("This consumer has been closed. Please create a new consumer to receive event data.",
-                                self.error)
+    def _create_handler(self):
+        source = Source(self._source)
+        if self._offset is not None:
+            source.set_filter(self._offset._selector())  # pylint:disable=protected-access
 
-    def _redirect(self, redirect):
-        self.redirected = redirect
-        self.running = False
-        self.messages_iter = None
+        if StrictVersion(uamqp.__version__) < StrictVersion("1.2.3"):  # backward compatible until uamqp 1.2.3 released
+            desired_capabilities = {}
+        elif self._track_last_enqueued_event_properties:
+            symbol_array = [types.AMQPSymbol(self._receiver_runtime_metric_symbol)]
+            desired_capabilities = {"desired_capabilities": utils.data_factory(types.AMQPArray(symbol_array))}
+        else:
+            desired_capabilities = {"desired_capabilities": None}
+
+        self._handler = ReceiveClient(
+            source,
+            auth=self._client._create_auth(),  # pylint:disable=protected-access
+            debug=self._client._config.network_tracing,  # pylint:disable=protected-access
+            prefetch=self._prefetch,
+            link_properties=self._link_properties,
+            timeout=self._timeout,
+            error_policy=self._retry_policy,
+            keep_alive_interval=self._keep_alive,
+            client_name=self._name,
+            receive_settle_mode=uamqp.constants.ReceiverSettleMode.ReceiveAndDelete,
+            auto_complete=False,
+            properties=self._client._create_properties(  # pylint:disable=protected-access
+            self._client._config.user_agent),  # pylint:disable=protected-access
+            **desired_capabilities)  # pylint:disable=protected-access
+        self._messages_iter = None
+
+    def _open_with_retry(self):
+        return self._do_retryable_operation(self._open, operation_need_param=False)
+
+    def _receive(self, timeout_time=None, max_batch_size=None, **kwargs):
+        last_exception = kwargs.get("last_exception")
+        data_batch = []
+
         self._open()
+        remaining_time = timeout_time - time.time()
+        if remaining_time <= 0.0:
+            if last_exception:
+                log.info("%r receive operation timed out. (%r)", self._name, last_exception)
+                raise last_exception
+            return data_batch
+        remaining_time_ms = 1000 * remaining_time
+        message_batch = self._handler.receive_message_batch(
+            max_batch_size=max_batch_size,
+            timeout=remaining_time_ms)
+        for message in message_batch:
+            event_data = EventData._from_message(message)  # pylint:disable=protected-access
+            data_batch.append(event_data)
+            event_data._trace_link_message()  # pylint:disable=protected-access
 
-    def _open(self):
+        if data_batch:
+            self._offset = EventPosition(data_batch[-1].offset)
+
+        if self._track_last_enqueued_event_properties and data_batch:
+            self._last_enqueued_event_properties = data_batch[-1]._get_last_enqueued_event_properties()  # pylint:disable=protected-access
+
+        return data_batch
+
+    def _receive_with_retry(self, timeout=None, max_batch_size=None, **kwargs):
+        return self._do_retryable_operation(self._receive, timeout=timeout,
+                                            max_batch_size=max_batch_size, **kwargs)
+
+    @property
+    def last_enqueued_event_properties(self):
         """
-        Open the EventHubConsumer using the supplied connection.
-        If the handler has previously been redirected, the redirect
-        context will be used to create a new handler before opening it.
+        The latest enqueued event information. This property will be updated each time an event is received when
+        the receiver is created with `track_last_enqueued_event_properties` being `True`.
+        The dict includes following information of the partition:
 
+            - `sequence_number`
+            - `offset`
+            - `enqueued_time`
+            - `retrieval_time`
+
+        :rtype: dict or None
         """
-        # pylint: disable=protected-access
-        self._check_closed()
-        if self.redirected:
-            self.client._process_redirect_uri(self.redirected)
-            self.source = self.redirected.address
-            source = Source(self.source)
-            if self.offset is not None:
-                source.set_filter(self.offset._selector())
-
-            alt_creds = {
-                "username": self.client._auth_config.get("iot_username"),
-                "password":self.client._auth_config.get("iot_password")}
-            self._handler = ReceiveClient(
-                source,
-                auth=self.client.get_auth(**alt_creds),
-                debug=self.client.config.network_tracing,
-                prefetch=self.prefetch,
-                link_properties=self.properties,
-                timeout=self.timeout,
-                error_policy=self.retry_policy,
-                keep_alive_interval=self.keep_alive,
-                client_name=self.name,
-                properties=self.client._create_properties(self.client.config.user_agent))  # pylint: disable=protected-access
-        if not self.running:
-            self._connect()
-            self.running = True
-
-    def _connect(self):
-        connected = self._build_connection()
-        if not connected:
-            time.sleep(self.reconnect_backoff)
-            while not self._build_connection(is_reconnect=True):
-                time.sleep(self.reconnect_backoff)
-
-    def _build_connection(self, is_reconnect=False):
-        """
-
-        :param is_reconnect: True - trying to reconnect after fail to connect or a connection is lost.
-                             False - the 1st time to connect
-        :return: True - connected.  False - not connected
-        """
-        # pylint: disable=protected-access
-        if is_reconnect:
-            alt_creds = {
-                "username": self.client._auth_config.get("iot_username"),
-                "password": self.client._auth_config.get("iot_password")}
-            self._handler.close()
-            source = Source(self.source)
-            if self.offset is not None:
-                source.set_filter(self.offset._selector())
-            self._handler = ReceiveClient(
-                source,
-                auth=self.client.get_auth(**alt_creds),
-                debug=self.client.config.network_tracing,
-                prefetch=self.prefetch,
-                link_properties=self.properties,
-                timeout=self.timeout,
-                error_policy=self.retry_policy,
-                keep_alive_interval=self.keep_alive,
-                client_name=self.name,
-                properties=self.client._create_properties(
-                    self.client.config.user_agent))  # pylint: disable=protected-access
-            self.messages_iter = None
-        try:
-            self._handler.open()
-            while not self._handler.client_ready():
-                time.sleep(0.05)
-            return True
-        except errors.AuthenticationException as shutdown:
-            if is_reconnect:
-                log.info("EventHubConsumer couldn't authenticate. Shutting down. (%r)", shutdown)
-                error = AuthenticationError(str(shutdown), shutdown)
-                self.close(exception=error)
-                raise error
-            else:
-                log.info("EventHubConsumer couldn't authenticate. Attempting reconnect.")
-                return False
-        except errors.LinkRedirect as redirect:
-            self._redirect(redirect)
-            return True
-        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
-            if shutdown.action.retry:
-                log.info("EventHubConsumer detached. Attempting reconnect.")
-                return False
-            else:
-                log.info("EventHubConsumer detached. Shutting down.")
-                error = ConnectError(str(shutdown), shutdown)
-                self.close(exception=error)
-                raise error
-        except errors.MessageHandlerError as shutdown:
-            if is_reconnect:
-                log.info("EventHubConsumer detached. Shutting down.")
-                error = ConnectError(str(shutdown), shutdown)
-                self.close(exception=error)
-                raise error
-            else:
-                log.info("EventHubConsumer detached. Attempting reconnect.")
-                return False
-        except errors.AMQPConnectionError as shutdown:
-            if is_reconnect:
-                log.info("EventHubConsumer connection error (%r). Shutting down.", shutdown)
-                error = AuthenticationError(str(shutdown), shutdown)
-                self.close(exception=error)
-                raise error
-            else:
-                log.info("EventHubConsumer couldn't authenticate. Attempting reconnect.")
-                return False
-        except compat.TimeoutException as shutdown:
-            if is_reconnect:
-                log.info("EventHubConsumer authentication timed out. Shutting down.")
-                error = AuthenticationError(str(shutdown), shutdown)
-                self.close(exception=error)
-                raise error
-            else:
-                log.info("EventHubConsumer authentication timed out. Attempting reconnect.")
-                return False
-        except Exception as e:
-            log.error("Unexpected error occurred when building connection (%r). Shutting down.", e)
-            error = EventHubError("Unexpected error occurred when building connection", e)
-            self.close(exception=error)
-            raise error
-
-    def _reconnect(self):
-        return self._build_connection(is_reconnect=True)
+        return self._last_enqueued_event_properties if self._track_last_enqueued_event_properties else None
 
     @property
     def queue_size(self):
@@ -322,7 +219,7 @@ class EventHubConsumer(object):
         return 0
 
     def receive(self, max_batch_size=None, timeout=None):
-        # type:(int, float) -> List[EventData]
+        # type: (int, float) -> List[EventData]
         """
         Receive events from the EventHub.
 
@@ -338,6 +235,7 @@ class EventHubConsumer(object):
         :rtype: list[~azure.eventhub.common.EventData]
         :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
                 ~azure.eventhub.EventHubError
+
         Example:
             .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START eventhub_client_sync_receive]
@@ -348,90 +246,17 @@ class EventHubConsumer(object):
 
         """
         self._check_closed()
-        self._open()
 
-        max_batch_size = min(self.client.config.max_batch_size, self.prefetch) if max_batch_size is None else max_batch_size
-        timeout = self.client.config.receive_timeout if timeout is None else timeout
+        timeout = timeout or self._client._config.receive_timeout  # pylint:disable=protected-access
+        max_batch_size = max_batch_size or min(self._client._config.max_batch_size, self._prefetch)  # pylint:disable=protected-access
 
-        data_batch = []  # type: List[EventData]
-        max_retries = self.client.config.max_retries
-        connecting_count = 0
-        while True:
-            connecting_count += 1
-            try:
-                timeout_ms = 1000 * timeout if timeout else 0
-                message_batch = self._handler.receive_message_batch(
-                    max_batch_size=max_batch_size - (len(data_batch) if data_batch else 0),
-                    timeout=timeout_ms)
-                for message in message_batch:
-                    event_data = EventData(message=message)
-                    self.offset = EventPosition(event_data.offset)
-                    data_batch.append(event_data)
-                return data_batch
-            except errors.AuthenticationException as auth_error:
-                if connecting_count < max_retries:
-                    log.info("EventHubConsumer disconnected due to token error. Attempting reconnect.")
-                    self._reconnect()
-                else:
-                    log.info("EventHubConsumer authentication failed. Shutting down.")
-                    error = AuthenticationError(str(auth_error), auth_error)
-                    self.close(auth_error)
-                    raise error
-            except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
-                if shutdown.action.retry and self.auto_reconnect:
-                    log.info("EventHubConsumer detached. Attempting reconnect.")
-                    self._reconnect()
-                else:
-                    log.info("EventHubConsumer detached. Shutting down.")
-                    error = ConnectionLostError(str(shutdown), shutdown)
-                    self.close(exception=error)
-                    raise error
-            except errors.MessageHandlerError as shutdown:
-                if connecting_count < max_retries:
-                    log.info("EventHubConsumer detached. Attempting reconnect.")
-                    self._reconnect()
-                else:
-                    log.info("EventHubConsumer detached. Shutting down.")
-                    error = ConnectionLostError(str(shutdown), shutdown)
-                    self.close(error)
-                    raise error
-            except errors.AMQPConnectionError as shutdown:
-                if connecting_count < max_retries:
-                    log.info("EventHubConsumer connection lost. Attempting reconnect.")
-                    self._reconnect()
-                else:
-                    log.info("EventHubConsumer connection lost. Shutting down.")
-                    error = ConnectionLostError(str(shutdown), shutdown)
-                    self.close(error)
-                    raise error
-            except compat.TimeoutException as shutdown:
-                if connecting_count < max_retries:
-                    log.info("EventHubConsumer timed out receiving event data. Attempting reconnect.")
-                    self._reconnect()
-                else:
-                    log.info("EventHubConsumer timed out. Shutting down.")
-                    self.close(shutdown)
-                    raise ConnectionLostError(str(shutdown), shutdown)
-            except KeyboardInterrupt:
-                log.info("EventHubConsumer stops due to keyboard interrupt")
-                self.close()
-                raise
-            except Exception as e:
-                log.error("Unexpected error occurred (%r). Shutting down.", e)
-                error = EventHubError("Receive failed: {}".format(e), e)
-                self.close(exception=error)
-                raise error
+        return self._receive_with_retry(timeout=timeout, max_batch_size=max_batch_size)
 
-    def close(self, exception=None):
-        # type:(Exception) -> None
+    def close(self):  # pylint:disable=useless-super-delegation
+        # type:() -> None
         """
         Close down the handler. If the handler has already closed,
-        this will be a no op. An optional exception can be passed in to
-        indicate that the handler was shutdown due to error.
-
-        :param exception: An optional exception if the handler is closing
-         due to an error.
-        :type exception: Exception
+        this will be a no op.
 
         Example:
             .. literalinclude:: ../examples/test_examples_eventhub.py
@@ -442,20 +267,6 @@ class EventHubConsumer(object):
                 :caption: Close down the handler.
 
         """
-        if self.messages_iter:
-            self.messages_iter.close()
-            self.messages_iter = None
-        self.running = False
-        if self.error:
-            return
-        if isinstance(exception, errors.LinkRedirect):
-            self.redirected = exception
-        elif isinstance(exception, EventHubError):
-            self.error = exception
-        elif exception:
-            self.error = EventHubError(str(exception))
-        else:
-            self.error = EventHubError("This receive handler is now closed.")
-        self._handler.close()
+        super(EventHubConsumer, self).close()
 
     next = __next__  # for python2.7

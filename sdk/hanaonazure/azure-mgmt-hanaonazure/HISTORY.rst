@@ -3,6 +3,26 @@
 Release History
 ===============
 
+0.10.0 (2019-08-15)
++++++++++++++++++++
+
+**Features**
+
+- Model SapMonitor has a new parameter log_analytics_workspace_arm_id
+- Model SapMonitor has a new parameter managed_resource_group_name
+
+0.9.0 (2019-07-31)
+++++++++++++++++++
+
+**Features**
+
+- Model SapMonitor has a new parameter hana_db_credentials_msi_id
+- Model SapMonitor has a new parameter hana_db_password_key_vault_url
+
+**Breaking changes**
+
+- Removed operation HanaInstancesOperations.enable_monitoring
+
 0.8.0 (2019-06-26)
 ++++++++++++++++++
 

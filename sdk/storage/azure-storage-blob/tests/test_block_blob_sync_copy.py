@@ -6,13 +6,14 @@
 import pytest
 
 from datetime import datetime, timedelta
-from azure.core import HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
     StorageErrorCode,
-    BlobPermissions
+    BlobSasPermissions,
+    generate_blob_sas
 )
 from azure.storage.blob._shared.policies import StorageContentValidation
 from testcase import (
@@ -54,11 +55,16 @@ class StorageBlockBlobTest(StorageTestCase):
             blob.upload_blob(self.source_blob_data)
 
         # generate a SAS so that it is accessible with a URL
-        sas_token = blob.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+        sas_token = generate_blob_sas(
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            snapshot=blob.snapshot,
+            account_key=blob.credential.account_key,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        self.source_blob_url = BlobClient(blob.url, credential=sas_token).url
+        self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
 
     def tearDown(self):
         if not self.is_playback():
@@ -76,16 +82,17 @@ class StorageBlockBlobTest(StorageTestCase):
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
         # Act part 1: make put block from url calls
+        split = 4 * 1024
         dest_blob.stage_block_from_url(
             block_id=1,
             source_url=self.source_blob_url,
             source_offset=0,
-            source_length=4 * 1024 - 1)
+            source_length=split)
         dest_blob.stage_block_from_url(
             block_id=2,
             source_url=self.source_blob_url,
-            source_offset=4 * 1024,
-            source_length=8 * 1024)
+            source_offset=split,
+            source_length=split)
 
         # Assert blocks
         committed, uncommitted = dest_blob.get_block_list('all')
@@ -96,7 +103,8 @@ class StorageBlockBlobTest(StorageTestCase):
         dest_blob.commit_block_list(['1', '2'])
 
         # Assert destination blob has right content
-        content = dest_blob.download_blob().content_as_bytes()
+        content = dest_blob.download_blob().readall()
+        self.assertEqual(len(content), 8 * 1024)
         self.assertEqual(content, self.source_blob_data)
 
     @record
@@ -142,13 +150,13 @@ class StorageBlockBlobTest(StorageTestCase):
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
         # Act
-        copy_props = dest_blob.copy_blob_from_url(self.source_blob_url, requires_sync=True)
+        copy_props = dest_blob.start_copy_from_url(self.source_blob_url, requires_sync=True)
 
         # Assert
         self.assertIsNotNone(copy_props)
-        self.assertIsNotNone(copy_props.copy_id())
-        self.assertEqual('success', copy_props.status())
+        self.assertIsNotNone(copy_props['copy_id'])
+        self.assertEqual('success', copy_props['copy_status'])
 
         # Verify content
-        content = dest_blob.download_blob().content_as_bytes()
+        content = dest_blob.download_blob().readall()
         self.assertEqual(self.source_blob_data, content)

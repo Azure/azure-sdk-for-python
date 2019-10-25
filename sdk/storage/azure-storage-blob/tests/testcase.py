@@ -10,6 +10,7 @@ import copy
 import inspect
 import os
 import os.path
+import re
 import time
 from unittest import SkipTest
 
@@ -79,11 +80,11 @@ class StorageTestCase(unittest.TestCase):
         self.fake_settings = fake_settings
 
         if settings is None:
-            self.test_mode = TestMode.playback
+            self.test_mode = os.getenv('TEST_MODE') or TestMode.playback
         else:
             self.test_mode = self.settings.TEST_MODE.lower() or TestMode.playback
 
-        if self.test_mode == TestMode.playback:
+        if self.test_mode == TestMode.playback or (self.settings is None and self.test_mode.lower() == TestMode.run_live_no_record):
             self.settings = self.fake_settings
 
         # example of qualified test name:
@@ -328,14 +329,31 @@ class StorageTestCase(unittest.TestCase):
             response = copy.deepcopy(response)
             headers = response.get('headers')
             if headers:
+                headers.pop('x-ms-client-request-id', None)
+
+                def internal_scrub(key, val):
+                    if key.lower() == 'retry-after':
+                        return '0'
+                    return self._scrub(val)
+
                 for name, val in headers.items():
-                    for i in range(len(val)):
-                        val[i] = self._scrub(val[i])
+                    if isinstance(val, list):
+                        for i, e in enumerate(val):
+                            val[i] = internal_scrub(name, e)
+                    else:
+                        headers[name] = internal_scrub(name, val)
+
             body = response.get('body')
             if body:
                 body_str = body.get('string')
                 if body_str:
                     response['body']['string'] = self._scrub(body_str)
+
+                    content_type = response.get('headers', {}).get('Content-Type', '')
+                    if content_type:
+                        content_type = (content_type[0] if isinstance(content_type, list) else content_type).lower()
+                        if 'multipart/mixed' in content_type:
+                            response['body']['string'] = re.sub("x-ms-client-request-id: [a-f0-9-]+\r\n", "", body_str.decode()).encode()
 
         return response
 
@@ -403,9 +421,9 @@ class StorageTestCase(unittest.TestCase):
         from azure.identity import ClientSecretCredential
 
         return ClientSecretCredential(
+            self.settings.ACTIVE_DIRECTORY_TENANT_ID,
             self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
-            self.settings.ACTIVE_DIRECTORY_TENANT_ID
+            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET
         )
 
     def generate_fake_token(self):

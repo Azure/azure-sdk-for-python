@@ -9,19 +9,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:01:55 GMT
+      - Tue, 06 Aug 2019 23:50:44 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -29,9 +29,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:01:55 GMT
+      - Tue, 06 Aug 2019 23:50:44 GMT
       request-id:
-      - 58d94e49-db1f-4aa0-8ed2-a7ee7439fc0f
+      - bd1a0393-4dee-4f65-ade7-0b9ac9ac591e
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -53,19 +53,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:02:05 GMT
+      - Tue, 06 Aug 2019 23:50:54 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -73,9 +73,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:02:06 GMT
+      - Tue, 06 Aug 2019 23:50:54 GMT
       request-id:
-      - 489bd801-b803-48fc-96a3-bf0159d84212
+      - e481f075-52d7-4c6e-9185-4b071dc6d993
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -97,19 +97,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:02:16 GMT
+      - Tue, 06 Aug 2019 23:51:05 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -117,9 +117,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:02:16 GMT
+      - Tue, 06 Aug 2019 23:51:05 GMT
       request-id:
-      - 3dda02df-0f21-4310-866c-82abe27b78e6
+      - 235c8120-3101-4546-852b-6745963df481
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -141,19 +141,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:02:26 GMT
+      - Tue, 06 Aug 2019 23:51:15 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -161,9 +161,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:02:25 GMT
+      - Tue, 06 Aug 2019 23:51:15 GMT
       request-id:
-      - 805854b7-e471-4f07-bbb3-4bb839b5310c
+      - 31d765c0-072b-436f-a5cf-239091e3f50e
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -185,19 +185,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:02:36 GMT
+      - Tue, 06 Aug 2019 23:51:25 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -205,9 +205,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:02:36 GMT
+      - Tue, 06 Aug 2019 23:51:25 GMT
       request-id:
-      - 16c04a1d-6b81-4c91-9030-3c8f55d2e80c
+      - f3b1a47d-1499-4802-baa6-3a0a0cbdb0aa
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -229,19 +229,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:02:46 GMT
+      - Tue, 06 Aug 2019 23:51:35 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -249,9 +249,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:02:46 GMT
+      - Tue, 06 Aug 2019 23:51:35 GMT
       request-id:
-      - 173712e3-bcdb-4104-982a-40968f214880
+      - b271bc37-a3ff-4739-9c56-72a809ca8fa1
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -273,19 +273,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:02:56 GMT
+      - Tue, 06 Aug 2019 23:51:45 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -293,9 +293,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:02:55 GMT
+      - Tue, 06 Aug 2019 23:51:45 GMT
       request-id:
-      - e74582ae-b117-4db5-94c6-730da261b000
+      - 281d788c-e5c3-4c41-9960-65d00838c776
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -317,19 +317,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:03:06 GMT
+      - Tue, 06 Aug 2019 23:51:55 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -337,9 +337,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:03:06 GMT
+      - Tue, 06 Aug 2019 23:51:55 GMT
       request-id:
-      - 7f11f1ab-f003-4ed2-a907-8d2db62ed473
+      - 54c9d292-8274-46c2-a872-63d5a734ccec
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -361,19 +361,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:03:16 GMT
+      - Tue, 06 Aug 2019 23:52:05 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -381,9 +381,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:03:16 GMT
+      - Tue, 06 Aug 2019 23:52:05 GMT
       request-id:
-      - 28d005d5-4095-494c-894a-f0ab314177ca
+      - e9950607-7a91-4c5d-8359-81c79af1f354
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -405,19 +405,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:03:26 GMT
+      - Tue, 06 Aug 2019 23:52:15 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -425,9 +425,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:03:27 GMT
+      - Tue, 06 Aug 2019 23:52:15 GMT
       request-id:
-      - 1a7fd620-62db-4216-a583-b8c5820178b7
+      - 2f56f5dc-4a6e-4fa6-992e-64a518e7f09c
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -449,19 +449,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:03:37 GMT
+      - Tue, 06 Aug 2019 23:52:25 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -469,9 +469,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:03:37 GMT
+      - Tue, 06 Aug 2019 23:52:25 GMT
       request-id:
-      - e9b52713-3174-4906-a814-33a09c521d08
+      - cc588c76-1f4c-4e88-ac66-fb5ef035c084
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -493,19 +493,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:03:47 GMT
+      - Tue, 06 Aug 2019 23:52:36 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -513,9 +513,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:03:46 GMT
+      - Tue, 06 Aug 2019 23:52:36 GMT
       request-id:
-      - 2864f57e-089b-4163-8045-39ee2f66c49c
+      - 656535da-0a57-4516-ae40-b08758d649b2
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -537,19 +537,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:03:57 GMT
+      - Tue, 06 Aug 2019 23:52:46 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -557,9 +557,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:03:57 GMT
+      - Tue, 06 Aug 2019 23:52:45 GMT
       request-id:
-      - 3228a068-015a-4e6f-93c0-06133744b0a2
+      - abf4f35e-69e3-4cbb-8bf0-a18e07d9f8bf
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -581,19 +581,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:04:07 GMT
+      - Tue, 06 Aug 2019 23:52:56 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -601,9 +601,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:04:07 GMT
+      - Tue, 06 Aug 2019 23:52:56 GMT
       request-id:
-      - a8df4355-288d-46bb-9e93-713ba2edaa2b
+      - d6b762c1-01c0-4be3-bdf4-c1093fd3c8ad
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -625,19 +625,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:04:17 GMT
+      - Tue, 06 Aug 2019 23:53:06 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -645,9 +645,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:04:17 GMT
+      - Tue, 06 Aug 2019 23:53:06 GMT
       request-id:
-      - ff9550f4-4071-4576-bdc4-78c680a2d2db
+      - 09612051-d5b8-4d9d-b1e6-ccc342b3c509
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -669,19 +669,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:04:27 GMT
+      - Tue, 06 Aug 2019 23:53:16 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -689,9 +689,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:04:27 GMT
+      - Tue, 06 Aug 2019 23:53:15 GMT
       request-id:
-      - f8b8848b-ff7f-43da-8301-5f23476fa4ea
+      - 0a57d281-f54c-4e72-a03a-9d6d6cbb9a70
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -713,19 +713,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:04:37 GMT
+      - Tue, 06 Aug 2019 23:53:26 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -733,9 +733,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:04:37 GMT
+      - Tue, 06 Aug 2019 23:53:26 GMT
       request-id:
-      - 054307c7-893c-4e20-9eee-2850f2e4bc95
+      - fd02ade3-36b4-4533-b81a-6a4c6100833f
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -757,19 +757,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:04:47 GMT
+      - Tue, 06 Aug 2019 23:53:36 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -777,9 +777,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:04:48 GMT
+      - Tue, 06 Aug 2019 23:53:36 GMT
       request-id:
-      - 40a394b5-7ea0-4d3d-ad8b-29cc6bbe60af
+      - 65061492-f836-4e2b-95ab-ef15ab46755f
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -801,19 +801,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:04:58 GMT
+      - Tue, 06 Aug 2019 23:53:46 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -821,9 +821,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:04:58 GMT
+      - Tue, 06 Aug 2019 23:53:46 GMT
       request-id:
-      - 710b7eea-50be-4457-84c9-bc57a5db3f66
+      - 202929e5-35e2-405a-856a-145bc3864386
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -845,19 +845,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:05:08 GMT
+      - Tue, 06 Aug 2019 23:53:56 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -865,9 +865,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:05:08 GMT
+      - Tue, 06 Aug 2019 23:53:57 GMT
       request-id:
-      - 3255b364-fd2c-4f57-8dd9-a88586e5d91f
+      - d97caa02-4917-4ee9-82da-b9a1cb5c6afb
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -889,19 +889,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:05:18 GMT
+      - Tue, 06 Aug 2019 23:54:07 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -909,9 +909,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:05:18 GMT
+      - Tue, 06 Aug 2019 23:54:06 GMT
       request-id:
-      - 718c4a75-c555-420e-8a00-2b71a5bc5565
+      - 1358ab5c-4f53-44a5-a489-3b2e9edf3ee2
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -933,19 +933,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:05:28 GMT
+      - Tue, 06 Aug 2019 23:54:17 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -953,9 +953,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:05:28 GMT
+      - Tue, 06 Aug 2019 23:54:17 GMT
       request-id:
-      - 8302d9be-6ef8-4e71-a2a3-29f4c4a6eca6
+      - 0acf7e90-02d6-4b7a-9110-13b21fc2299a
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -977,19 +977,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:05:38 GMT
+      - Tue, 06 Aug 2019 23:54:27 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -997,9 +997,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:05:38 GMT
+      - Tue, 06 Aug 2019 23:54:27 GMT
       request-id:
-      - a501e1bc-0d77-4305-9c01-2e79ed7952eb
+      - 714b769f-c965-4063-8ee9-cfac0484ab28
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -1021,19 +1021,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:05:48 GMT
+      - Tue, 06 Aug 2019 23:54:37 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -1041,9 +1041,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:05:48 GMT
+      - Tue, 06 Aug 2019 23:54:37 GMT
       request-id:
-      - ea79cbae-113e-48cf-a203-381829a7243e
+      - b5d3b06a-fc8f-4ff2-9ace-4df5cde20814
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -1065,19 +1065,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:05:58 GMT
+      - Tue, 06 Aug 2019 23:54:47 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -1085,9 +1085,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:05:59 GMT
+      - Tue, 06 Aug 2019 23:54:47 GMT
       request-id:
-      - 26c9a95e-1fb9-4d08-8bcd-70c8bd754967
+      - d59eed12-2fa0-44eb-bb8e-51a6556a5c0d
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -1109,19 +1109,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:06:09 GMT
+      - Tue, 06 Aug 2019 23:54:57 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -1129,9 +1129,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:06:09 GMT
+      - Tue, 06 Aug 2019 23:54:57 GMT
       request-id:
-      - 20d73f1b-0399-40a7-b62c-7606812649db
+      - 70006cf5-9410-4a7d-aab2-4ca9ed8a0028
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -1153,19 +1153,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:06:19 GMT
+      - Tue, 06 Aug 2019 23:55:07 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -1173,9 +1173,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:06:19 GMT
+      - Tue, 06 Aug 2019 23:55:07 GMT
       request-id:
-      - 430e41c3-d446-42e9-98e0-ec314aea9412
+      - 05cb0fdb-dc1b-4982-8858-61ef0e5fb2d6
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -1197,19 +1197,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:06:29 GMT
+      - Tue, 06 Aug 2019 23:55:17 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
         \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -1217,9 +1217,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:06:29 GMT
+      - Tue, 06 Aug 2019 23:55:17 GMT
       request-id:
-      - 45243b21-08f6-442e-9520-2a4234046255
+      - 52ca9b7f-4467-4dba-882f-168a3ebdbfd9
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -1241,20 +1241,65 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:06:39 GMT
+      - Tue, 06 Aug 2019 23:55:27 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:01:53.7718416Z\",\"lastBootTime\":\"2019-06-13T19:06:34.952058Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
-        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2019-06-13T19:06:34.952058Z\",\"version\":\"1.5.11\"\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:50:43.7968854Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Tue, 06 Aug 2019 23:55:28 GMT
+      request-id:
+      - 905fecae-c3b1-4bf2-84bf-aad532966d79
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Tue, 06 Aug 2019 23:55:38 GMT
+    method: GET
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:55:28.540527Z\",\"lastBootTime\":\"2019-08-06T23:55:24.990672Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"certificateReferences\":[\r\n
+        \       \r\n      ],\"isDedicated\":true,\"endpointConfiguration\":{\r\n        \"inboundEndpoints\":[\r\n
+        \         {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2019-08-06T23:55:24.990672Z\",\"version\":\"1.6.3\"\r\n
         \     }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -1262,9 +1307,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:06:39 GMT
+      - Tue, 06 Aug 2019 23:55:38 GMT
       request-id:
-      - 70e8e679-bcec-4d19-9d6f-80254a6dd7c4
+      - 98989c5d-6034-474d-ab44-542c289fe274
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -1286,20 +1331,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:06:49 GMT
+      - Tue, 06 Aug 2019 23:55:38 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:06:42.955209Z\",\"lastBootTime\":\"2019-06-13T19:06:34.952058Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
-        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2019-06-13T19:06:34.952058Z\",\"version\":\"1.5.11\"\r\n
+        \   {\r\n      \"id\":\"tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-08-06T23:55:28.540527Z\",\"lastBootTime\":\"2019-08-06T23:55:24.990672Z\",\"allocationTime\":\"2019-08-06T23:50:43.433061Z\",\"ipAddress\":\"10.218.0.4\",\"affinityId\":\"TVM:tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"certificateReferences\":[\r\n
+        \       \r\n      ],\"isDedicated\":true,\"endpointConfiguration\":{\r\n        \"inboundEndpoints\":[\r\n
+        \         {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.161.9.172\",\"frontendPort\":3389,\"backendPort\":20000\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2019-08-06T23:55:24.990672Z\",\"version\":\"1.6.3\"\r\n
         \     }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -1307,54 +1353,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:06:49 GMT
+      - Tue, 06 Aug 2019 23:55:38 GMT
       request-id:
-      - c99d39df-eded-44da-97a1-dbcbc8c5d4f9
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-      ocp-date:
-      - Thu, 13 Jun 2019 19:06:49 GMT
-    method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2019-06-01.9.0
-  response:
-    body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch3c670ff0.westcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"url\":\"https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2019-06-13T19:06:42.955209Z\",\"lastBootTime\":\"2019-06-13T19:06:34.952058Z\",\"allocationTime\":\"2019-06-13T19:01:52.6031034Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d\",\"vmSize\":\"small\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"Microsoft.WindowsAzure.Plugins.RemoteForwarder.RdpInput\",\"protocol\":\"tcp\",\"publicIPAddress\":\"13.78.143.104\",\"frontendPort\":3389,\"backendPort\":20000\r\n
-        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2019-06-13T19:06:34.952058Z\",\"version\":\"1.5.11\"\r\n
-        \     }\r\n    }\r\n  ]\r\n}"
-    headers:
-      content-type:
-      - application/json;odata=minimalmetadata
-      dataserviceversion:
-      - '3.0'
-      date:
-      - Thu, 13 Jun 2019 19:06:49 GMT
-      request-id:
-      - e6a80fd9-f32d-4b0c-9491-a85c3806f8ee
+      - 5836fc07-8d70-4b73-91e8-877181be1dd2
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -1380,28 +1381,28 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:06:49 GMT
+      - Tue, 06 Aug 2019 23:55:38 GMT
     method: POST
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d/users?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d/users?api-version=2019-08-01.10.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d/users/BatchPythonSDKUser
+      - https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d/users/BatchPythonSDKUser
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:06:50 GMT
+      - Tue, 06 Aug 2019 23:55:40 GMT
       location:
-      - https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d/users/BatchPythonSDKUser
+      - https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d/users/BatchPythonSDKUser
       request-id:
-      - a87f2008-a059-4663-bfaa-7a839ef58297
+      - 80c57111-0fee-4ea7-9543-011ea73aff7d
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -1427,26 +1428,26 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:06:50 GMT
+      - Tue, 06 Aug 2019 23:55:40 GMT
     method: PUT
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d/users/BatchPythonSDKUser?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d/users/BatchPythonSDKUser?api-version=2019-08-01.10.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d/users/BatchPythonSDKUser
+      - https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d/users/BatchPythonSDKUser
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:06:50 GMT
+      - Tue, 06 Aug 2019 23:55:40 GMT
       request-id:
-      - 9b90e0ec-fcf1-479a-bd50-b43da35b623c
+      - 77a724c3-c906-45d2-8f94-e1f3cb464c07
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -1468,26 +1469,26 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:06:51 GMT
+      - Tue, 06 Aug 2019 23:55:40 GMT
     method: GET
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d/rdp?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d/rdp?api-version=2019-08-01.10.0
   response:
     body:
-      string: "full address:s:13.78.143.104\r\nLoadBalanceInfo:s:Cookie: mstshash=TVM#TVM_IN_0"
+      string: "full address:s:52.161.9.172\r\nLoadBalanceInfo:s:Cookie: mstshash=TVM#TVM_IN_0"
     headers:
       content-type:
       - application/octet-stream
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:06:50 GMT
+      - Tue, 06 Aug 2019 23:55:40 GMT
       request-id:
-      - ee6b46f7-702e-47dd-a12b-2c943e1bdd96
+      - f44459b0-0b7d-4963-befc-b8c4427d91a1
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -1511,14 +1512,14 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 19:06:51 GMT
+      - Tue, 06 Aug 2019 23:55:40 GMT
     method: DELETE
-    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_bf8ca4d7561d6b011966f08f2d8ed7e3c383560cf9bb337b12b60c884d509d33_d/users/BatchPythonSDKUser?api-version=2019-06-01.9.0
+    uri: https://batch3c670ff0.westcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvmps_e16d3709a13810145ed3fc5889c3ad16ca918d55c0224ca0e75736e2ec00f8db_d/users/BatchPythonSDKUser?api-version=2019-08-01.10.0
   response:
     body:
       string: ''
@@ -1526,9 +1527,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 19:06:52 GMT
+      - Tue, 06 Aug 2019 23:55:40 GMT
       request-id:
-      - ba54a92c-d5fc-45e1-9912-89957c7a68f9
+      - 8b569c81-62a5-4998-a38d-5a479eda514f
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

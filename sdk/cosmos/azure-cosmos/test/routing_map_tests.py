@@ -23,8 +23,8 @@ import unittest
 import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos.routing.routing_map_provider import _PartitionKeyRangeCache
-from azure.cosmos.routing import routing_range as routing_range
+from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
+from azure.cosmos._routing import routing_range as routing_range
 import test_config
 
 pytestmark = pytest.mark.cosmosEmulator
@@ -55,7 +55,7 @@ class RoutingMapEndToEndTests(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         
-        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, connection_policy=cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
         cls.collection_link = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(cls.client).container_link
 
     def test_read_partition_key_ranges(self):
@@ -66,8 +66,8 @@ class RoutingMapEndToEndTests(unittest.TestCase):
     def test_routing_map_provider(self):
         partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link))
 
-        routing_mp = _PartitionKeyRangeCache(self.client.client_connection)
-        overlapping_partition_key_ranges = routing_mp.get_overlapping_ranges(self.collection_link, routing_range._Range("", "FF", True, False))
+        routing_mp = PartitionKeyRangeCache(self.client.client_connection)
+        overlapping_partition_key_ranges = routing_mp.get_overlapping_ranges(self.collection_link, routing_range.Range("", "FF", True, False))
         self.assertEqual(len(overlapping_partition_key_ranges), len(partition_key_ranges))
         self.assertEqual(overlapping_partition_key_ranges, partition_key_ranges)
 

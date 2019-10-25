@@ -24,7 +24,7 @@ class ApplicationOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2019-06-01.9.0".
+    :ivar api_version: Client API Version. Constant value: "2019-08-01.10.0".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ApplicationOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01.9.0"
+        self.api_version = "2019-08-01.10.0"
 
         self.config = config
 
@@ -146,8 +146,8 @@ class ApplicationOperations(object):
         This operation returns only Applications and versions that are
         available for use on Compute Nodes; that is, that can be used in an
         Package reference. For administrator information about Applications and
-        versions that are not yet available to Compute Compute Nodes, use the
-        Azure portal or the Azure Resource Manager API.
+        versions that are not yet available to Compute Nodes, use the Azure
+        portal or the Azure Resource Manager API.
 
         :param application_id: The ID of the Application.
         :type application_id: str

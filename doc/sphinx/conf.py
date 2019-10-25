@@ -21,17 +21,19 @@ from shutil import copyfile
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('../azure'))
+# sys.path.insert(0, os.path.abspath('../azure'))
 
 # FIX FOR EXAMPLE REFERENCES
 REPO_ROOT = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
-examples_glob_expansion = os.path.join(REPO_ROOT, 'sdk/*/*/examples/**/test*example*.py')
+examples_tests_glob_expansion = os.path.join(REPO_ROOT, 'sdk/*/*/examples/**/test*example*.py')
 samples_glob_expansion = os.path.join(REPO_ROOT, 'sdk/*/*/tests/**/test*sample*.py')
+test_examples_glob_expansion = os.path.join(REPO_ROOT, 'sdk/*/*/tests/**/test*example*.py')
 
-example_files = glob.glob(examples_glob_expansion, recursive=True)
+example_tests_files = glob.glob(examples_tests_glob_expansion, recursive=True)
+test_examples_files = glob.glob(test_examples_glob_expansion, recursive=True)
 samples_files = glob.glob(samples_glob_expansion, recursive=True)
 
-all_files = [os.path.relpath(file, REPO_ROOT) for file in list(set(example_files + samples_files))]
+all_files = [os.path.relpath(file, REPO_ROOT) for file in list(set(example_tests_files + test_examples_files + samples_files))]
 
 # now for each package, we need to copy it and write it to the relative path FROM THE CURRENT CWD
 for example_file in all_files:
@@ -53,13 +55,13 @@ for example_file in all_files:
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.doctest',
-              'sphinx.ext.viewcode', 'sphinx.ext.intersphinx']
+              'sphinx.ext.viewcode', 'sphinx.ext.intersphinx', 'sphinx.ext.napoleon']
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3.5', None),
-    'msrestazure': ('http://msrestazure.readthedocs.io/en/latest/', None),
-    'msrest': ('http://msrest.readthedocs.io/en/latest/', None)
+    'python': ('https://docs.python.org/3.7', None)
 }
+
+autodoc_member_order = 'groupwise'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -79,7 +81,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Azure SDK for Python'
-copyright = u'2016, Microsoft'
+copyright = u'2019, Microsoft'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -168,7 +170,15 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = ['_static']
+html_static_path = ['_static']
+
+html_css_files = [
+  'css/default_overrides.css'
+]
+
+html_js_files = [
+  'js/get_options.js'
+]
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -260,5 +270,3 @@ latex_documents = [
 
 # If false, no module index is generated.
 #latex_domain_indices = True
-
-

@@ -3,16 +3,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import Any, Callable, Mapping, TYPE_CHECKING
-from azure.core.async_paging import AsyncPagedMixin
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpTransport
 from msrest.serialization import Model
 
-from azure.keyvault.keys._generated import KeyVaultClient
 from azure.keyvault.keys.aio import KeyClient
-from azure.keyvault.keys.aio._internal import _AsyncKeyVaultClientBase
+from azure.keyvault.keys.crypto.aio import CryptographyClient
+from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
 
 if TYPE_CHECKING:
     try:
@@ -24,20 +23,23 @@ if TYPE_CHECKING:
 KEY_VAULT_SCOPE = "https://vault.azure.net/.default"
 
 
-class VaultClient(_AsyncKeyVaultClientBase):
+class VaultClient(AsyncKeyVaultClientBase):
     def __init__(
         self,
         vault_url: str,
         credential: "TokenCredential",
-        config: Configuration = None,
         transport: HttpTransport = None,
         api_version: str = None,
         **kwargs: Any
     ) -> None:
         super(VaultClient, self).__init__(
-            vault_url, credential, config=config, transport=transport, api_version=api_version, **kwargs
+            vault_url, credential, transport=transport, api_version=api_version, **kwargs
         )
+        self._credential = credential
         self._keys = KeyClient(self.vault_url, credential, generated_client=self._client, **kwargs)
+
+    def get_cryptography_client(self, key):
+        return CryptographyClient(key, self._credential)
 
     @property
     def keys(self):

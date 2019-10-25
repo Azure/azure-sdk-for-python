@@ -11,165 +11,28 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 1c028bc6-952a-11e9-8166-f45c89a7d159
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Sat, 22 Jun 2019 20:12:50 GMT
+      - Tue, 22 Oct 2019 21:19:26 GMT
       x-ms-version:
       - '2018-03-28'
     method: DELETE
-    uri: https://remotestoragename.queue.core.windows.net/pythonqueue637410fd
+    uri: https://pyacrstorage637410fd.queue.core.windows.net/pythonqueue637410fd
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The\
-        \ specified queue does not exist.\nRequestId:1ecb1021-6003-0038-0236-292559000000\n\
-        Time:2019-06-22T20:12:50.4701156Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
+        specified queue does not exist.\nRequestId:f6161f5e-6003-009d-5e1e-894b23000000\nTime:2019-10-22T21:19:25.4206710Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '217'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Sat, 22 Jun 2019 20:12:49 GMT
-      Server:
+      date:
+      - Tue, 22 Oct 2019 21:19:24 GMT
+      server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - QueueNotFound
-      x-ms-request-id:
-      - 1ecb1021-6003-0038-0236-292559000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 404
-      message: The specified queue does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - dd73ec6c-952a-11e9-a2be-f45c89a7d159
-      x-ms-date:
-      - Sat, 22 Jun 2019 20:18:14 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: DELETE
-    uri: https://storagename.queue.core.windows.net/pythonqueue637410fd
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The\
-        \ specified queue does not exist.\nRequestId:003b1c7a-3003-0046-3837-29ba96000000\n\
-        Time:2019-06-22T20:18:15.0360363Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '217'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 22 Jun 2019 20:18:14 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - QueueNotFound
-      x-ms-request-id:
-      - 003b1c7a-3003-0046-3837-29ba96000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 404
-      message: The specified queue does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 74c34338-952b-11e9-a579-f45c89a7d159
-      x-ms-date:
-      - Sat, 22 Jun 2019 20:22:28 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: DELETE
-    uri: https://storagename.queue.core.windows.net/pythonqueue637410fd
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The\
-        \ specified queue does not exist.\nRequestId:762115a2-a003-0025-0438-29fcb3000000\n\
-        Time:2019-06-22T20:22:28.8953884Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '217'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 22 Jun 2019 20:22:28 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - QueueNotFound
-      x-ms-request-id:
-      - 762115a2-a003-0025-0438-29fcb3000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 404
-      message: The specified queue does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - afa695b6-952d-11e9-a5c1-f45c89a7d159
-      x-ms-date:
-      - Sat, 22 Jun 2019 20:38:26 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: DELETE
-    uri: https://storagename.queue.core.windows.net/pythonqueue637410fd
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The\
-        \ specified queue does not exist.\nRequestId:7eec24bd-1003-0037-3a3a-29c8af000000\n\
-        Time:2019-06-22T20:38:26.6802231Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '217'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 22 Jun 2019 20:38:26 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - QueueNotFound
-      x-ms-request-id:
-      - 7eec24bd-1003-0037-3a3a-29c8af000000
       x-ms-version:
       - '2018-03-28'
     status:

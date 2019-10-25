@@ -7,7 +7,7 @@ from unittest import mock
 
 from azure.core.credentials import AccessToken
 from azure.identity.aio import ManagedIdentityCredential
-from azure.identity.constants import Endpoints, EnvironmentVariables
+from azure.identity._constants import Endpoints, EnvironmentVariables
 import pytest
 
 from helpers import async_validating_transport, mock_response, Request

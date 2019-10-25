@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+from datetime import timedelta
 
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 
@@ -126,7 +127,7 @@ class StorageDirectoryTest(FileTestCase):
         new_file = directory.upload_file(file_name, file_data)
 
         # Assert
-        file_content = new_file.download_file().content_as_bytes()
+        file_content = new_file.download_file().readall()
         self.assertEqual(file_content, file_data)
 
     @record
@@ -309,6 +310,51 @@ class StorageDirectoryTest(FileTestCase):
 
         # Assert
         self.assertDictEqual(md, metadata)
+
+    @record
+    def test_set_directory_properties_with_empty_smb_properties(self):
+        # Arrange
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_client = share_client.create_directory('dir1')
+        directory_properties_on_creation = directory_client.get_directory_properties()
+
+        # Act
+        directory_client.set_http_headers()
+        directory_properties = directory_client.get_directory_properties()
+
+        # Assert
+        # Make sure set empty smb_properties doesn't change smb_properties
+        self.assertEqual(directory_properties_on_creation.creation_time,
+                          directory_properties.creation_time)
+        self.assertEqual(directory_properties_on_creation.last_write_time,
+                          directory_properties.last_write_time)
+        self.assertEqual(directory_properties_on_creation.permission_key,
+                          directory_properties.permission_key)
+
+    @record
+    def test_set_directory_properties_with_file_permission_key(self):
+        # Arrange
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_client = share_client.create_directory('dir1')
+
+        directory_properties_on_creation = directory_client.get_directory_properties()
+        permission_key = directory_properties_on_creation.permission_key
+        last_write_time = directory_properties_on_creation.last_write_time
+        creation_time = directory_properties_on_creation.creation_time
+
+        new_last_write_time = last_write_time + timedelta(hours=1)
+        new_creation_time = creation_time + timedelta(hours=1)
+
+        # Act
+        directory_client.set_http_headers(file_attributes='None', file_creation_time=new_creation_time,
+                                          file_last_write_time=new_last_write_time,
+                                          permission_key=permission_key)
+        directory_properties = directory_client.get_directory_properties()
+
+        # Assert
+        self.assertIsNotNone(directory_properties)
+        self.assertEqual(directory_properties.creation_time, new_creation_time)
+        self.assertEqual(directory_properties.last_write_time, new_last_write_time)
 
     @record
     def test_list_subdirectories_and_files(self):

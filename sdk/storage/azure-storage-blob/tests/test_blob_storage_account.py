@@ -15,6 +15,7 @@ from azure.storage.blob import (
     BlobClient,
     StandardBlobTier
 )
+from azure.storage.blob._generated.models import RehydratePriority
 from testcase import (
     StorageTestCase,
     record,
@@ -58,7 +59,7 @@ class BlobStorageAccountTest(StorageTestCase):
 
     def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bsc.get_blob_client(container_name, blob_name)
-        actual_data = blob.download_blob().content_as_bytes()
+        actual_data = blob.download_blob().readall()
         self.assertEqual(actual_data, expected_data)
 
     # --Tests specific to Blob Storage Accounts (not general purpose)------------
@@ -108,6 +109,23 @@ class BlobStorageAccountTest(StorageTestCase):
             self.assertIsNotNone(blobs[0].blob_tier_change_time)
 
             blob.delete_blob()
+
+    @record
+    def test_set_standard_blob_tier_with_rehydrate_priority(self):
+        # Arrange
+        blob_client = self._create_blob()
+        blob_tier = StandardBlobTier.Archive
+        rehydrate_tier = StandardBlobTier.Cool
+        rehydrate_priority = RehydratePriority.standard
+
+        # Act
+        blob_client.set_standard_blob_tier(blob_tier,
+                                           rehydrate_priority=rehydrate_priority)
+        blob_client.set_standard_blob_tier(rehydrate_tier)
+        blob_props = blob_client.get_blob_properties()
+
+        # Assert
+        self.assertEqual('rehydrate-pending-to-cool', blob_props.archive_status)
 
     @record
     def test_rehydration_status(self):

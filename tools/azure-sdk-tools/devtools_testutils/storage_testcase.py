@@ -76,4 +76,3 @@ class StorageAccountPreparer(AzureMgmtPreparer):
             template = 'To create a storage account a resource group is required. Please add ' \
                        'decorator @{} in front of this storage account preparer.'
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
-

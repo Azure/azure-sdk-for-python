@@ -20,7 +20,6 @@ from azure.storage.blob import (
     LocationMode,
     LinearRetry,
     ExponentialRetry,
-    NoRetry
 )
 
 from testcase import (
@@ -122,7 +121,7 @@ class StorageRetryTest(StorageTestCase):
         service = self._create_storage_service(
             BlobServiceClient, self.settings, retry_policy=retry, connection_timeout=socket_timeout)
 
-        self.assertEqual(service._config.connection.timeout, socket_timeout)
+        assert service._client._client._pipeline._transport.connection_config.timeout == socket_timeout
 
         # Act
         try:
@@ -141,7 +140,7 @@ class StorageRetryTest(StorageTestCase):
         # Arrange
         container_name = self.get_resource_name()
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=NoRetry())
+            BlobServiceClient, self.settings, retry_total=0)
 
 
         # Force the create call to 'timeout' with a 408

@@ -42,7 +42,8 @@ def ObtainClient():
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     connection_policy.SSLConfiguration.SSLCaCerts = False
 
-    return cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY}, "Session", connection_policy)
+    return cosmos_client.CosmosClient(HOST, MASTER_KEY, "Session", connection_policy=connection_policy)
+
 
 # Query for Entity / Entities
 def Query_Entities(parent, entity_type, id = None):
@@ -56,13 +57,13 @@ def Query_Entities(parent, entity_type, id = None):
     try:
         if entity_type == 'database':
             if id == None:
-                entities = list(parent.read_all_databases())
+                entities = list(parent.list_databases())
             else:
                 entities = list(parent.query_databases(find_entity_by_id_query))
 
         elif entity_type == 'collection':
             if id == None:
-                entities = list(parent.read_all_containers())
+                entities = list(parent.list_containers())
             else:
                 entities = list(parent.query_containers(find_entity_by_id_query))
 
@@ -71,7 +72,7 @@ def Query_Entities(parent, entity_type, id = None):
                 entities = list(parent.read_all_items())
             else:
                 entities = list(parent.query_items(find_entity_by_id_query))
-    except errors.CosmosError as e:
+    except errors.AzureError as e:
         print("The following error occured while querying for the entity / entities ", entity_type, id if id != None else "")
         print(e)
         raise
@@ -81,35 +82,35 @@ def Query_Entities(parent, entity_type, id = None):
         return entities[0]
     return None
 
+
 def CreateDatabaseIfNotExists(client, database_id):
     try:
         database = Query_Entities(client, 'database', id = database_id)
         if database == None:
-            database = client.create_database(id=database_id)
-        return client.get_database_client(database['id'])
-    except errors.HTTPFailure as e:
-        if e.status_code == 409: # Move these constants to an enum
-            pass
-        else: 
-            raise errors.HTTPFailure(e.status_code)
+            return client.create_database(id=database_id)
+        else:
+            return client.get_database_client(database_id)
+    except errors.CosmosResourceExistsError:
+        pass
+
 
 def DeleteContainerIfExists(db, collection_id):
     try:
         db.delete_container(collection_id)
         print('Collection with id \'{0}\' was deleted'.format(collection_id))
-    except errors.HTTPFailure as e:
-        if e.status_code == 404:
-            pass
-        elif e.status_code == 400:
+    except errors.CosmosResourceNotFoundError:
+        pass
+    except errors.CosmosHttpResponseError as e:
+        if e.status_code == 400:
             print("Bad request for collection link", collection_id)
-            raise
-        else:
-            raise
+        raise
+
 
 def print_dictionary_items(dict):
     for k, v in dict.items():
         print("{:<15}".format(k), v)
     print()
+
 
 def FetchAllDatabases(client):
     databases = Query_Entities(client, 'database')
@@ -119,6 +120,7 @@ def FetchAllDatabases(client):
         print_dictionary_items(db)
         print("-" * 41)
 
+
 def QueryDocumentsWithCustomQuery(container, query_with_optional_parameters, message = "Document(s) found by query: "):
     try:
         results = list(container.query_items(query_with_optional_parameters, enable_cross_partition_query=True))
@@ -126,10 +128,10 @@ def QueryDocumentsWithCustomQuery(container, query_with_optional_parameters, mes
         for doc in results:
             print(doc)
         return results
-    except errors.HTTPFailure as e:
-        if e.status_code == 404:
-            print("Document doesn't exist")
-        elif e.status_code == 400:
+    except errors.CosmosResourceNotFoundError:
+        print("Document doesn't exist")
+    except errors.CosmosHttpResponseError as e:
+        if e.status_code == 400:
             # Can occur when we are trying to query on excluded paths
             print("Bad Request exception occured: ", e)
             pass
@@ -137,6 +139,7 @@ def QueryDocumentsWithCustomQuery(container, query_with_optional_parameters, mes
             raise
     finally:
         print()
+
 
 def ExplicitlyExcludeFromIndex(db):
     """ The default index policy on a DocumentContainer will AUTOMATICALLY index ALL documents added.
@@ -153,7 +156,8 @@ def ExplicitlyExcludeFromIndex(db):
         print(created_Container)
 
         print("\n" + "-" * 25 + "\n1. Collection created with index policy")
-        print_dictionary_items(created_Container.properties["indexingPolicy"])
+        properties = created_Container.read()
+        print_dictionary_items(properties["indexingPolicy"])
 
         # Create a document and query on it immediately.
         # Will work as automatic indexing is still True
@@ -190,14 +194,11 @@ def ExplicitlyExcludeFromIndex(db):
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
-    
-    except errors.HTTPFailure as e:
-        if e.status_code == 409:
-            print("Entity already exists")
-        elif e.status_code == 404:
-            print("Entity doesn't exist")
-        else:
-            raise
+    except errors.CosmosResourceExistsError:
+        print("Entity already exists")
+    except errors.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
+
 
 def UseManualIndexing(db):
     """The default index policy on a DocumentContainer will AUTOMATICALLY index ALL documents added.
@@ -214,10 +215,11 @@ def UseManualIndexing(db):
             indexing_policy={"automatic" : False},
             partition_key=PARTITION_KEY
         )
+        properties = created_Container.read()
         print(created_Container)
 
         print("\n" + "-" * 25 + "\n2. Collection created with index policy")
-        print_dictionary_items(created_Container.properties["indexingPolicy"])
+        print_dictionary_items(properties["indexingPolicy"])
 
         # Create a document
         # Then query for that document
@@ -254,14 +256,11 @@ def UseManualIndexing(db):
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
+    except errors.CosmosResourceExistsError:
+        print("Entity already exists")
+    except errors.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
 
-    except errors.HTTPFailure as e:
-        if e.status_code == 409:
-            print("Entity already exists")
-        elif e.status_code == 404:
-            print("Entity doesn't exist")
-        else:
-            raise
 
 def ExcludePathsFromIndex(db):
     """The default behavior is for Cosmos to index every attribute in every document automatically.
@@ -300,9 +299,10 @@ def ExcludePathsFromIndex(db):
             indexing_policy=collection_to_create['indexingPolicy'],
             partition_key=PARTITION_KEY
         )
+        properties = created_Container.read()
         print(created_Container)
         print("\n" + "-" * 25 + "\n4. Collection created with index policy")
-        print_dictionary_items(created_Container.properties["indexingPolicy"])
+        print_dictionary_items(properties["indexingPolicy"])
 
         # The effect of the above IndexingPolicy is that only id, foo, and the subDoc/searchable are indexed
         doc = created_Container.create_item(body=doc_with_nested_structures)
@@ -329,14 +329,11 @@ def ExcludePathsFromIndex(db):
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
+    except errors.CosmosResourceExistsError:
+        print("Entity already exists")
+    except errors.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
 
-    except errors.HTTPFailure as e:
-        if e.status_code == 409:
-            print("Entity already exists")
-        elif e.status_code == 404:
-            print("Entity doesn't exist")
-        else:
-            raise
 
 def RangeScanOnHashIndex(db):
     """When a range index is not available (i.e. Only hash or no index found on the path), comparisons queries can still 
@@ -365,9 +362,10 @@ def RangeScanOnHashIndex(db):
             indexing_policy=collection_to_create['indexingPolicy'],
             partition_key=PARTITION_KEY
         )
+        properties = created_Container.read()
         print(created_Container)
         print("\n" + "-" * 25 + "\n5. Collection created with index policy")
-        print_dictionary_items(created_Container.properties["indexingPolicy"])
+        print_dictionary_items(properties["indexingPolicy"])
 
         doc1 = created_Container.create_item(body={ "id" : "dyn1", "length" : 10, "width" : 5, "height" : 15 })
         doc2 = created_Container.create_item(body={ "id" : "dyn2", "length" : 7, "width" : 15 })
@@ -393,13 +391,11 @@ def RangeScanOnHashIndex(db):
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
-    except errors.HTTPFailure as e:
-        if e.status_code == 409:
-            print("Entity already exists")
-        elif e.status_code == 404:
-            print("Entity doesn't exist")
-        else:
-            raise
+    except errors.CosmosResourceExistsError:
+        print("Entity already exists")
+    except errors.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
+
 
 def UseRangeIndexesOnStrings(db):
     """Showing how range queries can be performed even on strings.
@@ -458,9 +454,10 @@ def UseRangeIndexesOnStrings(db):
             indexing_policy=collection_definition['indexingPolicy'],
             partition_key=PARTITION_KEY
         )
+        properties = created_Container.read()
         print(created_Container)
         print("\n" + "-" * 25 + "\n6. Collection created with index policy")
-        print_dictionary_items(created_Container.properties["indexingPolicy"])
+        print_dictionary_items(properties["indexingPolicy"])
 
         created_Container.create_item(body={ "id" : "doc1", "region" : "USA" })
         created_Container.create_item(body={ "id" : "doc2", "region" : "UK" })
@@ -481,13 +478,11 @@ def UseRangeIndexesOnStrings(db):
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
-    except errors.HTTPFailure as e:
-        if e.status_code == 409:
-            print("Entity already exists")
-        elif e.status_code == 404:
-            print("Entity doesn't exist")
-        else:
-            raise
+    except errors.CosmosResourceExistsError:
+        print("Entity already exists")
+    except errors.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
+
 
 def PerformIndexTransformations(db):
     try:
@@ -495,21 +490,22 @@ def PerformIndexTransformations(db):
 
         # Create a collection with default indexing policy
         created_Container = db.create_container(id=CONTAINER_ID, partition_key=PARTITION_KEY)
+        properties = created_Container.read()
         print(created_Container)
 
         print("\n" + "-" * 25 + "\n7. Collection created with index policy")
-        print_dictionary_items(created_Container.properties["indexingPolicy"])
+        print_dictionary_items(properties["indexingPolicy"])
 
         # Insert some documents
         doc1 = created_Container.create_item(body={ "id" : "dyn1", "length" : 10, "width" : 5, "height" : 15 })
         doc2 = created_Container.create_item(body={ "id" : "dyn2", "length" : 7, "width" : 15 })
         doc3 = created_Container.create_item(body={ "id" : "dyn3", "length" : 2 })
-        print("Three docs created with ids : ", doc1["id"], doc2["id"], doc3["id"], " with indexing mode", created_Container.properties['indexingPolicy']['indexingMode'])
+        print("Three docs created with ids : ", doc1["id"], doc2["id"], doc3["id"], " with indexing mode", properties['indexingPolicy']['indexingMode'])
 
         # Switch to use string & number range indexing with maximum precision.
         print("Changing to string & number range indexing with maximum precision (needed for Order By).")
 
-        created_Container.properties['indexingPolicy']['includedPaths'][0]['indexes'] = [{
+        properties['indexingPolicy']['includedPaths'][0]['indexes'] = [{
             'kind': documents.IndexKind.Range, 
             'dataType': documents.DataType.String, 
             'precision': -1
@@ -518,34 +514,34 @@ def PerformIndexTransformations(db):
         created_Container = db.replace_container(
             container=created_Container.id,
             partition_key=PARTITION_KEY,
-            indexing_policy=created_Container.properties['indexingPolicy']
+            indexing_policy=properties['indexingPolicy']
         )
+        properties = created_Container.read()
 
         # Check progress and wait for completion - should be instantaneous since we have only a few documents, but larger
         # collections will take time.
-        print_dictionary_items(created_Container.properties["indexingPolicy"])
+        print_dictionary_items(properties["indexingPolicy"])
 
         # Now exclude a path from indexing to save on storage space.
         print("Now excluding the path /length/ to save on storage space")
-        created_Container.properties['indexingPolicy']['excludedPaths'] = [{"path" : "/length/*"}]
+        properties['indexingPolicy']['excludedPaths'] = [{"path" : "/length/*"}]
 
         created_Container = db.replace_container(
             container=created_Container.id,
             partition_key=PARTITION_KEY,
-            indexing_policy=created_Container.properties['indexingPolicy']
+            indexing_policy=properties['indexingPolicy']
         )
-        print_dictionary_items(created_Container.properties["indexingPolicy"])
+        properties = created_Container.read()
+        print_dictionary_items(properties["indexingPolicy"])
 
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
-    except errors.HTTPFailure as e:
-        if e.status_code == 409:
-            print("Entity already exists")
-        elif e.status_code == 404:
-            print("Entity doesn't exist")
-        else:
-            raise
+    except errors.CosmosResourceExistsError:
+        print("Entity already exists")
+    except errors.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
+
 
 def PerformMultiOrderbyQuery(db):
     try:
@@ -590,11 +586,11 @@ def PerformMultiOrderbyQuery(db):
             indexing_policy=indexing_policy,
             partition_key=PARTITION_KEY
         )
-
+        properties = created_container.read()
         print(created_container)
 
         print("\n" + "-" * 25 + "\n8. Collection created with index policy")
-        print_dictionary_items(created_container.properties["indexingPolicy"])
+        print_dictionary_items(properties["indexingPolicy"])
 
         # Insert some documents
         doc1 = created_container.create_item(body={"id": "doc1", "numberField": 1, "stringField": "1", "numberField2": 1, "stringField2": "1"})
@@ -632,109 +628,11 @@ def PerformMultiOrderbyQuery(db):
         # Cleanup
         db.delete_container(created_container)
         print("\n")
-    except errors.HTTPFailure as e:
-        if e.status_code == 409:
-            print("Entity already exists")
-        elif e.status_code == 404:
-            print("Entity doesn't exist")
-        else:
-            raise
+    except errors.CosmosResourceExistsError:
+        print("Entity already exists")
+    except errors.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
 
-def PerformMultiOrderbyQuery(client, database_id):
-    try:
-        DeleteContainerIfExists(client, database_id, COLLECTION_ID)
-        database_link = GetDatabaseLink(database_id)
-
-        # Create a collection with composite indexes
-        indexingPolicy = {
-            "compositeIndexes": [
-                [
-                    {
-                        "path": "/numberField",
-                        "order": "ascending"
-                    },
-                    {
-                        "path": "/stringField",
-                        "order": "descending"
-                    }
-                ],
-                [
-                    {
-                        "path": "/numberField",
-                        "order": "descending"
-                    },
-                    {
-                        "path": "/stringField",
-                        "order": "ascending"
-                    },
-                    {
-                        "path": "/numberField2",
-                        "order": "descending"
-                    },
-                    {
-                        "path": "/stringField2",
-                        "order": "ascending"
-                    }
-                ]
-            ]
-        }
-
-        container_definition = {
-            'id': COLLECTION_ID,
-            'indexingPolicy': indexingPolicy
-        }
-
-        created_container = client.CreateContainer(database_link, container_definition)
-
-        print(created_container)
-
-        print("\n" + "-" * 25 + "\n8. Collection created with index policy")
-        print_dictionary_items(created_container["indexingPolicy"])
-
-        # Insert some documents
-        collection_link = GetContainerLink(database_id, COLLECTION_ID)
-        doc1 = client.CreateItem(collection_link, {"id": "doc1", "numberField": 1, "stringField": "1", "numberField2": 1, "stringField2": "1"})
-        doc2 = client.CreateItem(collection_link, {"id": "doc2", "numberField": 1, "stringField": "1", "numberField2": 1, "stringField2": "2"})
-        doc3 = client.CreateItem(collection_link, {"id": "doc3", "numberField": 1, "stringField": "1", "numberField2": 2, "stringField2": "1"})
-        doc4 = client.CreateItem(collection_link, {"id": "doc4", "numberField": 1, "stringField": "1", "numberField2": 2, "stringField2": "2"})
-        doc5 = client.CreateItem(collection_link, {"id": "doc5", "numberField": 1, "stringField": "2", "numberField2": 1, "stringField2": "1"})
-        doc6 = client.CreateItem(collection_link, {"id": "doc6", "numberField": 1, "stringField": "2", "numberField2": 1, "stringField2": "2"})
-        doc7 = client.CreateItem(collection_link, {"id": "doc7", "numberField": 1, "stringField": "2", "numberField2": 2, "stringField2": "1"})
-        doc8 = client.CreateItem(collection_link, {"id": "doc8", "numberField": 1, "stringField": "2", "numberField2": 2, "stringField2": "2"})
-        doc9 = client.CreateItem(collection_link, {"id": "doc9", "numberField": 2, "stringField": "1", "numberField2": 1, "stringField2": "1"})
-        doc10 = client.CreateItem(collection_link, {"id": "doc10", "numberField": 2, "stringField": "1", "numberField2": 1, "stringField2": "2"})
-        doc11 = client.CreateItem(collection_link, {"id": "doc11", "numberField": 2, "stringField": "1", "numberField2": 2, "stringField2": "1"})
-        doc12 = client.CreateItem(collection_link, {"id": "doc12", "numberField": 2, "stringField": "1", "numberField2": 2, "stringField2": "2"})
-        doc13 = client.CreateItem(collection_link, {"id": "doc13", "numberField": 2, "stringField": "2", "numberField2": 1, "stringField2": "1"})
-        doc14 = client.CreateItem(collection_link, {"id": "doc14", "numberField": 2, "stringField": "2", "numberField2": 1, "stringField2": "2"})
-        doc15 = client.CreateItem(collection_link, {"id": "doc15", "numberField": 2, "stringField": "2", "numberField2": 2, "stringField2": "1"})
-        doc16 = client.CreateItem(collection_link, {"id": "doc16", "numberField": 2, "stringField": "2", "numberField2": 2, "stringField2": "2"})
-
-        print("Query documents and Order by 1st composite index: Ascending numberField and Descending stringField:")
-
-        query = {
-                "query": "SELECT * FROM r ORDER BY r.numberField ASC, r.stringField DESC",
-                }
-        QueryDocumentsWithCustomQuery(client, collection_link, query)
-
-        print("Query documents and Order by inverted 2nd composite index -")
-        print("Ascending numberField, Descending stringField, Ascending numberField2, Descending stringField2")
-
-        query = {
-                "query": "SELECT * FROM r ORDER BY r.numberField ASC, r.stringField DESC, r.numberField2 ASC, r.stringField2 DESC",
-                }
-        QueryDocumentsWithCustomQuery(client, collection_link, query)
-
-        # Cleanup
-        client.DeleteContainer(collection_link)
-        print("\n")
-    except errors.HTTPFailure as e:
-        if e.status_code == 409:
-            print("Entity already exists")
-        elif e.status_code == 404:
-            print("Entity doesn't exist")
-        else:
-            raise
 
 def RunIndexDemo():
     try:
@@ -766,10 +664,7 @@ def RunIndexDemo():
         # 8. Perform Multi Orderby queries using composite indexes
         PerformMultiOrderbyQuery(created_db)
 
-        # 8. Perform Multi Orderby queries using composite indexes
-        PerformMultiOrderbyQuery(client, DATABASE_ID)
-
-    except errors.CosmosError as e:
+    except errors.AzureError as e:
         raise e
 
 if __name__ == '__main__':
@@ -777,4 +672,4 @@ if __name__ == '__main__':
         RunIndexDemo()
 
     except Exception as e:
-            print("Top level Error: args:{0}, message:N/A".format(e.args))
+        print("Top level Error: args:{0}, message:N/A".format(e.args))

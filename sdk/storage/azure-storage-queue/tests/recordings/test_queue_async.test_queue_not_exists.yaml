@@ -1,0 +1,35 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 22 Oct 2019 21:22:42 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://pyacrstorage349b0fe3.queue.core.windows.net/missing349b0fe3?comp=metadata
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
+        specified queue does not exist.\nRequestId:28c680ae-f003-005a-4b1e-890c8b000000\nTime:2019-10-22T21:22:41.0440927Z</Message></Error>"
+    headers:
+      content-length: '217'
+      content-type: application/xml
+      date: Tue, 22 Oct 2019 21:22:40 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: QueueNotFound
+      x-ms-version: '2018-03-28'
+    status:
+      code: 404
+      message: The specified queue does not exist.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage349b0fe3.queue.core.windows.net
+        - /missing349b0fe3
+        - comp=metadata
+        - ''
+version: 1

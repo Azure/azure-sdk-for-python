@@ -11,10 +11,12 @@
 
 try:
     from ._models_py3 import AccountSasParameters
+    from ._models_py3 import ActiveDirectoryProperties
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import AzureFilesIdentityBasedAuthentication
     from ._models_py3 import BlobContainer
     from ._models_py3 import BlobServiceProperties
+    from ._models_py3 import ChangeFeed
     from ._models_py3 import CheckNameAvailabilityResult
     from ._models_py3 import CorsRule
     from ._models_py3 import CorsRules
@@ -27,6 +29,10 @@ try:
     from ._models_py3 import EncryptionService
     from ._models_py3 import EncryptionServices
     from ._models_py3 import Endpoints
+    from ._models_py3 import FileServiceItems
+    from ._models_py3 import FileServiceProperties
+    from ._models_py3 import FileShare
+    from ._models_py3 import FileShareItem
     from ._models_py3 import GeoReplicationStats
     from ._models_py3 import Identity
     from ._models_py3 import ImmutabilityPolicy
@@ -74,10 +80,12 @@ try:
     from ._models_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
     from ._models import AccountSasParameters
+    from ._models import ActiveDirectoryProperties
     from ._models import AzureEntityResource
     from ._models import AzureFilesIdentityBasedAuthentication
     from ._models import BlobContainer
     from ._models import BlobServiceProperties
+    from ._models import ChangeFeed
     from ._models import CheckNameAvailabilityResult
     from ._models import CorsRule
     from ._models import CorsRules
@@ -90,6 +98,10 @@ except (SyntaxError, ImportError):
     from ._models import EncryptionService
     from ._models import EncryptionServices
     from ._models import Endpoints
+    from ._models import FileServiceItems
+    from ._models import FileServiceProperties
+    from ._models import FileShare
+    from ._models import FileShareItem
     from ._models import GeoReplicationStats
     from ._models import Identity
     from ._models import ImmutabilityPolicy
@@ -135,6 +147,8 @@ except (SyntaxError, ImportError):
     from ._models import Usage
     from ._models import UsageName
     from ._models import VirtualNetworkRule
+from ._paged_models import BlobServicePropertiesPaged
+from ._paged_models import FileShareItemPaged
 from ._paged_models import ListContainerItemPaged
 from ._paged_models import OperationPaged
 from ._paged_models import SkuPaged
@@ -153,6 +167,7 @@ from ._storage_management_client_enums import (
     DefaultAction,
     DirectoryServiceOptions,
     AccessTier,
+    LargeFileSharesState,
     GeoReplicationStatus,
     ProvisioningState,
     AccountStatus,
@@ -170,14 +185,17 @@ from ._storage_management_client_enums import (
     ImmutabilityPolicyState,
     ImmutabilityPolicyUpdateType,
     StorageAccountExpand,
+    ListKeyExpand,
 )
 
 __all__ = [
     'AccountSasParameters',
+    'ActiveDirectoryProperties',
     'AzureEntityResource',
     'AzureFilesIdentityBasedAuthentication',
     'BlobContainer',
     'BlobServiceProperties',
+    'ChangeFeed',
     'CheckNameAvailabilityResult',
     'CorsRule',
     'CorsRules',
@@ -190,6 +208,10 @@ __all__ = [
     'EncryptionService',
     'EncryptionServices',
     'Endpoints',
+    'FileServiceItems',
+    'FileServiceProperties',
+    'FileShare',
+    'FileShareItem',
     'GeoReplicationStats',
     'Identity',
     'ImmutabilityPolicy',
@@ -239,7 +261,9 @@ __all__ = [
     'SkuPaged',
     'StorageAccountPaged',
     'UsagePaged',
+    'BlobServicePropertiesPaged',
     'ListContainerItemPaged',
+    'FileShareItemPaged',
     'ReasonCode',
     'SkuName',
     'SkuTier',
@@ -252,6 +276,7 @@ __all__ = [
     'DefaultAction',
     'DirectoryServiceOptions',
     'AccessTier',
+    'LargeFileSharesState',
     'GeoReplicationStatus',
     'ProvisioningState',
     'AccountStatus',
@@ -269,4 +294,5 @@ __all__ = [
     'ImmutabilityPolicyState',
     'ImmutabilityPolicyUpdateType',
     'StorageAccountExpand',
+    'ListKeyExpand',
 ]

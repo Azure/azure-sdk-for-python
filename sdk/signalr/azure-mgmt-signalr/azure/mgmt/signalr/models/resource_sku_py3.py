@@ -13,26 +13,26 @@ from msrest.serialization import Model
 
 
 class ResourceSku(Model):
-    """The billing information of the resource.(e.g. basic vs. standard).
+    """The billing information of the SignalR resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the SKU. This is typically a letter +
-     number code, such as A0 or P3.  Required (if sku is specified)
+    :param name: Required. The name of the SKU. Required.
+     Allowed values: Standard_S1, Free_F1
     :type name: str
-    :param tier: Optional tier of this particular SKU. `Basic` is deprecated,
-     use `Standard` instead. Possible values include: 'Free', 'Basic',
-     'Standard', 'Premium'
+    :param tier: Optional tier of this particular SKU. 'Standard' or 'Free'.
+     `Basic` is deprecated, use `Standard` instead. Possible values include:
+     'Free', 'Basic', 'Standard', 'Premium'
     :type tier: str or ~azure.mgmt.signalr.models.SignalRSkuTier
-    :param size: Optional, string. When the name field is the combination of
-     tier and some other value, this would be the standalone code.
+    :param size: Optional string. For future use.
     :type size: str
-    :param family: Optional, string. If the service has different generations
-     of hardware, for the same SKU, then that can be captured here.
+    :param family: Optional string. For future use.
     :type family: str
-    :param capacity: Optional, integer. If the SKU supports scale out/in then
-     the capacity integer should be included. If scale out/in is not
-     possible for the resource this may be omitted.
+    :param capacity: Optional, integer. The unit count of SignalR resource. 1
+     by default.
+     If present, following values are allowed:
+     Free: 1
+     Standard: 1,2,5,10,20,50,100
     :type capacity: int
     """
 

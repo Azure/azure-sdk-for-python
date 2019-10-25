@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dev_test_labs_client import DevTestLabsClient
-from .version import VERSION
+from ._configuration import DevTestLabsClientConfiguration
+from ._dev_test_labs_client import DevTestLabsClient
+__all__ = ['DevTestLabsClient', 'DevTestLabsClientConfiguration']
 
-__all__ = ['DevTestLabsClient']
+from .version import VERSION
 
 __version__ = VERSION
 

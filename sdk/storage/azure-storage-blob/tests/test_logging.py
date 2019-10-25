@@ -14,10 +14,12 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    ContainerPermissions,
-    BlobPermissions
+    ContainerSasPermissions,
+    BlobSasPermissions,
+    generate_blob_sas,
+    generate_container_sas
 )
-from azure.storage.blob._shared.utils import _QueryStringConstants
+from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
 
 from testcase import (
     StorageTestCase,
@@ -27,9 +29,9 @@ from testcase import (
 )
 
 if sys.version_info >= (3,):
-    from urllib.parse import parse_qs, quote
+    from urllib.parse import parse_qs, quote, urlparse
 else:
-    from urlparse import parse_qs
+    from urlparse import parse_qs, urlparse
     from urllib2 import quote
 
 _AUTHORIZATION_HEADER_NAME = 'Authorization'
@@ -55,11 +57,16 @@ class StorageLoggingTest(StorageTestCase):
             source_blob.upload_blob(self.source_blob_data)
 
         # generate a SAS so that it is accessible with a URL
-        sas_token = source_blob.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
+        sas_token = generate_blob_sas(
+            source_blob.account_name,
+            source_blob.container_name,
+            source_blob.blob_name,
+            snapshot=source_blob.snapshot,
+            account_key=source_blob.credential.account_key,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_source = BlobClient(source_blob.url, credential=sas_token)
+        sas_source = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
         self.source_blob_url = sas_source.url
 
     def tearDown(self):
@@ -90,15 +97,18 @@ class StorageLoggingTest(StorageTestCase):
 
         # Arrange
         container = self.bsc.get_container_client(self.container_name)
-        token = container.generate_shared_access_signature(
-            permission=ContainerPermissions.READ,
+        token = generate_container_sas(
+            container.account_name,
+            container.container_name,
+            account_key=container.credential.account_key,
+            permission=ContainerSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         # parse out the signed signature
         token_components = parse_qs(token)
-        signed_signature = quote(token_components[_QueryStringConstants.SIGNED_SIGNATURE][0])
+        signed_signature = quote(token_components[QueryStringConstants.SIGNED_SIGNATURE][0])
 
-        sas_service = ContainerClient(container.url, credential=token)
+        sas_service = ContainerClient.from_container_url(container.url, credential=token)
 
         # Act
         with LogCaptured(self) as log_captured:
@@ -107,7 +117,7 @@ class StorageLoggingTest(StorageTestCase):
 
             # Assert
             # make sure the query parameter 'sig' is logged, but its value is not
-            self.assertTrue(_QueryStringConstants.SIGNED_SIGNATURE in log_as_str)
+            self.assertTrue(QueryStringConstants.SIGNED_SIGNATURE in log_as_str)
             self.assertFalse(signed_signature in log_as_str)
 
     @record
@@ -121,18 +131,26 @@ class StorageLoggingTest(StorageTestCase):
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
         # parse out the signed signature
-        token_components = parse_qs(self.source_blob_url)
-        signed_signature = quote(token_components[_QueryStringConstants.SIGNED_SIGNATURE][0])
+        query_parameters = urlparse(self.source_blob_url).query
+        token_components = parse_qs(query_parameters)
+        if QueryStringConstants.SIGNED_SIGNATURE not in token_components:
+            pytest.fail("Blob URL {} doesn't contain {}, parsed query params: {}".format(
+                self.source_blob_url,
+                QueryStringConstants.SIGNED_SIGNATURE,
+                list(token_components.keys())
+            ))
+
+        signed_signature = quote(token_components[QueryStringConstants.SIGNED_SIGNATURE][0])
 
         # Act
         with LogCaptured(self) as log_captured:
-            dest_blob.copy_blob_from_url(
+            dest_blob.start_copy_from_url(
                 self.source_blob_url, requires_sync=True, logging_enable=True)
             log_as_str = log_captured.getvalue()
 
             # Assert
             # make sure the query parameter 'sig' is logged, but its value is not
-            self.assertTrue(_QueryStringConstants.SIGNED_SIGNATURE in log_as_str)
+            self.assertTrue(QueryStringConstants.SIGNED_SIGNATURE in log_as_str)
             self.assertFalse(signed_signature in log_as_str)
 
             # make sure authorization header is logged, but its value is not

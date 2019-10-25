@@ -9,6 +9,7 @@
 import pytest
 
 import os
+import platform
 import unittest
 
 from azure.storage.blob import (
@@ -36,7 +37,8 @@ LARGE_BLOB_SIZE = 12 * 1024 * 1024
 LARGE_BLOCK_SIZE = 6 * 1024 * 1024
 
 # ------------------------------------------------------------------------------
-
+if platform.python_implementation() == 'PyPy':
+    pytest.skip("Skip tests for Pypy", allow_module_level=True)
 
 class StorageLargeBlockBlobTest(StorageTestCase):
     def setUp(self):
@@ -89,7 +91,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         actual_data = blob.download_blob()
-        self.assertEqual(b"".join(list(actual_data)), expected_data)
+        self.assertEqual(b"".join(list(actual_data.chunks())), expected_data)
 
     # --Test cases for block blobs --------------------------------------------
 
@@ -174,7 +176,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_connections=2)
+            blob.upload_blob(stream, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
@@ -193,7 +195,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, validate_content=True, max_connections=2)
+            blob.upload_blob(stream, validate_content=True, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
@@ -211,7 +213,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_connections=1)
+            blob.upload_blob(stream, max_concurrency=1)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
@@ -237,11 +239,11 @@ class StorageLargeBlockBlobTest(StorageTestCase):
                 progress.append((current, total))
 
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_connections=2, raw_response_hook=callback)
+            blob.upload_blob(stream, max_concurrency=2, raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        self.assert_upload_progress(len(data), self.config.blob_settings.max_block_size, progress)
+        self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
     def test_create_large_blob_from_path_with_properties(self):
         # parallel tests introduce random order of requests, can only run live
@@ -260,7 +262,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
             content_type='image/png',
             content_language='spanish')
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, content_settings=content_settings, max_connections=2)
+            blob.upload_blob(stream, content_settings=content_settings, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
@@ -282,7 +284,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_connections=2)
+            blob.upload_blob(stream, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
@@ -308,12 +310,11 @@ class StorageLargeBlockBlobTest(StorageTestCase):
                 progress.append((current, total))
 
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_connections=2, raw_response_hook=callback)
+            blob.upload_blob(stream, max_concurrency=2, raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        self.assert_upload_progress(
-            len(data), self.config.blob_settings.max_block_size, progress)
+        self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
     def test_create_large_blob_from_stream_chunked_upload_with_count(self):
         # parallel tests introduce random order of requests, can only run live
@@ -330,7 +331,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
         # Act
         blob_size = len(data) - 301
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, length=blob_size, max_connections=2)
+            blob.upload_blob(stream, length=blob_size, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
@@ -354,7 +355,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
         blob_size = len(data) - 301
         with open(FILE_PATH, 'rb') as stream:
             blob.upload_blob(
-                stream, length=blob_size, content_settings=content_settings, max_connections=2)
+                stream, length=blob_size, content_settings=content_settings, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
@@ -379,7 +380,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
             content_type='image/png',
             content_language='spanish')
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, content_settings=content_settings, max_connections=2)
+            blob.upload_blob(stream, content_settings=content_settings, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)

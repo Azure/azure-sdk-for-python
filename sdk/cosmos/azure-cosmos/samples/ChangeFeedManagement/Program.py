@@ -74,12 +74,8 @@ def run_sample():
             # setup database for this sample
             try:
                 db = client.create_database(id=DATABASE_ID)
-
-            except errors.HTTPFailure as e:
-                if e.status_code == 409:
-                    pass
-                else:
-                    raise errors.HTTPFailure(e.status_code)
+            except errors.CosmosResourceExistsError:
+                pass
 
             # setup container for this sample
             try:
@@ -89,11 +85,8 @@ def run_sample():
                 )
                 print('Container with id \'{0}\' created'.format(CONTAINER_ID))
 
-            except errors.HTTPFailure as e:
-                if e.status_code == 409:
-                    print('Container with id \'{0}\' was found'.format(CONTAINER_ID))
-                else:
-                    raise errors.HTTPFailure(e.status_code)
+            except errors.CosmosResourceExistsError:
+                print('Container with id \'{0}\' was found'.format(CONTAINER_ID))
 
             ChangeFeedManagement.CreateItems(container, 100)
             ChangeFeedManagement.ReadChangeFeed(container)
@@ -101,14 +94,10 @@ def run_sample():
             # cleanup database after sample
             try:
                 client.delete_database(db)
+            except errors.CosmosResourceNotFoundError:
+                pass
 
-            except errors.CosmosError as e:
-                if e.status_code == 404:
-                    pass
-                else:
-                    raise errors.HTTPFailure(e.status_code)
-
-        except errors.HTTPFailure as e:
+        except errors.CosmosHttpResponseError as e:
             print('\nrun_sample has caught an error. {0}'.format(e.message))
         
         finally:

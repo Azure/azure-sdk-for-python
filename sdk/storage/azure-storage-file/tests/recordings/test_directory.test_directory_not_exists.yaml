@@ -9,81 +9,36 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 092eb85e-97cf-11e9-a12d-f45c89a7d159
+      - 52862a0c-d9a6-11e9-8b5c-001a7dda7113
       x-ms-date:
-      - Wed, 26 Jun 2019 04:58:27 GMT
+      - Tue, 17 Sep 2019 23:53:18 GMT
       x-ms-version:
-      - '2018-11-09'
-    method: GET
-    uri: https://blobstoragename.file.core.windows.net/utshare553610c6/dir1?restype=directory
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The\
-        \ specified resource does not exist.\nRequestId:e6edd355-301a-0020-4fdb-2b08cc000000\n\
-        Time:2019-06-26T04:58:29.1869965Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '223'
-      Content-Type:
-      - application/xml
-      Date:
-      - Wed, 26 Jun 2019 04:58:28 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - ResourceNotFound
-      x-ms-request-id:
-      - e6edd355-301a-0020-4fdb-2b08cc000000
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 404
-      message: The specified resource does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - a888f8dc-981b-11e9-aa52-f45c89a7d159
-      x-ms-date:
-      - Wed, 26 Jun 2019 14:06:57 GMT
-      x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare553610c6/dir1?restype=directory
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The\
-        \ specified resource does not exist.\nRequestId:5d17b185-701a-008d-6128-2c28a6000000\n\
-        Time:2019-06-26T14:06:57.3188788Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
+        specified resource does not exist.\nRequestId:2ace7c89-001a-00a1-1eb3-6d8889000000\nTime:2019-09-17T23:53:18.4491485Z</Message></Error>"
     headers:
       Content-Length:
       - '223'
       Content-Type:
       - application/xml
       Date:
-      - Wed, 26 Jun 2019 14:06:56 GMT
+      - Tue, 17 Sep 2019 23:53:17 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
       x-ms-error-code:
       - ResourceNotFound
       x-ms-request-id:
-      - 5d17b185-701a-008d-6128-2c28a6000000
+      - 2ace7c89-001a-00a1-1eb3-6d8889000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 404
       message: The specified resource does not exist.

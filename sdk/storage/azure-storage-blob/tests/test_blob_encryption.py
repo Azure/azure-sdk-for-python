@@ -25,7 +25,7 @@ from azure.storage.blob._shared.encryption import (
     _generate_AES_CBC_cipher,
     _ERROR_OBJECT_INVALID,
 )
-from azure.storage.blob.blob_client import _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
+from azure.storage.blob._blob_client import _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from cryptography.hazmat.primitives.padding import PKCS7
 
 from azure.storage.blob import (
@@ -71,7 +71,9 @@ class StorageBlobEncryptionTest(StorageTestCase):
             credential=credential,
             max_single_put_size=32 * 1024,
             max_block_size=4 * 1024,
-            max_page_size=4 * 1024)
+            max_page_size=4 * 1024,
+            max_single_get_size=1024,
+            max_chunk_get_size=1024)
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
         self.blob_types = (BlobType.BlockBlob, BlobType.PageBlob, BlobType.AppendBlob)
@@ -170,7 +172,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
     @record
     def test_missing_attribute_kek_unwrap(self):
-        # Shared between all services in _decrypt_blob
+        # Shared between all services in decrypt_blob
         # Arrange
         self.bsc.require_encryption = True
         valid_key = KeyWrapper('key1')
@@ -222,7 +224,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         content = blob.download_blob()
 
         # Assert
-        self.assertEqual(b"".join(list(content)), self.bytes)
+        self.assertEqual(b"".join(list(content.chunks())), self.bytes)
         
 
     @record
@@ -257,7 +259,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         content = blob.download_blob()
 
         # Assert
-        self.assertEqual(b"".join(list(content)), self.bytes)
+        self.assertEqual(b"".join(list(content.chunks())), self.bytes)
 
     @record
     def test_get_blob_nonmatching_kid(self):
@@ -282,7 +284,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
         small_stream = StringIO(u'small')
-        large_stream = StringIO(u'large' * self.config.blob_settings.max_single_put_size)
+        large_stream = StringIO(u'large' * self.config.max_single_put_size)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -306,13 +308,13 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
         content = self.get_random_bytes(
-            self.config.blob_settings.max_single_put_size + self.config.blob_settings.max_block_size)
+            self.config.max_single_put_size + self.config.max_block_size)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        blob.upload_blob(content, max_connections=3)
-        blob_content = blob.download_blob().content_as_bytes(max_connections=3)
+        blob.upload_blob(content, max_concurrency=3)
+        blob_content = blob.download_blob().content_as_bytes(max_concurrency=3)
 
         # Assert
         self.assertEqual(content, blob_content)
@@ -325,13 +327,13 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Arrange
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
-        content = urandom(self.config.blob_settings.max_single_put_size + 1)
+        content = urandom(self.config.max_single_put_size + 1)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        blob.upload_blob(content, max_connections=3)
-        blob_content = blob.download_blob().content_as_bytes(max_connections=3)
+        blob.upload_blob(content, max_concurrency=3)
+        blob_content = blob.download_blob().content_as_bytes(max_concurrency=3)
 
         # Assert
         self.assertEqual(content, blob_content)
@@ -344,19 +346,19 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Arrange
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
-        content = self.get_random_bytes(self.config.blob_settings.max_single_put_size * 2)
+        content = self.get_random_bytes(self.config.max_single_put_size * 2)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         blob.upload_blob(
             content,
-            length=self.config.blob_settings.max_single_put_size + 53,
-            max_connections=3)
-        blob_content = blob.download_blob().content_as_bytes(max_connections=3)
+            length=self.config.max_single_put_size + 53,
+            max_concurrency=3)
+        blob_content = blob.download_blob().content_as_bytes(max_concurrency=3)
 
         # Assert
-        self.assertEqual(content[:self.config.blob_settings.max_single_put_size+53], blob_content)
+        self.assertEqual(content[:self.config.max_single_put_size+53], blob_content)
 
     @record
     def test_put_block_blob_single_shot(self):
@@ -379,7 +381,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Arrange
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
-        content = b'Random repeats' * self.config.blob_settings.max_single_put_size * 5
+        content = b'Random repeats' * self.config.max_single_put_size * 5
 
         # All page blob uploads call _upload_chunks, so this will test the ability
         # of that function to handle ranges even though it's a small blob
@@ -389,12 +391,12 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Act
         blob.upload_blob(
             content[2:],
-            length=self.config.blob_settings.max_single_put_size + 5,
-            max_connections=1)
-        blob_content = blob.download_blob().content_as_bytes(max_connections=1)
+            length=self.config.max_single_put_size + 5,
+            max_concurrency=1)
+        blob_content = blob.download_blob().content_as_bytes(max_concurrency=1)
 
         # Assert
-        self.assertEqual(content[2:2 + self.config.blob_settings.max_single_put_size + 5], blob_content)
+        self.assertEqual(content[2:2 + self.config.max_single_put_size + 5], blob_content)
 
     @record
     def test_put_blob_empty(self):
@@ -407,7 +409,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Act
         blob.upload_blob(content)
-        blob_content = blob.download_blob().content_as_bytes(max_connections=2)
+        blob_content = blob.download_blob().content_as_bytes(max_concurrency=2)
 
         # Assert
         self.assertEqual(content, blob_content)
@@ -417,13 +419,13 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Arrange
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
-        content = self.get_random_bytes(self.config.blob_settings.max_single_put_size + 1)
+        content = self.get_random_bytes(self.config.max_single_put_size + 1)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        blob.upload_blob(content, max_connections=1)
-        blob_content = blob.download_blob().content_as_bytes(max_connections=1)
+        blob.upload_blob(content, max_concurrency=1)
+        blob_content = blob.download_blob().content_as_bytes(max_concurrency=1)
 
         # Assert
         self.assertEqual(content, blob_content)
@@ -438,11 +440,11 @@ class StorageBlobEncryptionTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        blob.upload_blob(content, max_connections=1)
-        blob_content = blob.download_blob(offset=0, length=50).content_as_bytes(max_connections=1)
+        blob.upload_blob(content, max_concurrency=1)
+        blob_content = blob.download_blob(offset=0, length=50).content_as_bytes(max_concurrency=1)
 
         # Assert
-        self.assertEqual(content[:51], blob_content)
+        self.assertEqual(content[:50], blob_content)
 
     @record
     def test_get_blob_range_middle_to_end(self):
@@ -454,13 +456,13 @@ class StorageBlobEncryptionTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        blob.upload_blob(content, max_connections=1)
-        blob_content = blob.download_blob(offset=50, length=127).content_as_bytes()
-        blob_content2 = blob.download_blob(offset=50).content_as_bytes()
+        blob.upload_blob(content, max_concurrency=1)
+        blob_content = blob.download_blob(offset=100, length=28).content_as_bytes()
+        blob_content2 = blob.download_blob(offset=100).content_as_bytes()
 
         # Assert
-        self.assertEqual(content[50:], blob_content)
-        self.assertEqual(content[50:], blob_content2)
+        self.assertEqual(content[100:], blob_content)
+        self.assertEqual(content[100:], blob_content2)
 
     @record
     def test_get_blob_range_middle_to_middle(self):
@@ -473,10 +475,10 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Act
         blob.upload_blob(content)
-        blob_content = blob.download_blob(offset=50, length=93).content_as_bytes()
+        blob_content = blob.download_blob(offset=5, length=93).content_as_bytes()
 
         # Assert
-        self.assertEqual(content[50:94], blob_content)
+        self.assertEqual(content[5:98], blob_content)
 
     @record
     def test_get_blob_range_aligns_on_16_byte_block(self):
@@ -489,7 +491,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Act
         blob.upload_blob(content)
-        blob_content = blob.download_blob(offset=48, length=63).content_as_bytes()
+        blob_content = blob.download_blob(offset=48, length=16).content_as_bytes()
 
         # Assert
         self.assertEqual(content[48:64], blob_content)
@@ -508,7 +510,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         blob_content = blob.download_blob(offset=5, length=50).content_as_bytes()
 
         # Assert
-        self.assertEqual(content[5:51], blob_content)
+        self.assertEqual(content[5:55], blob_content)
 
     @record
     def test_get_blob_range_expanded_to_beginning_iv(self):
@@ -521,10 +523,10 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Act
         blob.upload_blob(content)
-        blob_content = blob.download_blob(offset=22, length=42).content_as_bytes()
+        blob_content = blob.download_blob(offset=22, length=20).content_as_bytes()
 
         # Assert
-        self.assertEqual(content[22:43], blob_content)
+        self.assertEqual(content[22:42], blob_content)
 
     @record
     def test_put_blob_strict_mode(self):
@@ -628,7 +630,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Assert
         with self.assertRaises(ValueError) as e:
-            blob.upload_page(urandom(512), 0, 511, blob_type=BlobType.PageBlob)
+            blob.upload_page(urandom(512), offset=0, length=512)
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
         with self.assertRaises(ValueError) as e:
@@ -700,6 +702,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         blob_content = blob.download_blob().content_as_bytes()
         self.assertEqual(content, blob_content)
+        blob.delete_blob()
 
     @record
     def test_get_blob_to_star(self):
@@ -709,12 +712,12 @@ class StorageBlobEncryptionTest(StorageTestCase):
         blob = self._create_small_blob(BlobType.BlockBlob)
 
         # Act
-        iter_blob = b"".join(list(blob.download_blob()))
+        iter_blob = b"".join(list(blob.download_blob().chunks()))
         bytes_blob = blob.download_blob().content_as_bytes()
         stream_blob = BytesIO()
         blob.download_blob().download_to_stream(stream_blob)
         stream_blob.seek(0)
-        text_blob = blob.download_blob().content_as_text()
+        text_blob = blob.download_blob(encoding='UTF-8').readall()
 
         # Assert
         self.assertEqual(self.bytes, iter_blob)

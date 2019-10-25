@@ -3,6 +3,15 @@
 Release History
 ===============
 
+1.2.0 (2019-08-06)
+++++++++++++++++++
+
+**Features**
+
+- Model Role has a new parameter autoscale_configuration
+- Added operation LocationsOperations.list_billing_specs
+- Added operation LocationsOperations.get_capabilities
+
 1.1.0 (2019-06-17)
 ++++++++++++++++++
 

@@ -52,6 +52,9 @@ class CustomActivity(ExecutionActivity):
      custom activity has the full responsibility to consume and interpret the
      content defined.
     :type extended_properties: dict[str, object]
+    :param retention_time_in_days: The retention time for the files submitted
+     for custom activity. Type: double (or Expression with resultType double).
+    :type retention_time_in_days: object
     """
 
     _validation = {
@@ -74,13 +77,15 @@ class CustomActivity(ExecutionActivity):
         'folder_path': {'key': 'typeProperties.folderPath', 'type': 'object'},
         'reference_objects': {'key': 'typeProperties.referenceObjects', 'type': 'CustomActivityReferenceObject'},
         'extended_properties': {'key': 'typeProperties.extendedProperties', 'type': '{object}'},
+        'retention_time_in_days': {'key': 'typeProperties.retentionTimeInDays', 'type': 'object'},
     }
 
-    def __init__(self, *, name: str, command, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, resource_linked_service=None, folder_path=None, reference_objects=None, extended_properties=None, **kwargs) -> None:
+    def __init__(self, *, name: str, command, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, resource_linked_service=None, folder_path=None, reference_objects=None, extended_properties=None, retention_time_in_days=None, **kwargs) -> None:
         super(CustomActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.command = command
         self.resource_linked_service = resource_linked_service
         self.folder_path = folder_path
         self.reference_objects = reference_objects
         self.extended_properties = extended_properties
+        self.retention_time_in_days = retention_time_in_days
         self.type = 'Custom'

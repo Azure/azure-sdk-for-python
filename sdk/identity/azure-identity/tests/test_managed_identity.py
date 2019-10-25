@@ -11,7 +11,7 @@ except ImportError:  # python < 3.3
 
 from azure.core.credentials import AccessToken
 from azure.identity import ManagedIdentityCredential
-from azure.identity.constants import Endpoints, EnvironmentVariables
+from azure.identity._constants import Endpoints, EnvironmentVariables
 
 
 from helpers import validating_transport, mock_response, Request

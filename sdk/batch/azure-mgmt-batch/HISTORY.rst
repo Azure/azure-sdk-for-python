@@ -3,6 +3,17 @@
 Release History
 ===============
 
+7.0.0 (2019-08-05)
+++++++++++++++++++
+
+- Added ability to specify a collection of public IPs on `NetworkConfiguration` via the new `public_ips` property. This guarantees nodes in the Pool will have an IP from the list user provided IPs.
+- Added ability to mount remote file-systems on each node of a pool via the `mount_configuration` property on `Pool`.
+- Shared Image Gallery images can now be specified on the `id` property of `ImageReference` by referencing the image via its ARM ID.
+- **[Breaking]** When not specified, the default value for `wait_for_success` on `StartTask` is now `True` (was `False`).
+- **[Breaking]** When not specified, the default value for `scope` on `AutoUserSpecification` is now always `Pool` (was `Task` on Windows nodes, `Pool` on Linux nodes).
+- **Breaking** Model signatures are now using only keywords-arguments syntax. Each positional argument must be rewritten as a keyword argument.
+- Enum types now use the "str" mixin (class AzureEnum(str, Enum)) to improve the behavior when unrecognized enum values are encountered.
+
 6.0.0 (2019-01-14)
 ++++++++++++++++++
 

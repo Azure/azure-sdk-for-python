@@ -1,5 +1,11 @@
 # Mgmt helper commands cheat sheet
 
+## Dockerized environment
+
+Following Dockerfile can be used to build entire enviornment:
+
+https://github.com/Azure/azure-sdk-for-python/blob/master/tools/Dockerfile
+
 ## Create a venv
 
 Windows:<br/>

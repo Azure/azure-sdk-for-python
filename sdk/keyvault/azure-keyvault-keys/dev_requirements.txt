@@ -1,4 +1,7 @@
--e ../../core/azure-core
+-e ../../../tools/azure-devtools
+../../core/azure-core
 -e ../../identity/azure-identity
 -e ../azure-mgmt-keyvault
+-e ../../../tools/azure-sdk-tools
+../azure-keyvault-nspkg
 aiohttp>=3.0; python_version >= '3.5'
