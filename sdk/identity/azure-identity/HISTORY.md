@@ -26,6 +26,14 @@ the Azure CLI's client ID will be used.
   described in
   [`azure-core` documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/configuration.md)
 
+### Fixes and improvements:
+- Authenticating with a single sign-on shared with other Microsoft applications
+only requires a username when multiple users have signed in
+([#8095](https://github.com/Azure/azure-sdk-for-python/pull/8095))
+- `DefaultAzureCredential` accepts an `authority` keyword argument, enabling
+its use in national clouds
+([#8154](https://github.com/Azure/azure-sdk-for-python/pull/8154))
+
 ### Dependency changes
 - Adopted [`msal_extensions`](https://pypi.org/project/msal-extensions/) 0.1.2
 - Constrained [`msal`](https://pypi.org/project/msal/) requirement to >=0.4.1,
