@@ -62,14 +62,14 @@ in the types of identities they can authenticate as, and in their configuration:
 
 |credential class|identity|configuration
 |-|-|-
-|[`DefaultAzureCredential`](#defaultazurecredential)|service principal, managed identity, user|none for managed identity, [environment variables](#environment-variables) for service principal or user authentication
-|[`ManagedIdentityCredential`][managed_id_cred_ref]|managed identity|none
-|[`EnvironmentCredential`][environment_cred_ref]|service principal, user|[environment variables](#environment-variables)
-|[`ClientSecretCredential`][client_secret_cred_ref]|service principal|constructor parameters
-|[`CertificateCredential`][cert_cred_ref]|service principal|constructor parameters
-|[`DeviceCodeCredential`][device_code_cred_ref]|user|constructor parameters
-|[`InteractiveBrowserCredential`][interactive_cred_ref]|user|constructor parameters
-|[`UsernamePasswordCredential`][userpass_cred_ref]|user|constructor parameters
+|[DefaultAzureCredential](#defaultazurecredential)|service principal, managed identity, user|none for managed identity, [environment variables](#environment-variables) for service principal or user authentication
+|[ManagedIdentityCredential][managed_id_cred_ref]|managed identity|none
+|[EnvironmentCredential][environment_cred_ref]|service principal, user|[environment variables](#environment-variables)
+|[ClientSecretCredential][client_secret_cred_ref]|service principal|constructor parameters
+|[CertificateCredential][cert_cred_ref]|service principal|constructor parameters
+|[DeviceCodeCredential][device_code_cred_ref]|user|constructor parameters
+|[InteractiveBrowserCredential][interactive_cred_ref]|user|constructor parameters
+|[UsernamePasswordCredential][userpass_cred_ref]|user|constructor parameters
 
 Credentials can be chained together and tried in turn until one succeeds; see
 [chaining credentials](#chaining-credentials) for details.
@@ -80,7 +80,7 @@ the `azure.identity.aio` namespace, supported on Python 3.5.3+. See the
 credentials will be part of a future release.
 
 ## `DefaultAzureCredential`
-[`DefaultAzureCredential`][default_cred_ref] is appropriate for most
+[DefaultAzureCredential][default_cred_ref] is appropriate for most
 applications intended to run in Azure. It can authenticate as a service
 principal, managed identity, or user, and can be configured for local
 development and production environments without code changes.
@@ -94,7 +94,7 @@ possible in a supported hosting environment. See Azure Active Directory's
 for more information.
 
 ### Single sign-on
-During local development on Windows, [`DefaultAzureCredential`][default_cred_ref]
+During local development on Windows, [DefaultAzureCredential][default_cred_ref]
 can authenticate using a single sign-on shared with Microsoft applications, for
 example Visual Studio 2019. This may require additional configuration when
 multiple identities have signed in. In that case, set the environment variable
@@ -102,8 +102,8 @@ multiple identities have signed in. In that case, set the environment variable
 address).
 
 ## Environment variables
-[`DefaultAzureCredential`][default_cred_ref] and
-[`EnvironmentCredential`][environment_cred_ref] can be configured with
+[DefaultAzureCredential][default_cred_ref] and
+[EnvironmentCredential][environment_cred_ref] can be configured with
 environment variables. Each type of authentication requires values for specific
 variables:
 
@@ -136,8 +136,8 @@ client secret and certificate are both present, the client secret will be used.
 # Examples
 ## Authenticating with `DefaultAzureCredential`
 This example demonstrates authenticating the `BlobServiceClient` from the
-[`azure-storage-blob`][azure_storage_blob] library using
-[`DefaultAzureCredential`][default_cred_ref].
+[azure-storage-blob][azure_storage_blob] library using
+[DefaultAzureCredential][default_cred_ref].
 
 ```py
 from azure.identity import DefaultAzureCredential
@@ -152,8 +152,8 @@ client = BlobServiceClient(account_url, credential=credential)
 
 ## Authenticating a service principal with a client secret:
 This example demonstrates authenticating the `KeyClient` from the
-[`azure-keyvault-keys`][azure_keyvault_keys] library using
-[`ClientSecretCredential`][client_secret_cred_ref].
+[azure-keyvault-keys][azure_keyvault_keys] library using
+[ClientSecretCredential][client_secret_cred_ref].
 
 ```py
 from azure.identity import ClientSecretCredential
@@ -166,8 +166,8 @@ client = KeyClient("https://my-vault.vault.azure.net", credential)
 
 ## Authenticating a service principal with a certificate:
 This example demonstrates authenticating the `SecretClient` from the
-[`azure-keyvault-secrets`][azure_keyvault_secrets] library using
-[`CertificateCredential`][cert_cred_ref].
+[azure-keyvault-secrets][azure_keyvault_secrets] library using
+[CertificateCredential][cert_cred_ref].
 
 ```py
 from azure.identity import CertificateCredential
@@ -181,11 +181,11 @@ client = SecretClient("https://my-vault.vault.azure.net", credential)
 ```
 
 ## Chaining credentials:
-[`ChainedTokenCredential`][chain_cred_ref] links multiple credential instances
+[ChainedTokenCredential][chain_cred_ref] links multiple credential instances
 to be tried sequentially when authenticating. The following example demonstrates
 creating a credential which will attempt to authenticate using managed identity,
 and fall back to a service principal if a managed identity is unavailable. This
-example uses the `EventHubClient` from the [`azure-eventhubs`][azure_eventhubs]
+example uses the `EventHubClient` from the [azure-eventhubs][azure_eventhubs]
 client library.
 
 ```py
@@ -206,12 +206,12 @@ client = EventHubClient(host, event_hub_path, credential_chain)
 ## Async credentials:
 This library includes an async API supported on Python 3.5+. To use the async
 credentials in `azure.identity.aio`, you must first install an async transport,
-such as [`aiohttp`](https://pypi.org/project/aiohttp/). See
+such as [aiohttp](https://pypi.org/project/aiohttp/). See
 [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
 for more information.
 
 This example demonstrates authenticating the asynchronous `SecretClient` from
-[`azure-keyvault-secrets`][azure_keyvault_secrets] with an asynchronous
+[azure-keyvault-secrets][azure_keyvault_secrets] with an asynchronous
 credential.
 
 ```py
@@ -230,7 +230,7 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 Credentials raise `azure.core.exceptions.ClientAuthenticationError` when they fail
 to authenticate. `ClientAuthenticationError` has a `message` attribute which
 describes why authentication failed. When raised by
-[`DefaultAzureCredential`](#defaultazurecredential) or `ChainedTokenCredential`,
+[DefaultAzureCredential](#defaultazurecredential) or `ChainedTokenCredential`,
 the message collects error messages from each credential in the chain.
 
 For more details on handling Azure Active Directory errors please refer to the
