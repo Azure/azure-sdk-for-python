@@ -95,6 +95,39 @@ class CommonBlobSamples(object):
         # Delete container
         blob_service_client.delete_container("containerfordeletedblobs")
 
+    def delete_multiple_blobs(self):
+        # Instantiate a BlobServiceClient using a connection string
+        from azure.storage.blob import BlobServiceClient
+        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+
+        # Instantiate a ContainerClient
+        container_client = blob_service_client.get_container_client("containerforbatchblobdelete")
+
+        # Create new Container
+        try:
+            container_client.create_container()
+        except ResourceExistsError:
+            # Container already created
+            pass
+
+        # Upload a blob to the container
+        upload_data = b"Hello World"
+        container_client.upload_blob(name="my_blob1", data=upload_data)
+        container_client.upload_blob(name="my_blob2", data=upload_data)
+        container_client.upload_blob(name="my_blob3", data=upload_data)
+
+        # [START delete_multiple_blobs]
+        # Delete multiple blobs in the container by name
+        container_client.delete_blobs("my_blob1", "my_blob2")
+
+        # Delete multiple blobs by properties iterator
+        my_blobs = container_client.list_blobs(name_starts_with="my_blob")
+        container_client.delete_blobs(*my_blobs)
+        # [END delete_multiple_blobs]
+
+        # Delete container
+        blob_service_client.delete_container("containerforbatchblobdeletesasync")
+
     def acquire_lease_on_blob(self):
 
         # Instantiate a BlobServiceClient using a connection string

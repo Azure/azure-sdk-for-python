@@ -799,6 +799,15 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The timeout parameter is expressed in seconds.
         :return: An async iterator of responses, one for each blob in order
         :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_common_async.py
+                :start-after: [START delete_multiple_blobs]
+                :end-before: [END delete_multiple_blobs]
+                :language: python
+                :dedent: 8
+                :caption: Deleting multiple blobs.
         """
         raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
         timeout = kwargs.pop('timeout', None)

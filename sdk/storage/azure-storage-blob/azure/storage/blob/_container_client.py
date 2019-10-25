@@ -966,6 +966,15 @@ class ContainerClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :return: An iterator of responses, one for each blob in order
         :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_common.py
+                :start-after: [START delete_multiple_blobs]
+                :end-before: [END delete_multiple_blobs]
+                :language: python
+                :dedent: 8
+                :caption: Deleting multiple blobs.
         """
         raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
         options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
