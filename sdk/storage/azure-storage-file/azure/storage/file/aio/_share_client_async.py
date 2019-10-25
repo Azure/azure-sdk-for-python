@@ -39,24 +39,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
     For operations relating to a specific directory or file in this share, the clients for
     those entities can also be retrieved using the :func:`get_directory_client` and :func:`get_file_client` functions.
 
-    :ivar str url:
-        The full endpoint URL to the Share, including snapshot and SAS token if used. This could be
-        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondary endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the share,
         use the :func:`from_share_url` classmethod.
@@ -70,6 +52,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword str secondary_hostname:
+        The hostname of the secondary endpoint.
     :keyword loop:
         The event loop to run the asynchronous tasks.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
@@ -151,11 +135,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share_async.py
+            .. literalinclude:: ../samples/file_samples_share_async.py
                 :start-after: [START create_share]
                 :end-before: [END create_share]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Creates a file share.
         """
         metadata = kwargs.pop('metadata', None)
@@ -200,11 +184,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share_async.py
+            .. literalinclude:: ../samples/file_samples_share_async.py
                 :start-after: [START create_share_snapshot]
                 :end-before: [END create_share_snapshot]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Creates a snapshot of the file share.
         """
         metadata = kwargs.pop('metadata', None)
@@ -237,11 +221,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share_async.py
+            .. literalinclude:: ../samples/file_samples_share_async.py
                 :start-after: [START delete_share]
                 :end-before: [END delete_share]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Deletes the share and any snapshots.
         """
         timeout = kwargs.pop('timeout', None)
@@ -271,11 +255,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_hello_world_async.py
+            .. literalinclude:: ../samples/file_samples_hello_world_async.py
                 :start-after: [START get_share_properties]
                 :end-before: [END get_share_properties]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Gets the share properties.
         """
         timeout = kwargs.pop('timeout', None)
@@ -306,11 +290,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share_async.py
+            .. literalinclude:: ../samples/file_samples_share_async.py
                 :start-after: [START set_share_quota]
                 :end-before: [END set_share_quota]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Sets the share quota.
         """
         timeout = kwargs.pop('timeout', None)
@@ -342,11 +326,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share_async.py
+            .. literalinclude:: ../samples/file_samples_share_async.py
                 :start-after: [START set_share_metadata]
                 :end-before: [END set_share_metadata]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Sets the share metadata.
         """
         timeout = kwargs.pop('timeout', None)
@@ -471,11 +455,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_share_async.py
+            .. literalinclude:: ../samples/file_samples_share_async.py
                 :start-after: [START share_list_files_in_dir]
                 :end-before: [END share_list_files_in_dir]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: List directories and files in the share.
         """
         timeout = kwargs.pop('timeout', None)

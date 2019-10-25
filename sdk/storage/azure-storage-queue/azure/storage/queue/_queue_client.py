@@ -40,24 +40,6 @@ if TYPE_CHECKING:
 class QueueClient(StorageAccountHostsMixin):
     """A client to interact with a specific Queue.
 
-    :ivar str url:
-        The full endpoint URL to the account, including SAS token if used. This could be
-        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondary endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URL to the storage account. In order to create a client given the full URI to the queue,
         use the :func:`from_queue_url` classmethod.
@@ -76,7 +58,7 @@ class QueueClient(StorageAccountHostsMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_queue_samples_message.py
+        .. literalinclude:: ../samples/queue_samples_message.py
             :start-after: [START create_queue_client]
             :end-before: [END create_queue_client]
             :language: python
@@ -113,6 +95,19 @@ class QueueClient(StorageAccountHostsMixin):
         self._config.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
 
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        queue_name = self.queue_name
+        if isinstance(queue_name, six.text_type):
+            queue_name = queue_name.encode('UTF-8')
+        return "{}://{}/{}{}".format(
+            self.scheme,
+            hostname,
+            quote(queue_name),
+            self._query_str)
+
     @classmethod
     def from_queue_url(cls, queue_url, credential=None, **kwargs):
         # type: (str, Optional[Any], Any) -> QueueClient
@@ -133,26 +128,20 @@ class QueueClient(StorageAccountHostsMixin):
 
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(queue_url))
-        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
-        try:
-            queue_name = unquote(parsed_url.path.lstrip('/'))
-        except AttributeError:
-            raise ValueError("Invalid URL: {}".format(queue_url))
 
+        queue_path = parsed_url.path.lstrip('/').split('/')
+        account_path = ""
+        if len(queue_path) > 1:
+            account_path = "/" + "/".join(queue_path[:-1])
+        account_url = "{}://{}{}?{}".format(
+            parsed_url.scheme,
+            parsed_url.netloc.rstrip('/'),
+            account_path,
+            parsed_url.query)
+        queue_name = unquote(queue_path[-1])
+        if not queue_name:
+            raise ValueError("Invalid URL. Please provide a URL with a valid queue name")
         return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
-
-    def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
-        queue_name = self.queue_name
-        if isinstance(queue_name, six.text_type):
-            queue_name = queue_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(queue_name),
-            self._query_str)
 
     @classmethod
     def from_connection_string(
@@ -176,7 +165,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message.py
+            .. literalinclude:: ../samples/queue_samples_message.py
                 :start-after: [START create_queue_client_from_connection_string]
                 :end-before: [END create_queue_client_from_connection_string]
                 :language: python
@@ -209,7 +198,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_hello_world.py
+            .. literalinclude:: ../samples/queue_samples_hello_world.py
                 :start-after: [START create_queue]
                 :end-before: [END create_queue]
                 :language: python
@@ -249,7 +238,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_hello_world.py
+            .. literalinclude:: ../samples/queue_samples_hello_world.py
                 :start-after: [START delete_queue]
                 :end-before: [END delete_queue]
                 :language: python
@@ -276,7 +265,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message.py
+            .. literalinclude:: ../samples/queue_samples_message.py
                 :start-after: [START get_queue_properties]
                 :end-before: [END get_queue_properties]
                 :language: python
@@ -310,7 +299,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message.py
+            .. literalinclude:: ../samples/queue_samples_message.py
                 :start-after: [START set_queue_metadata]
                 :end-before: [END set_queue_metadata]
                 :language: python
@@ -377,7 +366,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message.py
+            .. literalinclude:: ../samples/queue_samples_message.py
                 :start-after: [START set_access_policy]
                 :end-before: [END set_access_policy]
                 :language: python
@@ -448,7 +437,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message.py
+            .. literalinclude:: ../samples/queue_samples_message.py
                 :start-after: [START send_messages]
                 :end-before: [END send_messages]
                 :language: python
@@ -516,7 +505,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message.py
+            .. literalinclude:: ../samples/queue_samples_message.py
                 :start-after: [START receive_messages]
                 :end-before: [END receive_messages]
                 :language: python
@@ -584,7 +573,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message.py
+            .. literalinclude:: ../samples/queue_samples_message.py
                 :start-after: [START update_message]
                 :end-before: [END update_message]
                 :language: python
@@ -670,7 +659,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message.py
+            .. literalinclude:: ../samples/queue_samples_message.py
                 :start-after: [START peek_message]
                 :end-before: [END peek_message]
                 :language: python
@@ -707,7 +696,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message.py
+            .. literalinclude:: ../samples/queue_samples_message.py
                 :start-after: [START clear_messages]
                 :end-before: [END clear_messages]
                 :language: python
@@ -746,7 +735,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message.py
+            .. literalinclude:: ../samples/queue_samples_message.py
                 :start-after: [START delete_message]
                 :end-before: [END delete_message]
                 :language: python

@@ -88,24 +88,6 @@ async def _upload_file_helper(
 class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
     """A client to interact with a specific file, although that file may not yet exist.
 
-    :ivar str url:
-        The full endpoint URL to the File, including SAS token if used. This could be
-        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondary endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the
         file, use the :func:`from_file_url` classmethod.
@@ -122,6 +104,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword str secondary_hostname:
+        The hostname of the secondary endpoint.
     :keyword loop:
         The event loop to run the asynchronous tasks.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
@@ -199,11 +183,11 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_file_async.py
+            .. literalinclude:: ../samples/file_samples_client_async.py
                 :start-after: [START create_file]
                 :end-before: [END create_file]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Create a file.
         """
         content_settings = kwargs.pop('content_settings', None)
@@ -307,11 +291,11 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_file_async.py
+            .. literalinclude:: ../samples/file_samples_client_async.py
                 :start-after: [START upload_file]
                 :end-before: [END upload_file]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Upload a file.
         """
         metadata = kwargs.pop('metadata', None)
@@ -379,11 +363,11 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_file_async.py
+            .. literalinclude:: ../samples/file_samples_client_async.py
                 :start-after: [START copy_file_from_url]
                 :end-before: [END copy_file_from_url]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Copy a file from a URL
         """
         metadata = kwargs.pop('metadata', None)
@@ -460,11 +444,11 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_file_async.py
+            .. literalinclude:: ../samples/file_samples_client_async.py
                 :start-after: [START download_file]
                 :end-before: [END download_file]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Download a file.
         """
         if self.require_encryption or (self.key_encryption_key is not None):
@@ -502,11 +486,11 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_file_async.py
+            .. literalinclude:: ../samples/file_samples_client_async.py
                 :start-after: [START delete_file]
                 :end-before: [END delete_file]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Delete a file.
         """
         timeout = kwargs.pop('timeout', None)

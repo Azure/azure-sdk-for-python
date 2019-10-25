@@ -268,6 +268,76 @@ class StorageFileClientTest(FileTestCase):
             self.assertEqual(service.primary_hostname, 'www.mydomain.com')
             self.assertEqual(service.secondary_hostname, 'www-sec.mydomain.com')
 
+    def test_create_service_with_custom_account_endpoint_path(self):
+        custom_account_url = "http://local-machine:11002/custom/account/path/" + self.sas_token
+        for service_type in SERVICES.items():
+            conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};FileEndpoint={};'.format(
+                self.account_name, self.account_key, custom_account_url)
+
+            # Act
+            service = service_type[0].from_connection_string(
+                conn_string, share_name="foo", directory_path="bar", file_path="baz")
+
+            # Assert
+            self.assertEqual(service.account_name, self.account_name)
+            self.assertEqual(service.credential.account_name, self.account_name)
+            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        
+        service = FileServiceClient(account_url=custom_account_url)
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/?'))
+
+        service = ShareClient(account_url=custom_account_url, share_name="foo", snapshot="snap")
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.share_name, "foo")
+        self.assertEqual(service.snapshot, "snap")
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo?sharesnapshot=snap&'))
+
+        service = DirectoryClient(account_url=custom_account_url, share_name='foo', directory_path="bar/baz", snapshot="snap")
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.share_name, "foo")
+        self.assertEqual(service.directory_path, "bar/baz")
+        self.assertEqual(service.snapshot, "snap")
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo/bar%2Fbaz?sharesnapshot=snap&'))
+
+        service = DirectoryClient(account_url=custom_account_url, share_name='foo', directory_path="")
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.share_name, "foo")
+        self.assertEqual(service.directory_path, "")
+        self.assertEqual(service.snapshot, None)
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo?'))
+
+        service = FileClient(account_url=custom_account_url, share_name="foo", file_path="bar/baz/file", snapshot="snap")
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.share_name, "foo")
+        self.assertEqual(service.directory_path, "bar/baz")
+        self.assertEqual(service.file_path, ["bar", "baz", "file"])
+        self.assertEqual(service.file_name, "file")
+        self.assertEqual(service.snapshot, "snap")
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo/bar/baz/file?sharesnapshot=snap&'))
+
+        service = FileClient(account_url=custom_account_url, share_name="foo", file_path="file")
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.share_name, "foo")
+        self.assertEqual(service.directory_path, "")
+        self.assertEqual(service.file_path, ["file"])
+        self.assertEqual(service.file_name, "file")
+        self.assertEqual(service.snapshot, None)
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo/file?'))
+
     async def _test_user_agent_default_async(self):
         service = FileServiceClient(self.get_file_url(), credential=self.account_key, transport=AiohttpTestTransport())
 

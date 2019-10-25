@@ -31,6 +31,7 @@ try:
     from ._models_py3 import PeeringService
     from ._models_py3 import PeeringServiceLocation
     from ._models_py3 import PeeringServicePrefix
+    from ._models_py3 import PeeringServicePrefixEvent
     from ._models_py3 import PeeringServiceProvider
     from ._models_py3 import PeeringSku
     from ._models_py3 import Resource
@@ -58,6 +59,7 @@ except (SyntaxError, ImportError):
     from ._models import PeeringService
     from ._models import PeeringServiceLocation
     from ._models import PeeringServicePrefix
+    from ._models import PeeringServicePrefixEvent
     from ._models import PeeringServiceProvider
     from ._models import PeeringSku
     from ._models import Resource
@@ -110,6 +112,7 @@ __all__ = [
     'PeeringService',
     'PeeringServiceLocation',
     'PeeringServicePrefix',
+    'PeeringServicePrefixEvent',
     'PeeringServiceProvider',
     'PeeringSku',
     'Resource',

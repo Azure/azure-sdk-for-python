@@ -68,24 +68,6 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
 class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
 
-    :ivar str url:
-        The full endpoint URL to the Blob, including snapshot and SAS token if used. This could be
-        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondary endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the blob,
         use the :func:`from_blob_url` classmethod.
@@ -118,14 +100,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_blob_samples_authentication.py
+        .. literalinclude:: ../samples/blob_samples_authentication.py
             :start-after: [START create_blob_client]
             :end-before: [END create_blob_client]
             :language: python
             :dedent: 8
             :caption: Creating the BlobClient from a URL to a public blob (no auth needed).
 
-        .. literalinclude:: ../tests/test_blob_samples_authentication.py
+        .. literalinclude:: ../samples/blob_samples_authentication.py
             :start-after: [START create_blob_client_sas_url]
             :end-before: [END create_blob_client_sas_url]
             :language: python
@@ -169,6 +151,17 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
 
+    def _format_url(self, hostname):
+        container_name = self.container_name
+        if isinstance(container_name, six.text_type):
+            container_name = container_name.encode('UTF-8')
+        return "{}://{}/{}/{}{}".format(
+            self.scheme,
+            hostname,
+            quote(container_name),
+            quote(self.blob_name, safe='~'),
+            self._query_str)
+
     @classmethod
     def from_blob_url(cls, blob_url, credential=None, snapshot=None, **kwargs):
         # type: (str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> BlobClient
@@ -198,9 +191,17 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(blob_url))
-        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
-        path_blob = parsed_url.path.lstrip('/').partition('/')
-        container_name, blob_name = unquote(path_blob[0]), unquote(path_blob[2])
+
+        path_blob = parsed_url.path.lstrip('/').split('/')
+        account_path = ""
+        if len(path_blob) > 2:
+            account_path = "/" + "/".join(path_blob[:-2])
+        account_url = "{}://{}{}?{}".format(
+            parsed_url.scheme,
+            parsed_url.netloc.rstrip('/'),
+            account_path,
+            parsed_url.query)
+        container_name, blob_name = unquote(path_blob[-2]), unquote(path_blob[-1])
         if not container_name or not blob_name:
             raise ValueError("Invalid URL. Provide a blob_url with a valid blob and container name.")
 
@@ -218,17 +219,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             account_url, container_name=container_name, blob_name=blob_name,
             snapshot=path_snapshot, credential=credential, **kwargs
         )
-
-    def _format_url(self, hostname):
-        container_name = self.container_name
-        if isinstance(container_name, six.text_type):
-            container_name = container_name.encode('UTF-8')
-        return "{}://{}/{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(container_name),
-            quote(self.blob_name, safe='~'),
-            self._query_str)
 
     @classmethod
     def from_connection_string(
@@ -260,7 +250,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_authentication.py
+            .. literalinclude:: ../samples/blob_samples_authentication.py
                 :start-after: [START auth_from_connection_string_blob]
                 :end-before: [END auth_from_connection_string_blob]
                 :language: python
@@ -468,7 +458,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_hello_world.py
+            .. literalinclude:: ../samples/blob_samples_hello_world.py
                 :start-after: [START upload_a_blob]
                 :end-before: [END upload_a_blob]
                 :language: python
@@ -590,7 +580,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_hello_world.py
+            .. literalinclude:: ../samples/blob_samples_hello_world.py
                 :start-after: [START download_a_blob]
                 :end-before: [END download_a_blob]
                 :language: python
@@ -674,7 +664,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_hello_world.py
+            .. literalinclude:: ../samples/blob_samples_hello_world.py
                 :start-after: [START delete_blob]
                 :end-before: [END delete_blob]
                 :language: python
@@ -701,7 +691,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common.py
+            .. literalinclude:: ../samples/blob_samples_common.py
                 :start-after: [START undelete_blob]
                 :end-before: [END undelete_blob]
                 :language: python
@@ -752,7 +742,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common.py
+            .. literalinclude:: ../samples/blob_samples_common.py
                 :start-after: [START get_blob_properties]
                 :end-before: [END get_blob_properties]
                 :language: python
@@ -1206,7 +1196,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common.py
+            .. literalinclude:: ../samples/blob_samples_common.py
                 :start-after: [START create_blob_snapshot]
                 :end-before: [END create_blob_snapshot]
                 :language: python
@@ -1377,7 +1367,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common.py
+            .. literalinclude:: ../samples/blob_samples_common.py
                 :start-after: [START copy_blob_from_url]
                 :end-before: [END copy_blob_from_url]
                 :language: python
@@ -1429,7 +1419,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common.py
+            .. literalinclude:: ../samples/blob_samples_common.py
                 :start-after: [START abort_copy_blob_from_url]
                 :end-before: [END abort_copy_blob_from_url]
                 :language: python
@@ -1483,7 +1473,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common.py
+            .. literalinclude:: ../samples/blob_samples_common.py
                 :start-after: [START acquire_lease_on_blob]
                 :end-before: [END acquire_lease_on_blob]
                 :language: python

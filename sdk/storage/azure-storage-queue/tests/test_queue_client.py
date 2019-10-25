@@ -343,6 +343,43 @@ class StorageQueueClientTest(QueueTestCase):
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_with_custom_account_endpoint_path(self, resource_group, location, storage_account, storage_account_key):
+        custom_account_url = "http://local-machine:11002/custom/account/path/" + self.sas_token
+        for service_type in SERVICES.items():
+            conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};QueueEndpoint={};'.format(
+                storage_account.name, storage_account_key, custom_account_url)
+
+            # Act
+            service = service_type[0].from_connection_string(conn_string, queue_name="foo")
+
+            # Assert
+            self.assertEqual(service.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_key, storage_account_key)
+            self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        
+        service = QueueServiceClient(account_url=custom_account_url)
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/?'))
+
+        service = QueueClient(account_url=custom_account_url, queue_name="foo")
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.queue_name, "foo")
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo?'))
+
+        service = QueueClient.from_queue_url("http://local-machine:11002/custom/account/path/foo" + self.sas_token)
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.queue_name, "foo")
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo?'))
+
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_request_callback_signed_header(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         service = QueueServiceClient(self._account_url(storage_account.name), credential=storage_account_key)

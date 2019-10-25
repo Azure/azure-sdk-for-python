@@ -64,24 +64,6 @@ class ContainerClient(StorageAccountHostsMixin):
     For operations relating to a specific blob within this container, a blob client can be
     retrieved using the :func:`~get_blob_client` function.
 
-    :ivar str url:
-        The full endpoint URL to the Container, including SAS token if used. This could be
-        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondary endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the container,
         use the :func:`from_container_url` classmethod.
@@ -109,14 +91,14 @@ class ContainerClient(StorageAccountHostsMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_blob_samples_containers.py
+        .. literalinclude:: ../samples/blob_samples_containers.py
             :start-after: [START create_container_client_from_service]
             :end-before: [END create_container_client_from_service]
             :language: python
             :dedent: 8
             :caption: Get a ContainerClient from an existing BlobServiceClient.
 
-        .. literalinclude:: ../tests/test_blob_samples_containers.py
+        .. literalinclude:: ../samples/blob_samples_containers.py
             :start-after: [START create_container_client_sasurl]
             :end-before: [END create_container_client_sasurl]
             :language: python
@@ -147,6 +129,16 @@ class ContainerClient(StorageAccountHostsMixin):
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
 
+    def _format_url(self, hostname):
+        container_name = self.container_name
+        if isinstance(container_name, six.text_type):
+            container_name = container_name.encode('UTF-8')
+        return "{}://{}/{}{}".format(
+            self.scheme,
+            hostname,
+            quote(container_name),
+            self._query_str)
+
     @classmethod
     def from_container_url(cls, container_url, credential=None, **kwargs):
         # type: (str, Optional[Any], Any) -> ContainerClient
@@ -171,24 +163,20 @@ class ContainerClient(StorageAccountHostsMixin):
         parsed_url = urlparse(container_url.rstrip('/'))
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(container_url))
-        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
-        container_name = unquote(parsed_url.path.lstrip('/').partition('/')[0])
+
+        container_path = parsed_url.path.lstrip('/').split('/')
+        account_path = ""
+        if len(container_path) > 1:
+            account_path = "/" + "/".join(container_path[:-1])
+        account_url = "{}://{}{}?{}".format(
+            parsed_url.scheme,
+            parsed_url.netloc.rstrip('/'),
+            account_path,
+            parsed_url.query)
+        container_name = unquote(container_path[-1])
         if not container_name:
-            raise ValueError("Invalid URL. Please provide a  url with a valid container_name")
-
-        return cls(
-            account_url, container_name=container_name, credential=credential, **kwargs
-        )
-
-    def _format_url(self, hostname):
-        container_name = self.container_name
-        if isinstance(container_name, six.text_type):
-            container_name = container_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(container_name),
-            self._query_str)
+            raise ValueError("Invalid URL. Please provide a URL with a valid container name")
+        return cls(account_url, container_name=container_name, credential=credential, **kwargs)
 
     @classmethod
     def from_connection_string(
@@ -213,7 +201,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_authentication.py
+            .. literalinclude:: ../samples/blob_samples_authentication.py
                 :start-after: [START auth_from_connection_string_container]
                 :end-before: [END auth_from_connection_string_container]
                 :language: python
@@ -245,7 +233,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START create_container]
                 :end-before: [END create_container]
                 :language: python
@@ -301,7 +289,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START delete_container]
                 :end-before: [END delete_container]
                 :language: python
@@ -364,7 +352,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START acquire_lease_on_container]
                 :end-before: [END acquire_lease_on_container]
                 :language: python
@@ -410,7 +398,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START get_container_properties]
                 :end-before: [END get_container_properties]
                 :language: python
@@ -463,7 +451,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START set_container_metadata]
                 :end-before: [END set_container_metadata]
                 :language: python
@@ -504,7 +492,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START get_container_access_policy]
                 :end-before: [END get_container_access_policy]
                 :language: python
@@ -567,7 +555,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START set_container_access_policy]
                 :end-before: [END set_container_access_policy]
                 :language: python
@@ -621,7 +609,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START list_blobs_in_container]
                 :end-before: [END list_blobs_in_container]
                 :language: python
@@ -783,7 +771,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START upload_blob_to_container]
                 :end-before: [END upload_blob_to_container]
                 :language: python
@@ -1171,7 +1159,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START get_blob_client]
                 :end-before: [END get_blob_client]
                 :language: python

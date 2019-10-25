@@ -26,7 +26,11 @@ from .._generated.models import StorageErrorException, StorageServiceProperties,
 from .._blob_service_client import BlobServiceClient as BlobServiceClientBase
 from ._container_client_async import ContainerClient
 from ._blob_client_async import BlobClient
-from .._models import ContainerProperties
+from .._models import (
+    ContainerProperties,
+    service_stats_deserialize,
+    service_properties_deserialize,
+)
 from ._models import ContainerPropertiesPaged
 
 if TYPE_CHECKING:
@@ -37,12 +41,12 @@ if TYPE_CHECKING:
     from ._lease_async import BlobLeaseClient
     from .._models import (
         BlobProperties,
+        PublicAccess,
         BlobAnalyticsLogging,
         Metrics,
+        CorsRule,
         RetentionPolicy,
         StaticWebsite,
-        CorsRule,
-        PublicAccess,
     )
 
 
@@ -54,24 +58,6 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
     For operations relating to a specific container or blob, clients for those entities
     can also be retrieved using the `get_client` functions.
 
-    :ivar str url:
-        The full endpoint URL to the Blob service endpoint. This could be either the
-        primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondary endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URL to the blob storage account. Any other entities included
         in the URL path (e.g. container or blob) will be discarded. This URL can be optionally
@@ -97,14 +83,14 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_blob_samples_authentication_async.py
+        .. literalinclude:: ../samples/blob_samples_authentication_async.py
             :start-after: [START create_blob_service_client]
             :end-before: [END create_blob_service_client]
             :language: python
             :dedent: 8
             :caption: Creating the BlobServiceClient with account url and credential.
 
-        .. literalinclude:: ../tests/test_blob_samples_authentication_async.py
+        .. literalinclude:: ../samples/blob_samples_authentication_async.py
             :start-after: [START create_blob_service_client_oauth]
             :end-before: [END create_blob_service_client_oauth]
             :language: python
@@ -169,7 +155,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service_async.py
+            .. literalinclude:: ../samples/blob_samples_service_async.py
                 :start-after: [START get_blob_service_account_info]
                 :end-before: [END get_blob_service_account_info]
                 :language: python
@@ -209,7 +195,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service_async.py
+            .. literalinclude:: ../samples/blob_samples_service_async.py
                 :start-after: [START get_blob_service_stats]
                 :end-before: [END get_blob_service_stats]
                 :language: python
@@ -218,8 +204,9 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.service.get_statistics( # type: ignore
+            stats = await self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
+            return service_stats_deserialize(stats)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -237,7 +224,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service_async.py
+            .. literalinclude:: ../samples/blob_samples_service_async.py
                 :start-after: [START get_blob_service_properties]
                 :end-before: [END get_blob_service_properties]
                 :language: python
@@ -246,7 +233,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.service.get_properties(timeout=timeout, **kwargs)
+            service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
+            return service_properties_deserialize(service_props)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -301,7 +289,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service_async.py
+            .. literalinclude:: ../samples/blob_samples_service_async.py
                 :start-after: [START set_blob_service_properties]
                 :end-before: [END set_blob_service_properties]
                 :language: python
@@ -351,7 +339,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service_async.py
+            .. literalinclude:: ../samples/blob_samples_service_async.py
                 :start-after: [START bsc_list_containers]
                 :end-before: [END bsc_list_containers]
                 :language: python
@@ -402,7 +390,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service_async.py
+            .. literalinclude:: ../samples/blob_samples_service_async.py
                 :start-after: [START bsc_create_container]
                 :end-before: [END bsc_create_container]
                 :language: python
@@ -460,7 +448,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service_async.py
+            .. literalinclude:: ../samples/blob_samples_service_async.py
                 :start-after: [START bsc_delete_container]
                 :end-before: [END bsc_delete_container]
                 :language: python
@@ -490,7 +478,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service_async.py
+            .. literalinclude:: ../samples/blob_samples_service_async.py
                 :start-after: [START bsc_get_container_client]
                 :end-before: [END bsc_get_container_client]
                 :language: python
@@ -540,7 +528,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_service_async.py
+            .. literalinclude:: ../samples/blob_samples_service_async.py
                 :start-after: [START bsc_get_blob_client]
                 :end-before: [END bsc_get_blob_client]
                 :language: python

@@ -126,11 +126,12 @@ class PrefixValidationState(str, Enum):
     verified = "Verified"
     failed = "Failed"
     pending = "Pending"
+    warning = "Warning"
     unknown = "Unknown"
 
 
 class LearnedType(str, Enum):
 
     none = "None"
-    via_partner = "ViaPartner"
+    via_service_provider = "ViaServiceProvider"
     via_session = "ViaSession"

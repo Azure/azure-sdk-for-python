@@ -47,24 +47,6 @@ if TYPE_CHECKING:
 class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
 
-    :ivar str url:
-        The full endpoint URL to the Blob, including snapshot and SAS token if used. This could be
-        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondary endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the blob,
         use the :func:`from_blob_url` classmethod.
@@ -97,14 +79,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_blob_samples_authentication_async.py
+        .. literalinclude:: ../samples/blob_samples_authentication_async.py
             :start-after: [START create_blob_client]
             :end-before: [END create_blob_client]
             :language: python
             :dedent: 8
             :caption: Creating the BlobClient from a URL to a public blob (no auth needed).
 
-        .. literalinclude:: ../tests/test_blob_samples_authentication_async.py
+        .. literalinclude:: ../samples/blob_samples_authentication_async.py
             :start-after: [START create_blob_client_sas_url]
             :end-before: [END create_blob_client_sas_url]
             :language: python
@@ -239,7 +221,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_hello_world_async.py
+            .. literalinclude:: ../samples/blob_samples_hello_world_async.py
                 :start-after: [START upload_a_blob]
                 :end-before: [END upload_a_blob]
                 :language: python
@@ -318,7 +300,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_hello_world_async.py
+            .. literalinclude:: ../samples/blob_samples_hello_world_async.py
                 :start-after: [START download_a_blob]
                 :end-before: [END download_a_blob]
                 :language: python
@@ -381,7 +363,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_hello_world_async.py
+            .. literalinclude:: ../samples/blob_samples_hello_world_async.py
                 :start-after: [START delete_blob]
                 :end-before: [END delete_blob]
                 :language: python
@@ -408,7 +390,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common_async.py
+            .. literalinclude:: ../samples/blob_samples_common_async.py
                 :start-after: [START undelete_blob]
                 :end-before: [END undelete_blob]
                 :language: python
@@ -459,7 +441,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common_async.py
+            .. literalinclude:: ../samples/blob_samples_common_async.py
                 :start-after: [START get_blob_properties]
                 :end-before: [END get_blob_properties]
                 :language: python
@@ -748,7 +730,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common_async.py
+            .. literalinclude:: ../samples/blob_samples_common_async.py
                 :start-after: [START create_blob_snapshot]
                 :end-before: [END create_blob_snapshot]
                 :language: python
@@ -885,7 +867,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common_async.py
+            .. literalinclude:: ../samples/blob_samples_common_async.py
                 :start-after: [START copy_blob_from_url]
                 :end-before: [END copy_blob_from_url]
                 :language: python
@@ -920,7 +902,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common_async.py
+            .. literalinclude:: ../samples/blob_samples_common_async.py
                 :start-after: [START abort_copy_blob_from_url]
                 :end-before: [END abort_copy_blob_from_url]
                 :language: python
@@ -974,7 +956,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_common_async.py
+            .. literalinclude:: ../samples/blob_samples_common_async.py
                 :start-after: [START acquire_lease_on_blob]
                 :end-before: [END acquire_lease_on_blob]
                 :language: python

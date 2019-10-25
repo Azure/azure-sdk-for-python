@@ -1,0 +1,183 @@
+interactions:
+- request:
+    body: '{"properties": {"peeringServiceLocation": "California", "peeringServiceProvider":
+      "Kordia Limited"}, "location": "westus"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '122'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-peering/0.1.0rc1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_peering_test_peeringc05b0c55/providers/Microsoft.Peering/peeringServices/MyPeerServiceName?api-version=2019-09-01-preview
+  response:
+    body:
+      string: "{\r\n  \"properties\": {\r\n    \"peeringServiceLocation\": \"California\"\
+        ,\r\n    \"peeringServiceProvider\": \"Kordia Limited\",\r\n    \"provisioningState\"\
+        : \"Succeeded\"\r\n  },\r\n  \"location\": \"westus\",\r\n  \"eTag\": \"e242c145-decb-4c6f-be6d-ddd1909a69e4\"\
+        ,\r\n  \"name\": \"MyPeerServiceName\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_peering_test_peeringc05b0c55/providers/Microsoft.Peering/peeringServices/MyPeerServiceName\"\
+        ,\r\n  \"type\": \"Microsoft.Peering/peeringServices\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '496'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 24 Oct 2019 04:21:06 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '99'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"properties": {"prefix": "192.168.1.0/24"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '44'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-peering/0.1.0rc1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_peering_test_peeringc05b0c55/providers/Microsoft.Peering/peeringServices/MyPeerServiceName/prefixes/MyPeerPrefix?api-version=2019-09-01-preview
+  response:
+    body:
+      string: "{\r\n  \"properties\": {\r\n    \"prefix\": \"192.168.1.0/24\",\r\n\
+        \    \"prefixValidationState\": \"Pending\",\r\n    \"learnedType\": \"None\"\
+        ,\r\n    \"provisioningState\": \"Succeeded\"\r\n  },\r\n  \"name\": \"MyPeerPrefix\"\
+        ,\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_peering_test_peeringc05b0c55/providers/Microsoft.Peering/peeringServices/MyPeerServiceName/prefixes/MyPeerPrefix\"\
+        ,\r\n  \"type\": \"Microsoft.Peering/peeringServices/prefixes\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '454'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 24 Oct 2019 04:21:07 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-peering/0.1.0rc1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_peering_test_peeringc05b0c55/providers/Microsoft.Peering/peeringServices/MyPeerServiceName/prefixes/MyPeerPrefix?api-version=2019-09-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 24 Oct 2019 04:21:07 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-peering/0.1.0rc1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_peering_test_peeringc05b0c55/providers/Microsoft.Peering/peeringServices/MyPeerServiceName?api-version=2019-09-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 24 Oct 2019 04:21:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14998'
+    status:
+      code: 200
+      message: OK
+version: 1

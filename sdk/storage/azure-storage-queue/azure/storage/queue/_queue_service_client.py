@@ -22,7 +22,12 @@ from ._shared.response_handlers import process_storage_error
 from ._generated import AzureQueueStorage
 from ._generated.models import StorageServiceProperties, StorageErrorException
 
-from ._models import QueuePropertiesPaged
+from ._models import (
+    QueuePropertiesPaged,
+    service_stats_deserialize,
+    service_properties_deserialize,
+)
+
 from ._queue_client import QueueClient
 
 if TYPE_CHECKING:
@@ -33,7 +38,7 @@ if TYPE_CHECKING:
         QueueProperties,
         QueueAnalyticsLogging,
         Metrics,
-        CorsRule
+        CorsRule,
     )
 
 
@@ -45,24 +50,6 @@ class QueueServiceClient(StorageAccountHostsMixin):
     For operations relating to a specific queue, a client for this entity
     can be retrieved using the :func:`~get_queue_client` function.
 
-    :ivar str url:
-        The full queue service endpoint URL, including SAS token if used. This could be
-        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondary endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URL to the queue service endpoint. Any other entities included
         in the URL path (e.g. queue) will be discarded. This URL can be optionally
@@ -71,17 +58,19 @@ class QueueServiceClient(StorageAccountHostsMixin):
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
+    :keyword str secondary_hostname:
+        The hostname of the secondary endpoint.
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_queue_samples_authentication.py
+        .. literalinclude:: ../samples/queue_samples_authentication.py
             :start-after: [START create_queue_service_client]
             :end-before: [END create_queue_service_client]
             :language: python
             :dedent: 8
             :caption: Creating the QueueServiceClient with an account url and credential.
 
-        .. literalinclude:: ../tests/test_queue_samples_authentication.py
+        .. literalinclude:: ../samples/queue_samples_authentication.py
             :start-after: [START create_queue_service_client_token]
             :end-before: [END create_queue_service_client_token]
             :language: python
@@ -135,7 +124,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_authentication.py
+            .. literalinclude:: ../samples/queue_samples_authentication.py
                 :start-after: [START auth_from_connection_string]
                 :end-before: [END auth_from_connection_string]
                 :language: python
@@ -176,8 +165,9 @@ class QueueServiceClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.service.get_statistics( # type: ignore
+            stats = self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
+            return service_stats_deserialize(stats)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -195,7 +185,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
+            .. literalinclude:: ../samples/queue_samples_service.py
                 :start-after: [START get_queue_service_properties]
                 :end-before: [END get_queue_service_properties]
                 :language: python
@@ -204,7 +194,8 @@ class QueueServiceClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.service.get_properties(timeout=timeout, **kwargs) # type: ignore
+            service_props = self._client.service.get_properties(timeout=timeout, **kwargs) # type: ignore
+            return service_properties_deserialize(service_props)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -245,7 +236,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
+            .. literalinclude:: ../samples/queue_samples_service.py
                 :start-after: [START set_queue_service_properties]
                 :end-before: [END set_queue_service_properties]
                 :language: python
@@ -293,7 +284,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
+            .. literalinclude:: ../samples/queue_samples_service.py
                 :start-after: [START qsc_list_queues]
                 :end-before: [END qsc_list_queues]
                 :language: python
@@ -337,7 +328,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
+            .. literalinclude:: ../samples/queue_samples_service.py
                 :start-after: [START qsc_create_queue]
                 :end-before: [END qsc_create_queue]
                 :language: python
@@ -377,7 +368,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
+            .. literalinclude:: ../samples/queue_samples_service.py
                 :start-after: [START qsc_delete_queue]
                 :end-before: [END qsc_delete_queue]
                 :language: python
@@ -404,7 +395,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
+            .. literalinclude:: ../samples/queue_samples_service.py
                 :start-after: [START get_queue_client]
                 :end-before: [END get_queue_client]
                 :language: python

@@ -24,11 +24,16 @@ from .._generated.version import VERSION
 from .._file_service_client import FileServiceClient as FileServiceClientBase
 from ._share_client_async import ShareClient
 from ._models import SharePropertiesPaged
+from .._models import service_properties_deserialize
 
 if TYPE_CHECKING:
     from datetime import datetime
     from .._shared.models import ResourceTypes, AccountSasPermissions
-    from .._models import Metrics, CorsRule, ShareProperties
+    from .._models import (
+        ShareProperties,
+        Metrics,
+        CorsRule,
+    )
 
 
 class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
@@ -39,24 +44,6 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
     For operations relating to a specific share, a client for that entity
     can also be retrieved using the :func:`get_share_client` function.
 
-    :ivar str url:
-        The full endpoint URL to the file service endpoint, including SAS token if used. This could be
-        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondary endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URL to the file storage account. Any other entities included
         in the URL path (e.g. share or file) will be discarded. This URL can be optionally
@@ -65,13 +52,15 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword str secondary_hostname:
+        The hostname of the secondary endpoint.
     :keyword loop:
         The event loop to run the asynchronous tasks.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_file_samples_authentication_async.py
+        .. literalinclude:: ../samples/file_samples_authentication_async.py
             :start-after: [START create_file_service_client]
             :end-before: [END create_file_service_client]
             :language: python
@@ -108,16 +97,17 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../samples/file_samples_service_async.py
                 :start-after: [START get_service_properties]
                 :end-before: [END get_service_properties]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Get file service properties.
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.service.get_properties(timeout=timeout, **kwargs)
+            service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
+            return service_properties_deserialize(service_props)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -152,7 +142,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../samples/file_samples_service_async.py
                 :start-after: [START set_service_properties]
                 :end-before: [END set_service_properties]
                 :language: python
@@ -195,11 +185,11 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../samples/file_samples_service_async.py
                 :start-after: [START fsc_list_shares]
                 :end-before: [END fsc_list_shares]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: List shares in the file service.
         """
         timeout = kwargs.pop('timeout', None)
@@ -240,11 +230,11 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../samples/file_samples_service_async.py
                 :start-after: [START fsc_create_shares]
                 :end-before: [END fsc_create_shares]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Create a share in the file service.
         """
         metadata = kwargs.pop('metadata', None)
@@ -277,11 +267,11 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../samples/file_samples_service_async.py
                 :start-after: [START fsc_delete_shares]
                 :end-before: [END fsc_delete_shares]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Delete a share in the file service.
         """
         timeout = kwargs.pop('timeout', None)
@@ -307,7 +297,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_service_async.py
+            .. literalinclude:: ../samples/file_samples_service_async.py
                 :start-after: [START get_share_client]
                 :end-before: [END get_share_client]
                 :language: python
