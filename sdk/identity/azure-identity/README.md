@@ -93,7 +93,7 @@ possible in a supported hosting environment. See Azure Active Directory's
 [managed identity documentation](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/services-support-managed-identities)
 for more information.
 
-### Single sign-on
+#### Single sign-on
 During local development on Windows, [DefaultAzureCredential][default_cred_ref]
 can authenticate using a single sign-on shared with Microsoft applications, for
 example Visual Studio 2019. This may require additional configuration when
