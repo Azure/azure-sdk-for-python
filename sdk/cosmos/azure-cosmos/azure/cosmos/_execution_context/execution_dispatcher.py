@@ -24,7 +24,7 @@
 
 import json
 from six.moves import xrange
-from azure.cosmos.errors import CosmosHttpResponseError
+from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo

@@ -20,7 +20,7 @@
 #SOFTWARE.
 
 import azure.cosmos.cosmos_client as cosmos_client
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 import requests
 import six
 import json
@@ -285,7 +285,7 @@ def run_sample():
             # setup database for this sample
             try:
                 db = client.create_database(id=DATABASE_ID)
-            except errors.CosmosResourceExistsError:
+            except exceptions.CosmosResourceExistsError:
                 db = client.get_database_client(DATABASE_ID)
 
             # setup container for this sample
@@ -293,7 +293,7 @@ def run_sample():
                 container, document = ItemManagement.CreateNonPartitionedCollection(db)
                 print('Container with id \'{0}\' created'.format(CONTAINER_ID))
 
-            except errors.CosmosResourceExistsError:
+            except exceptions.CosmosResourceExistsError:
                 print('Container with id \'{0}\' was found'.format(CONTAINER_ID))
 
             # Read Item created in non partitioned collection using older API version
@@ -308,10 +308,10 @@ def run_sample():
             # cleanup database after sample
             try:
                 client.delete_database(db)
-            except errors.CosmosResourceNotFoundError:
+            except exceptions.CosmosResourceNotFoundError:
                 pass
 
-        except errors.CosmosHttpResponseError as e:
+        except exceptions.CosmosHttpResponseError as e:
             print('\nrun_sample has caught an error. {0}'.format(e.message))
 
         finally:
