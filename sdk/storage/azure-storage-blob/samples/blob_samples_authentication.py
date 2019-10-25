@@ -120,7 +120,10 @@ class AuthSamples(object):
  
         # Instantiate a BlobServiceClient using a token credential
         from azure.storage.blob import BlobServiceClient
-        blob_service_client = BlobServiceClient(account_url=self.oauth_url, credential=default_credential)
+        blob_service_client = BlobServiceClient(
+            account_url=self.oauth_url,
+            credential=default_credential
+        )
         # [END create_blob_service_client_oauth]
  
         # Get account information for the Blob Service
