@@ -36,6 +36,23 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport._base import _HttpResponseBase
 
 
+__all__ = [
+    'AzureError',
+    'ServiceRequestError',
+    'ServiceResponseError',
+    'HttpResponseError',
+    'DecodeError',
+    'ResourceExistsError',
+    'ResourceNotFoundError',
+    'ClientAuthenticationError',
+    'ResourceModifiedError',
+    'ResourceNotModifiedError',
+    'TooManyRedirectsError',
+    'ODataV4Format',
+    'ODataV4Error',
+]
+
+
 def raise_with_traceback(exception, *args, **kwargs):
     # type: (Callable, Any, Any) -> None
     """Raise exception with a specified traceback.
