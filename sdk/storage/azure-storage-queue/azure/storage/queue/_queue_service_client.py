@@ -121,6 +121,8 @@ class QueueServiceClient(StorageAccountHostsMixin):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
+        :returns: A Queue service client.
+        :rtype: ~azure.storage.queue.QueueClient
 
         .. admonition:: Example:
 
