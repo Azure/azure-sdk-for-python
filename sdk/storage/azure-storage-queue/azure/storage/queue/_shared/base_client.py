@@ -78,9 +78,10 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
 
-        if service not in ["blob", "queue", "file"]:
+        if service not in ["blob", "queue", "file-share"]:
             raise ValueError("Invalid service: {}".format(service))
-        account = parsed_url.netloc.split(".{}.core.".format(service))
+        service_name = service.split('-')[0]
+        account = parsed_url.netloc.split(".{}.core.".format(service_name))
         self.account_name = account[0] if len(account) > 1 else None
         secondary_hostname = None
 
@@ -89,7 +90,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, "account_name"):
             self.account_name = self.credential.account_name
-            secondary_hostname = "{}-secondary.{}.{}".format(self.credential.account_name, service, SERVICE_HOST_BASE)
+            secondary_hostname = "{}-secondary.{}.{}".format(
+                self.credential.account_name, service_name, SERVICE_HOST_BASE)
 
         if not self._hosts:
             if len(account) > 1:

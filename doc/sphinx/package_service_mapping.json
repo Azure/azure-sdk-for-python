@@ -850,7 +850,7 @@
     "service_name": "Storage",
     "manually_generated": true
   },
-  "azure-storage-file": {
+  "azure-storage-file-share": {
     "category": "Client",
     "service_name": "Storage",
     "manually_generated": true

@@ -170,6 +170,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`. If specified, this will override
             the snapshot in the url.
+        :returns: A Blob client.
+        :rtype: ~azure.storage.blob.BlobClient
         """
         try:
             if not blob_url.lower().startswith('http'):
@@ -218,8 +220,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):  # type: (...) -> BlobClient
-        """
-        Create BlobClient from a Connection String.
+        """Create BlobClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Storage account.
@@ -236,6 +237,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
+        :returns: A Blob client.
+        :rtype: ~azure.storage.blob.BlobClient
 
         .. admonition:: Example:
 

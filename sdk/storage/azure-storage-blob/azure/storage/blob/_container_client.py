@@ -143,6 +143,8 @@ class ContainerClient(StorageAccountHostsMixin):
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
+        :returns: A container client.
+        :rtype: ~azure.storage.blob.ContainerClient
         """
         try:
             if not container_url.lower().startswith('http'):
@@ -187,6 +189,8 @@ class ContainerClient(StorageAccountHostsMixin):
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
+        :returns: A container client.
+        :rtype: ~azure.storage.blob.ContainerClient
 
         .. admonition:: Example:
 

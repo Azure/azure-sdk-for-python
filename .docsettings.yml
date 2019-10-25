@@ -48,7 +48,7 @@ known_content_issues:
   - ['sdk/loganalytics/azure-loganalytics/README.rst', '#4554']
   - ['sdk/servicefabric/azure-servicefabric/README.rst', '#4554']
   - ['sdk/core/azure-servicemanagement-legacy/README.rst', '#4554']
-  - ['sdk/storage/azure-storage-file/swagger/README.md', '#4554']
+  - ['sdk/storage/azure-storage-file-share/swagger/README.md', '#4554']
   - ['sdk/storage/azure-storage-queue/swagger/README.md', '#4554']
   - ['sdk/storage/azure-storage-blob/swagger/README.md', '#4554']
 
