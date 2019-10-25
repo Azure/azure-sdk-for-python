@@ -82,7 +82,7 @@ credentials will be part of a future release.
 ## `DefaultAzureCredential`
 [`DefaultAzureCredential`][default_cred_ref] is appropriate for most
 applications intended to run in Azure. It can authenticate as a service
-principal, managed identity, or user, and  can be configured for local
+principal, managed identity, or user, and can be configured for local
 development and production environments without code changes.
 
 To authenticate as a service principal, provide configuration in
