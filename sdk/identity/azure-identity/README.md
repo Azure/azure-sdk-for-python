@@ -79,7 +79,7 @@ the [azure.identity.aio][ref_docs_aio] namespace, supported on Python 3.5.3+.
 See the [async credentials](#async-credentials) example for details. Async user
 credentials will be part of a future release.
 
-## `DefaultAzureCredential`
+## DefaultAzureCredential
 [DefaultAzureCredential][default_cred_ref] is appropriate for most
 applications intended to run in Azure. It can authenticate as a service
 principal, managed identity, or user, and can be configured for local
@@ -127,6 +127,7 @@ variables:
 >|`AZURE_CLIENT_ID`|id of an Azure Active Directory application
 >|`AZURE_USERNAME`|a username (usually an email address)
 >|`AZURE_PASSWORD`|that user's password
+
 > Note: username/password authentication is not supported by the async API
 ([azure.identity.aio][ref_docs_aio])
 
