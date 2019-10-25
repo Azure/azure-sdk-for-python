@@ -38,7 +38,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'azure-storage-blob==12.0.0b5',
-        'azure-storage-file==12.0.0b5',
+        'azure-storage-file-share==12.0.0b5',
         'azure-storage-queue==12.0.0b5',
     ],
 )

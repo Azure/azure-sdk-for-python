@@ -6,7 +6,7 @@ This package does not contain any code in itself. It installs a set
 of packages that provide APIs for Storage operations:
 
 - [azure-storage-blob v12.0.0b5](https://pypi.python.org/pypi/azure-storage-blob)
-- [azure-storage-file v12.0.0b5](https://pypi.python.org/pypi/azure-storage-file)
+- [azure-storage-file-share v12.0.0b5](https://pypi.python.org/pypi/azure-storage-file-share)
 - [azure-storage-queue v12.0.0b5](https://pypi.python.org/pypi/azure-storage-queue)
 
 
