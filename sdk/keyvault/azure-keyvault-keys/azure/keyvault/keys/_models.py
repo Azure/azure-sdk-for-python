@@ -46,17 +46,17 @@ class JsonWebKey(object):
     :param bytes y: Y component of an EC public key.
     """
 
-    FIELDS = ("kid", "kty", "key_ops", "n", "e", "d", "dp", "dq", "qi", "p", "q", "k", "t", "crv", "x", "y")
+    _FIELDS = ("kid", "kty", "key_ops", "n", "e", "d", "dp", "dq", "qi", "p", "q", "k", "t", "crv", "x", "y")
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        for field in self.FIELDS:
+        for field in self._FIELDS:
             setattr(self, field, kwargs.get(field))
 
     def _to_generated_model(self):
         # type: () -> _JsonWebKey
         jwk = _JsonWebKey()
-        for field in self.FIELDS:
+        for field in self._FIELDS:
             setattr(jwk, field, getattr(self, field))
         return jwk
 
@@ -235,7 +235,7 @@ class KeyVaultKey(object):
         # type: (str, Optional[dict], **Any) -> None
         self._properties = kwargs.pop("properties", None) or KeyProperties(key_id, **kwargs)
         if isinstance(jwk, dict):
-            if any(field in kwargs for field in JsonWebKey.FIELDS):
+            if any(field in kwargs for field in JsonWebKey._FIELDS):  # pylint:disable=protected-access
                 raise ValueError(
                     "Individual keyword arguments for key material and the 'jwk' argument are mutually exclusive."
                 )
@@ -251,10 +251,11 @@ class KeyVaultKey(object):
     def _from_key_bundle(cls, key_bundle):
         # type: (_models.KeyBundle) -> KeyVaultKey
         """Construct a KeyVaultKey from an autorest-generated KeyBundle"""
+        # pylint:disable=protected-access
         return cls(
             key_id=key_bundle.key.kid,
-            jwk={field: getattr(key_bundle.key, field, None) for field in JsonWebKey.FIELDS},
-            properties=KeyProperties._from_key_bundle(key_bundle),  # pylint: disable=protected-access
+            jwk={field: getattr(key_bundle.key, field, None) for field in JsonWebKey._FIELDS},
+            properties=KeyProperties._from_key_bundle(key_bundle),
         )
 
     @property
@@ -338,10 +339,11 @@ class DeletedKey(KeyVaultKey):
     def _from_deleted_key_bundle(cls, deleted_key_bundle):
         # type: (_models.DeletedKeyBundle) -> DeletedKey
         """Construct a DeletedKey from an autorest-generated DeletedKeyBundle"""
+        # pylint:disable=protected-access
         return cls(
-            properties=KeyProperties._from_key_bundle(deleted_key_bundle),  # pylint: disable=protected-access
+            properties=KeyProperties._from_key_bundle(deleted_key_bundle),
             key_id=deleted_key_bundle.key.kid,
-            jwk={field: getattr(deleted_key_bundle.key, field, None) for field in JsonWebKey.FIELDS},
+            jwk={field: getattr(deleted_key_bundle.key, field, None) for field in JsonWebKey._FIELDS},
             deleted_date=deleted_key_bundle.deleted_date,
             recovery_id=deleted_key_bundle.recovery_id,
             scheduled_purge_date=deleted_key_bundle.scheduled_purge_date,
