@@ -27,7 +27,7 @@ def main():
         print("AZURE_STORAGE_CONNECTION_STRING must be set.")
         sys.exit(1)
 
-    is_finished = False
+    status = None
     blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
     source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
     copied_blob = blob_service_client.get_blob_client("mycontainer", '59466-0.txt')
@@ -39,11 +39,10 @@ def main():
         print("Copy status: " + status)
         if status == "success":
             # Copy finished
-            is_finished = True
             break
         time.sleep(10)
 
-    if not(is_finished):
+    if status != "success":
         # if not finished after 100s, cancel the operation
         props = copied_blob.get_blob_properties()
         print(props.copy.status)
