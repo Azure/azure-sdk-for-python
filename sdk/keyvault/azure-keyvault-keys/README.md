@@ -20,6 +20,14 @@ Install the Azure Key Vault Keys client library for Python with [pip][pip]:
 pip install azure-keyvault-keys
 ```
 
+Additionally, we strongly recommend using the [`azure-identity`][azure_identity] library.
+
+Install the Azure Identity client library for Python with [pip][pip]:
+
+```Bash
+pip install azure-identity
+```
+
 ### Prerequisites
 * An [Azure subscription][azure_sub]
 * Python 2.7, 3.5.3, or later
@@ -61,12 +69,13 @@ names):
     }
     ```
 
-    > The `"vaultUri"` property is the `vault_url` used by `KeyClient`.
+    > The `"vaultUri"` property is the `vault_url` used by [`KeyClient`][key_client_docs].
 
 ### Authenticate the client
 To interact with a Key Vault's keys, you'll need an instance of the
 [KeyClient][key_client_docs] class. Creating one requires a **vault url** and
-**credential**. This document demonstrates using `DefaultAzureCredential` as
+**credential**. The **vault_url** can be found on the [portal](https://portal.azure.com)
+under `DNS Name`. This document demonstrates using [`DefaultAzureCredential`][default_cred_ref] as
 the credential, authenticating with a service principal's client id, secret,
 and tenant id. Other authentication methods are supported. See the
 [azure-identity][azure_identity] documentation for more details.
@@ -124,7 +133,7 @@ key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", creden
 ```
 
 ## Key concepts
-With a `KeyClient`, you can get keys from the vault, create new keys and new
+With a [`KeyClient`](key_client_docs), you can get keys from the vault, create new keys and new
 versions of existing keys, update key metadata, and delete keys, as shown in
 the [examples](#examples) below.
 
@@ -148,11 +157,19 @@ This section contains code snippets covering common tasks:
 * [Perform cryptographic operations](#cryptographic-operations)
 
 ### Create a Key
-`create_rsa_key` and `create_ec_key` create RSA and elliptic curve keys in the
+[`create_rsa_key`](https://aka.ms/azsdk-python-keyvault-keys-create-rsa-key-ref) and
+[`create_ec_key`](https://aka.ms/azsdk-python-keyvault-keys-create-ec-key-rf) create RSA and elliptic curve keys in the
 vault, respectively. If a key with the same name already exists, a new version
 of that key is created.
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.keys import KeyClient
+
+credential = DefaultAzureCredential()
+
+key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+
 # Create an RSA key
 rsa_key = key_client.create_rsa_key("rsa-key-name", size=2048)
 print(rsa_key.name)
@@ -165,42 +182,68 @@ print(ec_key.key_type)
 ```
 
 ### Retrieve a Key
-`get_key` retrieves a key previously stored in the vault.
+[`get_key`](https://aka.ms/azsdk-python-keyvault-keys-get-key-ref) retrieves a key previously stored in the vault.
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.keys import KeyClient
+
+credential = DefaultAzureCredential()
+
+key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 key = key_client.get_key("key-name")
 print(key.name)
 ```
 
 ### Update an existing Key
-`update_key` updates a key previously stored in the Key Vault.
+[`update_key_properties`](https://aka.ms/azsdk-python-keyvault-keys-update-key-ref) updates the properties of a key previously stored in the Key Vault.
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.keys import KeyClient
+
+credential = DefaultAzureCredential()
+
+key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+
 # Clients may specify additional application-specific metadata in the form of tags.
 tags = {"foo": "updated tag"}
 
-updated_key_properties = key_client.update_key_properties("key-name", tags=tags)
+updated_key = key_client.update_key_properties("key-name", tags=tags)
 
-print(updated_key_properties.name)
-print(updated_key_properties.version)
-print(updated_key_properties.updated_on)
-print(updated_key_properties.tags)
+print(updated_key.name)
+print(updated_key.properties.version)
+print(updated_key.properties.updated_on)
+print(updated_key.properties.tags)
 ```
 
 ### Delete a Key
-`begin_delete_key` requests Key Vault delete a key, returning a poller which allows you to
+[`begin_delete_key`](https://aka.ms/azsdk-python-keyvault-keys-begin-delete-key-ref) requests Key Vault delete a key, returning a poller which allows you to
 wait for the deletion to finish. Waiting is helpful when the vault has [soft-delete][soft_delete]
 enabled, and you want to purge (permanently delete) the key as soon as possible.
 When [soft-delete][soft_delete] is disabled, deletion is always permanent.
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.keys import KeyClient
+
+credential = DefaultAzureCredential()
+
+key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 deleted_key = key_client.begin_delete_key("key-name").result()
 
 print(deleted_key.name)
 print(deleted_key.deleted_date)
 ```
 ### List keys
-This example lists all the keys in the client's vault.
+[`list_properties_of_keys`](https://aka.ms/azsdk-python-keyvault-keys-list-properties-keys-ref) example lists the
+properties of all of the keys in the client's vault.
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.keys import KeyClient
+
+credential = DefaultAzureCredential()
+
+key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 keys = key_client.list_properties_of_keys()
 
 for key in keys:
@@ -209,7 +252,7 @@ for key in keys:
 ```
 
 ### Cryptographic operations
-`CryptographyClient` enables cryptographic operations (encrypt/decrypt,
+[`CryptographyClient`][crypto_client_docs] enables cryptographic operations (encrypt/decrypt,
 wrap/unwrap, sign/verify) using a particular key.
 
 ```py
@@ -220,8 +263,9 @@ from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm
 credential = DefaultAzureCredential()
 key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
-key = key_client.get_key("mykey")
+key = key_client.get_key("key-name")
 crypto_client = CryptographyClient(key, credential=credential)
+plaintext = <my-bytes-to-encrypt>
 
 result = crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, plaintext)
 decrypted = crypto_client.decrypt(result.algorithm, result.ciphertext)
@@ -239,7 +283,8 @@ See
 for more information.
 
 ### Asynchronously create a Key
-`create_rsa_key` and `create_ec_key` create RSA and elliptic curve keys in the vault, respectively.
+[`create_rsa_key`](https://aka.ms/azsdk-python-keyvault-keys-async-create-rsa-key-ref) and
+[`create_ec_key`](https://aka.ms/azsdk-python-keyvault-keys-async-create-ec-key-ref) create RSA and elliptic curve keys in the vault, respectively.
 If a key with the same name already exists, a new version of the key is created.
 
 ```python
@@ -261,9 +306,15 @@ print(ec_key.key_type)
 ```
 
 ### Asynchronously list keys
-This example lists all the keys in the client's vault:
+[`list_properties_of_keys`](https://aka.ms/azsdk-python-keyvault-keys-async-list-properties-keys-ref) example lists the
+properties of all of the keys in the client's vault.
 
 ```python
+from azure.identity.aio import DefaultAzureCredential
+from azure.keyvault.keys.aio import KeyClient
+
+credential = DefaultAzureCredential()
+key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 keys = key_client.list_properties_of_keys()
 
 async for key in keys:
@@ -273,23 +324,27 @@ async for key in keys:
 ## Troubleshooting
 ### General
 Key Vault clients raise exceptions defined in [`azure-core`][azure_core_exceptions].
-For example, if you try to get a key that doesn't exist in the vault, `KeyClient`
-raises `ResourceNotFoundError`:
+For example, if you try to get a key that doesn't exist in the vault, [`KeyClient`][key_client_docs]
+raises [`ResourceNotFoundError`](https://aka.ms/azsdk-python-core-exceptions-resource-not-found-error):
 
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.keys import KeyClient
 from azure.core.exceptions import ResourceNotFoundError
 
-key_client.begin_delete_key("my-key").wait()
+credential = DefaultAzureCredential()
+key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+key_client.begin_delete_key("key-name").wait()
 
 try:
-    key_client.get_key("my-key")
+    key_client.get_key("key-name")
 except ResourceNotFoundError as e:
     print(e.message)
 ```
 
 ### Logging
 Network trace logging is disabled by default for this library. When enabled,
-HTTP requests will be logged at DEBUG level using the `logging` library. You
+HTTP requests will be logged at DEBUG level using the [`logging`](https://docs.python.org/3.5/library/logging.html) library. You
 can configure logging to print debugging information to stdout or write it
 to a file:
 
@@ -300,7 +355,7 @@ import sys
 import logging
 
 # Create a logger for the 'azure' SDK
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('azure')
 logger.setLevel(logging.DEBUG)
 
 # Configure a console output
@@ -310,11 +365,28 @@ logger.addHandler(handler)
 credential = DefaultAzureCredential()
 
 # Enable network trace logging. Each HTTP request will be logged at DEBUG level.
-client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential, logging_enable=True)
+key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential, logging_enable=True)
 ```
 
 Network trace logging can also be enabled for any single operation:
 ```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.keys import KeyClient
+import sys
+import logging
+
+# Create a logger for the 'azure' SDK
+logger = logging.getLogger('azure')
+logger.setLevel(logging.DEBUG)
+
+# Configure a console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+credential = DefaultAzureCredential()
+
+# Enable network trace logging. Each HTTP request will be logged at DEBUG level.
+key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 key = key_client.get_key("key-name", logging_enable=True)
 ```
 
@@ -354,6 +426,7 @@ additional questions or comments.
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/exceptions.md
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
 [azure_sub]: https://azure.microsoft.com/free/
+[default_cred_ref]: https://aka.ms/azsdk-python-identity-default-cred-ref
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [hello_world_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples/hello_world.py
 [hello_world_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples/hello_world_async.py
@@ -363,8 +436,9 @@ additional questions or comments.
 [backup_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples/backup_restore_operations_async.py
 [pip]: https://pypi.org/project/pip/
 [pypi_package_keys]: https://pypi.org/project/azure-keyvault-keys/
-[reference_docs]: https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.keys.html
-[key_client_docs]: https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.keys.html#azure.keyvault.keys.KeyClient
+[reference_docs]: https://aka.ms/azsdk-python-keyvault-keys-docs
+[key_client_docs]: https://aka.ms/azsdk-python-keyvault-keys-keyclient
+[crypto_client_docs]: https://aka.ms/azsdk-python-keyvault-keys-cryptographyclient
 [key_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/azure/keyvault/keys
 [key_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples
 [soft_delete]: https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
