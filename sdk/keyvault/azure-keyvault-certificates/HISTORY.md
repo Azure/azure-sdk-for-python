@@ -17,6 +17,8 @@
 - Renamed `expires` property of `CertificateProperties` and `CertificatePolicy` to `expires_on`
 - Renamed `created` property of `CertificateProperties`, `CertificatePolicy`, and `CertificateIssuer` to `created_on`
 - Renamed `updated` property of `CertificateProperties`, `CertificatePolicy`, and `CertificateIssuer` to `updated_on`
+- The `vault_endpoint` parameter of `CertificateClient` has been renamed to `vault_url`
+- The property `vault_endpoint` has been renamed to `vault_url` in all models
 
 ### New Features
 - `CertificatePolicy` now has a public class method `get_default` allowing users to get the default `CertificatePolicy`

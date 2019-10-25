@@ -135,5 +135,5 @@
 | [`azure-servicefabric`]( sdk/servicefabric/azure-servicefabric/setup.py )| [Readme](sdk/servicefabric/azure-servicefabric/README.rst) | [Changelog](sdk/servicefabric/azure-servicefabric/HISTORY.rst) | [PyPI]( https://pypi.org/project/azure-servicefabric ) |
 | [`azure-servicemanagement-legacy`]( sdk/core/azure-servicemanagement-legacy/setup.py )| [Readme](sdk/core/azure-servicemanagement-legacy/README.rst) | [Changelog](sdk/core/azure-servicemanagement-legacy/HISTORY.rst) | [PyPI]( https://pypi.org/project/azure-servicemanagement-legacy ) |
 | [`azure-storage-blob`]( sdk/storage/azure-storage-blob/setup.py )| [Readme](sdk/storage/azure-storage-blob/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-storage-blob ) |
-| [`azure-storage-file`]( sdk/storage/azure-storage-file/setup.py )| [Readme](sdk/storage/azure-storage-file/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-storage-file ) |
+| [`azure-storage-file-share`]( sdk/storage/azure-storage-file-share/setup.py )| [Readme](sdk/storage/azure-storage-file-share/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-storage-file-share ) |
 | [`azure-storage-queue`]( sdk/storage/azure-storage-queue/setup.py )| [Readme](sdk/storage/azure-storage-queue/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-storage-queue ) |

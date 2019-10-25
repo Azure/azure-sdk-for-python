@@ -10,20 +10,21 @@ import copy
 import inspect
 import os
 import os.path
-import re
 import time
-from unittest import SkipTest
 
-import adal
-import vcr
+try:
+    import unittest.mock as mock
+except ImportError:
+    import mock
+
 import zlib
 import math
-import uuid
-import unittest
 import sys
 import random
+import re
 import logging
-
+from devtools_testutils import AzureMgmtTestCase, AzureMgmtPreparer, FakeResource
+from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError
 try:
     from cStringIO import StringIO      # Python 2
 except ImportError:
@@ -31,34 +32,13 @@ except ImportError:
 
 from azure.core.credentials import AccessToken
 
-import blob_settings_fake as fake_settings
 try:
-    import settings_real as settings
+    from devtools_testutils import mgmt_settings_real as settings
 except ImportError:
-    settings = None
+    from devtools_testutils import mgmt_settings_fake as settings
 
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
-
-
-class TestMode(object):
-    none = 'None'.lower() # this will be for unit test, no need for any recordings
-    playback = 'Playback'.lower() # run against stored recordings
-    record = 'Record'.lower() # run tests against live storage and update recordings
-    run_live_no_record = 'RunLiveNoRecord'.lower() # run tests against live storage without altering recordings
-
-    @staticmethod
-    def is_playback(mode):
-        return mode == TestMode.playback
-
-    @staticmethod
-    def need_recording_file(mode):
-        return mode == TestMode.playback or mode == TestMode.record
-
-    @staticmethod
-    def need_real_credentials(mode):
-        return mode == TestMode.run_live_no_record or mode == TestMode.record
-
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
@@ -71,37 +51,94 @@ class FakeTokenCredential(object):
         return self.token
 
 
-class StorageTestCase(unittest.TestCase):
+class XMSRequestIDBody(RecordingProcessor):
+    """This process is used for Storage batch call only, to avoid the echo policy.
+    """
+    def process_response(self, response):
+        content_type = None
+        for key, value in response.get('headers', {}).items():
+            if key.lower() == 'content-type':
+                content_type = (value[0] if isinstance(value, list) else value).lower()
+                break
 
-    def setUp(self):
-        self.working_folder = os.path.dirname(__file__)
+        if content_type and 'multipart/mixed' in content_type:
+            response['body']['string'] = re.sub(b"x-ms-client-request-id: [a-f0-9-]+\r\n", b"", response['body']['string'])
 
-        self.settings = settings
-        self.fake_settings = fake_settings
+        return response
 
-        if settings is None:
-            self.test_mode = os.getenv('TEST_MODE') or TestMode.playback
-        else:
-            self.test_mode = self.settings.TEST_MODE.lower() or TestMode.playback
 
-        if self.test_mode == TestMode.playback or (self.settings is None and self.test_mode.lower() == TestMode.run_live_no_record):
-            self.settings = self.fake_settings
-
-        # example of qualified test name:
-        # test_mgmt_network.test_public_ip_addresses
-        _, filename = os.path.split(inspect.getsourcefile(type(self)))
-        name, _ = os.path.splitext(filename)
-        self.qualified_test_name = '{0}.{1}'.format(
-            name,
-            self._testMethodName,
+class GlobalStorageAccountPreparer(AzureMgmtPreparer):
+    def __init__(self):
+        super(GlobalStorageAccountPreparer, self).__init__(
+            name_prefix='',
+            random_name_length=42
         )
 
-        self.logger = logging.getLogger('azure.storage')
-        # enable logging if desired
-        self.configure_logging()
+    def create_resource(self, name, **kwargs):
+        storage_account = StorageTestCase._STORAGE_ACCOUNT
+        if self.is_live:
+            self.test_class_instance.scrubber.register_name_pair(
+                storage_account.name,
+                "blobstoragename"
+            )
+        else:
+            storage_account = FakeResource(
+                id=storage_account.id,
+                name="blobstoragename"
+            )
+
+        return {
+            'location': 'westus',
+            'resource_group': StorageTestCase._RESOURCE_GROUP,
+            'storage_account': storage_account,
+            'storage_account_key': StorageTestCase._STORAGE_KEY,
+        }
+
+class GlobalResourceGroupPreparer(AzureMgmtPreparer):
+    def __init__(self):
+        super(GlobalResourceGroupPreparer, self).__init__(
+            name_prefix='',
+            random_name_length=42
+        )
+
+    def create_resource(self, name, **kwargs):
+        rg = StorageTestCase._RESOURCE_GROUP
+        if self.is_live:
+            self.test_class_instance.scrubber.register_name_pair(
+                rg.name,
+                "rgname"
+            )
+        else:
+            rg = FakeResource(
+                name="rgname",
+                id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname"
+            )
+
+        return {
+            'location': 'westus',
+            'resource_group': rg,
+        }
+
+
+class StorageTestCase(AzureMgmtTestCase):
+
+    def __init__(self, *args, **kwargs):
+        super(StorageTestCase, self).__init__(*args, **kwargs)
+        self.replay_processors.append(XMSRequestIDBody())
+
+    def connection_string(self, account, key):
+        return "DefaultEndpointsProtocol=https;AccountName=" + account.name + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
+
+    def _account_url (self, name):
+        return 'https://{}.blob.core.windows.net'.format(name)
 
     def configure_logging(self):
-        self.enable_logging() if self.settings.ENABLE_LOGGING else self.disable_logging()
+        try:
+            enable_logging = self.get_settings_value("ENABLE_LOGGING")
+        except AzureTestError:
+            enable_logging = True  # That's the default value in fake settings
+
+        self.enable_logging() if enable_logging else self.disable_logging()
 
     def enable_logging(self):
         handler = logging.StreamHandler()
@@ -117,37 +154,13 @@ class StorageTestCase(unittest.TestCase):
         self.logger.handlers = []
 
     def sleep(self, seconds):
-        if not self.is_playback():
+        if self.is_live:
             time.sleep(seconds)
 
-    def is_playback(self):
-        return self.test_mode == TestMode.playback
-
-    def get_resource_name(self, prefix=''):
-        # Append a suffix to the name, based on the fully qualified test name
-        # We use a checksum of the test name so that each test gets different
-        # resource names, but each test will get the same name on repeat runs,
-        # which is needed for playback.
-        # Most resource names have a length limit, so we use a crc32
-        if self.test_mode.lower() == TestMode.run_live_no_record.lower():
-            return prefix + str(uuid.uuid4()).replace('-', '')
-        else:
-            checksum = zlib.adler32(self.qualified_test_name.encode()) & 0xffffffff
-            name = '{}{}'.format(prefix, hex(checksum)[2:])
-            if name.endswith('L'):
-                name = name[:-1]
-            return name
-
     def get_random_bytes(self, size):
-        if self.test_mode.lower() == TestMode.run_live_no_record.lower():
-            rand = random.Random()
-        else:
-            checksum = zlib.adler32(self.qualified_test_name.encode()) & 0xffffffff
-            rand = random.Random(checksum)
-        result = bytearray(size)
-        for i in range(size):
-            result[i] = int(rand.random()*255)  # random() is consistent between python 2 and 3
-        return bytes(result)
+        # recordings don't like random stuff. making this more
+        # deterministic.
+        return b'a'*size
 
     def get_random_text_data(self, size):
         '''Returns random unicode text data exceeding the size threshold for
@@ -172,95 +185,11 @@ class StorageTestCase(unittest.TestCase):
                 settings.PROXY_PASSWORD,
             )
 
-    def _get_shared_key_credential(self):
-        return {
-            "account_name": self.settings.STORAGE_ACCOUNT_NAME,
-            "account_key": self.settings.STORAGE_ACCOUNT_KEY
-        }
-
-    def _get_premium_shared_key_credential(self):
-        return {
-            "account_name": self.settings.PREMIUM_STORAGE_ACCOUNT_NAME,
-            "account_key": self.settings.PREMIUM_STORAGE_ACCOUNT_KEY
-        }
-
-    def _get_remote_shared_key_credential(self):
-        return {
-            "account_name": self.settings.REMOTE_STORAGE_ACCOUNT_NAME,
-            "account_key": self.settings.REMOTE_STORAGE_ACCOUNT_KEY
-        }
-
-    def _get_account_url(self):
-        return "{}://{}.blob.core.windows.net".format(
-            self.settings.PROTOCOL,
-            self.settings.STORAGE_ACCOUNT_NAME
-        )
-
-    def _get_oauth_account_url(self):
-        return "{}://{}.blob.core.windows.net".format(
-            self.settings.PROTOCOL,
-            self.settings.OAUTH_STORAGE_ACCOUNT_NAME
-        )
-
-    def _get_premium_account_url(self):
-        return "{}://{}.blob.core.windows.net".format(
-            self.settings.PROTOCOL,
-            self.settings.PREMIUM_STORAGE_ACCOUNT_NAME
-        )
-
-    def _get_remote_account_url(self):
-        return "{}://{}.blob.core.windows.net".format(
-            self.settings.PROTOCOL,
-            self.settings.REMOTE_STORAGE_ACCOUNT_NAME
-        )
-
-    def _create_storage_service(self, service_class, settings, **kwargs):
-        if settings.CONNECTION_STRING:
-            service = service_class.from_connection_string(settings.CONNECTION_STRING, **kwargs)
+    def _create_storage_service(self, service_class, account, key, connection_string=None, **kwargs):
+        if connection_string:
+            service = service_class.from_connection_string(connection_string, **kwargs)
         else:
-            url = self._get_account_url()
-            credential = self._get_shared_key_credential()
-            service = service_class(url, credential=credential, **kwargs)
-        return service
-
-    # for blob storage account
-    def _create_storage_service_for_blob_storage_account(self, service_class, settings):
-        if hasattr(settings, 'BLOB_CONNECTION_STRING') and settings.BLOB_CONNECTION_STRING != "":
-            service = service_class(connection_string=settings.BLOB_CONNECTION_STRING)
-        elif hasattr(settings, 'BLOB_STORAGE_ACCOUNT_NAME') and settings.BLOB_STORAGE_ACCOUNT_NAME != "":
-            service = service_class(
-                settings.BLOB_STORAGE_ACCOUNT_NAME,
-                settings.BLOB_STORAGE_ACCOUNT_KEY,
-                protocol=settings.PROTOCOL,
-            )
-        else:
-            raise SkipTest('BLOB_CONNECTION_STRING or BLOB_STORAGE_ACCOUNT_NAME must be populated to run this test')
-
-    def _create_premium_storage_service(self, service_class, settings):
-        if hasattr(settings, 'PREMIUM_CONNECTION_STRING') and settings.PREMIUM_CONNECTION_STRING != "":
-            service = service_class(connection_string=settings.PREMIUM_CONNECTION_STRING)
-        elif hasattr(settings, 'PREMIUM_STORAGE_ACCOUNT_NAME') and settings.PREMIUM_STORAGE_ACCOUNT_NAME != "":
-            service = service_class(
-                settings.PREMIUM_STORAGE_ACCOUNT_NAME,
-                settings.PREMIUM_STORAGE_ACCOUNT_KEY,
-                protocol=settings.PROTOCOL,
-            )
-        else:
-            raise SkipTest('PREMIUM_CONNECTION_STRING or PREMIUM_STORAGE_ACCOUNT_NAME must be populated to run this test')
-
-        self._set_test_proxy(service, settings)
-        return service
-
-    def _create_remote_storage_service(self, service_class, settings):
-        if settings.REMOTE_STORAGE_ACCOUNT_NAME and settings.REMOTE_STORAGE_ACCOUNT_KEY:
-            service = service_class(
-                settings.REMOTE_STORAGE_ACCOUNT_NAME,
-                settings.REMOTE_STORAGE_ACCOUNT_KEY,
-                protocol=settings.PROTOCOL,
-            )
-        else:
-            print("REMOTE_STORAGE_ACCOUNT_NAME and REMOTE_STORAGE_ACCOUNT_KEY not set in test settings file.")
-        self._set_test_proxy(service, settings)
+            service = service_class(self._account_url(account.name), credential=key, **kwargs)
         return service
 
     def assertNamedItemInContainer(self, container, item_name, msg=None):
@@ -290,104 +219,6 @@ class StorageTestCase(unittest.TestCase):
                     repr(item_name), repr(container))
                 self.fail(self._formatMessage(msg, standardMsg))
 
-    def recording(self):
-        if TestMode.need_recording_file(self.test_mode):
-            cassette_name = '{0}.yaml'.format(self.qualified_test_name)
-
-            my_vcr = vcr.VCR(
-                before_record_request = self._scrub_sensitive_request_info,
-                before_record_response = self._scrub_sensitive_response_info,
-                record_mode = 'none' if TestMode.is_playback(self.test_mode) else 'all'
-            )
-
-            self.assertIsNotNone(self.working_folder)
-            return my_vcr.use_cassette(
-                os.path.join(self.working_folder, 'recordings', cassette_name),
-                filter_headers=['authorization'],
-            )
-        else:
-            @contextmanager
-            def _nop_context_manager():
-                yield
-            return _nop_context_manager()
-
-    def _scrub_sensitive_request_info(self, request):
-        if not TestMode.is_playback(self.test_mode):
-            request.uri = self._scrub(request.uri)
-            if request.body is not None:
-                request.body = self._scrub(request.body)
-        return request
-
-    def _scrub_sensitive_response_info(self, response):
-        if not TestMode.is_playback(self.test_mode):
-            # We need to make a copy because vcr doesn't make one for us.
-            # Without this, changing the contents of the dicts would change
-            # the contents returned to the caller - not just the contents
-            # getting saved to disk. That would be a problem with headers
-            # such as 'location', often used in the request uri of a
-            # subsequent service call.
-            response = copy.deepcopy(response)
-            headers = response.get('headers')
-            if headers:
-                headers.pop('x-ms-client-request-id', None)
-
-                def internal_scrub(key, val):
-                    if key.lower() == 'retry-after':
-                        return '0'
-                    return self._scrub(val)
-
-                for name, val in headers.items():
-                    if isinstance(val, list):
-                        for i, e in enumerate(val):
-                            val[i] = internal_scrub(name, e)
-                    else:
-                        headers[name] = internal_scrub(name, val)
-
-            body = response.get('body')
-            if body:
-                body_str = body.get('string')
-                if body_str:
-                    response['body']['string'] = self._scrub(body_str)
-
-                    content_type = response.get('headers', {}).get('Content-Type', '')
-                    if content_type:
-                        content_type = (content_type[0] if isinstance(content_type, list) else content_type).lower()
-                        if 'multipart/mixed' in content_type:
-                            response['body']['string'] = re.sub("x-ms-client-request-id: [a-f0-9-]+\r\n", "", body_str.decode()).encode()
-
-        return response
-
-    def _scrub(self, val):
-        old_to_new_dict = {
-            self.settings.STORAGE_ACCOUNT_NAME: self.fake_settings.STORAGE_ACCOUNT_NAME,
-            self.settings.STORAGE_ACCOUNT_KEY: self.fake_settings.STORAGE_ACCOUNT_KEY,
-            self.settings.OAUTH_STORAGE_ACCOUNT_NAME: self.fake_settings.OAUTH_STORAGE_ACCOUNT_NAME,
-            self.settings.OAUTH_STORAGE_ACCOUNT_KEY: self.fake_settings.OAUTH_STORAGE_ACCOUNT_KEY,
-            self.settings.BLOB_STORAGE_ACCOUNT_NAME: self.fake_settings.BLOB_STORAGE_ACCOUNT_NAME,
-            self.settings.BLOB_STORAGE_ACCOUNT_KEY: self.fake_settings.BLOB_STORAGE_ACCOUNT_KEY,
-            self.settings.REMOTE_STORAGE_ACCOUNT_KEY: self.fake_settings.REMOTE_STORAGE_ACCOUNT_KEY,
-            self.settings.REMOTE_STORAGE_ACCOUNT_NAME: self.fake_settings.REMOTE_STORAGE_ACCOUNT_NAME,
-            self.settings.PREMIUM_STORAGE_ACCOUNT_NAME: self.fake_settings.PREMIUM_STORAGE_ACCOUNT_NAME,
-            self.settings.PREMIUM_STORAGE_ACCOUNT_KEY: self.fake_settings.PREMIUM_STORAGE_ACCOUNT_KEY,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_ID: self.fake_settings.ACTIVE_DIRECTORY_APPLICATION_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET: self.fake_settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
-            self.settings.ACTIVE_DIRECTORY_TENANT_ID: self.fake_settings.ACTIVE_DIRECTORY_TENANT_ID,
-        }
-        replacements = list(old_to_new_dict.keys())
-
-        # if we have 'val1' and 'val10', we want 'val10' to be replaced first
-        replacements.sort(reverse=True)
-
-        for old_value in replacements:
-            if old_value:
-                new_value = old_to_new_dict[old_value]
-                if old_value != new_value:
-                    if isinstance(val, bytes):
-                        val = val.replace(old_value.encode(), new_value.encode())
-                    else:
-                        val = val.replace(old_value, new_value)
-        return val
-
     def assert_upload_progress(self, size, max_chunk_size, progress, unknown_size=False):
         '''Validates that the progress chunks align with our chunking procedure.'''
         index = 0
@@ -414,27 +245,19 @@ class StorageTestCase(unittest.TestCase):
                 self.assertTrue(i[0] % max_chunk_size == 0 or i[0] % max_chunk_size == small_chunk_size)
                 self.assertEqual(i[1], size)
 
-    def is_file_encryption_enabled(self):
-        return self.settings.IS_SERVER_SIDE_FILE_ENCRYPTION_ENABLED
-
     def generate_oauth_token(self):
-        from azure.identity import ClientSecretCredential
-
-        return ClientSecretCredential(
-            self.settings.ACTIVE_DIRECTORY_TENANT_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET
-        )
+        if self.is_live:
+            from azure.identity import ClientSecretCredential
+            return ClientSecretCredential(
+                self.get_settings_value("TENANT_ID"),
+                self.get_settings_value("CLIENT_ID"),
+                self.get_settings_value("CLIENT_SECRET"),
+            )
+        else:
+            return self.generate_fake_token()
 
     def generate_fake_token(self):
         return FakeTokenCredential()
-
-def record(test):
-    def recording_test(self):
-        with self.recording():
-            test(self)
-    recording_test.__name__ = test.__name__
-    return recording_test
 
 
 def not_for_emulator(test):
