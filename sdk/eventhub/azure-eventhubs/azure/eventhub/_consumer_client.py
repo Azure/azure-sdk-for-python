@@ -187,3 +187,11 @@ class EventHubConsumerClient(EventHubClient):
                 _, ep = self._event_processors.popitem()
                 ep.stop()
             super().close()
+
+
+class Task:
+    def __init__(self, event_processor):
+        self._event_processor = event_processor
+
+    def stop(self):
+        self._event_processor.stop()

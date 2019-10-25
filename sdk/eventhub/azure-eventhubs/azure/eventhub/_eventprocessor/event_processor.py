@@ -78,83 +78,6 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
     def __repr__(self):
         return 'EventProcessor: id {}'.format(self._id)
 
-    def start(self):
-        """Start the EventProcessor.
-
-        The EventProcessor will try to claim and balance partition ownership with other `EventProcessor`
-        and start receiving EventData from EventHub and processing events.
-
-        :return: None
-
-        """
-        log.info("EventProcessor %r is being started", self._id)
-        ownership_manager = OwnershipManager(self._eventhub_client, self._consumer_group_name, self._id,
-                                             self._partition_manager, self._ownership_timeout, self._partition_id)
-        if not self._running:
-            self._running = True
-            while self._running:
-                try:
-                    checkpoints = ownership_manager.get_checkpoints() if self._partition_manager else None
-                    claimed_partition_ids = ownership_manager.claim_ownership()
-                    if claimed_partition_ids:
-                        to_cancel_list = self._working_threads.keys() - claimed_partition_ids
-                        self._create_tasks_for_claimed_ownership(claimed_partition_ids, checkpoints)
-                    else:
-                        log.info("EventProcessor %r hasn't claimed an ownership. It keeps claiming.", self._id)
-                        to_cancel_list = set(self._working_threads.keys())
-                    self._cancel_tasks_for_partitions(to_cancel_list)
-                except Exception as err:  # pylint:disable=broad-except
-                    log.warning("An exception (%r) occurred during balancing and claiming ownership for "
-                                "eventhub %r consumer group %r. Retrying after %r seconds",
-                                err, self._eventhub_name, self._consumer_group_name, self._polling_interval)
-                    '''
-                    ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
-                    when there are load balancing and/or checkpointing (partition_manager isn't None).
-                    They're swallowed here to retry every self._polling_interval seconds. Meanwhile this event processor
-                    won't lose the partitions it has claimed before.
-                    If it keeps failing, other EventProcessors will start to claim ownership of the partitions 
-                    that this EventProcessor is working on. So two or multiple EventProcessors may be working 
-                    on the same partition.
-
-                    Should we raise this exception out to users?
-                    '''
-                    # TODO: This exception handling requires more thinking
-                time.sleep(self._polling_interval)
-
-    def stop(self):
-        """Stop the EventProcessor.
-
-        The EventProcessor will stop receiving events from EventHubs and release the ownership of the partitions
-        it is working on.
-        Other running EventProcessor will take over these released partitions.
-
-        A stopped EventProcessor can be restarted by calling method `start` again.
-
-        :return: None
-
-        """
-        if not self._running:
-            log.info("EventProcessor %r has already been stopped.", self._id)
-            return
-
-        self._running = False
-
-        for _ in range(len(self._working_threads)):
-            partition_id, thread = self._working_threads.popitem()
-            self._threads_stop_flags[partition_id] = True
-            thread.join()
-
-        self._working_threads.clear()
-        self._threads_stop_flags.clear()
-
-        log.info("EventProcessor %r has been stopped.", self._id)
-
-    def get_last_enqueued_event_properties(self, partition_id):
-        if partition_id in self._working_threads and partition_id in self._last_enqueued_event_properties:
-            return self._last_enqueued_event_properties[partition_id]
-        else:
-            raise ValueError("You're not receiving events from partition {}".format(partition_id))
-
     def _cancel_tasks_for_partitions(self, to_cancel_partitions):
         to_stop_partition_threads = []
         for partition_id in to_cancel_partitions:
@@ -291,3 +214,87 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                 close(CloseReason.OWNERSHIP_LOST)
             partition_consumer.close()
             # TODO: remove thread from the working_threads?
+
+    def _start(self):
+        """Start the EventProcessor.
+
+        The EventProcessor will try to claim and balance partition ownership with other `EventProcessor`
+        and start receiving EventData from EventHub and processing events.
+
+        :return: None
+
+        """
+        log.info("EventProcessor %r is being started", self._id)
+        ownership_manager = OwnershipManager(self._eventhub_client, self._consumer_group_name, self._id,
+                                             self._partition_manager, self._ownership_timeout, self._partition_id)
+        if not self._running:
+            self._running = True
+            while self._running:
+                try:
+                    checkpoints = ownership_manager.get_checkpoints() if self._partition_manager else None
+                    claimed_partition_ids = ownership_manager.claim_ownership()
+                    if claimed_partition_ids:
+                        to_cancel_list = self._working_threads.keys() - claimed_partition_ids
+                        self._create_tasks_for_claimed_ownership(claimed_partition_ids, checkpoints)
+                    else:
+                        log.info("EventProcessor %r hasn't claimed an ownership. It keeps claiming.", self._id)
+                        to_cancel_list = set(self._working_threads.keys())
+                    self._cancel_tasks_for_partitions(to_cancel_list)
+                except Exception as err:  # pylint:disable=broad-except
+                    log.warning("An exception (%r) occurred during balancing and claiming ownership for "
+                                "eventhub %r consumer group %r. Retrying after %r seconds",
+                                err, self._eventhub_name, self._consumer_group_name, self._polling_interval)
+                    '''
+                    ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
+                    when there are load balancing and/or checkpointing (partition_manager isn't None).
+                    They're swallowed here to retry every self._polling_interval seconds. Meanwhile this event processor
+                    won't lose the partitions it has claimed before.
+                    If it keeps failing, other EventProcessors will start to claim ownership of the partitions
+                    that this EventProcessor is working on. So two or multiple EventProcessors may be working
+                    on the same partition.
+
+                    Should we raise this exception out to users?
+                    '''
+                    # TODO: This exception handling requires more thinking
+                time.sleep(self._polling_interval)
+
+    def start(self):
+        if not self._running:
+            thread = threading.Thread(target=self._start)
+            thread.start()
+        else:
+            log.info("EventProcessor %r has already started.", self._id)
+
+    def stop(self):
+        """Stop the EventProcessor.
+
+        The EventProcessor will stop receiving events from EventHubs and release the ownership of the partitions
+        it is working on.
+        Other running EventProcessor will take over these released partitions.
+
+        A stopped EventProcessor can be restarted by calling method `start` again.
+
+        :return: None
+
+        """
+        if not self._running:
+            log.info("EventProcessor %r has already been stopped.", self._id)
+            return
+
+        self._running = False
+
+        for _ in range(len(self._working_threads)):
+            partition_id, thread = self._working_threads.popitem()
+            self._threads_stop_flags[partition_id] = True
+            thread.join()
+
+        self._working_threads.clear()
+        self._threads_stop_flags.clear()
+
+        log.info("EventProcessor %r has been stopped.", self._id)
+
+    def get_last_enqueued_event_properties(self, partition_id):
+        if partition_id in self._working_threads and partition_id in self._last_enqueued_event_properties:
+            return self._last_enqueued_event_properties[partition_id]
+        else:
+            raise ValueError("You're not receiving events from partition {}".format(partition_id))
