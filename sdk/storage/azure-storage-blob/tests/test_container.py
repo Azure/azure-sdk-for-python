@@ -958,7 +958,8 @@ class StorageContainerTest(StorageTestCase):
         data = b'hello world'
 
         try:
-            container.get_blob_client('blob1').upload_blob(data)
+            blob_client1 = container.get_blob_client('blob1')
+            blob_client1.upload_blob(data)
             container.get_blob_client('blob2').upload_blob(data)
             container.get_blob_client('blob3').upload_blob(data)
         except:
@@ -966,7 +967,7 @@ class StorageContainerTest(StorageTestCase):
 
         # Act
         response = container.delete_blobs(
-            'blob1',
+            blob_client1.get_blob_properties(),
             'blob2',
             'blob3',
         )
