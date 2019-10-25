@@ -242,7 +242,7 @@ def generate_queue_sas(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_queue_samples_message.py
+        .. literalinclude:: ../samples/queue_samples_message.py
             :start-after: [START queue_client_sas_token]
             :end-before: [END queue_client_sas_token]
             :language: python
