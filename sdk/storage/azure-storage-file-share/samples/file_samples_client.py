@@ -32,7 +32,7 @@ class FileSamples(object):
 
     def simple_file_operations(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file import ShareClient
+        from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "filesamples1")
 
         # Create the share
@@ -73,7 +73,7 @@ class FileSamples(object):
 
     def copy_file_from_url(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file import ShareClient
+        from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "filesamples2")
 
         # Create the share

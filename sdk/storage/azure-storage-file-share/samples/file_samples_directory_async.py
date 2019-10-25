@@ -31,7 +31,7 @@ class DirectorySamplesAsync(object):
 
     async def create_directory_and_file_async(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file.aio import ShareClient
+        from azure.storage.fileshare.aio import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "directorysamples1")
 
         # Create the share
@@ -67,7 +67,7 @@ class DirectorySamplesAsync(object):
 
     async def create_subdirectory_and_file_async(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file.aio import ShareClient
+        from azure.storage.fileshare.aio import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "directorysamples2")
 
         # Create the share
@@ -114,7 +114,7 @@ class DirectorySamplesAsync(object):
 
     async def get_subdirectory_client_async(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file.aio import ShareClient
+        from azure.storage.fileshare.aio import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "directorysamples3")
 
         # Create the share

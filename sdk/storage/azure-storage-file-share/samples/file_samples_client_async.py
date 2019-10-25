@@ -35,7 +35,7 @@ class FileSamplesAsync(object):
 
     async def simple_file_operations_async(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file.aio import ShareClient
+        from azure.storage.fileshare.aio import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "filesamples1")
 
         # Create the share
@@ -77,7 +77,7 @@ class FileSamplesAsync(object):
 
     async def file_copy_from_url_async(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file.aio import ShareClient
+        from azure.storage.fileshare.aio import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "filesamples2")
 
         # Create the share

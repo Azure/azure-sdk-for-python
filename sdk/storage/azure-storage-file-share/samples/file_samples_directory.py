@@ -30,7 +30,7 @@ class DirectorySamples(object):
 
     def create_directory_and_file(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file import ShareClient
+        from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "directorysamples1")
 
         # Create the share
@@ -65,7 +65,7 @@ class DirectorySamples(object):
 
     def create_subdirectory_and_file(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file import ShareClient
+        from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "directorysamples2")
 
         # Create the share
@@ -109,7 +109,7 @@ class DirectorySamples(object):
 
     def get_subdirectory_client(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file import ShareClient
+        from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "directorysamples3")
 
         # Create the share

@@ -32,7 +32,7 @@ class ShareSamplesAsync(object):
 
     async def create_share_snapshot_async(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file.aio import ShareClient
+        from azure.storage.fileshare.aio import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "sharesamples1")
 
         async with share:
@@ -50,7 +50,7 @@ class ShareSamplesAsync(object):
 
     async def set_share_quota_and_metadata_async(self):
         # [START create_share_client_from_conn_string]
-        from azure.storage.file.aio import ShareClient
+        from azure.storage.fileshare.aio import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "sharesamples2")
         # [END create_share_client_from_conn_string]
 
@@ -78,7 +78,7 @@ class ShareSamplesAsync(object):
 
     async def list_directories_and_files_async(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file.aio import ShareClient
+        from azure.storage.fileshare.aio import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "sharesamples3")
 
         # Create the share
@@ -106,7 +106,7 @@ class ShareSamplesAsync(object):
 
     async def get_directory_or_file_client_async(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file.aio import ShareClient
+        from azure.storage.fileshare.aio import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "sharesamples4")
 
         # Get the directory client to interact with a specific directory

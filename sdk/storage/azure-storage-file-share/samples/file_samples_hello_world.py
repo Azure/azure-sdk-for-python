@@ -29,13 +29,13 @@ class HelloWorldSamples(object):
     connection_string = os.getenv('CONNECTION_STRING')
 
     def create_client_with_connection_string(self):
-        # Instantiate the FileServiceClient from a connection string
-        from azure.storage.file import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        # Instantiate the ShareServiceClient from a connection string
+        from azure.storage.fileshare import ShareServiceClient
+        file_service = ShareServiceClient.from_connection_string(self.connection_string)
 
     def create_file_share(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file import ShareClient
+        from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, share_name="helloworld1")
 
         # Create the share
@@ -52,17 +52,17 @@ class HelloWorldSamples(object):
 
     def upload_a_file_to_share(self):
         # Instantiate the ShareClient from a connection string
-        from azure.storage.file import ShareClient
+        from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, share_name="helloworld2")
 
         # Create the share
         share.create_share()
 
         try:
-            # Instantiate the FileClient from a connection string
+            # Instantiate the ShareFileClient from a connection string
             # [START create_file_client]
-            from azure.storage.file import FileClient
-            file = FileClient.from_connection_string(
+            from azure.storage.fileshare import ShareFileClient
+            file = ShareFileClient.from_connection_string(
                 self.connection_string,
                 share_name="helloworld2",
                 file_path="myfile")

@@ -25,18 +25,18 @@ SOURCE_FILE = './SampleSource.txt'
 DEST_FILE = './SampleDestination.txt'
 
 
-class FileServiceSamples(object):
+class FileShareServiceSamples(object):
 
     connection_string = os.getenv('CONNECTION_STRING')
 
     def file_service_properties(self):
-        # Instantiate the FileServiceClient from a connection string
-        from azure.storage.file import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        # Instantiate the ShareServiceClient from a connection string
+        from azure.storage.fileshare import ShareServiceClient
+        file_service = ShareServiceClient.from_connection_string(self.connection_string)
 
         # [START set_service_properties]
         # Create service properties
-        from azure.storage.file import Metrics, CorsRule, RetentionPolicy
+        from azure.storage.fileshare import Metrics, CorsRule, RetentionPolicy
 
         # Create metrics for requests statistics
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
@@ -68,9 +68,9 @@ class FileServiceSamples(object):
         # [END get_service_properties]
 
     def list_shares_in_service(self):
-        # Instantiate the FileServiceClient from a connection string
-        from azure.storage.file import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        # Instantiate the ShareServiceClient from a connection string
+        from azure.storage.fileshare import ShareServiceClient
+        file_service = ShareServiceClient.from_connection_string(self.connection_string)
 
         # [START fsc_create_shares]
         file_service.create_share(share_name="fileshare1")
@@ -92,8 +92,8 @@ class FileServiceSamples(object):
 
     def get_share_client(self):
         # [START get_share_client]
-        from azure.storage.file import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        from azure.storage.fileshare import ShareServiceClient
+        file_service = ShareServiceClient.from_connection_string(self.connection_string)
 
         # Get a share client to interact with a specific share
         share = file_service.get_share_client("fileshare2")
@@ -101,7 +101,7 @@ class FileServiceSamples(object):
 
 
 if __name__ == '__main__':
-    sample = FileServiceSamples()
+    sample = FileShareServiceSamples()
     sample.file_service_properties()
     sample.list_shares_in_service()
     sample.get_share_client()
