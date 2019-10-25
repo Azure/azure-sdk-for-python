@@ -51,3 +51,9 @@ def get_package_details(setup_filename):
     _, kwargs = global_vars["__setup_calls__"][0]
 
     return kwargs["name"], kwargs["version"]
+
+def get_package_namespace(setup_filename):
+    # traverse until meeting an improperly formatted __init__
+    pass
+
+    

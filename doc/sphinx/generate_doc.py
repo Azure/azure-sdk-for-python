@@ -5,7 +5,7 @@ from pathlib import Path
 import os
 
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), './package_service_mapping.json')
-GENERATED_PACKAGES_LIST_FILE = 'autorest_generated_packages.rst'
+GENERATED_PACKAGES_LIST_FILE = 'toc_tree.rst'
 
 _LOGGER = logging.getLogger(__name__)
 
