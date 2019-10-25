@@ -91,6 +91,14 @@ class EventHubConsumerClient(EventHubClient):
         self._event_processors = dict()
         self._closed = False
 
+    def _stop_eventprocessor(self, event_processor, consumer_group, partition_id):
+        with self._lock:
+            event_processor.stop()
+            if partition_id and (consumer_group, partition_id) in self._event_processors:
+                del self._event_processors[(consumer_group, partition_id)]
+            elif (consumer_group, '-1') in self._event_processors:
+                del self._event_processors[(consumer_group, "-1")]
+
     def receive(
             self, event_handler, consumer_group, *, partition_id=None,
             owner_level=None, prefetch=None, track_last_enqueued_event_properties=False,
@@ -144,15 +152,9 @@ class EventHubConsumerClient(EventHubClient):
                 self._event_processors[(consumer_group, partition_id)] = event_processor
             else:
                 self._event_processors[(consumer_group, "-1")] = event_processor
-        try:
+
             event_processor.start()
-        finally:
-            with self._lock:
-                event_processor.stop()
-                if partition_id and (consumer_group, partition_id) in self._event_processors:
-                    del self._event_processors[(consumer_group, partition_id)]
-                elif (consumer_group, '-1') in self._event_processors:
-                    del self._event_processors[(consumer_group, "-1")]
+            return Task(self, event_processor)
 
     def get_last_enqueued_event_properties(self, consumer_group: str, partition_id: str):
         """The latest enqueued event information of a partition.
@@ -190,8 +192,12 @@ class EventHubConsumerClient(EventHubClient):
 
 
 class Task:
-    def __init__(self, event_processor):
+    def __init__(self, consumer_client, event_processor):
+        self._consumer_client = consumer_client
         self._event_processor = event_processor
+        self._partition_id = event_processor._partition_id
+        self._consumer_group_name = event_processor._consumer_group_name
 
-    def stop(self):
-        self._event_processor.stop()
+    def cancel(self):
+        self._consumer_client._stop_eventprocessor(self._event_processor, self._consumer_group_name, self._partition_id)
+        log.info("Task of EventProcessor %r has been cancelled successfully.", self._event_processor._id)

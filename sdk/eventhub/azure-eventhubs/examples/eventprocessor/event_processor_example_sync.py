@@ -1,7 +1,6 @@
 import logging
 import os
 import time
-import threading
 from azure.eventhub import EventHubConsumerClient, FileBasedPartitionManager, InMemoryPartitionManager
 
 RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
@@ -12,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 def do_operation(event):
-    print(event)
+    pass
 
 
 def process_events(partition_context, events):
@@ -27,28 +26,18 @@ def process_events(partition_context, events):
 
 
 if __name__ == '__main__':
-    partition_manager = FileBasedPartitionManager('consumer_pm_store')
-    # partition_manager = InMemoryPartitionManager()
+    #partition_manager = FileBasedPartitionManager('consumer_pm_store')
+    partition_manager = InMemoryPartitionManager()
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR, partition_manager=partition_manager, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL
     )
-    work_thread_0 = threading.Thread(target=client.receive,
-                                     args=(process_events, '$Default'), kwargs={'partition_id': '0'})
-    work_thread_1 = threading.Thread(target=client.receive,
-                                     args=(process_events, '$Default'), kwargs={'partition_id': '1'})
-    try:
 
-        work_thread_0.start()
-        work_thread_1.start()
+    try:
+        task = client.receive(process_events, '$Default')
         time.sleep(5)
-        client.close()
-        work_thread_0.join()
-        work_thread_1.join()
+        task.cancel()
 
     except KeyboardInterrupt:
-        print('KeyboardInterrupt')
-        client.close()
-        work_thread_0.join()
-        work_thread_1.join()
+        task.cancel()
 
 
