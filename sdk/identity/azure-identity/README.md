@@ -127,8 +127,7 @@ variables:
 >|`AZURE_CLIENT_ID`|id of an Azure Active Directory application
 >|`AZURE_USERNAME`|a username (usually an email address)
 >|`AZURE_PASSWORD`|that user's password
-
-> ***Note**: username/password authentication is not supported in the async API (`azure.identity.aio`)*
+> Note: username/password authentication is not supported by the async API (`azure.identity.aio`)
 
 Configuration is attempted in the above order. For example, if values for a
 client secret and certificate are both present, the client secret will be used.
