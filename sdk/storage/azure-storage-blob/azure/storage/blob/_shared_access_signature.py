@@ -333,7 +333,7 @@ def generate_account_sas(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_blob_samples_authentication.py
+        .. literalinclude:: ../samples/blob_samples_authentication.py
             :start-after: [START create_sas_token]
             :end-before: [END create_sas_token]
             :language: python
@@ -437,7 +437,7 @@ def generate_container_sas(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_blob_samples_containers.py
+        .. literalinclude:: ../samples/blob_samples_containers.py
             :start-after: [START generate_sas_token]
             :end-before: [END generate_sas_token]
             :language: python
