@@ -18,11 +18,12 @@ from azure.storage.blob.aio import (
     ContainerClient,
     BlobClient,
 )
+
 from azure.storage.blob._shared.policies import StorageContentValidation
-from testcase import (
-    StorageTestCase,
-    record,
-    TestMode
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from testcase import GlobalStorageAccountPreparer
+from asyncblobtestcase import (
+    AsyncBlobTestCase,
 )
 
 # ------------------------------------------------------------------------------
@@ -42,18 +43,13 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageBlockBlobTestAsync(StorageTestCase):
-
-    def setUp(self):
-        super(StorageBlockBlobTestAsync, self).setUp()
-        url = self._get_account_url()
-        credential = self._get_shared_key_credential()
-
+class StorageBlockBlobTestAsync(AsyncBlobTestCase):
+    async def _setup(self, name, key):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         self.bsc = BlobServiceClient(
-            url,
-            credential=credential,
+            self._account_url(name),
+            credential=key,
             connection_data_block_size=4 * 1024,
             max_single_put_size=32 * 1024,
             max_block_size=4 * 1024,
@@ -67,31 +63,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         blob = self.bsc.get_blob_client(self.container_name, self.source_blob_name)
 
-        # generate a SAS so that it is accessible with a URL
-        sas_token = generate_blob_sas(
-            blob.account_name,
-            blob.container_name,
-            blob.blob_name,
-            snapshot=blob.snapshot,
-            account_key=blob.credential.account_key,
-            permission=BlobSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1),
-        )
-        self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
-
-    def tearDown(self):
-        if not self.is_playback():
-            loop = asyncio.get_event_loop()
-            try:
-                loop.run_until_complete(self.bsc.delete_container(self.container_name))
-            except:
-                pass
-
-        return super(StorageBlockBlobTestAsync, self).tearDown()
-
-    async def _setup(self):
-        blob = self.bsc.get_blob_client(self.container_name, self.source_blob_name)
-        if not self.is_playback():
+        if self.is_live:
             try:
                 await self.bsc.create_container(self.container_name)
             except:
@@ -110,14 +82,16 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         )
         self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
 
-    async def _test_put_block_from_url_and_commit_async(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_put_block_from_url_and_commit_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        split = 4 * 1024
+        await self._setup(storage_account.name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
         # Act part 1: make put block from url calls
+        split = 4 * 1024
         futures = [
             dest_blob.stage_block_from_url(
                 block_id=1,
@@ -144,14 +118,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(content, self.source_blob_data)
         self.assertEqual(len(content), 8 * 1024)
 
-    @record
-    def test_put_block_from_url_and_commit_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_block_from_url_and_commit_async())
-
-    async def _test_put_block_from_url_and_validate_content_md5_async(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_put_block_from_url_and_vldte_content_md5(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
         src_md5 = StorageContentValidation.get_content_md5(self.source_blob_data)
@@ -185,14 +156,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(len(uncommitted), 1)
         self.assertEqual(len(committed), 0)
 
-    @record
-    def test_put_block_from_url_and_validate_content_md5_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_block_from_url_and_validate_content_md5_async())
-
-    async def _test_copy_blob_sync_async(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_copy_blob_sync_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
@@ -207,8 +175,3 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         # Verify content
         content = await (await dest_blob.download_blob()).readall()
         self.assertEqual(self.source_blob_data, content)
-
-    @record
-    def test_copy_blob_sync_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_copy_blob_sync_async())

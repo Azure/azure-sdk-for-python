@@ -14,46 +14,40 @@ from azure.storage.blob.aio import (
     ContainerClient,
     BlobClient,
 )
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import ResourceExistsError, HttpResponseError
-from testcase import (
-    StorageTestCase,
-    ResponseCallback,
-    record,
-    TestMode
+from azure.core.pipeline.transport import AioHttpTransport
+from multidict import CIMultiDict, CIMultiDictProxy
+from testcase import ResponseCallback, GlobalStorageAccountPreparer
+from asyncblobtestcase import (
+    AsyncBlobTestCase,
 )
 
 # test constants
 PUT_BLOCK_SIZE = 4 * 1024
 
+class AiohttpTestTransport(AioHttpTransport):
+    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
+    """
 
-class StorageBlobRetryTestAsync(StorageTestCase):
+    async def send(self, request, **config):
+        response = await super(AiohttpTestTransport, self).send(request, **config)
+        if not isinstance(response.headers, CIMultiDictProxy):
+            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
+            response.content_type = response.headers.get("content-type")
+        return response
 
-    def setUp(self):
-        super(StorageBlobRetryTestAsync, self).setUp()
 
-        url = self._get_account_url()
-        credential = self._get_shared_key_credential()
-        retry = ExponentialRetry(initial_backoff=1, increment_base=2, retry_total=3)
-
-        self.bs = BlobServiceClient(url, credential=credential, retry_policy=retry)
-        self.container_name = self.get_resource_name('utcontainer')
-
-    def tearDown(self):
-        if not self.is_playback():
-            loop = asyncio.get_event_loop()
-            try:
-                loop.run_until_complete(self.bs.delete_container(self.container_name))
-            except:
-                pass
-
-        return super(StorageBlobRetryTestAsync, self).tearDown()
-
+class StorageBlobRetryTestAsync(AsyncBlobTestCase):
     # --Helpers-----------------------------------------------------------------
+    def setUp(self):
+        self.retry = ExponentialRetry(initial_backoff=1, increment_base=2, retry_total=3)
 
-    async def _setup(self):
-        if not self.is_playback():
+    async def _setup(self, bsc):
+        self.container_name = self.get_resource_name('utcontainer')
+        if self.is_live:
             try:
-                await self.bs.create_container(self.container_name)
+                await bsc.create_container(self.container_name)
             except ResourceExistsError:
                 pass
 
@@ -73,21 +67,27 @@ class StorageBlobRetryTestAsync(StorageTestCase):
         def tell(self):
             return self.wrapped_stream.tell()
 
-    async def _test_retry_put_block_with_seekable_stream_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_retry_put_block_with_seekable_stream_async(self, resource_group, location, storage_account,
+                                                              storage_account_key):
+        pytest.skip("Aiohttp closes stream after request - cannot rewind.")
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
-        await self._setup()
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
+                                retry_policy=self.retry, transport=AiohttpTestTransport())
+        await self._setup(bsc)
         blob_name = self.get_resource_name('blob')
         data = self.get_random_bytes(PUT_BLOCK_SIZE)
         data_stream = BytesIO(data)
 
         # rig the response so that it fails for a single time
         responder = ResponseCallback(status=201, new_status=408)
-        
+
         # Act
-        blob = self.bs.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
         await blob.stage_block(1, data_stream, raw_response_hook=responder.override_first_status)
 
         # Assert
@@ -104,19 +104,17 @@ class StorageBlobRetryTestAsync(StorageTestCase):
         content = await (await blob.download_blob()).readall()
         self.assertEqual(content, data)
 
-    def test_retry_put_block_with_seekable_stream_async(self):
-        pytest.skip("Aiohttp closes stream after request - cannot rewind.")
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_retry_put_block_with_seekable_stream_async())
-
-    async def _test_retry_put_block_with_non_seekable_stream_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_retry_put_block_with_non_seekable_stream_async(self, resource_group, location, storage_account,
+                                                                  storage_account_key):
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
-        await self._setup()
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
+                                retry_policy=self.retry, transport=AiohttpTestTransport())
+        await self._setup(bsc)
         blob_name = self.get_resource_name('blob')
         data = self.get_random_bytes(PUT_BLOCK_SIZE)
         data_stream = self.NonSeekableStream(BytesIO(data))
@@ -125,7 +123,7 @@ class StorageBlobRetryTestAsync(StorageTestCase):
         responder = ResponseCallback(status=201, new_status=408)
 
         # Act
-        blob = self.bs.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
         # Note: put_block transforms non-seekable streams into byte arrays before handing it off to the executor
         await blob.stage_block(1, data_stream, raw_response_hook=responder.override_first_status)
 
@@ -143,18 +141,17 @@ class StorageBlobRetryTestAsync(StorageTestCase):
         content = await (await blob.download_blob()).readall()
         self.assertEqual(content, data)
 
-    def test_retry_put_block_with_non_seekable_stream_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_retry_put_block_with_non_seekable_stream_async())
-
-    async def _test_retry_put_block_with_non_seekable_stream_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_retry_put_block_with_non_seekable_stream_fail_async(self, resource_group, location, storage_account,
+                                                                       storage_account_key):
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
-        await self._setup()
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
+                                retry_policy=self.retry, transport=AiohttpTestTransport())
+        await self._setup(bsc)
         blob_name = self.get_resource_name('blob')
         data = self.get_random_bytes(PUT_BLOCK_SIZE)
         data_stream = self.NonSeekableStream(BytesIO(data))
@@ -163,16 +160,11 @@ class StorageBlobRetryTestAsync(StorageTestCase):
         responder = ResponseCallback(status=201, new_status=408)
 
         # Act
-        blob = self.bs.get_blob_client(self.container_name, blob_name)
-        
+        blob = bsc.get_blob_client(self.container_name, blob_name)
+
         with self.assertRaises(HttpResponseError) as error:
-            await blob.stage_block(1, data_stream, length=PUT_BLOCK_SIZE, raw_response_hook=responder.override_first_status)
-    
+            await blob.stage_block(1, data_stream, length=PUT_BLOCK_SIZE,
+                                   raw_response_hook=responder.override_first_status)
+
         # Assert
         self.assertEqual(error.exception.response.status_code, 408)
-
-    def test_retry_put_block_with_non_seekable_stream_fail_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_retry_put_block_with_non_seekable_stream_fail_async())
