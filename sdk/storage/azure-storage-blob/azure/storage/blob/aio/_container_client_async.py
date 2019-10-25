@@ -30,7 +30,7 @@ from .._generated.models import (
     SignedIdentifier)
 from .._deserialize import deserialize_container_properties
 from .._serialize import get_modify_conditions
-from .._container_client import ContainerClient as ContainerClientBase
+from .._container_client import ContainerClient as ContainerClientBase, _get_blob_name
 from .._lease import get_access_conditions
 from .._models import ContainerProperties, BlobProperties, BlobType  # pylint: disable=unused-import
 from ._models import BlobPropertiesPaged, BlobPrefix
@@ -764,7 +764,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         Soft-deleted blobs or snapshots can be restored using :func:`~BlobClient.undelete()`
 
         :param blobs: The blob names with which to interact.
-        :type blobs: str
+        :type blobs: str or ~azure.storage.blob.BlobProperties
         :param str delete_snapshots:
             Required if a blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -816,9 +816,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
         reqs = []
         for blob in blobs:
+            blob_name = _get_blob_name(blob)
             req = HttpRequest(
                 "DELETE",
-                "/{}/{}".format(self.container_name, blob),
+                "/{}/{}".format(self.container_name, blob_name),
                 headers=header_parameters
             )
             req.format_parameters(query_parameters)
@@ -847,7 +848,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             for at least six months with flexible latency requirements.
         :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
         :param blobs: The blobs with which to interact.
-        :type blobs: str
+        :type blobs: str or ~azure.storage.blob.BlobProperties
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword lease:
@@ -877,9 +878,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
         reqs = []
         for blob in blobs:
+            blob_name = _get_blob_name(blob)
             req = HttpRequest(
                 "PUT",
-                "/{}/{}".format(self.container_name, blob),
+                "/{}/{}".format(self.container_name, blob_name),
                 headers=header_parameters
             )
             req.format_parameters(query_parameters)
@@ -934,9 +936,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
 
         reqs = []
         for blob in blobs:
+            blob_name = _get_blob_name(blob)
             req = HttpRequest(
                 "PUT",
-                "/{}/{}".format(self.container_name, blob),
+                "/{}/{}".format(self.container_name, blob_name),
                 headers=header_parameters
             )
             req.format_parameters(query_parameters)
@@ -971,10 +974,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :dedent: 8
                 :caption: Get the blob client.
         """
-        try:
-            blob_name = blob.name
-        except AttributeError:
-            blob_name = blob
+        blob_name = _get_blob_name(blob)
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
