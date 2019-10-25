@@ -8,37 +8,35 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - b3f0141c-8eca-11e9-94b3-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:34:46 GMT
+      - Fri, 25 Oct 2019 18:09:18 GMT
       x-ms-version:
-      - '2018-03-28'
-    method: HEAD
-    uri: https://remotestoragename.blob.core.windows.net/utcontainer20760f42/blob20760f42
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer20760f42?timeout=5&restype=container
   response:
     body:
       string: ''
     headers:
-      Date:
-      - Fri, 14 Jun 2019 17:34:47 GMT
-      Server:
+      content-length:
+      - '0'
+      date:
+      - Fri, 25 Oct 2019 18:09:18 GMT
+      etag:
+      - '"0x8D759767411354E"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:09:18 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - BlobNotFound
-      x-ms-request-id:
-      - 1826f809-f01e-0097-31d7-2207c9000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
-      code: 404
-      message: The specified blob does not exist.
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
@@ -49,113 +47,27 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 72917d40-8ed3-11e9-8618-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 18:37:22 GMT
+      - Fri, 25 Oct 2019 18:09:18 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/utcontainer20760f42/blob20760f42
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer20760f42/blob20760f42
   response:
     body:
       string: ''
     headers:
-      Date:
-      - Fri, 14 Jun 2019 18:37:22 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:09:18 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
-      Vary:
-      - Origin
       x-ms-error-code:
       - BlobNotFound
-      x-ms-request-id:
-      - 913b71de-e01e-0066-3fe0-22d65a000000
       x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 404
-      message: The specified blob does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 993be31e-8eda-11e9-b304-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:28:33 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: HEAD
-    uri: https://storagename.blob.core.windows.net/utcontainer20760f42/blob20760f42
-  response:
-    body:
-      string: ''
-    headers:
-      Date:
-      - Fri, 14 Jun 2019 19:28:32 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - BlobNotFound
-      x-ms-request-id:
-      - 20468c11-c01e-009f-7fe7-221cba000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 404
-      message: The specified blob does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 370df5d8-8edc-11e9-9011-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:40:07 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: HEAD
-    uri: https://storagename.blob.core.windows.net/utcontainer20760f42/blob20760f42
-  response:
-    body:
-      string: ''
-    headers:
-      Date:
-      - Fri, 14 Jun 2019 19:40:07 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - BlobNotFound
-      x-ms-request-id:
-      - 96189a97-b01e-00d4-45e8-222d20000000
-      x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 404
       message: The specified blob does not exist.

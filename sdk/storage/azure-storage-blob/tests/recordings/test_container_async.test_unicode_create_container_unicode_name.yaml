@@ -3,37 +3,24 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 67351018-b4d5-11e9-a3d4-b831b58100e8
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 02 Aug 2019 03:27:06 GMT
+      - Fri, 25 Oct 2019 18:01:00 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=container
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
-        specifed resource name contains invalid characters.\nRequestId:cd9b16ad-701e-00af-3fe2-484690000000\nTime:2019-08-02T03:27:06.5088537Z</Message></Error>"
+        specifed resource name contains invalid characters.\nRequestId:ca6dc299-001e-0028-485e-8bdf74000000\nTime:2019-10-25T18:01:00.0182555Z</Message></Error>"
     headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '243'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Fri, 02 Aug 2019 03:27:05 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      content-length: '243'
+      content-type: application/xml
+      date: Fri, 25 Oct 2019 18:00:59 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: InvalidResourceName
-      x-ms-request-id: cd9b16ad-701e-00af-3fe2-484690000000
-      x-ms-version: '2018-03-28'
+      x-ms-version: '2019-02-02'
     status:
       code: 400
       message: The specifed resource name contains invalid characters.
@@ -41,7 +28,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - amqptest.blob.core.windows.net
+        - pyacrstoragekzoj3d7n4a5m.blob.core.windows.net
         - /%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C
         - restype=container
         - ''

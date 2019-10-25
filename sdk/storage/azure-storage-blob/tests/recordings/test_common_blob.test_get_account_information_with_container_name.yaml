@@ -8,39 +8,35 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 30562fd2-8ecb-11e9-b390-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:38:15 GMT
+      - Fri, 25 Oct 2019 18:13:11 GMT
       x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://remotestoragename.blob.core.windows.net/missing?restype=account&comp=properties
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer71971ac2?timeout=5&restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 14 Jun 2019 17:38:15 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:13:11 GMT
+      etag:
+      - '"0x8D75976FF196286"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:13:11 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-account-kind:
-      - StorageV2
-      x-ms-request-id:
-      - 9184d1b4-e01e-0088-44d7-22dcd9000000
-      x-ms-sku-name:
-      - Standard_RAGRS
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
-      code: 200
-      message: OK
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
@@ -51,35 +47,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 82ae0b66-8ed4-11e9-87b5-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 18:44:58 GMT
+      - Fri, 25 Oct 2019 18:13:11 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: GET
-    uri: https://storagename.blob.core.windows.net/missing?restype=account&comp=properties
+    uri: https://blobstoragename.blob.core.windows.net/missing?restype=account&comp=properties
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 14 Jun 2019 18:44:58 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:13:11 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
       x-ms-account-kind:
       - StorageV2
-      x-ms-request-id:
-      - 98937ed8-201e-0095-13e1-220533000000
       x-ms-sku-name:
-      - Standard_RAGRS
+      - Standard_LRS
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
