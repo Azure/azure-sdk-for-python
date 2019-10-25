@@ -66,14 +66,14 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_queue_samples_authentication_async.py
+        .. literalinclude:: ../samples/queue_samples_authentication_async.py
             :start-after: [START async_create_queue_service_client]
             :end-before: [END async_create_queue_service_client]
             :language: python
             :dedent: 8
             :caption: Creating the QueueServiceClient with an account url and credential.
 
-        .. literalinclude:: ../tests/test_queue_samples_authentication_async.py
+        .. literalinclude:: ../samples/queue_samples_authentication_async.py
             :start-after: [START async_create_queue_service_client_token]
             :end-before: [END async_create_queue_service_client_token]
             :language: python
@@ -145,7 +145,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+            .. literalinclude:: ../samples/queue_samples_service_async.py
                 :start-after: [START async_get_queue_service_properties]
                 :end-before: [END async_get_queue_service_properties]
                 :language: python
@@ -196,7 +196,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+            .. literalinclude:: ../samples/queue_samples_service_async.py
                 :start-after: [START async_set_queue_service_properties]
                 :end-before: [END async_set_queue_service_properties]
                 :language: python
@@ -243,7 +243,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+            .. literalinclude:: ../samples/queue_samples_service_async.py
                 :start-after: [START async_qsc_list_queues]
                 :end-before: [END async_qsc_list_queues]
                 :language: python
@@ -287,7 +287,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+            .. literalinclude:: ../samples/queue_samples_service_async.py
                 :start-after: [START async_qsc_create_queue]
                 :end-before: [END async_qsc_create_queue]
                 :language: python
@@ -327,7 +327,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+            .. literalinclude:: ../samples/queue_samples_service_async.py
                 :start-after: [START async_qsc_delete_queue]
                 :end-before: [END async_qsc_delete_queue]
                 :language: python
@@ -354,7 +354,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service_async.py
+            .. literalinclude:: ../samples/queue_samples_service_async.py
                 :start-after: [START async_get_queue_client]
                 :end-before: [END async_get_queue_client]
                 :language: python

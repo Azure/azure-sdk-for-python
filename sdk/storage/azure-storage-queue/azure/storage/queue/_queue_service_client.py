@@ -63,14 +63,14 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_queue_samples_authentication.py
+        .. literalinclude:: ../samples/queue_samples_authentication.py
             :start-after: [START create_queue_service_client]
             :end-before: [END create_queue_service_client]
             :language: python
             :dedent: 8
             :caption: Creating the QueueServiceClient with an account url and credential.
 
-        .. literalinclude:: ../tests/test_queue_samples_authentication.py
+        .. literalinclude:: ../samples/queue_samples_authentication.py
             :start-after: [START create_queue_service_client_token]
             :end-before: [END create_queue_service_client_token]
             :language: python
@@ -124,7 +124,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_authentication.py
+            .. literalinclude:: ../samples/queue_samples_authentication.py
                 :start-after: [START auth_from_connection_string]
                 :end-before: [END auth_from_connection_string]
                 :language: python
@@ -185,7 +185,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
+            .. literalinclude:: ../samples/queue_samples_service.py
                 :start-after: [START get_queue_service_properties]
                 :end-before: [END get_queue_service_properties]
                 :language: python
@@ -236,7 +236,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
+            .. literalinclude:: ../samples/queue_samples_service.py
                 :start-after: [START set_queue_service_properties]
                 :end-before: [END set_queue_service_properties]
                 :language: python
@@ -284,7 +284,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
+            .. literalinclude:: ../samples/queue_samples_service.py
                 :start-after: [START qsc_list_queues]
                 :end-before: [END qsc_list_queues]
                 :language: python
@@ -328,7 +328,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
+            .. literalinclude:: ../samples/queue_samples_service.py
                 :start-after: [START qsc_create_queue]
                 :end-before: [END qsc_create_queue]
                 :language: python
@@ -368,7 +368,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
+            .. literalinclude:: ../samples/queue_samples_service.py
                 :start-after: [START qsc_delete_queue]
                 :end-before: [END qsc_delete_queue]
                 :language: python
@@ -395,7 +395,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_service.py
+            .. literalinclude:: ../samples/queue_samples_service.py
                 :start-after: [START get_queue_client]
                 :end-before: [END get_queue_client]
                 :language: python
