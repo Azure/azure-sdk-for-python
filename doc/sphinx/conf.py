@@ -58,7 +58,17 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.doctes
               'sphinx.ext.viewcode', 'sphinx.ext.intersphinx', 'sphinx.ext.napoleon']
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3.7', None)
+    # Dependencies
+    'python': ('https://docs.python.org/3.8', None),
+    'msrestazure': ('http://msrestazure.readthedocs.io/en/latest/', None),
+    'msrest': ('http://msrest.readthedocs.io/en/latest/', None),
+    'requests': ('https://requests.kennethreitz.org/en/master/', None),
+    'aiohttp': ('https://aiohttp.readthedocs.io/en/stable/', None),
+    'trio': ('https://trio.readthedocs.io/en/stable/', None),
+    'msal': ('https://msal-python.readthedocs.io/en/latest/', None),
+    # Azure packages
+    'azure-core': ('https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/1.0.0/', None),
+    'azure-identity': ('https://azuresdkdocs.blob.core.windows.net/$web/python/azure-identity/1.0.0/', None),
 }
 
 autodoc_member_order = 'groupwise'
