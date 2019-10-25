@@ -441,7 +441,7 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def backup_key(self, name, **kwargs):
         # type: (str, **Any) -> bytes
-        """Back up a key in a protected form useable only by Azure Key Vault. Requires key/backup permission.
+        """Back up a key in a protected form useable only by Azure Key Vault. Requires keys/backup permission.
 
         This is intended to allow copying a key from one vault to another. Both vaults must be owned by the same Azure
         subscription. Also, backup / restore cannot be performed across geopolitical boundaries. For example, a backup
