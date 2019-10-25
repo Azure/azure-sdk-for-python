@@ -32,28 +32,6 @@ In summary, some modules were incorrectly visible/importable and have been renam
 
 Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
 
-2.2.0 (2019-05-23)
-++++++++++++++++++
-
-**Breaking changes**
-
-- Operation EventSubscriptionsOperations.list_regional_by_subscription_for_topic_type has a new signature
-- Operation EventSubscriptionsOperations.list_regional_by_subscription has a new signature
-- Operation EventSubscriptionsOperations.list_regional_by_resource_group_for_topic_type has a new signature
-- Operation EventSubscriptionsOperations.list_regional_by_resource_group has a new signature
-- Operation EventSubscriptionsOperations.list_global_by_subscription_for_topic_type has a new signature
-- Operation EventSubscriptionsOperations.list_global_by_subscription has a new signature
-- Operation EventSubscriptionsOperations.list_global_by_resource_group_for_topic_type has a new signature
-- Operation EventSubscriptionsOperations.list_global_by_resource_group has a new signature
-- Operation EventSubscriptionsOperations.list_by_resource has a new signature
-- Operation EventSubscriptionsOperations.list_by_domain_topic has a new signature
-- Model EventSubscription no longer has parameter event_delivery_schema
-- Model EventSubscriptionUpdateParameters no longer has parameter event_delivery_schema
-- Model Domain no longer has parameter input_schema
-- Model Domain no longer has parameter input_schema_mapping
-- Model Topic no longer has parameter input_schema
-- Model Topic no longer has parameter input_schema_mapping
-
 2.1.0 (2019-05-22)
 ++++++++++++++++++
 
