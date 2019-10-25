@@ -204,15 +204,11 @@ credential = DefaultAzureCredential()
 
 key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
-# Clients may specify additional application-specific metadata in the form of tags.
-tags = {"foo": "updated tag"}
-
-updated_key = key_client.update_key_properties("key-name", tags=tags)
+# we will now disable the key for further use
+updated_key = key_client.update_key_properties("key-name", enabled=False)
 
 print(updated_key.name)
-print(updated_key.properties.version)
-print(updated_key.properties.updated_on)
-print(updated_key.properties.tags)
+print(updated_key.properties.enabled)
 ```
 
 ### Delete a Key
@@ -234,7 +230,7 @@ print(deleted_key.name)
 print(deleted_key.deleted_date)
 ```
 ### List keys
-[`list_properties_of_keys`](https://aka.ms/azsdk-python-keyvault-keys-list-properties-keys-ref) example lists the
+[`list_properties_of_keys`](https://aka.ms/azsdk-python-keyvault-keys-list-properties-keys-ref) lists the
 properties of all of the keys in the client's vault.
 
 ```python
@@ -306,7 +302,7 @@ print(ec_key.key_type)
 ```
 
 ### Asynchronously list keys
-[`list_properties_of_keys`](https://aka.ms/azsdk-python-keyvault-keys-async-list-properties-keys-ref) example lists the
+[`list_properties_of_keys`](https://aka.ms/azsdk-python-keyvault-keys-async-list-properties-keys-ref) lists the
 properties of all of the keys in the client's vault.
 
 ```python
