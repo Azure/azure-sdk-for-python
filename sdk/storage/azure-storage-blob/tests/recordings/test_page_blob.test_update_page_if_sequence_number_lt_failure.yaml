@@ -11,37 +11,109 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 25 Oct 2019 18:09:33 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerff6a18db?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 25 Oct 2019 18:09:33 GMT
+      etag:
+      - '"0x8D759767D3E5209"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:09:33 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 25 Oct 2019 18:09:34 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainersourceff6a18db?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 25 Oct 2019 18:09:33 GMT
+      etag:
+      - '"0x8D759767D46B804"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:09:33 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-blob-content-length:
       - '512'
       x-ms-blob-sequence-number:
       - '10'
       x-ms-blob-type:
       - PageBlob
-      x-ms-client-request-id:
-      - 2e54ff14-e48e-11e9-ae0b-001a7dda7113
       x-ms-date:
-      - Tue, 01 Oct 2019 20:58:12 GMT
+      - Fri, 25 Oct 2019 18:09:34 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainerff6a18db/blobff6a18db
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerff6a18db/blobff6a18db
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Tue, 01 Oct 2019 20:58:12 GMT
-      ETag:
-      - '"0x8D746B212C3BE01"'
-      Last-Modified:
-      - Tue, 01 Oct 2019 20:58:12 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:09:33 GMT
+      etag:
+      - '"0x8D759767D64E008"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:09:34 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - be598a5d-601e-0010-5b9a-785753000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -50,16 +122,7 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: !!binary |
-      P8kKJsHpAt/3cs14r7vPMeHn5j8SJoREiuQbB9DtdmU3fu012TdXM05dxf2tJdz6xfuHlQ4xSGGU
-      Dtre0fm1K4x4KslyLm5iqyq5Cr1qvYsfwNbT4cUUefgurTke3YFg60VHhmATmiiH3/ULM4k4rToF
-      HRecVOxFXkSevpApY8jVBGVtUB6ydWhF8G/P5wU+tjeMhLwIxOzc0PE7uSQPbJcb1vwfeDjKG7We
-      SG46SPR+OsheFiqTygbyuFYJlw3hDIjvsbiyKKg7TYe3hVMnNf7lNjh4kM+AOdWZ7oY8fPdpn+vT
-      VlwfeXDvQbHbSHf1zyNAvqrGKPhMGj5IQK5GUOHj7p076/ryvraNUgr7kisnY+29J202GTcw5mhU
-      XlcLrKb87dCjTO05ZsE/fCjdOlZfsaLxNIY+6bvXSHAglHXnymrwqFsywsHQd/HBx/bcLQ8sLs4V
-      ja1KhiKJnQTsxiC2C3ga6emEvKVDACEnbx4qpZNZSrj6eyWAhCpXB+9dG/7ezvV8g/k5jJMho+HN
-      hwIGcZnuBo3AFQwd8nakn84th0LGhc3JCXCfYUjYBQ1nyPH0q01g9em+0i8HQFWkOy8Ttmdk0AZX
-      1TtnP/FjARu3AIMNqPueEKYIEjS0+SUxt6KM2jKt5mjsloR94UQoYlFaXsDugc2Pjrnfrawlrzo=
+    body: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     headers:
       Accept:
       - '*/*'
@@ -72,11 +135,9 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 2ea07a64-e48e-11e9-a28e-001a7dda7113
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 01 Oct 2019 20:58:13 GMT
+      - Fri, 25 Oct 2019 18:09:34 GMT
       x-ms-if-sequence-number-lt:
       - '10'
       x-ms-page-write:
@@ -86,24 +147,22 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainerff6a18db/blobff6a18db?comp=page
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerff6a18db/blobff6a18db?comp=page
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>SequenceNumberConditionNotMet</Code><Message>The
-        sequence number condition specified was not met.\nRequestId:be598a63-601e-0010-609a-785753000000\nTime:2019-10-01T20:58:13.0552031Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>SequenceNumberConditionNotMet</Code><Message>The
+        sequence number condition specified was not met.\nRequestId:db09e48f-801e-0055-355f-8be17d000000\nTime:2019-10-25T18:09:34.1455866Z</Message></Error>"
     headers:
-      Content-Length:
-      - '251'
-      Content-Type:
+      content-length:
+      - '250'
+      content-type:
       - application/xml
-      Date:
-      - Tue, 01 Oct 2019 20:58:12 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:09:33 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - SequenceNumberConditionNotMet
-      x-ms-request-id:
-      - be598a63-601e-0010-609a-785753000000
       x-ms-version:
       - '2019-02-02'
     status:
