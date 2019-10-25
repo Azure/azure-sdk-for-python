@@ -5,11 +5,10 @@
 from typing import Iterable, Dict, Any
 import logging
 from collections import defaultdict
-import asyncio
-from azure.eventhub import OwnershipLostError
-from azure.eventhub.aio import PartitionManager  # type: ignore
+
+from azure.eventhub import PartitionManager, OwnershipLostError  # type: ignore
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError  # type: ignore
-from azure.storage.blob.aio import ContainerClient, BlobClient  # type: ignore
+from azure.storage.blob import ContainerClient, BlobClient  # type: ignore
 
 logger = logging.getLogger(__name__)
 UPLOAD_DATA = ""
@@ -38,7 +37,7 @@ class BlobPartitionManager(PartitionManager):
             self._cached_blob_clients[blob_name] = result
         return result
 
-    async def _upload_ownership(self, ownership, metadata):
+    def _upload_ownership(self, ownership, metadata):
         etag = ownership.get("etag")
         if etag:
             etag_match = {"if_match": etag}
@@ -46,19 +45,20 @@ class BlobPartitionManager(PartitionManager):
             etag_match = {"if_none_match": '*'}
         blob_name = "{}/{}/{}/ownership/{}".format(ownership["fully_qualified_namespace"], ownership["eventhub_name"],
                                      ownership["consumer_group_name"], ownership["partition_id"])
-        uploaded_blob_properties = await self._get_blob_client(blob_name).upload_blob(
+        uploaded_blob_properties = self._get_blob_client(blob_name).upload_blob(
             data=UPLOAD_DATA, overwrite=True, metadata=metadata, **etag_match
         )
         ownership["etag"] = uploaded_blob_properties["etag"]
         ownership["last_modified_time"] = uploaded_blob_properties["last_modified"].timestamp()
+        ownership.update(metadata)
 
-    async def list_ownership(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group_name: str) -> Iterable[Dict[str, Any]]:
+    def list_ownership(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group_name: str) -> Iterable[Dict[str, Any]]:
         try:
             blobs = self._container_client.list_blobs(
                 name_starts_with="{}/{}/{}/ownership".format(fully_qualified_namespace, eventhub_name, consumer_group_name),
                 include=['metadata'])
             result = []
-            async for b in blobs:
+            for b in blobs:
                 ownership = {
                     "fully_qualified_namespace": fully_qualified_namespace,
                     "eventhub_name": eventhub_name,
@@ -76,34 +76,37 @@ class BlobPartitionManager(PartitionManager):
                            "Exception is %r", fully_qualified_namespace, eventhub_name, consumer_group_name, err)
             raise
 
-    async def _claim_one_partition(self, ownership):
+    def _claim_one_partition(self, ownership):
         partition_id = ownership["partition_id"]
-        namespace = ownership["fully_qualified_namespace"]
+        fully_qualified_namespace = ownership["fully_qualified_namespace"]
         eventhub_name = ownership["eventhub_name"]
         consumer_group_name = ownership["consumer_group_name"]
         owner_id = ownership["owner_id"]
         metadata = {"ownerId": owner_id}
         try:
-            await self._upload_ownership(ownership, metadata)
+            self._upload_ownership(ownership, metadata)
             return ownership
         except (ResourceModifiedError, ResourceExistsError):
             logger.info(
                 "EventProcessor instance %r of namespace %r eventhub %r consumer group %r lost ownership to partition %r",
-                owner_id, namespace, eventhub_name, consumer_group_name, partition_id)
+                owner_id, fully_qualified_namespace, eventhub_name, consumer_group_name, partition_id)
             raise OwnershipLostError()
         except Exception as err:  # pylint:disable=broad-except
             logger.warning("An exception occurred when EventProcessor instance %r claim_ownership for "
                            "namespace %r eventhub %r consumer group %r partition %r. The ownership is now lost. Exception "
-                           "is %r", owner_id, namespace, eventhub_name, consumer_group_name, partition_id, err)
+                           "is %r", owner_id, fully_qualified_namespace, eventhub_name, consumer_group_name, partition_id, err)
             return ownership  # Keep the ownership if an unexpected error happens
 
-    async def claim_ownership(self, ownership_list: Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]:
-        gathered_results = await asyncio.gather(*[self._claim_one_partition(x)
-                                                  for x in ownership_list], return_exceptions=True)
-        return [claimed_ownership for claimed_ownership in gathered_results
-                if not isinstance(claimed_ownership, Exception)]
+    def claim_ownership(self, ownership_list: Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]:
+        gathered_results = []
+        for x in ownership_list:
+            try:
+                gathered_results.append(self._claim_one_partition(x))
+            except (ResourceModifiedError, ResourceExistsError):
+                pass
+        return gathered_results
 
-    async def update_checkpoint(self, fully_qualified_namespace, eventhub_name, consumer_group_name, partition_id,
+    def update_checkpoint(self, fully_qualified_namespace, eventhub_name, consumer_group_name, partition_id,
                                 offset, sequence_number) -> None:
         metadata = {
             "Offset": offset,
@@ -111,16 +114,16 @@ class BlobPartitionManager(PartitionManager):
         }
         blob_name = "{}/{}/{}/checkpoint/{}".format(fully_qualified_namespace, eventhub_name,
                                      consumer_group_name, partition_id)
-        await self._get_blob_client(blob_name).upload_blob(
+        self._get_blob_client(blob_name).upload_blob(
             data=UPLOAD_DATA, overwrite=True, metadata=metadata
         )
 
-    async def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
+    def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
         blobs = self._container_client.list_blobs(
             name_starts_with="{}/{}/{}/checkpoint".format(fully_qualified_namespace, eventhub_name, consumer_group_name),
             include=['metadata'])
         result = []
-        async for b in blobs:
+        for b in blobs:
             metadata = b.metadata
             checkpoint = {
                 "fully_qualified_namespace": fully_qualified_namespace,

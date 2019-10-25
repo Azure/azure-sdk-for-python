@@ -14,8 +14,8 @@ from typing import Union, Any, TYPE_CHECKING
 
 from uamqp import types  # type: ignore
 from azure.eventhub import __version__
-from azure.eventhub.configuration import _Configuration
-from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
+from ._configuration import Configuration
+from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
 
 try:
     from urlparse import urlparse  # type: ignore
@@ -94,8 +94,6 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
     def __init__(self, host, event_hub_path, credential, **kwargs):
         # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
         """
-        Constructs a new EventHubClient.
-
         :param host: The hostname of the Event Hub.
         :type host: str
         :param event_hub_path: The path of the specific Event Hub to connect the client to.
@@ -122,17 +120,6 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
         :param transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is ~azure.eventhub.TransportType.Amqp.
         :type transport_type: ~azure.eventhub.TransportType
-        :param prefetch: The message prefetch count of the consumer. Default is 300.
-        :type prefetch: int
-        :param max_batch_size: Receive a batch of events. Batch size will be up to the maximum specified, but
-         will return as soon as service returns no new events. Default value is the same as prefetch.
-        :type max_batch_size: int
-        :param receive_timeout: The timeout in seconds to receive a batch of events from an Event Hub.
-         Default value is 0 seconds.
-        :type receive_timeout: float
-        :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
-         queued. Default value is 60 seconds. If set to 0, there will be no timeout.
-        :type send_timeout: float
         """
         self.eh_name = event_hub_path
         self._host = host
@@ -145,7 +132,7 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
         self._mgmt_target = "amqps://{}/{}".format(self._host, self.eh_name)
         self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
-        self._config = _Configuration(**kwargs)
+        self._config = Configuration(**kwargs)
         self._debug = self._config.network_tracing
 
         log.info("%r: Created the Event Hub client", self._container_id)
@@ -190,8 +177,7 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
-        """Create an EventHubClient from an EventHub connection string.
-
+        """
         :param conn_str: The connection string of an eventhub
         :type conn_str: str
         :param event_hub_path: The path of the specific Event Hub to connect the client to, if the EntityName is
@@ -215,25 +201,6 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
         :param transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is ~azure.eventhub.TransportType.Amqp.
         :type transport_type: ~azure.eventhub.TransportType
-        :param prefetch: The message prefetch count of the consumer. Default is 300.
-        :type prefetch: int
-        :param max_batch_size: Receive a batch of events. Batch size will be up to the maximum specified, but
-         will return as soon as service returns no new events. Default value is the same as prefetch.
-        :type max_batch_size: int
-        :param receive_timeout: The timeout in seconds to receive a batch of events from an Event Hub.
-         Default value is 0 seconds, meaning there is no timeout.
-        :type receive_timeout: float
-        :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
-         queued. Default value is 60 seconds. If set to 0, there will be no timeout.
-        :type send_timeout: float
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START create_eventhub_client_connstr]
-                :end-before: [END create_eventhub_client_connstr]
-                :language: python
-                :dedent: 4
-                :caption: Create an EventHubClient from a connection string.
 
         """
         event_hub_path = kwargs.pop("event_hub_path", None)
