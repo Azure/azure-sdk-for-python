@@ -114,6 +114,8 @@ class QueueClient(StorageAccountHostsMixin):
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string, an account
             shared access key, or an instance of a TokenCredentials class from azure.identity.
+        :returns: A queue client.
+        :rtype: ~azure.storage.queue.QueueClient
         """
         try:
             if not queue_url.lower().startswith('http'):
@@ -158,6 +160,8 @@ class QueueClient(StorageAccountHostsMixin):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
+        :returns: A queue client.
+        :rtype: ~azure.storage.queue.QueueClient
 
         .. admonition:: Example:
 
