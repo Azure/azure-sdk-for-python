@@ -75,8 +75,8 @@ Credentials can be chained together and tried in turn until one succeeds; see
 [chaining credentials](#chaining-credentials) for details.
 
 Service principal and managed identity credentials have async equivalents in
-the `azure.identity.aio` namespace, supported on Python 3.5.3+. See the
-[async credentials](#async-credentials) example for details. Async user
+the [azure.identity.aio][ref_docs_aio] namespace, supported on Python 3.5.3+.
+See the [async credentials](#async-credentials) example for details. Async user
 credentials will be part of a future release.
 
 ## `DefaultAzureCredential`
@@ -127,7 +127,8 @@ variables:
 >|`AZURE_CLIENT_ID`|id of an Azure Active Directory application
 >|`AZURE_USERNAME`|a username (usually an email address)
 >|`AZURE_PASSWORD`|that user's password
-> Note: username/password authentication is not supported by the async API (`azure.identity.aio`)
+> Note: username/password authentication is not supported by the async API
+([azure.identity.aio][ref_docs_aio])
 
 Configuration is attempted in the above order. For example, if values for a
 client secret and certificate are both present, the client secret will be used.
@@ -204,8 +205,8 @@ client = EventHubClient(host, event_hub_path, credential_chain)
 
 ## Async credentials:
 This library includes an async API supported on Python 3.5+. To use the async
-credentials in `azure.identity.aio`, you must first install an async transport,
-such as [aiohttp](https://pypi.org/project/aiohttp/). See
+credentials in [azure.identity.aio][ref_docs_aio], you must first install an
+async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). See
 [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
 for more information.
 
@@ -279,9 +280,11 @@ additional questions or comments.
 [azure_storage_blob]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob
 
 [ref_docs]: https://aka.ms/azsdk-python-identity-docs
+[ref_docs_aio]: https://aka.ms/azsdk-python-identity-aio-docs
 [cert_cred_ref]: https://aka.ms/azsdk-python-identity-cert-cred-ref
 [chain_cred_ref]: https://aka.ms/azsdk-python-identity-chain-cred-ref
 [client_secret_cred_ref]: https://aka.ms/azsdk-python-identity-client-secret-cred-ref
+[client_secret_cred_aio_ref]: https://aka.ms/azsdk-python-identity-client-secret-cred-aio-ref
 [default_cred_ref]: https://aka.ms/azsdk-python-identity-default-cred-ref
 [device_code_cred_ref]: https://aka.ms/azsdk-python-identity-device-code-cred-ref
 [environment_cred_ref]: https://aka.ms/azsdk-python-identity-environment-cred-ref
