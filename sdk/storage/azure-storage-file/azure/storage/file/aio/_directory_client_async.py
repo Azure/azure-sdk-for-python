@@ -41,24 +41,6 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
     For operations relating to a specific subdirectory or file in this share, the clients for those
     entities can also be retrieved using the :func:`get_subdirectory_client` and :func:`get_file_client` functions.
 
-    :ivar str url:
-        The full endpoint URL to the Directory, including SAS token if used. This could be
-        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondary endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the directory,
         use the :func:`from_directory_url` classmethod.
@@ -75,6 +57,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword str secondary_hostname:
+        The hostname of the secondary endpoint.
     :keyword loop:
         The event loop to run the asynchronous tasks.
     """
@@ -136,11 +120,11 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_directory_async.py
+            .. literalinclude:: ../samples/file_samples_directory_async.py
                 :start-after: [START get_subdirectory_client]
                 :end-before: [END get_subdirectory_client]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Gets the subdirectory client.
         """
         directory_path = self.directory_path.rstrip('/') + "/" + directory_name
@@ -168,11 +152,11 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_directory_async.py
+            .. literalinclude:: ../samples/file_samples_directory_async.py
                 :start-after: [START create_directory]
                 :end-before: [END create_directory]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Creates a directory.
         """
         metadata = kwargs.pop('metadata', None)
@@ -200,11 +184,11 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_directory_async.py
+            .. literalinclude:: ../samples/file_samples_directory_async.py
                 :start-after: [START delete_directory]
                 :end-before: [END delete_directory]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Deletes a directory.
         """
         timeout = kwargs.pop('timeout', None)
@@ -228,11 +212,11 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_directory_async.py
+            .. literalinclude:: ../samples/file_samples_directory_async.py
                 :start-after: [START lists_directory]
                 :end-before: [END lists_directory]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: List directories and files.
         """
         timeout = kwargs.pop('timeout', None)
@@ -470,11 +454,11 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_directory_async.py
+            .. literalinclude:: ../samples/file_samples_directory_async.py
                 :start-after: [START create_subdirectory]
                 :end-before: [END create_subdirectory]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Create a subdirectory.
         """
         metadata = kwargs.pop('metadata', None)
@@ -499,11 +483,11 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_directory_async.py
+            .. literalinclude:: ../samples/file_samples_directory_async.py
                 :start-after: [START delete_subdirectory]
                 :end-before: [END delete_subdirectory]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Delete a subdirectory.
         """
         timeout = kwargs.pop('timeout', None)
@@ -550,11 +534,11 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_directory_async.py
+            .. literalinclude:: ../samples/file_samples_directory_async.py
                 :start-after: [START upload_file_to_directory]
                 :end-before: [END upload_file_to_directory]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Upload a file to a directory.
         """
         file_client = self.get_file_client(file_name)
@@ -581,11 +565,11 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_directory_async.py
+            .. literalinclude:: ../samples/file_samples_directory_async.py
                 :start-after: [START delete_file_in_directory]
                 :end-before: [END delete_file_in_directory]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Delete a file in a directory.
         """
         file_client = self.get_file_client(file_name)

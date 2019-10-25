@@ -45,24 +45,6 @@ class DirectoryClient(StorageAccountHostsMixin):
     For operations relating to a specific subdirectory or file in this share, the clients for those
     entities can also be retrieved using the :func:`get_subdirectory_client` and :func:`get_file_client` functions.
 
-    :ivar str url:
-        The full endpoint URL to the Directory, including SAS token if used. This could be
-        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondary endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the directory,
         use the :func:`from_directory_url` classmethod.
@@ -79,6 +61,8 @@ class DirectoryClient(StorageAccountHostsMixin):
         The credential with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string or an account
         shared access key.
+    :keyword str secondary_hostname:
+        The hostname of the secondary endpoint.
     """
     def __init__( # type: ignore
             self, account_url,  # type: str
@@ -243,7 +227,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_directory.py
+            .. literalinclude:: ../samples/file_samples_directory.py
                 :start-after: [START get_subdirectory_client]
                 :end-before: [END get_subdirectory_client]
                 :language: python
@@ -275,7 +259,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_directory.py
+            .. literalinclude:: ../samples/file_samples_directory.py
                 :start-after: [START create_directory]
                 :end-before: [END create_directory]
                 :language: python
@@ -307,7 +291,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_directory.py
+            .. literalinclude:: ../samples/file_samples_directory.py
                 :start-after: [START delete_directory]
                 :end-before: [END delete_directory]
                 :language: python
@@ -335,7 +319,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_directory.py
+            .. literalinclude:: ../samples/file_samples_directory.py
                 :start-after: [START lists_directory]
                 :end-before: [END lists_directory]
                 :language: python
@@ -576,7 +560,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_directory.py
+            .. literalinclude:: ../samples/file_samples_directory.py
                 :start-after: [START create_subdirectory]
                 :end-before: [END create_subdirectory]
                 :language: python
@@ -605,7 +589,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_directory.py
+            .. literalinclude:: ../samples/file_samples_directory.py
                 :start-after: [START delete_subdirectory]
                 :end-before: [END delete_subdirectory]
                 :language: python
@@ -656,7 +640,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_directory.py
+            .. literalinclude:: ../samples/file_samples_directory.py
                 :start-after: [START upload_file_to_directory]
                 :end-before: [END upload_file_to_directory]
                 :language: python
@@ -687,7 +671,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_file_samples_directory.py
+            .. literalinclude:: ../samples/file_samples_directory.py
                 :start-after: [START delete_file_in_directory]
                 :end-before: [END delete_file_in_directory]
                 :language: python

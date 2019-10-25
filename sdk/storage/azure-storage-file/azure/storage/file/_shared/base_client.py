@@ -113,28 +113,63 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
     @property
     def url(self):
+        """The full endpoint URL to this entity, including SAS token if used.
+
+        This could be either the primary endpoint,
+        or the secondary endpoint depending on the current :func:`location_mode`.
+        """
         return self._format_url(self._hosts[self._location_mode])
 
     @property
     def primary_endpoint(self):
+        """The full primary endpoint URL.
+
+        :type: str
+        """
         return self._format_url(self._hosts[LocationMode.PRIMARY])
 
     @property
     def primary_hostname(self):
+        """The hostname of the primary endpoint.
+
+        :type: str
+        """
         return self._hosts[LocationMode.PRIMARY]
 
     @property
     def secondary_endpoint(self):
+        """The full secondary endpoint URL if configured.
+
+        If not available a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+
+        :type: str
+        :raise ValueError:
+        """
         if not self._hosts[LocationMode.SECONDARY]:
             raise ValueError("No secondary host configured.")
         return self._format_url(self._hosts[LocationMode.SECONDARY])
 
     @property
     def secondary_hostname(self):
+        """The hostname of the secondary endpoint.
+
+        If not available this will be None. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+
+        :type: str or None
+        """
         return self._hosts[LocationMode.SECONDARY]
 
     @property
     def location_mode(self):
+        """The location mode that the client is currently using.
+
+        By default this will be "primary". Options include "primary" and "secondary".
+
+        :type: str
+        """
+
         return self._location_mode
 
     @location_mode.setter

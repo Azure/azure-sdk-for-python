@@ -93,8 +93,8 @@ from ._app_platform_management_client_enums import (
     TestKeyType,
     AppResourceProvisioningState,
     UserSourceType,
-    RuntimeVersion,
     DeploymentResourceProvisioningState,
+    RuntimeVersion,
     DeploymentResourceStatus,
 )
 
@@ -145,7 +145,7 @@ __all__ = [
     'TestKeyType',
     'AppResourceProvisioningState',
     'UserSourceType',
-    'RuntimeVersion',
     'DeploymentResourceProvisioningState',
+    'RuntimeVersion',
     'DeploymentResourceStatus',
 ]

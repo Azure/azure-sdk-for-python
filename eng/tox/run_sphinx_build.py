@@ -26,6 +26,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 ci_doc_dir = os.path.join(root_dir, '_docs')
+sphinx_conf_dir = os.path.join(root_dir, 'doc/sphinx')
 
 def in_ci():
     return os.getenv('TF_BUILD', False)
@@ -37,13 +38,15 @@ def move_output_and_zip(target_dir, package_dir, package_name):
     individual_zip_location = os.path.join(ci_doc_dir, package_name)
     shutil.make_archive(individual_zip_location, 'zip', target_dir)
 
-
-
 def sphinx_build(target_dir, output_dir):
     command_array = [
                 "sphinx-build",
                 "-b",
                 "html",
+                "-A",
+                "include_index_link=True",
+                "-c",
+                sphinx_conf_dir,
                 target_dir,
                 output_dir
             ]
