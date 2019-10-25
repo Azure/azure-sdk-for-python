@@ -45,7 +45,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def create_key(self, name: str, key_type: "Union[str, KeyType]", **kwargs: "Any") -> KeyVaultKey:
-        """Create a key or, if ``name`` is already in use, create a new version of the key.
+        """Create a key or, if `name` is already in use, create a new version of the key.
 
         Requires keys/create permission.
 
@@ -98,7 +98,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def create_rsa_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
-        """Create a new RSA key or, if ``name`` is already in use, create a new version of the key
+        """Create a new RSA key or, if `name` is already in use, create a new version of the key
 
         Requires the keys/create permission.
 
@@ -130,7 +130,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def create_ec_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
-        """Create a new elliptic curve key or, if ``name`` is already in use, create a new version of the key.
+        """Create a new elliptic curve key or, if `name` is already in use, create a new version of the key.
 
         Requires the keys/create permission.
 
@@ -314,12 +314,14 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def purge_deleted_key(self, name: str, **kwargs: "Any") -> None:
-        """Permanently delete a key. Only possible in a vault with soft-delete enabled. Requires keys/purge permission.
+        """Permanently delete a deleted key. Only possible in a vault with soft-delete enabled.
 
-        If the vault does not have soft-delete enabled, :func:`begin_delete_key` is permanent, and this method will
+        If the vault does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will
         return an error.
 
-        :param str name: The name of the key
+        Requires keys/purge permission.
+
+        :param str name: The name of the deleted key to purge
         :returns: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -418,8 +420,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         subscription. Also, backup / restore cannot be performed across geopolitical boundaries. For example, a backup
         from a vault in a USA region cannot be restored to a vault in an EU region.
 
-        :param str name: The name of the key
-        :returns: The raw bytes of the key backup
+        :param str name: The name of the key to back up
         :rtype: bytes
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
@@ -444,7 +445,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         is already in use, restoring it will fail. Also, the target vault must be owned by the same Microsoft Azure
         subscription as the source vault.
 
-        :param bytes backup: The bytes of the key backup
+        :param bytes backup: A key backup as returned by :func:`backup_key`
         :returns: The restored key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises:
@@ -466,7 +467,7 @@ class KeyClient(AsyncKeyVaultClientBase):
     async def import_key(self, name: str, key: JsonWebKey, **kwargs: "Any") -> KeyVaultKey:
         """Import a key created externally. Requires keys/import permission.
 
-        If ``name`` is already in use, the key will be imported as a new version.
+        If `name` is already in use, the key will be imported as a new version.
 
         :param str name: Name for the imported key
         :param key: The JSON web key to import

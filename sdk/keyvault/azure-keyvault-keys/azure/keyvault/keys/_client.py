@@ -47,7 +47,7 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def create_key(self, name, key_type, **kwargs):
         # type: (str, Union[str, azure.keyvault.keys.KeyType], **Any) -> KeyVaultKey
-        """Create a key or, if ``name`` is already in use, create a new version of the key.
+        """Create a key or, if `name` is already in use, create a new version of the key.
 
         Requires keys/create permission.
 
@@ -100,7 +100,7 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def create_rsa_key(self, name, **kwargs):
         # type: (str, **Any) -> KeyVaultKey
-        """Create a new RSA key or, if ``name`` is already in use, create a new version of the key
+        """Create a new RSA key or, if `name` is already in use, create a new version of the key
 
         Requires the keys/create permission.
 
@@ -133,7 +133,7 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def create_ec_key(self, name, **kwargs):
         # type: (str, **Any) -> KeyVaultKey
-        """Create a new elliptic curve key or, if ``name`` is already in use, create a new version of the key.
+        """Create a new elliptic curve key or, if `name` is already in use, create a new version of the key.
 
         Requires the keys/create permission.
 
@@ -334,10 +334,10 @@ class KeyClient(KeyVaultClientBase):
         # type: (str, **Any) -> None
         """Permanently delete a key. Only possible in a vault with soft-delete enabled. Requires keys/purge permission.
 
-        If the vault does not have soft-delete enabled, :func:`begin_delete_key` is permanent, and this method will
-        return an error.
+        If the vault does not have soft-delete enabled, :func:`begin_delete_key` permanently deletes the key, and this
+        method will return an error.
 
-        :param str name: The name of the key
+        :param str name: The name of the deleted key to purge
         :returns: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -362,7 +362,7 @@ class KeyClient(KeyVaultClientBase):
         method therefore returns a poller enabling you to wait for recovery to complete. Waiting is only necessary when
         you want to use the recovered key in another operation immediately.
 
-        :param str name: The name of the deleted key
+        :param str name: The name of the deleted key to recover
         :returns: A poller for the recovery operation. The poller's `result` method returns the recovered
          :class:`~azure.keyvault.keys.KeyVaultKey` without waiting for recovery to complete. If you want to use the
          recovered key immediately, call the poller's `wait` method, which blocks until the key is ready to use. The
@@ -447,8 +447,7 @@ class KeyClient(KeyVaultClientBase):
         subscription. Also, backup / restore cannot be performed across geopolitical boundaries. For example, a backup
         from a vault in a USA region cannot be restored to a vault in an EU region.
 
-        :param str name: The name of the key
-        :returns: The raw bytes of the key backup
+        :param str name: The name of the key to back up
         :rtype: bytes
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
@@ -474,7 +473,7 @@ class KeyClient(KeyVaultClientBase):
         is already in use, restoring it will fail. Also, the target vault must be owned by the same Microsoft Azure
         subscription as the source vault.
 
-        :param bytes backup: The bytes of the key backup
+        :param bytes backup: A key backup as returned by :func:`backup_key`
         :returns: The restored key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises:
@@ -497,7 +496,7 @@ class KeyClient(KeyVaultClientBase):
         # type: (str, JsonWebKey, **Any) -> KeyVaultKey
         """Import a key created externally. Requires keys/import permission.
 
-        If ``name`` is already in use, the key will be imported as a new version.
+        If `name` is already in use, the key will be imported as a new version.
 
         :param str name: Name for the imported key
         :param key: The JSON web key to import
