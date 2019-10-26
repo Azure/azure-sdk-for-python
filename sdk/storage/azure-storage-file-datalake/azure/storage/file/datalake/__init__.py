@@ -9,13 +9,12 @@ from .directory_client import DirectoryClient
 from .file_system_client import FileSystemClient
 from .data_lake_service_client import DataLakeServiceClient
 from .lease import DataLakeLeaseClient
+from .models import *
+from ._shared_access_signature import *
 
 from azure.storage.blob._shared.policies import ExponentialRetry, LinearRetry
 from azure.storage.blob._shared.models import(
-    LocationMode,
-    ResourceTypes,
-    AccountSasPermissions,
-    StorageErrorCode)
+    StorageErrorCode, UserDelegationKey)
 
 
 __all__ = [
@@ -30,4 +29,20 @@ __all__ = [
     'ResourceTypes',
     'AccountSasPermissions',
     'StorageErrorCode',
+    'UserDelegationKey',
+    'FileSystemProperties',
+    'FileSystemPropertiesPaged',
+    'DirectoryProperties',
+    'PathProperties',
+    'PathPropertiesPaged',
+    'LeaseProperties',
+    'ContentSettings',
+    'AccountSasPermissions',
+    'FileSystemSasPermissions',
+    'DirectorySasPermissions',
+    'FileSasPermissions',
+    'generate_account_sas',
+    'generate_file_system_sas',
+    'generate_directory_sas',
+    'generate_file_sas'
 ]

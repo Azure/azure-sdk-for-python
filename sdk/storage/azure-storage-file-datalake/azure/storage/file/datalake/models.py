@@ -7,7 +7,7 @@
 # pylint: disable=super-init-not-called, too-many-lines
 from azure.core.paging import PageIterator
 from azure.storage.blob import ContainerProperties, LeaseProperties, ContentSettings, ContainerSasPermissions, \
-    BlobSasPermissions, AccessPolicy, BlobProperties
+    BlobSasPermissions, AccessPolicy, BlobProperties, ResourceTypes, AccountSasPermissions
 from azure.storage.blob._generated.models import StorageErrorException
 from azure.storage.blob._models import ContainerPropertiesPaged, BlobPropertiesPaged
 from azure.storage.blob._shared.response_handlers import process_storage_error, return_context_and_deserialized
@@ -146,6 +146,7 @@ class PathPropertiesPaged(PageIterator):
             return path
         return item
 
+
 class LeaseProperties(LeaseProperties):
     def __init__(self, **kwargs):
         super(LeaseProperties, self).__init__(
@@ -169,27 +170,66 @@ class ContentSettings(ContentSettings):
         )
 
 
-class AccessPolicy(AccessPolicy):
-    def __init__(self, permission=None, expiry=None, start=None):
-        super(AccessPolicy, self).__init__(
-            start=start,
-            expiry=expiry,
-            permission=permission
+class AccountSasPermissions(AccountSasPermissions):
+    def __init__(self, read=False, write=False, delete=False, list=False, create=False):
+        super(AccountSasPermissions, self).__init__(
+            read=read, create=create, write=write,
+            delete=delete
         )
 
 
 class FileSystemSasPermissions(ContainerSasPermissions):
-    def __init__(self, **kwargs):
+    def __init__(self, read=False, write=False, delete=False, list=False):
         super(FileSystemSasPermissions, self).__init__(
-            **kwargs
+            read=read, write=write, delete=delete, list=list
         )
 
 
-class PathSasPermissions(BlobSasPermissions):
-    def __init__(self, **kwargs):
-        super(PathSasPermissions, self).__init__(
-            **kwargs
+class FileSystemSasPermissions(ContainerSasPermissions):
+    def __init__(self, read=False, write=False, delete=False, list=False):
+        super(FileSystemSasPermissions, self).__init__(
+            read=read, write=write, delete=delete, list=list
         )
+
+
+class DirectorySasPermissions(BlobSasPermissions):
+    def __init__(self, read=False, create=False, write=False,
+                 delete=False):
+        super(DirectorySasPermissions, self).__init__(
+            read=read, create=create, write=write,
+            delete=delete
+        )
+
+
+class FileSasPermissions(BlobSasPermissions):
+    """FileSasPermissions class to be used with the
+    :func:`~azure.storage.file.datalake.generate_file_sas` function.
+
+    :param bool read:
+        Read the content, properties, metadata etc. Use the blob as
+        the source of a read operation.
+    :param bool add:
+        Add a block to an append blob.
+    :param bool create:
+        Write a new blob, snapshot a blob, or copy a blob to a new blob.
+    :param bool write:
+        Create or write content, properties, metadata, or block list. Snapshot
+        or lease the blob. Resize the blob (page blob only). Use the blob as the
+        destination of a copy operation within the same account.
+    :param bool delete:
+        Delete the blob.
+    """
+    def __init__(self, read=False, add=False, create=False, write=False,
+                 delete=False):
+        super(FileSasPermissions, self).__init__(
+            read=read, add=add, create=create, write=write,
+            delete=delete
+        )
+
+
+class ResourceTypes(ResourceTypes):
+    def __init__(self, service=False, file_system=False, object=False):
+        super(ResourceTypes, self).__init__(service=service, container=file_system, object=object)
 
 
 class LocationMode(object):

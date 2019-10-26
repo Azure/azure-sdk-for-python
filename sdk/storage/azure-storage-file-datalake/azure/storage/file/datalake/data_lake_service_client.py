@@ -77,6 +77,15 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, credential=credential, **kwargs)
 
+    def get_user_delegation_key(self, key_start_time,  # type: datetime
+                                key_expiry_time,  # type: datetime
+                                **kwargs  # type: Any
+                                ):
+        # type: (...) -> UserDelegationKey
+        return self._blob_service_client.get_user_delegation_key(key_start_time=key_start_time,
+                                                                 key_expiry_time=key_expiry_time,
+                                                                 **kwargs)
+
     def list_file_systems(self, name_starts_with=None,  # type: Optional[str]
                           **kwargs):
         # type: (...) -> ItemPaged[FileSystemProperties]
