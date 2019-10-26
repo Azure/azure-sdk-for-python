@@ -56,12 +56,15 @@ class DirectoryClient(PathClient):
             account_url, file_system_name=file_system_name, directory_name=directory_name,
             credential=credential, **kwargs)
 
-    def create_directory(self, content_settings=None, metadata=None, **kwargs):
+    def create_directory(self, content_settings=None,  # type: Optional[ContentSettings]
+                         metadata=None,  # type: Optional[Dict[str, str]]
+                         **kwargs):
+        # type: (...) -> Dict[str, Union[str, datetime]]
         """
         Create directory
         :return:
         """
-        return self.create_path('directory', content_settings=content_settings, metadata=metadata, **kwargs)
+        return self._create('directory', content_settings=content_settings, metadata=metadata, **kwargs)
 
     def delete_directory(self, **kwargs):
         # type: (...) -> ItemPaged[Response]
@@ -69,17 +72,29 @@ class DirectoryClient(PathClient):
         Marks the specified directory for deletion.
         :return:
         """
-        return self.delete_path(**kwargs)
+        return self._delete(**kwargs)
 
-    def create_sub_directory(self, sub_directory, content_settings=None, metadata=None, **kwargs):
+    def get_directory_properties(self, **kwargs):
+        # type: (**Any) -> DirectoryProperties
+        return self._get_path_properties(**kwargs)
+
+    def create_sub_directory(self, sub_directory,  # type: Union[DirectoryProperties, str]
+                             content_settings=None,  # type: Optional[ContentSettings]
+                             metadata=None,  # type: Optional[Dict[str, str]]
+                             **kwargs):
+        # type: (...) -> Dict[str, Union[str, datetime]]
         subdir = self.get_sub_directory_client(sub_directory)
         return subdir.create_directory(content_settings=content_settings, metadata=metadata, **kwargs)
 
-    def delete_sub_directory(self, sub_directory, **kwargs):
+    def delete_sub_directory(self, sub_directory,  # type: Union[DirectoryProperties, str]
+                             **kwargs):
+        # type: (...) -> ItemPaged[Response]
         subdir = self.get_sub_directory_client(sub_directory)
         return subdir.delete_directory(**kwargs)
 
-    def get_file_client(self, file):
+    def get_file_client(self, file  # type: Union[FileProperties, str]
+                        ):
+        # type: (...) -> FileClient
         return FileClient(
             self.url, self.file_system_name, self.path_name, file, credential=self.credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
@@ -87,7 +102,9 @@ class DirectoryClient(PathClient):
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
 
-    def get_sub_directory_client(self, sub_directory):
+    def get_sub_directory_client(self, sub_directory  # type: Union[DirectoryProperties, str]
+                                 ):
+        # type: (...) -> DirectoryClient
         directory = self.path_name.rstrip('/') + "/" + sub_directory
         return DirectoryClient(
             self.url, self.file_system_name, directory, credential=self.credential,

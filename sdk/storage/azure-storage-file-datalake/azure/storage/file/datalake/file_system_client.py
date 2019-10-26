@@ -66,13 +66,6 @@ class FileSystemClient(StorageAccountHostsMixin):
             self._query_str)
 
     @classmethod
-    def from_file_system_url(cls):
-        pass
-
-    def generate_shared_access_signature(self):
-        pass
-
-    @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
             file_system_name,  # type: str
@@ -106,9 +99,12 @@ class FileSystemClient(StorageAccountHostsMixin):
         lease_id=None,  # type: Optional[str]
         **kwargs
     ):
+        # type: (...) -> DataLakeLeaseClient
         pass
 
-    def create_file_system(self, metadata=None, **kwargs):
+    def create_file_system(self, metadata=None,  # type: Optional[Dict[str, str]]
+                           **kwargs):
+        # type: (Any) -> None
         return self._container_client.create_container(metadata=metadata, **kwargs)
 
     def delete_file_system(self, **kwargs):
@@ -128,10 +124,14 @@ class FileSystemClient(StorageAccountHostsMixin):
         self, metadata=None,  # type: Optional[Dict[str, str]]
         **kwargs
     ):
+        # type: (...) -> Dict[str, Union[str, datetime]]
         return self._container_client.set_container_metadata(metadata=metadata, **kwargs)
 
-    def get_paths(self, path=None, recursive=True, max_results=None, **kwargs):
-        # type: (Optional[str], Optional[Any], **Any) -> ItemPaged[BlobProperties]
+    def get_paths(self, path=None, # type: Optional[str]
+                  recursive=True,  # type: Optional[bool]
+                  max_results=None,  # type: Optional[int]
+                  **kwargs):
+        # type: (Optional[str], Optional[Any], **Any) -> ItemPaged[PathProperties]
 
         timeout = kwargs.pop('timeout', None)
         command = functools.partial(
@@ -143,21 +143,34 @@ class FileSystemClient(StorageAccountHostsMixin):
             command, recursive, path=path, max_results=max_results,
             page_iterator_class=PathPropertiesPaged, **kwargs)
 
-    def create_directory(self, directory, content_settings=None, metadata=None, **kwargs):
+    def create_directory(self, directory,  # type: # type: Union[DirectoryProperties, str]
+                         content_settings=None,  # type: Optional[ContentSettings]
+                         metadata=None,  # type: Optional[Dict[str, str]]
+                         **kwargs):
+        # type: (...) -> Dict[str, Union[str, datetime]]
         directory_client = self.get_directory_client(directory)
         return directory_client.create_directory(content_settings=content_settings, metadata=metadata, **kwargs)
 
-    def delete_directory(self, directory, **kwargs):
+    def delete_directory(self, directory,  # type: # type: Union[DirectoryProperties, str]
+                         **kwargs):
+        # type: (bool, **Any) -> None
         directory_client = self.get_directory_client(directory)
         return directory_client.delete_directory(**kwargs)
 
-    def create_file(self, file, **kwargs):
+    def create_file(self, file,  # type: Union[FileProperties, str]
+                    **kwargs):
+        # type: (...) -> Dict[str, Union[str, datetime]]
         pass
 
-    def delete_file(self, file, lease=None, **kwargs):
+    def delete_file(self, file,  # type: Union[FileProperties, str]
+                    lease=None,  # type: Optional[Union[DataLakeLeaseClient, str]]
+                    **kwargs):
+        # type: (bool, **Any) -> None
         pass
 
-    def get_directory_client(self, directory):
+    def get_directory_client(self, directory  # type: Union[DirectoryProperties, str]
+                             ):
+        # type: (...) -> DirectoryClient
         return DirectoryClient(self.url, self.file_system_name, directory, credential=self.credential,
                                _configuration=self._config, _pipeline=self._pipeline,
                                _location_mode=self._location_mode, _hosts=self._hosts,
@@ -165,7 +178,10 @@ class FileSystemClient(StorageAccountHostsMixin):
                                key_resolver_function=self.key_resolver_function
                                )
 
-    def get_file_client(self, directory, file):
+    def get_file_client(self, directory,  # type: Union[DirectoryProperties, str]
+                        file  # type: Union[FileProperties, str]
+                        ):
+        # type: (...) -> FileClient
         return FileClient(
             self.url, self.file_system_name, directory, file, credential=self.credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,

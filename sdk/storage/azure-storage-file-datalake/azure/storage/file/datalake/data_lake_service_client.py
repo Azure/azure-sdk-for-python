@@ -94,27 +94,32 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         item_paged._page_iterator_class = FileSystemPropertiesPaged
         return item_paged
 
-    def create_file_system(self, name,  # type: str
+    def create_file_system(self, file_system_name,  # type: str
                            metadata=None,  # type: Optional[Dict[str, str]]
                            **kwargs):
         # type: (...) -> FileSystemClient
-        file_system_client = self.get_file_system_client(name)
+        file_system_client = self.get_file_system_client(file_system_name)
         file_system_client.create_file_system(metadata=metadata, **kwargs)
         return file_system_client
 
-    def delete_file_system(self, file_system, **kwargs):
+    def delete_file_system(self, file_system,  # type: Union[FileSystemProperties, str]
+                           **kwargs):
         # type: (Any) -> None
         file_system_client = self.get_file_system_client(file_system)
         file_system_client.delete_file_system(**kwargs)
 
-    def get_file_system_client(self, file_system):
-
+    def get_file_system_client(self, file_system  # type: Union[FileSystemProperties, str]
+                               ):
+        # type: (...) -> FileSystemClient
         return FileSystemClient(self.url, file_system, credential=self.credential, _configuration=self._config,
                                 _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
                                 require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
                                 key_resolver_function=self.key_resolver_function)
 
-    def get_directory_client(self, file_system, directory):
+    def get_directory_client(self, file_system,  # type: Union[FileSystemProperties, str]
+                             directory  # type: # type: Union[DirectoryProperties, str]
+                             ):
+        # type: (...) -> DirectoryClient
         return DirectoryClient(self.url, file_system, directory, credential=self.credential,
                                _configuration=self._config, _pipeline=self._pipeline,
                                _location_mode=self._location_mode, _hosts=self._hosts,
@@ -122,7 +127,11 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                                key_resolver_function=self.key_resolver_function
                                )
 
-    def get_file_client(self, file_system, directory, file):
+    def get_file_client(self, file_system,  # type: Union[FileSystemProperties, str]
+                        directory,  # type: # type: Union[DirectoryProperties, str]
+                        file  # type: Union[FileProperties, str]
+                        ):
+        # type: (...) -> FileClient
         return FileClient(
             self.url, file_system, directory, file, credential=self.credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,

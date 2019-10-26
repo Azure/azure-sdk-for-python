@@ -41,6 +41,13 @@ class DirectoryProperties(BlobProperties):
         )
 
 
+class FileProperties(BlobProperties):
+    def __init__(self, **kwargs):
+        super(DirectoryProperties, self).__init__(
+            **kwargs
+        )
+
+
 class PathProperties(object):
     def __init__(self, **kwargs):
         super(PathProperties, self).__init__(

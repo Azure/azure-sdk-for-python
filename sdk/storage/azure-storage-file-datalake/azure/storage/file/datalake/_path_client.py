@@ -79,9 +79,6 @@ class PathClient(StorageAccountHostsMixin):
             quote(self.path_name, safe='~'),
             self._query_str)
 
-    def generate_shared_access_signature(self):
-        pass
-
     def _create_path_options(self, resource_type, content_settings=None, metadata=None, **kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
         if self.require_encryption or (self.key_encryption_key is not None):
@@ -107,7 +104,7 @@ class PathClient(StorageAccountHostsMixin):
         options.update(kwargs)
         return options
 
-    def create_path(self, resource_type, content_settings=None, metadata=None, **kwargs):
+    def _create(self, resource_type, content_settings=None, metadata=None, **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
         Create directory or file
@@ -188,7 +185,7 @@ class PathClient(StorageAccountHostsMixin):
         options.update(kwargs)
         return options
 
-    def delete_path(self, **kwargs):
+    def _delete(self, **kwargs):
         # type: (bool, **Any) -> None
         """
         Marks the specified path for deletion.
@@ -246,7 +243,11 @@ class PathClient(StorageAccountHostsMixin):
         options.update(kwargs)
         return options
 
-    def set_access_control(self, owner=None, group=None, permissions=None, acl=None, **kwargs):
+    def set_access_control(self, owner=None,  # type: Optional[str]
+                           group=None,  # type: Optional[str]
+                           permissions=None,  # type: Optional[str]
+                           acl=None,  # type: Optional[str]
+                           **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
         Set the owner, group, permissions, or access control list for a path.
@@ -303,15 +304,16 @@ class PathClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def _get_access_control_options(self, upn=None, **kwargs):
-        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+    def _get_access_control_options(self, upn=None,  # type: Optional[bool]
+                                    **kwargs):
+        # type: (...) -> Dict[str, Any]
 
         access_conditions = get_access_conditions(kwargs.pop('lease', None)) # TODO: move the method to a right place
         mod_conditions = get_mod_conditions(kwargs)
 
         options = {
             'action': 'getAccessControl',
-            'upn': upn,
+            'upn': upn if upn else False,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
             'timeout': kwargs.pop('timeout', None),
@@ -319,28 +321,40 @@ class PathClient(StorageAccountHostsMixin):
         options.update(kwargs)
         return options
 
-    def get_access_control(self, upn=None, **kwargs):
+    def get_access_control(self, upn=None,  # type: Optional[bool]
+                           **kwargs):
+        # type: (**Any) -> Dict[str, Any]
         options = self._get_access_control_options(upn=upn, **kwargs)
         try:
             return self._client.path.get_properties(**options)
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def rename_path(self, **kwargs):
-        pass
+    def rename_path(self, rename_source,
+                    **kwargs):
+        # type: (**Any) -> Dict[str, Any]
+        return self._client.path.create(rename_source=rename_source, **kwargs)
 
-    def get_path_properties(self, **kwargs):
+    def _get_path_properties(self, **kwargs):
+        # type: (**Any) -> Union[FileProperties, DirectoryProperties]
         path_properties = self._blob_client.get_blob_properties(**kwargs)
         path_properties.__class__ = DirectoryProperties
         return path_properties
 
-    def set_path_metadata(self, metadata=None, **kwargs):
+    def set_metadata(self, metadata=None,  # type: Optional[Dict[str, str]]
+                     **kwargs):
+        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Union[str, datetime]]
         return self._blob_client.set_blob_metadata(metadata=metadata, **kwargs)
 
-    def set_http_headers(self, content_settings=None, **kwargs):
+    def set_http_headers(self, content_settings=None,# type: Optional[ContentSettings]
+                         **kwargs):
+        # type: (Optional[ContentSettings], **Any) -> None
         return self._blob_client.set_http_headers(content_settings=content_settings, **kwargs)
 
-    def acquire_lease(self, lease_duration=-1, lease_id=None, **kwargs):
-        lease = DataLakeLeaseClient(self, lease_id=lease_id) # type: ignore
+    def acquire_lease(self, lease_duration=-1,  # type: Optional[int]
+                      lease_id=None,  # type: Optional[str]
+                      **kwargs):
+        # type: (int, Optional[str], **Any) -> DataLakeLeaseClient
+        lease = DataLakeLeaseClient(self, lease_id=lease_id)  # type: ignore
         lease.acquire(lease_duration=lease_duration, **kwargs)
         return lease

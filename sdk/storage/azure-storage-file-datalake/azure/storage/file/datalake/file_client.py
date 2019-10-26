@@ -30,10 +30,6 @@ class FileClient(PathClient):
         super(FileClient, self).__init__(account_url, file_system_name, path,
                                          credential=credential, **kwargs)
 
-    def generate_shared_access_signature(self):
-        # ???
-        pass
-
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
@@ -70,12 +66,15 @@ class FileClient(PathClient):
             account_url, file_system_name=file_system_name, directory_name=directory_name, file_name=file_name,
             credential=credential, **kwargs)
 
-    def create_file(self, content_settings=None, metadata=None, **kwargs):
+    def create_file(self, content_settings=None,  # type: Optional[ContentSettings]
+                    metadata=None,  # type: Optional[Dict[str, str]]
+                    **kwargs):
+        # type: (...) -> Dict[str, Union[str, datetime]]
         """
         Create directory or file
         :return:
         """
-        return self.create_path('file', content_settings=content_settings, metadata=metadata, **kwargs)
+        return self._create('file', content_settings=content_settings, metadata=metadata, **kwargs)
 
     def delete_file(self, **kwargs):
         # type: (...) -> None
@@ -83,7 +82,12 @@ class FileClient(PathClient):
         Marks the specified path for deletion.
         :return:
         """
-        return self.delete_path(**kwargs)
+        self._
+        return self._delete(**kwargs)
+
+    def get_file_properties(self, **kwargs):
+        # type: (**Any) -> FileProperties
+        return self._get_path_properties(**kwargs)
 
     @staticmethod
     def _append_data_options(data, offset, length=None, **kwargs):
@@ -110,7 +114,10 @@ class FileClient(PathClient):
         options.update(kwargs)
         return options
 
-    def append_data(self, data, offset, length=None, **kwargs):
+    def append_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
+                    offset,  # type: int
+                    length=None,  # type: Optional[int]
+                    **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
         """
 
@@ -165,11 +172,13 @@ class FileClient(PathClient):
         options.update(kwargs)
         return options
 
-    def flush_data(self, offset, retain_uncommitted_data=False, **kwargs):
+    def flush_data(self, offset,  # type: int
+                   retain_uncommitted_data=False,   # type: Optional[bool]
+                   **kwargs):
+        # type: (...) -> Dict[str, Union[str, datetime]]
         """
 
         :param offset:
-        :param length:
         :param bool retain_uncommitted_data: Valid only for flush operations.  If
          "true", uncommitted data is retained after the flush operation
          completes; otherwise, the uncommitted data is deleted after the flush
@@ -223,10 +232,16 @@ class FileClient(PathClient):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def read_file(self, offset=None, length=None, **kwargs):
-        # type: (Optional[int], Optional[int], bool, **Any) -> Iterable[bytes]
+    def read_file(self, offset=None,   # type: Optional[int]
+                  length=None,   # type: Optional[int]
+                  stream=None,  # type: Optional[IO]
+                  **kwargs):
+        # type: (Optional[int], Optional[int], bool, **Any) -> Union[int, byte, str]
         """
         Download a file from the service, including its metadata and properties
         :return:
         """
-        self._blob_client.download_blob(offset=offset, length=length, **kwargs)
+        downloader = self._blob_client.download_blob(offset=offset, length=length, **kwargs)
+        if stream:
+            return downloader.readinto(stream)
+        return downloader.readall()

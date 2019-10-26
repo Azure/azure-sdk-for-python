@@ -107,6 +107,8 @@ class DirectoryTest(StorageTestCase):
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         created = directory_client.create_directory(metadata=metadata)
 
+        properties = directory_client.get_directory_properties()
+
         # Assert
         self.assertTrue(created)
 
@@ -139,7 +141,7 @@ class DirectoryTest(StorageTestCase):
         # to make sure the sub directory was indeed created by get sub_directory properties from sub directory client
         sub_directory_client = self.dsc.get_directory_client(self.file_system_name,
                                                              directory_name+'/'+sub_directory_name)
-        sub_properties = sub_directory_client.get_path_properties()
+        sub_properties = sub_directory_client.get_directory_properties()
 
         # Assert
         self.assertTrue(sub_directory_created)
@@ -148,7 +150,7 @@ class DirectoryTest(StorageTestCase):
         # Act
         directory_client.delete_sub_directory(sub_directory_name)
         with self.assertRaises(ResourceNotFoundError):
-            sub_directory_client.get_path_properties()
+            sub_directory_client.get_directory_properties()
 
     @record
     def test_set_access_control(self):
@@ -181,9 +183,22 @@ class DirectoryTest(StorageTestCase):
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory(metadata=metadata)
 
-        properties = directory_client.get_path_properties()
+        properties = directory_client.get_directory_properties()
         # Assert
         self.assertTrue(properties)
+
+    @record
+    def test_rename(self):
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        properties = directory_client.get_directory_properties()
+
+        new_name = "newname"
+        directory_client = self.dsc.get_directory_client(self.file_system_name, new_name)
+
+        properties = directory_client.rename_path('/'+self.file_system_name+'/'+directory_name)
 
 
 # ------------------------------------------------------------------------------

@@ -99,7 +99,7 @@ class FileTest(StorageTestCase):
         create_resp = file_client.create_file(lease=lease)
 
         # Assert
-        blob_properties = file_client.get_path_properties()
+        blob_properties = file_client.get_file_properties()
         self.assertIsNotNone(blob_properties)
         self.assertEqual(blob_properties.etag, create_resp.get('etag'))
         self.assertEqual(blob_properties.last_modified, create_resp.get('last_modified'))
@@ -182,7 +182,7 @@ class FileTest(StorageTestCase):
         # to make sure the sub directory was indeed created by get sub_directory properties from sub directory client
         sub_directory_client = self.dsc.get_directory_client(self.file_system_name,
                                                              directory_name+'/'+sub_directory_name)
-        sub_properties = sub_directory_client.get_path_properties()
+        sub_properties = sub_directory_client.get_file_properties()
 
         # Assert
         self.assertTrue(sub_directory_created)
@@ -191,7 +191,7 @@ class FileTest(StorageTestCase):
         # Act
         directory_client.delete_sub_directory(sub_directory_name)
         with self.assertRaises(ResourceNotFoundError):
-            sub_directory_client.get_path_properties()
+            sub_directory_client.get_file_properties()
 
     @record
     def test_set_access_control(self):
@@ -224,7 +224,7 @@ class FileTest(StorageTestCase):
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory(metadata=metadata)
 
-        properties = directory_client.get_path_properties()
+        properties = directory_client.get_file_properties()
         # Assert
         self.assertTrue(properties)
 
