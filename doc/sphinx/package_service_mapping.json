@@ -474,7 +474,7 @@
     "namespaces": [
       "azure.mgmt.keyvault"
     ],
-    "service_name": "Key Vault"
+    "service_name": "Keyvault"
   },
   "azure-mgmt-kusto": {
     "category": "Management",

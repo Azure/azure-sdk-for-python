@@ -146,7 +146,7 @@ def create_docs_folder():
 
     # copy all written RST files written in the sphinx folder
     for file in [p for p in os.listdir(location) if os.path.splitext(p)[1] == ".rst"]:
-        shutil.copy(file, docs_folder)
+        shutil.copy(os.path.join(location, file), docs_folder)
 
 # output everything to the _docs
 if __name__ == "__main__":
