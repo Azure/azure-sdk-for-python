@@ -44,7 +44,7 @@ az storage account create -n my-storage-account-name -g my-resource-group
 ### Create the client
 The Azure Storage Blobs client library for Python allows you to interact with three types of resources: the storage
 account itself, blob storage containers, and blobs. Interaction with these resources starts with an instance of a
-[client](#clients). To create a client object, you will need the storage account's blob service endpoint URL and a
+[client](#clients). To create a client object, you will need the storage account's blob service account URL and a
 credential that allows you to access the storage account:
 
 ```python
@@ -53,14 +53,14 @@ from azure.storage.blob import BlobServiceClient
 service = BlobServiceClient(account_url="https://<my-storage-account-name>.blob.core.windows.net/", credential=credential)
 ```
 
-#### Looking up the endpoint URL
-You can find the storage account's blob service endpoint URL using the 
+#### Looking up the account URL
+You can find the storage account's blob service account URL using the 
 [Azure Portal](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview#storage-account-endpoints),
 [Azure PowerShell](https://docs.microsoft.com/en-us/powershell/module/az.storage/get-azstorageaccount),
 or [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show):
 
 ```bash
-# Get the blob service endpoint for the storage account
+# Get the blob service account url for the storage account
 az storage account show -n my-storage-account-name -g my-resource-group --query "primaryEndpoints.blob"
 ```
 
@@ -70,7 +70,9 @@ The `credential` parameter may be provided in a number of different forms, depen
 1. To use a [shared access signature (SAS) token](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview),
    provide the token as a string. If your account URL includes the SAS token, omit the credential parameter.
 2. To use a storage account [shared access key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/),
-   provide the key as a string.
+   provide the key as a string. This can be found in the Azure Portal under your storage account or by running
+    the following Azure CLI command:
+    ```az storage account keys list -g MyResourceGroup -n MyStorageAccount```
 3. To use an [Azure Active Directory (AAD) token credential](https://docs.microsoft.com/en-us/azure/storage/common/storage-auth-aad),
    provide an instance of the desired credential type obtained from the
    [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials) library.
@@ -85,7 +87,15 @@ connection string to the client's `from_connection_string` class method:
 ```python
 from azure.storage.blob import BlobServiceClient
 
-service = BlobServiceClient.from_connection_string(conn_str="my_connection_string")
+connection_string = "DefaultEndpointsProtocol=https;AccountName=xxxx;AccountKey=xxxx;EndpointSuffix=core.windows.net"
+service = BlobServiceClient.from_connection_string(conn_str=connection_string)
+```
+
+The connection string to your storage account can be found in the Azure Portal or by running the following CLI
+command:
+
+```bash
+az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
 ```
 
 ## Key concepts
@@ -112,7 +122,7 @@ Four different clients are provided to to interact with the various components o
 3. **[BlobClient](https://docs.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob.blobclient)** -
     this client represents interaction with a specific blob (which need not exist yet). It provides operations to
     upload, download, delete, and create snapshots of a blob, as well as specific operations per blob type.
-4. **[LeaseClient](https://docs.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob.leaseclient)** -
+4. **[BlobLeaseClient](https://docs.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob.blobleaseclient)** -
     this client represents lease interactions with a `ContainerClient` or `BlobClient`. It provides operations to
     acquire, renew, release, change, and break a lease on a specified resource.
 
@@ -141,7 +151,7 @@ Upload a blob to your container
 ```python
 from azure.storage.blob import BlobClient
 
-blob = BlobClient.from_connection_string(conn_str="my_connection_string", container_name="my_container", blob_name="my_blob")
+blob = BlobClient.from_connection_string(conn_str="<connection_string>", container_name="my_container", blob_name="my_blob")
 
 with open("./SampleSource.txt", "rb") as data:
     blob.upload_blob(data)
@@ -152,7 +162,7 @@ Use the async client to upload a blob
 ```python
 from azure.storage.blob.aio import BlobClient
 
-blob = BlobClient.from_connection_string(conn_str="my_connection_string", container_name="my_container", blob_name="my_blob")
+blob = BlobClient.from_connection_string(conn_str="<connection_string>", container_name="my_container", blob_name="my_blob")
 
 with open("./SampleSource.txt", "rb") as data:
     await blob.upload_blob(data)
@@ -168,7 +178,7 @@ blob = BlobClient.from_connection_string(conn_str="my_connection_string", contai
 
 with open("./BlockDestination.txt", "wb") as my_blob:
     blob_data = blob.download_blob()
-    my_blob.writelines(blob_data.content_as_bytes())
+    my_blob.writelines(blob_data.readall())
 ```
 
 Download a blob asynchronously
@@ -180,7 +190,7 @@ blob = BlobClient.from_connection_string(conn_str="my_connection_string", contai
 
 with open("./BlockDestination.txt", "wb") as my_blob:
     stream = await blob.download_blob()
-    data = await stream.content_as_bytes()
+    data = await stream.readall()
     my_blob.write(data)
 ```
 
