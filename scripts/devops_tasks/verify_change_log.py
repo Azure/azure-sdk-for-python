@@ -15,6 +15,9 @@ import logging
 
 from common_tasks import process_glob_string, parse_setup, run_check_call
 
+excluded_packages = [   
+    "azure"]
+
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
@@ -53,7 +56,7 @@ def verify_packages(targeted_packages):
         pkg_name, version, _ = parse_setup(package)
 
         # Skip management packages
-        if "-mgmt-" in pkg_name:
+        if "-mgmt" in pkg_name or pkg_name in excluded_packages:
             continue
 
         if not find_change_log(package, version):
