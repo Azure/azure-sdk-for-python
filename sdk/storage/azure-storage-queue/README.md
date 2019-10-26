@@ -208,6 +208,43 @@ async for message in response:
     await queue.delete_message(message)
 ```
 
+## Optional Configuration
+
+Optional keyword arguments that can be passed in at the client and per-operation level. 
+
+### Retry Policy configuration
+
+Use the following keyword arguments when instantiating a client to configure the retry policy:
+
+* _retry_total_ (int): Total number of retries to allow. Takes precedence over other counts.
+    Pass in `retry_total=0` if you do not want to retry on requests. Defaults to 10.
+* _retry_connect_ (int): How many connection-related errors to retry on. Defaults to 3.
+* _retry_read_ (int): How many times to retry on read errors. Defaults to 3.
+* _retry_status_ (int): How many times to retry on bad status codes. Defaults to 3.
+* _retry_to_secondary_ (bool): Whether the request should be retried to secondary, if able.
+    This should only be enabled of RA-GRS accounts are used and potentially stale data can be handled.
+    Defaults to `False`.
+
+### Other client / per-operation configuration
+
+Other optional configuration keyword arguments that can be specified on the client or per-operation.
+
+**Client keyword arguments:**
+
+* _connection_timeout_ (int): Optionally sets the connect and read timeout value, in seconds.
+* _transport_ (Any): User-provided transport to send the HTTP request.
+
+**Per-operation keyword arguments:**
+
+* _raw_response_hook_ (callable): The given callback uses the response returned from the service.
+* _raw_request_hook_ (callable): The given callback uses the request before being sent to service.
+* _client_request_id_ (str): Optional user specified identification of the request.
+* _user_agent_ (str): Appends the custom value to the user-agent header to be sent with the request.
+* _logging_enable_ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at
+the client level to enable it for all requests.
+* _headers_ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
+
+
 ## Troubleshooting
 Storage Queue clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/exceptions.md).
 All Queue service operations will throw a `StorageErrorException` on failure with helpful [error codes](https://docs.microsoft.com/rest/api/storageservices/queue-service-error-codes).

@@ -56,6 +56,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         The hostname of the secondary endpoint.
     :keyword loop:
         The event loop to run the asynchronous tasks.
+    :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
 
     .. admonition:: Example:
 

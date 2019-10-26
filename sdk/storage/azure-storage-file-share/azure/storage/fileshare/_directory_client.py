@@ -63,6 +63,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         shared access key.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
+    :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
     """
     def __init__( # type: ignore
             self, account_url,  # type: str
