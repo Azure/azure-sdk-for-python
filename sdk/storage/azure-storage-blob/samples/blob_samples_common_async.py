@@ -93,6 +93,39 @@ class CommonBlobSamplesAsync(object):
         # Delete container
         await blob_service_client.delete_container("containerfordeletedblobsasync")
 
+    async def delete_multiple_blobs_async(self):
+        # Instantiate a BlobServiceClient using a connection string
+        from azure.storage.blob.aio import BlobServiceClient
+        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+
+        # Instantiate a ContainerClient
+        container_client = blob_service_client.get_container_client("containerforbatchblobdeletesasync")
+
+        # Create new Container
+        try:
+            await container_client.create_container()
+        except ResourceExistsError:
+            # Container already created
+            pass
+
+        # Upload a blob to the container
+        upload_data = b"Hello World"
+        await container_client.upload_blob(name="my_blob1", data=upload_data)
+        await container_client.upload_blob(name="my_blob2", data=upload_data)
+        await container_client.upload_blob(name="my_blob3", data=upload_data)
+
+        # [START delete_multiple_blobs]
+        # Delete multiple blobs in the container by name
+        await container_client.delete_blobs("my_blob1", "my_blob2")
+
+        # Delete multiple blobs by properties iterator
+        my_blobs = container_client.list_blobs(name_starts_with="my_blob")
+        await container_client.delete_blobs(*[b async for b in my_blobs])  # async for in list comprehension after 3.6 only
+        # [END delete_multiple_blobs]
+
+        # Delete container
+        await blob_service_client.delete_container("containerforbatchblobdeletesasync")
+
     async def acquire_lease_on_blob_async(self):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
