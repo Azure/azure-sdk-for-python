@@ -293,7 +293,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         return UnwrapResult(key_id=self._key_id, algorithm=algorithm, key=result)
 
     @distributed_trace_async
-    async def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs: "**Any") -> SignResult:
+    async def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs: "Any") -> SignResult:
         """
         Create a signature from a digest using the client's key. Requires the keys/sign permission.
 

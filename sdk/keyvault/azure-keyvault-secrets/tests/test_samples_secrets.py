@@ -192,12 +192,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START recover_deleted_secret]
 
         # recover deleted secret to the latest version
-        recovered_secret_poller = secret_client.begin_recover_deleted_secret("secret-name")
-        recovered_secret = recovered_secret_poller.result()
+        recover_secret_poller = secret_client.begin_recover_deleted_secret("secret-name")
+        recovered_secret = recover_secret_poller.result()
         print(recovered_secret.id)
         print(recovered_secret.name)
 
         # if you want to block until secret is recovered server-side, call wait() on the poller
-        recovered_secret_poller.wait()
+        recover_secret_poller.wait()
 
         # [END recover_deleted_secret]
