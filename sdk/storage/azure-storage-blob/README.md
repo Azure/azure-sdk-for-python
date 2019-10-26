@@ -168,7 +168,7 @@ blob = BlobClient.from_connection_string(conn_str="my_connection_string", contai
 
 with open("./BlockDestination.txt", "wb") as my_blob:
     blob_data = blob.download_blob()
-    my_blob.writelines(blob_data.content_as_bytes())
+    blob_data.readinto(my_blob)
 ```
 
 Download a blob asynchronously
@@ -180,7 +180,7 @@ blob = BlobClient.from_connection_string(conn_str="my_connection_string", contai
 
 with open("./BlockDestination.txt", "wb") as my_blob:
     stream = await blob.download_blob()
-    data = await stream.content_as_bytes()
+    data = await stream.readall()
     my_blob.write(data)
 ```
 
