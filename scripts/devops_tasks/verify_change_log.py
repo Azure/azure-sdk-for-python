@@ -26,9 +26,9 @@ psscript = os.path.join(root_dir, "scripts", "devops_tasks", "find_change_log.ps
 def find_change_log(targeted_package, version):
     # Execute powershell script to find a matching version in history.md
     command_array = ["pwsh"]    
-    command_array.append(". {}".format(psscript))
-    command_array.append(" -workingDir {}".format(targeted_package))
-    command_array.append(" -version {}".format(version))
+    command_array.append("-File {}".format(psscript))
+    command_array.append("-workingDir {}".format(targeted_package))
+    command_array.append("-version {}".format(version))
     command_array.append("set-ExecutionPolicy Unrestricted")
 
     allowed_return_codes = []
