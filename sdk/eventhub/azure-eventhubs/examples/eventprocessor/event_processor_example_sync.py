@@ -1,7 +1,7 @@
 import logging
 import os
 import time
-from azure.eventhub import EventHubConsumerClient, FileBasedPartitionManager, InMemoryPartitionManager
+from azure.eventhub import EventHubConsumerClient, FileBasedPartitionManager
 
 RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
 RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
@@ -26,8 +26,7 @@ def process_events(partition_context, events):
 
 
 if __name__ == '__main__':
-    #partition_manager = FileBasedPartitionManager('consumer_pm_store')
-    partition_manager = InMemoryPartitionManager()
+    partition_manager = FileBasedPartitionManager('consumer_pm_store')
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR, partition_manager=partition_manager, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL
     )
