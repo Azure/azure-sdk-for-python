@@ -229,12 +229,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START recover_deleted_key]
 
         # recover a deleted key to its latest version (requires soft-delete enabled for the vault)
-        recovered_key_poller = key_client.begin_recover_deleted_key("key-name")
-        recovered_key = recovered_key_poller.result()
+        recover_key_poller = key_client.begin_recover_deleted_key("key-name")
+        recovered_key = recover_key_poller.result()
         print(recovered_key.id)
         print(recovered_key.name)
 
         # if you want to block until key is recovered server-side, call wait() on the poller
-        recovered_key_poller.wait()
+        recover_key_poller.wait()
 
         # [END recover_deleted_key]

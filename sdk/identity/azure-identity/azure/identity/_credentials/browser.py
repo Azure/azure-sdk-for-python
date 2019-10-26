@@ -33,15 +33,14 @@ class InteractiveBrowserCredential(PublicClientCredential):
     there with the authorization code flow. Azure Active Directory documentation describes this flow in more detail:
     https://docs.microsoft.com/en-us/azure/active-directory/develop/v1-protocols-oauth-code
 
-    Keyword arguments
-        - **authority** (str): Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
           defines authorities for other clouds.
-        - **tenant_id** (str): an Azure Active Directory tenant ID. Defaults to the 'organizations' tenant, which can
+    :keyword str tenant_id: an Azure Active Directory tenant ID. Defaults to the 'organizations' tenant, which can
           authenticate work or school accounts.
-        - **client_id** (str): Client ID of the Azure Active Directory application users will sign in to. If
+    :keyword str client_id: Client ID of the Azure Active Directory application users will sign in to. If
           unspecified, the Azure CLI's ID will be used.
-        - **timeout** (int): seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
+    :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
 
     """
 
@@ -62,7 +61,7 @@ class InteractiveBrowserCredential(PublicClientCredential):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
 
         # start an HTTP server on localhost to receive the redirect

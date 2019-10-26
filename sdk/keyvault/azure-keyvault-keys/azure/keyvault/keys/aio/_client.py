@@ -27,11 +27,10 @@ class KeyClient(AsyncKeyVaultClientBase):
     :param str vault_url: URL of the vault the client will access
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
-
-    Keyword arguments
-        - **api_version**: version of the Key Vault API to use. Defaults to the most recent.
-        - **transport**: :class:`~azure.core.pipeline.transport.AsyncHttpTransport` to use. Defaults to
-          :class:`~azure.core.pipeline.transport.AioHttpTransport`.
+    :keyword str api_version: version of the Key Vault API to use. Defaults to the most recent.
+    :keyword transport: transport to use. Defaults to
+     :class:`~azure.core.pipeline.transport.AioHttpTransport`.
+    :paramtype transport: ~azure.core.pipeline.transport.AsyncHttpTransport
 
     Example:
         .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -46,27 +45,28 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def create_key(self, name: str, key_type: "Union[str, KeyType]", **kwargs: "Any") -> KeyVaultKey:
-        """Create a key. If ``name`` is already in use, create a new version of the key. Requires the keys/create
-        permission.
+        """Create a key or, if `name` is already in use, create a new version of the key.
 
-        :param str name: The name of the new key. Key Vault will generate the key's version.
+        Requires keys/create permission.
+
+        :param str name: The name of the new key.
         :param key_type: The type of key to create
-        :type key_type: str or ~azure.keyvault.keys.KeyType
+        :type key_type: ~azure.keyvault.keys.KeyType or str
+        :keyword int size: RSA key size in bits, for example 2048, 3072, or 4096. Applies only to RSA keys. To
+         create an RSA key, consider using :func:`create_rsa_key` instead.
+        :keyword curve: Elliptic curve name. Applies only to elliptic curve keys. Defaults to the NIST P-256
+         elliptic curve. To create an elliptic curve key, consider using :func:`create_ec_key` instead.
+        :paramtype curve: ~azure.keyvault.keys.KeyCurveName or str
+        :keyword key_operations: Allowed key operations
+        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
+        :keyword bool enabled: Whether the key is enabled for use.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
+        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
-
-        Keyword arguments
-            - **size** (int): RSA key size in bits, for example 2048, 3072, or 4096. Applies only to RSA keys.
-              To create an RSA key, consider using :func:`create_rsa_key` instead.
-            - **curve** (:class:`~azure.keyvault.keys.KeyCurveName` or str):
-              Elliptic curve name. Applies only to elliptic curve keys. Defaults to the NIST P-256 elliptic curve.
-              To create an elliptic curve key, consider using :func:`create_ec_key` instead.
-            - **key_operations** (list[str or :class:`~azure.keyvault.keys.KeyOperation`]): Allowed key operations
-            - **enabled** (bool): Whether the key is enabled for use.
-            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
-            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
-            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -98,23 +98,24 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def create_rsa_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
-        """Create a new RSA key. If ``name`` is already in use, create a new version of the key. Requires the
-        keys/create permission.
+        """Create a new RSA key or, if `name` is already in use, create a new version of the key
 
-        :param str name: The name for the new key
+        Requires the keys/create permission.
+
+        :param str name: The name for the new key.
+        :keyword int size: Key size in bits, for example 2048, 3072, or 4096.
+        :keyword bool hardware_protected: Whether the key should be created in a hardware security module.
+         Defaults to ``False``.
+        :keyword key_operations: Allowed key operations
+        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
+        :keyword bool enabled: Whether the key is enabled for use.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
+        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
-
-        Keyword arguments
-            - **size** (int): Key size in bits, for example 2048, 3072, or 4096.
-            - **hardware_protected** (bool): Whether the key should be created in a hardware security module.
-              Defaults to ``False``.
-            - **key_operations** (list[str or :class:`~azure.keyvault.keys.KeyOperation`]): Allowed key operations
-            - **enabled** (bool): Whether the key is enabled for use.
-            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
-            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
-            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -129,24 +130,25 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def create_ec_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
-        """Create a new elliptic curve key. If ``name`` is already in use, create a new version of the key. Requires
-        the keys/create permission.
+        """Create a new elliptic curve key or, if `name` is already in use, create a new version of the key.
 
-        :param str name: The name for the new key. Key Vault will generate the key's version.
+        Requires the keys/create permission.
+
+        :param str name: The name for the new key.
+        :keyword curve: Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
+        :paramtype curve: ~azure.keyvault.keys.KeyCurveName or str
+        :keyword key_operations: Allowed key operations
+        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
+        :keyword bool hardware_protected: Whether the key should be created in a hardware security module.
+         Defaults to ``False``.
+        :keyword bool enabled: Whether the key is enabled for use.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
+        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
-
-        Keyword arguments
-            - **curve** (:class:`~azure.keyvault.keys.KeyCurveName` or str):
-              Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
-            - **hardware_protected** (bool): Whether the key should be created in a hardware security module.
-              Defaults to ``False``.
-            - **key_operations** (list[str or :class:`~azure.keyvault.keys.KeyOperation`]): Allowed key operations
-            - **enabled** (bool): Whether the key is enabled for use.
-            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
-            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
-            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -161,14 +163,12 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def delete_key(self, name: str, **kwargs: "Any") -> DeletedKey:
-        """Delete all versions of a key and its cryptographic material.
+        """Delete all versions of a key and its cryptographic material. Requires keys/delete permission.
 
-        Requires the keys/delete permission. The poller requires the keys/get permission to function properly.
+        If the vault has soft-delete enabled, deletion may take several seconds to complete.
 
-        :param str name: The name of the key to delete.
-        :returns: A coroutine for the deletion of the key. Since deleting a key is not instant,
-         we poll on the deletion of the key. Awaiting this method returns the
-         :class:`~azure.keyvault.keys.DeletedKey`
+        :param str name: The name of the key to delete
+        :returns: The deleted key
         :rtype: ~azure.keyvault.keys.DeletedKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
@@ -196,7 +196,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def get_key(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> KeyVaultKey:
-        """Get a key's attributes and, if it's an asymmetric key, its public material. Requires the keys/get permission.
+        """Get a key's attributes and, if it's an asymmetric key, its public material. Requires keys/get permission.
 
         :param str name: The name of the key to get.
         :param str version: (optional) A specific version of the key to get. If not specified, gets the latest version
@@ -222,8 +222,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def get_deleted_key(self, name: str, **kwargs: "Any") -> DeletedKey:
-        """Get a deleted key. This is only possible in a vault with soft-delete enabled. Requires the keys/get
-        permission.
+        """Get a deleted key. Possible only in a vault with soft-delete enabled. Requires keys/get permission.
 
         :param str name: The name of the key
         :returns: The deleted key
@@ -245,8 +244,9 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace
     def list_deleted_keys(self, **kwargs: "Any") -> "AsyncIterable[DeletedKey]":
-        """List all deleted keys, including the public part of each. This is only possible in a vault with soft-delete
-        enabled. Requires the keys/list permission.
+        """List all deleted keys, including the public part of each. Possible only in a vault with soft-delete enabled.
+
+        Requires keys/list permission.
 
         :returns: An iterator of deleted keys
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.keys.DeletedKey]
@@ -268,7 +268,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace
     def list_properties_of_keys(self, **kwargs: "Any") -> "AsyncIterable[KeyProperties]":
-        """List identifiers, attributes, and tags of all keys in the vault. Requires the keys/list permission.
+        """List identifiers and properties of all keys in the vault. Requires keys/list permission.
 
         :returns: An iterator of keys without their cryptographic material or version information
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.keys.KeyProperties]
@@ -290,7 +290,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace
     def list_properties_of_key_versions(self, name: str, **kwargs: "Any") -> "AsyncIterable[KeyProperties]":
-        """List the identifiers, attributes, and tags of a key's versions. Requires the keys/list permission.
+        """List the identifiers and properties of a key's versions. Requires keys/list permission.
 
         :param str name: The name of the key
         :returns: An iterator of keys without their cryptographic material
@@ -314,12 +314,14 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def purge_deleted_key(self, name: str, **kwargs: "Any") -> None:
-        """Permanently delete the specified key. This is only possible in vaults with soft-delete enabled. If a vault
-        does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
+        """Permanently delete a deleted key. Only possible in a vault with soft-delete enabled.
 
-        Requires the keys/purge permission.
+        If the vault does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will
+        return an error.
 
-        :param str name: The name of the key
+        Requires keys/purge permission.
+
+        :param str name: The name of the deleted key to purge
         :returns: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -335,16 +337,14 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def recover_deleted_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
-        """Recover a deleted key to its latest version. This is only possible in vaults with soft-delete enabled. If a
-        vault does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
-        Attempting to recover a non-deleted key will also return an error.
+        """Recover a deleted key to its latest version. Possible only in a vault with soft-delete enabled.
 
-        Requires the keys/recover permission. The poller requires the keys/get permission to function properly.
+        Requires keys/recover permission. If the vault does not have soft-delete enabled, :func:`delete_key` is
+        permanent, and this method will raise an error. Attempting to recover a non-deleted key will also raise an
+        error.
 
         :param str name: The name of the deleted key
-        :returns: A coroutine for the recovery of the key. Since recovering a key is not instant, we poll on the
-         recovering of the key. Awaiting this method returns the recovered
-         :class:`~azure.keyvault.keys.KeyVaultKey`
+        :returns: The recovered key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -369,23 +369,22 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def update_key_properties(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> KeyVaultKey:
-        """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
-        permission.
+        """Change a key's properties (not its cryptographic material). Requires keys/update permission.
 
         :param str name: The name of key to update
         :param str version: (optional) The version of the key to update. If unspecified, the latest version is updated.
+        :keyword key_operations: Allowed key operations
+        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
+        :keyword bool enabled: Whether the key is enabled for use.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
+        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The updated key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
-
-        Keyword arguments
-            - **enabled** (bool): Whether the key is enabled for use.
-            - **key_operations** (list[str or :class:`~azure.keyvault.keys.KeyOperation`]): Allowed key operations
-            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
-            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
-            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -415,14 +414,13 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def backup_key(self, name: str, **kwargs: "Any") -> bytes:
-        """Back up a key in a protected form that can't be used outside Azure Key Vault. This is intended to allow
-        copying a key from one vault to another. Requires the key/backup permission.
+        """Back up a key in a protected form useable only by Azure Key Vault. Requires key/backup permission.
 
-        Backup / restore cannot be performed across geopolitical boundaries. For example, a backup from a vault in a
-        USA region cannot be restored to a vault in an EU region.
+        This is intended to allow copying a key from one vault to another. Both vaults must be owned by the same Azure
+        subscription. Also, backup / restore cannot be performed across geopolitical boundaries. For example, a backup
+        from a vault in a USA region cannot be restored to a vault in an EU region.
 
-        :param str name: The name of the key
-        :returns: The raw bytes of the key backup
+        :param str name: The name of the key to back up
         :rtype: bytes
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
@@ -441,13 +439,13 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def restore_key_backup(self, backup: bytes, **kwargs: "Any") -> KeyVaultKey:
-        """Restore a key backup to the vault. This imports all versions of the key, with its name, attributes, and
-        access control policies. Requires the keys/restore permission.
+        """Restore a key backup to the vault. Requires keys/restore permission.
 
-        If the backed up key's name is already in use in the target vault, restoring it will fail. Also, the target
-        vault must be owned by the same Microsoft Azure subscription as the source vault.
+        This imports all versions of the key, with its name, attributes, and access control policies. If the key's name
+        is already in use, restoring it will fail. Also, the target vault must be owned by the same Microsoft Azure
+        subscription as the source vault.
 
-        :param bytes backup: The raw bytes of the key backup
+        :param bytes backup: A key backup as returned by :func:`backup_key`
         :returns: The restored key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises:
@@ -467,22 +465,22 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def import_key(self, name: str, key: JsonWebKey, **kwargs: "Any") -> KeyVaultKey:
-        """Import an externally created key. If ``name`` is already in use, import the key as a new version. Requires
-        the keys/import permission.
+        """Import a key created externally. Requires keys/import permission.
+
+        If `name` is already in use, the key will be imported as a new version.
 
         :param str name: Name for the imported key
         :param key: The JSON web key to import
         :type key: ~azure.keyvault.keys.JsonWebKey
+        :keyword bool hardware_protected: Whether the key should be backed by a hardware security module
+        :keyword bool enabled: Whether the key is enabled for use.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
+        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
         :returns: The imported key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
-
-        Keyword arguments
-            - **enabled** (bool): Whether the key is enabled for use.
-            - **hardware_protected** (bool): Whether the key should be backed by a hardware security module
-            - **not_before** (:class:`~datetime.datetime`): Not before date of the key in UTC
-            - **expires_on** (:class:`~datetime.datetime`): Expiry date of the key in UTC
-            - **tags** (dict[str, str]): Application specific metadata in the form of key-value pairs.
         """
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)

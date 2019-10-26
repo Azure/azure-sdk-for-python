@@ -19,13 +19,13 @@ from azure.storage.blob import (
     generate_blob_sas,
     generate_container_sas
 )
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
 
 from testcase import (
     StorageTestCase,
-    TestMode,
-    record,
     LogCaptured,
+    GlobalStorageAccountPreparer
 )
 
 if sys.version_info >= (3,):
@@ -37,23 +37,16 @@ else:
 _AUTHORIZATION_HEADER_NAME = 'Authorization'
 
 class StorageLoggingTest(StorageTestCase):
-
-    def setUp(self):
-        super(StorageLoggingTest, self).setUp()
-
-        url = self._get_account_url()
-        credential = self._get_shared_key_credential()
-
-        self.bsc = BlobServiceClient(url, credential=credential)
+    def _setup(self, bsc):
         self.container_name = self.get_resource_name('utcontainer')
 
         # create source blob to be copied from
         self.source_blob_name = self.get_resource_name('srcblob')
         self.source_blob_data = self.get_random_bytes(4 * 1024)
-        source_blob = self.bsc.get_blob_client(self.container_name, self.source_blob_name)
+        source_blob = bsc.get_blob_client(self.container_name, self.source_blob_name)
 
-        if not self.is_playback():
-            self.bsc.create_container(self.container_name)
+        if self.is_live:
+            bsc.create_container(self.container_name)
             source_blob.upload_blob(self.source_blob_data)
 
         # generate a SAS so that it is accessible with a URL
@@ -69,16 +62,12 @@ class StorageLoggingTest(StorageTestCase):
         sas_source = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
         self.source_blob_url = sas_source.url
 
-    def tearDown(self):
-        if not self.is_playback():
-            self.bsc.delete_container(self.container_name)
-
-        return super(StorageLoggingTest, self).tearDown()
-
-    @record
-    def test_authorization_is_scrubbed_off(self):
+    @GlobalStorageAccountPreparer()
+    def test_authorization_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        container = self.bsc.get_container_client(self.container_name)
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key)
+        self._setup(bsc)
+        container = bsc.get_container_client(self.container_name)
         # Act
         with LogCaptured(self) as log_captured:
             container.get_container_properties(logging_enable=True)
@@ -89,14 +78,15 @@ class StorageLoggingTest(StorageTestCase):
             self.assertTrue(_AUTHORIZATION_HEADER_NAME in log_as_str)
             self.assertFalse('SharedKey' in log_as_str)
 
-    @record
-    def test_sas_signature_is_scrubbed_off(self):
+    @GlobalStorageAccountPreparer()
+    def test_sas_signature_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
-            return
-
+        if not self.is_live:
+            pytest.skip("live only")
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key)
+        self._setup(bsc)
         # Arrange
-        container = self.bsc.get_container_client(self.container_name)
+        container = bsc.get_container_client(self.container_name)
         token = generate_container_sas(
             container.account_name,
             container.container_name,
@@ -120,15 +110,16 @@ class StorageLoggingTest(StorageTestCase):
             self.assertTrue(QueryStringConstants.SIGNED_SIGNATURE in log_as_str)
             self.assertFalse(signed_signature in log_as_str)
 
-    @record
-    def test_copy_source_sas_is_scrubbed_off(self):
+    @GlobalStorageAccountPreparer()
+    def test_copy_source_sas_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
-            return
-
+        if not self.is_live:
+            pytest.skip("live only")
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key)
+        self._setup(bsc)
         # Arrange
         dest_blob_name = self.get_resource_name('destblob')
-        dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
+        dest_blob = bsc.get_blob_client(self.container_name, dest_blob_name)
 
         # parse out the signed signature
         query_parameters = urlparse(self.source_blob_url).query
@@ -139,7 +130,6 @@ class StorageLoggingTest(StorageTestCase):
                 QueryStringConstants.SIGNED_SIGNATURE,
                 list(token_components.keys())
             ))
-
         signed_signature = quote(token_components[QueryStringConstants.SIGNED_SIGNATURE][0])
 
         # Act

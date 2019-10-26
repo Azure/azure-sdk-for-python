@@ -11,33 +11,29 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 66155824-8eca-11e9-8206-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:32:35 GMT
+      - Fri, 25 Oct 2019 17:22:00 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/utcontainerdac91c1f?restype=container
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerdac91c1f?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 14 Jun 2019 17:32:35 GMT
-      ETag:
-      - '"0x8D6F0EE4ADAA502"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:32:36 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 17:22:00 GMT
+      etag:
+      - '"0x8D7596FD89B09E3"'
+      last-modified:
+      - Fri, 25 Oct 2019 17:22:00 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 4d0f12e9-101e-00bf-2cd7-227076000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -53,37 +49,33 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-blob-type:
       - AppendBlob
-      x-ms-client-request-id:
-      - 66364cfa-8eca-11e9-8f69-f45c89a7d159
       x-ms-date:
-      - Fri, 14 Jun 2019 17:32:36 GMT
+      - Fri, 25 Oct 2019 17:22:00 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/utcontainerdac91c1f/blob1
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerdac91c1f/blob1
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 14 Jun 2019 17:32:35 GMT
-      ETag:
-      - '"0x8D6F0EE4AE4DACF"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:32:36 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 17:22:00 GMT
+      etag:
+      - '"0x8D7596FD8A3604D"'
+      last-modified:
+      - Fri, 25 Oct 2019 17:22:00 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 4d0f131e-101e-00bf-59d7-227076000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -101,173 +93,32 @@ interactions:
       Content-Type:
       - application/octet-stream
       If-Unmodified-Since:
-      - Fri, 14 Jun 2019 17:17:36 GMT
+      - Fri, 25 Oct 2019 17:07:00 GMT
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 663f27ee-8eca-11e9-8b9a-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:32:36 GMT
+      - Fri, 25 Oct 2019 17:22:00 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/utcontainerdac91c1f/blob1?comp=appendblock
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerdac91c1f/blob1?comp=appendblock
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The\
-        \ condition specified using HTTP conditional header(s) is not met.\nRequestId:4d0f1340-101e-00bf-7bd7-227076000000\n\
-        Time:2019-06-14T17:32:36.9470513Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:3b52cac0-f01e-00e0-2a58-8b6737000000\nTime:2019-10-25T17:22:00.7726573Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '252'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Fri, 14 Jun 2019 17:32:36 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 17:22:00 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - ConditionNotMet
-      x-ms-request-id:
-      - 4d0f1340-101e-00bf-7bd7-227076000000
       x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 412
-      message: The condition specified using HTTP conditional header(s) is not met.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 1acce1ee-8ed3-11e9-ae3d-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:34:55 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainerdac91c1f?restype=container
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 18:34:55 GMT
-      ETag:
-      - '"0x8D6F0F6FF1EE55F"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 18:34:55 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 20302074-c01e-009f-7fdf-221cba000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-blob-type:
-      - AppendBlob
-      x-ms-client-request-id:
-      - 1aefc7c2-8ed3-11e9-b430-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:34:55 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainerdac91c1f/blob1
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 18:34:55 GMT
-      ETag:
-      - '"0x8D6F0F6FF295A3E"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 18:34:55 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 20302092-c01e-009f-1bdf-221cba000000
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: block 0
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '7'
-      Content-Type:
-      - application/octet-stream
-      If-Unmodified-Since:
-      - Fri, 14 Jun 2019 18:19:55 GMT
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 1af93640-8ed3-11e9-a342-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:34:55 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainerdac91c1f/blob1?comp=appendblock
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The\
-        \ condition specified using HTTP conditional header(s) is not met.\nRequestId:203020a9-c01e-009f-2edf-221cba000000\n\
-        Time:2019-06-14T18:34:55.3670746Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '252'
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 18:34:55 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - ConditionNotMet
-      x-ms-request-id:
-      - 203020a9-c01e-009f-2edf-221cba000000
-      x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 412
       message: The condition specified using HTTP conditional header(s) is not met.

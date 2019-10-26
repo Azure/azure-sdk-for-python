@@ -106,7 +106,7 @@ six>=1.6
 #override azure-eventhub azure-core<2.0.0,>=1.0.0b4
 #override azure-storage-blob msrest>=0.6.10
 #override azure-storage-queue msrest>=0.6.10
-#override azure-storage-file msrest>=0.6.10
+#override azure-storage-file-share msrest>=0.6.10
 opencensus>=0.6.0
 opencensus-ext-threading
 opencensus-ext-azure>=0.3.1
