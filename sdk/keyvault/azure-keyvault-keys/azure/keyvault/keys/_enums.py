@@ -30,6 +30,6 @@ class KeyType(str, Enum):
 
     ec = "EC"  #: Elliptic Curve
     ec_hsm = "EC-HSM"  #: Elliptic Curve with a private key which is not exportable from the HSM
-    rsa = "RSA"  #: RSA (https://tools.ietf.org/html/rfc3447)
+    rsa = "RSA"
     rsa_hsm = "RSA-HSM"  #: RSA with a private key which is not exportable from the HSM
     oct = "oct"  #: Octet sequence (used to represent symmetric keys)
