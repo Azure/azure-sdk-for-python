@@ -11,7 +11,8 @@ logging.basicConfig(level=logging.INFO)
 
 
 def do_operation(event):
-    pass
+    # do some sync or async operations. If the operation is i/o intensive, async will have better performance
+    print(event)
 
 
 def process_events(partition_context, events):

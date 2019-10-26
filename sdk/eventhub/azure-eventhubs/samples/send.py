@@ -15,7 +15,7 @@ See 'send_list_of_event_data.py' and 'send_event_data_batch.py' for an example o
 
 import time
 import os
-from azure.eventhub import EventHubProducerClient, EventData, EventHubSharedKeyCredential
+from azure.eventhub import EventHubProducerClient, EventData
 
 EVENT_HUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENT_HUB = os.environ['EVENT_HUB_NAME']

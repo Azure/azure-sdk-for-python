@@ -20,8 +20,8 @@ EVENT_HUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENT_HUB = os.environ['EVENT_HUB_NAME']
 
 
-def create_batch_data(producer):
-    event_data_batch = producer.create_batch(max_size=10000)
+def create_batch_data(producer_client):
+    batch_data = producer_client.create_batch(max_size=10000)
     while True:
         try:
             event_data_batch.try_add(EventData('Message inside EventBatchData'))
@@ -29,7 +29,7 @@ def create_batch_data(producer):
             # EventDataBatch object reaches max_size.
             # New EventDataBatch object can be created here to send more data
             break
-    return event_data_batch
+    return batch_data
 
 
 producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONNECTION_STR, event_hub_path=EVENT_HUB)

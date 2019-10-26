@@ -25,7 +25,7 @@ class EventHubProducerClient(EventHubClient):
     sending events to the Azure Event Hubs service.
 
     Example:
-        .. literalinclude:: ../examples/TODO sample.py
+        .. literalinclude:: ../examples/test_examples_eventhub.py
             :start-after: [START create_eventhub_producer_client_sync]
             :end-before: [END create_eventhub_producer_client_sync]
             :language: python
@@ -45,6 +45,24 @@ class EventHubProducerClient(EventHubClient):
 
     def send(self, event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
             *, partition_key: Union[str, bytes] = None, partition_id: str = None, timeout: float = None):
+        """
+        Sends an event data and blocks until acknowledgement is received or operation times out.
+
+        :param event_data:
+        :param partition_key:
+        :param partition_id:
+        :param timeout:
+        :return:
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_producer_client_send_sync]
+                :end-before: [END eventhub_producer_client_send_sync]
+                :language: python
+                :dedent: 4
+                :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
+
+        """
 
         if self._producers is None:
             with self._producers_lock:
@@ -62,6 +80,27 @@ class EventHubProducerClient(EventHubClient):
         self._producers[producer_index].send(event_data, partition_key=partition_key, timeout=timeout)
 
     def create_batch(self, max_size=None, partition_key=None):
+        """
+        Create an EventDataBatch object with max size being max_size.
+        The max_size should be no greater than the max allowed message size defined by the service side.
+
+        :param max_size: The maximum size of bytes data that an EventDataBatch object can hold.
+        :type max_size: int
+        :param partition_key: With the given partition_key, event data will land to
+         a particular partition of the Event Hub decided by the service.
+        :type partition_key: str
+        :return: an EventDataBatch instance
+        :rtype: ~azure.eventhub.EventDataBatch
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_producer_client_create_batch_sync]
+                :end-before: [END eventhub_producer_client_create_batch_sync]
+                :language: python
+                :dedent: 4
+                :caption: Create EventDataBatch object within limited size
+
+        """
         # type:(int, str) -> EventDataBatch
         if not self._max_message_size_on_link:
             with self._producers_locks[-1]:
@@ -79,6 +118,20 @@ class EventHubProducerClient(EventHubClient):
         return EventDataBatch(max_size=(max_size or self._max_message_size_on_link), partition_key=partition_key)
 
     def close(self):
+        # type:() -> None
+        """
+        Close down the handler. If the handler has already closed,
+        this will be a no op.
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_producer_client_close_sync]
+                :end-before: [END eventhub_producer_client_close_sync]
+                :language: python
+                :dedent: 4
+                :caption: Close down the handler.
+
+        """
         # type: () -> None
         for p in self._producers:
             if p:

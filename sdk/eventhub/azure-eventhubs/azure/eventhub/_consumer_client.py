@@ -18,33 +18,12 @@ class EventHubConsumerClient(EventHubClient):
     """Represents an AMQP connection to an EventHub and receives event data from it.
 
     Example:
-        .. code-block:: python
-
-            import asyncio
-            import logging
-            import os
-            from azure.eventhub.aio import EventHubConsumerClient
-            from azure.eventhub.aio import FileBasedPartitionManager
-
-            RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
-            RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
-            CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-
-            logging.basicConfig(level=logging.INFO)
-
-            def process_events(partition_context, events):
-                if events:
-                    # do something
-                    partition_context.update_checkpoint(events[-1])
-                else:
-                    print("empty events received", "partition:", partition_context.partition_id)
-
-
-            if __name__ == '__main__':
-                partition_manager = FileBasedPartitionManager("consumer_pm_store")
-                client = EventHubConsumerClient.from_connection_string(
-                    CONNECTION_STR, partition_manager=partition_manager, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL
-                )
+        .. literalinclude:: ../examples/test_examples_eventhub.py
+            :start-after: [START create_eventhub_consumer_client_sync]
+            :end-before: [END create_eventhub_consumer_client_sync]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the EventHubConsumerClient.
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
@@ -118,6 +97,14 @@ class EventHubConsumerClient(EventHubClient):
         :param partition_initialize_handler:
         :param partition_close_handler:
         :return: None
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_consumer_client_receive_sync]
+                :end-before: [END eventhub_consumer_client_receive_sync]
+                :language: python
+                :dedent: 4
+                :caption: Receive events from the EventHub.
         """
         with self._lock:
             error = None
@@ -169,6 +156,15 @@ class EventHubConsumerClient(EventHubClient):
 
         :rtype: dict or None
         :raises: ValueError
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_client_consumer_get_last_enqueued_info_sync]
+                :end-before: [END eventhub_client_consumer_get_last_enqueued_info_sync]
+                :language: python
+                :dedent: 4
+                :caption: Get latest enqueued event properties of a partition.
+
         """
         if (consumer_group, partition_id) in self._event_processors:
             return self._event_processors[(consumer_group, partition_id)].get_last_enqueued_event_properties(partition_id)
@@ -182,6 +178,14 @@ class EventHubConsumerClient(EventHubClient):
     def close(self):
         # type: () -> None
         """Stop retrieving events from event hubs and close the underlying AMQP connection and links.
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_consumer_client_close_sync]
+                :end-before: [END eventhub_consumer_client_close_sync]
+                :language: python
+                :dedent: 4
+                :caption: Close down the handler.
 
         """
         with self._lock:

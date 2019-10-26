@@ -13,7 +13,7 @@ from azure.eventhub import EventData, EventHubProducerClient
 from azure.identity import EnvironmentCredential
 
 
-HOSTNAME = os.environ['EVENT_HUB_HOSTNAME']  # <mynamespace>.servicebus.windows.net
+HOSTNAME = os.environ['EVENT_HUB_HOSTNAME']
 EVENT_HUB = os.environ['EVENT_HUB_NAME']
 
 
