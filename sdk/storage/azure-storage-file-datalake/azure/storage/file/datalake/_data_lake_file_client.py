@@ -14,7 +14,7 @@ from azure.storage.file.datalake._path_client import PathClient
 from azure.storage.file.datalake._serialize import get_mod_conditions, get_path_http_headers
 
 
-class FileClient(PathClient):
+class DataLakeFileClient(PathClient):
     def __init__(
         self, account_url,  # type: str
         file_system_name,  # type: str
@@ -27,8 +27,8 @@ class FileClient(PathClient):
             path = file_directory.rstrip('/') + "/" + file_name
         else:
             path = file_name
-        super(FileClient, self).__init__(account_url, file_system_name, path,
-                                         credential=credential, **kwargs)
+        super(DataLakeFileClient, self).__init__(account_url, file_system_name, path,
+                                                 credential=credential, **kwargs)
 
     @classmethod
     def from_connection_string(
@@ -38,9 +38,9 @@ class FileClient(PathClient):
             file_name,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> FileClient
+        ):  # type: (...) -> DataLakeFileClient
         """
-        Create FileClient from a Connection String.
+        Create DataLakeFileClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Storage account.
@@ -56,8 +56,8 @@ class FileClient(PathClient):
             access key values. The value can be a SAS token string, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
-        :return a FileClient
-        :rtype ~azure.storage.file.datalake.FileClient
+        :return a DataLakeFileClient
+        :rtype ~azure.storage.file.datalake.DataLakeFileClient
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'dfs')
         if 'secondary_hostname' not in kwargs:
@@ -236,7 +236,7 @@ class FileClient(PathClient):
                   length=None,   # type: Optional[int]
                   stream=None,  # type: Optional[IO]
                   **kwargs):
-        # type: (Optional[int], Optional[int], bool, **Any) -> Union[int, byte, str]
+        # type: (...) -> Union[int, byte, str]
         """
         Download a file from the service, including its metadata and properties
         :return:

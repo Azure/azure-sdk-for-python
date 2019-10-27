@@ -11,7 +11,7 @@ import re
 import sys
 import unittest
 
-from azure.storage.file.datalake.models import ContentSettings
+from azure.storage.file.datalake import ContentSettings
 from testcase import (
     StorageTestCase,
     TestMode,
@@ -193,13 +193,25 @@ class DirectoryTest(StorageTestCase):
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory()
 
-        properties = directory_client.get_directory_properties()
-
         new_name = "newname"
-        directory_client = self.dsc.get_directory_client(self.file_system_name, new_name)
+        new_directory_client = self.dsc.get_directory_client(self.file_system_name, new_name)
 
-        properties = directory_client.rename_path('/'+self.file_system_name+'/'+directory_name)
+        new_directory_client.rename_path('/'+self.file_system_name+'/'+directory_name)
+        properties = new_directory_client.get_directory_properties()
 
+        self.assertIsNotNone(properties)
+
+    @record
+    def test_get_properties(self):
+        # Arrange
+        directory_name = self._get_directory_reference()
+        metadata = {'hello': 'world', 'number': '42'}
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory(metadata=metadata)
+
+        properties = directory_client.get_directory_properties()
+        # Assert
+        self.assertTrue(properties)
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

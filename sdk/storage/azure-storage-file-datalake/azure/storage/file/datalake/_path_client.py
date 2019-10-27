@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from azure.storage.blob._lease import get_access_conditions
 from azure.storage.file.datalake._generated.models import StorageErrorException
-from .lease import DataLakeLeaseClient
+from ._data_lake_lease import DataLakeLeaseClient
 
 try:
     from urllib.parse import urlparse, quote, unquote
@@ -21,7 +21,7 @@ from azure.storage.blob._shared.base_client import StorageAccountHostsMixin, par
 from azure.storage.blob._shared.response_handlers import process_storage_error, return_response_headers
 from azure.storage.file.datalake._serialize import convert_dfs_url_to_blob_url, get_mod_conditions, \
     get_path_http_headers, add_metadata_headers
-from azure.storage.file.datalake.models import LocationMode, FileSystemProperties, PathPropertiesPaged, DirectoryProperties
+from azure.storage.file.datalake._models import LocationMode, FileSystemProperties, PathPropertiesPaged, DirectoryProperties
 from ._generated import DataLakeStorageClient
 
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
@@ -323,7 +323,7 @@ class PathClient(StorageAccountHostsMixin):
 
     def get_access_control(self, upn=None,  # type: Optional[bool]
                            **kwargs):
-        # type: (**Any) -> Dict[str, Any]
+        # type: (...) -> Dict[str, Any]
         options = self._get_access_control_options(upn=upn, **kwargs)
         try:
             return self._client.path.get_properties(**options)
@@ -343,18 +343,18 @@ class PathClient(StorageAccountHostsMixin):
 
     def set_metadata(self, metadata=None,  # type: Optional[Dict[str, str]]
                      **kwargs):
-        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Union[str, datetime]]
+        # type: (...) -> Dict[str, Union[str, datetime]]
         return self._blob_client.set_blob_metadata(metadata=metadata, **kwargs)
 
-    def set_http_headers(self, content_settings=None,# type: Optional[ContentSettings]
+    def set_http_headers(self, content_settings=None,  # type: Optional[ContentSettings]
                          **kwargs):
-        # type: (Optional[ContentSettings], **Any) -> None
+        # type: (...) -> None
         return self._blob_client.set_http_headers(content_settings=content_settings, **kwargs)
 
     def acquire_lease(self, lease_duration=-1,  # type: Optional[int]
                       lease_id=None,  # type: Optional[str]
                       **kwargs):
-        # type: (int, Optional[str], **Any) -> DataLakeLeaseClient
+        # type: (...) -> DataLakeLeaseClient
         lease = DataLakeLeaseClient(self, lease_id=lease_id)  # type: ignore
         lease.acquire(lease_duration=lease_duration, **kwargs)
         return lease

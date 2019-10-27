@@ -16,14 +16,14 @@ from azure.storage.blob import LeaseClient as BlobLeaseClient
 if TYPE_CHECKING:
     from datetime import datetime
     FileSystemClient = TypeVar("FileSystemClient")
-    DirectoryClient = TypeVar("DirectoryClient")
-    FileClient = TypeVar("FileClient")
-    PathClient = TypeVar("PathClient")
+    DataLakeDirectoryClient = TypeVar("DataLakeDirectoryClient")
+    DataLakeFileClient = TypeVar("DataLakeFileClient")
+
 
 class DataLakeLeaseClient(object):
     """Creates a new LeaseClient.
 
-    This client provides lease operations on a FileSystemClient, DirectoryClient or FileClient.
+    This client provides lease operations on a FileSystemClient, DataLakeDirectoryClient or DataLakeFileClient.
 
     :ivar str id:
         The ID of the lease currently being maintained. This will be `None` if no
@@ -38,7 +38,7 @@ class DataLakeLeaseClient(object):
     :param client:
         The client of the file system, directory, or file to lease.
     :type client: ~azure.storage.file.datalake.FileSystemClient or
-        ~azure.storage.file.datalake.DirectoryClient or ~azure.storage.file.datalake.FileClient
+        ~azure.storage.file.datalake.DataLakeDirectoryClient or ~azure.storage.file.datalake.DataLakeFileClient
     :param str lease_id:
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
@@ -46,7 +46,7 @@ class DataLakeLeaseClient(object):
     def __init__(
             self, client, lease_id=None
     ):  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
-        # type: (Union[FileSystemClient, DirectoryClient, FileClient], Optional[str]) -> None
+        # type: (Union[FileSystemClient, DataLakeDirectoryClient, DataLakeFileClient], Optional[str]) -> None
         self.id = lease_id or str(uuid.uuid4())
         self.last_modified = None
         self.etag = None
@@ -56,7 +56,7 @@ class DataLakeLeaseClient(object):
         elif hasattr(client, '_container_client'):
             _client = client._container_client  # type: ignore # pylint: disable=protected-access
         else:
-            raise TypeError("Lease must use any of FileSystemClient DirectoryClient, or FileClient.")
+            raise TypeError("Lease must use any of FileSystemClient DataLakeDirectoryClient, or DataLakeFileClient.")
 
         self._blob_lease_client = BlobLeaseClient(_client, lease_id=lease_id)
 

@@ -11,7 +11,7 @@ import re
 import sys
 import unittest
 
-from azure.storage.file.datalake.models import ContentSettings
+from azure.storage.file.datalake import ContentSettings
 from testcase import (
     StorageTestCase,
     TestMode,
@@ -106,15 +106,10 @@ class FileTest(StorageTestCase):
 
     @record
     def test_create_file_under_root_directory(self):
-        # TODO: fix this test
         # Arrange
-        directory_name = None
+        # get a file client to interact with the file under root directory
+        file_client = self.dsc.get_file_client(self.file_system_name, None, "filename")
 
-        # Create a directory to put the file under that
-        directory_client = self.dsc.get_directory_client(self.file_system_name, '/')
-        directory_client.create_directory()
-
-        file_client = directory_client.get_file_client('filename')
         response = file_client.create_file()
 
         # Assert
@@ -182,7 +177,7 @@ class FileTest(StorageTestCase):
         # to make sure the sub directory was indeed created by get sub_directory properties from sub directory client
         sub_directory_client = self.dsc.get_directory_client(self.file_system_name,
                                                              directory_name+'/'+sub_directory_name)
-        sub_properties = sub_directory_client.get_file_properties()
+        sub_properties = sub_directory_client.get_directory_properties()
 
         # Assert
         self.assertTrue(sub_directory_created)
@@ -191,7 +186,7 @@ class FileTest(StorageTestCase):
         # Act
         directory_client.delete_sub_directory(sub_directory_name)
         with self.assertRaises(ResourceNotFoundError):
-            sub_directory_client.get_file_properties()
+            sub_directory_client.get_directory_properties()
 
     @record
     def test_set_access_control(self):
@@ -224,7 +219,9 @@ class FileTest(StorageTestCase):
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory(metadata=metadata)
 
-        properties = directory_client.get_file_properties()
+        file_client = directory_client.get_file_client("newfile")
+        file_client.create_file()
+        properties = file_client.get_file_properties()
         # Assert
         self.assertTrue(properties)
 

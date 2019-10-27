@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 from azure.storage.blob import generate_account_sas as generate_blob_account_sas
+from azure.storage.blob import generate_container_sas, generate_blob_sas
 
 
 def generate_account_sas(
@@ -71,17 +72,26 @@ def generate_account_sas(
             :dedent: 8
             :caption: Generating a shared access signature.
     """
-    pass
+    return generate_blob_account_sas(
+        account_name=account_name,
+        account_key=account_key,
+        resource_types=resource_types,
+        permission=permission,
+        expiry=expiry,
+        start=start,
+        ip=ip,
+        **kwargs
+    )
+
 
 def generate_file_system_sas(
         account_name,  # type: str
         file_system_name,  # type: str
         account_key=None,  # type: Optional[str]
         user_delegation_key=None,  # type: Optional[UserDelegationKey]
-        permission=None,  # type: Optional[Union[ContainerSasPermissions, str]]
+        permission=None,  # type: Optional[Union[FileSystemSasPermissions, str]]
         expiry=None,  # type: Optional[Union[datetime, str]]
         start=None,  # type: Optional[Union[datetime, str]]
-        policy_id=None,  # type: Optional[str]
         ip=None,  # type: Optional[str]
         **kwargs # type: Any
     ):
@@ -93,8 +103,8 @@ def generate_file_system_sas(
 
     :param str account_name:
         The storage account name used to generate the shared access signature.
-    :param str container_name:
-        The name of the container.
+    :param str file_system_name:
+        The name of the file system.
     :param str account_key:
         The access key to generate the shared access signature. Either `account_key` or
         `user_delegation_key` must be specified.
@@ -126,10 +136,6 @@ def generate_file_system_sas(
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
     :type start: datetime or str
-    :param str policy_id:
-        A unique value up to 64 characters in length that correlates to a
-        stored access policy. To create a stored access policy, use
-        :func:`~azure.storage.blob.ContainerClient.set_container_access_policy`.
     :param str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
@@ -165,7 +171,16 @@ def generate_file_system_sas(
             :dedent: 12
             :caption: Generating a sas token.
     """
-    pass
+    return generate_container_sas(
+        account_name=account_name,
+        container_name=file_system_name,
+        account_key=account_key,
+        user_delegation_key=user_delegation_key,
+        permission=permission,
+        expiry=expiry,
+        start=start,
+        ip=ip,
+        **kwargs)
 
 
 def generate_directory_sas(
@@ -251,7 +266,17 @@ def generate_directory_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
-    pass
+    return generate_blob_sas(
+        account_name=account_name,
+        container_name=file_system_name,
+        blob_name=directory_name,
+        account_key=account_key,
+        user_delegation_key=user_delegation_key,
+        permission=permission,
+        expiry=expiry,
+        start=start,
+        ip=ip,
+        **kwargs)
 
 def generate_file_sas(
         account_name,  # type: str
@@ -337,4 +362,16 @@ def generate_file_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
-    pass
+    if directory_name:
+        path = directory_name.rstrip('/') + "/" + file_name
+    return generate_blob_sas(
+        account_name=account_name,
+        container_name=file_system_name,
+        blob_name=path,
+        account_key=account_key,
+        user_delegation_key=user_delegation_key,
+        permission=permission,
+        expiry=expiry,
+        start=start,
+        ip=ip,
+        **kwargs)

@@ -4,11 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.storage.blob._shared.base_client import parse_connection_str
-from azure.storage.file.datalake import FileClient
+from azure.storage.file.datalake import DataLakeFileClient
 from ._path_client import PathClient
 
 
-class DirectoryClient(PathClient):
+class DataLakeDirectoryClient(PathClient):
     def __init__(
         self, account_url,  # type: str
         file_system_name,  # type: str
@@ -16,8 +16,8 @@ class DirectoryClient(PathClient):
         credential=None,  # type: Optional[Any]
         **kwargs  # type: Any
     ):
-        super(DirectoryClient, self).__init__(account_url, file_system_name, directory_name,
-                                              credential=credential, **kwargs)
+        super(DataLakeDirectoryClient, self).__init__(account_url, file_system_name, directory_name,
+                                                      credential=credential, **kwargs)
 
     def generate_shared_access_signature(self):
         # ???
@@ -30,9 +30,9 @@ class DirectoryClient(PathClient):
             directory_name,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> DirectoryClient
+        ):  # type: (...) -> DataLakeDirectoryClient
         """
-        Create DirectoryClient from a Connection String.
+        Create DataLakeDirectoryClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Storage account.
@@ -46,8 +46,8 @@ class DirectoryClient(PathClient):
             access key values. The value can be a SAS token string, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
-        :return a DirectoryClient
-        :rtype ~azure.storage.file.datalake.DirectoryClient
+        :return a DataLakeDirectoryClient
+        :rtype ~azure.storage.file.datalake.DataLakeDirectoryClient
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'dfs')
         if 'secondary_hostname' not in kwargs:
@@ -94,8 +94,8 @@ class DirectoryClient(PathClient):
 
     def get_file_client(self, file  # type: Union[FileProperties, str]
                         ):
-        # type: (...) -> FileClient
-        return FileClient(
+        # type: (...) -> DataLakeFileClient
+        return DataLakeFileClient(
             self.url, self.file_system_name, self.path_name, file, credential=self.credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, require_encryption=self.require_encryption,
@@ -104,9 +104,9 @@ class DirectoryClient(PathClient):
 
     def get_sub_directory_client(self, sub_directory  # type: Union[DirectoryProperties, str]
                                  ):
-        # type: (...) -> DirectoryClient
+        # type: (...) -> DataLakeDirectoryClient
         directory = self.path_name.rstrip('/') + "/" + sub_directory
-        return DirectoryClient(
+        return DataLakeDirectoryClient(
             self.url, self.file_system_name, directory, credential=self.credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, require_encryption=self.require_encryption,

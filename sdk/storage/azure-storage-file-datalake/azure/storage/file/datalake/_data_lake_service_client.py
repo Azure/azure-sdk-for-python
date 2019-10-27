@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import functools
 
-from azure.storage.file.datalake import DirectoryClient, FileClient
+from azure.storage.file.datalake import DataLakeDirectoryClient, DataLakeFileClient
 
 try:
     from urllib.parse import urlparse
@@ -16,10 +16,10 @@ from azure.core.paging import ItemPaged
 
 from azure.storage.blob import BlobServiceClient
 from azure.storage.blob._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
-from .file_system_client import FileSystemClient
+from ._file_system_client import FileSystemClient
 
 from ._serialize import convert_dfs_url_to_blob_url
-from .models import FileSystemPropertiesPaged
+from ._models import FileSystemPropertiesPaged
 
 
 class DataLakeServiceClient(StorageAccountHostsMixin):
@@ -104,7 +104,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
 
     def delete_file_system(self, file_system,  # type: Union[FileSystemProperties, str]
                            **kwargs):
-        # type: (Any) -> None
+        # type: (...) -> None
         file_system_client = self.get_file_system_client(file_system)
         file_system_client.delete_file_system(**kwargs)
 
@@ -117,22 +117,22 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                                 key_resolver_function=self.key_resolver_function)
 
     def get_directory_client(self, file_system,  # type: Union[FileSystemProperties, str]
-                             directory  # type: # type: Union[DirectoryProperties, str]
+                             directory  # type: Union[DirectoryProperties, str]
                              ):
-        # type: (...) -> DirectoryClient
-        return DirectoryClient(self.url, file_system, directory, credential=self.credential,
-                               _configuration=self._config, _pipeline=self._pipeline,
-                               _location_mode=self._location_mode, _hosts=self._hosts,
-                               require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-                               key_resolver_function=self.key_resolver_function
-                               )
+        # type: (...) -> DataLakeDirectoryClient
+        return DataLakeDirectoryClient(self.url, file_system, directory, credential=self.credential,
+                                       _configuration=self._config, _pipeline=self._pipeline,
+                                       _location_mode=self._location_mode, _hosts=self._hosts,
+                                       require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+                                       key_resolver_function=self.key_resolver_function
+                                       )
 
     def get_file_client(self, file_system,  # type: Union[FileSystemProperties, str]
-                        directory,  # type: # type: Union[DirectoryProperties, str]
+                        directory,  # type: Union[DirectoryProperties, str]
                         file  # type: Union[FileProperties, str]
                         ):
-        # type: (...) -> FileClient
-        return FileClient(
+        # type: (...) -> DataLakeFileClient
+        return DataLakeFileClient(
             self.url, file_system, directory, file, credential=self.credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, require_encryption=self.require_encryption,

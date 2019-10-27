@@ -4,13 +4,28 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from .file_client import FileClient
-from .directory_client import DirectoryClient
-from .file_system_client import FileSystemClient
-from .data_lake_service_client import DataLakeServiceClient
-from .lease import DataLakeLeaseClient
-from .models import *
-from ._shared_access_signature import *
+from ._data_lake_file_client import DataLakeFileClient
+from ._data_lake_directory_client import DataLakeDirectoryClient
+from ._file_system_client import FileSystemClient
+from ._data_lake_service_client import DataLakeServiceClient
+from ._data_lake_lease import DataLakeLeaseClient
+from ._models import (
+    LocationMode,
+    ResourceTypes,
+    FileSystemProperties,
+    FileSystemPropertiesPaged,
+    DirectoryProperties,
+    PathProperties,
+    PathPropertiesPaged,
+    LeaseProperties,
+    ContentSettings,
+    AccountSasPermissions,
+    FileSystemSasPermissions,
+    DirectorySasPermissions,
+    FileSasPermissions
+)
+from ._shared_access_signature import generate_account_sas, generate_file_system_sas, generate_directory_sas, \
+    generate_file_sas
 
 from azure.storage.blob._shared.policies import ExponentialRetry, LinearRetry
 from azure.storage.blob._shared.models import(
@@ -20,14 +35,13 @@ from azure.storage.blob._shared.models import(
 __all__ = [
     'DataLakeServiceClient',
     'FileSystemClient',
-    'FileClient',
-    'DirectoryClient',
+    'DataLakeFileClient',
+    'DataLakeDirectoryClient',
     'DataLakeLeaseClient',
     'ExponentialRetry',
     'LinearRetry',
     'LocationMode',
     'ResourceTypes',
-    'AccountSasPermissions',
     'StorageErrorCode',
     'UserDelegationKey',
     'FileSystemProperties',

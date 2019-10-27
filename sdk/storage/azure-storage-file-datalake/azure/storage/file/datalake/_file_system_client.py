@@ -16,8 +16,8 @@ from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from azure.storage.blob._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
 from azure.storage.file.datalake._serialize import convert_dfs_url_to_blob_url
-from azure.storage.file.datalake.models import LocationMode, FileSystemProperties, PathPropertiesPaged
-from azure.storage.file.datalake import FileClient, DirectoryClient
+from azure.storage.file.datalake._models import LocationMode, FileSystemProperties, PathPropertiesPaged
+from azure.storage.file.datalake import DataLakeFileClient, DataLakeDirectoryClient
 from ._generated import DataLakeStorageClient
 
 
@@ -104,7 +104,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     def create_file_system(self, metadata=None,  # type: Optional[Dict[str, str]]
                            **kwargs):
-        # type: (Any) -> None
+        # type: (...) -> None
         return self._container_client.create_container(metadata=metadata, **kwargs)
 
     def delete_file_system(self, **kwargs):
@@ -131,7 +131,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                   recursive=True,  # type: Optional[bool]
                   max_results=None,  # type: Optional[int]
                   **kwargs):
-        # type: (Optional[str], Optional[Any], **Any) -> ItemPaged[PathProperties]
+        # type: (...) -> ItemPaged[PathProperties]
 
         timeout = kwargs.pop('timeout', None)
         command = functools.partial(
@@ -143,7 +143,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             command, recursive, path=path, max_results=max_results,
             page_iterator_class=PathPropertiesPaged, **kwargs)
 
-    def create_directory(self, directory,  # type: # type: Union[DirectoryProperties, str]
+    def create_directory(self, directory,  # type: Union[DirectoryProperties, str]
                          content_settings=None,  # type: Optional[ContentSettings]
                          metadata=None,  # type: Optional[Dict[str, str]]
                          **kwargs):
@@ -151,9 +151,9 @@ class FileSystemClient(StorageAccountHostsMixin):
         directory_client = self.get_directory_client(directory)
         return directory_client.create_directory(content_settings=content_settings, metadata=metadata, **kwargs)
 
-    def delete_directory(self, directory,  # type: # type: Union[DirectoryProperties, str]
+    def delete_directory(self, directory,  # type: Union[DirectoryProperties, str]
                          **kwargs):
-        # type: (bool, **Any) -> None
+        # type: (...) -> None
         directory_client = self.get_directory_client(directory)
         return directory_client.delete_directory(**kwargs)
 
@@ -165,24 +165,24 @@ class FileSystemClient(StorageAccountHostsMixin):
     def delete_file(self, file,  # type: Union[FileProperties, str]
                     lease=None,  # type: Optional[Union[DataLakeLeaseClient, str]]
                     **kwargs):
-        # type: (bool, **Any) -> None
+        # type: (...) -> None
         pass
 
     def get_directory_client(self, directory  # type: Union[DirectoryProperties, str]
                              ):
-        # type: (...) -> DirectoryClient
-        return DirectoryClient(self.url, self.file_system_name, directory, credential=self.credential,
-                               _configuration=self._config, _pipeline=self._pipeline,
-                               _location_mode=self._location_mode, _hosts=self._hosts,
-                               require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-                               key_resolver_function=self.key_resolver_function
-                               )
+        # type: (...) -> DataLakeDirectoryClient
+        return DataLakeDirectoryClient(self.url, self.file_system_name, directory, credential=self.credential,
+                                       _configuration=self._config, _pipeline=self._pipeline,
+                                       _location_mode=self._location_mode, _hosts=self._hosts,
+                                       require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+                                       key_resolver_function=self.key_resolver_function
+                                       )
 
     def get_file_client(self, directory,  # type: Union[DirectoryProperties, str]
                         file  # type: Union[FileProperties, str]
                         ):
-        # type: (...) -> FileClient
-        return FileClient(
+        # type: (...) -> DataLakeFileClient
+        return DataLakeFileClient(
             self.url, self.file_system_name, directory, file, credential=self.credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, require_encryption=self.require_encryption,

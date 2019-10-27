@@ -192,13 +192,6 @@ class FileSystemSasPermissions(ContainerSasPermissions):
         )
 
 
-class FileSystemSasPermissions(ContainerSasPermissions):
-    def __init__(self, read=False, write=False, delete=False, list=False):
-        super(FileSystemSasPermissions, self).__init__(
-            read=read, write=write, delete=delete, list=list
-        )
-
-
 class DirectorySasPermissions(BlobSasPermissions):
     def __init__(self, read=False, create=False, write=False,
                  delete=False):
