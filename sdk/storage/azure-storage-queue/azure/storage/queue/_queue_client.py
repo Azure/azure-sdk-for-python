@@ -51,6 +51,12 @@ class QueueClient(StorageAccountHostsMixin):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
+    :keyword encode_policy: The encoding policy to use on outgoing messages.
+        Default is not to encode messages. Other options include :class:`TextBase64EncodePolicy`,
+        :class:`BinaryBase64EncodePolicy` or `None`.
+    :keyword decode_policy: The decoding policy to use on incoming messages.
+        Default value is not to decode messages. Other options include :class:`TextBase64DecodePolicy`,
+        :class:`BinaryBase64DecodePolicy` or `None`.
 
     .. admonition:: Example:
 

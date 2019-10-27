@@ -69,6 +69,19 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         If the URL already has a SAS token, specifying an explicit credential will take priority.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
+    :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
+        Defaults to 4*1024*1024, or 4MB.
+    :keyword int max_single_put_size: If the blob size is less than max_single_put_size, then the blob will be
+        uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
+        the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
+    :keyword int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
+        algorithm when uploading a block blob. Defaults to 4*1024*1024+1.
+    :keyword bool use_byte_buffer: Use a byte buffer for block blob uploads. Defaults to False.
+    :keyword int max_page_size: The maximum chunk size for uploading a page blob. Defaults to 4*1024*1024, or 4MB.
+    :keyword int max_single_get_size: The maximum size for a blob to be downloaded in a single call,
+        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
+    :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
+        or 4MB.
 
     .. admonition:: Example:
 
