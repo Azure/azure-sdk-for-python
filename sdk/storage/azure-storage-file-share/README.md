@@ -7,7 +7,7 @@ Azure file shares can be used to:
 * "Lift and shift" applications
 * Simplify cloud development with shared application settings, diagnostic share, and Dev/Test/Debug tools
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/azure/storage/fileshare) | [Package (PyPI)](https://pypi.org/project/azure-storage-file-share/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-storage-file-share/12.0.0b5/azure.storage.fileshare.html) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/azure/storage/fileshare) | [Package (PyPI)](https://pypi.org/project/azure-storage-file-share/) | [API reference documentation](https://aka.ms/azsdk-python-storage-fileshare-ref) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples)
 
 ## Getting started
 
@@ -103,23 +103,23 @@ use of a dedicated client object.
 
 ### Clients
 Four different clients are provided to to interact with the various components of the File Share Service:
-1. **[ShareServiceClient](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-storage-file-share/12.0.0b5/azure.storage.file.share.html#azure.storage.fileshare.ShareServiceClient)** -
+1. **[ShareServiceClient](https://aka.ms/azsdk-python-storage-fileshare-shareserviceclient)** -
     this client represents interaction with the Azure storage account itself, and allows you to acquire preconfigured
     client instances to access the file shares within. It provides operations to retrieve and configure the service
     properties as well as list, create, and delete shares within the account. To perform operations on a specific share,
     retrieve a client using the `get_share_client` method.
-2. **[ShareClient](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-storage-file-share/12.0.0b5/azure.storage.file.share.html#azure.storage.fileshare.ShareClient)** -
+2. **[ShareClient](https://aka.ms/azsdk-python-storage-fileshare-shareclient)** -
     this client represents interaction with a specific file share (which need not exist yet), and allows you to acquire
     preconfigured client instances to access the directories and files within. It provides operations to create, delete,
     configure, or create snapshots of a share and includes operations to create and enumerate the contents of
     directories within it. To perform operations on a specific directory or file, retrieve a client using the
     `get_directory_client` or `get_file_client` methods.
-3. **[ShareDirectoryClient](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-storage-file-share/12.0.0b5/azure.storage.file.share.html#azure.storage.fileshare.ShareDirectoryClient)** -
+3. **[ShareDirectoryClient](https://aka.ms/azsdk-python-storage-fileshare-sharedirectoryclient)** -
     this client represents interaction with a specific directory (which need not exist yet). It provides operations to
     create, delete, or enumerate the contents of an immediate or nested subdirectory, and includes operations to create
     and delete files within it. For operations relating to a specific subdirectory or file, a client for that entity can
     also be retrieved using the `get_subdirectory_client` and `get_file_client` functions.
-4. **[ShareFileClient](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-storage-file-share/12.0.0b5/azure.storage.file.share.html#azure.storage.fileshare.ShareFileClient)** -
+4. **[ShareFileClient](http://aka.ms/azsdk-python-storage-fileshare-sharefileclient)** -
     this client represents interaction with a specific file (which need not exist yet). It provides operations to
     upload, download, create, delete, and copy a file.
 
