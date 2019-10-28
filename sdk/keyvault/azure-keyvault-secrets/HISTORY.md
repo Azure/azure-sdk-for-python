@@ -15,6 +15,8 @@ detail the new keyword arguments):
 - Renamed `Secret` to `KeyVaultSecret`
 - `KeyVaultSecret`  properties `created`, `expires`, and `updated` renamed to `created_on`,
 `expires_on`, and `updated_on`
+- The `vault_endpoint` parameter of `SecretClient` has been renamed to `vault_url`
+- The property `vault_endpoint` has been renamed to `vault_url` in all models
 
 
 ## 4.0.0b4 (2019-10-08)

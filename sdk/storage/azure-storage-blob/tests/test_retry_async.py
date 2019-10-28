@@ -13,6 +13,9 @@ from azure.core.exceptions import (
     ServiceResponseError,
     ClientAuthenticationError
 )
+from azure.core.pipeline.transport import (
+    AioHttpTransport
+)
 
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
@@ -26,11 +29,13 @@ from azure.storage.blob.aio import (
 )
 
 from testcase import (
-    StorageTestCase,
-    record,
-    TestMode,
     ResponseCallback,
     RetryCounter,
+    GlobalStorageAccountPreparer
+)
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from asyncblobtestcase import (
+    AsyncBlobTestCase,
 )
 
 
@@ -46,19 +51,14 @@ class AiohttpTestTransport(AioHttpTransport):
 
 
 # --Test Class -----------------------------------------------------------------
-class StorageRetryTestAsync(StorageTestCase):
-    def setUp(self):
-        super(StorageRetryTestAsync, self).setUp()
-
-    def tearDown(self):
-        return super(StorageRetryTestAsync, self).tearDown()
-
+class StorageRetryTestAsync(AsyncBlobTestCase):
     # --Test Cases --------------------------------------------
-
-    async def _test_retry_on_server_error_async(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_retry_on_server_error_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        container_name = self.get_resource_name()
-        service = self._create_storage_service(BlobServiceClient, self.settings, transport=AiohttpTestTransport())
+        container_name = self.get_resource_name('utcontainer')
+        service = self._create_storage_service(BlobServiceClient, storage_account, storage_account_key, transport=AiohttpTestTransport())
 
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=500).override_status
@@ -74,17 +74,14 @@ class StorageRetryTestAsync(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_retry_on_server_error_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_retry_on_server_error_async())
-
-    async def _test_retry_on_timeout_async(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_retry_on_timeout_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        container_name = self.get_resource_name()
+        container_name = self.get_resource_name('utcontainer')
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
 
         callback = ResponseCallback(status=201, new_status=408).override_status
 
@@ -99,17 +96,14 @@ class StorageRetryTestAsync(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_retry_on_timeout_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_retry_on_timeout_async())
-
-    async def _test_retry_callback_and_retry_context_async(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_retry_callback_and_retry_context_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        container_name = self.get_resource_name()
+        container_name = self.get_resource_name('utcontainer')
         retry = LinearRetry(backoff=1)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
 
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=408).override_status
@@ -130,22 +124,20 @@ class StorageRetryTestAsync(StorageTestCase):
         finally:
             await service.delete_container(container_name)
 
-    @record
-    def test_retry_callback_and_retry_context_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_retry_callback_and_retry_context_async())
-
-    async def _test_retry_on_socket_timeout_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_retry_on_socket_timeout_async(self, resource_group, location, storage_account, storage_account_key):
+        if not self.is_live:
+            pytest.skip("live only")
         # Arrange
-        container_name = self.get_resource_name()
+        container_name = self.get_resource_name('utcontainer')
         retry = LinearRetry(backoff=1)
 
         # make the connect timeout reasonable, but packet timeout truly small, to make sure the request always times out
-        socket_timeout = 0.000000000001
+        import aiohttp
+        socket_timeout = aiohttp.ClientTimeout(sock_connect=11, sock_read=0.000000000001)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, connection_timeout=socket_timeout, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport(connection_timeout=socket_timeout))
 
         assert service._client._client._pipeline._transport.connection_config.timeout == socket_timeout
 
@@ -155,7 +147,10 @@ class StorageRetryTestAsync(StorageTestCase):
                 await service.create_container(container_name)
             # Assert
             # This call should succeed on the server side, but fail on the client side due to socket timeout
-            self.assertTrue('read timeout' in str(error.exception), 'Expected socket timeout but got different exception.')
+            self.assertTrue(
+                'Timeout on reading data from socket' in str(error.exception),
+                'Expected socket timeout but got different exception.'
+            )
 
         finally:
             # we must make the timeout normal again to let the delete operation succeed
@@ -164,18 +159,13 @@ class StorageRetryTestAsync(StorageTestCase):
             except:
                 pass
 
-    def test_retry_on_socket_timeout_async(self):
-        pytest.skip("Error not raised on retry")
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_retry_on_socket_timeout_async())
-
-    async def _test_no_retry_async(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_no_retry_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        container_name = self.get_resource_name()
+        container_name = self.get_resource_name('utcontainer')
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_total=0, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_total=0, transport=AiohttpTestTransport())
 
 
         # Force the create call to 'timeout' with a 408
@@ -191,17 +181,14 @@ class StorageRetryTestAsync(StorageTestCase):
         finally:
             await service.delete_container(container_name)
 
-    @record
-    def test_no_retry_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_no_retry_async())
-
-    async def _test_linear_retry_async(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_linear_retry_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        container_name = self.get_resource_name()
+        container_name = self.get_resource_name('utcontainer')
         retry = LinearRetry(backoff=1)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
 
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=408).override_status
@@ -217,17 +204,14 @@ class StorageRetryTestAsync(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_linear_retry_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_linear_retry_async())
-
-    async def _test_exponential_retry_async(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_exponential_retry_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        container_name = self.get_resource_name()
+        container_name = self.get_resource_name('utcontainer')
         retry = ExponentialRetry(initial_backoff=1, increment_base=3, retry_total=3)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
 
         try:
             container = await service.create_container(container_name)
@@ -245,13 +229,8 @@ class StorageRetryTestAsync(StorageTestCase):
             # Clean up
             await service.delete_container(container_name)
 
-    @record
-    def test_exponential_retry_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_exponential_retry_async())
-
-    @record
-    def test_exponential_retry_interval_async(self):
+    @GlobalStorageAccountPreparer()
+    def test_exponential_retry_interval_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         retry_policy = ExponentialRetry(initial_backoff=1, increment_base=3, random_jitter_range=3)
         context_stub = {}
@@ -285,8 +264,8 @@ class StorageRetryTestAsync(StorageTestCase):
             # Assert backoff interval is within +/- 3 of 28(1+3^3)
             self.assertTrue(25 <= backoff <= 31)
 
-    @record
-    def test_linear_retry_interval_async(self):
+    @GlobalStorageAccountPreparer()
+    def test_linear_retry_interval_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         context_stub = {}
 
@@ -312,12 +291,14 @@ class StorageRetryTestAsync(StorageTestCase):
             # Assert backoff interval is within +/- 3 of 15
             self.assertTrue(12 <= backoff <= 18)
 
-    async def _test_invalid_retry_async(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_invalid_retry_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        container_name = self.get_resource_name()
+        container_name = self.get_resource_name('utcontainer')
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
 
         # Force the create call to fail by pretending it's a teapot
         callback = ResponseCallback(status=201, new_status=418).override_status
@@ -331,17 +312,14 @@ class StorageRetryTestAsync(StorageTestCase):
         finally:
             await service.delete_container(container_name)
 
-    @record
-    def test_invalid_retry_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_invalid_retry_async())
-
-    async def _test_retry_with_deserialization_async(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_retry_with_deserialization_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        container_name = self.get_resource_name(prefix='retry')
+        container_name = self.get_resource_name('retry')
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
 
         try:
             created = await service.create_container(container_name)
@@ -358,147 +336,110 @@ class StorageRetryTestAsync(StorageTestCase):
         finally:
             await service.delete_container(container_name)
 
-    @record
-    def test_retry_with_deserialization_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_retry_with_deserialization_async())
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_retry_secondary_async(self, resource_group, location, storage_account, storage_account_key):
+        """Secondary location test.
 
-    async def _test_secondary_location_mode_async(self):
+        This test is special, since in pratical term, we don't have time to wait
+        for the georeplication to be done (can take a loooooong time).
+        So for the purpose of this test, we fake a 408 on the primary request,
+        and then we check we do a 408. AND DONE.
+        It's not really perfect, since we didn't tested it would work on
+        a real geo-location.
+
+        Might be changed to live only as loooooong test with a polling on
+        the current geo-replication status.
+        """
         # Arrange
-        container_name = self.get_resource_name()
-        retry = ExponentialRetry(initial_backoff=1, increment_base=2)
-        service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
-
-        # Act
-        try:
-            container = await service.create_container(container_name)
-            container.location_mode = LocationMode.SECONDARY
-
-            # Override the response from secondary if it's 404 as that simply means
-            # the container hasn't replicated. We're just testing we try secondary,
-            # so that's fine.
-            response_callback = ResponseCallback(status=404, new_status=200).override_first_status
-
-            # Assert
-            def request_callback(request):
-                self.assertNotEqual(-1, request.http_request.url.find('-secondary'))
-
-            request_callback = request_callback
-            await container.get_container_properties(
-                raw_request_hook=request_callback, raw_response_hook=response_callback)
-        finally:
-            # Delete will go to primary, so disable the request validation
-            await service.delete_container(container_name)
-
-    @record
-    def test_secondary_location_mode_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_secondary_location_mode_async())
-
-    async def _test_retry_to_secondary_with_put_async(self):
-        # Arrange
-        container_name = self.get_resource_name()
-        retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
-        service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
-
-        # Act
-        try:
-            # Fail the first create attempt
-            response_callback = ResponseCallback(status=201, new_status=408).override_first_status
-
-            # Assert
-            # Confirm that the create request does *not* get retried to secondary
-            # This should actually throw InvalidPermissions if sent to secondary,
-            # but validate the location_mode anyways.
-            def retry_callback(location_mode=None, **kwargs):
-                self.assertEqual(LocationMode.PRIMARY, location_mode)
-
-            with self.assertRaises(ResourceExistsError):
-                await service.create_container(
-                    container_name, raw_response_hook=response_callback, retry_hook=retry_callback)
-
-        finally:
-            await service.delete_container(container_name)
-
-    @record
-    def test_retry_to_secondary_with_put_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_retry_to_secondary_with_put_async())
-
-    async def _test_retry_to_secondary_with_get_async(self):
-        # Arrange
-        container_name = self.get_resource_name()
-        retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
-        service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
-
-        # Act
-        try:
-            container = await service.create_container(container_name)
-            response_callback = ResponseCallback(status=200, new_status=408).override_first_status
-
-            # Assert
-            # Confirm that the get request gets retried to secondary
-            def retry_callback(retry_count=None, location_mode=None, **kwargs):
-                # Only check this every other time, sometimes the secondary location fails due to delay
-                if retry_count % 2 == 0:
-                    self.assertEqual(LocationMode.SECONDARY, location_mode)
-
-            await container.get_container_properties(
-                raw_response_hook=response_callback, retry_hook=retry_callback)
-        finally:
-            await service.delete_container(container_name)
-
-    @record
-    def test_retry_to_secondary_with_get_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_retry_to_secondary_with_get_async())
-
-    async def _test_location_lock_async(self):
-        # Arrange
-        retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
-        service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
-
-        # Act
         # Fail the first request and set the retry policy to retry to secondary
-        response_callback = ResponseCallback(status=200, new_status=408).override_first_status
-        #context = _OperationContext(location_lock=True)
+        # The given test account must be GRS
+        class MockTransport(AioHttpTransport):
+            CALL_NUMBER = 1
+            ENABLE = False
+            async def send(self, request, **kwargs):
+                if MockTransport.ENABLE:
+                    if MockTransport.CALL_NUMBER == 2:
+                        if request.method != 'PUT':
+                            assert '-secondary' in request.url
+                        # Here's our hack
+                        # Replace with primary so the test works even
+                        # if secondary is not ready
+                        request.url = request.url.replace('-secondary', '')
+
+                response = await super(MockTransport, self).send(request, **kwargs)
+
+                if MockTransport.ENABLE:
+                    assert response.status_code in [200, 201, 409]
+                    if MockTransport.CALL_NUMBER == 1:
+                        response.status_code = 408
+                    elif MockTransport.CALL_NUMBER == 2:
+                        if response.status_code == 409:  # We can't really retry on PUT
+                            response.status_code = 201
+                    else:
+                        pytest.fail("This test is not supposed to do more calls")
+                    MockTransport.CALL_NUMBER += 1
+                return response
+
+        retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
+        service = self._create_storage_service(
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry,
+            transport=MockTransport())
+
+        # Act
+        MockTransport.ENABLE = True
 
         # Assert
-        # Confirm that the first request gets retried to secondary
-        # The given test account must be GRS
-        def retry_callback(retry_count=None, location_mode=None, **kwargs):
-            self.assertEqual(LocationMode.SECONDARY, location_mode)
 
-        # Confirm that the second list request done with the same context sticks
-        # to the final location of the first list request (aka secondary) despite
-        # the client normally trying primary first
-        requests = []
-        def request_callback(request):
-            if not requests:
-                requests.append(request)
+        # Try put
+        def put_retry_callback(retry_count=None, location_mode=None, **kwargs):
+            # This call should be called once, with the decision to try secondary
+            put_retry_callback.called = True
+            if MockTransport.CALL_NUMBER == 1:
+                self.assertEqual(LocationMode.PRIMARY, location_mode)
+            elif MockTransport.CALL_NUMBER == 2:
+                self.assertEqual(LocationMode.PRIMARY, location_mode)
             else:
-                self.assertNotEqual(-1, request.http_request.url.find('-secondary'))
+                pytest.fail("This test is not supposed to retry more than once")
+        put_retry_callback.called = False
 
+        container = service.get_container_client('containername')
+        created = await container.create_container(retry_hook=put_retry_callback)
+        assert put_retry_callback.called
+
+        def retry_callback(retry_count=None, location_mode=None, **kwargs):
+            # This call should be called once, with the decision to try secondary
+            retry_callback.called = True
+            if MockTransport.CALL_NUMBER == 1:
+                self.assertEqual(LocationMode.SECONDARY, location_mode)
+            elif MockTransport.CALL_NUMBER == 2:
+                self.assertEqual(LocationMode.SECONDARY, location_mode)
+            else:
+                pytest.fail("This test is not supposed to retry more than once")
+        retry_callback.called = False
+
+        # Try list
+        MockTransport.CALL_NUMBER = 1
+        retry_callback.called = False
         containers = service.list_containers(
             results_per_page=1, retry_hook=retry_callback)
         await containers.__anext__()
-        await containers.__anext__()
+        assert retry_callback.called
 
-    @record
-    def test_location_lock_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_location_lock_async())
+        # Try get
+        MockTransport.CALL_NUMBER = 1
+        retry_callback.called = False
+        await container.get_container_properties(retry_hook=retry_callback)
+        assert retry_callback.called
 
-    async def _test_invalid_account_key_async(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_invalid_account_key_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        container_name = self.get_resource_name()
+        container_name = self.get_resource_name('utcontainer')
         retry = ExponentialRetry(initial_backoff=1, increment_base=3, retry_total=3)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
         service.credential.account_name = "dummy_account_name"
         service.credential.account_key = "dummy_account_key"
 
@@ -514,11 +455,4 @@ class StorageRetryTestAsync(StorageTestCase):
         # No retry should be performed since the signing error is fatal
         self.assertEqual(retry_counter.count, 0)
 
-    @record
-    def test_invalid_account_key_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_invalid_account_key_async())
-
 # ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()
