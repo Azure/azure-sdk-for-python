@@ -26,9 +26,6 @@ if TYPE_CHECKING:
 class InteractiveBrowserCredential(PublicClientCredential):
     """Opens a browser to interactively authenticate a user.
 
-    This is an interactive flow: ``get_token`` opens a browser to a login URL provided by Azure Active Directory, and
-    waits for the user to authenticate there.
-
     :func:`~get_token` opens a browser to a login URL provided by Azure Active Directory and authenticates a user
     there with the authorization code flow. Azure Active Directory documentation describes this flow in more detail:
     https://docs.microsoft.com/en-us/azure/active-directory/develop/v1-protocols-oauth-code
@@ -58,6 +55,8 @@ class InteractiveBrowserCredential(PublicClientCredential):
 
         This will open a browser to a login page and listen on localhost for a request indicating authentication has
         completed.
+
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`

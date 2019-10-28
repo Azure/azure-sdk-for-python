@@ -46,6 +46,8 @@ class AuthorizationCodeCredential(object):
         the credential will return a cached access token or redeem a refresh token, if it acquired a refresh token upon
         redeeming the authorization code.
 
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
         :param str scopes: desired scopes for the access token
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.core.exceptions.ClientAuthenticationError:
