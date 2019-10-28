@@ -3,11 +3,11 @@ Azure Key Vault helps solve the following problems:
 - Cryptographic key management (this library) - create, store, and control
 access to the keys used to encrypt your data
 - Secrets management
-([`azure-keyvault-secrets`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets)) -
+([azure-keyvault-secrets](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets)) -
 securely store and control access to tokens, passwords, certificates, API keys,
 and other secrets
 - Certificate management
-([`azure-keyvault-certificates`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates)) -
+([azure-keyvault-certificates](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates)) -
 create, manage, and deploy public and private SSL/TLS certificates
 
 [Source code][key_client_src] | [Package (PyPI)][pypi_package_keys] | [API reference documentation][reference_docs] | [Product documentation][keyvault_docs] | [Samples][key_samples]
@@ -20,7 +20,7 @@ Install the Azure Key Vault Keys client library for Python with [pip][pip]:
 pip install azure-keyvault-keys
 ```
 
-Additionally, install the [`azure-identity`][azure_identity]:
+Additionally, install the [azure-identity][azure_identity]:
 ```sh
 pip install azure-identity
 ```
@@ -74,7 +74,7 @@ names):
 To interact with a Key Vault's keys, you'll need an instance of the
 [KeyClient][key_client_docs] class. Creating one requires a **vault url** and
 **credential**. The **vault_url** can be found on the [portal](https://portal.azure.com)
-under `DNS Name`. This document demonstrates using [`DefaultAzureCredential`][default_cred_ref] as
+under `DNS Name`. This document demonstrates using [DefaultAzureCredential][default_cred_ref] as
 the credential, authenticating with a service principal's client id, secret,
 and tenant id. Other authentication methods are supported. See the
 [azure-identity][azure_identity] documentation for more details.
@@ -132,7 +132,7 @@ key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", creden
 ```
 
 ## Key concepts
-With a [`KeyClient`](key_client_docs), you can get keys from the vault, create new keys and new
+With a [KeyClient](key_client_docs), you can get keys from the vault, create new keys and new
 versions of existing keys, update key metadata, and delete keys, as shown in
 the [examples](#examples) below.
 
@@ -156,8 +156,8 @@ This section contains code snippets covering common tasks:
 * [Perform cryptographic operations](#cryptographic-operations)
 
 ### Create a Key
-[`create_rsa_key`](https://aka.ms/azsdk-python-keyvault-keys-create-rsa-key-ref) and
-[`create_ec_key`](https://aka.ms/azsdk-python-keyvault-keys-create-ec-key-rf) create RSA and elliptic curve keys in the
+[create_rsa_key](https://aka.ms/azsdk-python-keyvault-keys-create-rsa-key-ref) and
+[create_ec_key](https://aka.ms/azsdk-python-keyvault-keys-create-ec-key-rf) create RSA and elliptic curve keys in the
 vault, respectively. If a key with the same name already exists, a new version
 of that key is created.
 
@@ -181,7 +181,7 @@ print(ec_key.key_type)
 ```
 
 ### Retrieve a Key
-[`get_key`](https://aka.ms/azsdk-python-keyvault-keys-get-key-ref) retrieves a key previously stored in the vault.
+[get_key](https://aka.ms/azsdk-python-keyvault-keys-get-key-ref) retrieves a key previously stored in the vault.
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
@@ -194,7 +194,7 @@ print(key.name)
 ```
 
 ### Update an existing Key
-[`update_key_properties`](https://aka.ms/azsdk-python-keyvault-keys-update-key-ref) updates the properties of a key previously stored in the Key Vault.
+[update_key_properties](https://aka.ms/azsdk-python-keyvault-keys-update-key-ref) updates the properties of a key previously stored in the Key Vault.
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
@@ -211,7 +211,7 @@ print(updated_key.properties.enabled)
 ```
 
 ### Delete a Key
-[`begin_delete_key`](https://aka.ms/azsdk-python-keyvault-keys-begin-delete-key-ref) requests Key Vault delete a key, returning a poller which allows you to
+[begin_delete_key](https://aka.ms/azsdk-python-keyvault-keys-begin-delete-key-ref) requests Key Vault delete a key, returning a poller which allows you to
 wait for the deletion to finish. Waiting is helpful when the vault has [soft-delete][soft_delete]
 enabled, and you want to purge (permanently delete) the key as soon as possible.
 When [soft-delete][soft_delete] is disabled, deletion is always permanent.
@@ -229,7 +229,7 @@ print(deleted_key.name)
 print(deleted_key.deleted_date)
 ```
 ### List keys
-[`list_properties_of_keys`](https://aka.ms/azsdk-python-keyvault-keys-list-properties-keys-ref) lists the
+[list_properties_of_keys](https://aka.ms/azsdk-python-keyvault-keys-list-properties-keys-ref) lists the
 properties of all of the keys in the client's vault.
 
 ```python
@@ -247,7 +247,7 @@ for key in keys:
 ```
 
 ### Cryptographic operations
-[`CryptographyClient`][crypto_client_docs] enables cryptographic operations (encrypt/decrypt,
+[CryptographyClient][crypto_client_docs] enables cryptographic operations (encrypt/decrypt,
 wrap/unwrap, sign/verify) using a particular key.
 
 ```py
@@ -272,14 +272,14 @@ for more details of the cryptography API.
 
 ### Async operations
 This library includes a complete async API supported on Python 3.5+. To use it, you must
-first install an async transport, such as [`aiohttp`](https://pypi.org/project/aiohttp/).
+first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
 [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
 for more information.
 
 ### Asynchronously create a Key
-[`create_rsa_key`](https://aka.ms/azsdk-python-keyvault-keys-async-create-rsa-key-ref) and
-[`create_ec_key`](https://aka.ms/azsdk-python-keyvault-keys-async-create-ec-key-ref) create RSA and elliptic curve keys in the vault, respectively.
+[create_rsa_key](https://aka.ms/azsdk-python-keyvault-keys-async-create-rsa-key-ref) and
+[create_ec_key](https://aka.ms/azsdk-python-keyvault-keys-async-create-ec-key-ref) create RSA and elliptic curve keys in the vault, respectively.
 If a key with the same name already exists, a new version of the key is created.
 
 ```python
@@ -301,7 +301,7 @@ print(ec_key.key_type)
 ```
 
 ### Asynchronously list keys
-[`list_properties_of_keys`](https://aka.ms/azsdk-python-keyvault-keys-async-list-properties-keys-ref) lists the
+[list_properties_of_keys](https://aka.ms/azsdk-python-keyvault-keys-async-list-properties-keys-ref) lists the
 properties of all of the keys in the client's vault.
 
 ```python
@@ -318,9 +318,9 @@ async for key in keys:
 
 ## Troubleshooting
 ### General
-Key Vault clients raise exceptions defined in [`azure-core`][azure_core_exceptions].
-For example, if you try to get a key that doesn't exist in the vault, [`KeyClient`][key_client_docs]
-raises [`ResourceNotFoundError`](https://aka.ms/azsdk-python-core-exceptions-resource-not-found-error):
+Key Vault clients raise exceptions defined in [azure-core][azure_core_exceptions].
+For example, if you try to get a key that doesn't exist in the vault, [KeyClient][key_client_docs]
+raises [ResourceNotFoundError](https://aka.ms/azsdk-python-core-exceptions-resource-not-found-error):
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -339,7 +339,7 @@ except ResourceNotFoundError as e:
 
 ### Logging
 Network trace logging is disabled by default for this library. When enabled,
-HTTP requests will be logged at DEBUG level using the [`logging`](https://docs.python.org/3.5/library/logging.html) library. You
+HTTP requests will be logged at DEBUG level using the [logging](https://docs.python.org/3.5/library/logging.html) library. You
 can configure logging to print debugging information to stdout or write it
 to a file:
 
