@@ -18,46 +18,12 @@ class EventHubConsumerClient(EventHubClient):
     """Represents an AMQP connection to an EventHub and receives event data from it.
 
     Example:
-        .. code-block:: python
-
-            import asyncio
-            import logging
-            import os
-            from azure.eventhub.aio import EventHubConsumerClient
-            from azure.eventhub.aio import FileBasedPartitionManager
-
-            RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
-            RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
-            CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-
-            logging.basicConfig(level=logging.INFO)
-
-
-            async def do_operation(event):
-                # do some sync or async operations. If the operation is i/o intensive, async will have better performance
-                print(event)
-
-
-            async def process_events(partition_context, events):
-                if events:
-                    await asyncio.gather(*[do_operation(event) for event in events])
-                    await partition_context.update_checkpoint(events[-1])
-                else:
-                    print("empty events received", "partition:", partition_context.partition_id)
-
-
-            if __name__ == '__main__':
-                loop = asyncio.get_event_loop()
-                partition_manager = FileBasedPartitionManager("consumer_pm_store")
-                client = EventHubConsumerClient.from_connection_string(
-                    CONNECTION_STR, partition_manager=partition_manager, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL
-                )
-                try:
-                    loop.run_until_complete(client.receive(process_events, consumer_group="$default"))
-                except KeyboardInterrupt:
-                    loop.run_until_complete(client.close())
-                finally:
-                    loop.stop()
+        .. literalinclude:: ../examples/test_examples_eventhub_async.py
+            :start-after: [START create_eventhub_consumer_client_async]
+            :end-before: [END create_eventhub_consumer_client_async]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the EventHubConsumerClient.
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
@@ -123,6 +89,14 @@ class EventHubConsumerClient(EventHubClient):
         :param partition_initialize_handler:
         :param partition_close_handler:
         :return: None
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub_async.py
+                :start-after: [START eventhub_consumer_client_receive_async]
+                :end-before: [END eventhub_consumer_client_receive_async]
+                :language: python
+                :dedent: 4
+                :caption: Receive events from the EventHub.
         """
         async with self._lock:
             error = None
@@ -166,29 +140,6 @@ class EventHubConsumerClient(EventHubClient):
                     del self._event_processors[(consumer_group, partition_id)]
                 elif partition_id is None and (consumer_group, '-1') in self._event_processors:
                     del self._event_processors[(consumer_group, "-1")]
-
-    async def get_last_enqueued_event_properties(self, consumer_group: str, partition_id: str):
-        """The latest enqueued event information of a partition.
-        This property will be updated each time an event is received when
-        the client is created with `track_last_enqueued_event_properties` being `True`.
-        The dict includes following information of the partition:
-
-            * `sequence_number`
-            * `offset`
-            * `enqueued_time`
-            * `retrieval_time`
-
-        :rtype: dict or None
-        :raises: ValueError
-        """
-        if (consumer_group, partition_id) in self._event_processors:
-            return self._event_processors[(consumer_group, partition_id)].get_last_enqueued_event_properties(partition_id)
-        elif (consumer_group, '-1') in self._event_processors:
-            return self._event_processors[(consumer_group, -1)].get_last_enqueued_event_properties(
-                partition_id)
-        else:
-            raise ValueError("You're not receiving events from partition {} for consumer group {}".
-                             format(partition_id, consumer_group))
 
     async def close(self):
         # type: () -> None

@@ -81,6 +81,7 @@ class EventData(object):
         else:
             self.message = Message(body)
         self.message.annotations = {}
+        self.message.application_properties = {}
 
     def __str__(self):
         dic = {
@@ -259,6 +260,20 @@ class EventData(object):
             return self.message.get_data()
         except TypeError:
             raise ValueError("Message data empty.")
+
+    @property
+    def last_enqueued_event_properties(self):
+        """
+        The latest enqueued event information. This property will be updated each time an event is received when
+        the receiver is created with `track_last_enqueued_event_properties` being `True`.
+        The dict includes following information of the partition:
+            - `sequence_number`
+            - `offset`
+            - `enqueued_time`
+            - `retrieval_time`
+        :rtype: dict or None
+        """
+        return self._get_last_enqueued_event_properties()
 
     def body_as_str(self, encoding='UTF-8'):
         """

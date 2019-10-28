@@ -25,7 +25,7 @@ class EventHubProducerClient(EventHubClient):
     sending events to the Azure Event Hubs service.
 
     Example:
-        .. literalinclude:: ../examples/TODO sample.py
+        .. literalinclude:: ../examples/test_examples_eventhub.py
             :start-after: [START create_eventhub_producer_client_sync]
             :end-before: [END create_eventhub_producer_client_sync]
             :language: python
@@ -39,19 +39,40 @@ class EventHubProducerClient(EventHubClient):
         super(EventHubProducerClient, self).__init__(
             host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
         self._producers = None  # type: List[EventHubProducer]
-        self._producers_lock = threading.Lock()
+        self._client_lock = threading.Lock()
         self._producers_locks = None
-        self._max_message_size_on_link = constants.MAX_MESSAGE_LENGTH_BYTES
+        self._max_message_size_on_link = None
 
-    def send(self, event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
-            *, partition_key: Union[str, bytes] = None, partition_id: str = None, timeout: float = None):
-
+    def _init_locks_for_producers(self):
         if self._producers is None:
-            with self._producers_lock:
+            with self._client_lock:
                 if self._producers is None:
                     num_of_producers = len(self.get_partition_ids()) + 1
                     self._producers = [None] * num_of_producers
                     self._producers_locks = [threading.Lock()] * num_of_producers
+
+    def send(self, event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+            *, partition_key: Union[str, bytes] = None, partition_id: str = None, timeout: float = None):
+        """
+        Sends an event data and blocks until acknowledgement is received or operation times out.
+
+        :param event_data:
+        :param partition_key:
+        :param partition_id:
+        :param timeout:
+        :return:
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_producer_client_send_sync]
+                :end-before: [END eventhub_producer_client_send_sync]
+                :language: python
+                :dedent: 4
+                :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
+
+        """
+
+        self._init_locks_for_producers()
 
         producer_index = int(partition_id) if partition_id is not None else -1
         if self._producers[producer_index] is None or self._producers[producer_index]._closed:  # pylint:disable=protected-access
@@ -63,14 +84,37 @@ class EventHubProducerClient(EventHubClient):
 
     def create_batch(self, max_size=None, partition_key=None):
         # type:(int, str) -> EventDataBatch
+        """
+        Create an EventDataBatch object with max size being max_size.
+        The max_size should be no greater than the max allowed message size defined by the service side.
+
+        :param max_size: The maximum size of bytes data that an EventDataBatch object can hold.
+        :type max_size: int
+        :param partition_key: With the given partition_key, event data will land to
+         a particular partition of the Event Hub decided by the service.
+        :type partition_key: str
+        :return: an EventDataBatch instance
+        :rtype: ~azure.eventhub.EventDataBatch
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_producer_client_create_batch_sync]
+                :end-before: [END eventhub_producer_client_create_batch_sync]
+                :language: python
+                :dedent: 4
+                :caption: Create EventDataBatch object within limited size
+
+        """
         if not self._max_message_size_on_link:
+            self._init_locks_for_producers()
             with self._producers_locks[-1]:
                 if self._producers[-1] is None:
                     self._producers[-1] = self._create_producer(partition_id=None)
                     self._producers[-1]._open_with_retry()  # pylint: disable=protected-access
-            with self._producers_locks:
-                self._max_message_size_on_link = self._producers[-1].message_handler._link.peer_max_message_size \
-                                                 or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
+            with self._client_lock:
+                self._max_message_size_on_link =\
+                    self._producers[-1]._handler.message_handler._link.peer_max_message_size \
+                    or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
 
         if max_size and max_size > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
@@ -80,6 +124,19 @@ class EventHubProducerClient(EventHubClient):
 
     def close(self):
         # type: () -> None
+        """
+        Close down the handler. If the handler has already closed,
+        this will be a no op.
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_producer_client_close_sync]
+                :end-before: [END eventhub_producer_client_close_sync]
+                :language: python
+                :dedent: 4
+                :caption: Close down the handler.
+
+        """
         for p in self._producers:
             if p:
                 p.close()

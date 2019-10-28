@@ -6,28 +6,39 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show sending individual events asynchronously to an Event Hub.
+An example to show creating and sending EventBatchData within limited size.
 """
 
 # pylint: disable=C0111
 
 import time
-import asyncio
 import os
+import asyncio
 
 from azure.eventhub.aio import EventHubProducerClient
 from azure.eventhub import EventData
+
 
 EVENT_HUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENT_HUB = os.environ['EVENT_HUB_NAME']
 
 
+async def create_batch_data(producer_client):
+    batch_data = await producer_client.create_batch(max_size=10000)
+    while True:
+        try:
+            batch_data.try_add(EventData('Message inside EventBatchData'))
+        except ValueError:
+            # EventDataBatch object reaches max_size.
+            # New EventDataBatch object can be created here to send more data
+            break
+    return batch_data
+
+
 async def run(producer):
+    data_batch = await create_batch_data(producer)
     async with producer:
-        for i in range(5):
-            print("Sending message: {}".format(i))
-            data = EventData(str(i))
-            await producer.send(data)
+        await producer.send(data_batch)
 
 
 loop = asyncio.get_event_loop()
@@ -36,4 +47,4 @@ tasks = asyncio.gather(
     run(producer))
 start_time = time.time()
 loop.run_until_complete(tasks)
-print("Runtime: {} seconds".format(time.time() - start_time))
+print("Send messages in {} seconds".format(time.time() - start_time))

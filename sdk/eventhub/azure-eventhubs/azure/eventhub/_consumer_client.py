@@ -18,33 +18,12 @@ class EventHubConsumerClient(EventHubClient):
     """Represents an AMQP connection to an EventHub and receives event data from it.
 
     Example:
-        .. code-block:: python
-
-            import asyncio
-            import logging
-            import os
-            from azure.eventhub.aio import EventHubConsumerClient
-            from azure.eventhub.aio import FileBasedPartitionManager
-
-            RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
-            RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
-            CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-
-            logging.basicConfig(level=logging.INFO)
-
-            def process_events(partition_context, events):
-                if events:
-                    # do something
-                    partition_context.update_checkpoint(events[-1])
-                else:
-                    print("empty events received", "partition:", partition_context.partition_id)
-
-
-            if __name__ == '__main__':
-                partition_manager = FileBasedPartitionManager("consumer_pm_store")
-                client = EventHubConsumerClient.from_connection_string(
-                    CONNECTION_STR, partition_manager=partition_manager, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL
-                )
+        .. literalinclude:: ../examples/test_examples_eventhub.py
+            :start-after: [START create_eventhub_consumer_client_sync]
+            :end-before: [END create_eventhub_consumer_client_sync]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the EventHubConsumerClient.
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
@@ -85,19 +64,30 @@ class EventHubConsumerClient(EventHubClient):
         :type load_balancing_interval: float
         """
 
+        receive_timeout = kwargs.get("receive_timeout", 3)
+        if receive_timeout <= 0:
+            raise ValueError("receive_timeout must be greater than 0.")
+
+        kwargs['receive_timeout'] = receive_timeout
+
         super(EventHubConsumerClient, self).__init__(host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
         self._partition_manager = kwargs.get("partition_manager")
         self._load_balancing_interval = kwargs.get("load_balancing_interval", 10)
         self._event_processors = dict()
         self._closed = False
 
-    def _stop_eventprocessor(self, event_processor, consumer_group, partition_id):
-        with self._lock:
+    @classmethod
+    def _stop_eventprocessor(cls, event_processor):
+        # pylint: disable=protected-access
+        eventhub_client = event_processor._eventhub_client
+        consumer_group = event_processor._consumer_group_name
+        partition_id = event_processor._partition_id
+        with eventhub_client._lock:
             event_processor.stop()
-            if partition_id and (consumer_group, partition_id) in self._event_processors:
-                del self._event_processors[(consumer_group, partition_id)]
-            elif (consumer_group, '-1') in self._event_processors:
-                del self._event_processors[(consumer_group, "-1")]
+            if partition_id and (consumer_group, partition_id) in eventhub_client._event_processors:
+                del eventhub_client._event_processors[(consumer_group, partition_id)]
+            elif (consumer_group, '-1') in eventhub_client._event_processors:
+                del eventhub_client._event_processors[(consumer_group, "-1")]
 
     def receive(
             self, event_handler, consumer_group, *, partition_id=None,
@@ -118,6 +108,14 @@ class EventHubConsumerClient(EventHubClient):
         :param partition_initialize_handler:
         :param partition_close_handler:
         :return: None
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_consumer_client_receive_sync]
+                :end-before: [END eventhub_consumer_client_receive_sync]
+                :language: python
+                :dedent: 4
+                :caption: Receive events from the EventHub.
         """
         with self._lock:
             error = None
@@ -154,34 +152,19 @@ class EventHubConsumerClient(EventHubClient):
                 self._event_processors[(consumer_group, "-1")] = event_processor
 
             event_processor.start()
-            return Task(self, event_processor)
-
-    def get_last_enqueued_event_properties(self, consumer_group: str, partition_id: str):
-        """The latest enqueued event information of a partition.
-        This property will be updated each time an event is received when
-        the client is created with `track_last_enqueued_event_properties` being `True`.
-        The dict includes following information of the partition:
-
-            * `sequence_number`
-            * `offset`
-            * `enqueued_time`
-            * `retrieval_time`
-
-        :rtype: dict or None
-        :raises: ValueError
-        """
-        if (consumer_group, partition_id) in self._event_processors:
-            return self._event_processors[(consumer_group, partition_id)].get_last_enqueued_event_properties(partition_id)
-        elif (consumer_group, '-1') in self._event_processors:
-            return self._event_processors[(consumer_group, -1)].get_last_enqueued_event_properties(
-                partition_id)
-        else:
-            raise ValueError("You're not receiving events from partition {} for consumer group {}".
-                             format(partition_id, consumer_group))
+            return Task(event_processor)
 
     def close(self):
         # type: () -> None
         """Stop retrieving events from event hubs and close the underlying AMQP connection and links.
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_consumer_client_close_sync]
+                :end-before: [END eventhub_consumer_client_close_sync]
+                :language: python
+                :dedent: 4
+                :caption: Close down the handler.
 
         """
         with self._lock:
@@ -192,12 +175,10 @@ class EventHubConsumerClient(EventHubClient):
 
 
 class Task:
-    def __init__(self, consumer_client, event_processor):
-        self._consumer_client = consumer_client
+    def __init__(self, event_processor):
         self._event_processor = event_processor
-        self._partition_id = event_processor._partition_id
-        self._consumer_group_name = event_processor._consumer_group_name
 
     def cancel(self):
-        self._consumer_client._stop_eventprocessor(self._event_processor, self._consumer_group_name, self._partition_id)
+        # pylint: disable=protected-access
+        EventHubConsumerClient._stop_eventprocessor(self._event_processor)
         log.info("Task of EventProcessor %r has been cancelled successfully.", self._event_processor._id)
