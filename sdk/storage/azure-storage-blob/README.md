@@ -189,9 +189,9 @@ Once you've initialized a Client, you can choose from the different types of blo
 ## Examples
 The following sections provide several code snippets covering some of the most common Storage Blob tasks, including:
 
-* [Uploading a blob](#uploading-a-blob)
-* [Downloading a blob](#downloading-a-blob)
-* [Enumerating blobs](#enumerating-blobs)
+* [Uploading a blob](#uploading-a-blob "Uploading a blob")
+* [Downloading a blob](#downloading-a-blob "Downloading a blob")
+* [Enumerating blobs](#enumerating-blobs "Enumerating blobs")
 
 ### Uploading a blob
 Upload a blob to your container

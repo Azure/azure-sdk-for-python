@@ -174,9 +174,9 @@ Two different clients are provided to to interact with the various components of
 
 The following sections provide several code snippets covering some of the most common Storage Queue tasks, including:
 
-* [Creating a queue](#creating-a-queue)
-* [Sending messages](#sending-messages)
-* [Receiving messages](#receiving-messages)
+* [Creating a queue](#creating-a-queue "Creating a queue")
+* [Sending messages](#sending-messages "Sending messages")
+* [Receiving messages](#receiving-messages "Receiving messages")
 
 ### Creating a queue
 Create a queue in your storage account

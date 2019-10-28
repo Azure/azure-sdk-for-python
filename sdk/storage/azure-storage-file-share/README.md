@@ -152,10 +152,10 @@ For details on path naming restrictions, see [Naming and Referencing Shares, Dir
 ## Examples
 The following sections provide several code snippets covering some of the most common Storage File Share tasks, including:
 
-* [Creating a file share](#creating-a-file-share)
-* [Uploading a file](#uploading-a-file)
-* [Downloading a file](#downloading-a-file)
-* [Listing contents of a directory](#listing-contents-of-a-directory)
+* [Creating a file share](#creating-a-file-share "Creating a file share")
+* [Uploading a file](#uploading-a-file "Uploading a file")
+* [Downloading a file](#downloading-a-file "Downloading a file")
+* [Listing contents of a directory](#listing-contents-of-a-directory "Listing contents of a directory")
 
 ### Creating a file share
 Create a file share to store your files
