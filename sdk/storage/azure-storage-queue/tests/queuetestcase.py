@@ -24,7 +24,17 @@ import sys
 import random
 import logging
 import time
-from devtools_testutils import AzureMgmtTestCase
+import re
+try:
+    import unittest.mock as mock
+except ImportError:
+    import mock
+from devtools_testutils import AzureMgmtTestCase, AzureMgmtPreparer, FakeResource
+from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError
+try:
+    from devtools_testutils import mgmt_settings_real as settings
+except ImportError:
+    from devtools_testutils import mgmt_settings_fake as settings
 try:
     from cStringIO import StringIO      # Python 2
 except ImportError:
@@ -45,7 +55,29 @@ class FakeTokenCredential(object):
     def get_token(self, *args):
         return self.token
 
+
+class XMSRequestIDBody(RecordingProcessor):
+    """This process is used for Storage batch call only, to avoid the echo policy.
+    """
+    def process_response(self, response):
+        content_type = None
+        for key, value in response.get('headers', {}).items():
+            if key.lower() == 'content-type':
+                content_type = (value[0] if isinstance(value, list) else value).lower()
+                break
+
+        if content_type and 'multipart/mixed' in content_type:
+            response['body']['string'] = re.sub(b"x-ms-client-request-id: [a-f0-9-]+\r\n", b"", response['body']['string'])
+
+        return response
+
+
 class QueueTestCase(AzureMgmtTestCase):
+
+    def __init__(self, *args, **kwargs):
+        super(QueueTestCase, self).__init__(*args, **kwargs)
+        self.replay_processors.append(XMSRequestIDBody())
+
     def connection_string(self, account, key):
         return "DefaultEndpointsProtocol=https;AccountName=" + account.name + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
 
@@ -92,6 +124,13 @@ class QueueTestCase(AzureMgmtTestCase):
             text = text + u' ' + words[index]
 
         return text
+
+    def _create_storage_service(self, service_class, account, key, connection_string=None, **kwargs):
+        if connection_string:
+            service = service_class.from_connection_string(connection_string, **kwargs)
+        else:
+            service = service_class(self._account_url(account.name), credential=key, **kwargs)
+        return service
 
     @staticmethod
     def _set_test_proxy(service, settings):
@@ -160,13 +199,15 @@ class QueueTestCase(AzureMgmtTestCase):
         return self.settings.IS_SERVER_SIDE_FILE_ENCRYPTION_ENABLED
 
     def generate_oauth_token(self):
-        from azure.identity import ClientSecretCredential
-
-        return ClientSecretCredential(
-            self.settings.ACTIVE_DIRECTORY_TENANT_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET
-        )
+        if self.is_live:
+            from azure.identity import ClientSecretCredential
+            return ClientSecretCredential(
+                self.get_settings_value("TENANT_ID"),
+                self.get_settings_value("CLIENT_ID"),
+                self.get_settings_value("CLIENT_SECRET"),
+            )
+        else:
+            return self.generate_fake_token()
 
     def generate_fake_token(self):
         return FakeTokenCredential()
@@ -231,3 +272,55 @@ class LogCaptured(object):
 
         # reset logging since we messed with the setting
         self.test_case.configure_logging()
+
+class GlobalStorageAccountPreparer(AzureMgmtPreparer):
+    def __init__(self):
+        super(GlobalStorageAccountPreparer, self).__init__(
+            name_prefix='',
+            random_name_length=42
+        )
+
+    def create_resource(self, name, **kwargs):
+        storage_account = QueueTestCase._STORAGE_ACCOUNT
+        if self.is_live:
+            self.test_class_instance.scrubber.register_name_pair(
+                storage_account.name,
+                "storagename"
+            )
+        else:
+            storage_account = FakeResource(
+                id=storage_account.id,
+                name="storagename"
+            )
+
+        return {
+            'location': 'westus',
+            'resource_group': QueueTestCase._RESOURCE_GROUP,
+            'storage_account': storage_account,
+            'storage_account_key': QueueTestCase._STORAGE_KEY,
+        }
+
+class GlobalResourceGroupPreparer(AzureMgmtPreparer):
+    def __init__(self):
+        super(GlobalResourceGroupPreparer, self).__init__(
+            name_prefix='',
+            random_name_length=42
+        )
+
+    def create_resource(self, name, **kwargs):
+        rg = QueueTestCase._RESOURCE_GROUP
+        if self.is_live:
+            self.test_class_instance.scrubber.register_name_pair(
+                rg.name,
+                "rgname"
+            )
+        else:
+            rg = FakeResource(
+                name="rgname",
+                id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname"
+            )
+
+        return {
+            'location': 'westus',
+            'resource_group': rg,
+        }

@@ -39,6 +39,7 @@ from azure.storage.queue import (
 from queuetestcase import (
     QueueTestCase,
     LogCaptured,
+    GlobalStorageAccountPreparer
 )
 
 # ------------------------------------------------------------------------------
@@ -61,8 +62,7 @@ class StorageQueueTest(QueueTestCase):
         return queue
 
     # --Test cases for queues ----------------------------------------------
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_queue(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
@@ -72,8 +72,7 @@ class StorageQueueTest(QueueTestCase):
         # Asserts
         self.assertTrue(created)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_queue_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
@@ -85,8 +84,7 @@ class StorageQueueTest(QueueTestCase):
         # Asserts
         self.assertTrue(created)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_create_queue_fail_on_exist_different_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Action
         url = self._account_url(storage_account.name)
@@ -983,8 +981,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertIsInstance(message.expires_on, datetime)
         self.assertIsInstance(message.next_visible_on, datetime)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_transport_closed_only_once(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
             return

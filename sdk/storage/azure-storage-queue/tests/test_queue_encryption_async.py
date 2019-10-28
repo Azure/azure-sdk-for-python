@@ -50,6 +50,7 @@ from encryption_test_helper import (
 from asyncqueuetestcase import (
     AsyncQueueTestCase
 )
+from queuetestcase import GlobalStorageAccountPreparer
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = 'encryptionqueue'

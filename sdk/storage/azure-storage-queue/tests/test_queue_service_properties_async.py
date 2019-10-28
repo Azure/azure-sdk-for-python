@@ -26,6 +26,8 @@ from azure.storage.queue.aio import (
 from asyncqueuetestcase import (
     AsyncQueueTestCase
 )
+from queuetestcase import GlobalStorageAccountPreparer
+
 
 # ------------------------------------------------------------------------------
 class AiohttpTestTransport(AioHttpTransport):
@@ -116,8 +118,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
 
     # --Test cases per service ---------------------------------------
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncQueueTestCase.await_prepared_test
     async def test_queue_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -136,8 +137,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
         self._assert_properties_default(props)
 
     # --Test cases per feature ---------------------------------------
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncQueueTestCase.await_prepared_test
     async def test_set_logging(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -151,8 +151,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
         received_props = await qsc.get_service_properties()
         self._assert_logging_equal(received_props['analytics_logging'], logging)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncQueueTestCase.await_prepared_test
     async def test_set_hour_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -166,8 +165,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
         received_props = await qsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncQueueTestCase.await_prepared_test
     async def test_set_minute_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -182,8 +180,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
         received_props = await qsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncQueueTestCase.await_prepared_test
     async def test_set_cors(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -213,8 +210,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
 
     # --Test cases for errors ---------------------------------------
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncQueueTestCase.await_prepared_test
     async def test_retention_no_days(self, resource_group, location, storage_account, storage_account_key):
         # Assert
@@ -223,8 +219,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
                           RetentionPolicy,
                           True, None)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncQueueTestCase.await_prepared_test
     async def test_too_many_cors_rules(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -237,8 +232,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
         with self.assertRaises(HttpResponseError):
             await qsc.set_service_properties()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncQueueTestCase.await_prepared_test
     async def test_retention_too_long(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

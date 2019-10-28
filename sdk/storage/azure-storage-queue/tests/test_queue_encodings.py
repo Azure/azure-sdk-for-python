@@ -21,7 +21,8 @@ from azure.storage.queue import (
 from azure.storage.queue._message_encoding import NoEncodePolicy, NoDecodePolicy
 
 from queuetestcase import (
-    QueueTestCase
+    QueueTestCase,
+    GlobalStorageAccountPreparer
 )
 
 # ------------------------------------------------------------------------------

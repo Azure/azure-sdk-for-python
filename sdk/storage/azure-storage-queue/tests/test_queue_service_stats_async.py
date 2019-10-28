@@ -13,6 +13,7 @@ from multidict import CIMultiDict, CIMultiDictProxy
 from asyncqueuetestcase import (
     AsyncQueueTestCase
 )
+from queuetestcase import GlobalStorageAccountPreparer
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
