@@ -9,11 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
-from msrest import Configuration, Serializer, Deserializer
+from msrest import Configuration
+
 from .version import VERSION
-from .operations.prediction_operations import PredictionOperations
-from . import models
 
 
 class LUISRuntimeClientConfiguration(Configuration):
@@ -36,43 +34,14 @@ class LUISRuntimeClientConfiguration(Configuration):
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/luis/v2.0'
+        base_url = '{Endpoint}/luis/prediction/v3.0'
 
         super(LUISRuntimeClientConfiguration, self).__init__(base_url)
+
+        # Starting Autorest.Python 4.0.64, make connection pool activated by default
+        self.keep_alive = True
 
         self.add_user_agent('azure-cognitiveservices-language-luis/{}'.format(VERSION))
 
         self.endpoint = endpoint
         self.credentials = credentials
-
-
-class LUISRuntimeClient(SDKClient):
-    """LUISRuntimeClient
-
-    :ivar config: Configuration for client.
-    :vartype config: LUISRuntimeClientConfiguration
-
-    :ivar prediction: Prediction operations
-    :vartype prediction: azure.cognitiveservices.language.luis.runtime.operations.PredictionOperations
-
-    :param endpoint: Supported Cognitive Services endpoints (protocol and
-     hostname, for example: https://westus.api.cognitive.microsoft.com).
-    :type endpoint: str
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    """
-
-    def __init__(
-            self, endpoint, credentials):
-
-        self.config = LUISRuntimeClientConfiguration(endpoint, credentials)
-        super(LUISRuntimeClient, self).__init__(self.config.credentials, self.config)
-
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2.0'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
-
-        self.prediction = PredictionOperations(
-            self._client, self.config, self._serialize, self._deserialize)

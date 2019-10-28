@@ -3,6 +3,23 @@
 Release History
 ===============
 
+0.4.0 (2019-10-25)
+++++++++++++++++++
+
+**Features**
+
+- Added operation PredictionOperations.get_slot_prediction
+- Added operation PredictionOperations.get_version_prediction
+
+**Breaking changes**
+- Parameter score of model Sentiment is now required
+- Model EntityLabel no longer has parameter role
+- Model EntityLabel no longer has parameter role_id
+- Model JSONEntity no longer has parameter role
+- Model EntityLabelObject no longer has parameter role
+- Model CompositeEntityModel has a new signature
+- Removed operation PredictionOperations.resolve
+  
 0.3.1 (2019-09-11)
 ++++++++++++++++++
 

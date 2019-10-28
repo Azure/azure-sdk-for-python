@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+"""Credentials for Azure SDK clients."""
+
 from ._constants import KnownAuthorities
 from ._credentials import (
     AuthorizationCodeCredential,

@@ -6,7 +6,7 @@ azure-cognitiveservices-language-nspkg
 azure-cognitiveservices-search-nspkg
 azure-cognitiveservices-vision-nspkg
 azure-common~=1.1
-azure-core<2.0.0,>=1.0.0b5
+azure-core<2.0.0,>=1.0.0
 azure-cosmosdb-table~=1.0
 azure-datalake-store~=0.0.18
 azure-eventhub<6.0.0,>=5.0.0b3
@@ -103,7 +103,6 @@ aiohttp>=3.0
 aiodns>=2.0
 python-dateutil>=2.8.0
 six>=1.6
-#override azure-eventhub azure-core<2.0.0,>=1.0.0b4
 #override azure-storage-blob msrest>=0.6.10
 #override azure-storage-queue msrest>=0.6.10
 #override azure-storage-file-share msrest>=0.6.10
@@ -115,5 +114,3 @@ opencensus-ext-azure>=0.3.1
 #override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0
 #override azure-eventhub uamqp<2.0,>=1.2.3
 #override azure-appconfiguration msrest>=0.6.10
-#override azure-cosmos azure-core<2.0.0,>=1.0.0b4
-#override azure-core-tracing-opencensus azure-core<2.0.0,>=1.0.0b4
