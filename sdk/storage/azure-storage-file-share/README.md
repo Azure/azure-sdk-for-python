@@ -52,9 +52,9 @@ service = ShareServiceClient(account_url="https://<my-storage-account-name>.file
 
 #### Looking up the account URL
 You can find the storage account's file service URL using the
-[Azure Portal](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview#storage-account-endpoints),
-[Azure PowerShell](https://docs.microsoft.com/en-us/powershell/module/az.storage/get-azstorageaccount),
-or [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show):
+[Azure Portal](https://docs.microsoft.com/azure/storage/common/storage-account-overview#storage-account-endpoints),
+[Azure PowerShell](https://docs.microsoft.com/powershell/module/az.storage/get-azstorageaccount),
+or [Azure CLI](https://docs.microsoft.com/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show):
 
 ```bash
 # Get the file service URL for the storage account
@@ -63,8 +63,8 @@ az storage account show -n my-storage-account-name -g my-resource-group --query 
 
 #### Types of credentials
 The `credential` parameter may be provided in a number of different forms, depending on the type of
-[authorization](https://docs.microsoft.com/en-us/azure/storage/common/storage-auth) you wish to use:
-1. To use a [shared access signature (SAS) token](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview),
+[authorization](https://docs.microsoft.com/azure/storage/common/storage-auth) you wish to use:
+1. To use a [shared access signature (SAS) token](https://docs.microsoft.com/azure/storage/common/storage-sas-overview),
    provide the token as a string. If your account URL includes the SAS token, omit the credential parameter.
 2. To use a storage account [shared access key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/),
    provide the key as a string.This can be found in the Azure Portal under the "Access Keys" section or by running
@@ -268,7 +268,7 @@ Several Storage File Share Python SDK samples are available to you in the SDK's 
     * Copy a file from a URL
 
 ### Additional documentation
-For more extensive documentation on Azure File Share storage, see the [Azure File Share storage documentation](https://docs.microsoft.com/en-us/azure/storage/files/) on docs.microsoft.com.
+For more extensive documentation on Azure File Share storage, see the [Azure File Share storage documentation](https://docs.microsoft.com/azure/storage/files/) on docs.microsoft.com.
 
 ## Contributing
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
