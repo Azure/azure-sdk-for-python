@@ -132,17 +132,17 @@ can get from the Azure CLI or the Azure Portal, where it's labeled "DNS Name".
 ```
 
 ## Key concepts
-With a [SecretClient][secret_client_docs], you can get secrets from the vault, create new secrets
-and update their values, and delete secrets, as shown in the
-[examples](#examples) below.
-
 ### Secret
 A secret consists of a secret value and its associated metadata and management
-information. For this library secret values are strings, but Azure Key Vault
+information. This library handles secret values as strings, but Azure Key Vault
 doesn't store them as such. For more information about secrets and how Key
 Vault stores and manages them, see the
 [Key Vault documentation](https://docs.microsoft.com/en-us/azure/key-vault/about-keys-secrets-and-certificates#key-vault-secrets)
 .
+
+This library contains a [SecretClient][secret_client_docs] used to create secrets
+in the vault, change the values of existing secrets, and delete secrets, as shown
+in the [examples](#examples) below.
 
 ## Examples
 This section contains code snippets covering common tasks:

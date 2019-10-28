@@ -132,10 +132,6 @@ key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", creden
 ```
 
 ## Key concepts
-With a [KeyClient](key_client_docs), you can get keys from the vault, create new keys and new
-versions of existing keys, update key metadata, and delete keys, as shown in
-the [examples](#examples) below.
-
 ### Keys
 Azure Key Vault can create and store RSA and elliptic curve keys. Both can
 optionally be protected by hardware security modules (HSMs). Azure Key Vault
@@ -143,6 +139,10 @@ can also perform cryptographic operations with them. For more information about
 keys and supported operations and algorithms, see the
 [Key Vault documentation](https://docs.microsoft.com/en-us/azure/key-vault/about-keys-secrets-and-certificates#key-vault-keys)
 .
+
+This library contains a [KeyClient](key_client_docs) used to create keys in the
+vault, get existing keys from the vault, update key metadata, and delete keys,
+as shown in the [examples](#examples) below.
 
 ## Examples
 This section contains code snippets covering common tasks:
