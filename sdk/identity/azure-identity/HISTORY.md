@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b5
+## 1.0.0 (2019-10-29)
 ### Breaking changes:
 - Async credentials now default to [`aiohttp`](https://pypi.org/project/aiohttp/)
 for transport but the library does not require it as a dependency because the
