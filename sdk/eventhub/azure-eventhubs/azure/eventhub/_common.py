@@ -81,6 +81,7 @@ class EventData(object):
         else:
             self.message = Message(body)
         self.message.annotations = {}
+        self.message.application_properties = {}
 
     def __str__(self):
         dic = {

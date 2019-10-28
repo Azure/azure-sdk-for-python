@@ -64,6 +64,12 @@ class EventHubConsumerClient(EventHubClient):
         :type load_balancing_interval: float
         """
 
+        receive_timeout = kwargs.get("receive_timeout", 3)
+        if receive_timeout <= 0:
+            raise ValueError("receive_timeout must be greater than 0.")
+
+        kwargs['receive_timeout'] = receive_timeout
+
         super(EventHubConsumerClient, self).__init__(host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
         self._partition_manager = kwargs.get("partition_manager")
         self._load_balancing_interval = kwargs.get("load_balancing_interval", 10)

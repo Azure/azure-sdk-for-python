@@ -31,13 +31,6 @@ async def event_handler(partition_context, events):
         print("empty events received", "partition:", partition_context.partition_id)
 
 
-async def wait_and_close(client, receiving_time):
-    await asyncio.sleep(receiving_time)
-    print('EventHubConsumer Client Closing.')
-    await client.close()
-    print('EventHubConsumer Client Closed.')
-
-
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     client = EventHubConsumerClient.from_connection_string(
@@ -45,10 +38,11 @@ if __name__ == '__main__':
         retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
     )
     try:
-        tasks = asyncio.gather(*[client.receive(event_handler=event_handler, consumer_group="$default"),
-                                 wait_and_close(client, 5)])
-        loop.run_until_complete(tasks)
+        task = asyncio.ensure_future(client.receive(event_handler=event_handler, consumer_group="$default"))
+        loop.run_until_complete(asyncio.sleep(5))
+        task.cancel()
     except KeyboardInterrupt:
         loop.run_until_complete(client.close())
     finally:
+        loop.run_until_complete(client.close())
         loop.stop()

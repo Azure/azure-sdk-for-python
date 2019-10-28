@@ -7,6 +7,9 @@
 
 """
 An example to show receiving events from an Event Hub with partition manager.
+In the `receive` method of `EventHubConsumerClient`:
+If no partition id is specified, the partition_manager are used for load-balance and checkpoint.
+If partition id is specified, the partition_manager can only be used for checkpoint.
 """
 import os
 import time
@@ -36,11 +39,15 @@ def event_handler(partition_context, events):
 if __name__ == '__main__':
     partition_manager = FileBasedPartitionManager('consumer_pm_store')
     client = EventHubConsumerClient.from_connection_string(
-        conn_str=CONNECTION_STR, partition_manager=partition_manager, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL
+        conn_str=CONNECTION_STR, partition_manager=partition_manager,
+        receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL
     )
 
     try:
+        # Without specified partition_id, load-balance will be enabled
         task = client.receive(event_handler=event_handler, consumer_group='$Default')
+        # With specified partition_id, load-balance will be disabled
+        # task = client.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
         time.sleep(5)
         task.cancel()
 

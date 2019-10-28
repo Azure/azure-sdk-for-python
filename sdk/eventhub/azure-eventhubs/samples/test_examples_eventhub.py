@@ -42,6 +42,8 @@ def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
     producer = create_eventhub_producer_client()
     consumer = create_eventhub_consumer_client()
     try:
+        logger = logging.getLogger("azure.eventhub")
+
         def event_handler(partition_context, events):
             logger.info("Received {} messages from partition: {}".format(
                 len(events), partition_context.partition_id))

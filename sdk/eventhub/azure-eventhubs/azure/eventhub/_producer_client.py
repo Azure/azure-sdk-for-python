@@ -83,6 +83,7 @@ class EventHubProducerClient(EventHubClient):
         self._producers[producer_index].send(event_data, partition_key=partition_key, timeout=timeout)
 
     def create_batch(self, max_size=None, partition_key=None):
+        # type:(int, str) -> EventDataBatch
         """
         Create an EventDataBatch object with max size being max_size.
         The max_size should be no greater than the max allowed message size defined by the service side.
@@ -104,7 +105,6 @@ class EventHubProducerClient(EventHubClient):
                 :caption: Create EventDataBatch object within limited size
 
         """
-        # type:(int, str) -> EventDataBatch
         if not self._max_message_size_on_link:
             self._init_locks_for_producers()
             with self._producers_locks[-1]:
@@ -123,7 +123,7 @@ class EventHubProducerClient(EventHubClient):
         return EventDataBatch(max_size=(max_size or self._max_message_size_on_link), partition_key=partition_key)
 
     def close(self):
-        # type:() -> None
+        # type: () -> None
         """
         Close down the handler. If the handler has already closed,
         this will be a no op.
@@ -137,7 +137,6 @@ class EventHubProducerClient(EventHubClient):
                 :caption: Close down the handler.
 
         """
-        # type: () -> None
         for p in self._producers:
             if p:
                 p.close()

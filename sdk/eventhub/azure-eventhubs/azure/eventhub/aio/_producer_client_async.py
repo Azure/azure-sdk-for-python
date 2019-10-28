@@ -23,15 +23,12 @@ class EventHubProducerClient(EventHubClient):
     """Represents an AMQP connection to an EventHub and receives event data from it.
 
     Example:
-        .. code-block:: python
-
-            async def send():
-                producer_client = EventHubProducerClient.from_connection_string(CONNECTION_STRING)
-                async with producer_client:
-                    for i in range(100):
-                        await producer_client.send(EventData("test"), partition_id="0")
-                        await producer_client.send(EventData("test"), partition_key="some pk")
-                        await producer_client.send(EventData("test"))
+        .. literalinclude:: ../examples/test_examples_eventhub_async.py
+            :start-after: [START create_eventhub_producer_client_async]
+            :end-before: [END create_eventhub_producer_client_async]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the EventHubProducerClient.
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
@@ -101,6 +98,15 @@ class EventHubProducerClient(EventHubClient):
                 ~azure.eventhub.EventDataError, ~azure.eventhub.EventDataSendError, ~azure.eventhub.EventHubError
         :return: None
         :rtype: None
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub_async.py
+                :start-after: [START eventhub_producer_client_send_async]
+                :end-before: [END eventhub_producer_client_send_async]
+                :language: python
+                :dedent: 4
+                :caption: Asynchronously sends an event data and blocks until acknowledgement is received or operation times out.
+
         """
 
         await self._init_locks_for_producers()
@@ -114,6 +120,7 @@ class EventHubProducerClient(EventHubClient):
         await self._producers[producer_index].send(event_data, partition_key=partition_key, timeout=timeout)
 
     async def create_batch(self, max_size=None, partition_key=None):
+        # type:(int, str) -> EventDataBatch
         """
         Create an EventDataBatch object with max size being max_size.
         The max_size should be no greater than the max allowed message size defined by the service side.
@@ -135,7 +142,6 @@ class EventHubProducerClient(EventHubClient):
                 :caption: Create EventDataBatch object within limited size
 
         """
-        # type:(int, str) -> EventDataBatch
         if not self._max_message_size_on_link:
             await self._init_locks_for_producers()
             async with self._producers_locks[-1]:
@@ -155,6 +161,19 @@ class EventHubProducerClient(EventHubClient):
 
     async def close(self):
         # type: () -> None
+        """
+        Close down the handler. If the handler has already closed,
+        this will be a no op.
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub_async.py
+                :start-after: [START eventhub_producer_client_close_async]
+                :end-before: [END eventhub_producer_client_close_async]
+                :language: python
+                :dedent: 4
+                :caption: Close down the handler.
+
+        """
         for p in self._producers:
             if p:
                 await p.close()

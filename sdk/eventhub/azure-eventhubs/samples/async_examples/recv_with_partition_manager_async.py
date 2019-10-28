@@ -7,6 +7,9 @@
 
 """
 An example to show receiving events from an Event Hub with partition manager asynchronously.
+In the `receive` method of `EventHubConsumerClient`:
+If no partition id is specified, the partition_manager are used for load-balance and checkpoint.
+If partition id is specified, the partition_manager can only be used for checkpoint.
 """
 
 import asyncio
@@ -23,7 +26,7 @@ async def do_operation(event):
     print(event)
 
 
-async def process_events(partition_context, events):
+async def event_handler(partition_context, events):
     if events:
         await asyncio.gather(*[do_operation(event) for event in events])
         await partition_context.update_checkpoint(events[-1])
@@ -40,10 +43,11 @@ if __name__ == '__main__':
         retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
     )
     try:
-        loop.run_until_complete(
-            client.receive(process_events, consumer_group="$default")
-        )
+        task = asyncio.ensure_future(client.receive(event_handler=event_handler, consumer_group="$default"))
+        loop.run_until_complete(asyncio.sleep(5))
+        task.cancel()
     except KeyboardInterrupt:
         loop.run_until_complete(client.close())
     finally:
+        loop.run_until_complete(client.close())
         loop.stop()
