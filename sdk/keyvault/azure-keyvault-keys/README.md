@@ -109,9 +109,9 @@ export AZURE_TENANT_ID="tenant id"
 
 Authorize the service principal to perform key operations in your Key Vault:
 ```Bash
-az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --key-permissions backup delete get list create
+az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --key-permissions backup delete get list create update decrypt encrypt
 ```
-> Possible key permissions:
+> Possible permissions:
 > - Key management: backup, delete, get, list, purge, recover, restore, create, update, import
 > - Cryptographic operations: decrypt, encrypt, unwrapKey, wrapKey, verify, sign
 
