@@ -25,7 +25,6 @@
 #--------------------------------------------------------------------------
 
 import sys
-from azure.core.configuration import Configuration
 from azure.core.pipeline.transport import HttpRequest
 from azure.core import PipelineClient
 from azure.core.pipeline.policies import RedirectPolicy
@@ -35,20 +34,22 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 def test_example_headers_policy():
     url = "https://bing.com"
-    config = Configuration()
-    config.user_agent_policy = UserAgentPolicy("myusergant")
-    config.redirect_policy = RedirectPolicy()
+    policies = [
+        UserAgentPolicy("myuseragent"),
+        RedirectPolicy()
+    ]
 
     # [START headers_policy]
     from azure.core.pipeline.policies import HeadersPolicy
 
-    config.headers_policy = HeadersPolicy()
-    config.headers_policy.add_header('CustomValue', 'Foo')
+    headers_policy = HeadersPolicy()
+    headers_policy.add_header('CustomValue', 'Foo')
 
     # Or headers can be added per operation. These headers will supplement existing headers
     # or those defined in the config headers policy. They will also overwrite existing
     # identical headers.
-    client = PipelineClient(base_url=url, config=config)
+    policies.append(headers_policy)
+    client = PipelineClient(base_url=url, policies=policies)
     request = client.get(url)
     pipeline_response = client._pipeline.run(request, headers={'CustomValue': 'Bar'})
     # [END headers_policy]
@@ -59,20 +60,23 @@ def test_example_headers_policy():
 
 def test_example_user_agent_policy():
     url = "https://bing.com"
-    config = Configuration()
-    config.redirect_policy = RedirectPolicy()
+    redirect_policy = RedirectPolicy()
 
     # [START user_agent_policy]
     from azure.core.pipeline.policies import UserAgentPolicy
 
-    config.user_agent_policy = UserAgentPolicy()
+    user_agent_policy = UserAgentPolicy()
 
     # The user-agent policy allows you to append a custom value to the header.
-    config.user_agent_policy.add_user_agent("CustomValue")
+    user_agent_policy.add_user_agent("CustomValue")
 
     # You can also pass in a custom value per operation to append to the end of the user-agent.
     # This can be used together with the policy configuration to append multiple values.
-    client = PipelineClient(base_url=url, config=config)
+    policies=[
+        redirect_policy,
+        user_agent_policy,
+    ]
+    client = PipelineClient(base_url=url, policies=policies)
     request = client.get(url)
     pipeline_response = client._pipeline.run(request, user_agent="AnotherValue")
     # [END user_agent_policy]
@@ -84,8 +88,10 @@ def test_example_user_agent_policy():
 def example_network_trace_logging():
     filename = "log.txt"
     url = "https://bing.com"
-    config = Configuration()
-    config.redirect_policy = RedirectPolicy()
+    policies = [
+        UserAgentPolicy("myuseragent"),
+        RedirectPolicy()
+    ]
 
     # [START network_trace_logging_policy]
     from azure.core.pipeline.policies import NetworkTraceLoggingPolicy
@@ -106,11 +112,12 @@ def example_network_trace_logging():
 
     # Enable network trace logging. This will be logged at DEBUG level.
     # By default, logging is disabled.
-    config.logging_policy = NetworkTraceLoggingPolicy()
-    config.logging_policy.enable_http_logger = True
+    logging_policy = NetworkTraceLoggingPolicy()
+    logging_policy.enable_http_logger = True
 
     # The logger can also be enabled per operation.
-    client = PipelineClient(base_url=url, config=config)
+    policies.append(logging_policy)
+    client = PipelineClient(base_url=url, policies=policies)
     request = client.get(url)
     pipeline_response = client._pipeline.run(request, logging_enable=True)
 
@@ -123,14 +130,13 @@ def example_proxy_policy():
     # [START proxy_policy]
     from azure.core.pipeline.policies import ProxyPolicy
 
-    config = Configuration()
-    config.proxy_policy = ProxyPolicy()
+    proxy_policy = ProxyPolicy()
 
     # Example
-    config.proxy_policy.proxies = {'http': 'http://10.10.1.10:3148'}
+    proxy_policy.proxies = {'http': 'http://10.10.1.10:3148'}
 
     # Use basic auth
-    config.proxy_policy.proxies = {'https': 'http://user:password@10.10.1.10:1180/'}
+    proxy_policy.proxies = {'https': 'http://user:password@10.10.1.10:1180/'}
 
     # You can also configure proxies by setting the environment variables
     # HTTP_PROXY and HTTPS_PROXY.
