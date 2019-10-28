@@ -160,11 +160,11 @@ class EventHubConsumerClient(EventHubClient):
         try:
             await event_processor.start()
         finally:
+            await event_processor.stop()
             async with self._lock:
-                await event_processor.stop()
                 if partition_id and (consumer_group, partition_id) in self._event_processors:
                     del self._event_processors[(consumer_group, partition_id)]
-                elif (consumer_group, '-1') in self._event_processors:
+                elif partition_id is None and (consumer_group, '-1') in self._event_processors:
                     del self._event_processors[(consumer_group, "-1")]
 
     async def get_last_enqueued_event_properties(self, consumer_group: str, partition_id: str):
