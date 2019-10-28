@@ -53,6 +53,8 @@ class ManagedIdentityCredential(object):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.core.exceptions.ClientAuthenticationError:

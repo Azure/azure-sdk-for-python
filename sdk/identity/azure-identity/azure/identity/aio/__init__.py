@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+"""Credentials for asynchronous Azure SDK clients."""
+
 from ._credentials import (
     AuthorizationCodeCredential,
     CertificateCredential,
