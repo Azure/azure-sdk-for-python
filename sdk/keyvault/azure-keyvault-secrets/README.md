@@ -310,10 +310,9 @@ from azure.core.exceptions import ResourceNotFoundError
 
 credential = DefaultAzureCredential()
 secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
-secret_client.begin_delete_secret("secret-name").wait()
 
 try:
-    secret_client.get_secret("secret-name")
+    secret_client.get_secret("which-does-not-exist")
 except ResourceNotFoundError as e:
     print(e.message)
 ```

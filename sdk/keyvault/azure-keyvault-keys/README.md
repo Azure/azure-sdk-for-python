@@ -332,10 +332,9 @@ from azure.core.exceptions import ResourceNotFoundError
 
 credential = DefaultAzureCredential()
 key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
-key_client.begin_delete_key("key-name").wait()
 
 try:
-    key_client.get_key("key-name")
+    key_client.get_key("which-does-not-exist")
 except ResourceNotFoundError as e:
     print(e.message)
 ```
