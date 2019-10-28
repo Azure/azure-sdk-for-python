@@ -32,41 +32,43 @@ pip install azure-identity
 [Azure Cloud Shell][azure_cloud_shell] to create one with these commands
 (replace `"my-resource-group"` and `"my-key-vault"` with your own, unique
 names):
-  * (Optional) if you want a new resource group to hold the Key Vault:
-    ```sh
-    az group create --name my-resource-group --location westus2
-    ```
-  * Create the Key Vault:
-    ```Bash
-    az keyvault create --resource-group my-resource-group --name my-key-vault
-    ```
 
-    Output:
-    ```json
-    {
-        "id": "...",
-        "location": "westus2",
-        "name": "my-key-vault",
-        "properties": {
-            "accessPolicies": [...],
-            "createMode": null,
-            "enablePurgeProtection": null,
-            "enableSoftDelete": null,
-            "enabledForDeployment": false,
-            "enabledForDiskEncryption": null,
-            "enabledForTemplateDeployment": null,
-            "networkAcls": null,
-            "provisioningState": "Succeeded",
-            "sku": { "name": "standard" },
-            "tenantId": "...",
-            "vaultUri": "https://my-key-vault.vault.azure.net/"
-        },
-        "resourceGroup": "my-resource-group",
-        "type": "Microsoft.KeyVault/vaults"
-    }
-    ```
+  (Optional) if you want a new resource group to hold the Key Vault:
+  ```sh
+  az group create --name my-resource-group --location westus2
+  ```
 
-    > The `"vaultUri"` property is the `vault_url` used by [`SecretClient`][secret_client_docs]
+  Create the Key Vault:
+  ```Bash
+  az keyvault create --resource-group my-resource-group --name my-key-vault
+  ```
+
+  Output:
+  ```json
+  {
+      "id": "...",
+      "location": "westus2",
+      "name": "my-key-vault",
+      "properties": {
+          "accessPolicies": [...],
+          "createMode": null,
+          "enablePurgeProtection": null,
+          "enableSoftDelete": null,
+          "enabledForDeployment": false,
+          "enabledForDiskEncryption": null,
+          "enabledForTemplateDeployment": null,
+          "networkAcls": null,
+          "provisioningState": "Succeeded",
+          "sku": { "name": "standard" },
+          "tenantId": "...",
+          "vaultUri": "https://my-key-vault.vault.azure.net/"
+      },
+      "resourceGroup": "my-resource-group",
+      "type": "Microsoft.KeyVault/vaults"
+  }
+  ```
+
+  > The `"vaultUri"` property is the `vault_url` used by [SecretClient][secret_client_docs]
 
 ### Authenticate the client
 In order to interact with a Key Vault's secrets, you'll need an instance of the
