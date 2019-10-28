@@ -67,7 +67,7 @@ The `credential` parameter may be provided in a number of different forms, depen
 1. To use a [shared access signature (SAS) token](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview),
    provide the token as a string. If your account URL includes the SAS token, omit the credential parameter.
 2. To use a storage account [shared access key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/),
-   provide the key as a string.This can be found in the Azure Portal under your storage account or by running
+   provide the key as a string.This can be found in the Azure Portal under the "Access Keys" section or by running
     the following Azure CLI command:
 
     ```az storage account keys list -g MyResourceGroup -n MyStorageAccount```
