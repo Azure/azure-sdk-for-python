@@ -140,13 +140,13 @@ Vault stores and manages them, see the
 [Key Vault documentation](https://docs.microsoft.com/en-us/azure/key-vault/about-keys-secrets-and-certificates#key-vault-secrets)
 .
 
-This library contains a [SecretClient][secret_client_docs] used to create secrets
-in the vault, change the values of existing secrets, and delete secrets, as shown
+This library contains a [SecretClient][secret_client_docs] used to set secret
+values in the vault, update secret metadata, and delete secrets, as shown
 in the [examples](#examples) below.
 
 ## Examples
 This section contains code snippets covering common tasks:
-* [Create a Secret](#create-a-secret)
+* [Set a Secret](#set-a-secret)
 * [Retrieve a Secret](#retrieve-a-secret)
 * [Update Secret metadata](#update-secret-metadata)
 * [Delete a Secret](#delete-a-secret)
@@ -154,9 +154,12 @@ This section contains code snippets covering common tasks:
 * [Async create a Secret](#async-create-a-secret)
 * [Async list Secrets](#async-list-secrets)
 
-### Create a Secret
-[set_secret](https://aka.ms/azsdk-python-keyvault-secrets-set-secret) creates a secret in the vault. If a secret with the same name
-already exists, a new version of that secret is created.
+### Set a Secret
+[set_secret](https://aka.ms/azsdk-python-keyvault-secrets-set-secret) creates
+new secrets and changes the values of existing secrets. If no secret with the
+given name exists, `set_secret` creates a new secret with that name and the
+given value. If the given name is in use, `set_secret` creates a new version
+of that secret, with the given value.
 
 ```python
     from azure.identity import DefaultAzureCredential
