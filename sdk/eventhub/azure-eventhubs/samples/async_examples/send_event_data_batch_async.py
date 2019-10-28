@@ -41,8 +41,6 @@ async def run(producer):
         await producer.send(data_batch)
 
 
-producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONNECTION_STR, event_hub_path=EVENT_HUB)
-
 loop = asyncio.get_event_loop()
 producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONNECTION_STR, event_hub_path=EVENT_HUB)
 tasks = asyncio.gather(

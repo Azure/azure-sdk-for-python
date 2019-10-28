@@ -47,6 +47,8 @@ consumer_client = EventHubConsumerClient.from_connection_string(
 with consumer_client:
     receiving_time = 5
     task = consumer_client.receive(event_handler=event_handler, consumer_group='$Default')
+    # Receive with owner level:
+    # task = consumer_client.receive(event_handler=event_handler, consumer_group='$Default', owner_level=1)
     time.sleep(receiving_time)
     task.cancel()
 

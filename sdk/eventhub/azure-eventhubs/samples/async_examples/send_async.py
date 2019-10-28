@@ -33,6 +33,12 @@ async def run(producer):
         ed = EventData("msg sent with partition_key")
         await producer.send(ed, partition_key="p_key")  # Specifying partition_key
 
+        # Send a list of events
+        event_list = []
+        for i in range(1500):
+            event_list.append(EventData('Hello World'))
+        await producer.send(event_list)
+
 
 loop = asyncio.get_event_loop()
 producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONNECTION_STR, event_hub_path=EVENT_HUB)

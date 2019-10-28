@@ -6,43 +6,49 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show running concurrent consumers.
+An example to show receiving events from an Event Hub asynchronously.
 """
 
-import os
-import time
 import asyncio
+import os
+from azure.eventhub.aio import EventHubConsumerClient
 
-from azure.eventhub.aio import EventHubClient
-from azure.eventhub import EventPosition, EventHubSharedKeyCredential
-
-HOSTNAME = os.environ['EVENT_HUB_HOSTNAME']  # <mynamespace>.servicebus.windows.net
-EVENT_HUB = os.environ['EVENT_HUB_NAME']
-USER = os.environ['EVENT_HUB_SAS_POLICY']
-KEY = os.environ['EVENT_HUB_SAS_KEY']
-
-EVENT_POSITION = EventPosition("-1")
+RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
+CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 
 
-async def pump(client, partition):
-    consumer = client.create_consumer(consumer_group="$default", partition_id=partition, event_position=EVENT_POSITION, prefetch=5)
-    async with consumer:
-        total = 0
-        start_time = time.time()
-        for event_data in await consumer.receive(timeout=10):
-            last_offset = event_data.offset
-            last_sn = event_data.sequence_number
-            print("Received: {}, {}".format(last_offset, last_sn))
-            total += 1
-        end_time = time.time()
-        run_time = end_time - start_time
-        print("Received {} messages in {} seconds".format(total, run_time))
+async def do_operation(event):
+    pass
+    # do some sync or async operations. If the operation is i/o intensive, async will have better performance
+    # print(event)
 
 
-loop = asyncio.get_event_loop()
-client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
-                        network_tracing=False)
-tasks = [
-    asyncio.ensure_future(pump(client, "0")),
-    asyncio.ensure_future(pump(client, "1"))]
-loop.run_until_complete(asyncio.wait(tasks))
+async def event_handler(partition_context, events):
+    if events:
+        print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
+        await asyncio.gather(*[do_operation(event) for event in events])
+    else:
+        print("empty events received", "partition:", partition_context.partition_id)
+
+
+async def wait_and_close(client, receiving_time):
+    await asyncio.sleep(receiving_time)
+    print('EventHubConsumer Client Closing.')
+    await client.close()
+    print('EventHubConsumer Client Closed.')
+
+
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    client = EventHubConsumerClient.from_connection_string(
+        CONNECTION_STR,
+        retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
+    )
+    try:
+        tasks = asyncio.gather(*[client.receive(event_handler=event_handler, consumer_group="$default"),
+                                 wait_and_close(client, 5)])
+        loop.run_until_complete(tasks)
+    except KeyboardInterrupt:
+        loop.run_until_complete(client.close())
+    finally:
+        loop.stop()

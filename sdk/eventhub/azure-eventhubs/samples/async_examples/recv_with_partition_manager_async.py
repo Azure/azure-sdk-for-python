@@ -1,13 +1,21 @@
+#!/usr/bin/env python
+
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
+"""
+An example to show receiving events from an Event Hub with partition manager asynchronously.
+"""
+
 import asyncio
-import logging
 import os
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.aio import FileBasedPartitionManager
 
 RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-
-logging.basicConfig(level=logging.INFO)
 
 
 async def do_operation(event):

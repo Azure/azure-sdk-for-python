@@ -8,7 +8,7 @@
 """
 An example to show sending individual events to an Event Hub partition.
 Although this works, sending events in batches will get better performance.
-See 'send_list_of_event_data.py' and 'send_event_data_batch.py' for an example of batching.
+See 'send_event_data_batch.py' for an example of batching.
 """
 
 # pylint: disable=C0111
@@ -32,5 +32,11 @@ with producer:
 
     ed = EventData("msg sent with partition_key")
     producer.send(ed, partition_key="p_key")  # Specifying partition_key
+
+    # Send a list of events
+    event_list = []
+    for i in range(1500):
+        event_list.append(EventData('Hello World'))
+    producer.send(event_list)
 
 print("Send messages in {} seconds".format(time.time() - start_time))
