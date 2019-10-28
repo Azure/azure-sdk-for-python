@@ -43,7 +43,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             )
             self.test_class_instance.scrubber.register_name_pair(
                 name,
-                self.resource_moniker
+                self.moniker
             )
         else:
             self.resource = self.resource or FakeResource(
