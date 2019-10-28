@@ -29,7 +29,7 @@ from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
-from .errors import CosmosResourceNotFoundError
+from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
 from .offer import Offer
 from .scripts import ScriptsProxy
@@ -127,7 +127,7 @@ class ContainerProxy(object):
         :param populate_quota_info: Enable returning collection storage quota information in response headers.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
         :returns: Dict representing the retrieved container.
         :rtype: dict[str, Any]
@@ -173,7 +173,7 @@ class ContainerProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: Dict representing the item to be retrieved.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The given item couldn't be retrieved.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :rtype: dict[str, Any]
 
         .. admonition:: Example:
@@ -392,7 +392,7 @@ class ContainerProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the item after replace went through.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The replace failed or the item with
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace failed or the item with
             given id does not exist.
         :rtype: dict[str, Any]
         """
@@ -438,7 +438,7 @@ class ContainerProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the upserted item.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The given item could not be upserted.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -483,7 +483,7 @@ class ContainerProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the new item.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: Item with the given ID already exists.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -530,8 +530,8 @@ class ContainerProxy(object):
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The item wasn't deleted successfully.
-        :raises ~azure.cosmos.errors.CosmosResourceNotFoundError: The item does not exist in the container.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The item wasn't deleted successfully.
+        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
         :rtype: None
         """
         request_options = build_options(kwargs)
@@ -558,7 +558,7 @@ class ContainerProxy(object):
 
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the container.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: No offer exists for the container or
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No offer exists for the container or
             the offer could not be retrieved.
         :rtype: ~azure.cosmos.Offer
         """
@@ -589,7 +589,7 @@ class ContainerProxy(object):
         :param throughput: The throughput to be set (an integer).
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the container, updated with new throughput.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: No offer exists for the container
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No offer exists for the container
             or the offer could not be updated.
         :rtype: ~azure.cosmos.Offer
         """
@@ -694,7 +694,7 @@ class ContainerProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the retrieved conflict.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The given conflict couldn't be retrieved.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -719,8 +719,8 @@ class ContainerProxy(object):
         :param partition_key: Partition key for the conflict to delete.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The conflict wasn't deleted successfully.
-        :raises ~azure.cosmos.errors.CosmosResourceNotFoundError: The conflict does not exist in the container.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The conflict wasn't deleted successfully.
+        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
         :rtype: None
         """
         request_options = build_options(kwargs)

@@ -32,7 +32,7 @@ from ._base import build_options
 from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy
 from .documents import ConnectionPolicy, DatabaseAccount
-from .errors import CosmosResourceNotFoundError
+from .exceptions import CosmosResourceNotFoundError
 
 __all__ = ("CosmosClient",)
 
@@ -261,7 +261,7 @@ class CosmosClient(object):
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: A DatabaseProxy instance representing the new database.
         :rtype: ~azure.cosmos.DatabaseProxy
-        :raises ~azure.cosmos.errors.CosmosResourceExistsError: Database with the given ID already exists.
+        :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
 
         .. admonition:: Example:
 
@@ -315,7 +315,7 @@ class CosmosClient(object):
         :param Callable response_hook: a callable invoked with the response metadata
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The database read or creation failed.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         """
         try:
             database_proxy = self.get_database_client(id)
@@ -461,7 +461,7 @@ class CosmosClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :type request_options: dict[str, Any]
         :param Callable response_hook: a callable invoked with the response metadata
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the database couldn't be deleted.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
         request_options = build_options(kwargs)

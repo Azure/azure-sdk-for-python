@@ -32,7 +32,7 @@ from ._base import build_options
 from .container import ContainerProxy
 from .offer import Offer
 from .http_constants import StatusCodes
-from .errors import CosmosResourceNotFoundError
+from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
 
 __all__ = ("DatabaseProxy",)
@@ -121,7 +121,7 @@ class DatabaseProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :rtype: Dict[Str, Any]
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the given database couldn't be retrieved.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
         """
         # TODO this helper function should be extracted from CosmosClient
         from .cosmos_client import CosmosClient
@@ -174,7 +174,7 @@ class DatabaseProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A `ContainerProxy` instance representing the new container.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The container creation failed.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
 
         .. admonition:: Example:
@@ -258,7 +258,7 @@ class DatabaseProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A `ContainerProxy` instance representing the container.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The container read or creation failed.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
         """
 
@@ -301,7 +301,7 @@ class DatabaseProxy(object):
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the container couldn't be deleted.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
         request_options = build_options(kwargs)
@@ -451,7 +451,7 @@ class DatabaseProxy(object):
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: Raised if the container couldn't be replaced.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
         :returns: A `ContainerProxy` instance representing the container after replace completed.
         :rtype: ~azure.cosmos.ContainerProxy
@@ -557,7 +557,7 @@ class DatabaseProxy(object):
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be retrieved.
         :returns: A `UserProxy` instance representing the retrieved user.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the given user couldn't be retrieved.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be retrieved.
         :rtype: ~azure.cosmos.UserProxy
         """
         if isinstance(user, UserProxy):
@@ -581,7 +581,7 @@ class DatabaseProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A `UserProxy` instance representing the new user.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the given user couldn't be created.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be created.
         :rtype: ~azure.cosmos.UserProxy
 
         .. admonition:: Example:
@@ -618,7 +618,7 @@ class DatabaseProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A `UserProxy` instance representing the upserted user.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the given user could not be upserted.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user could not be upserted.
         :rtype: ~azure.cosmos.UserProxy
         """
         request_options = build_options(kwargs)
@@ -652,7 +652,7 @@ class DatabaseProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A `UserProxy` instance representing the user after replace went through.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the replace failed or the user with given
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the user with given
             id does not exist.
         :rtype: ~azure.cosmos.UserProxy
         """
@@ -683,8 +683,8 @@ class DatabaseProxy(object):
             instance of the user to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The user wasn't deleted successfully.
-        :raises ~azure.cosmos.errors.CosmosResourceNotFoundError: The user does not exist in the container.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The user wasn't deleted successfully.
+        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The user does not exist in the container.
         :rtype: None
         """
         request_options = build_options(kwargs)
@@ -704,7 +704,7 @@ class DatabaseProxy(object):
 
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the database.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If no offer exists for the database or if the
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If no offer exists for the database or if the
          offer could not be retrieved.
         :rtype: ~azure.cosmos.Offer
         """
@@ -735,7 +735,7 @@ class DatabaseProxy(object):
         :param throughput: The throughput to be set (an integer).
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the database, updated with new throughput.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If no offer exists for the database or if the
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If no offer exists for the database or if the
          offer could not be updated.
         :rtype: ~azure.cosmos.Offer
         """

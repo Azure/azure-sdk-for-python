@@ -1,6 +1,6 @@
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
 import requests
 import traceback
@@ -72,7 +72,7 @@ def Query_Entities(parent, entity_type, id = None):
                 entities = list(parent.read_all_items())
             else:
                 entities = list(parent.query_items(find_entity_by_id_query))
-    except errors.AzureError as e:
+    except exceptions.AzureError as e:
         print("The following error occured while querying for the entity / entities ", entity_type, id if id != None else "")
         print(e)
         raise
@@ -90,7 +90,7 @@ def CreateDatabaseIfNotExists(client, database_id):
             return client.create_database(id=database_id)
         else:
             return client.get_database_client(database_id)
-    except errors.CosmosResourceExistsError:
+    except exceptions.CosmosResourceExistsError:
         pass
 
 
@@ -98,9 +98,9 @@ def DeleteContainerIfExists(db, collection_id):
     try:
         db.delete_container(collection_id)
         print('Collection with id \'{0}\' was deleted'.format(collection_id))
-    except errors.CosmosResourceNotFoundError:
+    except exceptions.CosmosResourceNotFoundError:
         pass
-    except errors.CosmosHttpResponseError as e:
+    except exceptions.CosmosHttpResponseError as e:
         if e.status_code == 400:
             print("Bad request for collection link", collection_id)
         raise
@@ -128,9 +128,9 @@ def QueryDocumentsWithCustomQuery(container, query_with_optional_parameters, mes
         for doc in results:
             print(doc)
         return results
-    except errors.CosmosResourceNotFoundError:
+    except exceptions.CosmosResourceNotFoundError:
         print("Document doesn't exist")
-    except errors.CosmosHttpResponseError as e:
+    except exceptions.CosmosHttpResponseError as e:
         if e.status_code == 400:
             # Can occur when we are trying to query on excluded paths
             print("Bad Request exception occured: ", e)
@@ -194,9 +194,9 @@ def ExplicitlyExcludeFromIndex(db):
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
-    except errors.CosmosResourceExistsError:
+    except exceptions.CosmosResourceExistsError:
         print("Entity already exists")
-    except errors.CosmosResourceNotFoundError:
+    except exceptions.CosmosResourceNotFoundError:
         print("Entity doesn't exist")
 
 
@@ -256,9 +256,9 @@ def UseManualIndexing(db):
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
-    except errors.CosmosResourceExistsError:
+    except exceptions.CosmosResourceExistsError:
         print("Entity already exists")
-    except errors.CosmosResourceNotFoundError:
+    except exceptions.CosmosResourceNotFoundError:
         print("Entity doesn't exist")
 
 
@@ -329,9 +329,9 @@ def ExcludePathsFromIndex(db):
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
-    except errors.CosmosResourceExistsError:
+    except exceptions.CosmosResourceExistsError:
         print("Entity already exists")
-    except errors.CosmosResourceNotFoundError:
+    except exceptions.CosmosResourceNotFoundError:
         print("Entity doesn't exist")
 
 
@@ -391,9 +391,9 @@ def RangeScanOnHashIndex(db):
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
-    except errors.CosmosResourceExistsError:
+    except exceptions.CosmosResourceExistsError:
         print("Entity already exists")
-    except errors.CosmosResourceNotFoundError:
+    except exceptions.CosmosResourceNotFoundError:
         print("Entity doesn't exist")
 
 
@@ -478,9 +478,9 @@ def UseRangeIndexesOnStrings(db):
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
-    except errors.CosmosResourceExistsError:
+    except exceptions.CosmosResourceExistsError:
         print("Entity already exists")
-    except errors.CosmosResourceNotFoundError:
+    except exceptions.CosmosResourceNotFoundError:
         print("Entity doesn't exist")
 
 
@@ -537,9 +537,9 @@ def PerformIndexTransformations(db):
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
-    except errors.CosmosResourceExistsError:
+    except exceptions.CosmosResourceExistsError:
         print("Entity already exists")
-    except errors.CosmosResourceNotFoundError:
+    except exceptions.CosmosResourceNotFoundError:
         print("Entity doesn't exist")
 
 
@@ -628,9 +628,9 @@ def PerformMultiOrderbyQuery(db):
         # Cleanup
         db.delete_container(created_container)
         print("\n")
-    except errors.CosmosResourceExistsError:
+    except exceptions.CosmosResourceExistsError:
         print("Entity already exists")
-    except errors.CosmosResourceNotFoundError:
+    except exceptions.CosmosResourceNotFoundError:
         print("Entity doesn't exist")
 
 
@@ -664,7 +664,7 @@ def RunIndexDemo():
         # 8. Perform Multi Orderby queries using composite indexes
         PerformMultiOrderbyQuery(created_db)
 
-    except errors.AzureError as e:
+    except exceptions.AzureError as e:
         raise e
 
 if __name__ == '__main__':

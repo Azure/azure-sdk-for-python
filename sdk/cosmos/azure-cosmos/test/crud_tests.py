@@ -45,7 +45,7 @@ from azure.core.exceptions import AzureError, ServiceResponseError
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 from azure.cosmos import _consistent_hash_ring
 import azure.cosmos.documents as documents
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import azure.cosmos._murmur_hash as _murmur_hash
 import test_config
@@ -110,7 +110,7 @@ class CRUDTests(unittest.TestCase):
         try:
             func(*args, **kwargs)
             self.assertFalse(True, 'function should fail.')
-        except errors.CosmosHttpResponseError as inst:
+        except exceptions.CosmosHttpResponseError as inst:
             self.assertEqual(inst.status_code, status_code)
 
     @classmethod
@@ -2066,7 +2066,7 @@ class CRUDTests(unittest.TestCase):
             return end_time - start_time
 
     def test_absolute_client_timeout(self):
-        with self.assertRaises(errors.CosmosClientTimeoutError):
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
             cosmos_client.CosmosClient(
                 "https://localhost:9999",
                 CRUDTests.masterKey,
@@ -2079,29 +2079,29 @@ class CRUDTests(unittest.TestCase):
         client = cosmos_client.CosmosClient(
             self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
 
-        with self.assertRaises(errors.CosmosClientTimeoutError):
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
             client.create_database_if_not_exists("test", timeout=2)
 
         status_response = 500  # Users connection level retry
         timeout_transport = TimeoutTransport(status_response)
         client = cosmos_client.CosmosClient(
             self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
-        with self.assertRaises(errors.CosmosClientTimeoutError):
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
             client.create_database("test", timeout=2)
 
         databases = client.list_databases(timeout=2)
-        with self.assertRaises(errors.CosmosClientTimeoutError):
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
             list(databases)
 
         status_response = 429  # Uses Cosmos custom retry
         timeout_transport = TimeoutTransport(status_response)
         client = cosmos_client.CosmosClient(
             self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
-        with self.assertRaises(errors.CosmosClientTimeoutError):
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
             client.create_database_if_not_exists("test", timeout=2)
 
         databases = client.list_databases(timeout=2)
-        with self.assertRaises(errors.CosmosClientTimeoutError):
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
             list(databases)
 
     def test_query_iterable_functionality(self):

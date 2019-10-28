@@ -1,5 +1,5 @@
 import azure.cosmos.cosmos_client as cosmos_client
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
 
 import samples.Shared.config as cfg
@@ -92,7 +92,7 @@ class ContainerManagement:
             db.create_container(id=id, partition_key=partition_key)
             print('Container with id \'{0}\' created'.format(id))
 
-        except errors.CosmosResourceExistsError:
+        except exceptions.CosmosResourceExistsError:
             print('A container with id \'{0}\' already exists'.format(id))               
 
         print("\n2.2 Create Container - With custom index policy")
@@ -116,7 +116,7 @@ class ContainerManagement:
             print('IndexPolicy Mode - \'{0}\''.format(properties['indexingPolicy']['indexingMode']))
             print('IndexPolicy Automatic - \'{0}\''.format(properties['indexingPolicy']['automatic']))
             
-        except errors.CosmosResourceExistsError:
+        except exceptions.CosmosResourceExistsError:
             print('A container with id \'{0}\' already exists'.format(coll['id']))
 
         print("\n2.3 Create Container - With custom offer throughput")
@@ -130,7 +130,7 @@ class ContainerManagement:
             )
             print('Container with id \'{0}\' created'.format(container.id))
             
-        except errors.CosmosResourceExistsError:
+        except exceptions.CosmosResourceExistsError:
             print('A container with id \'{0}\' already exists'.format(coll['id']))
 
         print("\n2.4 Create Container - With Unique keys")
@@ -146,7 +146,7 @@ class ContainerManagement:
             print('Container with id \'{0}\' created'.format(container.id))
             print('Unique Key Paths - \'{0}\', \'{1}\''.format(unique_key_paths[0], unique_key_paths[1]))
             
-        except errors.CosmosResourceExistsError:
+        except exceptions.CosmosResourceExistsError:
             print('A container with id \'container_unique_keys\' already exists')
 
         print("\n2.5 Create Collection - With Partition key V2 (Default)")
@@ -160,7 +160,7 @@ class ContainerManagement:
             print('Container with id \'{0}\' created'.format(container.id))
             print('Partition Key - \'{0}\''.format(properties['partitionKey']))
 
-        except errors.CosmosResourceExistsError:
+        except exceptions.CosmosResourceExistsError:
             print('A container with id \'collection_partition_key_v2\' already exists')
 
         print("\n2.6 Create Collection - With Partition key V1")
@@ -174,7 +174,7 @@ class ContainerManagement:
             print('Container with id \'{0}\' created'.format(container.id))
             print('Partition Key - \'{0}\''.format(properties['partitionKey']))
 
-        except errors.CosmosResourceExistsError:
+        except exceptions.CosmosResourceExistsError:
             print('A container with id \'collection_partition_key_v1\' already exists')
 
     @staticmethod
@@ -195,7 +195,7 @@ class ContainerManagement:
             
             print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(offer.properties['id'], container.id, offer.properties['content']['offerThroughput']))
 
-        except errors.CosmosResourceExistsError:
+        except exceptions.CosmosResourceExistsError:
             print('A container with id \'{0}\' does not exist'.format(id))
 
         print("\n3.2 Change Offer Throughput of Container")
@@ -214,7 +214,7 @@ class ContainerManagement:
             container = db.get_container_client(id)
             print('Container with id \'{0}\' was found, it\'s link is {1}'.format(container.id, container.container_link))
 
-        except errors.CosmosResourceNotFoundError:
+        except exceptions.CosmosResourceNotFoundError:
             print('A container with id \'{0}\' does not exist'.format(id))   
     
     @staticmethod
@@ -240,7 +240,7 @@ class ContainerManagement:
 
             print('Container with id \'{0}\' was deleted'.format(id))
 
-        except errors.CosmosResourceNotFoundError:
+        except exceptions.CosmosResourceNotFoundError:
             print('A container with id \'{0}\' does not exist'.format(id))
 
 def run_sample():
@@ -251,7 +251,7 @@ def run_sample():
             try:
                 db = client.create_database(id=DATABASE_ID)
             
-            except errors.CosmosResourceExistsError:
+            except exceptions.CosmosResourceExistsError:
                 db = client.get_database_client(DATABASE_ID)
             
             # query for a container            
@@ -276,10 +276,10 @@ def run_sample():
             try:
                 client.delete_database(db)
             
-            except errors.CosmosResourceNotFoundError:
+            except exceptions.CosmosResourceNotFoundError:
                 pass
 
-        except errors.CosmosHttpResponseError as e:
+        except exceptions.CosmosHttpResponseError as e:
             print('\nrun_sample has caught an error. {0}'.format(e.message))
         
         finally:

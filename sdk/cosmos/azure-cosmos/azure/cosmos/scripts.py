@@ -107,7 +107,7 @@ class ScriptsProxy(object):
         :param sproc: The ID (name) or dict representing stored procedure to retrieve.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the retrieved stored procedure.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the given stored procedure couldn't be retrieved.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given stored procedure couldn't be retrieved.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -125,7 +125,7 @@ class ScriptsProxy(object):
         :param body: A dict-like object representing the sproc to create.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the new stored procedure.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the given stored procedure couldn't be created.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given stored procedure couldn't be created.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -143,7 +143,7 @@ class ScriptsProxy(object):
         :param body: A dict-like object representing the sproc to replace.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the stored procedure after replace went through.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the replace failed or the stored
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the stored
             procedure with given id does not exist.
         :rtype: dict[str, Any]
         """
@@ -163,8 +163,8 @@ class ScriptsProxy(object):
 
         :param sproc: The ID (name) or dict representing stored procedure to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The sproc wasn't deleted successfully.
-        :raises ~azure.cosmos.errors.CosmosResourceNotFoundError: The sproc does not exist in the container.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The sproc wasn't deleted successfully.
+        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The sproc does not exist in the container.
         :rtype: None
         """
         request_options = build_options(kwargs)
@@ -191,7 +191,7 @@ class ScriptsProxy(object):
         :param partition_key: Specifies the partition key to indicate which partition the sproc should execute on.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: Result of the executed stored procedure for the given parameters.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the stored procedure execution failed
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the stored procedure execution failed
             or if the stored procedure with given id does not exists in the container.
         :rtype: dict[str, Any]
         """
@@ -262,7 +262,7 @@ class ScriptsProxy(object):
         :param trigger: The ID (name) or dict representing trigger to retrieve.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the retrieved trigger.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the given trigger couldn't be retrieved.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given trigger couldn't be retrieved.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -280,7 +280,7 @@ class ScriptsProxy(object):
         :param body: A dict-like object representing the trigger to create.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the new trigger.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the given trigger couldn't be created.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given trigger couldn't be created.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -298,7 +298,7 @@ class ScriptsProxy(object):
         :param body: A dict-like object representing the trigger to replace.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the trigger after replace went through.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the replace failed or the trigger with given
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the trigger with given
             id does not exist.
         :rtype: dict[str, Any]
         """
@@ -318,8 +318,8 @@ class ScriptsProxy(object):
 
         :param trigger: The ID (name) or dict representing trigger to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The trigger wasn't deleted successfully.
-        :raises ~azure.cosmos.errors.CosmosResourceNotFoundError: The trigger does not exist in the container.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The trigger wasn't deleted successfully.
+        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The trigger does not exist in the container.
         :rtype: None
         """
         request_options = build_options(kwargs)
@@ -377,7 +377,7 @@ class ScriptsProxy(object):
         :param udf: The ID (name) or dict representing udf to retrieve.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the retrieved user defined function.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the given user defined function couldn't be retrieved.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user defined function couldn't be retrieved.
         :rtype: Iterable[dict[str, Any]]
         """
         request_options = build_options(kwargs)
@@ -395,7 +395,7 @@ class ScriptsProxy(object):
         :param body: A dict-like object representing the udf to create.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the new user defined function.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the given user defined function couldn't be created.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user defined function couldn't be created.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -413,8 +413,8 @@ class ScriptsProxy(object):
         :param body: A dict-like object representing the udf to replace.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the user defined function after replace went through.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: If the replace failed or the user defined function with
-            given id does not exist.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the user defined function
+            with the given id does not exist.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -433,8 +433,8 @@ class ScriptsProxy(object):
 
         :param udf: The ID (name) or dict representing udf to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
-        :raises ~azure.cosmos.errors.CosmosHttpResponseError: The udf wasn't deleted successfully.
-        :raises ~azure.cosmos.errors.CosmosResourceNotFoundError: The UDF does not exist in the container.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The udf wasn't deleted successfully.
+        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The UDF does not exist in the container.
         :rtype: None
         """
         request_options = build_options(kwargs)

@@ -1,5 +1,9 @@
 # Change Log azure-cosmos
 
+## Version 4.0.0b5
+
+- azure.cosmos.errors module deprecated and replaced by azure.cosmos.exceptions
+
 ## Version 4.0.0b4:
 
 - Added support for a `timeout` keyword argument to all operations to specify an absolute timeout in seconds
