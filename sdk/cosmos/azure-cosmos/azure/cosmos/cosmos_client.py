@@ -194,6 +194,10 @@ class CosmosClient(object):
             url, auth=auth, consistency_level=consistency_level, connection_policy=connection_policy, **kwargs
         )
 
+    def __repr__(self):
+        # type () -> str
+        return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
+
     def __enter__(self):
         self.client_connection.pipeline_client.__enter__()
         return self

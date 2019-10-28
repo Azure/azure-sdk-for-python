@@ -67,6 +67,10 @@ class ContainerProxy(object):
         self._is_system_key = None
         self._scripts = None  # type: Optional[ScriptsProxy]
 
+    def __repr__(self):
+        # type () -> str
+        return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
+
     def _get_properties(self):
         # type: () -> Dict[str, Any]
         if self._properties is None:
