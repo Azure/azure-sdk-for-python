@@ -22,14 +22,15 @@ from ._models import (
     AccountSasPermissions,
     FileSystemSasPermissions,
     DirectorySasPermissions,
-    FileSasPermissions
+    FileSasPermissions,
+    UserDelegationKey,
+    PublicAccess
 )
 from ._shared_access_signature import generate_account_sas, generate_file_system_sas, generate_directory_sas, \
     generate_file_sas
 
 from azure.storage.blob._shared.policies import ExponentialRetry, LinearRetry
-from azure.storage.blob._shared.models import(
-    StorageErrorCode, UserDelegationKey)
+from azure.storage.blob._shared.models import StorageErrorCode
 
 
 __all__ = [
@@ -41,6 +42,7 @@ __all__ = [
     'ExponentialRetry',
     'LinearRetry',
     'LocationMode',
+    'PublicAccess',
     'ResourceTypes',
     'StorageErrorCode',
     'UserDelegationKey',

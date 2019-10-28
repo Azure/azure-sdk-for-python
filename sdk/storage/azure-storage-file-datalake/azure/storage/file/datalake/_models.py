@@ -5,9 +5,10 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
+from enum import Enum
 from azure.core.paging import PageIterator
 from azure.storage.blob import ContainerProperties, LeaseProperties, ContentSettings, ContainerSasPermissions, \
-    BlobSasPermissions, AccessPolicy, BlobProperties, ResourceTypes, AccountSasPermissions
+    BlobSasPermissions, AccessPolicy, BlobProperties, ResourceTypes, AccountSasPermissions, UserDelegationKey
 from azure.storage.blob._generated.models import StorageErrorException
 from azure.storage.blob._models import ContainerPropertiesPaged, BlobPropertiesPaged
 from azure.storage.blob._shared.response_handlers import process_storage_error, return_context_and_deserialized
@@ -230,6 +231,37 @@ class FileSasPermissions(BlobSasPermissions):
 class ResourceTypes(ResourceTypes):
     def __init__(self, service=False, file_system=False, object=False):
         super(ResourceTypes, self).__init__(service=service, container=file_system, object=object)
+
+
+class UserDelegationKey(UserDelegationKey):
+    def _init(self):
+        super(UserDelegationKey, self).__init__()
+
+
+class PublicAccess(str, Enum):
+    """
+    Specifies whether data in the file system may be accessed publicly and the level of access.
+    """
+
+    OFF = 'off'
+    """
+    Specifies that there is no public read access for both the file systems and files within the file system.
+    Clients cannot enumerate the file systems within the storage account as well as the files within the file system.
+    """
+
+    File = 'blob'
+    """
+    Specifies public read access for files. file data within this file system can be read
+    via anonymous request, but file system data is not available. Clients cannot enumerate
+    files within the container via anonymous request.
+    """
+
+    FileSystem = 'container'
+    """
+    Specifies full public read access for file system and file data. Clients can enumerate
+    files within the file system via anonymous request, but cannot enumerate file systems
+    within the storage account.
+    """
 
 
 class LocationMode(object):
