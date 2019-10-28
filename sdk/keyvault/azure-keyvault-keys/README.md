@@ -117,10 +117,14 @@ az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --key-permissi
 
 
 #### Create a client
-After setting the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
-**AZURE_TENANT_ID** environment variables, you can create the
-[KeyClient][key_client_docs]. This requires your vault's URL, which you can
-get from the Azure CLI or the Azure Portal, where it's labeled "DNS Name".
+Once the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
+**AZURE_TENANT_ID** environment variables are set,
+[DefaultAzureCredential][default_cred_ref] will be able to authenticate the
+[KeyClient][key_client_docs].
+
+Constructing the client also requires your vault's URL, which you can
+get from the Azure CLI or the Azure Portal. In the Azure Portal, this URL is
+the vault's "DNS Name".
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -137,12 +141,11 @@ Azure Key Vault can create and store RSA and elliptic curve keys. Both can
 optionally be protected by hardware security modules (HSMs). Azure Key Vault
 can also perform cryptographic operations with them. For more information about
 keys and supported operations and algorithms, see the
-[Key Vault documentation](https://docs.microsoft.com/en-us/azure/key-vault/about-keys-secrets-and-certificates#key-vault-keys)
-.
+[Key Vault documentation](https://docs.microsoft.com/en-us/azure/key-vault/about-keys-secrets-and-certificates#key-vault-keys).
 
-This library contains a [KeyClient](key_client_docs) used to create keys in the
-vault, get existing keys from the vault, update key metadata, and delete keys,
-as shown in the [examples](#examples) below.
+[KeyClient](key_client_docs) can create keys in the vault, get existing keys
+from the vault, update key metadata, and delete keys, as shown in the
+[examples](#examples) below.
 
 ## Examples
 This section contains code snippets covering common tasks:
@@ -214,7 +217,7 @@ print(updated_key.properties.enabled)
 [begin_delete_key](https://aka.ms/azsdk-python-keyvault-keys-begin-delete-key-ref) requests Key Vault delete a key, returning a poller which allows you to
 wait for the deletion to finish. Waiting is helpful when the vault has [soft-delete][soft_delete]
 enabled, and you want to purge (permanently delete) the key as soon as possible.
-When [soft-delete][soft_delete] is disabled, deletion is always permanent.
+When [soft-delete][soft_delete] is disabled, `begin_delete_key` itself is permanent.
 
 ```python
 from azure.identity import DefaultAzureCredential

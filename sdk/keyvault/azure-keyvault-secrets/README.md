@@ -117,10 +117,14 @@ az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --secret-permi
 
 
 #### Create a client
-After setting the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
-**AZURE_TENANT_ID** environment variables, you can create the
-[SecretClient][secret_client_docs]. This requires your vault's URL, which you
-can get from the Azure CLI or the Azure Portal, where it's labeled "DNS Name".
+Once the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
+**AZURE_TENANT_ID** environment variables are set,
+[DefaultAzureCredential][default_cred_ref] will be able to authenticate the
+[SecretClient][secret_client_docs].
+
+Constructing the client also requires your vault's URL, which you can
+get from the Azure CLI or the Azure Portal. In the Azure Portal, this URL is
+the vault's "DNS Name".
 
 ```python
     from azure.identity import DefaultAzureCredential
@@ -140,9 +144,8 @@ Vault stores and manages them, see the
 [Key Vault documentation](https://docs.microsoft.com/en-us/azure/key-vault/about-keys-secrets-and-certificates#key-vault-secrets)
 .
 
-This library contains a [SecretClient][secret_client_docs] used to set secret
-values in the vault, update secret metadata, and delete secrets, as shown
-in the [examples](#examples) below.
+[SecretClient][secret_client_docs] can set secret values in the vault, update
+secret metadata, and delete secrets, as shown in the [examples](#examples) below.
 
 ## Examples
 This section contains code snippets covering common tasks:
@@ -219,7 +222,7 @@ value; use [set_secret](#create-a-secret) to set a secret's value.
 [begin_delete_secret](https://aka.ms/azsdk-python-keyvault-secrets-begin-delete-secret-ref) requests Key Vault delete
 a secret, returning a poller which allows you to wait for the deletion to finish. Waiting is helpful when the vault has
 [soft-delete][soft_delete] enabled, and you want to purge (permanently delete) the secret as soon as possible.
-When [soft-delete][soft_delete] is disabled, deletion is always permanent.
+When [soft-delete][soft_delete] is disabled, `begin_delete_secret` itself is permanent.
 
 ```python
     from azure.identity import DefaultAzureCredential
