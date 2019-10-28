@@ -39,13 +39,15 @@ class FileSystemClient(StorageAccountHostsMixin):
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(account_url))
 
-        datalake_hosts = kwargs.pop('_hosts', None)
-
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
-        blob_primary_account_url = convert_dfs_url_to_blob_url(datalake_hosts[LocationMode.PRIMARY])
-        blob_secondary_account_url = convert_dfs_url_to_blob_url(datalake_hosts[LocationMode.SECONDARY])
-        blob_hosts = {LocationMode.PRIMARY: blob_primary_account_url,
-                      LocationMode.SECONDARY: blob_secondary_account_url}
+
+        datalake_hosts = kwargs.pop('_hosts', None)
+        blob_hosts = None
+        if datalake_hosts:
+            blob_primary_account_url = convert_dfs_url_to_blob_url(datalake_hosts[LocationMode.PRIMARY])
+            blob_secondary_account_url = convert_dfs_url_to_blob_url(datalake_hosts[LocationMode.SECONDARY])
+            blob_hosts = {LocationMode.PRIMARY: blob_primary_account_url,
+                          LocationMode.SECONDARY: blob_secondary_account_url}
         self._container_client = ContainerClient(blob_account_url, file_system_name, credential, _hosts=blob_hosts, **kwargs)
 
         _, sas_token = parse_query(parsed_url.query)

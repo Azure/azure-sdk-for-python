@@ -51,21 +51,25 @@ class PathClient(StorageAccountHostsMixin):
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(account_url))
 
-        datalake_hosts = kwargs.pop('_hosts', None)
-
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
-        blob_primary_account_url = convert_dfs_url_to_blob_url(datalake_hosts[LocationMode.PRIMARY])
-        blob_secondary_account_url = convert_dfs_url_to_blob_url(datalake_hosts[LocationMode.SECONDARY])
-        blob_hosts = {LocationMode.PRIMARY: blob_primary_account_url,
-                      LocationMode.SECONDARY: blob_secondary_account_url}
-        self._blob_client = BlobClient(blob_account_url, file_system_name, path_name, credential=credential, _hosts=blob_hosts, **kwargs)
+
+        datalake_hosts = kwargs.pop('_hosts', None)
+        blob_hosts = None
+        if datalake_hosts:
+            blob_primary_account_url = convert_dfs_url_to_blob_url(datalake_hosts[LocationMode.PRIMARY])
+            blob_secondary_account_url = convert_dfs_url_to_blob_url(datalake_hosts[LocationMode.SECONDARY])
+            blob_hosts = {LocationMode.PRIMARY: blob_primary_account_url,
+                          LocationMode.SECONDARY: blob_secondary_account_url}
+        self._blob_client = BlobClient(blob_account_url, file_system_name, path_name,
+                                       credential=credential, _hosts=blob_hosts, **kwargs)
 
         _, sas_token = parse_query(parsed_url.query)
         self.file_system_name = file_system_name
         self.path_name = path_name
 
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(PathClient, self).__init__(parsed_url, service='dfs', credential=credential, **kwargs)
+        super(PathClient, self).__init__(parsed_url, service='dfs', credential=credential,
+                                         _hosts=datalake_hosts, **kwargs)
         self._client = DataLakeStorageClient(self.url, file_system_name, path_name, pipeline=self._pipeline)
 
     def _format_url(self, hostname):

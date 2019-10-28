@@ -364,6 +364,8 @@ def generate_file_sas(
     """
     if directory_name:
         path = directory_name.rstrip('/') + "/" + file_name
+    else:
+        path = file_name
     return generate_blob_sas(
         account_name=account_name,
         container_name=file_system_name,

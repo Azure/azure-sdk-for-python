@@ -11,7 +11,10 @@ import re
 import sys
 import unittest
 
-from azure.storage.file.datalake import ContentSettings
+from azure.storage.file.datalake import ContentSettings, generate_account_sas, generate_file_sas, \
+    ResourceTypes, AccountSasPermissions, \
+    DataLakeFileClient, FileSystemClient, DataLakeDirectoryClient, FileSasPermissions
+from azure.storage.file.datalake._generated.models import StorageErrorException
 from testcase import (
     StorageTestCase,
     TestMode,
@@ -19,7 +22,8 @@ from testcase import (
 )
 from datetime import datetime, timedelta
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
+    ClientAuthenticationError
 from azure.storage.blob import (
     BlobServiceClient,
     BlobType,
@@ -31,6 +35,7 @@ from azure.storage.file.datalake import DataLakeServiceClient
 
 # ------------------------------------------------------------------------------
 TEST_DIRECTORY_PREFIX = 'directory'
+TEST_FILE_PREFIX = 'file'
 # ------------------------------------------------------------------------------
 
 
@@ -64,9 +69,27 @@ class FileTest(StorageTestCase):
         directory_name = self.get_resource_name(prefix)
         return directory_name
 
+    def _get_file_reference(self, prefix=TEST_FILE_PREFIX):
+        file_name = self.get_resource_name(prefix)
+        return file_name
+
     def _create_file_system(self):
         return self.dsc.create_file_system(self._get_file_system_reference())
 
+    def _create_directory_and_return_client(self, directory=None):
+        directory_name = directory if directory else self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+        return directory_client
+
+    def _create_file_and_return_client(self, directory=None, file=None):
+        if directory:
+            self._create_directory_and_return_client(directory)
+        if not file:
+            file = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.file_system_name, directory, file)
+        file_client.create_file()
+        return file_client
 
     # --Helpers-----------------------------------------------------------------
 
@@ -148,6 +171,83 @@ class FileTest(StorageTestCase):
 
         self.assertIsNotNone(response)
 
+    @record
+    def test_read_file(self):
+        file_client = self._create_file_and_return_client()
+        data = self.get_random_bytes(1024)
+
+        # upload data to file
+        file_client.append_data(data, 0, len(data))
+        file_client.flush_data(len(data))
+
+        # doanload the data and make sure it is the same as uploaded data
+        downloaded_data = file_client.read_file()
+        self.assertEqual(data, downloaded_data)
+
+    @record
+    def test_account_sas(self):
+        file_name = self._get_file_reference()
+        self._create_file_and_return_client(directory=None, file=file_name)
+
+        # generate a token with file level read permission
+        token = generate_account_sas(
+            self.dsc.account_name,
+            self.dsc.credential.account_key,
+            ResourceTypes(file_system=True, object=True),
+            AccountSasPermissions(read=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # read the created file which is under root directory
+        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, None, file_name, credential=token)
+        properties = file_client.get_file_properties()
+
+        # make sure we can read the file properties
+        self.assertIsNotNone(properties)
+
+        # try to write to the created file with the token
+        with self.assertRaises(StorageErrorException):
+            file_client.append_data(b"abcd", 0, 4)
+
+    @record
+    def test_file_sas_only_applies_to_file_level(self):
+        file_name = self._get_file_reference()
+        directory_name = self._get_directory_reference()
+        self._create_file_and_return_client(directory=directory_name, file=file_name)
+
+        # generate a token with file level read and write permissions
+        token = generate_file_sas(
+            self.dsc.account_name,
+            self.file_system_name,
+            directory_name,
+            file_name,
+            account_key=self.dsc.credential.account_key,
+            permission=FileSasPermissions(read=True, write=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # read the created file which is under root directory
+        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, directory_name, file_name,
+                                         credential=token)
+        properties = file_client.get_file_properties()
+
+        # make sure we can read the file properties
+        self.assertIsNotNone(properties)
+
+        # try to write to the created file with the token
+        response = file_client.append_data(b"abcd", 0, 4)
+        self.assertIsNotNone(response)
+
+        # the token is for file level, so users are not supposed to have access to file system level operations
+        file_system_client = FileSystemClient(self.dsc.url, self.file_system_name, credential=token)
+        with self.assertRaises(ClientAuthenticationError):
+            file_system_client.get_file_system_properties()
+
+        # the token is for file level, so users are not supposed to have access to directory level operations
+        directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
+                                                   credential=token)
+        with self.assertRaises(ClientAuthenticationError):
+            directory_client.get_directory_properties()
     @record
     def test_delete_directory(self):
         # Arrange

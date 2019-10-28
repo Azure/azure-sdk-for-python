@@ -146,7 +146,7 @@ class DataLakeFileClient(PathClient):
         try:
             return self._client.path.append_data(**options)
         except StorageErrorException as error:
-            process_storage_error(error)
+            raise error
 
     @staticmethod
     def _flush_data_options(offset, content_settings=None, retain_uncommitted_data=False, **kwargs):

@@ -11,7 +11,7 @@ import re
 import sys
 import unittest
 
-from azure.storage.file.datalake import ContentSettings
+from azure.storage.file.datalake import ContentSettings, DirectorySasPermissions, DataLakeDirectoryClient
 from testcase import (
     StorageTestCase,
     TestMode,
@@ -25,7 +25,7 @@ from azure.storage.blob import (
     BlobType,
     BlobBlock,
 )
-from azure.storage.file.datalake import DataLakeServiceClient
+from azure.storage.file.datalake import DataLakeServiceClient, generate_directory_sas
 
 
 
@@ -63,6 +63,12 @@ class DirectoryTest(StorageTestCase):
     def _get_directory_reference(self, prefix=TEST_DIRECTORY_PREFIX):
         directory_name = self.get_resource_name(prefix)
         return directory_name
+
+    def _create_directory_and_get_directory_client(self, directory_name=None):
+        directory_name = directory_name if directory_name else self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+        return directory_client
 
     def _create_file_system(self):
         return self.dsc.create_file_system(self._get_file_system_reference())
@@ -212,6 +218,44 @@ class DirectoryTest(StorageTestCase):
         properties = directory_client.get_directory_properties()
         # Assert
         self.assertTrue(properties)
+
+    @record
+    def test_using_directory_sas_to_read(self):
+        client = self._create_directory_and_get_directory_client()
+        directory_name = client.path_name
+
+        # generate a token with directory level read permission
+        token = generate_directory_sas(
+            self.dsc.account_name,
+            self.file_system_name,
+            directory_name,
+            account_key=self.dsc.credential.account_key,
+            permission=DirectorySasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
+                                                   credential=token)
+        access_control = directory_client.get_access_control()
+
+        self.assertIsNotNone(access_control)
+
+    @record
+    def test_using_directory_sas_to_create(self):
+        # generate a token with directory level create permission
+        directory_name = self._get_directory_reference()
+        token = generate_directory_sas(
+            self.dsc.account_name,
+            self.file_system_name,
+            directory_name,
+            account_key=self.dsc.credential.account_key,
+            permission=DirectorySasPermissions(create=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
+                                                   credential=token)
+        access_control = directory_client.create_directory()
+
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
