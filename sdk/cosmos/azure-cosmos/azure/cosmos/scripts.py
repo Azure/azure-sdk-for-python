@@ -377,7 +377,7 @@ class ScriptsProxy(object):
         :param udf: The ID (name) or dict representing udf to retrieve.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the retrieved user defined function.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user defined function couldn't be retrieved.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user defined function couldn't be retrieved.
         :rtype: Iterable[dict[str, Any]]
         """
         request_options = build_options(kwargs)
@@ -395,7 +395,7 @@ class ScriptsProxy(object):
         :param body: A dict-like object representing the udf to create.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the new user defined function.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user defined function couldn't be created.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user defined function couldn't be created.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -413,8 +413,8 @@ class ScriptsProxy(object):
         :param body: A dict-like object representing the udf to replace.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the user defined function after replace went through.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the user defined function with
-            given id does not exist.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the user defined function
+            with the given id does not exist.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
