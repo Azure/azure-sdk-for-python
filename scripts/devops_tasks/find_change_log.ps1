@@ -20,11 +20,13 @@ function ExtractReleaseNotes($changeLogLocation)
 
     # walk the document, finding where the version specifiers are and creating lists
     $version = ""
+    Write-Host "Versions in change log $changeLogLocation"
     foreach($line in $contents){
       if ($line -match $RELEASE_TITLE_REGEX)
-      {
-        $version = $matches["version"]
-        $contentArrays[$version] = @()
+      {   
+         Write-Host $line     
+         $version = $matches["version"]
+         $contentArrays[$version] = @()
       }
 
       $contentArrays[$version] += $line
@@ -67,16 +69,25 @@ function VerifyPackages($rootDirectory)
       if ($releaseNotes.Count -gt 0)
       {
          #Log package if it doesn't have current version in history.md
-         if ( -not($releaseNotes.Contains($version)))
+         if ( $releaseNotes.Contains($version))
          {
-            Write-Host "Change log in path $rootDirectory doesn't have current version $version"
+            $content = $releaseNotes[$version]
+            Write-Host "Change log [$changeFile] is updated with current version $version"
+            Write-Host "Release notes for version $version"
+            Write-Host "****************************************************************************************************"
+            Write-Host $content
+            Write-Host "****************************************************************************************************"
+         }
+         else
+         {
+            Write-Host "Change log [$changeFile] does not have current version $version"
             exit(1)
          }            
       }
    }
    catch
    {
-      Write-Host "Error verifying version in chagne log"
+      Write-Host "Error verifying version in change log"
       Write-Host $_.Exception.Message
       exit(1)
    }

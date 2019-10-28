@@ -15,17 +15,17 @@ import logging
 
 from common_tasks import process_glob_string, parse_setup, run_check_call
 
-excluded_packages = [   
-    "azure"]
+excluded_packages = ["azure"]
 
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 psscript = os.path.join(root_dir, "scripts", "devops_tasks", "find_change_log.ps1")
 
+
 def find_change_log(targeted_package, version):
     # Execute powershell script to find a matching version in history.md
-    command_array = ["pwsh"]    
+    command_array = ["pwsh"]
     command_array.append("-File {}".format(psscript))
     command_array.append("-workingDir {}".format(targeted_package))
     command_array.append("-version {}".format(version))
@@ -35,17 +35,19 @@ def find_change_log(targeted_package, version):
 
     # Execute powershell script to verify version
     er_result = run_check_call(
-        command_array,
-        root_dir,
-        allowed_return_codes,
-        True,
-        False,) 
+        command_array, root_dir, allowed_return_codes, True, False
+    )
 
     if er_result:
-        logging.error("Failed to find version in change log for package {}".format(targeted_package))
+        logging.error(
+            "Failed to find version in change log for package {}".format(
+                targeted_package
+            )
+        )
         return False
 
     return True
+
 
 def verify_packages(targeted_packages):
     # run the build and distribution
@@ -60,10 +62,15 @@ def verify_packages(targeted_packages):
             continue
 
         if not find_change_log(package, version):
-            logging.error("Change log is not updated for package {0}, version {1}".format(pkg_name, version))
+            logging.error(
+                "Change log is not updated for package {0}, version {1}".format(
+                    pkg_name, version
+                )
+            )
             change_log_missing[pkg_name] = version
 
     return change_log_missing
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -106,7 +113,9 @@ if __name__ == "__main__":
     else:
         target_dir = root_dir
 
-    targeted_packages = process_glob_string(args.glob_string, target_dir, args.package_filter_string)
+    targeted_packages = process_glob_string(
+        args.glob_string, target_dir, args.package_filter_string
+    )
     change_missing = verify_packages(targeted_packages)
     if len(change_missing) > 0:
         logging.error("Below packages do not have change log in history.md")
