@@ -85,8 +85,8 @@ The `credential` parameter may be provided in a number of different forms, depen
     ```
 
 2. To use a storage account [shared key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/)
-    (aka account key or access key), provide the key as a string. This can be found in the Azure Portal under the "Access Keys" 
-    section or by running the following Azure CLI command:
+   (aka account key or access key), provide the key as a string. This can be found in the Azure Portal under the "Access Keys" 
+   section or by running the following Azure CLI command:
 
     ```az storage account keys list -g MyResourceGroup -n MyStorageAccount```
 
@@ -126,23 +126,23 @@ use of a dedicated client object.
 
 ### Clients
 Four different clients are provided to to interact with the various components of the File Share Service:
-1. **[ShareServiceClient](https://aka.ms/azsdk-python-storage-fileshare-shareserviceclient)** -
+1. [ShareServiceClient](https://aka.ms/azsdk-python-storage-fileshare-shareserviceclient) -
     this client represents interaction with the Azure storage account itself, and allows you to acquire preconfigured
     client instances to access the file shares within. It provides operations to retrieve and configure the service
     properties as well as list, create, and delete shares within the account. To perform operations on a specific share,
     retrieve a client using the `get_share_client` method.
-2. **[ShareClient](https://aka.ms/azsdk-python-storage-fileshare-shareclient)** -
+2. [ShareClient](https://aka.ms/azsdk-python-storage-fileshare-shareclient) -
     this client represents interaction with a specific file share (which need not exist yet), and allows you to acquire
     preconfigured client instances to access the directories and files within. It provides operations to create, delete,
     configure, or create snapshots of a share and includes operations to create and enumerate the contents of
     directories within it. To perform operations on a specific directory or file, retrieve a client using the
     `get_directory_client` or `get_file_client` methods.
-3. **[ShareDirectoryClient](https://aka.ms/azsdk-python-storage-fileshare-sharedirectoryclient)** -
+3. [ShareDirectoryClient](https://aka.ms/azsdk-python-storage-fileshare-sharedirectoryclient) -
     this client represents interaction with a specific directory (which need not exist yet). It provides operations to
     create, delete, or enumerate the contents of an immediate or nested subdirectory, and includes operations to create
     and delete files within it. For operations relating to a specific subdirectory or file, a client for that entity can
     also be retrieved using the `get_subdirectory_client` and `get_file_client` functions.
-4. **[ShareFileClient](http://aka.ms/azsdk-python-storage-fileshare-sharefileclient)** -
+4. [ShareFileClient](http://aka.ms/azsdk-python-storage-fileshare-sharefileclient) -
     this client represents interaction with a specific file (which need not exist yet). It provides operations to
     upload, download, create, delete, and copy a file.
 
@@ -256,14 +256,14 @@ Optional keyword arguments that can be passed in at the client and per-operation
 
 Use the following keyword arguments when instantiating a client to configure the retry policy:
 
-* _retry_total_ (int): Total number of retries to allow. Takes precedence over other counts.
-    Pass in `retry_total=0` if you do not want to retry on requests. Defaults to 10.
-* _retry_connect_ (int): How many connection-related errors to retry on. Defaults to 3.
-* _retry_read_ (int): How many times to retry on read errors. Defaults to 3.
-* _retry_status_ (int): How many times to retry on bad status codes. Defaults to 3.
-* _retry_to_secondary_ (bool): Whether the request should be retried to secondary, if able.
-    This should only be enabled of RA-GRS accounts are used and potentially stale data can be handled.
-    Defaults to `False`.
+* __retry_total__ (int): Total number of retries to allow. Takes precedence over other counts.
+Pass in `retry_total=0` if you do not want to retry on requests. Defaults to 10.
+* __retry_connect__ (int): How many connection-related errors to retry on. Defaults to 3.
+* __retry_read__ (int): How many times to retry on read errors. Defaults to 3.
+* __retry_status__ (int): How many times to retry on bad status codes. Defaults to 3.
+* __retry_to_secondary__ (bool): Whether the request should be retried to secondary, if able.
+This should only be enabled of RA-GRS accounts are used and potentially stale data can be handled.
+Defaults to `False`.
 
 ### Other client / per-operation configuration
 
@@ -271,18 +271,18 @@ Other optional configuration keyword arguments that can be specified on the clie
 
 **Client keyword arguments:**
 
-* _connection_timeout_ (int): Optionally sets the connect and read timeout value, in seconds.
-* _transport_ (Any): User-provided transport to send the HTTP request.
+* __connection_timeout__ (int): Optionally sets the connect and read timeout value, in seconds.
+* __transport__ (Any): User-provided transport to send the HTTP request.
 
 **Per-operation keyword arguments:**
 
-* _raw_response_hook_ (callable): The given callback uses the response returned from the service.
-* _raw_request_hook_ (callable): The given callback uses the request before being sent to service.
-* _client_request_id_ (str): Optional user specified identification of the request.
-* _user_agent_ (str): Appends the custom value to the user-agent header to be sent with the request.
-* _logging_enable_ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at
+* __raw_response_hook__ (callable): The given callback uses the response returned from the service.
+* __raw_request_hook__ (callable): The given callback uses the request before being sent to service.
+* __client_request_id__ (str): Optional user specified identification of the request.
+* __user_agent__ (str): Appends the custom value to the user-agent header to be sent with the request.
+* __logging_enable__ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at
 the client level to enable it for all requests.
-* _headers_ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
+* __headers__ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
 
 
 ## Troubleshooting
@@ -297,33 +297,33 @@ Get started with our [File Share samples](https://github.com/Azure/azure-sdk-for
 
 Several Storage File Share Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Storage File Share:
 
-* [`file_samples_hello_world.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_hello_world.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_hello_world_async.py)) - Examples found in this article:
+* [file_samples_hello_world.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_hello_world.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_hello_world_async.py)) - Examples found in this article:
     * Client creation
     * Create a file share
     * Upload a file
 
-* [`file_samples_authentication.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_authentication.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_authentication_async.py)) - Examples for authenticating and creating the client:
+* [file_samples_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_authentication_async.py)) - Examples for authenticating and creating the client:
     * From a connection string
     * From a shared access key
     * From a shared access signature token
 
-* [`file_samples_service.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_service.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_service_async.py)) - Examples for interacting with the file service:
+* [file_samples_service.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_service.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_service_async.py)) - Examples for interacting with the file service:
     * Get and set service properties
     * Create, list, and delete shares
     * Get a share client
 
-* [`file_samples_share.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_share.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_share_async.py)) - Examples for interacting with file shares:
+* [file_samples_share.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_share.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_share_async.py)) - Examples for interacting with file shares:
     * Create a share snapshot
     * Set share quota and metadata
     * List directories and files
     * Get the directory or file client to interact with a specific entity
 
-* [`file_samples_directory.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_directory.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_directory_async.py)) - Examples for interacting with directories:
+* [file_samples_directory.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_directory.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_directory_async.py)) - Examples for interacting with directories:
     * Create a directory and add files
     * Create and delete subdirectories
     * Get the subdirectory client
 
-* [`file_samples_client.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_client.py)([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_client_async.py)) - Examples for interacting with files:
+* [file_samples_client.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_client.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples/file_samples_client_async.py)) - Examples for interacting with files:
     * Create, upload, download, and delete files
     * Copy a file from a URL
 

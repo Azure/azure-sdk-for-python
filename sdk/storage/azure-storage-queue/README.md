@@ -85,8 +85,8 @@ The `credential` parameter may be provided in a number of different forms, depen
     ```
 
 2. To use a storage account [shared key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/)
-    (aka account key or access key), provide the key as a string. This can be found in the Azure Portal under the "Access Keys" 
-    section or by running the following Azure CLI command:
+   (aka account key or access key), provide the key as a string. This can be found in the Azure Portal under the "Access Keys" 
+   section or by running the following Azure CLI command:
 
     ```az storage account keys list -g MyResourceGroup -n MyStorageAccount```
 
@@ -150,12 +150,12 @@ use of a dedicated client object.
 
 ### Clients
 Two different clients are provided to to interact with the various components of the Queue Service:
-1. **[QueueServiceClient](https://aka.ms/azsdk-python-storage-queue-queueserviceclient)** -
+1. [QueueServiceClient](https://aka.ms/azsdk-python-storage-queue-queueserviceclient) -
     this client represents interaction with the Azure storage account itself, and allows you to acquire preconfigured
     client instances to access the queues within. It provides operations to retrieve and configure the account
     properties as well as list, create, and delete queues within the account. To perform operations on a specific queue,
     retrieve a client using the `get_queue_client` method.
-2. **[QueueClient](https://aka.ms/azsdk-python-storage-queue-queueclient)** -
+2. [QueueClient](https://aka.ms/azsdk-python-storage-queue-queueclient) -
     this client represents interaction with a specific queue (which need not exist yet). It provides operations to
     create, delete, or configure a queue and includes operations to send, receive, peek, delete, and update messages
     within it.
@@ -272,14 +272,14 @@ Optional keyword arguments that can be passed in at the client and per-operation
 
 Use the following keyword arguments when instantiating a client to configure the retry policy:
 
-* _retry_total_ (int): Total number of retries to allow. Takes precedence over other counts.
-    Pass in `retry_total=0` if you do not want to retry on requests. Defaults to 10.
-* _retry_connect_ (int): How many connection-related errors to retry on. Defaults to 3.
-* _retry_read_ (int): How many times to retry on read errors. Defaults to 3.
-* _retry_status_ (int): How many times to retry on bad status codes. Defaults to 3.
-* _retry_to_secondary_ (bool): Whether the request should be retried to secondary, if able.
-    This should only be enabled of RA-GRS accounts are used and potentially stale data can be handled.
-    Defaults to `False`.
+* __retry_total__ (int): Total number of retries to allow. Takes precedence over other counts.
+Pass in `retry_total=0` if you do not want to retry on requests. Defaults to 10.
+* __retry_connect__ (int): How many connection-related errors to retry on. Defaults to 3.
+* __retry_read__ (int): How many times to retry on read errors. Defaults to 3.
+* __retry_status__ (int): How many times to retry on bad status codes. Defaults to 3.
+* __retry_to_secondary__ (bool): Whether the request should be retried to secondary, if able.
+This should only be enabled of RA-GRS accounts are used and potentially stale data can be handled.
+Defaults to `False`.
 
 ### Other client / per-operation configuration
 
@@ -287,18 +287,18 @@ Other optional configuration keyword arguments that can be specified on the clie
 
 **Client keyword arguments:**
 
-* _connection_timeout_ (int): Optionally sets the connect and read timeout value, in seconds.
-* _transport_ (Any): User-provided transport to send the HTTP request.
+* __connection_timeout__ (int): Optionally sets the connect and read timeout value, in seconds.
+* __transport__ (Any): User-provided transport to send the HTTP request.
 
 **Per-operation keyword arguments:**
 
-* _raw_response_hook_ (callable): The given callback uses the response returned from the service.
-* _raw_request_hook_ (callable): The given callback uses the request before being sent to service.
-* _client_request_id_ (str): Optional user specified identification of the request.
-* _user_agent_ (str): Appends the custom value to the user-agent header to be sent with the request.
-* _logging_enable_ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at
+* __raw_response_hook__ (callable): The given callback uses the response returned from the service.
+* __raw_request_hook__ (callable): The given callback uses the request before being sent to service.
+* __client_request_id__ (str): Optional user specified identification of the request.
+* __user_agent__ (str): Appends the custom value to the user-agent header to be sent with the request.
+* __logging_enable__ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at
 the client level to enable it for all requests.
-* _headers_ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
+* __headers__ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
 
 
 ## Troubleshooting
@@ -312,25 +312,25 @@ Get started with our [Queue samples](https://github.com/Azure/azure-sdk-for-pyth
 
 Several Storage Queues Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Storage Queues:
 
-* [`queue_samples_hello_world.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_hello_world.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_hello_world_async.py)) - Examples found in this article:
+* [queue_samples_hello_world.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_hello_world.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_hello_world_async.py)) - Examples found in this article:
     * Client creation
     * Create a queue
     * Send messages
     * Receive messages
 
-* [`queue_samples_authentication.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_authentication_async.py)) - Examples for authenticating and creating the client:
+* [queue_samples_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_authentication_async.py)) - Examples for authenticating and creating the client:
     * From a connection string
     * From a shared access key
     * From a shared access signature token
     * From Azure Active Directory
 
-* [`queue_samples_service.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_service.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_service_async.py)) - Examples for interacting with the queue service:
+* [queue_samples_service.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_service.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_service_async.py)) - Examples for interacting with the queue service:
     * Get and set service properties
     * List queues in a storage account
     * Create and delete a queue from the service
     * Get the QueueClient
 
-* [`queue_samples_message.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_message.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_message_async.py)) - Examples for working with queues and messages:
+* [queue_samples_message.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_message.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_message_async.py)) - Examples for working with queues and messages:
     * Set an access policy
     * Get and set queue metadata
     * Send and receive messages

@@ -88,8 +88,8 @@ The `credential` parameter may be provided in a number of different forms, depen
     ```
 
 2. To use a storage account [shared key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/)
-    (aka account key or access key), provide the key as a string. This can be found in the Azure Portal under the "Access Keys" 
-    section or by running the following Azure CLI command:
+   (aka account key or access key), provide the key as a string. This can be found in the Azure Portal under the "Access Keys" 
+   section or by running the following Azure CLI command:
 
     ```az storage account keys list -g MyResourceGroup -n MyStorageAccount```
     
@@ -156,32 +156,32 @@ use of a dedicated client object.
 
 ### Clients
 Four different clients are provided to to interact with the various components of the Blob Service:
-1. **[BlobServiceClient](https://aka.ms/azsdk-python-storage-blob-blobserviceclient)** -
+1. [BlobServiceClient](https://aka.ms/azsdk-python-storage-blob-blobserviceclient) -
     this client represents interaction with the Azure storage account itself, and allows you to acquire preconfigured
     client instances to access the containers and blobs within. It provides operations to retrieve and configure the
     account properties as well as list, create, and delete containers within the account. To perform operations on a
     specific container or blob, retrieve a client using the `get_container_client` or `get_blob_client` methods.
-2. **[ContainerClient](https://aka.ms/azsdk-python-storage-blob-containerclient)** -
+2. [ContainerClient](https://aka.ms/azsdk-python-storage-blob-containerclient) -
     this client represents interaction with a specific container (which need not exist yet), and allows you to acquire
     preconfigured client instances to access the blobs within. It provides operations to create, delete, or configure a
     container and includes operations to list, upload, and delete the blobs within it. To perform operations on a
     specific blob within the container, retrieve a client using the `get_blob_client` method.
-3. **[BlobClient](https://aka.ms/azsdk-python-storage-blob-blobclient)** -
+3. [BlobClient](https://aka.ms/azsdk-python-storage-blob-blobclient) -
     this client represents interaction with a specific blob (which need not exist yet). It provides operations to
     upload, download, delete, and create snapshots of a blob, as well as specific operations per blob type.
-4. **[BlobLeaseClient](https://aka.ms/azsdk-python-storage-blob-blobleaseclient)** -
+4. [BlobLeaseClient](https://aka.ms/azsdk-python-storage-blob-blobleaseclient) -
     this client represents lease interactions with a `ContainerClient` or `BlobClient`. It provides operations to
     acquire, renew, release, change, and break a lease on a specified resource.
 
 ### Blob Types
 Once you've initialized a Client, you can choose from the different types of blobs:
-* **[Block blobs](https://docs.microsoft.com/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs#about-block-blobs)**
+* [Block blobs](https://docs.microsoft.com/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs#about-block-blobs)
   store text and binary data, up to approximately 4.75 TiB. Block blobs are made up of blocks of data that can be
   managed individually
-* **[Append blobs](https://docs.microsoft.com/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs#about-append-blobs)**
+* [Append blobs](https://docs.microsoft.com/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs#about-append-blobs)
   are made up of blocks like block blobs, but are optimized for append operations. Append blobs are ideal for scenarios
   such as logging data from virtual machines
-* **[Page blobs](https://docs.microsoft.com/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs#about-page-blobs)**
+* [Page blobs](https://docs.microsoft.com/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs#about-page-blobs)
   store random access files up to 8 TiB in size. Page blobs store virtual hard drive (VHD) files and serve as disks for
   Azure virtual machines
 
@@ -275,26 +275,26 @@ Optional keyword arguments that can be passed in at the client and per-operation
 
 Use the following keyword arguments when instantiating a client to configure the retry policy:
 
-* _retry_total_ (int): Total number of retries to allow. Takes precedence over other counts.
-    Pass in `retry_total=0` if you do not want to retry on requests. Defaults to 10.
-* _retry_connect_ (int): How many connection-related errors to retry on. Defaults to 3.
-* _retry_read_ (int): How many times to retry on read errors. Defaults to 3.
-* _retry_status_ (int): How many times to retry on bad status codes. Defaults to 3.
-* _retry_to_secondary_ (bool): Whether the request should be retried to secondary, if able.
-    This should only be enabled of RA-GRS accounts are used and potentially stale data can be handled.
-    Defaults to `False`.
+* __retry_total__ (int): Total number of retries to allow. Takes precedence over other counts.
+Pass in `retry_total=0` if you do not want to retry on requests. Defaults to 10.
+* __retry_connect__ (int): How many connection-related errors to retry on. Defaults to 3.
+* __retry_read__ (int): How many times to retry on read errors. Defaults to 3.
+* __retry_status__ (int): How many times to retry on bad status codes. Defaults to 3.
+* __retry_to_secondary__ (bool): Whether the request should be retried to secondary, if able.
+This should only be enabled of RA-GRS accounts are used and potentially stale data can be handled.
+Defaults to `False`.
 
 ### Encryption configuration
 
 Use the following keyword arguments when instantiating a client to configure encryption:
 
-* _require_encryption_ (bool): If set to True, will enforce that objects are encrypted and decrypt them.
-* _key_encryption_key_ (object): The user-provided key-encryption-key. The instance must implement the following methods:
+* __require_encryption__ (bool): If set to True, will enforce that objects are encrypted and decrypt them.
+* __key_encryption_key__ (object): The user-provided key-encryption-key. The instance must implement the following methods:
     - `wrap_key(key)`--wraps the specified key using an algorithm of the user's choice. 
     - `get_key_wrap_algorithm()`--returns the algorithm used to wrap the specified symmetric key.
     - `get_kid()`--returns a string key id for this key-encryption-key.
-* _key_resolver_function_ (callable): The user-provided key resolver. Uses the kid string to return a key-encryption-key
-    implementing the interface defined above.
+* __key_resolver_function__ (callable): The user-provided key resolver. Uses the kid string to return a key-encryption-key
+implementing the interface defined above.
 
 ### Other client / per-operation configuration
 
@@ -302,18 +302,18 @@ Other optional configuration keyword arguments that can be specified on the clie
 
 **Client keyword arguments:**
 
-* _connection_timeout_ (int): Optionally sets the connect and read timeout value, in seconds.
-* _transport_ (Any): User-provided transport to send the HTTP request.
+* __connection_timeout__ (int): Optionally sets the connect and read timeout value, in seconds.
+* __transport__ (Any): User-provided transport to send the HTTP request.
 
 **Per-operation keyword arguments:**
 
-* _raw_response_hook_ (callable): The given callback uses the response returned from the service.
-* _raw_request_hook_ (callable): The given callback uses the request before being sent to service.
-* _client_request_id_ (str): Optional user specified identification of the request.
-* _user_agent_ (str): Appends the custom value to the user-agent header to be sent with the request.
-* _logging_enable_ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at
+* __raw_response_hook__ (callable): The given callback uses the response returned from the service.
+* __raw_request_hook__ (callable): The given callback uses the request before being sent to service.
+* __client_request_id__ (str): Optional user specified identification of the request.
+* __user_agent__ (str): Appends the custom value to the user-agent header to be sent with the request.
+* __logging_enable__ (bool): Enables logging at the DEBUG level. Defaults to False. Can also be passed in at
 the client level to enable it for all requests.
-* _headers_ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
+* __headers__ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
 
 ## Troubleshooting
 Storage Blob clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/exceptions.md).
@@ -327,27 +327,27 @@ Get started with our [Blob samples](https://github.com/Azure/azure-sdk-for-pytho
 
 Several Storage Blobs Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Storage Blobs:
 
-* [`blob_samples_hello_world.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_hello_world.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_hello_world_async.py)) - Examples for common Storage Blob tasks:
+* [blob_samples_hello_world.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_hello_world.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_hello_world_async.py)) - Examples for common Storage Blob tasks:
     * Set up a container
     * Create a block, page, or append blob
     * Upload blobs
     * Download blobs
     * Delete blobs
 
-* [`blob_samples_authentication.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_authentication_async.py)) - Examples for authenticating and creating the client:
+* [blob_samples_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_authentication_async.py)) - Examples for authenticating and creating the client:
     * From a connection string
     * From a shared access key
     * From a shared access signature token
     * From active directory
     
-* [`blob_samples_service.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_service.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_service_async.py)) - Examples for interacting with the blob service:
+* [blob_samples_service.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_service.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_service_async.py)) - Examples for interacting with the blob service:
     * Get account information
     * Get and set service properties
     * Get service statistics
     * Create, list, and delete containers
     * Get the Blob or Container client
 
-* [`blob_samples_containers.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_containers.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_containers_async.py)) - Examples for interacting with containers:
+* [blob_samples_containers.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_containers.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_containers_async.py)) - Examples for interacting with containers:
     * Create a container and delete containers
     * Set metadata on containers
     * Get container properties
@@ -356,7 +356,7 @@ Several Storage Blobs Python SDK samples are available to you in the SDK's GitHu
     * Upload, list, delete blobs in container
     * Get the blob client to interact with a specific blob
 
-* [`blob_samples_common.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_common.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_common_async.py)) - Examples common to all types of blobs:
+* [blob_samples_common.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_common.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_common_async.py)) - Examples common to all types of blobs:
     * Create a snapshot
     * Delete a blob snapshot
     * Soft delete a blob
@@ -364,7 +364,7 @@ Several Storage Blobs Python SDK samples are available to you in the SDK's GitHu
     * Acquire a lease on a blob
     * Copy a blob from a URL
 
-* [`blob_samples_directory_interface.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_directory_interface.py) - Examples for interfacing with Blob storage as if it were a directory on a filesystem:
+* [blob_samples_directory_interface.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_directory_interface.py) - Examples for interfacing with Blob storage as if it were a directory on a filesystem:
     * Copy (upload or download) a single file or directory
     * List files or directories at a single level or recursively
     * Delete a single file or recursively delete a directory
