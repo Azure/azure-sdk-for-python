@@ -20,11 +20,8 @@ Install the Azure Key Vault Keys client library for Python with [pip][pip]:
 pip install azure-keyvault-keys
 ```
 
-Additionally, we strongly recommend using the [`azure-identity`][azure_identity] library.
-
-Install the Azure Identity client library for Python with [pip][pip]:
-
-```Bash
+Additionally, install the [`azure-identity`][azure_identity]:
+```sh
 pip install azure-identity
 ```
 
