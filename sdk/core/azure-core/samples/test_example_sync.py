@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core import PipelineClient
 from azure.core.pipeline.transport import HttpRequest
@@ -37,7 +36,6 @@ from azure.core.pipeline.policies import (
 
 def test_example_requests():
     request = HttpRequest("GET", "https://bing.com")
-    config = Configuration()
     policies = [
         UserAgentPolicy("myuseragent"),
         RedirectPolicy(),
@@ -78,15 +76,15 @@ def test_example_pipeline_client():
     url = "https://bing.com"
     # [START build_pipeline_client]
     from azure.core import PipelineClient
-    from azure.core.configuration import Configuration
     from azure.core.pipeline.policies import RedirectPolicy, UserAgentPolicy
 
     # example configuration with some policies
-    config = Configuration()
-    config.user_agent_policy = UserAgentPolicy("myuseragent")
-    config.redirect_policy = RedirectPolicy()
+    policies = [
+        UserAgentPolicy("myuseragent"),
+        RedirectPolicy()
+    ]
 
-    client = PipelineClient(base_url=url, config=config)
+    client = PipelineClient(base_url=url, policies=policies)
     request = client.get("https://bing.com")
 
     pipeline_response = client._pipeline.run(request)
@@ -102,20 +100,19 @@ def test_example_redirect_policy():
     # [START redirect_policy]
     from azure.core.pipeline.policies import RedirectPolicy
 
-    config = Configuration()
-    config.redirect_policy = RedirectPolicy()
+    redirect_policy = RedirectPolicy()
 
     # Client allows redirects. Defaults to True.
-    config.redirect_policy.allow = True
+    redirect_policy.allow = True
 
     # The maximum allowed redirects. The default value is 30
-    config.redirect_policy.max_redirects = 10
+    redirect_policy.max_redirects = 10
 
     # Alternatively you can disable redirects entirely
-    config.redirect_policy = RedirectPolicy.no_redirects()
+    redirect_policy = RedirectPolicy.no_redirects()
 
     # It can also be overridden per operation.
-    client = PipelineClient(base_url=url, config=config)
+    client = PipelineClient(base_url=url, policies=[redirect_policy])
     request = client.get(url)
     pipeline_response = client._pipeline.run(request, permit_redirects=True, redirect_max=5)
     # [END redirect_policy]
@@ -127,10 +124,9 @@ def test_example_redirect_policy():
 def test_example_no_redirects():
     url = "https://bing.com"
 
-    config = Configuration()
-    config.redirect_policy = RedirectPolicy.no_redirects()
+    redirect_policy = RedirectPolicy.no_redirects()
 
-    client = PipelineClient(base_url=url, config=config)
+    client = PipelineClient(base_url=url, policies=[redirect_policy])
     request = client.get(url)
     pipeline_response = client._pipeline.run(request)
 
@@ -143,31 +139,32 @@ def test_example_retry_policy():
 
     url = "https://bing.com"
 
-    config = Configuration()
-    config.user_agent_policy = UserAgentPolicy("myusergant")
-    config.redirect_policy = RedirectPolicy()
+    policies = [
+        UserAgentPolicy("myuseragent"),
+        RedirectPolicy()
+    ]
 
     # [START retry_policy]
     from azure.core.pipeline.policies import RetryPolicy
 
-    config.retry_policy = RetryPolicy()
+    retry_policy = RetryPolicy()
 
     # Total number of retries to allow. Takes precedence over other counts.
     # Default value is 10.
-    config.retry_policy.total_retries = 5
+    retry_policy.total_retries = 5
 
     # How many connection-related errors to retry on.
     # These are errors raised before the request is sent to the remote server,
     # which we assume has not triggered the server to process the request. Default value is 3
-    config.retry_policy.connect_retries = 2
+    retry_policy.connect_retries = 2
 
     # How many times to retry on read errors.
     # These errors are raised after the request was sent to the server, so the
     # request may have side-effects. Default value is 3.
-    config.retry_policy.read_retries = 4
+    retry_policy.read_retries = 4
 
     # How many times to retry on bad status codes. Default value is 3.
-    config.retry_policy.status_retries = 3
+    retry_policy.status_retries = 3
 
     # A backoff factor to apply between attempts after the second try
     # (most errors are resolved immediately by a second try without a delay).
@@ -176,16 +173,17 @@ def test_example_retry_policy():
     # seconds. If the backoff_factor is 0.1, then the retry will sleep
     # for [0.0s, 0.2s, 0.4s, ...] between retries.
     # The default value is 0.8.
-    config.retry_policy.backoff_factor = 0.5
+    retry_policy.backoff_factor = 0.5
 
     # The maximum back off time. Default value is 120 seconds (2 minutes).
-    config.retry_policy.backoff_max = 120
+    retry_policy.backoff_max = 120
 
     # Alternatively you can disable redirects entirely
-    config.retry_policy = RetryPolicy.no_retries()
+    retry_policy = RetryPolicy.no_retries()
 
     # All of these settings can also be configured per operation.
-    client = PipelineClient(base_url=url, config=config)
+    policies.append(retry_policy)
+    client = PipelineClient(base_url=url, policies=policies)
     request = client.get(url)
     pipeline_response = client._pipeline.run(
         request,
@@ -205,10 +203,9 @@ def test_example_retry_policy():
 def test_example_no_retries():
     url = "https://bing.com"
 
-    config = Configuration()
-    config.retry_policy = RetryPolicy.no_retries()
+    retry_policy = RetryPolicy.no_retries()
 
-    client = PipelineClient(base_url=url, config=config)
+    client = PipelineClient(base_url=url, policies=[retry_policy])
     request = client.get(url)
     pipeline_response = client._pipeline.run(request)
 
