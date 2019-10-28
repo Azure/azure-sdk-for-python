@@ -9,15 +9,11 @@
 An example to show sending and receiving events behind a proxy
 """
 import os
-from azure.eventhub import EventHubClient, EventPosition, EventData, EventHubSharedKeyCredential
+import time
+from azure.eventhub import EventPosition, EventData, EventHubConsumerClient, EventHubProducerClient
 
-
-# Hostname can be <mynamespace>.servicebus.windows.net"
-HOSTNAME = os.environ['EVENT_HUB_HOSTNAME']
+CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENT_HUB = os.environ['EVENT_HUB_NAME']
-
-USER = os.environ['EVENT_HUB_SAS_POLICY']
-KEY = os.environ['EVENT_HUB_SAS_KEY']
 
 EVENT_POSITION = EventPosition("-1")
 PARTITION = "0"
@@ -28,19 +24,39 @@ HTTP_PROXY = {
     'password': '123456'  # password used for proxy authentication if needed
 }
 
-client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
-                        network_tracing=False, http_proxy=HTTP_PROXY)
-producer = client.create_producer(partition_id=PARTITION)
-consumer = client.create_consumer(consumer_group="$default", partition_id=PARTITION, event_position=EVENT_POSITION)
-try:
-    consumer.receive(timeout=1)
-    event_list = []
-    for i in range(20):
-        event_list.append(EventData("Event Number {}".format(i)))
-    print('Start sending events behind a proxy.')
-    producer.send(event_list)
-    print('Start receiving events behind a proxy.')
-    received = consumer.receive(max_batch_size=50, timeout=5)
-finally:
-    producer.close()
-    consumer.close()
+RECEIVE_TIMEOUT = 1  # timeout in seconds for a receiving operation. 0 or None means no timeout
+RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
+
+
+def do_operation(event):
+    pass
+    # do some operations on the event
+    #print(event)
+
+
+def event_handler(partition_context, events):
+    if events:
+        print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
+        for event in events:
+            do_operation(event)
+    else:
+        print("empty events received", "partition:", partition_context.partition_id)
+
+
+consumer_client = EventHubConsumerClient.from_connection_string(
+    conn_str=CONNECTION_STR, event_hub_path=EVENT_HUB, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL,
+    http_proxy=HTTP_PROXY)
+producer_client = EventHubProducerClient.from_connection_string(
+    conn_str=CONNECTION_STR, event_hub_path=EVENT_HUB, http_proxy=HTTP_PROXY)
+
+with producer_client:
+    producer_client.send(EventData("A single event"))
+    print('Finish sending.')
+
+with consumer_client:
+    receiving_time = 5
+    task = consumer_client.receive(event_handler=event_handler, consumer_group='$Default')
+    time.sleep(receiving_time)
+    task.cancel()
+    print('Finish receiving.')
+

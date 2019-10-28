@@ -24,9 +24,13 @@ producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONN
 
 start_time = time.time()
 with producer:
+    ed = EventData("msg")
+    producer.send(ed)  # The event will be distributed to available partitions via round-robin.
+
     ed = EventData("msg sent to partition_id 0")
-    producer.send(ed, partition_id='0')
+    producer.send(ed, partition_id='0')  # Specifying partition_id
 
     ed = EventData("msg sent with partition_key")
-    producer.send(ed, partition_key="p_key")
+    producer.send(ed, partition_key="p_key")  # Specifying partition_key
+
 print("Send messages in {} seconds".format(time.time() - start_time))
