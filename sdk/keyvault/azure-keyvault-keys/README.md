@@ -268,7 +268,7 @@ decrypted = crypto_client.decrypt(result.algorithm, result.ciphertext)
 ```
 
 See the
-[package documentation](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.keys.crypto.html)
+[package documentation](https://aka.ms/azsdk-python-keyvault-keys-crypto-ref)
 for more details of the cryptography API.
 
 ### Async operations

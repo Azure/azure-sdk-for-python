@@ -405,7 +405,7 @@ additional questions or comments.
 [list_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-secrets/samples/list_operations_async.py
 [pip]: https://pypi.org/project/pip/
 [pypi_package_secrets]: https://pypi.org/project/azure-keyvault-secrets/
-[reference_docs]: https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.secrets.html
+[reference_docs]: https://aka.ms/azsdk-python-keyvault-secrets-ref
 [secret_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/azure/keyvault/secrets
 [secret_client_docs]: https://aka.ms/azsdk-python-keyvault-secrets-secretclient
 [secret_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets/samples
