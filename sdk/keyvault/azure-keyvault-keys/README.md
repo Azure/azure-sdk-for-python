@@ -119,7 +119,8 @@ az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --key-permissi
 #### Create a client
 After setting the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
 **AZURE_TENANT_ID** environment variables, you can create the
-[KeyClient][key_client_docs]:
+[KeyClient][key_client_docs]. This requires your vault's URL, which you can
+get from the Azure CLI or the Azure Portal, where it's labeled "DNS Name".
 
 ```python
 from azure.identity import DefaultAzureCredential
