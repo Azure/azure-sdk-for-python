@@ -1,7 +1,7 @@
 
 # Azure Core Library
 
-Azure core library defines basic exceptions and shared modules those are needed when you use client libraries. If you are a client library developer, please reference [client library developer doc](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md) for more information.
+Azure core library defines basic exceptions and shared modules those are needed when you use client libraries. If you are a client library developer, please reference [client library developer reference](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md) for more information.
 
 ## Azure Core Library Exceptions
 

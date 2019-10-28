@@ -25,7 +25,6 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline.policies import UserAgentPolicy, AsyncRedirectPolicy
@@ -118,17 +117,17 @@ async def test_example_async_pipeline_client():
 
     # [START build_async_pipeline_client]
     from azure.core import AsyncPipelineClient
-    from azure.core.configuration import Configuration
     from azure.core.pipeline.policies import AsyncRedirectPolicy, UserAgentPolicy
     from azure.core.pipeline.transport import HttpRequest
 
-    # example configuration with some policies
+    # example policies
     request = HttpRequest("GET", url)
-    config = Configuration()
-    config.user_agent_policy = UserAgentPolicy("myuseragent")
-    config.redirect_policy = AsyncRedirectPolicy()
+    policies = [
+        UserAgentPolicy("myuseragent"),
+        AsyncRedirectPolicy(),
+    ]
 
-    async with AsyncPipelineClient(base_url=url, config=config) as client:
+    async with AsyncPipelineClient(base_url=url, policies=policies) as client:
         response = await client._pipeline.run(request)
     # [END build_async_pipeline_client]
 
@@ -144,20 +143,19 @@ async def test_example_async_redirect_policy():
     # [START async_redirect_policy]
     from azure.core.pipeline.policies import AsyncRedirectPolicy
 
-    config = Configuration()
-    config.redirect_policy = AsyncRedirectPolicy()
+    redirect_policy = AsyncRedirectPolicy()
 
     # Client allows redirects. Defaults to True.
-    config.redirect_policy.allow = True
+    redirect_policy.allow = True
 
     # The maximum allowed redirects. The default value is 30
-    config.redirect_policy.max_redirects = 10
+    redirect_policy.max_redirects = 10
 
     # Alternatively you can disable redirects entirely
-    config.redirect_policy = AsyncRedirectPolicy.no_redirects()
+    redirect_policy = AsyncRedirectPolicy.no_redirects()
 
     # It can also be overridden per operation.
-    async with AsyncPipelineClient(base_url=url, config=config) as client:
+    async with AsyncPipelineClient(base_url=url, policies=[redirect_policy]) as client:
         response = await client._pipeline.run(request, permit_redirects=True, redirect_max=5)
 
     # [END async_redirect_policy]
@@ -170,31 +168,32 @@ async def test_example_async_redirect_policy():
 async def test_example_async_retry_policy():
     url = "https://bing.com"
     request = HttpRequest("GET", "https://bing.com")
-    config = Configuration()
-    config.user_agent_policy = UserAgentPolicy("myusergant")
-    config.redirect_policy = AsyncRedirectPolicy()
+    policies = [
+        UserAgentPolicy("myuseragent"),
+        AsyncRedirectPolicy(),
+    ]
 
     # [START async_retry_policy]
     from azure.core.pipeline.policies import AsyncRetryPolicy
 
-    config.retry_policy = AsyncRetryPolicy()
+    retry_policy = AsyncRetryPolicy()
 
     # Total number of retries to allow. Takes precedence over other counts.
     # Default value is 10.
-    config.retry_policy.total_retries = 5
+    retry_policy.total_retries = 5
 
     # How many connection-related errors to retry on.
     # These are errors raised before the request is sent to the remote server,
     # which we assume has not triggered the server to process the request. Default value is 3
-    config.retry_policy.connect_retries = 2
+    retry_policy.connect_retries = 2
 
     # How many times to retry on read errors.
     # These errors are raised after the request was sent to the server, so the
     # request may have side-effects. Default value is 3.
-    config.retry_policy.read_retries = 4
+    retry_policy.read_retries = 4
 
     # How many times to retry on bad status codes. Default value is 3.
-    config.retry_policy.status_retries = 3
+    retry_policy.status_retries = 3
 
     # A backoff factor to apply between attempts after the second try
     # (most errors are resolved immediately by a second try without a delay).
@@ -203,16 +202,17 @@ async def test_example_async_retry_policy():
     # seconds. If the backoff_factor is 0.1, then the retry will sleep
     # for [0.0s, 0.2s, 0.4s, ...] between retries.
     # The default value is 0.8.
-    config.retry_policy.backoff_factor = 0.5
+    retry_policy.backoff_factor = 0.5
 
     # The maximum back off time. Default value is 120 seconds (2 minutes).
-    config.retry_policy.backoff_max = 120
+    retry_policy.backoff_max = 120
 
     # Alternatively you can disable redirects entirely
-    config.retry_policy = AsyncRetryPolicy.no_retries()
+    retry_policy = AsyncRetryPolicy.no_retries()
 
     # All of these settings can also be configured per operation.
-    async with AsyncPipelineClient(base_url=url, config=config) as client:
+    policies.append(retry_policy)
+    async with AsyncPipelineClient(base_url=url, policies=policies) as client:
         response = await client._pipeline.run(
             request,
             retry_total=10,
