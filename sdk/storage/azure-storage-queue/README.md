@@ -7,7 +7,7 @@ Common uses of Queue storage include:
 * Creating a backlog of work to process asynchronously
 * Passing messages between different parts of a distributed application
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/azure/storage/queue) | [Package (PyPI)](https://pypi.org/project/azure-storage-queue/) | [API reference documentation](https://docs.microsoft.com/en-us/python/api/azure-storage-queue/azure.storage.queue) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/azure/storage/queue) | [Package (PyPI)](https://pypi.org/project/azure-storage-queue/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-storage-queue/12.0.0b5/azure.storage.queue.html) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples)
 
 ## Getting started
 
@@ -50,14 +50,14 @@ from azure.storage.queue import QueueServiceClient
 service = QueueServiceClient(account_url="https://<my-storage-account-name>.queue.core.windows.net/", credential=credential)
 ```
 
-#### Looking up the endpoint URL
-You can find the storage account's queue service endpoint URL using the 
+#### Looking up the account URL
+You can find the storage account's queue service URL using the 
 [Azure Portal](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview#storage-account-endpoints),
 [Azure PowerShell](https://docs.microsoft.com/en-us/powershell/module/az.storage/get-azstorageaccount),
 or [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show):
 
 ```bash
-# Get the queue service endpoint for the storage account
+# Get the queue service URL for the storage account
 az storage account show -n my-storage-account-name -g my-resource-group --query "primaryEndpoints.queue"
 ```
 
@@ -67,7 +67,10 @@ The `credential` parameter may be provided in a number of different forms, depen
 1. To use a [shared access signature (SAS) token](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview),
    provide the token as a string. If your account URL includes the SAS token, omit the credential parameter.
 2. To use a storage account [shared access key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/),
-   provide the key as a string.
+   provide the key as a string. This can be found in the Azure Portal under your storage account or by running
+    the following Azure CLI command:
+
+    ```az storage account keys list -g MyResourceGroup -n MyStorageAccount```
 3. To use an [Azure Active Directory (AAD) token credential](https://docs.microsoft.com/en-us/azure/storage/common/storage-auth-aad),
    provide an instance of the desired credential type obtained from the
    [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials) library.
@@ -80,7 +83,15 @@ connection string to the client's `from_connection_string` class method:
 ```python
 from azure.storage.queue import QueueServiceClient
 
-service = QueueServiceClient.from_connection_string(conn_str="my_connection_string")
+connection_string = "DefaultEndpointsProtocol=https;AccountName=xxxx;AccountKey=xxxx;EndpointSuffix=core.windows.net"
+service = QueueServiceClient.from_connection_string(conn_str=connection_string)
+```
+
+The connection string to your storage account can be found in the Azure Portal or by running the following CLI
+command:
+
+```bash
+az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
 ```
 
 ## Key concepts
@@ -94,12 +105,12 @@ use of a dedicated client object.
 
 ### Clients
 Two different clients are provided to to interact with the various components of the Queue Service:
-1. **[QueueServiceClient](https://docs.microsoft.com/en-us/python/api/azure-storage-queue/azure.storage.queue.queueserviceclient)** -
+1. **[QueueServiceClient](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-storage-queue/12.0.0b5/azure.storage.queue.html#azure.storage.queue.QueueServiceClient)** -
     this client represents interaction with the Azure storage account itself, and allows you to acquire preconfigured
     client instances to access the queues within. It provides operations to retrieve and configure the account
     properties as well as list, create, and delete queues within the account. To perform operations on a specific queue,
     retrieve a client using the `get_queue_client` method.
-2. **[QueueClient](https://docs.microsoft.com/en-us/python/api/azure-storage-queue/azure.storage.queue.queueclient)** -
+2. **[QueueClient](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-storage-queue/12.0.0b5/azure.storage.queue.html#azure.storage.queue.QueueClient)** -
     this client represents interaction with a specific queue (which need not exist yet). It provides operations to
     create, delete, or configure a queue and includes operations to send, receive, peek, delete, and update messages
     within it.
@@ -127,7 +138,7 @@ Create a queue in your storage account
 ```python
 from azure.storage.queue import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="my_queue")
+queue = QueueClient.from_connection_string(conn_str="<connection_string>", queue_name="my_queue")
 queue.create_queue()
 ```
 
@@ -135,7 +146,7 @@ Use the async client to create a queue
 ```python
 from azure.storage.queue.aio import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="my_queue")
+queue = QueueClient.from_connection_string(conn_str="<connection_string>", queue_name="my_queue")
 await queue.create_queue()
 ```
 
@@ -145,7 +156,7 @@ Send messages to your queue
 ```python
 from azure.storage.queue import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="my_queue")
+queue = QueueClient.from_connection_string(conn_str="<connection_string>", queue_name="my_queue")
 queue.send_message("I'm using queues!")
 queue.send_message("This is my second message")
 ```
@@ -156,7 +167,7 @@ Send messages asynchronously
 import asyncio
 from azure.storage.queue.aio import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="my_queue")
+queue = QueueClient.from_connection_string(conn_str="<connection_string>", queue_name="my_queue")
 await asyncio.gather(
     queue.send_message("I'm using queues!"),
     queue.send_message("This is my second message")
@@ -169,7 +180,7 @@ Receive and process messages from your queue
 ```python
 from azure.storage.queue import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="my_queue")
+queue = QueueClient.from_connection_string(conn_str="<connection_string>", queue_name="my_queue")
 response = queue.receive_messages()
 
 for message in response:
@@ -186,7 +197,7 @@ Receive and process messages in batches
 ```python
 from azure.storage.queue import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="my_queue")
+queue = QueueClient.from_connection_string(conn_str="<connection_string>", queue_name="my_queue")
 response = queue.receive_messages(messages_per_page=10)
 
 for message_batch in response.by_page():
@@ -200,7 +211,7 @@ Receive and process messages asynchronously
 ```python
 from azure.storage.queue.aio import QueueClient
 
-queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue_name="my_queue")
+queue = QueueClient.from_connection_string(conn_str="<connection_string>", queue_name="my_queue")
 response = queue.receive_messages()
 
 async for message in response:

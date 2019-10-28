@@ -7,7 +7,7 @@ Azure file shares can be used to:
 * "Lift and shift" applications
 * Simplify cloud development with shared application settings, diagnostic share, and Dev/Test/Debug tools
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/azure/storage/fileshare) | [Package (PyPI)](https://pypi.org/project/azure-storage-file-share/) | [API reference documentation](https://docs.microsoft.com/en-us/python/api/azure-storage-file-share/azure.storage.fileshare) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/azure/storage/fileshare) | [Package (PyPI)](https://pypi.org/project/azure-storage-file-share/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-storage-file-share/12.0.0b5/azure.storage.fileshare.html) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share/samples)
 
 ## Getting started
 
@@ -50,14 +50,14 @@ from azure.storage.fileshare import ShareServiceClient
 service = ShareServiceClient(account_url="https://<my-storage-account-name>.file.core.windows.net/", credential=credential)
 ```
 
-#### Looking up the endpoint URL
-You can find the storage account's file service endpoint URL using the
+#### Looking up the account URL
+You can find the storage account's file service URL using the
 [Azure Portal](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview#storage-account-endpoints),
 [Azure PowerShell](https://docs.microsoft.com/en-us/powershell/module/az.storage/get-azstorageaccount),
 or [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show):
 
 ```bash
-# Get the file service endpoint for the storage account
+# Get the file service URL for the storage account
 az storage account show -n my-storage-account-name -g my-resource-group --query "primaryEndpoints.file"
 ```
 
@@ -67,7 +67,10 @@ The `credential` parameter may be provided in a number of different forms, depen
 1. To use a [shared access signature (SAS) token](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview),
    provide the token as a string. If your account URL includes the SAS token, omit the credential parameter.
 2. To use a storage account [shared access key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/),
-   provide the key as a string.
+   provide the key as a string.This can be found in the Azure Portal under your storage account or by running
+    the following Azure CLI command:
+
+    ```az storage account keys list -g MyResourceGroup -n MyStorageAccount```
 
 #### Creating the client from a connection string
 Depending on your use case and authorization method, you may prefer to initialize a client instance with a storage
@@ -77,7 +80,15 @@ connection string to the client's `from_connection_string` class method:
 ```python
 from azure.storage.fileshare import ShareServiceClient
 
-service = ShareServiceClient.from_connection_string(conn_str="my_connection_string")
+connection_string = "DefaultEndpointsProtocol=https;AccountName=xxxx;AccountKey=xxxx;EndpointSuffix=core.windows.net"
+service = ShareServiceClient.from_connection_string(conn_str=connection_string)
+```
+
+The connection string to your storage account can be found in the Azure Portal or by running the following CLI
+command:
+
+```bash
+az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
 ```
 
 ## Key concepts
@@ -92,23 +103,23 @@ use of a dedicated client object.
 
 ### Clients
 Four different clients are provided to to interact with the various components of the File Share Service:
-1. **[ShareServiceClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file-share/azure.storage.fileshare.shareserviceclient)** -
+1. **[ShareServiceClient](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-storage-file-share/12.0.0b5/azure.storage.file.share.html#azure.storage.fileshare.ShareServiceClient)** -
     this client represents interaction with the Azure storage account itself, and allows you to acquire preconfigured
     client instances to access the file shares within. It provides operations to retrieve and configure the service
     properties as well as list, create, and delete shares within the account. To perform operations on a specific share,
     retrieve a client using the `get_share_client` method.
-2. **[ShareClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file-share/azure.storage.fileshare.shareclient)** -
+2. **[ShareClient](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-storage-file-share/12.0.0b5/azure.storage.file.share.html#azure.storage.fileshare.ShareClient)** -
     this client represents interaction with a specific file share (which need not exist yet), and allows you to acquire
     preconfigured client instances to access the directories and files within. It provides operations to create, delete,
     configure, or create snapshots of a share and includes operations to create and enumerate the contents of
     directories within it. To perform operations on a specific directory or file, retrieve a client using the
     `get_directory_client` or `get_file_client` methods.
-3. **[ShareDirectoryClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file-share/azure.storage.fileshare.sharedirectoryclient)** -
+3. **[ShareDirectoryClient](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-storage-file-share/12.0.0b5/azure.storage.file.share.html#azure.storage.fileshare.ShareDirectoryClient)** -
     this client represents interaction with a specific directory (which need not exist yet). It provides operations to
     create, delete, or enumerate the contents of an immediate or nested subdirectory, and includes operations to create
     and delete files within it. For operations relating to a specific subdirectory or file, a client for that entity can
     also be retrieved using the `get_subdirectory_client` and `get_file_client` functions.
-4. **[ShareFileClient](https://docs.microsoft.com/en-us/python/api/azure-storage-file-share/azure.storage.fileshare.sharefileclient)** -
+4. **[ShareFileClient](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-storage-file-share/12.0.0b5/azure.storage.file.share.html#azure.storage.fileshare.ShareFileClient)** -
     this client represents interaction with a specific file (which need not exist yet). It provides operations to
     upload, download, create, delete, and copy a file.
 
@@ -128,7 +139,7 @@ Create a file share to store your files
 ```python
 from azure.storage.fileshare import ShareClient
 
-share = ShareClient.from_connection_string(conn_str="my_connection_string", share_name="my_share")
+share = ShareClient.from_connection_string(conn_str="<connection_string>", share_name="my_share")
 share.create_share()
 ```
 
@@ -137,7 +148,7 @@ Use the async client to create a file share
 ```python
 from azure.storage.fileshare.aio import ShareClient
 
-share = ShareClient.from_connection_string(conn_str="my_connection_string", share_name="my_share")
+share = ShareClient.from_connection_string(conn_str="<connection_string>", share_name="my_share")
 await share.create_share()
 ```
 
@@ -147,7 +158,7 @@ Upload a file to the share
 ```python
 from azure.storage.fileshare import ShareFileClient
 
-file_client = ShareFileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
+file_client = ShareFileClient.from_connection_string(conn_str="<connection_string>", share_name="my_share", file_path="my_file")
 
 with open("./SampleSource.txt", "rb") as source_file:
     file_client.upload_file(source_file)
@@ -158,7 +169,7 @@ Upload a file asynchronously
 ```python
 from azure.storage.fileshare.aio import ShareFileClient
 
-file_client = ShareFileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
+file_client = ShareFileClient.from_connection_string(conn_str="<connection_string>", share_name="my_share", file_path="my_file")
 
 with open("./SampleSource.txt", "rb") as source_file:
     await file_client.upload_file(source_file)
@@ -170,7 +181,7 @@ Download a file from the share
 ```python
 from azure.storage.fileshare import ShareFileClient
 
-file_client = ShareFileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
+file_client = ShareFileClient.from_connection_string(conn_str="<connection_string>", share_name="my_share", file_path="my_file")
 
 with open("DEST_FILE", "wb") as file_handle:
     data = file_client.download_file()
@@ -182,7 +193,7 @@ Download a file asynchronously
 ```python
 from azure.storage.fileshare.aio import ShareFileClient
 
-file_client = ShareFileClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", file_path="my_file")
+file_client = ShareFileClient.from_connection_string(conn_str="<connection_string>", share_name="my_share", file_path="my_file")
 
 with open("DEST_FILE", "wb") as file_handle:
     data = await file_client.download_file()
@@ -195,7 +206,7 @@ List all directories and files under a parent directory
 ```python
 from azure.storage.fileshare import ShareDirectoryClient
 
-parent_dir = ShareDirectoryClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", directory_path="parent_dir")
+parent_dir = ShareDirectoryClient.from_connection_string(conn_str="<connection_string>", share_name="my_share", directory_path="parent_dir")
 
 my_list = list(parent_dir.list_directories_and_files())
 print(my_list)
@@ -206,7 +217,7 @@ List contents of a directory asynchronously
 ```python
 from azure.storage.fileshare.aio import ShareDirectoryClient
 
-parent_dir = ShareDirectoryClient.from_connection_string(conn_str="my_connection_string", share_name="my_share", directory_path="parent_dir")
+parent_dir = ShareDirectoryClient.from_connection_string(conn_str="<connection_string>", share_name="my_share", directory_path="parent_dir")
 
 my_files = []
 async for item in parent_dir.list_directories_and_files():
