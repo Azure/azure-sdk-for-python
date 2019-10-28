@@ -1908,6 +1908,11 @@ class CRUDTests(unittest.TestCase):
         )
         created_properties = created_container.read()
         read_indexing_policy = created_properties['indexingPolicy']
+
+        # All types are returned for spatial Indexes
+        indexing_policy['spatialIndexes'][0]['types'].append('MultiPolygon')
+        indexing_policy['spatialIndexes'][1]['types'].insert(0, 'Point')
+
         self.assertListEqual(indexing_policy['spatialIndexes'], read_indexing_policy['spatialIndexes'])
         self.assertListEqual(indexing_policy['compositeIndexes'], read_indexing_policy['compositeIndexes'])
         db.delete_container(container=created_container)
