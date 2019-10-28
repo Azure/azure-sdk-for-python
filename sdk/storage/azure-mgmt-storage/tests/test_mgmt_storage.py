@@ -26,7 +26,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_storage_accounts(self, resource_group, location):
-        account_name = self.create_random_name()
+        account_name = self.create_random_name('pyarmstorage')
 
         result_check = self.storage_client.storage_accounts.check_name_availability(
             account_name
