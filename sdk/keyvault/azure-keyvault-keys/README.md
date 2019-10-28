@@ -82,37 +82,38 @@ This [Azure Cloud Shell][azure_cloud_shell] snippet shows how to create a
 new service principal. Before using it, replace "your-application-name" with
 a more appropriate name for your service principal.
 
- * Create a service principal:
-    ```Bash
-    az ad sp create-for-rbac --name http://my-application --skip-assignment
-    ```
-    Output:
-    ```json
-    {
-        "appId": "generated app id",
-        "displayName": "my-application",
-        "name": "http://my-application",
-        "password": "random password",
-        "tenant": "tenant id"
-    }
-    ```
+Create a service principal:
+```Bash
+az ad sp create-for-rbac --name http://my-application --skip-assignment
+```
 
-* Use the output to set **AZURE_CLIENT_ID** (appId), **AZURE_CLIENT_SECRET**
-(password) and **AZURE_TENANT_ID** (tenant) environment variables. The
-following example shows a way to do this in Bash:
-  ```Bash
-   export AZURE_CLIENT_ID="generated app id"
-   export AZURE_CLIENT_SECRET="random password"
-   export AZURE_TENANT_ID="tenant id"
-  ```
+> Output:
+> ```json
+> {
+>     "appId": "generated app id",
+>     "displayName": "my-application",
+>     "name": "http://my-application",
+>     "password": "random password",
+>     "tenant": "tenant id"
+> }
+> ```
 
-* Authorize the service principal to perform key operations in your Key Vault:
-    ```Bash
-    az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --key-permissions backup delete get list create
-    ```
-    > Possible key permissions:
-    > - Key management: backup, delete, get, list, purge, recover, restore, create, update, import
-    > - Cryptographic operations: decrypt, encrypt, unwrapKey, wrapKey, verify, sign
+Use the output to set **AZURE_CLIENT_ID** ("appId" above), **AZURE_CLIENT_SECRET**
+("password" above) and **AZURE_TENANT_ID** ("tenant" above) environment variables.
+The following example shows a way to do this in Bash:
+```Bash
+export AZURE_CLIENT_ID="generated app id"
+export AZURE_CLIENT_SECRET="random password"
+export AZURE_TENANT_ID="tenant id"
+```
+
+Authorize the service principal to perform key operations in your Key Vault:
+```Bash
+az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --key-permissions backup delete get list create
+```
+> Possible key permissions:
+> - Key management: backup, delete, get, list, purge, recover, restore, create, update, import
+> - Cryptographic operations: decrypt, encrypt, unwrapKey, wrapKey, verify, sign
 
 
 #### Create a client
