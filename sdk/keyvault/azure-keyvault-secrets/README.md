@@ -316,12 +316,13 @@ except ResourceNotFoundError as e:
 ```
 
 ### Logging
-Network trace logging is disabled by default for this library. When enabled,
-HTTP requests will be logged at DEBUG level using the
-[logging](https://docs.python.org/3.5/library/logging.html) library. You
-can configure logging to print debugging information to stdout or write it
-to a file:
+This library uses the standard
+[logging](https://docs.python.org/3.5/library/logging.html) library for logging.
+Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
+level.
 
+Detailed DEBUG level logging, including request/response bodies and unredacted
+headers, can be enabled on a client with the `logging_enable` argument:
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
@@ -338,29 +339,8 @@ logger.addHandler(handler)
 
 credential = DefaultAzureCredential()
 
-# Enable network trace logging. Each HTTP request will be logged at DEBUG level.
+# This client will log detailed information about its HTTP sessions, at DEBUG level
 secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential, logging_enable=True)
-```
-
-Network trace logging can also be enabled for any single operation:
- ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.secrets import SecretClient
-import sys
-import logging
-
-# Create a logger for the 'azure' SDK
-logger = logging.getLogger('azure')
-logger.setLevel(logging.DEBUG)
-
-# Configure a console output
-handler = logging.StreamHandler(stream=sys.stdout)
-logger.addHandler(handler)
-
-credential = DefaultAzureCredential()
-
-secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
-secret = secret_client.get_secret("secret-name", logging_enable=True)
 ```
 
 ## Next steps
