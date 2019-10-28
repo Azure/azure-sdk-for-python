@@ -194,7 +194,7 @@ class CosmosClient(object):
             url, auth=auth, consistency_level=consistency_level, connection_policy=connection_policy, **kwargs
         )
 
-    def __repr__(self):
+    def __repr__(self):  # pylint:disable=client-method-name-no-double-underscore
         # type () -> str
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
 
