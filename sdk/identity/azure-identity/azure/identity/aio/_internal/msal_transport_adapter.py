@@ -10,7 +10,12 @@ from typing import TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import AsyncRetryPolicy, DistributedTracingPolicy, NetworkTraceLoggingPolicy
+from azure.core.pipeline.policies import (
+    AsyncRetryPolicy,
+    DistributedTracingPolicy,
+    HttpLoggingPolicy,
+    NetworkTraceLoggingPolicy,
+)
 from azure.core.pipeline.transport import AioHttpTransport, HttpRequest
 
 from azure.identity._internal import MsalTransportResponse
@@ -34,7 +39,12 @@ class MsalTransportAdapter:
     ) -> None:
 
         config = config or self._create_config(**kwargs)
-        policies = policies or [config.retry_policy, config.logging_policy, DistributedTracingPolicy()]
+        policies = policies or [
+            config.retry_policy,
+            config.logging_policy,
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
+        ]
         self._transport = transport or AioHttpTransport(configuration=config)
         atexit.register(self._close_transport_session)  # prevent aiohttp warnings
         self._pipeline = AsyncPipeline(transport=self._transport, policies=policies)

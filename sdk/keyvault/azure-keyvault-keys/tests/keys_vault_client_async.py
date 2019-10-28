@@ -10,6 +10,7 @@ from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpTranspor
 from msrest.serialization import Model
 
 from azure.keyvault.keys.aio import KeyClient
+from azure.keyvault.keys.crypto.aio import CryptographyClient
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
 
 if TYPE_CHECKING:
@@ -25,16 +26,20 @@ KEY_VAULT_SCOPE = "https://vault.azure.net/.default"
 class VaultClient(AsyncKeyVaultClientBase):
     def __init__(
         self,
-        vault_endpoint: str,
+        vault_url: str,
         credential: "TokenCredential",
         transport: HttpTransport = None,
         api_version: str = None,
         **kwargs: Any
     ) -> None:
         super(VaultClient, self).__init__(
-            vault_endpoint, credential, transport=transport, api_version=api_version, **kwargs
+            vault_url, credential, transport=transport, api_version=api_version, **kwargs
         )
-        self._keys = KeyClient(self.vault_endpoint, credential, generated_client=self._client, **kwargs)
+        self._credential = credential
+        self._keys = KeyClient(self.vault_url, credential, generated_client=self._client, **kwargs)
+
+    def get_cryptography_client(self, key):
+        return CryptographyClient(key, self._credential)
 
     @property
     def keys(self):

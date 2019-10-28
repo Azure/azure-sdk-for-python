@@ -21,7 +21,7 @@ package_folder_path = PACKAGE_NAME.replace('-', '/')
 namespace_name = PACKAGE_NAME.replace('-', '.')
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
+with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',  # type: ignore
                         fd.read(), re.MULTILINE).group(1)
 
@@ -52,6 +52,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
