@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class ChainedTokenCredential(SyncChainedTokenCredential):
     """A sequence of credentials that is itself a credential.
 
-    Its ``get_token`` method calls ``get_token`` on each credential in the sequence, in order, returning the first
+    Its :func:`get_token` method calls ``get_token`` on each credential in the sequence, in order, returning the first
     valid token received.
 
     :param credentials: credential instances to form the chain
@@ -27,6 +27,8 @@ class ChainedTokenCredential(SyncChainedTokenCredential):
 
         If no credential provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError`
         with an error message from each credential.
+
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
         :param str scopes: desired scopes for the token
         :raises ~azure.core.exceptions.ClientAuthenticationError:

@@ -116,9 +116,13 @@ class ServiceResponseError(AzureError):
 class HttpResponseError(AzureError):
     """A request was made, and a non-success status code was received from the service.
 
-    :param status_code: HttpResponse's status code
-    :type status_code: int
+    :param message: HttpResponse's error message
+    :type message: string
     :param response: The response that triggered the exception.
+    :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
+    :ivar status_code: HttpResponse's status code
+    :type status_code: int
+    :ivar response: The response that triggered the exception.
     :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
     """
 
