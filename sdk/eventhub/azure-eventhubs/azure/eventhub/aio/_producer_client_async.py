@@ -11,6 +11,8 @@ from ._producer_async import EventHubProducer
 from .._common import EventData, \
     EventHubSharedKeyCredential, EventHubSASTokenCredential, EventDataBatch
 
+from uamqp import constants
+
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
 
@@ -64,8 +66,17 @@ class EventHubProducerClient(EventHubClient):
         """
         super(EventHubProducerClient, self).__init__(host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
         self._producers = None  # type: List[EventHubProducer]
-        self._producers_lock = asyncio.Lock()  # sync the creation of self._producers
+        self._client_lock = asyncio.Lock()  # sync the creation of self._producers
         self._producers_locks = None  # sync the creation of
+        self._max_message_size_on_link = None
+
+    async def _init_locks_for_producers(self):
+        if self._producers is None:
+            async with self._client_lock:
+                if self._producers is None:
+                    num_of_producers = len(await self.get_partition_ids()) + 1
+                    self._producers = [None] * num_of_producers
+                    self._producers_locks = [asyncio.Lock()] * num_of_producers
 
     async def send(self, event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
             *, partition_key: Union[str, bytes] = None, partition_id: str = None, timeout: float = None):
@@ -92,12 +103,7 @@ class EventHubProducerClient(EventHubClient):
         :rtype: None
         """
 
-        if self._producers is None:
-            async with self._producers_lock:
-                if self._producers is None:
-                    num_of_producers = len(await self.get_partition_ids()) + 1
-                    self._producers = [None] * num_of_producers
-                    self._producers_locks = [asyncio.Lock()] * num_of_producers
+        await self._init_locks_for_producers()
 
         producer_index = int(partition_id) if partition_id is not None else -1
         if self._producers[producer_index] is None or self._producers[producer_index]._closed:
@@ -106,6 +112,46 @@ class EventHubProducerClient(EventHubClient):
                     self._producers[producer_index] = self._create_producer(partition_id=partition_id)
 
         await self._producers[producer_index].send(event_data, partition_key=partition_key, timeout=timeout)
+
+    async def create_batch(self, max_size=None, partition_key=None):
+        """
+        Create an EventDataBatch object with max size being max_size.
+        The max_size should be no greater than the max allowed message size defined by the service side.
+
+        :param max_size: The maximum size of bytes data that an EventDataBatch object can hold.
+        :type max_size: int
+        :param partition_key: With the given partition_key, event data will land to
+         a particular partition of the Event Hub decided by the service.
+        :type partition_key: str
+        :return: an EventDataBatch instance
+        :rtype: ~azure.eventhub.EventDataBatch
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub_async.py
+                :start-after: [START eventhub_producer_client_create_batch_async]
+                :end-before: [END eventhub_producer_client_create_batch_async]
+                :language: python
+                :dedent: 4
+                :caption: Create EventDataBatch object within limited size
+
+        """
+        # type:(int, str) -> EventDataBatch
+        if not self._max_message_size_on_link:
+            await self._init_locks_for_producers()
+            async with self._producers_locks[-1]:
+                if self._producers[-1] is None:
+                    self._producers[-1] = self._create_producer(partition_id=None)
+                    await self._producers[-1]._open_with_retry()  # pylint: disable=protected-access
+            async with self._client_lock:
+                self._max_message_size_on_link = \
+                    self._producers[-1]._handler.message_handler._link.peer_max_message_size \
+                    or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
+
+        if max_size and max_size > self._max_message_size_on_link:
+            raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
+                             .format(max_size, self._max_message_size_on_link))
+
+        return EventDataBatch(max_size=(max_size or self._max_message_size_on_link), partition_key=partition_key)
 
     async def close(self):
         # type: () -> None

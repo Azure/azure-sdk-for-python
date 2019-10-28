@@ -13,15 +13,18 @@ An example to show creating and sending EventBatchData within limited size.
 
 import time
 import os
-from azure.eventhub import EventHubProducerClient, EventData
+import asyncio
+
+from azure.eventhub.aio import EventHubProducerClient
+from azure.eventhub import EventData
 
 
 EVENT_HUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENT_HUB = os.environ['EVENT_HUB_NAME']
 
 
-def create_batch_data(producer_client):
-    batch_data = producer_client.create_batch(max_size=10000)
+async def create_batch_data(producer_client):
+    batch_data = await producer_client.create_batch(max_size=10000)
     while True:
         try:
             batch_data.try_add(EventData('Message inside EventBatchData'))
@@ -32,10 +35,18 @@ def create_batch_data(producer_client):
     return batch_data
 
 
+async def run(producer):
+    data_batch = await create_batch_data(producer)
+    async with producer:
+        await producer.send(data_batch)
+
+
 producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONNECTION_STR, event_hub_path=EVENT_HUB)
 
+loop = asyncio.get_event_loop()
+producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONNECTION_STR, event_hub_path=EVENT_HUB)
+tasks = asyncio.gather(
+    run(producer))
 start_time = time.time()
-with producer:
-    event_data_batch = create_batch_data(producer)
-    producer.send(event_data_batch)
-print("Runtime: {} seconds".format(time.time() - start_time))
+loop.run_until_complete(tasks)
+print("Send messages in {} seconds".format(time.time() - start_time))

@@ -29,9 +29,8 @@ RETRY_TOTAL = 3  # max number of retries for receive operations within the recei
 
 
 def do_operation(event):
-    pass
     # do some operations on the event
-    #print(event)
+    print(event)
 
 
 def event_handler(partition_context, events):

@@ -39,9 +39,17 @@ class EventHubProducerClient(EventHubClient):
         super(EventHubProducerClient, self).__init__(
             host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
         self._producers = None  # type: List[EventHubProducer]
-        self._producers_lock = threading.Lock()
+        self._client_lock = threading.Lock()
         self._producers_locks = None
-        self._max_message_size_on_link = constants.MAX_MESSAGE_LENGTH_BYTES
+        self._max_message_size_on_link = None
+
+    def _init_locks_for_producers(self):
+        if self._producers is None:
+            with self._client_lock:
+                if self._producers is None:
+                    num_of_producers = len(self.get_partition_ids()) + 1
+                    self._producers = [None] * num_of_producers
+                    self._producers_locks = [threading.Lock()] * num_of_producers
 
     def send(self, event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
             *, partition_key: Union[str, bytes] = None, partition_id: str = None, timeout: float = None):
@@ -64,12 +72,7 @@ class EventHubProducerClient(EventHubClient):
 
         """
 
-        if self._producers is None:
-            with self._producers_lock:
-                if self._producers is None:
-                    num_of_producers = len(self.get_partition_ids()) + 1
-                    self._producers = [None] * num_of_producers
-                    self._producers_locks = [threading.Lock()] * num_of_producers
+        self._init_locks_for_producers()
 
         producer_index = int(partition_id) if partition_id is not None else -1
         if self._producers[producer_index] is None or self._producers[producer_index]._closed:  # pylint:disable=protected-access
@@ -103,13 +106,15 @@ class EventHubProducerClient(EventHubClient):
         """
         # type:(int, str) -> EventDataBatch
         if not self._max_message_size_on_link:
+            self._init_locks_for_producers()
             with self._producers_locks[-1]:
                 if self._producers[-1] is None:
                     self._producers[-1] = self._create_producer(partition_id=None)
                     self._producers[-1]._open_with_retry()  # pylint: disable=protected-access
-            with self._producers_locks:
-                self._max_message_size_on_link = self._producers[-1].message_handler._link.peer_max_message_size \
-                                                 or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
+            with self._client_lock:
+                self._max_message_size_on_link =\
+                    self._producers[-1]._handler.message_handler._link.peer_max_message_size \
+                    or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
 
         if max_size and max_size > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'

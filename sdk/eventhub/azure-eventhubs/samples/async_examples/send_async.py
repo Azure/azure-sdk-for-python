@@ -24,10 +24,14 @@ EVENT_HUB = os.environ['EVENT_HUB_NAME']
 
 async def run(producer):
     async with producer:
-        for i in range(5):
-            print("Sending message: {}".format(i))
-            data = EventData(str(i))
-            await producer.send(data)
+        ed = EventData("msg")
+        await producer.send(ed)  # The event will be distributed to available partitions via round-robin.
+
+        ed = EventData("msg sent to partition_id 0")
+        await producer.send(ed, partition_id='0')  # Specifying partition_id
+
+        ed = EventData("msg sent with partition_key")
+        await producer.send(ed, partition_key="p_key")  # Specifying partition_key
 
 
 loop = asyncio.get_event_loop()
@@ -36,4 +40,4 @@ tasks = asyncio.gather(
     run(producer))
 start_time = time.time()
 loop.run_until_complete(tasks)
-print("Runtime: {} seconds".format(time.time() - start_time))
+print("Send messages in {} seconds".format(time.time() - start_time))
