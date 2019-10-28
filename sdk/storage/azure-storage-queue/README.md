@@ -66,14 +66,60 @@ The `credential` parameter may be provided in a number of different forms, depen
 [authorization](https://docs.microsoft.com/azure/storage/common/storage-auth) you wish to use:
 1. To use a [shared access signature (SAS) token](https://docs.microsoft.com/azure/storage/common/storage-sas-overview),
    provide the token as a string. If your account URL includes the SAS token, omit the credential parameter.
-2. To use a storage account [shared access key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/),
-   provide the key as a string. This can be found in the Azure Portal under the "Access Keys" section or by running
-    the following Azure CLI command:
+   You can generate a SAS token from the Azure Portal under "Shared access signature" or use one of the `generate_sas()`
+   functions to create a sas token for the storage account or queue:
+
+    ```python
+    from datetime import datetime, timedelta
+    from azure.storage.queue import QueueServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
+    
+    sas_token = generate_account_sas(
+        account_name="<storage-account-name>",
+        account_key="<account-access-key>",
+        resource_types=ResourceTypes(service=True),
+        permission=AccountSasPermissions(read=True),
+        expiry=datetime.utcnow() + timedelta(hours=1)
+    )
+    
+    queue_service_client = QueueServiceClient(account_url="https://<my_account_name>.queue.core.windows.net", credential=sas_token)
+    ```
+
+2. To use a storage account [shared access key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/)
+    (aka account access key), provide the key as a string. This can be found in the Azure Portal under the "Access Keys" 
+    section or by running the following Azure CLI command:
 
     ```az storage account keys list -g MyResourceGroup -n MyStorageAccount```
+
+    Use the key as the credential parameter to authenticate the client:
+    ```python
+    from azure.storage.queue import QueueServiceClient
+    service = QueueServiceClient(account_url="https://<my_account_name>.queue.core.windows.net", credential="<account_access_key>")
+    ```
+
 3. To use an [Azure Active Directory (AAD) token credential](https://docs.microsoft.com/azure/storage/common/storage-auth-aad),
    provide an instance of the desired credential type obtained from the
    [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials) library.
+   For example, [DefaultAzureCredential](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential)
+   can be used to authenticate the client.
+   
+   This requires some initial setup:
+   * [Install azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#install-the-package)
+   * [Register a new AAD application](https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app) and give permissions to access Azure Storage
+   * [Grant access](https://docs.microsoft.com/azure/storage/common/storage-auth-aad-rbac-portal) to Azure Queue data with RBAC in the Azure Portal
+   * Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables: 
+     AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
+   
+   Use the returned token credential to authenticate the client:
+    ```python
+        from azure.identity import DefaultAzureCredential
+        from azure.storage.queue import QueueServiceClient
+        token_credential = DefaultAzureCredential()
+    
+        queue_service_client = QueueServiceClient(
+            account_url="https://<my_account_name>.queue.core.windows.net",
+            credential=token_credential
+        )
+    ```
 
 #### Creating the client from a connection string
 Depending on your use case and authorization method, you may prefer to initialize a client instance with a storage

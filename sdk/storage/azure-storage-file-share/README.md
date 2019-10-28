@@ -41,7 +41,7 @@ az storage account create -n my-storage-account-name -g my-resource-group
 ### Create the client
 The Azure Storage File Share client library for Python allows you to interact with four types of resources: the storage
 account itself, file shares, directories, and files. Interaction with these resources starts with an instance of a
-[client](#clients). To create a client object, you will need the storage account's file service endpoint URL and a
+[client](#clients). To create a client object, you will need the storage account's file service URL and a
 credential that allows you to access the storage account:
 
 ```python
@@ -66,11 +66,35 @@ The `credential` parameter may be provided in a number of different forms, depen
 [authorization](https://docs.microsoft.com/azure/storage/common/storage-auth) you wish to use:
 1. To use a [shared access signature (SAS) token](https://docs.microsoft.com/azure/storage/common/storage-sas-overview),
    provide the token as a string. If your account URL includes the SAS token, omit the credential parameter.
-2. To use a storage account [shared access key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/),
-   provide the key as a string.This can be found in the Azure Portal under the "Access Keys" section or by running
-    the following Azure CLI command:
+   You can generate a SAS token from the Azure Portal under "Shared access signature" or use one of the `generate_sas()`
+   functions to create a sas token for the storage account, share, or file:
+
+    ```python
+    from datetime import datetime, timedelta
+    from azure.storage.fileshare import ShareServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
+    
+    sas_token = generate_account_sas(
+        account_name="<storage-account-name>",
+        account_key="<account-access-key>",
+        resource_types=ResourceTypes(service=True),
+        permission=AccountSasPermissions(read=True),
+        expiry=datetime.utcnow() + timedelta(hours=1)
+    )
+    
+    share_service_client = ShareServiceClient(account_url="https://<my_account_name>.file.core.windows.net", credential=sas_token)
+    ```
+
+2. To use a storage account [shared access key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/)
+    (aka account access key), provide the key as a string. This can be found in the Azure Portal under the "Access Keys" 
+    section or by running the following Azure CLI command:
 
     ```az storage account keys list -g MyResourceGroup -n MyStorageAccount```
+
+    Use the key as the credential parameter to authenticate the client:
+    ```python
+    from azure.storage.fileshare import ShareServiceClient
+    service = ShareServiceClient(account_url="https://<my_account_name>.file.core.windows.net", credential="<account_access_key>")
+    ```
 
 #### Creating the client from a connection string
 Depending on your use case and authorization method, you may prefer to initialize a client instance with a storage
