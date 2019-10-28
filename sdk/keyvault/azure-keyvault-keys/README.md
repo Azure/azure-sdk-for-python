@@ -71,15 +71,13 @@ names):
   > The `"vaultUri"` property is the `vault_url` used by [KeyClient][key_client_docs]
 
 ### Authenticate the client
-To interact with a Key Vault's keys, you'll need an instance of the
-[KeyClient][key_client_docs] class. Creating one requires a **vault url** and
-**credential**. The **vault_url** can be found on the [portal](https://portal.azure.com)
-under `DNS Name`. This document demonstrates using [DefaultAzureCredential][default_cred_ref] as
-the credential, authenticating with a service principal's client id, secret,
-and tenant id. Other authentication methods are supported. See the
-[azure-identity][azure_identity] documentation for more details.
+This document demonstrates using [DefaultAzureCredential][default_cred_ref]
+to authenticate as a service principal. However, [KeyClient][key_client_docs]
+accepts any [azure-identity][azure_identity] credential. See the
+[azure-identity][azure_identity] documentation for more information about other
+credentials.
 
-#### Create a service principal
+#### Create a service principal (optional)
 This [Azure Cloud Shell][azure_cloud_shell] snippet shows how to create a
 new service principal. Before using it, replace "your-application-name" with
 a more appropriate name for your service principal.
