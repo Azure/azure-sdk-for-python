@@ -117,17 +117,17 @@ async def test_example_async_pipeline_client():
 
     # [START build_async_pipeline_client]
     from azure.core import AsyncPipelineClient
-    from azure.core.configuration import Configuration
     from azure.core.pipeline.policies import AsyncRedirectPolicy, UserAgentPolicy
     from azure.core.pipeline.transport import HttpRequest
 
-    # example configuration with some policies
+    # example policies
     request = HttpRequest("GET", url)
-    config = Configuration()
-    config.user_agent_policy = UserAgentPolicy("myuseragent")
-    config.redirect_policy = AsyncRedirectPolicy()
+    policies = [
+        UserAgentPolicy("myuseragent"),
+        AsyncRedirectPolicy(),
+    ]
 
-    async with AsyncPipelineClient(base_url=url, config=config) as client:
+    async with AsyncPipelineClient(base_url=url, policies=policies) as client:
         response = await client._pipeline.run(request)
     # [END build_async_pipeline_client]
 
