@@ -260,7 +260,7 @@ key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", creden
 
 key = key_client.get_key("key-name")
 crypto_client = CryptographyClient(key, credential=credential)
-plaintext = <my-bytes-to-encrypt>
+plaintext = b"plaintext"
 
 result = crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, plaintext)
 decrypted = crypto_client.decrypt(result.algorithm, result.ciphertext)
