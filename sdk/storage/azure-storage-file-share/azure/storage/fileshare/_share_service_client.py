@@ -86,7 +86,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError(
-                'You need to provide either an account key or SAS token when creating a storage service.')
+                'You need to provide either an account shared key or SAS token when creating a storage service.')
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ShareServiceClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
