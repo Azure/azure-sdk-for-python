@@ -47,6 +47,10 @@ class UserProxy(object):
         self.user_link = u"{}/users/{}".format(database_link, id)
         self._properties = properties
 
+    def __repr__(self):
+        # type () -> str
+        return "<UserProxy [{}]>".format(self.user_link)[:1024]
+
     def _get_permission_link(self, permission_or_id):
         # type: (Union[Permission, str, Dict[str, Any]]) -> str
         if isinstance(permission_or_id, six.string_types):

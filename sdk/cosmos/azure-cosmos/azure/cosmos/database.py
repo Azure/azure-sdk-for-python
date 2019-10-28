@@ -76,6 +76,10 @@ class DatabaseProxy(object):
         self.database_link = u"dbs/{}".format(self.id)
         self._properties = properties
 
+    def __repr__(self):
+        # type () -> str
+        return "<DatabaseProxy [{}]>".format(self.database_link)[:1024]
+
     @staticmethod
     def _get_container_id(container_or_id):
         # type: (Union[str, ContainerProxy, Dict[str, Any]]) -> str
