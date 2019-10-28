@@ -54,7 +54,7 @@ service = BlobServiceClient(account_url="https://<my-storage-account-name>.blob.
 ```
 
 #### Looking up the endpoint URL
-You can find the storage account's blob service endpoint URL using the 
+You can find the storage account's blob service endpoint URL using the
 [Azure Portal](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview#storage-account-endpoints),
 [Azure PowerShell](https://docs.microsoft.com/en-us/powershell/module/az.storage/get-azstorageaccount),
 or [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show):
@@ -135,6 +135,18 @@ The following sections provide several code snippets covering some of the most c
 * [Downloading a blob](#downloading-a-blob)
 * [Enumerating blobs](#enumerating-blobs)
 
+
+### Client creation with a connection string
+Create the BlobServiceClient using the connection string to your Azure Storage account.
+To get the connection string from the portal, navigate to `Access keys` under `Settings`, and
+copy over the `Connection string`.
+
+```python
+from azure.storage.blob import BlobServiceClient
+
+service = BlobServiceClient.from_connection_string(conn_str="my_connection_string")
+```
+
 ### Uploading a blob
 Upload a blob to your container
 
@@ -204,7 +216,7 @@ from azure.storage.blob.aio import ContainerClient
 
 container = ContainerClient.from_connection_string(conn_str="my_connection_string", container_name="my_container")
 
-blob_list = [] 
+blob_list = []
 async for blob in container.list_blobs():
     blob_list.append(blob)
 print(blob_list)
@@ -307,6 +319,10 @@ Several Storage Blobs Python SDK samples are available to you in the SDK's GitHu
     * Acquire a lease on a blob
     * Copy a blob from a URL
 
+* [`blob_samples_directory_interface.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_directory_interface.py) - Examples for interfacing with Blob storage as if it were a directory on a filesystem:
+    * Copy (upload or download) a single file or directory
+    * List files or directories at a single level or recursively
+    * Delete a single file or recursively delete a directory
 
 ### Additional documentation
 For more extensive documentation on Azure Blob storage, see the [Azure Blob storage documentation](https://docs.microsoft.com/en-us/azure/storage/blobs/) on docs.microsoft.com.
