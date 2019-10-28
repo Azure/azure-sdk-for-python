@@ -76,7 +76,8 @@ def clean_coverage(coverage_dir):
         else:
             raise
 
-def parse_setup_requires(setup_path):
+
+def parse_setup(setup_path):
     setup_filename = os.path.join(setup_path, 'setup.py')
     mock_setup = textwrap.dedent('''\
     def setup(*args, **kwargs):
@@ -113,7 +114,17 @@ def parse_setup_requires(setup_path):
     except KeyError as e:
         python_requires = ">=2.7"
 
+    version = kwargs['version']
+    name = kwargs['name']
+
+    return name, version, python_requires
+
+
+def parse_setup_requires(setup_path):    
+    _, _, python_requires = parse_setup(setup_path)
+
     return python_requires
+
 
 def filter_for_compatibility(package_set):
     collected_packages = []

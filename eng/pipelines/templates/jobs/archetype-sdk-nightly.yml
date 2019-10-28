@@ -31,6 +31,9 @@ jobs:
 
     steps:
     - template: ../steps/analyze.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'Test'
     variables:
