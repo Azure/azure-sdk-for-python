@@ -76,7 +76,7 @@ This [Azure Cloud Shell][azure_cloud_shell] snippet shows how to create a
 new service principal. Before using it, replace "your-application-name" with
 a more appropriate name for your service principal.
 
- * Create a service principal:
+ * Create a service principal:`
     ```Bash
     az ad sp create-for-rbac --name http://my-application --skip-assignment
     ```
@@ -102,12 +102,10 @@ following example shows a way to do this in Bash:
 
 * Authorize the service principal to perform key operations in your Key Vault:
     ```Bash
-    az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --key-permissions backup delete get list create
+    az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --secret-permissions backup delete get list purge recover restore set
     ```
-    > Possible key permissions:
-    > - Key management: backup, delete, get, list, purge, recover, restore, create, update, import
-    > - Cryptographic operations: decrypt, encrypt, unwrapKey, wrapKey, verify, sign
-
+    > Possible secret permissions:
+    > - Key management: backup delete get list purge recover restore set
 
 #### Create a client
 After setting the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
