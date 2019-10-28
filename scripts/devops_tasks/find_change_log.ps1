@@ -75,7 +75,7 @@ function VerifyPackages($rootDirectory)
             Write-Host "Change log [$changeFile] is updated with current version $version"
             Write-Host "Release notes for version $version"
             Write-Host "****************************************************************************************************"
-            Write-Host $content
+            Write-Host $content.ReleaseContent
             Write-Host "****************************************************************************************************"
          }
          else
