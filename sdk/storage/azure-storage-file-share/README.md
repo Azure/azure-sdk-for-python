@@ -84,8 +84,8 @@ The `credential` parameter may be provided in a number of different forms, depen
     share_service_client = ShareServiceClient(account_url="https://<my_account_name>.file.core.windows.net", credential=sas_token)
     ```
 
-2. To use a storage account [shared access key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/)
-    (aka account access key), provide the key as a string. This can be found in the Azure Portal under the "Access Keys" 
+2. To use a storage account [shared key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/)
+    (aka account key or access key), provide the key as a string. This can be found in the Azure Portal under the "Access Keys" 
     section or by running the following Azure CLI command:
 
     ```az storage account keys list -g MyResourceGroup -n MyStorageAccount```
@@ -108,8 +108,7 @@ connection_string = "DefaultEndpointsProtocol=https;AccountName=xxxx;AccountKey=
 service = ShareServiceClient.from_connection_string(conn_str=connection_string)
 ```
 
-The connection string to your storage account can be found in the Azure Portal or by running the following CLI
-command:
+The connection string to your storage account can be found in the Azure Portal under the "Access Keys" section or by running the following CLI command:
 
 ```bash
 az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
