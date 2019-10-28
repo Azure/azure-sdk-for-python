@@ -49,7 +49,7 @@ class UserProxy(object):
 
     def __repr__(self):
         # type () -> str
-        return "<User [{}]>".format(self.user_link)[:1024]
+        return "<UserProxy [{}]>".format(self.user_link)[:1024]
 
     def _get_permission_link(self, permission_or_id):
         # type: (Union[Permission, str, Dict[str, Any]]) -> str
