@@ -146,6 +146,7 @@ Vault stores and manages them, see the
 
 ## Examples
 This section contains code snippets covering common tasks:
+* [Create a Secret](#create-a-secret)
 * [Retrieve a Secret](#retrieve-a-secret)
 * [Update Secret metadata](#update-secret-metadata)
 * [Delete a Secret](#delete-a-secret)
