@@ -141,29 +141,6 @@ class EventHubConsumerClient(EventHubClient):
                 elif (consumer_group, '-1') in self._event_processors:
                     del self._event_processors[(consumer_group, "-1")]
 
-    async def get_last_enqueued_event_properties(self, consumer_group: str, partition_id: str):
-        """The latest enqueued event information of a partition.
-        This property will be updated each time an event is received when
-        the client is created with `track_last_enqueued_event_properties` being `True`.
-        The dict includes following information of the partition:
-
-            * `sequence_number`
-            * `offset`
-            * `enqueued_time`
-            * `retrieval_time`
-
-        :rtype: dict or None
-        :raises: ValueError
-        """
-        if (consumer_group, partition_id) in self._event_processors:
-            return self._event_processors[(consumer_group, partition_id)].get_last_enqueued_event_properties(partition_id)
-        elif (consumer_group, '-1') in self._event_processors:
-            return self._event_processors[(consumer_group, -1)].get_last_enqueued_event_properties(
-                partition_id)
-        else:
-            raise ValueError("You're not receiving events from partition {} for consumer group {}".
-                             format(partition_id, consumer_group))
-
     async def close(self):
         # type: () -> None
         """Stop retrieving events from event hubs and close the underlying AMQP connection and links.

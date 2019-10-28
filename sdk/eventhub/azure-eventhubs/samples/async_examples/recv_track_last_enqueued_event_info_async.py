@@ -14,6 +14,7 @@ import asyncio
 import os
 from azure.eventhub.aio import EventHubConsumerClient
 
+RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
 RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 
@@ -28,34 +29,28 @@ async def event_handler(partition_context, events):
     if events:
         print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
         await asyncio.gather(*[do_operation(event) for event in events])
+
+        print("Last enqueued event properties from partition: {} is: {}".
+              format(partition_context.partition_id,
+                     events[-1].last_enqueued_event_properties))
     else:
         print("empty events received", "partition:", partition_context.partition_id)
-
-
-async def wait_and_close(client, receiving_time):
-    await asyncio.sleep(receiving_time)
-
-    last_enqueued_event_properties = await client.get_last_enqueued_event_properties(consumer_group='$default',
-                                                                                     partition_id='0')
-    print("Last enqueued event properties: {}".format(last_enqueued_event_properties))
-
-    print('EventHubConsumer Client Closing.')
-    await client.close()
-    print('EventHubConsumer Client Closed.')
 
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
+        receive_timeout=RECEIVE_TIMEOUT,  # the wait time for single receiving iteration
         retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
     )
     try:
-        tasks = asyncio.gather(*[client.receive(event_handler=event_handler, consumer_group="$default",
-                                                partition_id='0', track_last_enqueued_event_properties=True),
-                                 wait_and_close(client, 5)])
-        loop.run_until_complete(tasks)
+        task = asyncio.ensure_future(client.receive(event_handler=event_handler, consumer_group="$default",
+                                                    partition_id='0', track_last_enqueued_event_properties=True))
+        loop.run_until_complete(asyncio.sleep(5))
+        task.cancel()
     except KeyboardInterrupt:
         loop.run_until_complete(client.close())
     finally:
+        loop.run_until_complete(client.close())
         loop.stop()

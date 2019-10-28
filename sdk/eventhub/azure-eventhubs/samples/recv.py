@@ -25,8 +25,9 @@ total = 0
 
 
 def do_operation(event):
+    pass
     # do some operations on the event
-    print(event)
+    # print(event)
 
 
 def event_handler(partition_context, events):
@@ -41,7 +42,10 @@ def event_handler(partition_context, events):
 
 
 consumer_client = EventHubConsumerClient.from_connection_string(
-    conn_str=CONNECTION_STR, event_hub_path=EVENT_HUB, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL
+    conn_str=CONNECTION_STR,
+    event_hub_path=EVENT_HUB,
+    receive_timeout=RECEIVE_TIMEOUT,  # the wait time for single receiving iteration
+    retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
 )
 
 with consumer_client:

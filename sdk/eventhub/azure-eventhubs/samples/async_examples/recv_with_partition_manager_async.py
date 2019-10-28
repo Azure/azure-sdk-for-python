@@ -17,17 +17,20 @@ import os
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.aio import FileBasedPartitionManager
 
+RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
 RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 
 
 async def do_operation(event):
+    pass
     # do some sync or async operations. If the operation is i/o intensive, async will have better performance
-    print(event)
+    # print(event)
 
 
 async def event_handler(partition_context, events):
     if events:
+        print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
         await asyncio.gather(*[do_operation(event) for event in events])
         await partition_context.update_checkpoint(events[-1])
     else:
@@ -39,11 +42,19 @@ if __name__ == '__main__':
     partition_manager = FileBasedPartitionManager("consumer_pm_store")
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
-        partition_manager=partition_manager,  # For load balancing and checkpointing. Leave None for no load balancing
+        partition_manager=partition_manager,  # For load balancing and checkpoint. Leave None for no load balancing
+        receive_timeout=RECEIVE_TIMEOUT,  # the wait time for single receiving iteration
         retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
     )
     try:
+        """
+        Without specified partition_id, the receive will try to receive events from all partitions and if provided with
+        partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
+        which also try to receive events from all partitions and use the same storage resource.
+        """
         task = asyncio.ensure_future(client.receive(event_handler=event_handler, consumer_group="$default"))
+        # With specified partition_id, load-balance will be disabled
+        # task = asyncio.ensure_future(client.receive(event_handler=event_handler, consumer_group="$default", partition_id = 0))
         loop.run_until_complete(asyncio.sleep(5))
         task.cancel()
     except KeyboardInterrupt:

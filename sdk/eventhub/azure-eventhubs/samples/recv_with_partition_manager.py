@@ -21,8 +21,9 @@ CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 
 
 def do_operation(event):
+    pass
     # do some operations.
-    print(event)
+    # print(event)
 
 
 def event_handler(partition_context, events):
@@ -39,12 +40,18 @@ def event_handler(partition_context, events):
 if __name__ == '__main__':
     partition_manager = FileBasedPartitionManager('consumer_pm_store')
     client = EventHubConsumerClient.from_connection_string(
-        conn_str=CONNECTION_STR, partition_manager=partition_manager,
-        receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL
+        conn_str=CONNECTION_STR,
+        partition_manager=partition_manager,  # For load balancing and checkpoint. Leave None for no load balancing
+        receive_timeout=RECEIVE_TIMEOUT,  # the wait time for single receiving iteration
+        retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
     )
 
     try:
-        # Without specified partition_id, load-balance will be enabled
+        """
+        Without specified partition_id, the receive will try to receive events from all partitions and if provided with
+        partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
+        which also try to receive events from all partitions and use the same storage resource.
+        """
         task = client.receive(event_handler=event_handler, consumer_group='$Default')
         # With specified partition_id, load-balance will be disabled
         # task = client.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')

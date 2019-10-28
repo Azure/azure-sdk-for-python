@@ -34,16 +34,23 @@ def do_operation(event):
 def event_handler(partition_context, events):
     global total
     if events:
-        print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
+        print("received events: {} from partition {}".format(len(events), partition_context.partition_id))
         total += len(events)
         for event in events:
             do_operation(event)
+
+        print("Last enqueued event properties from partition: {} is: {}".
+              format(partition_context.partition_id,
+                     events[-1].last_enqueued_event_properties))
     else:
         print("empty events received", "partition:", partition_context.partition_id)
 
 
 consumer_client = EventHubConsumerClient.from_connection_string(
-    conn_str=CONNECTION_STR, event_hub_path=EVENT_HUB, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL
+    conn_str=CONNECTION_STR,
+    event_hub_path=EVENT_HUB,
+    receive_timeout=RECEIVE_TIMEOUT,  # the wait time for single receiving iteration
+    retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
 )
 
 with consumer_client:
@@ -51,9 +58,5 @@ with consumer_client:
     task = consumer_client.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0',
                                    track_last_enqueued_event_properties=True)
     time.sleep(receiving_time)
-
-    print("Last enqueued event properties: {}".format(
-        consumer_client.get_last_enqueued_event_properties(consumer_group='$Default', partition_id='0')))
-
     task.cancel()
     print("Received {} messages in {} seconds".format(total, receiving_time))
