@@ -63,7 +63,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         from azure.keyvault.keys.aio import KeyClient
 
         credential = DefaultAzureCredential()
-        key_client = KeyClient(vault_endpoint=<your vault url>, credential=credential)
+        key_client = KeyClient(vault_url=<your vault url>, credential=credential)
         crypto_client = key_client.get_cryptography_client("mykey")
 
     """
@@ -89,7 +89,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         self._internal_key = None  # type: Optional[_Key]
 
         super(CryptographyClient, self).__init__(
-            vault_endpoint=self._key_id.vault_endpoint, credential=credential, **kwargs
+            vault_url=self._key_id.vault_url, credential=credential, **kwargs
         )
 
     @property
@@ -113,7 +113,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         if not (self._key or self._keys_get_forbidden):
             try:
                 self._key = await self._client.get_key(
-                    self._key_id.vault_endpoint, self._key_id.name, self._key_id.version, **kwargs
+                    self._key_id.vault_url, self._key_id.name, self._key_id.version, **kwargs
                 )
                 self._allowed_ops = frozenset(self._key.key_operations)
             except HttpResponseError as ex:
@@ -177,7 +177,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             result = local_key.encrypt(plaintext, algorithm=algorithm.value)
         else:
             operation = await self._client.encrypt(
-                self._key_id.vault_endpoint, self._key_id.name, self._key_id.version, algorithm, plaintext, **kwargs
+                self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, plaintext, **kwargs
             )
             result = operation.result
         return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result)
@@ -205,7 +205,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
         """
         result = await self._client.decrypt(
-            vault_base_url=self._key_id.vault_endpoint,
+            vault_base_url=self._key_id.vault_url,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
             algorithm=algorithm,
@@ -245,7 +245,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             result = local_key.wrap_key(key, algorithm=algorithm.value)
         else:
             operation = await self._client.wrap_key(
-                self._key_id.vault_endpoint,
+                self._key_id.vault_url,
                 self._key_id.name,
                 self._key_id.version,
                 algorithm=algorithm,
@@ -282,7 +282,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             result = local_key.unwrap_key(encrypted_key, **kwargs)
         else:
             operation = await self._client.unwrap_key(
-                self._key_id.vault_endpoint,
+                self._key_id.vault_url,
                 self._key_id.name,
                 self._key_id.version,
                 algorithm=algorithm,
@@ -293,7 +293,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         return UnwrapResult(key_id=self._key_id, algorithm=algorithm, key=result)
 
     @distributed_trace_async
-    async def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs: "**Any") -> SignResult:
+    async def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs: "Any") -> SignResult:
         """
         Create a signature from a digest using the client's key. Requires the keys/sign permission.
 
@@ -322,7 +322,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         """
 
         result = await self._client.sign(
-            vault_base_url=self._key_id.vault_endpoint,
+            vault_base_url=self._key_id.vault_url,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
             algorithm=algorithm,
@@ -362,7 +362,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             result = local_key.verify(digest, signature, algorithm=algorithm.value)
         else:
             result = await self._client.verify(
-                vault_base_url=self._key_id.vault_endpoint,
+                vault_base_url=self._key_id.vault_url,
                 key_name=self._key_id.name,
                 key_version=self._key_id.version,
                 algorithm=algorithm,

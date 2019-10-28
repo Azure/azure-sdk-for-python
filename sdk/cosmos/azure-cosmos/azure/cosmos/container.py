@@ -190,11 +190,11 @@ class ContainerProxy(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
 
-        if partition_key:
+        if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if post_trigger_include:
+        if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
         result = self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
@@ -402,9 +402,9 @@ class ContainerProxy(object):
         request_options["disableIdGeneration"] = True
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include:
+        if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include:
+        if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
         result = self.client_connection.ReplaceItem(
@@ -446,9 +446,9 @@ class ContainerProxy(object):
         request_options["disableIdGeneration"] = True
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include:
+        if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include:
+        if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
         result = self.client_connection.UpsertItem(
@@ -492,11 +492,11 @@ class ContainerProxy(object):
         request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics:
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include:
+        if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include:
+        if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
-        if indexing_directive:
+        if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
 
         result = self.client_connection.CreateItem(
@@ -536,13 +536,13 @@ class ContainerProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        if partition_key:
+        if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include:
+        if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include:
+        if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
         document_link = self._get_document_link(item)
@@ -699,7 +699,7 @@ class ContainerProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        if partition_key:
+        if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
         result = self.client_connection.ReadConflict(
@@ -725,7 +725,7 @@ class ContainerProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        if partition_key:
+        if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
         result = self.client_connection.DeleteConflict(

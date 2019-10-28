@@ -159,7 +159,6 @@ if __name__ == "__main__":
         source_location = move_and_rename(unzip_sdist_to_directory(args.dist_dir))
         doc_folder = os.path.join(source_location, "docgen")
 
-        copy_conf(doc_folder)
         create_index(doc_folder, source_location, package_name)
 
         site_folder = os.path.join(args.dist_dir, "site")

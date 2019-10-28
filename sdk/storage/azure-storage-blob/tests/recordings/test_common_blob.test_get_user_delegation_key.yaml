@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: client_id=68390a19-a897-236b-b453-488abf67b4fc&client_secret=3Usxz7pzkOeE7flc6Z187ubs5%2FcJnszGPjAiXmcwhaY%3D&grant_type=client_credentials&scope=https%3A%2F%2Fstorage.azure.com%2F.default
+    body: null
     headers:
       Accept:
       - '*/*'
@@ -9,51 +9,38 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '188'
-      Content-Type:
-      - application/x-www-form-urlencoded
+      - '0'
       User-Agent:
-      - python-requests/2.22.0
-    method: POST
-    uri: https://login.microsoftonline.com/32f988bf-54f1-15af-36ab-2d7cd364db47/oauth2/v2.0/token
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 25 Oct 2019 18:28:25 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainera85e1275?timeout=5&restype=container
   response:
     body:
-      string: '{"token_type":"Bearer","expires_in":3600,"ext_expires_in":3600,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCIsImtpZCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCJ9.eyJhdWQiOiJodHRwczovL3N0b3JhZ2UuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsImlhdCI6MTU2ODc2MjQzMiwibmJmIjoxNTY4NzYyNDMyLCJleHAiOjE1Njg3NjYzMzIsImFpbyI6IjQyRmdZSGhlWXEvdWFKK1c2SHI0NWNPWjFRbE9BQT09IiwiYXBwaWQiOiI2ODM5MGExOS1hNjQzLTQ1OGItYjcyNi00MDhhYmY2N2I0ZmMiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwib2lkIjoiYzRmNDgyODktYmI4NC00MDg2LWIyNTAtNmY5NGE4ZjY0Y2VlIiwic3ViIjoiYzRmNDgyODktYmI4NC00MDg2LWIyNTAtNmY5NGE4ZjY0Y2VlIiwidGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3IiwidXRpIjoiLTRfX2FXT3ViMC15Y1o1dnM3OEVBQSIsInZlciI6IjEuMCJ9.jD3pTZDUPXjvK-T2M45bIToPUJYN3NrIiAV_7cmCRglKJ2HmVcC4FWNismBkOpkB3HlRn-prhQBlI7ktcFgZnaGpmxcQakZiicuUPkQkeFrGhcumMCAf_kvL6Dex1T7oG2gNkNjDLYq0xw6JzesLh3FyRt3fuYMtxsdU3c1Cmb8JHcpRBm5jFxC2kv6nDxNCZhKdVNPlmqszNaKsZ0UHl0NCWdXb5wpJ29ZkZFJqrPFX7QzpvCRsSTCEEdf_LCUyeTYu7vO7evvE9L31hfC4iWqoxp-KAUqhK1N2IYeO5ET-7TBE72mbwGlT7YuDHH4_LgEB5ZIXdm34PySrcPyWBw"}'
+      string: ''
     headers:
-      Cache-Control:
-      - no-cache, no-store
-      Content-Length:
-      - '1233'
-      Content-Type:
-      - application/json; charset=utf-8
-      Date:
-      - Tue, 17 Sep 2019 23:25:31 GMT
-      Expires:
-      - '-1'
-      P3P:
-      - CP="DSP CUR OTPi IND OTRi ONL FIN"
-      Pragma:
-      - no-cache
-      Set-Cookie:
-      - fpc=AlowUwUEsUFLqOWAcsuI75beSEc1AQAAAGtiE9UOAAAA; expires=Thu, 17-Oct-2019
-        23:25:32 GMT; path=/; secure; HttpOnly
-      - x-ms-gateway-slice=estsfd; path=/; secure; HttpOnly
-      - stsservicecookie=estsfd; path=/; secure; HttpOnly
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubDomains
-      X-Content-Type-Options:
-      - nosniff
-      x-ms-ests-server:
-      - 2.1.9395.12 - WUS ProdSlices
-      x-ms-request-id:
-      - 69ff8ffb-ae63-4f6f-b271-9e6fb3bf0400
+      content-length:
+      - '0'
+      date:
+      - Fri, 25 Oct 2019 18:28:24 GMT
+      etag:
+      - '"0x8D759791F866B0B"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:28:25 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-02-02'
     status:
-      code: 200
-      message: OK
+      code: 201
+      message: Created
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <KeyInfo><Start>2019-09-17T23:25:31Z</Start><Expiry>2019-09-18T00:25:31Z</Expiry></KeyInfo>'
+      <KeyInfo><Start>2019-10-25T18:28:25Z</Start><Expiry>2019-10-25T19:28:25Z</Expiry></KeyInfo>'
     headers:
       Accept:
       - application/xml
@@ -66,29 +53,25 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 71389d9c-d9a2-11e9-9bc9-001a7dda7113
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 17 Sep 2019 23:25:31 GMT
+      - Fri, 25 Oct 2019 18:28:25 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://oauthstoragename.blob.core.windows.net/?restype=service&comp=userdelegationkey
+    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=userdelegationkey
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><UserDelegationKey><SignedOid>c4f48289-bb84-4086-b250-6f94a8f64cee</SignedOid><SignedTid>32f988bf-54f1-15af-36ab-2d7cd364db47</SignedTid><SignedStart>2019-09-17T23:25:31Z</SignedStart><SignedExpiry>2019-09-18T00:25:31Z</SignedExpiry><SignedService>b</SignedService><SignedVersion>2019-02-02</SignedVersion><Value>hQuPIdHtZgpoLz8MNxEtjYb32d+5FQGpPAI4hpQigrQ=</Value></UserDelegationKey>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><UserDelegationKey><SignedOid>e33fbfd4-bc19-47c6-be55-5f5a7f950b7a</SignedOid><SignedTid>00000000-0000-0000-0000-000000000000</SignedTid><SignedStart>2019-10-25T18:28:25Z</SignedStart><SignedExpiry>2019-10-25T19:28:25Z</SignedExpiry><SignedService>b</SignedService><SignedVersion>2019-02-02</SignedVersion><Value>xmEMVC0hEq01teD2RUKpu9qgeIuS1RGGL+fcjI1RtUo=</Value></UserDelegationKey>"
     headers:
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Tue, 17 Sep 2019 23:25:33 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:28:25 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
-      x-ms-request-id:
-      - d05f5f13-001e-0018-79af-6d8c93000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -97,7 +80,7 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <KeyInfo><Start>2019-09-17T23:25:31Z</Start><Expiry>2019-09-18T00:25:31Z</Expiry></KeyInfo>'
+      <KeyInfo><Start>2019-10-25T18:28:25Z</Start><Expiry>2019-10-25T19:28:25Z</Expiry></KeyInfo>'
     headers:
       Accept:
       - application/xml
@@ -110,29 +93,25 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 7240e3c2-d9a2-11e9-bb1e-001a7dda7113
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 17 Sep 2019 23:25:33 GMT
+      - Fri, 25 Oct 2019 18:28:27 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://oauthstoragename.blob.core.windows.net/?restype=service&comp=userdelegationkey
+    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=userdelegationkey
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><UserDelegationKey><SignedOid>c4f48289-bb84-4086-b250-6f94a8f64cee</SignedOid><SignedTid>32f988bf-54f1-15af-36ab-2d7cd364db47</SignedTid><SignedStart>2019-09-17T23:25:31Z</SignedStart><SignedExpiry>2019-09-18T00:25:31Z</SignedExpiry><SignedService>b</SignedService><SignedVersion>2019-02-02</SignedVersion><Value>hQuPIdHtZgpoLz8MNxEtjYb32d+5FQGpPAI4hpQigrQ=</Value></UserDelegationKey>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><UserDelegationKey><SignedOid>e33fbfd4-bc19-47c6-be55-5f5a7f950b7a</SignedOid><SignedTid>00000000-0000-0000-0000-000000000000</SignedTid><SignedStart>2019-10-25T18:28:25Z</SignedStart><SignedExpiry>2019-10-25T19:28:25Z</SignedExpiry><SignedService>b</SignedService><SignedVersion>2019-02-02</SignedVersion><Value>xmEMVC0hEq01teD2RUKpu9qgeIuS1RGGL+fcjI1RtUo=</Value></UserDelegationKey>"
     headers:
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Tue, 17 Sep 2019 23:25:33 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:28:26 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
-      x-ms-request-id:
-      - d05f61aa-001e-0018-7aaf-6d8c93000000
       x-ms-version:
       - '2019-02-02'
     status:

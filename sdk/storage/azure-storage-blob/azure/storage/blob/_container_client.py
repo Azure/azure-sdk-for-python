@@ -57,6 +57,18 @@ if TYPE_CHECKING:
         PremiumPageBlobTier)
 
 
+def _get_blob_name(blob):
+    """Return the blob name.
+
+    :param blob: A blob string or BlobProperties
+    :rtype: str
+    """
+    try:
+        return blob.name
+    except AttributeError:
+        return blob
+
+
 class ContainerClient(StorageAccountHostsMixin):
     """A client to interact with a specific container, although that container
     may not yet exist.
@@ -64,24 +76,6 @@ class ContainerClient(StorageAccountHostsMixin):
     For operations relating to a specific blob within this container, a blob client can be
     retrieved using the :func:`~get_blob_client` function.
 
-    :ivar str url:
-        The full endpoint URL to the Container, including SAS token if used. This could be
-        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondary endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the container,
         use the :func:`from_container_url` classmethod.
@@ -93,17 +87,32 @@ class ContainerClient(StorageAccountHostsMixin):
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
+    :keyword str secondary_hostname:
+        The hostname of the secondary endpoint.
+    :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
+        Defaults to 4*1024*1024, or 4MB.
+    :keyword int max_single_put_size: If the blob size is less than max_single_put_size, then the blob will be
+        uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
+        the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
+    :keyword int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
+        algorithm when uploading a block blob. Defaults to 4*1024*1024+1.
+    :keyword bool use_byte_buffer: Use a byte buffer for block blob uploads. Defaults to False.
+    :keyword int max_page_size: The maximum chunk size for uploading a page blob. Defaults to 4*1024*1024, or 4MB.
+    :keyword int max_single_get_size: The maximum size for a blob to be downloaded in a single call,
+        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
+    :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
+        or 4MB.
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_blob_samples_containers.py
+        .. literalinclude:: ../samples/blob_samples_containers.py
             :start-after: [START create_container_client_from_service]
             :end-before: [END create_container_client_from_service]
             :language: python
             :dedent: 8
             :caption: Get a ContainerClient from an existing BlobServiceClient.
 
-        .. literalinclude:: ../tests/test_blob_samples_containers.py
+        .. literalinclude:: ../samples/blob_samples_containers.py
             :start-after: [START create_container_client_sasurl]
             :end-before: [END create_container_client_sasurl]
             :language: python
@@ -134,6 +143,16 @@ class ContainerClient(StorageAccountHostsMixin):
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
 
+    def _format_url(self, hostname):
+        container_name = self.container_name
+        if isinstance(container_name, six.text_type):
+            container_name = container_name.encode('UTF-8')
+        return "{}://{}/{}{}".format(
+            self.scheme,
+            hostname,
+            quote(container_name),
+            self._query_str)
+
     @classmethod
     def from_container_url(cls, container_url, credential=None, **kwargs):
         # type: (str, Optional[Any], Any) -> ContainerClient
@@ -149,6 +168,8 @@ class ContainerClient(StorageAccountHostsMixin):
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
+        :returns: A container client.
+        :rtype: ~azure.storage.blob.ContainerClient
         """
         try:
             if not container_url.lower().startswith('http'):
@@ -158,24 +179,20 @@ class ContainerClient(StorageAccountHostsMixin):
         parsed_url = urlparse(container_url.rstrip('/'))
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(container_url))
-        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
-        container_name = unquote(parsed_url.path.lstrip('/').partition('/')[0])
+
+        container_path = parsed_url.path.lstrip('/').split('/')
+        account_path = ""
+        if len(container_path) > 1:
+            account_path = "/" + "/".join(container_path[:-1])
+        account_url = "{}://{}{}?{}".format(
+            parsed_url.scheme,
+            parsed_url.netloc.rstrip('/'),
+            account_path,
+            parsed_url.query)
+        container_name = unquote(container_path[-1])
         if not container_name:
-            raise ValueError("Invalid URL. Please provide a  url with a valid container_name")
-
-        return cls(
-            account_url, container_name=container_name, credential=credential, **kwargs
-        )
-
-    def _format_url(self, hostname):
-        container_name = self.container_name
-        if isinstance(container_name, six.text_type):
-            container_name = container_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(container_name),
-            self._query_str)
+            raise ValueError("Invalid URL. Please provide a URL with a valid container name")
+        return cls(account_url, container_name=container_name, credential=credential, **kwargs)
 
     @classmethod
     def from_connection_string(
@@ -197,10 +214,12 @@ class ContainerClient(StorageAccountHostsMixin):
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
+        :returns: A container client.
+        :rtype: ~azure.storage.blob.ContainerClient
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_authentication.py
+            .. literalinclude:: ../samples/blob_samples_authentication.py
                 :start-after: [START auth_from_connection_string_container]
                 :end-before: [END auth_from_connection_string_container]
                 :language: python
@@ -232,7 +251,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START create_container]
                 :end-before: [END create_container]
                 :language: python
@@ -288,7 +307,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START delete_container]
                 :end-before: [END delete_container]
                 :language: python
@@ -351,7 +370,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START acquire_lease_on_container]
                 :end-before: [END acquire_lease_on_container]
                 :language: python
@@ -397,7 +416,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START get_container_properties]
                 :end-before: [END get_container_properties]
                 :language: python
@@ -450,7 +469,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START set_container_metadata]
                 :end-before: [END set_container_metadata]
                 :language: python
@@ -491,7 +510,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START get_container_access_policy]
                 :end-before: [END get_container_access_policy]
                 :language: python
@@ -554,7 +573,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START set_container_access_policy]
                 :end-before: [END set_container_access_policy]
                 :language: python
@@ -608,7 +627,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START list_blobs_in_container]
                 :end-before: [END list_blobs_in_container]
                 :language: python
@@ -770,7 +789,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START upload_blob_to_container]
                 :end-before: [END upload_blob_to_container]
                 :language: python
@@ -929,8 +948,9 @@ class ContainerClient(StorageAccountHostsMixin):
         Soft deleted blobs or snapshots are accessible through :func:`list_blobs()` specifying `include=["deleted"]`
         Soft-deleted blobs or snapshots can be restored using :func:`~BlobClient.undelete()`
 
-        :param blobs: The blob names with which to interact.
-        :type blobs: str
+        :param blobs: The blobs to delete. This can be a single blob, or multiple values can
+            be supplied, where each value is either the name of the blob (str) or BlobProperties.
+        :type blobs: str or ~azure.storage.blob.BlobProperties
         :keyword str delete_snapshots:
             Required if a blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -963,6 +983,15 @@ class ContainerClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :return: An iterator of responses, one for each blob in order
         :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_common.py
+                :start-after: [START delete_multiple_blobs]
+                :end-before: [END delete_multiple_blobs]
+                :language: python
+                :dedent: 8
+                :caption: Deleting multiple blobs.
         """
         raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
         options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
@@ -977,9 +1006,10 @@ class ContainerClient(StorageAccountHostsMixin):
 
         reqs = []
         for blob in blobs:
+            blob_name = _get_blob_name(blob)
             req = HttpRequest(
                 "DELETE",
-                "/{}/{}".format(self.container_name, blob),
+                "/{}/{}".format(self.container_name, blob_name),
                 headers=header_parameters
             )
             req.format_parameters(query_parameters)
@@ -1041,8 +1071,9 @@ class ContainerClient(StorageAccountHostsMixin):
             tier is optimized for storing data that is rarely accessed and stored
             for at least six months with flexible latency requirements.
         :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
-        :param blobs: The blobs with which to interact.
-        :type blobs: str
+        :param blobs: The blobs with which to interact. This can be a single blob, or multiple values can
+            be supplied, where each value is either the name of the blob (str) or BlobProperties.
+        :type blobs: str or ~azure.storage.blob.BlobProperties
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword lease:
@@ -1071,9 +1102,10 @@ class ContainerClient(StorageAccountHostsMixin):
 
         reqs = []
         for blob in blobs:
+            blob_name = _get_blob_name(blob)
             req = HttpRequest(
                 "PUT",
-                "/{}/{}".format(self.container_name, blob),
+                "/{}/{}".format(self.container_name, blob_name),
                 headers=header_parameters
             )
             req.format_parameters(query_parameters)
@@ -1096,7 +1128,8 @@ class ContainerClient(StorageAccountHostsMixin):
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
         :type premium_page_blob_tier: ~azure.storage.blob.PremiumPageBlobTier
-        :param blobs: The blobs with which to interact.
+        :param blobs: The blobs with which to interact. This can be a single blob, or multiple values can
+            be supplied, where each value is either the name of the blob (str) or BlobProperties.
         :type blobs: str or ~azure.storage.blob.BlobProperties
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
@@ -1128,9 +1161,10 @@ class ContainerClient(StorageAccountHostsMixin):
 
         reqs = []
         for blob in blobs:
+            blob_name = _get_blob_name(blob)
             req = HttpRequest(
                 "PUT",
-                "/{}/{}".format(self.container_name, blob),
+                "/{}/{}".format(self.container_name, blob_name),
                 headers=header_parameters
             )
             req.format_parameters(query_parameters)
@@ -1158,17 +1192,14 @@ class ContainerClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_blob_samples_containers.py
+            .. literalinclude:: ../samples/blob_samples_containers.py
                 :start-after: [START get_blob_client]
                 :end-before: [END get_blob_client]
                 :language: python
                 :dedent: 8
                 :caption: Get the blob client.
         """
-        try:
-            blob_name = blob.name
-        except AttributeError:
-            blob_name = blob
+        blob_name = _get_blob_name(blob)
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access

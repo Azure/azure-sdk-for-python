@@ -2104,7 +2104,6 @@ class CRUDTests(unittest.TestCase):
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
             list(databases)
 
-
     def test_query_iterable_functionality(self):
         def __create_resources(client):
             """Creates resources for this test.

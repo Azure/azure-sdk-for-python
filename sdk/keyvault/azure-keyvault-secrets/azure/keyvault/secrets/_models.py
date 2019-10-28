@@ -61,13 +61,19 @@ class SecretProperties(object):
     @property
     def content_type(self):
         # type: () -> str
-        """:rtype: str"""
+        """An arbitrary string indicating the type of the secret
+
+        :rtype: str
+        """
         return self._content_type
 
     @property
     def id(self):
         # type: () -> str
-        """:rtype: str"""
+        """The secret's id
+
+        :rtype: str
+        """
         return self._id
 
     @property
@@ -82,7 +88,10 @@ class SecretProperties(object):
     @property
     def enabled(self):
         # type: () -> bool
-        """:rtype: bool"""
+        """Whether the secret is enabled for use
+
+        :rtype: bool
+        """
         return self._attributes.enabled
 
     @property
@@ -90,7 +99,7 @@ class SecretProperties(object):
         # type: () -> datetime
         """The time before which the secret can not be used, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.not_before
 
@@ -99,7 +108,7 @@ class SecretProperties(object):
         # type: () -> datetime
         """When the secret expires, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.expires
 
@@ -108,7 +117,7 @@ class SecretProperties(object):
         # type: () -> datetime
         """When the secret was created, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.created
 
@@ -117,7 +126,7 @@ class SecretProperties(object):
         # type: () -> datetime
         """When the secret was last updated, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.updated
 
@@ -131,24 +140,30 @@ class SecretProperties(object):
         return self._attributes.recovery_level
 
     @property
-    def vault_endpoint(self):
+    def vault_url(self):
         # type: () -> str
         """URL of the vault containing the secret
 
         :rtype: str
         """
-        return self._vault_id.vault_endpoint
+        return self._vault_id.vault_url
 
     @property
     def name(self):
         # type: () -> str
-        """:rtype: str"""
+        """The secret's name
+
+        :rtype: str
+        """
         return self._vault_id.name
 
     @property
     def version(self):
         # type: () -> str
-        """:rtype: str"""
+        """The secret's version
+
+        :rtype: str
+        """
         return self._vault_id.version
 
     @property
@@ -184,13 +199,19 @@ class KeyVaultSecret(object):
     @property
     def name(self):
         # type: () -> str
-        """:rtype: str"""
+        """The secret's name
+
+        :rtype: str
+        """
         return self._properties.name
 
     @property
     def id(self):
         # type: () -> str
-        """:rtype: str"""
+        """The secret's id
+
+        :rtype: str
+        """
         return self._properties.id
 
     @property
@@ -258,13 +279,19 @@ class DeletedSecret(object):
     @property
     def name(self):
         # type: () -> str
-        """:rtype: str"""
+        """The secret's name
+
+        :rtype: str
+        """
         return self._properties.name
 
     @property
     def id(self):
         # type: () -> str
-        """:rtype: str"""
+        """The secret's id
+
+        :rtype: str
+        """
         return self._properties.id
 
     @property
@@ -281,14 +308,14 @@ class DeletedSecret(object):
         # type: () -> datetime
         """When the secret was deleted, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._deleted_date
 
     @property
     def recovery_id(self):
         # type: () -> str
-        """An identifier used to recover the deleted secret. Returns None if soft-delete is disabled.
+        """An identifier used to recover the deleted secret. Returns ``None`` if soft-delete is disabled.
 
         :rtype: str
         """
@@ -297,8 +324,8 @@ class DeletedSecret(object):
     @property
     def scheduled_purge_date(self):
         # type: () -> datetime
-        """When the secret is scheduled to be purged, in UTC. Returns None if soft-delete is disabled.
+        """When the secret is scheduled to be purged, in UTC. Returns ``None`` if soft-delete is disabled.
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._scheduled_purge_date

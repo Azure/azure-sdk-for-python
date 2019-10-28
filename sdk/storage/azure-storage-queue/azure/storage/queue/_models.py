@@ -38,6 +38,18 @@ class QueueAnalyticsLogging(GeneratedLogging):
         self.write = kwargs.get('write', False)
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            version=generated.version,
+            delete=generated.delete,
+            read=generated.read,
+            write=generated.write,
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+        )
+
 
 class Metrics(GeneratedMetrics):
     """A summary of request statistics grouped by API in hour or minute aggregates.
@@ -58,6 +70,17 @@ class Metrics(GeneratedMetrics):
         self.include_apis = kwargs.get('include_apis')
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            version=generated.version,
+            enabled=generated.enabled,
+            include_apis=generated.include_apis,
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+        )
+
 
 class RetentionPolicy(GeneratedRetentionPolicy):
     """The retention policy which determines how long the associated data should
@@ -77,6 +100,15 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         self.days = days
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            enabled=generated.enabled,
+            days=generated.days,
+        )
 
 
 class CorsRule(GeneratedCorsRule):
@@ -115,6 +147,16 @@ class CorsRule(GeneratedCorsRule):
         self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
         self.exposed_headers = ','.join(kwargs.get('exposed_headers', []))
         self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
+
+    @classmethod
+    def _from_generated(cls, generated):
+        return cls(
+            [generated.allowed_origins],
+            [generated.allowed_methods],
+            allowed_headers=[generated.allowed_headers],
+            exposed_headers=[generated.exposed_headers],
+            max_age_in_seconds=generated.max_age_in_seconds,
+        )
 
 
 class AccessPolicy(GenAccessPolicy):
@@ -369,3 +411,25 @@ class QueueSasPermissions(object):
         parsed = cls(p_read, p_add, p_update, p_process)
         parsed._str = permission # pylint: disable = protected-access
         return parsed
+
+
+def service_stats_deserialize(generated):
+    """Deserialize a ServiceStats objects into a dict.
+    """
+    return {
+        'geo_replication': {
+            'status': generated.geo_replication.status,
+            'last_sync_time': generated.geo_replication.last_sync_time,
+        }
+    }
+
+
+def service_properties_deserialize(generated):
+    """Deserialize a ServiceProperties objects into a dict.
+    """
+    return {
+        'analytics_logging': QueueAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
+        'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
+        'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
+        'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
+    }

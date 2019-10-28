@@ -27,7 +27,7 @@ class AsyncKeyVaultClientBase:
     """Base class for async Key Vault clients"""
 
     @staticmethod
-    def _create_config(credential: "TokenCredential", api_version: str = None, **kwargs: "**Any") -> Configuration:
+    def _create_config(credential: "TokenCredential", api_version: str = None, **kwargs: "Any") -> Configuration:
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=True)(credential, **kwargs)
@@ -56,16 +56,16 @@ class AsyncKeyVaultClientBase:
 
         return config
 
-    def __init__(self, vault_endpoint: str, credential: "TokenCredential", **kwargs: "Any") -> None:
+    def __init__(self, vault_url: str, credential: "TokenCredential", **kwargs: "Any") -> None:
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the TokenCredential protocol, "
                 "such as a credential from azure-identity"
             )
-        if not vault_endpoint:
-            raise ValueError("vault_endpoint must be the URL of an Azure Key Vault")
+        if not vault_url:
+            raise ValueError("vault_url must be the URL of an Azure Key Vault")
 
-        self._vault_endpoint = vault_endpoint.strip(" /")
+        self._vault_url = vault_url.strip(" /")
 
         client = kwargs.get("generated_client")
         if client:
@@ -76,10 +76,10 @@ class AsyncKeyVaultClientBase:
         config = self._create_config(credential, **kwargs)
         transport = kwargs.pop("transport", None)
         pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport=transport, **kwargs)
-        self._client = KeyVaultClient(credential, pipeline=pipeline, aio=True, **kwargs)
+        self._client = KeyVaultClient(credential, pipeline=pipeline, aio=True)
 
     @staticmethod
-    def _build_pipeline(config: Configuration, transport: AsyncHttpTransport, **kwargs: "**Any") -> AsyncPipeline:
+    def _build_pipeline(config: Configuration, transport: AsyncHttpTransport, **kwargs: "Any") -> AsyncPipeline:
         logging_policy = HttpLoggingPolicy(**kwargs)
         logging_policy.allowed_header_names.add("x-ms-keyvault-network-info")
         policies = [
@@ -102,5 +102,5 @@ class AsyncKeyVaultClientBase:
         return AsyncPipeline(transport, policies=policies)
 
     @property
-    def vault_endpoint(self) -> str:
-        return self._vault_endpoint
+    def vault_url(self) -> str:
+        return self._vault_url
