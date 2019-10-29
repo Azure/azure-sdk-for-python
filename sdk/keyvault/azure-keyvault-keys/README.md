@@ -367,6 +367,12 @@ credential = DefaultAzureCredential()
 client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential, logging_enable=True)
 ```
 
+Similarly, `logging_enable` can enable detailed logging for a single operation,
+even when it isn't enabled for the client:
+```py
+client.get_key("my-key", logging_enable=True)
+```
+
 ## Next steps
 Several samples are available in the Azure SDK for Python GitHub repository.
 These provide example code for additional Key Vault scenarios:
