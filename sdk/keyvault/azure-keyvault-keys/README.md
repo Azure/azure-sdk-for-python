@@ -383,7 +383,7 @@ the library's documentation
 [hello_world_async.py][hello_world_async_sample] - create/get/update/delete keys
 * [backup_restore_operations.py][backup_operations_sample] and
 [backup_restore_operations_async.py][backup_operations_async_sample] - backup and
-recover keys
+restore keys
 
 ###  Additional Documentation
 For more extensive documentation on Azure Key Vault, see the
