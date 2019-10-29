@@ -1,6 +1,6 @@
 # Change Log azure-storage-queue
 
-## Version 12.0.0b5:
+## Version 12.0.0:
 
 **Breaking changes**
 
