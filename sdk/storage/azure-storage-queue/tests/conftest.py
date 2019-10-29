@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, AzureMgmtTestCase
 from azure_devtools.scenario_tests import create_random_name
-from queuetestcase import QueueTestCase
+from _shared.testcase import StorageTestCase
 
 import pytest
 
@@ -46,23 +46,23 @@ def storage_account():
     storage_name = create_random_name("pyacrstorage", 24)
     try:
         rg = rg_preparer.create_resource(rg_name)
-        QueueTestCase._RESOURCE_GROUP = rg['resource_group']
+        StorageTestCase._RESOURCE_GROUP = rg['resource_group']
         try:
             storage_dict = storage_preparer.create_resource(
                 storage_name,
                 resource_group=rg['resource_group']
             )
             # Now the magic begins
-            QueueTestCase._STORAGE_ACCOUNT = storage_dict['storage_account']
-            QueueTestCase._STORAGE_KEY = storage_dict['storage_account_key']
+            StorageTestCase._STORAGE_ACCOUNT = storage_dict['storage_account']
+            StorageTestCase._STORAGE_KEY = storage_dict['storage_account_key']
             yield
         finally:
             storage_preparer.remove_resource(
                 storage_name,
                 resource_group=rg['resource_group']
             )
-            QueueTestCase._STORAGE_ACCOUNT = None
-            QueueTestCase._STORAGE_KEY = None
+            StorageTestCase._STORAGE_ACCOUNT = None
+            StorageTestCase._STORAGE_KEY = None
     finally:
         rg_preparer.remove_resource(rg_name)
-        QueueTestCase._RESOURCE_GROUP = None
+        StorageTestCase._RESOURCE_GROUP = None

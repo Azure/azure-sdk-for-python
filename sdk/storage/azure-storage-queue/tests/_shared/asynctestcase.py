@@ -1,4 +1,5 @@
-﻿# coding: utf-8
+
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -6,11 +7,11 @@
 # --------------------------------------------------------------------------
 import asyncio
 import functools
-from queuetestcase import QueueTestCase
+from .testcase import StorageTestCase
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 
-class AsyncQueueTestCase(QueueTestCase):
+class AsyncStorageTestCase(StorageTestCase):
     @staticmethod
     def await_prepared_test(test_fn):
         """Synchronous wrapper for async test methods. Used to avoid making changes

@@ -8,10 +8,7 @@ import pytest
 
 from azure.storage.queue import QueueServiceClient
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from queuetestcase import (
-    QueueTestCase,
-    GlobalStorageAccountPreparer
-)
+from _shared.testcase import GlobalStorageAccountPreparer, StorageTestCase
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
@@ -22,7 +19,7 @@ SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceS
                                 '></StorageServiceStats> '
 
 # --Test Class -----------------------------------------------------------------
-class QueueServiceStatsTest(QueueTestCase):
+class QueueServiceStatsTest(StorageTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_stats_default(self, stats):
         self.assertIsNotNone(stats)
@@ -52,7 +49,7 @@ class QueueServiceStatsTest(QueueTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS')
     def test_queue_service_stats_f(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
 
         # Act
         stats = qsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
@@ -63,7 +60,7 @@ class QueueServiceStatsTest(QueueTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS')
     def test_queue_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
 
         # Act
         stats = qsc.get_service_stats(
