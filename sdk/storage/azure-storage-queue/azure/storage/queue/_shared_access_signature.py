@@ -139,7 +139,7 @@ def generate_account_sas(
     :param str account_name:
         The storage account name used to generate the shared access signature.
     :param str account_key:
-        The access key to generate the shared access signature.
+        The account key, also called shared key or access key, to generate the shared access signature.
     :param ~azure.storage.queue.ResourceTypes resource_types:
         Specifies the resource types that are accessible with the account SAS.
     :param ~azure.storage.queue.AccountSasPermissions permission:
@@ -203,7 +203,7 @@ def generate_queue_sas(
     :param str queue_name:
         The name of the queue.
     :param str account_key:
-        The access key to generate the shared access signature.
+        The account key, also called shared key or access key, to generate the shared access signature.
     :param ~azure.storage.queue.QueueSasPermissions permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.

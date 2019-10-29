@@ -294,7 +294,7 @@ def generate_account_sas(
     :param str account_name:
         The storage account name used to generate the shared access signature.
     :param str account_key:
-        The access key to generate the shared access signature.
+        The account key, also called shared key or access key, to generate the shared access signature.
     :param resource_types:
         Specifies the resource types that are accessible with the account SAS.
     :type resource_types: str or ~azure.storage.blob.ResourceTypes
@@ -375,10 +375,10 @@ def generate_container_sas(
     :param str container_name:
         The name of the container.
     :param str account_key:
-        The access key to generate the shared access signature. Either `account_key` or
-        `user_delegation_key` must be specified.
+        The account key, also called shared key or access key, to generate the shared access signature.
+        Either `account_key` or `user_delegation_key` must be specified.
     :param ~azure.storage.blob.UserDelegationKey user_delegation_key:
-        Instead of an account key, the user could pass in a user delegation key.
+        Instead of an account shared key, the user could pass in a user delegation key.
         A user delegation key can be obtained from the service by authenticating with an AAD identity;
         this can be accomplished by calling :func:`~azure.storage.blob.BlobServiceClient.get_user_delegation_key`.
         When present, the SAS is signed with the user delegation key instead.
@@ -491,10 +491,10 @@ def generate_blob_sas(
     :param str snapshot:
         An optional blob snapshot ID.
     :param str account_key:
-        The access key to generate the shared access signature. Either `account_key` or
-        `user_delegation_key` must be specified.
+        The account key, also called shared key or access key, to generate the shared access signature.
+        Either `account_key` or `user_delegation_key` must be specified.
     :param ~azure.storage.blob.UserDelegationKey user_delegation_key:
-        Instead of an account key, the user could pass in a user delegation key.
+        Instead of an account shared key, the user could pass in a user delegation key.
         A user delegation key can be obtained from the service by authenticating with an AAD identity;
         this can be accomplished by calling :func:`~azure.storage.blob.BlobServiceClient.get_user_delegation_key`.
         When present, the SAS is signed with the user delegation key instead.

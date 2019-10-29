@@ -149,7 +149,7 @@ class StorageFileClientTest(FileTestCase):
 
             self.assertEqual(
                 str(e.exception),
-                'You need to provide either an account key or SAS token when creating a storage service.')
+                'You need to provide either an account shared key or SAS token when creating a storage service.')
 
     @record
     def test_create_service_with_socket_timeout_async(self):

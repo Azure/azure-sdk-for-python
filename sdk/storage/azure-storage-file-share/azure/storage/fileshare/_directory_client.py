@@ -90,7 +90,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         path_snapshot, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError(
-                'You need to provide either an account key or SAS token when creating a storage service.')
+                'You need to provide either an account shared key or SAS token when creating a storage service.')
         try:
             self.snapshot = snapshot.snapshot # type: ignore
         except AttributeError:
