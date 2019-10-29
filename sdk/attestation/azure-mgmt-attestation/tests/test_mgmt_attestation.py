@@ -27,7 +27,7 @@ class MgmtAttestationTest(AzureMgmtTestCase):
         ATTESTATION_PROVIDER_NAME = "myattestationproviderx"
         # result = self.mgmt_client.operations.list()
 
-         certs = { 'keys': [
+        certs = { 'keys': [
             {'kty': 'RSA',
              'alg': 'RSA',
              'use': 'sig',
