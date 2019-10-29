@@ -16,7 +16,9 @@ DESCRIPTION:
 
 USAGE:
     python file_samples_service_async.py
-    Set the environment variables with your own values before running the sample.
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 import asyncio
@@ -28,7 +30,7 @@ DEST_FILE = './SampleDestination.txt'
 
 class FileShareServiceSamplesAsync(object):
 
-    connection_string = os.getenv('CONNECTION_STRING')
+    connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
 
     async def file_service_properties_async(self):
         # Instantiate the ShareServiceClient from a connection string
