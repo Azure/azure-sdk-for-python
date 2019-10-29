@@ -1,21 +1,3 @@
-- [Azure App Configuration client library for Python](#azure-app-configuration-client-library-for-python "Azure App Configuration client library for Python")
-  - [Getting started](#getting-started "Getting started")
-    - [Supported Python version](#supported-python-version "Supported Python version")
-    - [Install the package](#install-the-package "Install the package")
-    - [Authenticate the client](#authenticate-the-client "Authenticate the client")
-      - [Get credentials](#get-credentials "Get credentials")
-      - [Create client](#create-client "Create client")
-  - [Key concepts](#key-concepts "Key concepts")
-    - [Configuration Setting](#configuration-setting "Configuration Setting")
-  - [Examples](#examples "Examples")
-    - [Create a Configuration Setting](#create-a-configuration-setting "Create a Configuration Setting")
-    - [Get a Configuration Setting](#get-a-configuration-setting "Get a Configuration Setting")
-    - [Delete a Configuration Setting](#delete-a-configuration-setting "Delete a Configuration Setting")
-    - [List Configuration Settings](#list-configuration-settings "List Configuration Settings")
-  - [Async Client](#async-client "Async Client")
-  - [Troubleshooting](#troubleshooting "Troubleshooting")
-    - [Logging](#logging "Logging")
-
 # Azure App Configuration client library for Python
 Azure App Configuration is a managed service that helps developers centralize their application configurations simply and securely.
 
