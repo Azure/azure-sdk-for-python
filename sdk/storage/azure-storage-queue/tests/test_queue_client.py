@@ -159,7 +159,7 @@ class StorageQueueClientTest(QueueTestCase):
                 test_service = service_type('testaccount', credential='', queue_name='foo')
 
             self.assertEqual(
-                str(e.exception), "You need to provide either a SAS token or an account key to authenticate.")
+                str(e.exception), "You need to provide either a SAS token or an account shared key to authenticate.")
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
