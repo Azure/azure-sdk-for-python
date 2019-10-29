@@ -119,9 +119,9 @@ class DatabaseProxy(object):
         See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :keyword session_token: Token for use with Session consistency.
+        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :rtype: Dict[Str, Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
         """
@@ -170,12 +170,12 @@ class DatabaseProxy(object):
         :param offer_throughput: The provisioned throughput for this offer.
         :param unique_key_policy: The unique key policy to apply to the container.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
-        :keyword session_token: Token for use with Session consistency.
+        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword Callable response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
@@ -255,12 +255,12 @@ class DatabaseProxy(object):
         :param offer_throughput: The provisioned throughput for this offer.
         :param unique_key_policy: The unique key policy to apply to the container.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
-        :keyword session_token: Token for use with Session consistency.
+        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword Callable response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `ContainerProxy` instance representing the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
@@ -301,12 +301,12 @@ class DatabaseProxy(object):
             pass in the ID of the container to delete, a :class:`ContainerProxy` instance or
             a dict representing the properties of the container.
         :param populate_query_metrics: Enable returning query metrics in response headers.
-        :keyword session_token: Token for use with Session consistency.
+        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword Callable response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
@@ -356,9 +356,9 @@ class DatabaseProxy(object):
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param populate_query_metrics: Enable returning query metrics in response headers.
-        :keyword session_token: Token for use with Session consistency.
+        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[dict[str, Any]]
 
@@ -404,9 +404,9 @@ class DatabaseProxy(object):
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param populate_query_metrics: Enable returning query metrics in response headers.
-        :keyword session_token: Token for use with Session consistency.
+        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -453,12 +453,12 @@ class DatabaseProxy(object):
             If unspecified, items do not expire.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :param populate_query_metrics: Enable returning query metrics in response headers.
-        :keyword session_token: Token for use with Session consistency.
+        :keyword str session_token: Token for use with Session consistency.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
         :returns: A `ContainerProxy` instance representing the container after replace completed.
@@ -512,7 +512,7 @@ class DatabaseProxy(object):
         See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param max_item_count: Max number of users to be returned in the enumeration operation.
-        :keyword Callable response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of user properties (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -538,7 +538,7 @@ class DatabaseProxy(object):
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of users to be returned in the enumeration operation.
-        :keyword Callable response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of user properties (dicts).
         :rtype: Iterable[str, Any]
         """
@@ -586,7 +586,7 @@ class DatabaseProxy(object):
 
         :param body: A dict-like object with an `id` key and value representing the user to be created.
          The user ID must be unique within the database, and consist of no more than 255 characters.
-        :keyword Callable response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `UserProxy` instance representing the new user.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be created.
         :rtype: ~azure.cosmos.UserProxy
@@ -623,7 +623,7 @@ class DatabaseProxy(object):
         See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param body: A dict-like object representing the user to update or insert.
-        :keyword Callable response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `UserProxy` instance representing the upserted user.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user could not be upserted.
         :rtype: ~azure.cosmos.UserProxy
@@ -657,7 +657,7 @@ class DatabaseProxy(object):
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be replaced.
         :param body: A dict-like object representing the user to replace.
-        :keyword Callable response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `UserProxy` instance representing the user after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the user with given
             id does not exist.
@@ -689,7 +689,7 @@ class DatabaseProxy(object):
 
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be deleted.
-        :keyword Callable response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The user wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The user does not exist in the container.
         :rtype: None
@@ -708,7 +708,7 @@ class DatabaseProxy(object):
         # type: (Any) -> Offer
         """Read the Offer object for this database.
 
-        :keyword Callable response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Offer for the database.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If no offer exists for the database or if the
          offer could not be retrieved.
@@ -738,7 +738,7 @@ class DatabaseProxy(object):
         """Replace the database level throughput.
 
         :param throughput: The throughput to be set (an integer).
-        :keyword Callable response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Offer for the database, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If no offer exists for the database or if the
          offer could not be updated.

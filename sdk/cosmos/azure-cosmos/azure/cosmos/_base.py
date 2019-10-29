@@ -96,6 +96,7 @@ def _get_match_headers(kwargs, match_param, etag_param):
         raise TypeError("Invalid match condition: {}".format(match_condition))
     return if_match, if_none_match
 
+
 def build_options(kwargs):
     # type: (Dict[str, Any]) -> Dict[str, Any]
     options = kwargs.pop('request_options', kwargs.pop('feed_options', {}))
