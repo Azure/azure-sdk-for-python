@@ -70,12 +70,12 @@ class UserProxy(object):
     @distributed_trace
     def read(self, **kwargs):
         # type: (Any) -> Dict[str, Any]
-        """
-        Read user propertes.
+        """Read user propertes.
 
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`UserProxy` instance representing the retrieved user.
+        See aka.ms/{} for a full list of optional request and feed keyword arguments.
+
+        :keyword Callable response_hook: a callable invoked with the response metadata
+        :returns: A dictionary of the retrieved user properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be retrieved.
         :rtype: dict[str, Any]
         """
@@ -92,12 +92,12 @@ class UserProxy(object):
     @distributed_trace
     def list_permissions(self, max_item_count=None, **kwargs):
         # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
-        """
-        List all permission for the user.
+        """List all permission for the user.
+
+        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param max_item_count: Max number of permissions to be returned in the enumeration operation.
-        :param feed_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: a callable invoked with the response metadata
         :returns: An Iterable of permissions (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -122,14 +122,14 @@ class UserProxy(object):
         **kwargs
     ):
         # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
-        """
-        Return all permissions matching the given `query`.
+        """Return all permissions matching the given `query`.
+
+        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of permissions to be returned in the enumeration operation.
-        :param feed_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: a callable invoked with the response metadata
         :returns: An Iterable of permissions (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -153,13 +153,13 @@ class UserProxy(object):
     @distributed_trace
     def get_permission(self, permission, **kwargs):
         # type: (str, Any) -> Permission
-        """
-        Get the permission identified by `id`.
+        """Get the permission identified by `id`.
+
+        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be retrieved.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: a callable invoked with the response metadata
         :returns: A dict representing the retrieved permission.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission couldn't be retrieved.
         :rtype: dict[str, Any]
@@ -185,13 +185,13 @@ class UserProxy(object):
     @distributed_trace
     def create_permission(self, body, **kwargs):
         # type: (Dict[str, Any], Any) -> Permission
-        """
-        Create a permission for the user.
+        """Create a permission for the user.
+
         To update or replace an existing permision, use the :func:`UserProxy.upsert_permission` method.
+        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param body: A dict-like object representing the permission to create.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: a callable invoked with the response metadata
         :returns: A dict representing the new permission.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission couldn't be created.
         :rtype: dict[str, Any]
@@ -217,13 +217,13 @@ class UserProxy(object):
     @distributed_trace
     def upsert_permission(self, body, **kwargs):
         # type: (Dict[str, Any], Any) -> Permission
-        """
-        Insert or update the specified permission.
+        """Insert or update the specified permission.
+
         If the permission already exists in the container, it is replaced. If it does not, it is inserted.
+        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param body: A dict-like object representing the permission to update or insert.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :param Callable response_hook: a callable invoked with the response metadata
         :returns: A dict representing the upserted permission.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission could not be upserted.
         :rtype: dict[str, Any]
@@ -249,14 +249,14 @@ class UserProxy(object):
     @distributed_trace
     def replace_permission(self, permission, body, **kwargs):
         # type: (str, Dict[str, Any], Any) -> Permission
-        """
-        Replaces the specified permission if it exists for the user.
+        """Replaces the specified permission if it exists for the user.
+
+        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be replaced.
         :param body: A dict-like object representing the permission to replace.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: a callable invoked with the response metadata
         :returns: A dict representing the permission after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the permission
             with given id does not exist.
@@ -283,13 +283,13 @@ class UserProxy(object):
     @distributed_trace
     def delete_permission(self, permission, **kwargs):
         # type: (str, Any) -> None
-        """
-        Delete the specified permission from the user.
+        """Delete the specified permission from the user.
+
+        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be replaced.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :keyword Callable response_hook: a callable invoked with the response metadata
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The permission wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The permission does not exist for the user.
         :rtype: None
