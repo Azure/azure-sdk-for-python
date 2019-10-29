@@ -119,7 +119,7 @@ To create the .cer certificate, execute this:
 
 After you have created the certificate, you will need to upload the .cer
 file to Microsoft Azure via the "Upload" action of the "Settings" tab of
-the `management portal <http://manage.windows.com>`__.
+the `management portal <http://manage.windowsazure.com>`__.
 
 
 ServiceManagementService
