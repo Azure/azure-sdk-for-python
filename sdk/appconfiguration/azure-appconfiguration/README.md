@@ -23,7 +23,7 @@ Modern programs, especially programs running in a cloud, generally have many com
 
 Use the client library for App Configuration to create and manage application configuration settings.
 
-[Source code]() | [Package (Pypi)][package] | [API reference documentation]() | [Product documentation][azconfig_docs]
+[Source code]() | [Package (Pypi)][package] | [API reference documentation][appconfig_rest] | [Product documentation][azconfig_docs]
 
 ## Getting started
 
@@ -201,3 +201,4 @@ Http request and response details are printed to stdout with this logging config
 [azure_sub]: https://azure.microsoft.com/free/
 [configuration_client_class]: ./azure/configuration/azure_configuration_client.py
 [package]: https://pypi.org/project/azure-app-configuration/
+[configuration_store]: https://azure.microsoft.com/en-us/services/app-configuration/
