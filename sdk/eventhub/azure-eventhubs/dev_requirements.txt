@@ -1,6 +1,4 @@
 -e ../../../tools/azure-sdk-tools
-../../core/azure-core
--e ../../identity/azure-identity
 -e ../../servicebus/azure-servicebus
 docutils>=0.14
 pygments>=2.2.0
