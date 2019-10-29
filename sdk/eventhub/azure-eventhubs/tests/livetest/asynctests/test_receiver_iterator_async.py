@@ -4,13 +4,10 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import os
-import asyncio
 import pytest
-import time
 
 from azure.eventhub import EventData, EventPosition, EventHubError, TransportType
-from azure.eventhub.aio import EventHubClient
+from azure.eventhub.aio._client_async import EventHubClient
 
 
 @pytest.mark.liveTest
@@ -18,7 +15,7 @@ from azure.eventhub.aio import EventHubClient
 async def test_receive_iterator_async(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     async with receiver:
         received = await receiver.receive(timeout=5)
         assert len(received) == 0

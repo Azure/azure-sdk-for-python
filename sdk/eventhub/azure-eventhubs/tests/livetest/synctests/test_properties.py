@@ -5,14 +5,14 @@
 #--------------------------------------------------------------------------
 
 import pytest
-from azure.eventhub import EventHubClient, EventHubSharedKeyCredential
+from azure.eventhub import EventHubSharedKeyCredential
+from azure.eventhub._client import EventHubClient
 
 
 @pytest.mark.liveTest
 def test_get_properties(live_eventhub):
     client = EventHubClient(live_eventhub['hostname'], live_eventhub['event_hub'],
-                                    EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
-                                    )
+                            EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key']))
     properties = client.get_properties()
     assert properties['path'] == live_eventhub['event_hub'] and properties['partition_ids'] == ['0', '1']
 
@@ -20,8 +20,7 @@ def test_get_properties(live_eventhub):
 @pytest.mark.liveTest
 def test_get_partition_ids(live_eventhub):
     client = EventHubClient(live_eventhub['hostname'], live_eventhub['event_hub'],
-                                    EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
-                                    )
+                            EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key']))
     partition_ids = client.get_partition_ids()
     assert partition_ids == ['0', '1']
 
@@ -29,8 +28,7 @@ def test_get_partition_ids(live_eventhub):
 @pytest.mark.liveTest
 def test_get_partition_properties(live_eventhub):
     client = EventHubClient(live_eventhub['hostname'], live_eventhub['event_hub'],
-                                    EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
-                                    )
+                            EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key']))
     properties = client.get_partition_properties('0')
     assert properties['event_hub_path'] == live_eventhub['event_hub'] \
         and properties['id'] == '0' \

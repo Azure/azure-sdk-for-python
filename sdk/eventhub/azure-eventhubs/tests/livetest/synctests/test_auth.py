@@ -7,34 +7,35 @@
 import pytest
 import time
 
-from azure.eventhub import EventData, EventHubClient, EventPosition
+from azure.eventhub import EventData, EventHubProducerClient, EventHubConsumerClient
 
 
 @pytest.mark.liveTest
 def test_client_secret_credential(aad_credential, live_eventhub):
     try:
-        from azure.identity import ClientSecretCredential
+        from azure.identity import EnvironmentCredential
     except ImportError:
         pytest.skip("No azure identity library")
-    client_id, secret, tenant_id = aad_credential
-    credential = ClientSecretCredential(client_id=client_id, client_secret=secret, tenant_id=tenant_id)
-    client = EventHubClient(host=live_eventhub['hostname'],
-                            event_hub_path=live_eventhub['event_hub'],
-                            credential=credential,
-                            user_agent='customized information')
-    sender = client.create_producer(partition_id='0')
-    receiver = client.create_consumer(consumer_group="$default", partition_id='0', event_position=EventPosition("@latest"))
 
-    with receiver:
-        received = receiver.receive(timeout=3)
-        assert len(received) == 0
+    credential = EnvironmentCredential()
+    producer_client = EventHubProducerClient(host=live_eventhub['hostname'],
+                                             event_hub_path=live_eventhub['event_hub'],
+                                             credential=credential,
+                                             user_agent='customized information')
+    consumer_client = EventHubConsumerClient(host=live_eventhub['hostname'],
+                                             event_hub_path=live_eventhub['event_hub'],
+                                             credential=credential,
+                                             user_agent='customized information')
 
-        with sender:
-            event = EventData(body='A single message')
-            sender.send(event)
-        time.sleep(1)
+    with producer_client:
+        producer_client.send(EventData(body='A single message'))
 
-        received = receiver.receive(timeout=3)
+    def event_handler(partition_context, events):
+        assert partition_context.partition_id == '0'
+        assert len(events) == 1
+        assert list(events[0].body)[0] == 'A single message'.encode('utf-8')
 
-        assert len(received) == 1
-        assert list(received[0].body)[0] == 'A single message'.encode('utf-8')
+    with consumer_client:
+        task = consumer_client.receive(event_handler=event_handler, consumer_group='$default', partition_id=0)
+        time.sleep(2)
+        task.cancel()

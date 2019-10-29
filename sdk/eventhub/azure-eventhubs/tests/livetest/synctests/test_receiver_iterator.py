@@ -5,18 +5,16 @@
 #--------------------------------------------------------------------------
 
 import pytest
-import time
-import datetime
-from threading import Thread
 
-from azure.eventhub import EventData, EventHubClient, EventPosition, TransportType
+from azure.eventhub import EventData, EventPosition
+from azure.eventhub._client import EventHubClient
 
 
 @pytest.mark.liveTest
 def test_receive_iterator(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     with receiver:
         received = receiver.receive(timeout=5)
         assert len(received) == 0

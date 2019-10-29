@@ -8,14 +8,15 @@ import pytest
 import asyncio
 
 from azure.eventhub import EventData, EventHubError
-from azure.eventhub.aio import EventHubClient
-from azure.eventhub.aio.eventprocessor import EventProcessor, SamplePartitionManager, PartitionProcessor, \
-    CloseReason, OwnershipLostError
+from azure.eventhub.aio._client_async import EventHubClient
+from azure.eventhub.aio._eventprocessor.event_processor import EventProcessor, CloseReason
+from azure.eventhub.aio._eventprocessor.local_partition_manager import InMemoryPartitionManager
+from azure.eventhub.aio._eventprocessor.partition_manager import OwnershipLostError
 
 
-class LoadBalancerPartitionProcessor(PartitionProcessor):
-    async def process_events(self, events, partition_context):
-        pass
+async def event_handler(partition_context, events):
+    pass
+
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
@@ -25,33 +26,55 @@ async def test_loadbalancer_balance(connstr_senders):
     for sender in senders:
         sender.send(EventData("EventProcessor Test"))
     eventhub_client = EventHubClient.from_connection_string(connection_str, receive_timeout=3)
-    partition_manager = SamplePartitionManager()
+    partition_manager = InMemoryPartitionManager()
 
-    event_processor1 = EventProcessor(eventhub_client, "$default", LoadBalancerPartitionProcessor,
-                                     partition_manager, polling_interval=1)
-    asyncio.ensure_future(event_processor1.start())
-    await asyncio.sleep(5)
+    event_processor1 = EventProcessor(eventhub_client=eventhub_client,
+                                      consumer_group_name='$default',
+                                      partition_manager=partition_manager,
+                                      event_handler=event_handler,
+                                      error_handler=None,
+                                      partition_initialize_handler=None,
+                                      partition_close_handler=None,
+                                      polling_interval=1)
+
+    task1 = asyncio.ensure_future(event_processor1.start())
+    await asyncio.sleep(3)
     assert len(event_processor1._tasks) == 2  # event_processor1 claims two partitions
 
-    event_processor2 = EventProcessor(eventhub_client, "$default", LoadBalancerPartitionProcessor,
-                                     partition_manager, polling_interval=1)
+    event_processor2 = EventProcessor(eventhub_client=eventhub_client,
+                                      consumer_group_name='$default',
+                                      partition_manager=partition_manager,
+                                      event_handler=event_handler,
+                                      error_handler=None,
+                                      partition_initialize_handler=None,
+                                      partition_close_handler=None,
+                                      polling_interval=1)
 
-    asyncio.ensure_future(event_processor2.start())
-    await asyncio.sleep(5)
+    task2 = asyncio.ensure_future(event_processor2.start())
+    await asyncio.sleep(3)
     assert len(event_processor1._tasks) == 1  # two event processors balance. So each has 1 task
     assert len(event_processor2._tasks) == 1
 
-    event_processor3 = EventProcessor(eventhub_client, "$default", LoadBalancerPartitionProcessor,
-                                      partition_manager, polling_interval=1)
-    asyncio.ensure_future(event_processor3.start())
-    await asyncio.sleep(5)
+    event_processor3 = EventProcessor(eventhub_client=eventhub_client,
+                                      consumer_group_name='$default',
+                                      partition_manager=partition_manager,
+                                      event_handler=event_handler,
+                                      error_handler=None,
+                                      partition_initialize_handler=None,
+                                      partition_close_handler=None,
+                                      polling_interval=1)
+    task3 = asyncio.ensure_future(event_processor3.start())
+    await asyncio.sleep(3)
     assert len(event_processor3._tasks) == 0
     await event_processor3.stop()
 
     await event_processor1.stop()
-    await asyncio.sleep(5)
+    await asyncio.sleep(3)
     assert len(event_processor2._tasks) == 2  # event_procesor2 takes another one after event_processor1 stops
     await event_processor2.stop()
+
+    await eventhub_client.close()
+    await asyncio.gather(*[task1, task2, task3])
 
 
 @pytest.mark.asyncio

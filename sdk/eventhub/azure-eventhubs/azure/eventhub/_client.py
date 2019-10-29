@@ -143,7 +143,6 @@ class EventHubClient(EventHubClientAbstract):
         log.info("%r returns an exception %r", self._container_id, last_exception)  # pylint:disable=specify-parameter-names-in-call
         raise last_exception
 
-
     def get_properties(self):
         # type:() -> Dict[str, Any]
         """

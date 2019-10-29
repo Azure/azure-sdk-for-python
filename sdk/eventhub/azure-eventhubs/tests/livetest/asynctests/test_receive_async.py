@@ -4,13 +4,12 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import os
 import asyncio
 import pytest
 import time
 
-from azure.eventhub import EventData, EventPosition, EventHubError, TransportType, ConnectionLostError, ConnectError
-from azure.eventhub.aio import EventHubClient
+from azure.eventhub import EventData, EventPosition, TransportType, ConnectionLostError
+from azure.eventhub.aio._client_async import EventHubClient
 
 
 @pytest.mark.liveTest
@@ -18,7 +17,7 @@ from azure.eventhub.aio import EventHubClient
 async def test_receive_end_of_stream_async(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     async with receiver:
         received = await receiver.receive(timeout=5)
         assert len(received) == 0
@@ -34,7 +33,7 @@ async def test_receive_end_of_stream_async(connstr_senders):
 async def test_receive_with_offset_async(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     async with receiver:
         received = await receiver.receive(timeout=5)
         assert len(received) == 0
@@ -44,7 +43,7 @@ async def test_receive_with_offset_async(connstr_senders):
         assert len(received) == 1
         offset = received[0].offset
 
-    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, inclusive=False))
+    offset_receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, inclusive=False))
     async with offset_receiver:
         received = await offset_receiver.receive(timeout=5)
         assert len(received) == 0
@@ -58,7 +57,7 @@ async def test_receive_with_offset_async(connstr_senders):
 async def test_receive_with_inclusive_offset_async(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     async with receiver:
         received = await receiver.receive(timeout=5)
         assert len(received) == 0
@@ -68,7 +67,7 @@ async def test_receive_with_inclusive_offset_async(connstr_senders):
         assert len(received) == 1
         offset = received[0].offset
 
-    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, inclusive=True))
+    offset_receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, inclusive=True))
     async with offset_receiver:
         received = await offset_receiver.receive(timeout=5)
         assert len(received) == 1
@@ -79,7 +78,7 @@ async def test_receive_with_inclusive_offset_async(connstr_senders):
 async def test_receive_with_datetime_async(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     async with receiver:
         received = await receiver.receive(timeout=5)
         assert len(received) == 0
@@ -88,7 +87,7 @@ async def test_receive_with_datetime_async(connstr_senders):
         assert len(received) == 1
         offset = received[0].enqueued_time
 
-    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset))
+    offset_receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset))
     async with offset_receiver:
         received = await offset_receiver.receive(timeout=5)
         assert len(received) == 0
@@ -103,7 +102,7 @@ async def test_receive_with_datetime_async(connstr_senders):
 async def test_receive_with_sequence_no_async(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     async with receiver:
         received = await receiver.receive(timeout=5)
         assert len(received) == 0
@@ -112,7 +111,7 @@ async def test_receive_with_sequence_no_async(connstr_senders):
         assert len(received) == 1
         offset = received[0].sequence_number
 
-    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset))
+    offset_receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset))
     async with offset_receiver:
         received = await offset_receiver.receive(timeout=5)
         assert len(received) == 0
@@ -127,7 +126,7 @@ async def test_receive_with_sequence_no_async(connstr_senders):
 async def test_receive_with_inclusive_sequence_no_async(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     async with receiver:
         received = await receiver.receive(timeout=5)
         assert len(received) == 0
@@ -136,7 +135,7 @@ async def test_receive_with_inclusive_sequence_no_async(connstr_senders):
         assert len(received) == 1
         offset = received[0].sequence_number
 
-    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, inclusive=True))
+    offset_receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, inclusive=True))
     async with offset_receiver:
         received = await offset_receiver.receive(timeout=5)
         assert len(received) == 1
@@ -147,7 +146,7 @@ async def test_receive_with_inclusive_sequence_no_async(connstr_senders):
 async def test_receive_batch_async(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
     async with receiver:
         received = await receiver.receive(timeout=5)
         assert len(received) == 0
@@ -185,8 +184,8 @@ async def test_exclusive_receiver_async(connstr_senders):
     senders[0].send(EventData(b"Receiving only a single event"))
 
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver1 = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), owner_level=10, prefetch=5)
-    receiver2 = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), owner_level=20, prefetch=10)
+    receiver1 = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), owner_level=10, prefetch=5)
+    receiver2 = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), owner_level=20, prefetch=10)
     try:
         await pump(receiver1)
         output2 = await pump(receiver2)
@@ -209,7 +208,7 @@ async def test_multiple_receiver_async(connstr_senders):
     assert partitions["partition_ids"] == ["0", "1"]
     receivers = []
     for i in range(2):
-        receivers.append(client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), prefetch=10))
+        receivers.append(client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), prefetch=10))
     try:
         more_partitions = await client.get_properties()
         assert more_partitions["partition_ids"] == ["0", "1"]
@@ -230,8 +229,8 @@ async def test_exclusive_receiver_after_non_exclusive_receiver_async(connstr_sen
     senders[0].send(EventData(b"Receiving only a single event"))
 
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver1 = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), prefetch=10)
-    receiver2 = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), owner_level=15, prefetch=10)
+    receiver1 = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), prefetch=10)
+    receiver2 = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), owner_level=15, prefetch=10)
     try:
         await pump(receiver1)
         output2 = await pump(receiver2)
@@ -250,8 +249,8 @@ async def test_non_exclusive_receiver_after_exclusive_receiver_async(connstr_sen
     senders[0].send(EventData(b"Receiving only a single event"))
 
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver1 = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), owner_level=15, prefetch=10)
-    receiver2 = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), prefetch=10)
+    receiver1 = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), owner_level=15, prefetch=10)
+    receiver2 = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), prefetch=10)
     try:
         output1 = await pump(receiver1)
         with pytest.raises(ConnectionLostError):
@@ -281,7 +280,7 @@ async def test_receive_batch_with_app_prop_async(connstr_senders):
             yield ed
 
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
     async with receiver:
         received = await receiver.receive(timeout=5)
         assert len(received) == 0
@@ -304,7 +303,7 @@ async def test_receive_batch_with_app_prop_async(connstr_senders):
 async def test_receive_over_websocket_async(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
 
     event_list = []
     for i in range(20):
@@ -332,7 +331,7 @@ async def test_receive_run_time_metric_async(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket,
                                                    network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0",
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0",
                                       event_position=EventPosition('@latest'), prefetch=500,
                                       track_last_enqueued_event_properties=True)
 
