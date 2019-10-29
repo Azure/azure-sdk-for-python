@@ -179,3 +179,6 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [ref_inkrecognizer_client]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-inkrecognizer/azure/cognitiveservices/inkrecognizer/_client.py
 [samples]: https://github.com/Azure-Samples/cognitive-services-python-sdk-samples/tree/master/samples/vision
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-inkrecognizer
+
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fcognitiveservices%2Fazure-cognitiveservices-inkrecognizer%2FREADME.png)

@@ -30,4 +30,4 @@ If you encounter any bugs or have suggestions, please file an issue in the
 section of the project.
 
 
-.. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-marketplaceordering%2FREADME.png
+.. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fmarketplaceordering%2Fazure-mgmt-marketplaceordering%2FREADME.png

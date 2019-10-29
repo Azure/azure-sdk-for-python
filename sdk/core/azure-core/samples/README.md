@@ -17,3 +17,6 @@ They are not intended to be ran as standalone application, but show you how thes
 [test_example_async.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/samples/test_example_async.py) - samples of how to create an async pipeline
 
 [test_example_sansio.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/samples/test_example_sansio.py) - samples of how to config policies
+
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fcore%2Fazure-core%2Fsamples%2FREADME.png)

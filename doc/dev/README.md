@@ -8,3 +8,5 @@ Overview of the documents:
 - [packaging.md](./packaging.md) : How to organize packaging information for packages under `azure`
 
 The [mgmt](./mgmt) folder contains information specific to management packages (i.e. packages prefixed by `azure-mgmt`)
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fdoc%2Fdev%2FREADME.png)

@@ -30,3 +30,6 @@ For more information see the
 or contact
 `opencode@microsoft.com <mailto:opencode@microsoft.com>`__
 with any additional questions or comments.
+
+
+.. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Ftools%2Fazure-devtools%2FREADME.png

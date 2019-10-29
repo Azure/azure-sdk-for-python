@@ -134,3 +134,5 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 If you'd like to contribute to this library, please read the contributing guide to learn more about how to build and test the code.
 
 This project has adopted the Microsoft Open Source Code of Conduct. For more information see the Code of Conduct FAQ or contact opencode@microsoft.com with any additional questions or comments.
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsamples%2Fsmoketest%2FREADME.png)

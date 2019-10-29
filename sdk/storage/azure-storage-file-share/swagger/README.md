@@ -97,3 +97,6 @@ directive:
     delete $["x-ms-enum"];
     $["x-ms-parameter-location"] = "method";
 ```
+
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fstorage%2Fazure-storage-file-share%2Fswagger%2FREADME.png)

@@ -67,3 +67,6 @@ swagger-to-sdk:
 ## Python
 
 See configuration in [readme.python.md](./readme.python.md)
+
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fdoc%2Fdev%2Fmgmt%2Fswagger%2Fmulti_api%2Freadme.png)

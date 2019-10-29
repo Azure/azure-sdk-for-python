@@ -256,4 +256,4 @@ Learn More
 Center <http://azure.microsoft.com/en-us/develop/python/>`__
 
 
-.. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-servicemanagement-legacy%2FREADME.png
+.. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fcore%2Fazure-servicemanagement-legacy%2FREADME.png
