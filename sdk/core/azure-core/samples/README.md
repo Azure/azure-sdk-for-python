@@ -1,13 +1,12 @@
 ---
-topic: sample
+page_type: sample
 languages:
   - python
 products:
   - azure
-  - azure-core
 ---
 
-# Azure Core Samples
+# Azure Core Library Python Samples
 
 These are some code snippets that show the way in which you can set up some functionalities used in new SDKs such as logging, pipelines, etc.
 
