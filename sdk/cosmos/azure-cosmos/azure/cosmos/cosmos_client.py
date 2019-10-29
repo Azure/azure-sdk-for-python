@@ -285,7 +285,7 @@ class CosmosClient(object):
         if they differ from what was passed into the method.
         See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
-        :param id: ID (name) of the database to read or create.   
+        :param id: ID (name) of the database to read or create.
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :param int offer_throughput: The provisioned throughput for this offer.
         :keyword str session_token: Token for use with Session consistency.

@@ -440,7 +440,7 @@ class DatabaseProxy(object):
     ):
         # type: (...) -> ContainerProxy
         """Reset the properties of the container.
-        
+
         Property changes are persisted immediately. Any properties not specified will be reset to
         their default values.
         See aka.ms/{} for a full list of optional request and feed keyword arguments.
