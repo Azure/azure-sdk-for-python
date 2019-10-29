@@ -145,17 +145,17 @@ keys and supported operations and algorithms, see the
 
 [KeyClient](key_client_docs) can create keys in the vault, get existing keys
 from the vault, update key metadata, and delete keys, as shown in the
-[examples](#examples) below.
+[examples](#examples "examples") below.
 
 ## Examples
 This section contains code snippets covering common tasks:
-* [Create a Key](#create-a-key)
-* [Retrieve a Key](#retrieve-a-key)
-* [Update an existing Key](#update-an-existing-key)
-* [Delete a Key](#delete-a-key)
-* [List Keys](#list-keys)
-* [Asynchronously create a Key](#asynchronously-create-a-key)
-* [Asynchronously list Keys](#asynchronously-list-keys)
+* [Create a Key](#create-a-key "Create a Key")
+* [Retrieve a Key](#retrieve-a-key "Retrieve a Key")
+* [Update an existing Key](#update-an-existing-key "Update an existing Key")
+* [Delete a Key](#delete-a-key "Delete a Key")
+* [List Keys](#list-keys "List Keys")
+* [Asynchronously create a Key](#asynchronously-create-a-key "Asynchronously create a Key")
+* [Asynchronously list Keys](#asynchronously-list-keys "Asynchronously list Keys")
 * [Perform cryptographic operations](#cryptographic-operations)
 
 ### Create a Key
@@ -273,7 +273,7 @@ See the
 [package documentation](https://aka.ms/azsdk-python-keyvault-keys-crypto-ref)
 for more details of the cryptography API.
 
-### Async operations
+### Async API
 This library includes a complete async API supported on Python 3.5+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See

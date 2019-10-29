@@ -141,21 +141,21 @@ A secret consists of a secret value and its associated metadata and management
 information. This library handles secret values as strings, but Azure Key Vault
 doesn't store them as such. For more information about secrets and how Key
 Vault stores and manages them, see the
-[Key Vault documentation](https://docs.microsoft.com/en-us/azure/key-vault/about-keys-secrets-and-certificates#key-vault-secrets)
-.
+[Key Vault documentation](https://docs.microsoft.com/en-us/azure/key-vault/about-keys-secrets-and-certificates#key-vault-secrets).
 
 [SecretClient][secret_client_docs] can set secret values in the vault, update
-secret metadata, and delete secrets, as shown in the [examples](#examples) below.
+secret metadata, and delete secrets, as shown in the
+[examples](#examples "examples") below.
 
 ## Examples
 This section contains code snippets covering common tasks:
-* [Set a Secret](#set-a-secret)
-* [Retrieve a Secret](#retrieve-a-secret)
-* [Update Secret metadata](#update-secret-metadata)
-* [Delete a Secret](#delete-a-secret)
-* [List Secrets](#list-secrets)
-* [Async create a Secret](#async-create-a-secret)
-* [Async list Secrets](#async-list-secrets)
+* [Set a Secret](#set-a-secret "Set a Secret")
+* [Retrieve a Secret](#retrieve-a-secret "Retrieve a Secret")
+* [Update Secret metadata](#update-secret-metadata "Update Secret metadata")
+* [Delete a Secret](#delete-a-secret "Delete a Secret")
+* [List Secrets](#list-secrets "List Secrets")
+* [Asynchronously create a Secret](#asynchronously-create-a-secret "Asynchronously create a Secret")
+* [Asynchronously list Secrets](#asynchronously-list-secrets "Asynchronously list Secrets")
 
 ### Set a Secret
 [set_secret](https://aka.ms/azsdk-python-keyvault-secrets-set-secret) creates
@@ -255,7 +255,7 @@ properties of all of the secrets in the client's vault. This list doesn't includ
         print(secret_property.name)
 ```
 
-### Async operations
+### Async API
 This library includes a complete async API supported on Python 3.5+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
@@ -279,7 +279,7 @@ specified optional arguments.
     print(secret.properties.version)
 ```
 
-### Async list secrets
+### Asynchronously list secrets
 [list_properties_of_secrets](https://aka.ms/azsdk-python-keyvault-secrets-async-list-properties-secrets-ref) lists the
 properties of all of the secrets in the client's vault.
 
