@@ -59,6 +59,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -67,7 +68,6 @@ setup(
     install_requires=[
         'azure-storage-blob<=12.1,>=12.0.0b4',
         'azure-eventhub<6.0.0,>=5.0.0b4',
-        'aiohttp<4.0,>=3.0',
     ],
     extras_require={
 
