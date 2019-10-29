@@ -7,13 +7,14 @@ import traceback
 import urllib3
 from requests.utils import DEFAULT_CA_BUNDLE_PATH as CaCertPath
 
-import samples.Shared.config as cfg
+import config
 
-HOST = cfg.settings['host']
-MASTER_KEY = cfg.settings['master_key']
-DATABASE_ID = cfg.settings['database_id']
+HOST = config.settings['host']
+MASTER_KEY = config.settings['master_key']
+DATABASE_ID = config.settings['database_id']
 CONTAINER_ID = "index-samples"
 PARTITION_KEY = PartitionKey(path='/id', kind='Hash')
+
 # A typical collection has the following properties within it's indexingPolicy property
 #   indexingMode
 #   automatic
@@ -33,7 +34,7 @@ PARTITION_KEY = PartitionKey(path='/id', kind='Hash')
 # Setup the certificate file in .pem format. 
 # If you still get an SSLError, try disabling certificate verification and suppress warnings
 
-def ObtainClient():
+def obtain_client():
     connection_policy = documents.ConnectionPolicy()
     connection_policy.SSLConfiguration = documents.SSLConfiguration()
     # Try to setup the cacert.pem
@@ -46,7 +47,7 @@ def ObtainClient():
 
 
 # Query for Entity / Entities
-def Query_Entities(parent, entity_type, id = None):
+def query_entities(parent, entity_type, id = None):
     find_entity_by_id_query = {
             "query": "SELECT * FROM r WHERE r.id=@id",
             "parameters": [
@@ -83,9 +84,9 @@ def Query_Entities(parent, entity_type, id = None):
     return None
 
 
-def CreateDatabaseIfNotExists(client, database_id):
+def create_database_if_not_exists(client, database_id):
     try:
-        database = Query_Entities(client, 'database', id = database_id)
+        database = query_entities(client, 'database', id = database_id)
         if database == None:
             return client.create_database(id=database_id)
         else:
@@ -94,7 +95,7 @@ def CreateDatabaseIfNotExists(client, database_id):
         pass
 
 
-def DeleteContainerIfExists(db, collection_id):
+def delete_container_if_exists(db, collection_id):
     try:
         db.delete_container(collection_id)
         print('Collection with id \'{0}\' was deleted'.format(collection_id))
@@ -112,8 +113,8 @@ def print_dictionary_items(dict):
     print()
 
 
-def FetchAllDatabases(client):
-    databases = Query_Entities(client, 'database')
+def fetch_all_databases(client):
+    databases = query_entities(client, 'database')
     print("-" * 41)
     print("-" * 41)
     for db in databases:
@@ -121,7 +122,7 @@ def FetchAllDatabases(client):
         print("-" * 41)
 
 
-def QueryDocumentsWithCustomQuery(container, query_with_optional_parameters, message = "Document(s) found by query: "):
+def query_documents_with_custom_query(container, query_with_optional_parameters, message = "Document(s) found by query: "):
     try:
         results = list(container.query_items(query_with_optional_parameters, enable_cross_partition_query=True))
         print(message)
@@ -141,7 +142,7 @@ def QueryDocumentsWithCustomQuery(container, query_with_optional_parameters, mes
         print()
 
 
-def ExplicitlyExcludeFromIndex(db):
+def explicitly_exclude_from_index(db):
     """ The default index policy on a DocumentContainer will AUTOMATICALLY index ALL documents added.
         There may be scenarios where you want to exclude a specific doc from the index even though all other 
         documents are being indexed automatically. 
@@ -149,7 +150,7 @@ def ExplicitlyExcludeFromIndex(db):
 
     """
     try:
-        DeleteContainerIfExists(db, CONTAINER_ID)
+        delete_container_if_exists(db, CONTAINER_ID)
 
         # Create a collection with default index policy (i.e. automatic = true)
         created_Container = db.create_container(id=CONTAINER_ID, partition_key=PARTITION_KEY)
@@ -169,7 +170,7 @@ def ExplicitlyExcludeFromIndex(db):
                 "query": "SELECT * FROM r WHERE r.orderId=@orderNo",
                 "parameters": [ { "name":"@orderNo", "value": "order1" } ]
             }
-        QueryDocumentsWithCustomQuery(created_Container, query)
+        query_documents_with_custom_query(created_Container, query)
 
         # Now, create a document but this time explictly exclude it from the collection using IndexingDirective
         # Then query for that document
@@ -186,7 +187,7 @@ def ExplicitlyExcludeFromIndex(db):
                 "query": "SELECT * FROM r WHERE r.orderId=@orderNo",
                 "parameters": [ { "name":"@orderNo", "value": "order2" } ]
                 }
-        QueryDocumentsWithCustomQuery(created_Container, query)
+        query_documents_with_custom_query(created_Container, query)
 
         docRead = created_Container.read_item(item="doc2", partition_key="doc2")
         print("Document read by ID: \n", docRead["id"])
@@ -200,14 +201,14 @@ def ExplicitlyExcludeFromIndex(db):
         print("Entity doesn't exist")
 
 
-def UseManualIndexing(db):
+def use_manual_indexing(db):
     """The default index policy on a DocumentContainer will AUTOMATICALLY index ALL documents added.
        There may be cases where you can want to turn-off automatic indexing and only selectively add only specific documents to the index. 
        This method demonstrates how to control this by setting the value of automatic within indexingPolicy to False
 
     """
     try:
-        DeleteContainerIfExists(db, CONTAINER_ID)
+        delete_container_if_exists(db, CONTAINER_ID)
 
         # Create a collection with manual (instead of automatic) indexing
         created_Container = db.create_container(
@@ -233,7 +234,7 @@ def UseManualIndexing(db):
                 "query": "SELECT * FROM r WHERE r.orderId=@orderNo",
                 "parameters": [ { "name":"@orderNo", "value": "order1" } ]
             }
-        QueryDocumentsWithCustomQuery(created_Container, query)
+        query_documents_with_custom_query(created_Container, query)
 
         docRead = created_Container.read_item(item="doc1", partition_key="doc1")
         print("Document read by ID: \n", docRead["id"])
@@ -251,7 +252,7 @@ def UseManualIndexing(db):
                 "query": "SELECT * FROM r WHERE r.orderId=@orderNo",
                 "parameters": [ { "name":"@orderNo", "value": "order2" } ]
             }
-        QueryDocumentsWithCustomQuery(created_Container, query)
+        query_documents_with_custom_query(created_Container, query)
 
         # Cleanup
         db.delete_container(created_Container)
@@ -262,7 +263,7 @@ def UseManualIndexing(db):
         print("Entity doesn't exist")
 
 
-def ExcludePathsFromIndex(db):
+def exclude_paths_from_index(db):
     """The default behavior is for Cosmos to index every attribute in every document automatically.
        There are times when a document contains large amounts of information, in deeply nested structures
        that you know you will never search on. In extreme cases like this, you can exclude paths from the 
@@ -271,7 +272,7 @@ def ExcludePathsFromIndex(db):
        This method demonstrates how to set excludedPaths within indexingPolicy
     """
     try:
-        DeleteContainerIfExists(db, CONTAINER_ID)
+        delete_container_if_exists(db, CONTAINER_ID)
 
         doc_with_nested_structures = {
             "id" : "doc1",
@@ -311,20 +312,20 @@ def ExcludePathsFromIndex(db):
 
         # Querying for a document on either metaData or /subDoc/subSubDoc/someProperty > fail because these paths were excluded and they raise a BadRequest(400) Exception
         query = {"query": "SELECT * FROM r WHERE r.metaData=@desiredValue", "parameters" : [{ "name":"@desiredValue", "value": "meta" }]}
-        QueryDocumentsWithCustomQuery(created_Container, query)
+        query_documents_with_custom_query(created_Container, query)
 
         query = {"query": "SELECT * FROM r WHERE r.subDoc.nonSearchable=@desiredValue", "parameters" : [{ "name":"@desiredValue", "value": "value" }]}
-        QueryDocumentsWithCustomQuery(created_Container, query)
+        query_documents_with_custom_query(created_Container, query)
 
         query = {"query": "SELECT * FROM r WHERE r.excludedNode.subExcludedNode.someProperty=@desiredValue", "parameters" : [{ "name":"@desiredValue", "value": "value" }]}
-        QueryDocumentsWithCustomQuery(created_Container, query)
+        query_documents_with_custom_query(created_Container, query)
 
         # Querying for a document using foo, or even subDoc/searchable > succeed because they were not excluded
         query = {"query": "SELECT * FROM r WHERE r.foo=@desiredValue", "parameters" : [{ "name":"@desiredValue", "value": "bar" }]}
-        QueryDocumentsWithCustomQuery(created_Container, query)
+        query_documents_with_custom_query(created_Container, query)
 
         query = {"query": "SELECT * FROM r WHERE r.subDoc.searchable=@desiredValue", "parameters" : [{ "name":"@desiredValue", "value": "searchable" }]}
-        QueryDocumentsWithCustomQuery(created_Container, query)
+        query_documents_with_custom_query(created_Container, query)
 
         # Cleanup
         db.delete_container(created_Container)
@@ -335,7 +336,7 @@ def ExcludePathsFromIndex(db):
         print("Entity doesn't exist")
 
 
-def RangeScanOnHashIndex(db):
+def range_scan_on_hash_index(db):
     """When a range index is not available (i.e. Only hash or no index found on the path), comparisons queries can still 
        be performed as scans using Allow scan request headers passed through options
 
@@ -347,7 +348,7 @@ def RangeScanOnHashIndex(db):
        on RequstUnits charged for an operation and will likely result in queries being throttled sooner.
     """
     try:
-        DeleteContainerIfExists(db, CONTAINER_ID)
+        delete_container_if_exists(db, CONTAINER_ID)
 
         # Force a range scan operation on a hash indexed path
         collection_to_create = { "id" : CONTAINER_ID ,
@@ -374,12 +375,12 @@ def RangeScanOnHashIndex(db):
 
         # Query for length > 5 - fail, this is a range based query on a Hash index only document
         query = { "query": "SELECT * FROM r WHERE r.length > 5" }
-        QueryDocumentsWithCustomQuery(created_Container, query)
+        query_documents_with_custom_query(created_Container, query)
 
         # Now add IndexingDirective and repeat query
         # expect 200 OK because now we are explicitly allowing scans in a query
         # using the enableScanInQuery directive
-        QueryDocumentsWithCustomQuery(created_Container, query)
+        query_documents_with_custom_query(created_Container, query)
         results = list(created_Container.query_items(
             query,
             enable_scan_in_query=True,
@@ -397,13 +398,13 @@ def RangeScanOnHashIndex(db):
         print("Entity doesn't exist")
 
 
-def UseRangeIndexesOnStrings(db):
+def use_range_indexes_on_strings(db):
     """Showing how range queries can be performed even on strings.
 
     """
     try:
-        DeleteContainerIfExists(db, CONTAINER_ID)
-        # collections = Query_Entities(client, 'collection', parent_link = database_link)
+        delete_container_if_exists(db, CONTAINER_ID)
+        # collections = query_entities(client, 'collection', parent_link = database_link)
         # print(collections)
 
         # Use range indexes on strings
@@ -467,13 +468,13 @@ def UseRangeIndexesOnStrings(db):
         # Now ordering against region is allowed. You can run the following query
         query = { "query" : "SELECT * FROM r ORDER BY r.region" }
         message = "Documents ordered by region"
-        QueryDocumentsWithCustomQuery(created_Container, query, message)
+        query_documents_with_custom_query(created_Container, query, message)
 
         # You can also perform filters against string comparison like >= 'UK'. Note that you can perform a prefix query, 
         # the equivalent of LIKE 'U%' (is >= 'U' AND < 'U')
         query = { "query" : "SELECT * FROM r WHERE r.region >= 'U'" }
         message = "Documents with region begining with U"
-        QueryDocumentsWithCustomQuery(created_Container, query, message)
+        query_documents_with_custom_query(created_Container, query, message)
 
         # Cleanup
         db.delete_container(created_Container)
@@ -484,9 +485,9 @@ def UseRangeIndexesOnStrings(db):
         print("Entity doesn't exist")
 
 
-def PerformIndexTransformations(db):
+def perform_index_transformations(db):
     try:
-        DeleteContainerIfExists(db, CONTAINER_ID)
+        delete_container_if_exists(db, CONTAINER_ID)
 
         # Create a collection with default indexing policy
         created_Container = db.create_container(id=CONTAINER_ID, partition_key=PARTITION_KEY)
@@ -543,9 +544,9 @@ def PerformIndexTransformations(db):
         print("Entity doesn't exist")
 
 
-def PerformMultiOrderbyQuery(db):
+def perform_multi_orderby_query(db):
     try:
-        DeleteContainerIfExists(db, CONTAINER_ID)
+        delete_container_if_exists(db, CONTAINER_ID)
 
         # Create a collection with composite indexes
         indexing_policy = {
@@ -615,7 +616,7 @@ def PerformMultiOrderbyQuery(db):
         query = {
                 "query": "SELECT * FROM r ORDER BY r.numberField ASC, r.stringField DESC",
                 }
-        QueryDocumentsWithCustomQuery(created_container, query)
+        query_documents_with_custom_query(created_container, query)
 
         print("Query documents and Order by inverted 2nd composite index -")
         print("Ascending numberField, Descending stringField, Ascending numberField2, Descending stringField2")
@@ -623,7 +624,7 @@ def PerformMultiOrderbyQuery(db):
         query = {
                 "query": "SELECT * FROM r ORDER BY r.numberField ASC, r.stringField DESC, r.numberField2 ASC, r.stringField2 DESC",
                 }
-        QueryDocumentsWithCustomQuery(created_container, query)
+        query_documents_with_custom_query(created_container, query)
 
         # Cleanup
         db.delete_container(created_container)
@@ -634,42 +635,38 @@ def PerformMultiOrderbyQuery(db):
         print("Entity doesn't exist")
 
 
-def RunIndexDemo():
+def run_sample():
     try:
-        client = ObtainClient()
-        FetchAllDatabases(client)
+        client = obtain_client()
+        fetch_all_databases(client)
 
         # Create database if doesn't exist already.
-        created_db = CreateDatabaseIfNotExists(client, DATABASE_ID)
+        created_db = create_database_if_not_exists(client, DATABASE_ID)
         print(created_db)
 
         # 1. Exclude a document from the index
-        ExplicitlyExcludeFromIndex(created_db)
+        explicitly_exclude_from_index(created_db)
 
         # 2. Use manual (instead of automatic) indexing
-        UseManualIndexing(created_db)
+        use_manual_indexing(created_db)
 
         # 4. Exclude specified document paths from the index
-        ExcludePathsFromIndex(created_db)
+        exclude_paths_from_index(created_db)
 
         # 5. Force a range scan operation on a hash indexed path
-        RangeScanOnHashIndex(created_db)
+        range_scan_on_hash_index(created_db)
 
         # 6. Use range indexes on strings
-        UseRangeIndexesOnStrings(created_db)
+        use_range_indexes_on_strings(created_db)
 
         # 7. Perform an index transform
-        PerformIndexTransformations(created_db)
+        perform_index_transformations(created_db)
 
         # 8. Perform Multi Orderby queries using composite indexes
-        PerformMultiOrderbyQuery(created_db)
+        perform_multi_orderby_query(created_db)
 
     except errors.AzureError as e:
         raise e
 
 if __name__ == '__main__':
-    try:
-        RunIndexDemo()
-
-    except Exception as e:
-        print("Top level Error: args:{0}, message:N/A".format(e.args))
+    run_sample()
