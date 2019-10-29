@@ -24,7 +24,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. Backup a certificate (backup_certificate)
 #
-# 3. Delete a certificate (delete_certificate)
+# 3. Delete a certificate (begin_delete_certificate)
 #
 # 4. Purge a deleted certificate (purge_deleted_certificate)
 #
@@ -60,7 +60,7 @@ try:
 
     # The storage account certificate is no longer in use, so you can delete it.
     print("\n.. Delete the certificate")
-    client.delete_certificate(name=cert_name)
+    client.begin_delete_certificate(name=cert_name).wait()
     print("Deleted certificate '{0}'".format(cert_name))
 
     # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.

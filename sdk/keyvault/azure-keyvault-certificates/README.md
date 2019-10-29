@@ -183,10 +183,13 @@ print(updated_certificate.properties.tags)
 ```
 
 ### Delete a Certificate
-`delete_certificate` deletes a certificate previously stored in the Key Vault. When [soft-delete][soft_delete]
-is not enabled for the Key Vault, this operation permanently deletes the certificate.
+`begin_delete_certificate` requests Key Vault delete a certificate, returning a poller which allows you to
+wait for the deletion to finish. Waiting is helpful when the vault has [soft-delete][soft_delete]
+enabled, and you want to purge (permanently delete) the certificate as soon as possible.
+When [soft-delete][soft_delete] is disabled, deletion is always permanent.
+
 ```python
-deleted_certificate = certificate_client.delete_certificate(name="cert-name")
+deleted_certificate = certificate_client.begin_delete_certificate(name="cert-name").result()
 
 print(deleted_certificate.name)
 print(deleted_certificate.deleted_date)
