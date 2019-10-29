@@ -1,3 +1,12 @@
+---
+topic: sample
+languages:
+  - python
+products:
+  - azure
+  - azure-core
+---
+
 # Azure Core Samples
 
 test_example_sync.py - samples of how to create a sync pipeline
