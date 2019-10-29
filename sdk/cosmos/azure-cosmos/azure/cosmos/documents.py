@@ -302,7 +302,7 @@ class TriggerOperation(object):
 class SSLConfiguration(object):
     """Configurations for SSL connections.
 
-    Please refer to http://docs.python-requests.org/en/master/user/advanced/#ssl-cert-verification for more detail.
+    Please refer to https://requests.readthedocs.io/en/master/user/advanced/#ssl-cert-verification for more detail.
 
     :ivar str SSLKeyFIle:
         The path of the key file for ssl connection.
