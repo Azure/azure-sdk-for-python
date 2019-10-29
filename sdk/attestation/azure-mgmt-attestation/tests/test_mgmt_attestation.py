@@ -29,6 +29,7 @@ class MgmtAttestationTest(AzureMgmtTestCase):
 
         certs = { 'keys': [
             {'kty': 'RSA',
+             'alg': 'RSA',
              'use': 'sig',
              'kid': '1b94c',
              'n': 'vrjOfz9Ccdgx5nQudyhdoR17V-IubWMeOZCwX_jj0hgAsz2J_pqYW08'
