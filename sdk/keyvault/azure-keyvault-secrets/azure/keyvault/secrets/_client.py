@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 class SecretClient(KeyVaultClientBase):
     """A high-level interface for managing a vault's secrets.
 
-    :param str vault_url: URL of the vault the client will access
+    :param str vault_url: URL of the vault the client will access. This is also called the vault's "DNS Name".
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
     :keyword str api_version: version of the Key Vault API to use. Defaults to the most recent.
