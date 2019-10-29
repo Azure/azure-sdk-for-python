@@ -44,9 +44,11 @@ Indices and tables
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 sphinx_conf = os.path.join(root_dir, "doc", "sphinx", "individual_build_conf.py")
 
-
+# reference issue 8523 for eliminating this ridiculousness.
 UNFRIENDLY_PACKAGE_TO_NAMESPACE = {
-    'azure-storage-file-share': 'azure.storage.fileshare'
+    'azure-storage-file-share': 'azure.storage.fileshare',
+    'azure-core-tracing-opencensus': 'azure.core.tracing.ext.opencensus_span',
+    'azure-eventhub-checkpointstoreblob-aio': 'azure.eventhub.extensions.checkpointstoreblobaio'
 }
 
 def should_build_docs(package_name):
