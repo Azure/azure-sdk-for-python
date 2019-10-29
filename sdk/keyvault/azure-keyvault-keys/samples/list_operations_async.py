@@ -46,7 +46,7 @@ async def run_sample():
         # already exists in the Key Vault, then a new version of the key is created.
         print("\n.. Create Key")
         rsa_key = await client.create_rsa_key("rsaKeyName")
-        ec_key = await client.create_ec_key("ecKey1Name")
+        ec_key = await client.create_ec_key("ecKeyName")
         print("Key with name '{0}' was created of type '{1}'.".format(rsa_key.name, rsa_key.key_type))
         print("Key with name '{0}' was created of type '{1}'.".format(ec_key.name, ec_key.key_type))
 
