@@ -7,13 +7,14 @@ import traceback
 import urllib3
 from requests.utils import DEFAULT_CA_BUNDLE_PATH as CaCertPath
 
-import samples.Shared.config as cfg
+import config
 
-HOST = cfg.settings['host']
-MASTER_KEY = cfg.settings['master_key']
-DATABASE_ID = cfg.settings['database_id']
+HOST = config.settings['host']
+MASTER_KEY = config.settings['master_key']
+DATABASE_ID = config.settings['database_id']
 CONTAINER_ID = "index-samples"
 PARTITION_KEY = PartitionKey(path='/id', kind='Hash')
+
 # A typical collection has the following properties within it's indexingPolicy property
 #   indexingMode
 #   automatic

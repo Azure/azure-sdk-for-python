@@ -1,7 +1,7 @@
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.errors as errors
 
-import samples.Shared.config as cfg
+import config
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequistes - 
@@ -25,9 +25,9 @@ import samples.Shared.config as cfg
 # 5. Delete a Database given its Id property (DeleteDatabase)
 # ----------------------------------------------------------------------------------------------------------
 
-HOST = cfg.settings['host']
-MASTER_KEY = cfg.settings['master_key']
-DATABASE_ID = cfg.settings['database_id']
+HOST = config.settings['host']
+MASTER_KEY = config.settings['master_key']
+DATABASE_ID = config.settings['database_id']
 
 class IDisposable:
     """ A context manager to automatically close an object with a close method

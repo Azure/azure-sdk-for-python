@@ -30,7 +30,7 @@ import azure.cosmos.auth as auth
 import azure.cosmos.partition_key as partition_key
 import datetime
 
-import samples.Shared.config as cfg
+import config
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequistes -
@@ -45,10 +45,10 @@ import samples.Shared.config as cfg
 # for Azure Cosmos using Python SDK > v4.0.0 with API version > 2018-12-31
 # ----------------------------------------------------------------------------------------------------------
 
-HOST = cfg.settings['host']
-MASTER_KEY = cfg.settings['master_key']
-DATABASE_ID = cfg.settings['database_id']
-CONTAINER_ID = cfg.settings['container_id']
+HOST = config.settings['host']
+MASTER_KEY = config.settings['master_key']
+DATABASE_ID = config.settings['database_id']
+CONTAINER_ID = config.settings['container_id']
 
 
 class IDisposable(cosmos_client.CosmosClient):

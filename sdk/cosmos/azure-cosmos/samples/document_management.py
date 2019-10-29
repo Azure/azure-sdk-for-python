@@ -3,7 +3,7 @@ import azure.cosmos.errors as errors
 from azure.cosmos.partition_key import PartitionKey
 import datetime
 
-import samples.Shared.config as cfg
+import config
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequistes - 
@@ -17,10 +17,10 @@ import samples.Shared.config as cfg
 # Sample - demonstrates the basic CRUD operations on a Item resource for Azure Cosmos
 # ----------------------------------------------------------------------------------------------------------
 
-HOST = cfg.settings['host']
-MASTER_KEY = cfg.settings['master_key']
-DATABASE_ID = cfg.settings['database_id']
-CONTAINER_ID = cfg.settings['container_id']
+HOST = config.settings['host']
+MASTER_KEY = config.settings['master_key']
+DATABASE_ID = config.settings['database_id']
+CONTAINER_ID = config.settings['container_id']
 
 class IDisposable(cosmos_client.CosmosClient):
     """ A context manager to automatically close an object with a close method
