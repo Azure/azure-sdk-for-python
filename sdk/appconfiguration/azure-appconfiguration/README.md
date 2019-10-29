@@ -1,3 +1,21 @@
+- [Azure App Configuration client library for Python](#azure-app-configuration-client-library-for-python "Azure App Configuration client library for Python")
+  - [Getting started](#getting-started "Getting started")
+    - [Supported Python version](#supported-python-version "Supported Python version")
+    - [Install the package](#install-the-package "Install the package")
+    - [Authenticate the client](#authenticate-the-client "Authenticate the client")
+      - [Get credentials](#get-credentials "Get credentials")
+      - [Create client](#create-client "Create client")
+  - [Key concepts](#key-concepts "Key concepts")
+    - [Configuration Setting](#configuration-setting "Configuration Setting")
+  - [Examples](#examples "Examples")
+    - [Create a Configuration Setting](#create-a-configuration-setting "Create a Configuration Setting")
+    - [Get a Configuration Setting](#get-a-configuration-setting "Get a Configuration Setting")
+    - [Delete a Configuration Setting](#delete-a-configuration-setting "Delete a Configuration Setting")
+    - [List Configuration Settings](#list-configuration-settings "List Configuration Settings")
+  - [Async Client](#async-client "Async Client")
+  - [Troubleshooting](#troubleshooting "Troubleshooting")
+    - [Logging](#logging "Logging")
+
 # Azure App Configuration client library for Python
 Azure App Configuration is a managed service that helps developers centralize their application configurations simply and securely.
 
@@ -76,23 +94,7 @@ Properties of a Configuration Setting:
 
 ## Examples
 The following sections provide several code snippets covering some of the most common Configuration Service tasks, including:
-- [Azure App Configuration client library for Python](#azure-app-configuration-client-library-for-python)
-  - [Getting started](#getting-started)
-    - [Supported Python version](#supported-python-version)
-    - [Install the package](#install-the-package)
-    - [Authenticate the client](#authenticate-the-client)
-      - [Get credentials](#get-credentials)
-      - [Create client](#create-client)
-  - [Key concepts](#key-concepts)
-    - [Configuration Setting](#configuration-setting)
-  - [Examples](#examples)
-    - [Create a Configuration Setting](#create-a-configuration-setting)
-    - [Get a Configuration Setting](#get-a-configuration-setting)
-    - [Delete a Configuration Setting](#delete-a-configuration-setting)
-    - [List Configuration Settings](#list-configuration-settings)
-  - [Async Client](#async-client)
-  - [Troubleshooting](#troubleshooting)
-    - [Logging](#logging)
+
 ### Create a Configuration Setting
 Create a Configuration Setting to be stored in the Configuration Store.
 There are two ways to store a Configuration Setting:
