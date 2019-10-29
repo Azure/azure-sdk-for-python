@@ -69,7 +69,7 @@ Properties of a Configuration Setting:
     content_type : str
     value : str
     last_modified : str
-    locked : bool
+    read_only : bool
     tags : dict
     etag : str
 ```
