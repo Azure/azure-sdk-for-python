@@ -290,8 +290,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :caption: Getting properties on the file system.
         """
         container_properties = self._container_client.get_container_properties(**kwargs)
-        container_properties.__class__ = FileSystemProperties
-        return container_properties
+        return FileSystemProperties._convert_from_container_props(container_properties)
 
     def set_file_system_metadata(  # type: ignore
         self, metadata=None,  # type: Optional[Dict[str, str]]

@@ -17,13 +17,75 @@ from azure.storage.file.datalake._generated.models import Path
 
 
 class FileSystemProperties(ContainerProperties):
+    """File System properties class.
+
+    :param ~datetime.datetime last_modified:
+        A datetime object representing the last time the file system was modified.
+    :param str etag:
+        The ETag contains a value that you can use to perform operations
+        conditionally.
+    :param ~azure.storage.file.datalake.LeaseProperties lease:
+        Stores all the lease information for the file system.
+    :param str public_access: Specifies whether data in the file system may be accessed
+        publicly and the level of access.
+    :param bool has_immutability_policy:
+        Represents whether the file system has an immutability policy.
+    :param bool has_legal_hold:
+        Represents whether the file system has a legal hold.
+    :param dict metadata: A dict with name-value pairs to associate with the
+        file system as metadata.
+
+    Returned ``FileSystemProperties`` instances expose these values through a
+    dictionary interface, for example: ``file_system_props["last_modified"]``.
+    Additionally, the file system name is available as ``file_system_props["name"]``.
+    """
     def __init__(self, **kwargs):
         super(FileSystemProperties, self).__init__(
             **kwargs
         )
 
+    @classmethod
+    def _from_generated(cls, generated):
+        props = cls()
+        props.name = generated.name
+        props.last_modified = generated.properties.last_modified
+        props.etag = generated.properties.etag
+        props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
+        props.public_access = PublicAccess._from_generated(generated.properties.public_access)
+        props.has_immutability_policy = generated.properties.has_immutability_policy
+        props.has_legal_hold = generated.properties.has_legal_hold
+        props.metadata = generated.metadata
+        return props
+
+    @classmethod
+    def _convert_from_container_props(cls, container_properties):
+        container_properties.__class__ = cls
+        container_properties.public_access = PublicAccess._from_generated(container_properties.public_access)
+        container_properties.lease.__class__ = LeaseProperties
+        return container_properties
+
 
 class FileSystemPropertiesPaged(ContainerPropertiesPaged):
+    """An Iterable of File System properties.
+
+    :ivar str service_endpoint: The service URL.
+    :ivar str prefix: A file system name prefix being used to filter the list.
+    :ivar str marker: The continuation token of the current page of results.
+    :ivar int results_per_page: The maximum number of results retrieved per API call.
+    :ivar str continuation_token: The continuation token to retrieve the next page of results.
+    :ivar str location_mode: The location mode being used to list results. The available
+        options include "primary" and "secondary".
+    :ivar current_page: The current page of listed results.
+    :vartype current_page: list(~azure.storage.file.datalake.FileSystemProperties)
+
+    :param callable command: Function to retrieve the next page of items.
+    :param str prefix: Filters the results to return only file systems whose names
+        begin with the specified prefix.
+    :param int results_per_page: The maximum number of file system names to retrieve per
+        call.
+    :param str continuation_token: An opaque continuation token.
+    """
+
     def __init__(self, *args, **kwargs):
         super(FileSystemPropertiesPaged, self).__init__(
             *args,
@@ -331,6 +393,16 @@ class PublicAccess(str, Enum):
     files within the file system via anonymous request, but cannot enumerate file systems
     within the storage account.
     """
+
+    @classmethod
+    def _from_generated(cls, public_access):
+        if public_access == "blob":
+            return cls.File
+        elif public_access == "container":
+            return cls.FileSystem
+        elif public_access == "off":
+            return cls.OFF
+        return None
 
 
 class LocationMode(object):

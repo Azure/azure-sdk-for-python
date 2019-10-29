@@ -160,7 +160,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             The default value is `False`.
         :keyword int results_per_page:
             The maximum number of file system names to retrieve per API
-            call. If the request does not specify the server will return up to 5,000 items.
+            call. If the request does not specify the server will return up to 5,000 items per page.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of FileSystemProperties.

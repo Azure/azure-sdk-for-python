@@ -21,11 +21,8 @@ from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import (
     BlobServiceClient,
     BlobType,
-    BlobBlock,
-)
-from azure.storage.file.datalake import DataLakeServiceClient
-
-
+    BlobBlock)
+from azure.storage.file.datalake import DataLakeServiceClient, PublicAccess
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
@@ -119,6 +116,44 @@ class FileSystemTest(StorageTestCase):
         self.assertIsNotNone(file_systems[0])
         self.assertNamedItemInContainer(file_systems, file_system.file_system_name)
         self.assertDictEqual(file_systems[0].metadata, metadata)
+
+    @record
+    def test_list_file_systems_by_page(self):
+        # Arrange
+        for i in range(0, 6):
+            self._create_file_system()
+
+        # Act
+        file_systems = list(next(self.dsc.list_file_systems(
+            results_per_page=3,
+            name_starts_with="file",
+            include_metadata=True).by_page()))
+
+        # Assert
+        self.assertIsNotNone(file_systems)
+        self.assertGreaterEqual(len(file_systems), 3)
+
+    @record
+    def test_list_file_systems_with_public_access(self):
+        # Arrange
+        file_system_name = self._get_file_system_reference()
+        file_system = self.dsc.get_file_system_client(file_system_name)
+        file_system.create_file_system(public_access="blob")
+        metadata = {'hello': 'world', 'number': '42'}
+        resp = file_system.set_file_system_metadata(metadata)
+
+        # Act
+        file_systems = list(self.dsc.list_file_systems(
+            name_starts_with=file_system.file_system_name,
+            include_metadata=True))
+
+        # Assert
+        self.assertIsNotNone(file_systems)
+        self.assertGreaterEqual(len(file_systems), 1)
+        self.assertIsNotNone(file_systems[0])
+        self.assertNamedItemInContainer(file_systems, file_system.file_system_name)
+        self.assertDictEqual(file_systems[0].metadata, metadata)
+        self.assertTrue(file_systems[0].public_access is PublicAccess.File)
 
     @record
     def test_get_file_system_properties(self):
