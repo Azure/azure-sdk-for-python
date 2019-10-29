@@ -24,90 +24,71 @@ MASTER_KEY = config.settings['master_key']
 DATABASE_ID = config.settings['database_id']
 CONTAINER_ID = config.settings['container_id']
 
-class IDisposable(cosmos_client.CosmosClient):
-    """ A context manager to automatically close an object with a close method
-    in a with statement. """
 
-    def __init__(self, obj):
-        self.obj = obj
+def create_items(container, size):
+    print('Creating Items')
 
-    def __enter__(self):
-        return self.obj # bound to target
+    for i in range(1, size):
+        c = str(uuid.uuid4())
+        item_definition = {'id': 'item' + c,
+                                'address': {'street': '1 Microsoft Way'+c,
+                                        'city': 'Redmond'+c,
+                                        'state': 'WA',
+                                        'zip code': 98052
+                                        }
+                                }
 
-    def __exit__(self, exception_type, exception_val, trace):
-        # extra cleanup in here
-        self = None
+        created_item = container.create_item(body=item_definition)
 
-class ChangeFeedManagement:
-    
-    @staticmethod
-    def CreateItems(container, size):
-        print('Creating Items')
 
-        for i in range(1, size):
-            c = str(uuid.uuid4())
-            item_definition = {'id': 'item' + c,
-                                   'address': {'street': '1 Microsoft Way'+c,
-                                            'city': 'Redmond'+c,
-                                            'state': 'WA',
-                                            'zip code': 98052
-                                            }
-                                  }
+def read_change_feed(container):
+    print('\nReading Change Feed from the beginning\n')
 
-            created_item = container.create_item(body=item_definition)
+    # For a particular Partition Key Range we can use partition_key_range_id]
+    # 'is_start_from_beginning = True' will read from the beginning of the history of the container
+    # If no is_start_from_beginning is specified, the read change feed loop will pickup the items that happen while the loop / process is active
+    response = container.query_items_change_feed(is_start_from_beginning=True)
+    for doc in response:
+        print(doc)
 
-    @staticmethod
-    def ReadChangeFeed(container):
-        print('\nReading Change Feed from the beginning\n')
+    print('\nFinished reading all the change feed\n')
 
-        # For a particular Partition Key Range we can use partition_key_range_id]
-        # 'is_start_from_beginning = True' will read from the beginning of the history of the container
-        # If no is_start_from_beginning is specified, the read change feed loop will pickup the items that happen while the loop / process is active
-        response = container.query_items_change_feed(is_start_from_beginning=True)
-        for doc in response:
-            print(doc)
-
-        print('\nFinished reading all the change feed\n')
 
 def run_sample():
-    with IDisposable(cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY} )) as client:
+    client = cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY})
+    try:
+        # setup database for this sample
         try:
-            # setup database for this sample
-            try:
-                db = client.create_database(id=DATABASE_ID)
-            except errors.CosmosResourceExistsError:
-                pass
+            db = client.create_database(id=DATABASE_ID)
+        except errors.CosmosResourceExistsError:
+            raise RuntimeError("Database with id '{}' already exists".format(DATABASE_ID))
 
-            # setup container for this sample
-            try:
-                container = db.create_container(
-                    id=CONTAINER_ID,
-                    partition_key=partition_key.PartitionKey(path='/address/state', kind=documents.PartitionKind.Hash)
-                )
-                print('Container with id \'{0}\' created'.format(CONTAINER_ID))
+        # setup container for this sample
+        try:
+            container = db.create_container(
+                id=CONTAINER_ID,
+                partition_key=partition_key.PartitionKey(path='/address/state', kind=documents.PartitionKind.Hash)
+            )
+            print('Container with id \'{0}\' created'.format(CONTAINER_ID))
 
-            except errors.CosmosResourceExistsError:
-                print('Container with id \'{0}\' was found'.format(CONTAINER_ID))
+        except errors.CosmosResourceExistsError:
+            raise RuntimeError("Container with id '{}' already exists".format(CONTAINER_ID))
 
-            ChangeFeedManagement.CreateItems(container, 100)
-            ChangeFeedManagement.ReadChangeFeed(container)
+        create_items(container, 100)
+        read_change_feed(container)
 
-            # cleanup database after sample
-            try:
-                client.delete_database(db)
-            except errors.CosmosResourceNotFoundError:
-                pass
+        # cleanup database after sample
+        try:
+            client.delete_database(db)
+        except errors.CosmosResourceNotFoundError:
+            pass
 
-        except errors.CosmosHttpResponseError as e:
-            print('\nrun_sample has caught an error. {0}'.format(e.message))
-        
-        finally:
-            print("\nrun_sample done")
+    except errors.CosmosHttpResponseError as e:
+        print('\nrun_sample has caught an error. {0}'.format(e.message))
+    
+    finally:
+        print("\nrun_sample done")
 
 
 if __name__ == '__main__':
-    try:
-        run_sample()
-
-    except Exception as e:
-            print("Top level Error: args:{0}, message:N/A".format(e.args))
+    run_sample()
