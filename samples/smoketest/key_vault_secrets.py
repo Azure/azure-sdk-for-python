@@ -8,7 +8,7 @@ from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 
 
-class KeyVault:
+class KeyVaultSecrets:
     def __init__(self):
         # DefaultAzureCredential() expects the following environment variables:
         # * AZURE_CLIENT_ID
