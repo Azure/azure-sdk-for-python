@@ -65,6 +65,7 @@ known_content_issues:
   - ['sdk/core/azure-mgmt-datalake-nspkg/README.rst', 'nspkg and common']
   - ['sdk/core/azure-mgmt-nspkg/README.rst', 'nspkg and common']
   - ['sdk/core/azure-core/README.md', 'nspkg and common']
+  - ['sdk/core/azure-core/samples/README.md', 'nspkg and common']
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'nspkg and common']
   - ['sdk/keyvault/azure-keyvault-nspkg/README.md', 'nspkg and common']
 
