@@ -38,22 +38,41 @@ def event_handler(partition_context, events):
         for event in events:
             do_operation(event)
     else:
-        print("empty events received", "partition:", partition_context.partition_id)
+        print("No event received from partition: {}".format(partition_context.partition_id))
 
 
-consumer_client = EventHubConsumerClient.from_connection_string(
-    conn_str=CONNECTION_STR,
-    event_hub_path=EVENT_HUB,
-    receive_timeout=RECEIVE_TIMEOUT,  # the wait time for single receiving iteration
-    retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
-)
-
-with consumer_client:
-    receiving_time = 5
-    task = consumer_client.receive(event_handler=event_handler, consumer_group='$Default')
+def receive_for_a_while(client, duration):
+    task = client.receive(event_handler=event_handler, consumer_group='$Default')
     # Receive with owner level:
     # task = consumer_client.receive(event_handler=event_handler, consumer_group='$Default', owner_level=1)
-    time.sleep(receiving_time)
+    time.sleep(duration)
     task.cancel()
 
-    print("Received {} messages in {} seconds".format(total, receiving_time))
+
+def receive_forever(client):
+    task = client.receive(event_handler=event_handler, consumer_group='$Default')
+    # Receive with owner level:
+    # task = consumer_client.receive(event_handler=event_handler, consumer_group='$Default', owner_level=1)
+    try:
+        while True:
+            time.sleep(0.05)
+            pass
+    except KeyboardInterrupt:
+        print('Task is being cancelled.')
+        task.cancel()
+
+
+if __name__ == '__main__':
+    consumer_client = EventHubConsumerClient.from_connection_string(
+        conn_str=CONNECTION_STR,
+        event_hub_path=EVENT_HUB,
+        receive_timeout=RECEIVE_TIMEOUT,  # the wait time for single receiving iteration
+        retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
+    )
+
+    with consumer_client:
+        receiving_time = 5
+        receive_for_a_while(consumer_client, receiving_time)
+        # receive_forever(consumer_client)
+
+        print("Received {} messages in {} seconds".format(total, receiving_time))

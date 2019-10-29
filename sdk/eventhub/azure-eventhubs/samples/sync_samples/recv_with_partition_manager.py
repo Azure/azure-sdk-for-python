@@ -34,31 +34,50 @@ def event_handler(partition_context, events):
 
         partition_context.update_checkpoint(events[-1])
     else:
-        print("empty events received", "partition:", partition_context.partition_id)
+        print("No event received from partition: {}".format(partition_context.partition_id))
+
+
+def receive_for_a_while(client, duration):
+    """
+    Without specified partition_id, the receive will try to receive events from all partitions and if provided with
+    partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
+    which also try to receive events from all partitions and use the same storage resource.
+    """
+    task = client.receive(event_handler=event_handler, consumer_group='$Default')
+    # With specified partition_id, load-balance will be disabled
+    # task = client.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
+    time.sleep(5)
+    task.cancel()
+
+
+def receive_forever(client):
+    """
+    Without specified partition_id, the receive will try to receive events from all partitions and if provided with
+    partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
+    which also try to receive events from all partitions and use the same storage resource.
+    """
+    task = client.receive(event_handler=event_handler, consumer_group='$Default')
+    # With specified partition_id, load-balance will be disabled
+    # task = client.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
+    try:
+        while True:
+            time.sleep(0.05)
+            pass
+    except KeyboardInterrupt:
+        print('Task is being cancelled.')
+        task.cancel()
 
 
 if __name__ == '__main__':
     partition_manager = FileBasedPartitionManager('consumer_pm_store')
-    client = EventHubConsumerClient.from_connection_string(
+    consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         partition_manager=partition_manager,  # For load balancing and checkpoint. Leave None for no load balancing
         receive_timeout=RECEIVE_TIMEOUT,  # the wait time for single receiving iteration
         retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
     )
 
-    try:
-        """
-        Without specified partition_id, the receive will try to receive events from all partitions and if provided with
-        partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
-        which also try to receive events from all partitions and use the same storage resource.
-        """
-        task = client.receive(event_handler=event_handler, consumer_group='$Default')
-        # With specified partition_id, load-balance will be disabled
-        # task = client.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
-        time.sleep(5)
-        task.cancel()
-
-    except KeyboardInterrupt:
-        task.cancel()
-
-
+    with consumer_client:
+        receiving_time = 5
+        # receive_for_a_while(consumer_client, receiving_time)
+        receive_forever(consumer_client)

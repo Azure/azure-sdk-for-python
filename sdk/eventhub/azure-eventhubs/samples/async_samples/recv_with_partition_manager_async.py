@@ -34,7 +34,34 @@ async def event_handler(partition_context, events):
         await asyncio.gather(*[do_operation(event) for event in events])
         await partition_context.update_checkpoint(events[-1])
     else:
-        print("empty events received", "partition:", partition_context.partition_id)
+        print("No event received from partition: {}".format(partition_context.partition_id))
+
+
+async def receive_for_a_while(client, duration):
+    """
+    Without specified partition_id, the receive will try to receive events from all partitions and if provided with
+    partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
+    which also try to receive events from all partitions and use the same storage resource.
+    """
+    task = asyncio.ensure_future(client.receive(event_handler=event_handler, consumer_group="$default"))
+    # With specified partition_id, load-balance will be disabled
+    # task = asyncio.ensure_future(client.receive(event_handler=event_handler, consumer_group="$default", partition_id = '0'))
+    await asyncio.sleep(duration)
+    task.cancel()
+
+
+async def receive_forever(client):
+    try:
+        """
+        Without specifying partition_id, the receive will try to receive events from all partitions and if provided with
+        partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
+        which also try to receive events from all partitions and use the same storage resource.
+        """
+        await client.receive(event_handler=event_handler, consumer_group="$default")
+        # With specified partition_id, load-balance will be disabled
+        # await client.receive(event_handler=event_handler, consumer_group="$default", partition_id = '0'))
+    except KeyboardInterrupt:
+        client.close()
 
 
 if __name__ == '__main__':
@@ -47,18 +74,10 @@ if __name__ == '__main__':
         retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
     )
     try:
-        """
-        Without specified partition_id, the receive will try to receive events from all partitions and if provided with
-        partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
-        which also try to receive events from all partitions and use the same storage resource.
-        """
-        task = asyncio.ensure_future(client.receive(event_handler=event_handler, consumer_group="$default"))
-        # With specified partition_id, load-balance will be disabled
-        # task = asyncio.ensure_future(client.receive(event_handler=event_handler, consumer_group="$default", partition_id = 0))
-        loop.run_until_complete(asyncio.sleep(5))
-        task.cancel()
+        loop.run_until_complete(receive_for_a_while(client, 5))
+        # loop.run_until_complete(receive_forever(client))
     except KeyboardInterrupt:
-        loop.run_until_complete(client.close())
+        pass
     finally:
         loop.run_until_complete(client.close())
         loop.stop()

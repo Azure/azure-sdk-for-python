@@ -7,15 +7,18 @@
 import pytest
 import asyncio
 
+
 from azure.eventhub import EventData, EventHubError
-from azure.eventhub.aio import EventHubClient
-from azure.eventhub.aio.eventprocessor import EventProcessor, SamplePartitionManager, PartitionProcessor, \
-    CloseReason, OwnershipLostError
+from azure.eventhub.aio._client_async import EventHubClient
+from azure.eventhub.aio._eventprocessor.event_processor import EventProcessor, CloseReason
+from azure.eventhub.aio._eventprocessor.local_partition_manager import InMemoryPartitionManager
+from azure.eventhub.aio._eventprocessor.partition_manager import OwnershipLostError
+from azure.eventhub._common import _Address
 
 
-class LoadBalancerPartitionProcessor(PartitionProcessor):
-    async def process_events(self, events, partition_context):
-        pass
+async def event_handler(partition_context, events):
+    pass
+
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
@@ -25,43 +28,72 @@ async def test_loadbalancer_balance(connstr_senders):
     for sender in senders:
         sender.send(EventData("EventProcessor Test"))
     eventhub_client = EventHubClient.from_connection_string(connection_str, receive_timeout=3)
-    partition_manager = SamplePartitionManager()
+    partition_manager = InMemoryPartitionManager()
+    tasks = []
 
-    event_processor1 = EventProcessor(eventhub_client, "$default", LoadBalancerPartitionProcessor,
-                                     partition_manager, polling_interval=1)
-    asyncio.ensure_future(event_processor1.start())
-    await asyncio.sleep(5)
+    event_processor1 = EventProcessor(eventhub_client=eventhub_client,
+                                      consumer_group_name='$default',
+                                      partition_manager=partition_manager,
+                                      event_handler=event_handler,
+                                      error_handler=None,
+                                      partition_initialize_handler=None,
+                                      partition_close_handler=None,
+                                      polling_interval=1)
+
+    tasks.append(asyncio.ensure_future(event_processor1.start()))
+    await asyncio.sleep(3)
     assert len(event_processor1._tasks) == 2  # event_processor1 claims two partitions
 
-    event_processor2 = EventProcessor(eventhub_client, "$default", LoadBalancerPartitionProcessor,
-                                     partition_manager, polling_interval=1)
+    event_processor2 = EventProcessor(eventhub_client=eventhub_client,
+                                      consumer_group_name='$default',
+                                      partition_manager=partition_manager,
+                                      event_handler=event_handler,
+                                      error_handler=None,
+                                      partition_initialize_handler=None,
+                                      partition_close_handler=None,
+                                      polling_interval=1)
 
-    asyncio.ensure_future(event_processor2.start())
-    await asyncio.sleep(5)
+    tasks.append(asyncio.ensure_future(event_processor2.start()))
+    await asyncio.sleep(3)
     assert len(event_processor1._tasks) == 1  # two event processors balance. So each has 1 task
     assert len(event_processor2._tasks) == 1
 
-    event_processor3 = EventProcessor(eventhub_client, "$default", LoadBalancerPartitionProcessor,
-                                      partition_manager, polling_interval=1)
-    asyncio.ensure_future(event_processor3.start())
-    await asyncio.sleep(5)
+    event_processor3 = EventProcessor(eventhub_client=eventhub_client,
+                                      consumer_group_name='$default',
+                                      partition_manager=partition_manager,
+                                      event_handler=event_handler,
+                                      error_handler=None,
+                                      partition_initialize_handler=None,
+                                      partition_close_handler=None,
+                                      polling_interval=1)
+    tasks.append(asyncio.ensure_future(event_processor3.start()))
+    await asyncio.sleep(3)
     assert len(event_processor3._tasks) == 0
     await event_processor3.stop()
 
     await event_processor1.stop()
-    await asyncio.sleep(5)
+    await asyncio.sleep(3)
     assert len(event_processor2._tasks) == 2  # event_procesor2 takes another one after event_processor1 stops
     await event_processor2.stop()
+
+    await eventhub_client.close()
+    await asyncio.gather(*tasks)
 
 
 @pytest.mark.asyncio
 async def test_load_balancer_abandon():
-    class TestPartitionProcessor(PartitionProcessor):
-        async def process_events(self, events, partition_context):
-            await asyncio.sleep(0.1)
+    async def event_handler(partition_context, events):
+        await asyncio.sleep(0.1)
+
+    class MockEventhubConsumer(object):
+        async def receive(self):
+            return []
 
     class MockEventHubClient(object):
         eh_name = "test_eh_name"
+
+        def __init__(self):
+            self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
 
         def create_consumer(self, consumer_group_name, partition_id, event_position):
             return MockEventhubConsumer()
@@ -69,34 +101,45 @@ async def test_load_balancer_abandon():
         async def get_partition_ids(self):
             return [str(pid) for pid in range(6)]
 
-    class MockEventhubConsumer(object):
-        async def receive(self):
-            return []
+    partition_manager = InMemoryPartitionManager()
 
-    partition_manager = SamplePartitionManager()
-
-    event_processor = EventProcessor(MockEventHubClient(), "$default", TestPartitionProcessor,
-                                      partition_manager, polling_interval=0.5)
-    asyncio.ensure_future(event_processor.start())
+    event_processor = EventProcessor(eventhub_client=MockEventHubClient(),
+                                     consumer_group_name='$default',
+                                     partition_manager=partition_manager,
+                                     event_handler=event_handler,
+                                     error_handler=None,
+                                     partition_initialize_handler=None,
+                                     partition_close_handler=None,
+                                     polling_interval=0.5)
+    tasks = []
+    tasks.append(asyncio.ensure_future(event_processor.start()))
     await asyncio.sleep(5)
 
     ep_list = []
     for _ in range(2):
-        ep = EventProcessor(MockEventHubClient(), "$default", TestPartitionProcessor,
-                                      partition_manager, polling_interval=0.5)
-        asyncio.ensure_future(ep.start())
+        ep = EventProcessor(eventhub_client=MockEventHubClient(),
+                            consumer_group_name='$default',
+                            partition_manager=partition_manager,
+                            event_handler=event_handler,
+                            error_handler=None,
+                            partition_initialize_handler=None,
+                            partition_close_handler=None,
+                            polling_interval=0.5)
+        tasks.append(asyncio.ensure_future(ep.start()))
         ep_list.append(ep)
     await asyncio.sleep(5)
     assert len(event_processor._tasks) == 2
     for ep in ep_list:
         await ep.stop()
     await event_processor.stop()
+    await asyncio.gather(*tasks)
+
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_loadbalancer_list_ownership_error(connstr_senders):
-    class ErrorPartitionManager(SamplePartitionManager):
-        async def list_ownership(self, eventhub_name, consumer_group_name):
+    class ErrorPartitionManager(InMemoryPartitionManager):
+        async def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
             raise RuntimeError("Test runtime error")
 
     connection_str, senders = connstr_senders
@@ -105,118 +148,140 @@ async def test_loadbalancer_list_ownership_error(connstr_senders):
     eventhub_client = EventHubClient.from_connection_string(connection_str, receive_timeout=3)
     partition_manager = ErrorPartitionManager()
 
-    event_processor = EventProcessor(eventhub_client, "$default", LoadBalancerPartitionProcessor,
-                                     partition_manager, polling_interval=1)
-    asyncio.ensure_future(event_processor.start())
+    event_processor = EventProcessor(eventhub_client=eventhub_client,
+                                     consumer_group_name='$default',
+                                     partition_manager=partition_manager,
+                                     event_handler=event_handler,
+                                     error_handler=None,
+                                     partition_initialize_handler=None,
+                                     partition_close_handler=None,
+                                     polling_interval=1)
+    task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(5)
     assert event_processor._running is True
     assert len(event_processor._tasks) == 0
     await event_processor.stop()
+    await asyncio.gather(*[task])
+    await eventhub_client.close()
 
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_partition_processor(connstr_senders):
-    partition_processor1 = None
-    partition_processor2 = None
+    lock = asyncio.Lock()
+    event_map = {}
+    checkpoint = None
+    close_reason = None
+    error = None
 
-    class TestPartitionProcessor(PartitionProcessor):
-        def __init__(self):
-            self.initialize_called = False
-            self.error = None
-            self.close_reason = None
-            self.received_events = []
-            self.checkpoint = None
+    async def partition_initialize_handler(partition_context):
+        assert partition_context
 
-        async def initialize(self, partition_context):
-            nonlocal partition_processor1, partition_processor2
-            if partition_context.partition_id == "1":
-                partition_processor1 = self
-            else:
-                partition_processor2 = self
-
-        async def process_events(self, events, partition_context):
-            self.received_events.extend(events)
+    async def event_handler(partition_context, events):
+        async with lock:
             if events:
+                nonlocal checkpoint, event_map
+                event_map[partition_context.partition_id] = event_map.get(partition_context.partition_id, 0) + len(events)
                 offset, sn = events[-1].offset, events[-1].sequence_number
-                await partition_context.update_checkpoint(offset, sn)
-                self.checkpoint = (offset, sn)
+                checkpoint = (offset, sn)
+                await partition_context.update_checkpoint(events[-1])
 
-        async def process_error(self, error, partition_context):
-            self.error = error
-            assert partition_context is not None
+    async def partition_close_handler(partition_context, reason):
+        nonlocal close_reason
+        close_reason = reason
+        assert partition_context and reason
 
-        async def close(self, reason, partition_context):
-            self.close_reason = reason
-            assert partition_context is not None
+    async def error_handler(partition_context, err):
+        nonlocal error
+        error = err
+        assert partition_context and err
 
     connection_str, senders = connstr_senders
     for sender in senders:
         sender.send(EventData("EventProcessor Test"))
     eventhub_client = EventHubClient.from_connection_string(connection_str, receive_timeout=3)
-    partition_manager = SamplePartitionManager()
+    partition_manager = InMemoryPartitionManager()
 
-    event_processor = EventProcessor(eventhub_client, "$default", TestPartitionProcessor,
-                                      partition_manager, polling_interval=1)
-    asyncio.ensure_future(event_processor.start())
+    event_processor = EventProcessor(eventhub_client=eventhub_client,
+                                     consumer_group_name='$default',
+                                     partition_manager=partition_manager,
+                                     event_handler=event_handler,
+                                     error_handler=error_handler,
+                                     partition_initialize_handler=partition_initialize_handler,
+                                     partition_close_handler=partition_close_handler,
+                                     polling_interval=1)
+
+    task = asyncio.ensure_future(event_processor.start())
+
     await asyncio.sleep(10)
+    assert len(event_processor._tasks) == 2
     await event_processor.stop()
-    assert partition_processor1 is not None and partition_processor2 is not None
-    assert len(partition_processor1.received_events) == 1 and len(partition_processor2.received_events) == 1
-    assert partition_processor1.checkpoint is not None
-    assert partition_processor1.close_reason == CloseReason.SHUTDOWN
-    assert partition_processor1.error is None
+    await asyncio.gather(*[task])
+    await eventhub_client.close()
+    assert event_map['0'] == 1 and event_map['1'] == 1
+    assert checkpoint is not None
+    assert close_reason == CloseReason.SHUTDOWN
+    assert error is None
 
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_partition_processor_process_events_error(connstr_senders):
-    class ErrorPartitionProcessor(PartitionProcessor):
-        async def process_events(self, events, partition_context):
-            if partition_context.partition_id == "1":
-                raise RuntimeError("processing events error")
-            else:
-                pass
+    async def event_handler(partition_context, events):
+        if partition_context.partition_id == "1":
+            raise RuntimeError("processing events error")
+        else:
+            pass
 
-        async def process_error(self, error, partition_context):
-            if partition_context.partition_id == "1":
-                assert isinstance(error, RuntimeError)
-            else:
-                raise RuntimeError("There shouldn't be an error for partition other than 1")
+    async def error_handler(partition_context, error):
+        if partition_context.partition_id == "1":
+            assert isinstance(error, RuntimeError)
+        else:
+            raise RuntimeError("There shouldn't be an error for partition other than 1")
 
-        async def close(self, reason, partition_context):
-            if partition_context.partition_id == "1":
-                assert reason == CloseReason.PROCESS_EVENTS_ERROR
-            else:
-                assert reason == CloseReason.SHUTDOWN
+    async def partition_close_handler(partition_context, reason):
+        if partition_context.partition_id == "1":
+            assert reason == CloseReason.OWNERSHIP_LOST
+        else:
+            assert reason == CloseReason.SHUTDOWN
 
     connection_str, senders = connstr_senders
     for sender in senders:
         sender.send(EventData("EventProcessor Test"))
     eventhub_client = EventHubClient.from_connection_string(connection_str, receive_timeout=3)
-    partition_manager = SamplePartitionManager()
+    partition_manager = InMemoryPartitionManager()
 
-    event_processor = EventProcessor(eventhub_client, "$default", ErrorPartitionProcessor,
-                                      partition_manager, polling_interval=1)
-    asyncio.ensure_future(event_processor.start())
+    event_processor = EventProcessor(eventhub_client=eventhub_client,
+                                     consumer_group_name='$default',
+                                     partition_manager=partition_manager,
+                                     event_handler=event_handler,
+                                     error_handler=error_handler,
+                                     partition_initialize_handler=None,
+                                     partition_close_handler=partition_close_handler,
+                                     polling_interval=1)
+    task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(10)
     await event_processor.stop()
+    await asyncio.gather(*[task])
+    await eventhub_client.close()
 
 
 @pytest.mark.asyncio
 async def test_partition_processor_process_eventhub_consumer_error():
-    class TestPartitionProcessor(PartitionProcessor):
-        async def process_events(self, events, partition_context):
-            pass
+    async def event_handler(partition_context, events):
+        pass
 
-        async def process_error(self, error, partition_context):
-            assert isinstance(error, EventHubError)
+    async def error_handler(partition_context, error):
+        assert isinstance(error, EventHubError)
 
-        async def close(self, reason, partition_context):
-            assert reason == CloseReason.EVENTHUB_EXCEPTION
+    async def partition_close_handler(partition_context, reason):
+        assert reason == CloseReason.OWNERSHIP_LOST
 
     class MockEventHubClient(object):
         eh_name = "test_eh_name"
+
+        def __init__(self):
+            self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
 
         def create_consumer(self, consumer_group_name, partition_id, event_position):
             return MockEventhubConsumer()
@@ -229,34 +294,43 @@ async def test_partition_processor_process_eventhub_consumer_error():
             raise EventHubError("Mock EventHubConsumer EventHubError")
 
     eventhub_client = MockEventHubClient()
-    partition_manager = SamplePartitionManager()
+    partition_manager = InMemoryPartitionManager()
 
-    event_processor = EventProcessor(eventhub_client, "$default", TestPartitionProcessor,
-                                      partition_manager, polling_interval=1)
-    asyncio.ensure_future(event_processor.start())
+    event_processor = EventProcessor(eventhub_client=eventhub_client,
+                                     consumer_group_name='$default',
+                                     partition_manager=partition_manager,
+                                     event_handler=event_handler,
+                                     error_handler=error_handler,
+                                     partition_initialize_handler=None,
+                                     partition_close_handler=partition_close_handler,
+                                     polling_interval=1)
+    task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(5)
     await event_processor.stop()
+    await asyncio.gather(*[task])
 
 
 @pytest.mark.asyncio
 async def test_partition_processor_process_error_close_error():
-    class TestPartitionProcessor(PartitionProcessor):
-        async def initialize(self, partition_context):
-            raise RuntimeError("initialize error")
+    async def partition_initialize_handler(partition_context):
+        raise RuntimeError("initialize error")
 
-        async def process_events(self, events, partition_context):
-            raise RuntimeError("process_events error")
+    async def event_handler(partition_context, events):
+        raise RuntimeError("process_events error")
 
-        async def process_error(self, error, partition_context):
-            assert isinstance(error, RuntimeError)
-            raise RuntimeError("process_error error")
+    async def error_handler(partition_context, error):
+        assert isinstance(error, RuntimeError)
+        raise RuntimeError("process_error error")
 
-        async def close(self, reason, partition_context):
-            assert reason == CloseReason.PROCESS_EVENTS_ERROR
-            raise RuntimeError("close error")
+    async def partition_close_handler(partition_context, reason):
+        assert reason == CloseReason.OWNERSHIP_LOST
+        raise RuntimeError("close error")
 
     class MockEventHubClient(object):
         eh_name = "test_eh_name"
+
+        def __init__(self):
+            self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
 
         def create_consumer(self, consumer_group_name, partition_id, event_position):
             return MockEventhubConsumer()
@@ -269,37 +343,44 @@ async def test_partition_processor_process_error_close_error():
             return [EventData("mock events")]
 
     eventhub_client = MockEventHubClient() #EventHubClient.from_connection_string(connection_str, receive_timeout=3)
-    partition_manager = SamplePartitionManager()
+    partition_manager = InMemoryPartitionManager()
 
-    event_processor = EventProcessor(eventhub_client, "$default", TestPartitionProcessor,
-                                      partition_manager, polling_interval=1)
-    asyncio.ensure_future(event_processor.start())
+    event_processor = EventProcessor(eventhub_client=eventhub_client,
+                                     consumer_group_name='$default',
+                                     partition_manager=partition_manager,
+                                     event_handler=event_handler,
+                                     error_handler=error_handler,
+                                     partition_initialize_handler=partition_initialize_handler,
+                                     partition_close_handler=partition_close_handler,
+                                     polling_interval=1)
+    task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(5)
     await event_processor.stop()
+    await asyncio.gather(*[task])
 
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_partition_processor_process_update_checkpoint_error(connstr_senders):
-    class ErrorPartitionManager(SamplePartitionManager):
-        async def update_checkpoint(self, eventhub_name, consumer_group_name, partition_id, owner_id,
-                                    offset, sequence_number):
+    class ErrorPartitionManager(InMemoryPartitionManager):
+        async def update_checkpoint(
+                self, fully_qualified_namespace, eventhub_name,
+                consumer_group_name, partition_id, offset, sequence_number):
             if partition_id == "1":
                 raise OwnershipLostError("Mocked ownership lost")
 
-    class TestPartitionProcessor(PartitionProcessor):
-        async def process_events(self, events, partition_context):
-            if events:
-                await partition_context.update_checkpoint(events[-1].offset, events[-1].sequence_number)
+    async def event_handler(partition_context, events):
+        if events:
+            await partition_context.update_checkpoint(events[-1])
 
-        async def process_error(self, error, partition_context):
-            assert isinstance(error, OwnershipLostError)
+    async def error_handler(partition_context, error):
+        assert isinstance(error, OwnershipLostError)
 
-        async def close(self, reason, partition_context):
-            if partition_context.partition_id == "1":
-                assert reason == CloseReason.OWNERSHIP_LOST
-            else:
-                assert reason == CloseReason.SHUTDOWN
+    async def partition_close_handler(partition_context, reason):
+        if partition_context.partition_id == "1":
+            assert reason == CloseReason.OWNERSHIP_LOST
+        else:
+            assert reason == CloseReason.SHUTDOWN
 
     connection_str, senders = connstr_senders
     for sender in senders:
@@ -307,8 +388,16 @@ async def test_partition_processor_process_update_checkpoint_error(connstr_sende
     eventhub_client = EventHubClient.from_connection_string(connection_str, receive_timeout=3)
     partition_manager = ErrorPartitionManager()
 
-    event_processor = EventProcessor(eventhub_client, "$default", TestPartitionProcessor,
-                                      partition_manager, polling_interval=1)
-    asyncio.ensure_future(event_processor.start())
+    event_processor = EventProcessor(eventhub_client=eventhub_client,
+                                     consumer_group_name='$default',
+                                     partition_manager=partition_manager,
+                                     event_handler=event_handler,
+                                     error_handler=error_handler,
+                                     partition_initialize_handler=None,
+                                     partition_close_handler=partition_close_handler,
+                                     polling_interval=1)
+    task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(10)
     await event_processor.stop()
+    await asyncio.gather(*[task])
+    await eventhub_client.close()

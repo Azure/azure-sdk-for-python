@@ -29,7 +29,22 @@ async def event_handler(partition_context, events):
         print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
         await asyncio.gather(*[do_operation(event) for event in events])
     else:
-        print("empty events received", "partition:", partition_context.partition_id)
+        print("No event received from partition: {}".format(partition_context.partition_id))
+
+
+async def receive_for_a_while(client, duration):
+    task = asyncio.ensure_future(client.receive(event_handler=event_handler,
+                                                consumer_group="$default"))
+    await asyncio.sleep(duration)
+    task.cancel()
+
+
+async def receive_forever(client):
+    try:
+        await client.receive(event_handler=event_handler,
+                             consumer_group="$default")
+    except KeyboardInterrupt:
+        client.close()
 
 
 if __name__ == '__main__':
@@ -40,11 +55,10 @@ if __name__ == '__main__':
         retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
     )
     try:
-        task = asyncio.ensure_future(client.receive(event_handler=event_handler, consumer_group="$default"))
-        loop.run_until_complete(asyncio.sleep(5))
-        task.cancel()
+        # loop.run_until_complete(receive_for_a_while(client, 5))
+        loop.run_until_complete(receive_forever(client))
     except KeyboardInterrupt:
-        loop.run_until_complete(client.close())
+        pass
     finally:
         loop.run_until_complete(client.close())
         loop.stop()

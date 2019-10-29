@@ -6,7 +6,7 @@
 
 import pytest
 from azure.eventhub import EventHubSharedKeyCredential
-from azure.eventhub.aio import EventHubClient
+from azure.eventhub.aio._client_async import EventHubClient
 
 
 @pytest.mark.liveTest
