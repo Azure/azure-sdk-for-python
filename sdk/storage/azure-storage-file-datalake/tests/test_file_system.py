@@ -146,6 +146,37 @@ class FileSystemTest(StorageTestCase):
         paths = list(file_system.get_paths(upn=True))
 
         self.assertEqual(len(paths), 6)
+
+    @record
+    def test_list_paths_with_max_per_page(self):
+        # Arrange
+        file_system = self._create_file_system()
+        for i in range(0, 6):
+            file_system.create_directory("dir1{}".format(i))
+
+        generator1 = file_system.get_paths(max_results=2, upn=True).by_page()
+        paths1 = list(next(generator1))
+
+        generator2 =file_system.get_paths(max_results=4, upn=True)\
+            .by_page(continuation_token=generator1.continuation_token)
+        paths2 = list(next(generator2))
+
+        self.assertEqual(len(paths1), 2)
+        self.assertEqual(len(paths2), 4)
+
+    @record
+    def test_list_paths_under_specific_path(self):
+        # Arrange
+        file_system = self._create_file_system()
+        for i in range(0, 6):
+            file_system.create_directory("dir1{}".format(i))
+            subdir = file_system.get_directory_client("dir1{}".format(i)).create_sub_directory("subdir")
+            subdir.create_sub_directory("subsub")
+
+        generator1 = file_system.get_paths(path="dir10/subdir", max_results=2, upn=True).by_page()
+        paths = list(next(generator1))
+
+        self.assertEqual(len(paths), 1)
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
