@@ -51,11 +51,13 @@ async def run_sample():
             deleted_key = await client.delete_key(key_name)
             print("Deleted key '{0}'".format(deleted_key.name))
 
+        # A deleted key can only be recovered if the Key Vault is soft-delete enabled.
         print("\n.. Recover a deleted key")
         recovered_key = await client.recover_deleted_key(rsa_key.name)
         print("Recovered key '{0}'".format(recovered_key.name))
 
         # deleting the recovered key so it doesn't outlast this script
+        # If the keyvault is soft-delete enabled, then for permanent deletion, the deleted key needs to be purged.
         await client.delete_key(recovered_key.name)
 
         print("\n.. Purge keys")

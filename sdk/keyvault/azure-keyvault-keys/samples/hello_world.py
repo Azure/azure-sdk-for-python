@@ -80,13 +80,10 @@ try:
 
     # The RSA key is no longer used, need to delete it from the Key Vault.
     print("\n.. Delete Keys")
-    deleted_ec_key = client.begin_delete_key(ec_key.name).result()
-    deleted_rsa_key = client.begin_delete_key(rsa_key.name).result()
-    print("Deleted key '{0}'".format(deleted_ec_key.name))
-    print("Deleted key '{0}'".format(deleted_rsa_key.name))
+    client.begin_delete_key(ec_key.name)
+    client.begin_delete_key(rsa_key.name)
+    print("Deleted key '{0}'".format(ec_key.name))
+    print("Deleted key '{0}'".format(rsa_key.name))
 
 except HttpResponseError as e:
-    print("\nrun_sample has caught an error. {0}".format(e.message))
-
-finally:
-    print("\nrun_sample done")
+    print("\nThis sample has caught an error. {0}".format(e.message))

@@ -59,7 +59,7 @@ async def run_sample():
         print("Recovered Secret with name '{0}'.".format(recovered_secret.name))
 
         # Let's delete storage account now.
-        # If the keyvault is soft-delete enabled, then for permanent deletion deleted secret needs to be purged.
+        # If the keyvault is soft-delete enabled, then for permanent deletion, the deleted secret needs to be purged.
         print("\n.. Deleting secret...")
         await client.delete_secret(storage_secret.name)
 

@@ -51,16 +51,19 @@ try:
         client.begin_delete_key(key_name).wait()
         print("Deleted key '{0}'".format(key_name))
 
+    # A deleted key can only be recovered if the Key Vault is soft-delete enabled.
     print("\n.. Recover a deleted key")
     recover_key_poller = client.begin_recover_deleted_key(rsa_key.name)
     recovered_key = recover_key_poller.result()
+
+    # This wait is just to ensure recovery is complete before we delete the key again
+    recover_key_poller.wait()
     print("Recovered key '{0}'".format(recovered_key.name))
 
-    # This wait is just to ensure the key has been properly recovered before we delete it again
-    recover_key_poller.wait()
-
-
     # deleting the recovered key so it doesn't outlast this script
+    # If the keyvault is soft-delete enabled, then for permanent deletion, the deleted key needs to be purged.
+    # Calling result() on the method will immediately return the `DeletedKey`, but calling wait() blocks
+    # until the key is deleted server-side so it can be purged.
     client.begin_delete_key(recovered_key.name).wait()
 
     print("\n.. Purge keys")
@@ -72,7 +75,4 @@ except HttpResponseError as e:
     if "(NotSupported)" in e.message:
         print("\n{0} Please enable soft delete on Key Vault to perform this operation.".format(e.message))
     else:
-        print("\nrun_sample has caught an error. {0}".format(e.message))
-
-finally:
-    print("\nrun_sample done")
+        print("\nThis sample has caught an error. {0}".format(e.message))
