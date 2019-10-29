@@ -30,7 +30,9 @@ class MgmtAttestationTest(AzureMgmtTestCase):
         azure_operation_poller = self.mgmt_client.attestation_providers.create(resource_group.name, ATTESTATION_PROVIDER_NAME)
         result = azure_operation_poller.result()
         
-        result = self.mgmt_client.attestation_providers.get(resource_group.name, ATTESTATION_PROVIDER_NAME, attestation_policy="xxx")
+        certs = { 'keys': []}
+
+        result = self.mgmt_client.attestation_providers.get(resource_group.name, ATTESTATION_PROVIDER_NAME, attestation_policy="MyPolicy", policy_signing_certificates=certs)
         
         result = self.mgmt_client.attestation_providers.list()
 
