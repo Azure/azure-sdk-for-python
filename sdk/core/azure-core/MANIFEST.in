@@ -2,5 +2,6 @@ recursive-include tests *.py *.yaml
 include *.md
 include azure/__init__.py
 recursive-include samples *.py
+recursive-include samples *.md
 recursive-include doc *.rst
 
