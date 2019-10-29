@@ -63,7 +63,8 @@ async def run_sample():
         print("\n.. Deleting secret...")
         await client.delete_secret(storage_secret.name)
 
-        # To ensure permanent deletion, we might need to purge the secret.
+        # Secrets will still purge eventually on their scheduled purge date, but calling `purge_deleted_secret` immediately
+        # purges.
         print("\n.. Purge Deleted Secret")
         await client.purge_deleted_secret(storage_secret.name)
         print("Secret has been permanently deleted.")

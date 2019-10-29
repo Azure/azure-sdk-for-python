@@ -71,7 +71,8 @@ try:
     print("\n.. Deleting secret...")
     client.begin_delete_secret(storage_secret.name).wait()
 
-    # To ensure permanent deletion, we might need to purge the secret.
+    # Secrets will still purge eventually on their scheduled purge date, but calling `purge_deleted_secret` immediately
+    # purges.
     print("\n.. Purge Deleted Secret")
     client.purge_deleted_secret(storage_secret.name)
     print("Secret has been permanently deleted.")

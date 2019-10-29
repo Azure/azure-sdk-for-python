@@ -66,6 +66,8 @@ try:
     # until the key is deleted server-side so it can be purged.
     client.begin_delete_key(recovered_key.name).wait()
 
+    # Keys will still purge eventually on their scheduled purge date, but calling `purge_deleted_key` immediately
+    # purges.
     print("\n.. Purge keys")
     for key_name in (ec_key.name, rsa_key.name):
         client.purge_deleted_key(key_name)

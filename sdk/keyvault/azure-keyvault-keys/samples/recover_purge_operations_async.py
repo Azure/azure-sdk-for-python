@@ -60,6 +60,8 @@ async def run_sample():
         # If the keyvault is soft-delete enabled, then for permanent deletion, the deleted key needs to be purged.
         await client.delete_key(recovered_key.name)
 
+        # Keys will still purge eventually on their scheduled purge date, but calling `purge_deleted_key` immediately
+        # purges.
         print("\n.. Purge keys")
         for key_name in (ec_key.name, rsa_key.name):
             await client.purge_deleted_key(key_name)
