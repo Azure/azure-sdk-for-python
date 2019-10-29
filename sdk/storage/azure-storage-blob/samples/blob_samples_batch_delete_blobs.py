@@ -1,6 +1,14 @@
 from azure.storage.blob import BlobServiceClient, ContainerClient
 import os
 
+"""
+FILE: blob_samples_batch_delete_blobs.py
+DESCRIPTION:
+    This sample demonstrates batch deleting blobs from a container.
+USAGE:
+    python blob_samples_batch_delete_blobs.py
+    Set the environment variables with your own values before running the sample.
+"""
 
 SOURCE_FOLDER = "./sample-blobs/"
 
@@ -23,4 +31,5 @@ def batch_delete_blobs_sample(local_path):
 	# Delete blobs
     container_client.delete_blobs(*blob_list)
 
-batch_delete_blobs_sample(SOURCE_FOLDER)
+if __name__  == '__main__':
+    batch_delete_blobs_sample(SOURCE_FOLDER)

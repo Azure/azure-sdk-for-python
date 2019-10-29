@@ -5,6 +5,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
+"""
+FILE: blob_samples_authentication_async.py
+DESCRIPTION:
+    These samples demonstrate authenticating a client via a connection string,
+    shared access key, or by generating a sas token with which the returned signature
+    can be used with the credential parameter of any BlobServiceClient,
+    ContainerClient, BlobClient.
+USAGE:
+    python blob_samples_authentication.py
+    Set the environment variables with your own values before running the sample.
+"""
+
+
 import os
 
 class AuthSamplesAsync(object):
@@ -103,3 +117,15 @@ class AuthSamplesAsync(object):
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         # [END create_sas_token]
+
+async def main():
+    sample = AuthSamples()
+    # Uncomment the methods you want to execute.
+    await sample.auth_connection_string()
+    # await sample.auth_active_directory()
+    # await sample.auth_shared_access_signature()
+    # await sample.auth_blob_url()
+    # await sample.auth_default_azure_credential
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())

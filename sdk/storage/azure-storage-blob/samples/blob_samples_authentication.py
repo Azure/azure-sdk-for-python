@@ -6,6 +6,18 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: blob_samples_authentication.py
+DESCRIPTION:
+    These samples demonstrate authenticating a client via a connection string,
+    shared access key, or by generating a sas token with which the returned signature
+    can be used with the credential parameter of any BlobServiceClient,
+    ContainerClient, BlobClient.
+USAGE:
+    python blob_samples_authentication.py
+    Set the environment variables with your own values before running the sample.
+"""
+
 import os
 
 class AuthSamples(object):
@@ -117,7 +129,7 @@ class AuthSamples(object):
         # The docs above specify all mechanisms which the defaultCredential internally support.
         from azure.identity import DefaultAzureCredential
         default_credential = DefaultAzureCredential()
- 
+
         # Instantiate a BlobServiceClient using a token credential
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient(
@@ -128,3 +140,12 @@ class AuthSamples(object):
  
         # Get account information for the Blob Service
         account_info = blob_service_client.get_service_properties()
+
+if __name__ == '__main__':
+    sample = AuthSamples()
+    # Uncomment the methods you want to execute.
+    sample.auth_connection_string()
+    # sample.auth_active_directory()
+    # sample.auth_shared_access_signature()
+    # sample.auth_blob_url()
+    # sample.auth_default_azure_credential

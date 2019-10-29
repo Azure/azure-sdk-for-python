@@ -6,6 +6,15 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: blob_samples_common_async.py
+DESCRIPTION:
+    This sample demonstrates batch deleting blobs from a container.
+USAGE:
+    python blob_samples_common_async.py
+    Set the environment variables with your own values before running the sample.
+"""
+
 import os
 import asyncio
 from azure.core.exceptions import ResourceExistsError
