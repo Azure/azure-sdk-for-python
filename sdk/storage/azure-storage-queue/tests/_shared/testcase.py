@@ -23,8 +23,8 @@ import sys
 import random
 import re
 import logging
-from devtools_testutils import AzureMgmtTestCase, AzureMgmtPreparer, FakeResource
-from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError
+from devtools_testutils import AzureMgmtTestCase, AzureMgmtPreparer, ResourceGroupPreparer, StorageAccountPreparer, FakeResource
+from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError, create_random_name
 try:
     from cStringIO import StringIO      # Python 2
 except ImportError:
@@ -36,6 +36,8 @@ try:
     from devtools_testutils import mgmt_settings_real as settings
 except ImportError:
     from devtools_testutils import mgmt_settings_fake as settings
+
+import pytest
 
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
@@ -330,3 +332,41 @@ class LogCaptured(object):
 
         # reset logging since we messed with the setting
         self.test_case.configure_logging()
+
+
+@pytest.fixture(scope="session")
+def storage_account():
+    test_case = AzureMgmtTestCase("__init__")
+    rg_preparer = ResourceGroupPreparer()
+    storage_preparer = StorageAccountPreparer(name_prefix='pyacrstorage')
+
+    # Set what the decorator is supposed to set for us
+    for prep in [rg_preparer, storage_preparer]:
+        prep.live_test = False
+        prep.test_class_instance = test_case
+
+    # Create
+    rg_name = create_random_name("pystorage", 24)
+    storage_name = create_random_name("pyacrstorage", 24)
+    try:
+        rg = rg_preparer.create_resource(rg_name)
+        StorageTestCase._RESOURCE_GROUP = rg['resource_group']
+        try:
+            storage_dict = storage_preparer.create_resource(
+                storage_name,
+                resource_group=rg['resource_group']
+            )
+            # Now the magic begins
+            StorageTestCase._STORAGE_ACCOUNT = storage_dict['storage_account']
+            StorageTestCase._STORAGE_KEY = storage_dict['storage_account_key']
+            yield
+        finally:
+            storage_preparer.remove_resource(
+                storage_name,
+                resource_group=rg['resource_group']
+            )
+            StorageTestCase._STORAGE_ACCOUNT = None
+            StorageTestCase._STORAGE_KEY = None
+    finally:
+        rg_preparer.remove_resource(rg_name)
+        StorageTestCase._RESOURCE_GROUP = None
