@@ -10,11 +10,9 @@
 # --------------------------------------------------------------------------
 
 from ._machines_operations import MachinesOperations
-from ._machine_extensions_operations import MachineExtensionsOperations
 from ._operations import Operations
 
 __all__ = [
     'MachinesOperations',
-    'MachineExtensionsOperations',
     'Operations',
 ]
