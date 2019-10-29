@@ -35,6 +35,7 @@ def sphinx_apidoc(working_directory):
     command_array = [
             "sphinx-apidoc",
             "--no-toc",
+            "--module-first",
             "-o",
             os.path.join(args.working_directory, "unzipped/docgen"),
             os.path.join(args.working_directory, "unzipped/"),
