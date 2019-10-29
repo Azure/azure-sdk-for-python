@@ -172,7 +172,9 @@ class DatabaseProxy(object):
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword access_condition: Conditions Associated with the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: a callable invoked with the response metadata
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
@@ -255,7 +257,9 @@ class DatabaseProxy(object):
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword access_condition: Conditions Associated with the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: a callable invoked with the response metadata
         :returns: A `ContainerProxy` instance representing the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
@@ -299,7 +303,9 @@ class DatabaseProxy(object):
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :keyword session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword access_condition: Conditions Associated with the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: a callable invoked with the response metadata
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
@@ -448,7 +454,9 @@ class DatabaseProxy(object):
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :keyword session_token: Token for use with Session consistency.
-        :keyword access_condition: Conditions Associated with the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: a callable invoked with the response metadata
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.

@@ -32,6 +32,8 @@ from typing import Dict, Any
 import six
 from six.moves.urllib.parse import quote as urllib_quote
 
+from azure.core import MatchConditions
+
 from . import auth
 from . import documents
 from . import partition_key
@@ -70,6 +72,30 @@ _COMMON_OPTIONS = {
     'query_version': 'queryVersion'
 }
 
+def _get_match_headers(kwargs, match_param, etag_param):
+    # type: (str) -> Tuple(Dict[str, Any], Optional[str], Optional[str])
+    if_match = kwargs.pop('if_match', None)
+    if_none_match = kwargs.pop('if_none_match', None)
+    match_condition = kwargs.pop(match_param, None)
+    if match_condition == MatchConditions.IfNotModified:
+        if_match = kwargs.pop(etag_param, None)
+        if not if_match:
+            raise ValueError("'{}' specified without '{}'.".format(match_param, etag_param))
+    elif match_condition == MatchConditions.IfPresent:
+        if_match = '*'
+    elif match_condition == MatchConditions.IfModified:
+        if_none_match = kwargs.pop(etag_param, None)
+        if not if_none_match:
+            raise ValueError("'{}' specified without '{}'.".format(match_param, etag_param))
+    elif match_condition == MatchConditions.IfMissing:
+        if_none_match = '*'
+    elif match_condition is None:
+        if etag_param in kwargs:
+            raise ValueError("'{}' specified without '{}'.".format(etag_param, match_param))
+    else:
+        raise TypeError("Invalid match condition: {}".format(match_condition))
+    return if_match, if_none_match
+
 def build_options(kwargs):
     # type: (Dict[str, Any]) -> Dict[str, Any]
     options = kwargs.pop('request_options', kwargs.pop('feed_options', {}))
@@ -77,10 +103,11 @@ def build_options(kwargs):
         if key in kwargs:
             options[value] = kwargs.pop(key)
 
-    if 'if_match' in kwargs:
-        options['accessCondition'] = {'type': 'IfMatch', 'condition': kwargs.pop('if_match')}
-    if 'if_none_match' in kwargs:
-        options['accessCondition'] = {'type': 'IfNoneMatch', 'condition': kwargs.pop('if_none_match')}
+    if_match, if_none_match = _get_match_headers(kwargs, 'match_condition', 'etag')
+    if if_match:
+        options['accessCondition'] = {'type': 'IfMatch', 'condition': if_match}
+    if if_none_match:
+        options['accessCondition'] = {'type': 'IfNoneMatch', 'condition': if_none_match}
     return options
 
 

@@ -392,7 +392,9 @@ class ContainerProxy(object):
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :keyword session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword access_condition: Conditions Associated with the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: a callable invoked with the response metadata
         :returns: A dict representing the item after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace failed or the item with
@@ -438,7 +440,9 @@ class ContainerProxy(object):
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :keyword session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword access_condition: Conditions Associated with the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: a callable invoked with the response metadata
         :returns: A dict representing the upserted item.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
@@ -483,7 +487,9 @@ class ContainerProxy(object):
         :param indexing_directive: Indicate whether the document should be omitted from indexing.
         :keyword session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword access_condition: Conditions Associated with the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: a callable invoked with the response metadata
         :returns: A dict representing the new item.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
@@ -531,7 +537,9 @@ class ContainerProxy(object):
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :keyword session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword access_condition: Conditions Associated with the request.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: a callable invoked with the response metadata
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The item wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
