@@ -20,7 +20,7 @@ Common uses of Queue storage include:
 Install the Azure Storage Queues client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-storage-queue --pre
+pip install azure-storage-queue
 ```
 
 ### Create a storage account
@@ -302,7 +302,7 @@ the client level to enable it for all requests.
 
 
 ## Troubleshooting
-Storage Queue clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/exceptions.md).
+Storage Queue clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
 All Queue service operations will throw a `StorageErrorException` on failure with helpful [error codes](https://docs.microsoft.com/rest/api/storageservices/queue-service-error-codes).
 
 ## Next steps

@@ -23,7 +23,7 @@ Blob storage is ideal for:
 Install the Azure Storage Blobs client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-storage-blob --pre
+pip install azure-storage-blob
 ```
 
 ### Create a storage account
@@ -316,7 +316,7 @@ the client level to enable it for all requests.
 * __headers__ (dict): Pass in custom headers as key, value pairs. E.g. `headers={'CustomValue': value}`
 
 ## Troubleshooting
-Storage Blob clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/exceptions.md).
+Storage Blob clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
 All Blob service operations will throw a `StorageErrorException` on failure with helpful [error codes](https://docs.microsoft.com/rest/api/storageservices/blob-service-error-codes).
 
 ## Next steps
