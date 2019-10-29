@@ -286,7 +286,8 @@ class DataLakeFileClient(PathClient):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """ Commit the previous appended data.
 
-        :param offset: the length of the file after commit the previous appended data.
+        :param offset: offset is equal to the length of the file after commit the
+            previous appended data.
         :param bool retain_uncommitted_data: Valid only for flush operations.  If
             "true", uncommitted data is retained after the flush operation
             completes; otherwise, the uncommitted data is deleted after the flush
@@ -337,14 +338,15 @@ class DataLakeFileClient(PathClient):
         try:
             return self._client.path.flush_data(**options)
         except StorageErrorException as error:
-            process_storage_error(error)
+            raise error
 
     def read_file(self, offset=None,   # type: Optional[int]
                   length=None,   # type: Optional[int]
                   stream=None,  # type: Optional[IO]
                   **kwargs):
         # type: (...) -> Union[int, byte]
-        """Download a file from the service.
+        """Download a file from the service. Return the downloaded data in bytes or
+        write the downloaded data into user provided stream and return the written size.
 
         :param int offset:
             Start of byte range to use for downloading a section of the file.
@@ -352,6 +354,8 @@ class DataLakeFileClient(PathClient):
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
+        :param int stream:
+            User provided stream to write the downloaded data into.
         :keyword lease:
             If specified, download_blob only succeeds if the blob's lease is active
             and matches this ID. Required if the blob has an active lease.

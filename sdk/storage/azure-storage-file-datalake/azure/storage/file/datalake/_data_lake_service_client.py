@@ -219,7 +219,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
 
     def delete_file_system(self, file_system,  # type: Union[FileSystemProperties, str]
                            **kwargs):
-        # type: (...) -> None
+        # type: (...) -> FileSystemClient
         """Marks the specified file system for deletion.
 
         The file system and any files contained within it are later deleted during garbage collection.
@@ -265,6 +265,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         """
         file_system_client = self.get_file_system_client(file_system)
         file_system_client.delete_file_system(**kwargs)
+        return file_system_client
 
     def get_file_system_client(self, file_system  # type: Union[FileSystemProperties, str]
                                ):

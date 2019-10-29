@@ -83,9 +83,7 @@ class PathPropertiesPaged(PageIterator):
     :ivar str path: Filters the results to return only paths under the specified path.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
     :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.file.datalake.PathProperties)
-    :ivar str container: The container that the blobs are listed from.
+    :ivar list(~azure.storage.file.datalake.PathProperties) current_page: The current page of listed results.
 
     :param callable command: Function to retrieve the next page of items.
     :param str path: Filters the results to return only paths under the specified path.
