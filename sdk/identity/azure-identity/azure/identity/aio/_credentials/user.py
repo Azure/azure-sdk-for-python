@@ -28,6 +28,8 @@ class SharedTokenCacheCredential(SyncSharedTokenCacheCredential):
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """Get an access token for `scopes` from the shared cache.
 
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
         If no access token is cached, attempt to acquire one using a cached refresh token.
 
         :param str scopes: desired scopes for the token
