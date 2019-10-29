@@ -41,6 +41,7 @@ async def test_send_with_partition_key_async(connstr_receivers):
                 assert existing == index
             except KeyError:
                 found_partition_keys[message.partition_key] = index
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -58,6 +59,7 @@ async def test_send_and_receive_zero_length_body_async(connstr_receivers):
 
     assert len(received) == 1
     assert list(received[0].body)[0] == b""
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -75,6 +77,7 @@ async def test_send_single_event_async(connstr_receivers):
 
     assert len(received) == 1
     assert list(received[0].body)[0] == b"A single event"
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -99,6 +102,7 @@ async def test_send_batch_async(connstr_receivers):
     assert len(received) == 10
     for index, message in enumerate(received):
         assert list(message.body)[0] == "Event number {}".format(index).encode('utf-8')
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -114,6 +118,7 @@ async def test_send_partition_async(connstr_receivers):
     assert len(partition_0) == 0
     partition_1 = receivers[1].receive(timeout=2)
     assert len(partition_1) == 1
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -130,6 +135,7 @@ async def test_send_non_ascii_async(connstr_receivers):
     assert len(partition_0) == 2
     assert partition_0[0].body_as_str() == "é,è,à,ù,â,ê,î,ô,û"
     assert partition_0[1].body_as_json() == {"foo": "漢字"}
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -150,6 +156,7 @@ async def test_send_partition_batch_async(connstr_receivers):
     assert len(partition_0) == 0
     partition_1 = receivers[1].receive(timeout=2)
     assert len(partition_1) == 10
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -167,6 +174,7 @@ async def test_send_array_async(connstr_receivers):
 
     assert len(received) == 1
     assert list(received[0].body) == [b"A", b"B", b"C"]
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -185,6 +193,7 @@ async def test_send_multiple_clients_async(connstr_receivers):
     assert len(partition_0) == 1
     partition_1 = receivers[1].receive(timeout=2)
     assert len(partition_1) == 1
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -221,6 +230,7 @@ async def test_send_batch_with_app_prop_async(connstr_receivers):
         assert list(message.body)[0] == "Event number {}".format(index).encode('utf-8')
         assert (app_prop_key.encode('utf-8') in message.application_properties) \
             and (dict(message.application_properties)[app_prop_key.encode('utf-8')] == app_prop_value.encode('utf-8'))
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -246,6 +256,7 @@ async def test_send_over_websocket_async(connstr_receivers):
 
     for r in receivers:
         r.close()
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -273,3 +284,4 @@ async def test_send_with_create_event_batch_async(connstr_receivers):
 
     await sender.send(event_data_batch)
     await sender.close()
+    await client.close()

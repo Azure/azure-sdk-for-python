@@ -76,8 +76,8 @@ async def test_loadbalancer_balance(connstr_senders):
     assert len(event_processor2._tasks) == 2  # event_procesor2 takes another one after event_processor1 stops
     await event_processor2.stop()
 
-    await eventhub_client.close()
     await asyncio.gather(*tasks)
+    await eventhub_client.close()
 
 
 @pytest.mark.asyncio

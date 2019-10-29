@@ -36,3 +36,4 @@ async def test_send_with_long_interval_async(connstr_receivers, sleep):
         received.extend(r.receive(timeout=5))
     assert len(received) == 2
     assert list(received[0].body)[0] == b"A single event"
+    await client.close()
