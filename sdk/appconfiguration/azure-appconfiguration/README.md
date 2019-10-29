@@ -23,7 +23,7 @@ Modern programs, especially programs running in a cloud, generally have many com
 
 Use the client library for App Configuration to create and manage application configuration settings.
 
-[Source code]() | [Package (Pypi)][package] | [API reference documentation][appconfig_rest] | [Product documentation][azconfig_docs]
+[Source code]() | [Package (Pypi)][package] | [API reference documentation][appconfig_rest] | [Product documentation][appconfig_docs]
 
 ## Getting started
 
