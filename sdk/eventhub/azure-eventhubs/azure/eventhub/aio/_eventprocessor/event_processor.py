@@ -125,9 +125,8 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         for _ in range(len(self._tasks)):
             _, task = self._tasks.popitem()
             task.cancel()
-        log.info("EventProcessor %r has been cancelled", self._id)
-        while self._tasks:
-            await asyncio.sleep(1)  # give some time to finish after cancelled.
+        log.info("EventProcessor %r has been cancelled.", self._id)
+        await asyncio.gather(*self._tasks)
 
     def get_last_enqueued_event_properties(self, partition_id):
         if partition_id in self._tasks and partition_id in self._last_enqueued_event_properties:

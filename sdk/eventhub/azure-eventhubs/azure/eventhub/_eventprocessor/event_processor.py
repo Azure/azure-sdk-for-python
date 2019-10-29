@@ -207,6 +207,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     break
                     # Go to finally to stop this partition processor.
                     # Later an EventProcessor(this one or another one) will pick up this partition again
+            self._running = False
         finally:
             if self._running is False:
                 close(CloseReason.SHUTDOWN)
