@@ -18,7 +18,7 @@ from azure.core.exceptions import HttpResponseError
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic list operations on a vault(secret) resource for Azure Key Vault.
+# Sample - demonstrates deleting and purging a vault(secret) resource for Azure Key Vault.
 # The vault has to be soft-delete enabled to perform one of the following operations. See
 # https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
 #
