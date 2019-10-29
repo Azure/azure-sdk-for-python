@@ -24,7 +24,7 @@ class MgmtAttestationTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_attestation(self, resource_group):
 
-        ATTESTATION_PROVIDER_NAME = "MyAttestationProvider"
+        ATTESTATION_PROVIDER_NAME = "myattestationprovider"
         # result = self.mgmt_client.operations.list()
 
         certs = { 'keys': [ 
