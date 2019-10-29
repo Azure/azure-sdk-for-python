@@ -63,7 +63,11 @@ _COMMON_OPTIONS = {
     'continuation': 'continuation',
     'is_start_from_beginning': 'isStartFromBeginning',
     'populate_partition_key_range_statistics': 'populatePartitionKeyRangeStatistics',
-    'populate_quota_info': 'populateQuotaInfo'
+    'populate_quota_info': 'populateQuotaInfo',
+    'content_type': 'contentType',
+    'is_query_plan_request': 'isQueryPlanRequest',
+    'supported_query_features': 'supportedQueryFeatures',
+    'query_version': 'queryVersion'
 }
 
 def build_options(kwargs):
