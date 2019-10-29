@@ -27,3 +27,4 @@ def test_receive_iterator(connstr_senders):
         assert len(received) == 1
         assert received[0].body_as_str() == "Receiving only a single event"
         assert list(received[-1].body)[0] == b"Receiving only a single event"
+    client.close()

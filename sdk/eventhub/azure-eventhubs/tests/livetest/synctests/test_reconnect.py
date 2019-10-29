@@ -32,3 +32,4 @@ def test_send_with_long_interval_sync(connstr_receivers, sleep):
 
     assert len(received) == 2
     assert list(received[0].body)[0] == b"A single event"
+    client.close()

@@ -25,6 +25,7 @@ def test_send_with_invalid_hostname(invalid_hostname):
     with pytest.raises(AuthenticationError):
         sender.send(EventData("test data"))
     sender.close()
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -34,6 +35,7 @@ def test_receive_with_invalid_hostname_sync(invalid_hostname):
     with pytest.raises(AuthenticationError):
         receiver.receive(timeout=5)
     receiver.close()
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -43,6 +45,7 @@ def test_send_with_invalid_key(invalid_key):
     with pytest.raises(AuthenticationError):
         sender.send(EventData("test data"))
     sender.close()
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -53,6 +56,7 @@ def test_receive_with_invalid_key_sync(invalid_key):
     with pytest.raises(AuthenticationError):
         receiver.receive(timeout=10)
     receiver.close()
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -62,6 +66,7 @@ def test_send_with_invalid_policy(invalid_policy):
     with pytest.raises(AuthenticationError):
         sender.send(EventData("test data"))
     sender.close()
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -71,6 +76,7 @@ def test_receive_with_invalid_policy_sync(invalid_policy):
     with pytest.raises(AuthenticationError):
         receiver.receive(timeout=5)
     receiver.close()
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -85,6 +91,7 @@ def test_send_partition_key_with_partition_sync(connection_str):
             sender.send(data)
     finally:
         sender.close()
+        client.close()
 
 
 @pytest.mark.liveTest
@@ -94,6 +101,7 @@ def test_non_existing_entity_sender(connection_str):
     with pytest.raises(AuthenticationError):
         sender.send(EventData("test data"))
     sender.close()
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -103,6 +111,7 @@ def test_non_existing_entity_receiver(connection_str):
     with pytest.raises(AuthenticationError):
         receiver.receive(timeout=5)
     receiver.close()
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -116,6 +125,7 @@ def test_receive_from_invalid_partitions_sync(connection_str):
                 receiver.receive(timeout=5)
         finally:
             receiver.close()
+            client.close()
 
 
 @pytest.mark.liveTest
@@ -129,6 +139,7 @@ def test_send_to_invalid_partitions(connection_str):
                 sender.send(EventData("test data"))
         finally:
             sender.close()
+            client.close()
 
 
 @pytest.mark.liveTest
@@ -143,6 +154,7 @@ def test_send_too_large_message(connection_str):
             sender.send(data)
     finally:
         sender.close()
+        client.close()
 
 
 @pytest.mark.liveTest
@@ -155,6 +167,7 @@ def test_send_null_body(connection_str):
             sender.send(data)
     finally:
         sender.close()
+        client.close()
 
 
 @pytest.mark.liveTest
@@ -209,6 +222,7 @@ def test_message_body_types(connstr_senders):
         raise
     finally:
         receiver.close()
+        client.close()
 
 
 @pytest.mark.liveTest
@@ -218,6 +232,7 @@ def test_create_batch_with_invalid_hostname_sync(invalid_hostname):
     with pytest.raises(AuthenticationError):
         sender.create_batch(max_size=300, partition_key="key")
     sender.close()
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -227,3 +242,4 @@ def test_create_batch_with_too_large_size_sync(connection_str):
     with pytest.raises(ValueError):
         sender.create_batch(max_size=5 * 1024 * 1024, partition_key="key")
     sender.close()
+    client.close()

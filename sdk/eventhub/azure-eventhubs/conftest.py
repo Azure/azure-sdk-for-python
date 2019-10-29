@@ -174,6 +174,7 @@ def connstr_receivers(connection_str):
 
     for r in receivers:
         r.close()
+    client.close()
 
 
 @pytest.fixture()
@@ -188,3 +189,4 @@ def connstr_senders(connection_str):
     yield connection_str, senders
     for s in senders:
         s.close()
+    client.close()

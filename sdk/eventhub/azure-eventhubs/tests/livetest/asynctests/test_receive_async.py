@@ -26,6 +26,7 @@ async def test_receive_end_of_stream_async(connstr_senders):
         assert len(received) == 1
 
         assert list(received[-1].body)[0] == b"Receiving only a single event"
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -50,6 +51,7 @@ async def test_receive_with_offset_async(connstr_senders):
         senders[0].send(EventData(b"Message after offset"))
         received = await offset_receiver.receive(timeout=5)
         assert len(received) == 1
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -71,6 +73,7 @@ async def test_receive_with_inclusive_offset_async(connstr_senders):
     async with offset_receiver:
         received = await offset_receiver.receive(timeout=5)
         assert len(received) == 1
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -95,6 +98,7 @@ async def test_receive_with_datetime_async(connstr_senders):
         time.sleep(1)
         received = await offset_receiver.receive(timeout=5)
         assert len(received) == 1
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -119,6 +123,7 @@ async def test_receive_with_sequence_no_async(connstr_senders):
         time.sleep(1)
         received = await offset_receiver.receive(timeout=5)
         assert len(received) == 1
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -139,6 +144,7 @@ async def test_receive_with_inclusive_sequence_no_async(connstr_senders):
     async with offset_receiver:
         received = await offset_receiver.receive(timeout=5)
         assert len(received) == 1
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -160,6 +166,7 @@ async def test_receive_batch_async(connstr_senders):
             assert event.sequence_number is not None
             assert event.offset
             assert event.enqueued_time
+    await client.close()
 
 
 async def pump(receiver, sleep=None):
@@ -195,6 +202,7 @@ async def test_exclusive_receiver_async(connstr_senders):
     finally:
         await receiver1.close()
         await receiver2.close()
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -220,6 +228,7 @@ async def test_multiple_receiver_async(connstr_senders):
     finally:
         for r in receivers:
             await r.close()
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -240,6 +249,7 @@ async def test_exclusive_receiver_after_non_exclusive_receiver_async(connstr_sen
     finally:
         await receiver1.close()
         await receiver2.close()
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -259,6 +269,7 @@ async def test_non_exclusive_receiver_after_exclusive_receiver_async(connstr_sen
     finally:
         await receiver1.close()
         await receiver2.close()
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -296,6 +307,7 @@ async def test_receive_batch_with_app_prop_async(connstr_senders):
         assert list(message.body)[0] == "Event Data {}".format(index).encode('utf-8')
         assert (app_prop_key.encode('utf-8') in message.application_properties) \
             and (dict(message.application_properties)[app_prop_key.encode('utf-8')] == app_prop_value.encode('utf-8'))
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -319,6 +331,7 @@ async def test_receive_over_websocket_async(connstr_senders):
 
         received = await receiver.receive(max_batch_size=50, timeout=5)
         assert len(received) == 20
+    await client.close()
 
 
 @pytest.mark.asyncio
@@ -332,8 +345,8 @@ async def test_receive_run_time_metric_async(connstr_senders):
     client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket,
                                                    network_tracing=False)
     receiver = client._create_consumer(consumer_group="$default", partition_id="0",
-                                      event_position=EventPosition('@latest'), prefetch=500,
-                                      track_last_enqueued_event_properties=True)
+                                       event_position=EventPosition('@latest'), prefetch=500,
+                                       track_last_enqueued_event_properties=True)
 
     event_list = []
     for i in range(20):
@@ -354,3 +367,4 @@ async def test_receive_run_time_metric_async(connstr_senders):
         assert receiver.last_enqueued_event_properties.get('offset', None)
         assert receiver.last_enqueued_event_properties.get('enqueued_time', None)
         assert receiver.last_enqueued_event_properties.get('retrieval_time', None)
+    await client.close()

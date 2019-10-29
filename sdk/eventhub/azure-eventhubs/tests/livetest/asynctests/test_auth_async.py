@@ -7,7 +7,7 @@
 import pytest
 import asyncio
 
-from azure.eventhub import EventData, EventPosition
+from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient
 
 
@@ -40,5 +40,5 @@ async def test_client_secret_credential_async(aad_credential, live_eventhub):
     async with consumer_client:
         task = asyncio.ensure_future(
             consumer_client.receive(event_handler=event_handler, consumer_group='$default', partition_id='0'))
-        asyncio.sleep(2)
+        await asyncio.sleep(2)
         task.cancel()

@@ -18,6 +18,7 @@ from azure.eventhub import (
 )
 from azure.eventhub.aio._client_async import EventHubClient
 
+
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receivers):
@@ -27,6 +28,7 @@ async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receiv
     with pytest.raises(AuthenticationError):
         await sender.send(EventData("test data"))
     await sender.close()
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -37,6 +39,7 @@ async def test_receive_with_invalid_hostname_async(invalid_hostname):
     with pytest.raises(AuthenticationError):
         await receiver.receive(timeout=3)
     await receiver.close()
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -58,6 +61,7 @@ async def test_receive_with_invalid_key_async(invalid_key):
     with pytest.raises(AuthenticationError):
         await receiver.receive(timeout=3)
     await receiver.close()
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -69,6 +73,7 @@ async def test_send_with_invalid_policy_async(invalid_policy, connstr_receivers)
     with pytest.raises(AuthenticationError):
         await sender.send(EventData("test data"))
     await sender.close()
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -79,6 +84,7 @@ async def test_receive_with_invalid_policy_async(invalid_policy):
     with pytest.raises(AuthenticationError):
         await receiver.receive(timeout=3)
     await receiver.close()
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -93,6 +99,7 @@ async def test_send_partition_key_with_partition_async(connection_str):
             await sender.send(EventData("test data"))
     finally:
         await sender.close()
+        await client.close()
 
 
 @pytest.mark.liveTest
@@ -103,6 +110,7 @@ async def test_non_existing_entity_sender_async(connection_str):
     with pytest.raises(AuthenticationError):
         await sender.send(EventData("test data"))
     await sender.close()
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -113,6 +121,7 @@ async def test_non_existing_entity_receiver_async(connection_str):
     with pytest.raises(AuthenticationError):
         await receiver.receive(timeout=5)
     await receiver.close()
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -125,6 +134,7 @@ async def test_receive_from_invalid_partitions_async(connection_str):
         with pytest.raises(ConnectError):
             await receiver.receive(timeout=5)
         await receiver.close()
+        await client.close()
 
 
 @pytest.mark.liveTest
@@ -137,6 +147,7 @@ async def test_send_to_invalid_partitions_async(connection_str):
         with pytest.raises(ConnectError):
             await sender.send(EventData("test data"))
         await sender.close()
+        await client.close()
 
 
 @pytest.mark.liveTest
@@ -152,6 +163,7 @@ async def test_send_too_large_message_async(connection_str):
             await sender.send(data)
     finally:
         await sender.close()
+        await client.close()
 
 
 @pytest.mark.liveTest
@@ -165,6 +177,7 @@ async def test_send_null_body_async(connection_str):
             await sender.send(data)
     finally:
         await sender.close()
+        await client.close()
 
 
 async def pump(receiver):
@@ -200,6 +213,7 @@ async def test_max_receivers_async(connstr_senders):
     failed = [o for o in outputs if isinstance(o, EventHubError)]
     assert len(failed) == 1
     print(failed[0].message)
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -212,6 +226,7 @@ async def test_create_batch_with_invalid_hostname_async(invalid_hostname):
             batch_event_data = await sender.create_batch(max_size=300, partition_key="key")
     finally:
         await sender.close()
+        await client.close()
 
 
 @pytest.mark.liveTest
@@ -224,3 +239,4 @@ async def test_create_batch_with_too_large_size_async(connection_str):
             batch_event_data = await sender.create_batch(max_size=5 * 1024 * 1024, partition_key="key")
     finally:
         await sender.close()
+        await client.close()

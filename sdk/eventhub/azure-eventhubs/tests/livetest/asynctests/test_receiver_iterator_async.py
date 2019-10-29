@@ -25,3 +25,4 @@ async def test_receive_iterator_async(connstr_senders):
             break
         assert len(received) == 1
         assert list(received[-1].body)[0] == b"Receiving only a single event"
+    await client.close()

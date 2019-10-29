@@ -27,6 +27,7 @@ def test_receive_end_of_stream(connstr_senders):
 
         assert received[0].body_as_str() == "Receiving only a single event"
         assert list(received[-1].body)[0] == b"Receiving only a single event"
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -57,6 +58,7 @@ def test_receive_with_offset_sync(connstr_senders):
         senders[0].send(EventData(b"Message after offset"))
         received = offset_receiver.receive(timeout=5)
         assert len(received) == 1
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -81,6 +83,7 @@ def test_receive_with_inclusive_offset(connstr_senders):
     with offset_receiver:
         received = offset_receiver.receive(timeout=5)
         assert len(received) == 1
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -110,6 +113,7 @@ def test_receive_with_datetime_sync(connstr_senders):
         senders[0].send(EventData(b"Message after timestamp"))
         received = offset_receiver.receive(timeout=5)
         assert len(received) == 1
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -137,6 +141,7 @@ def test_receive_with_custom_datetime_sync(connstr_senders):
         for received_event in all_received:
             assert received_event.body_as_str() == "Message after timestamp"
             assert received_event.enqueued_time > offset
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -162,6 +167,8 @@ def test_receive_with_sequence_no(connstr_senders):
         time.sleep(1)
         received = offset_receiver.receive(timeout=5)
         assert len(received) == 1
+    client.close()
+
 
 @pytest.mark.liveTest
 def test_receive_with_inclusive_sequence_no(connstr_senders):
@@ -179,6 +186,7 @@ def test_receive_with_inclusive_sequence_no(connstr_senders):
     with offset_receiver:
         received = offset_receiver.receive(timeout=5)
         assert len(received) == 1
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -199,6 +207,7 @@ def test_receive_batch(connstr_senders):
             assert event.sequence_number is not None
             assert event.offset
             assert event.enqueued_time
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -236,6 +245,7 @@ def test_receive_batch_with_app_prop_sync(connstr_senders):
             assert list(message.body)[0] == "Event Data {}".format(index).encode('utf-8')
             assert (app_prop_key.encode('utf-8') in message.application_properties) \
                 and (dict(message.application_properties)[app_prop_key.encode('utf-8')] == app_prop_value.encode('utf-8'))
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -258,6 +268,7 @@ def test_receive_over_websocket_sync(connstr_senders):
 
         received = receiver.receive(max_batch_size=50, timeout=5)
         assert len(received) == 20
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -292,3 +303,4 @@ def test_receive_run_time_metric(connstr_senders):
         assert receiver.last_enqueued_event_properties.get('offset', None)
         assert receiver.last_enqueued_event_properties.get('enqueued_time', None)
         assert receiver.last_enqueued_event_properties.get('retrieval_time', None)
+    client.close()
