@@ -95,7 +95,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
-            raise ValueError("You need to provide either a SAS token or an account key to authenticate.")
+            raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
