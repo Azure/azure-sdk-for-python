@@ -183,7 +183,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
 
     def create_file_system(self, file_system,  # type: Union[FileSystemProperties, str]
                            metadata=None,  # type: Optional[Dict[str, str]]
-                           public_access=None,  # type: Optional[Union[PublicAccess, str]]
+                           public_access=None,  # type: Optional[PublicAccess]
                            **kwargs):
         # type: (...) -> FileSystemClient
         """Creates a new file system under the specified account.
@@ -229,7 +229,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             The file system to delete. This can either be the name of the file system,
             or an instance of FileSystemProperties.
         :type file_system: str or ~azure.storage.file.datalake.FileSystemProperties
-        :param ~azure.storage.file.datalake.DataLakeLeaseClient lease:
+        :keyword ~azure.storage.file.datalake.DataLakeLeaseClient lease:
             If specified, delete_file_system only succeeds if the
             file system's lease is active and matches this ID.
             Required if the file system has an active lease.

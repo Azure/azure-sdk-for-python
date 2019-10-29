@@ -221,7 +221,7 @@ class PathClient(StorageAccountHostsMixin):
             operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :return:
+        :return: None
         """
         options = self._delete_path_options(**kwargs)
         try:
@@ -273,34 +273,34 @@ class PathClient(StorageAccountHostsMixin):
          group identifier, and permissions in the format
          "[scope:][type]:[id]:[permissions]".
         :type acl: str
-        :param lease:
+        :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.LeaseClient or str
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param int timeout:
+        :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return:
+        :keyword: response dict (Etag and last modified).
         """
         options = self._set_access_control_options(owner=owner, group=group, permissions=permissions, acl=acl, **kwargs)
         try:
@@ -341,6 +341,48 @@ class PathClient(StorageAccountHostsMixin):
 
     def _get_path_properties(self, **kwargs):
         # type: (**Any) -> Union[FileProperties, DirectoryProperties]
+        """Returns all user-defined metadata, standard HTTP properties, and
+        system properties for the blob. It does not return the content of the directory or file.
+
+        :keyword lease:
+            Required if the directory or file has an active lease. Value can be a DataLakeLeaseClient object
+            or the lease ID as a string.
+        :type lease: ~azure.storage.file.datalake.DataLakeLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.blob.BlobProperties
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../tests/test_blob_samples_common.py
+                :start-after: [START get_blob_properties]
+                :end-before: [END get_blob_properties]
+                :language: python
+                :dedent: 8
+                :caption: Getting the properties for a blob.
+        """
         path_properties = self._blob_client.get_blob_properties(**kwargs)
         path_properties.__class__ = DirectoryProperties
         return path_properties

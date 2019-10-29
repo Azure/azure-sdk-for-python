@@ -71,16 +71,89 @@ class DataLakeFileClient(PathClient):
                     **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
-        Create directory or file
-        :return:
+        Create file
+
+        :param ~azure.storage.file.datalake.ContentSettings content_settings:
+            ContentSettings object used to set path properties.
+        :param metadata:
+            Name-value pairs associated with the blob as metadata.
+        :type metadata: dict(str, str)
+        :keyword ~azure.storage.file.datalake.DataLakeLeaseClient or str lease:
+            Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
+            or the lease ID as a string.
+        :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
+            When creating a file or directory and the parent folder does not have a default ACL,
+            the umask restricts the permissions of the file or directory to be created.
+            The resulting permission is given by p & ^u, where p is the permission and u is the umask.
+            For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
+            The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
+            The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str permissions: Optional and only valid if Hierarchical Namespace
+         is enabled for the account. Sets POSIX access permissions for the file
+         owner, the file owning group, and others. Each class may be granted
+         read, write, or execute permission.  The sticky bit is also supported.
+         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
+         supported.
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :keyword str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: response dict (Etag and last modified).
         """
         return self._create('file', content_settings=content_settings, metadata=metadata, **kwargs)
 
     def delete_file(self, **kwargs):
         # type: (...) -> None
         """
-        Marks the specified path for deletion.
-        :return:
+        Marks the specified file for deletion.
+
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a LeaseClient object
+            or the lease ID as a string.
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :keyword str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: None
         """
         self._
         return self._delete(**kwargs)
@@ -119,24 +192,23 @@ class DataLakeFileClient(PathClient):
                     length=None,  # type: Optional[int]
                     **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
-        """
+        """Append data to the file.
 
-        :param data:
-        :param offset:
-        :param length:
-        :param bool validate_content:
+        :param data: Content to be appended to file
+        :param offset: start position of the data to be appended to.
+        :param length: Size of the data in bytes.
+        :keyword bool validate_content:
             If true, calculates an MD5 hash of the block content. The storage
             service checks the hash of the content that has arrived
             with the hash that was sent. This is primarily valuable for detecting
             bitflips on the wire if using http instead of https as https (the default)
             will already validate. Note that this MD5 hash is not stored with the
             blob.
-        :param lease:
+        :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.LeaseClient or str
-        :param kwargs:
-        :return:
+        :type lease: ~azure.storage.file.datalake.DataLakeLeaseClient or str
+        :return: dict of the response header
         """
         options = self._append_data_options(
             data,
@@ -176,53 +248,52 @@ class DataLakeFileClient(PathClient):
                    retain_uncommitted_data=False,   # type: Optional[bool]
                    **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
-        """
+        """ Commit the previous appended data.
 
-        :param offset:
+        :param offset: the length of the file after commit the previous appended data.
         :param bool retain_uncommitted_data: Valid only for flush operations.  If
-         "true", uncommitted data is retained after the flush operation
-         completes; otherwise, the uncommitted data is deleted after the flush
-         operation.  The default is false.  Data at offsets less than the
-         specified position are written to the file when flush succeeds, but
-         this optional parameter allows data after the flush position to be
-         retained for a future flush operation.
-        :param bool close: Azure Storage Events allow applications to receive
-         notifications when files change. When Azure Storage Events are
-         enabled, a file changed event is raised. This event has a property
-         indicating whether this is the final change to distinguish the
-         difference between an intermediate flush to a file stream and the
-         final close of a file stream. The close query parameter is valid only
-         when the action is "flush" and change notifications are enabled. If
-         the value of close is "true" and the flush operation completes
-         successfully, the service raises a file change notification with a
-         property indicating that this is the final update (the file stream has
-         been closed). If "false" a change notification is raised indicating
-         the file has changed. The default is false. This query parameter is
-         set to true by the Hadoop ABFS driver to indicate that the file stream
-         has been closed."
-        :param ~datetime.datetime if_modified_since:
+            "true", uncommitted data is retained after the flush operation
+            completes; otherwise, the uncommitted data is deleted after the flush
+            operation.  The default is false.  Data at offsets less than the
+            specified position are written to the file when flush succeeds, but
+            this optional parameter allows data after the flush position to be
+            retained for a future flush operation.
+        :keyword bool close: Azure Storage Events allow applications to receive
+            notifications when files change. When Azure Storage Events are
+            enabled, a file changed event is raised. This event has a property
+            indicating whether this is the final change to distinguish the
+            difference between an intermediate flush to a file stream and the
+            final close of a file stream. The close query parameter is valid only
+            when the action is "flush" and change notifications are enabled. If
+            the value of close is "true" and the flush operation completes
+            successfully, the service raises a file change notification with a
+            property indicating that this is the final update (the file stream has
+            been closed). If "false" a change notification is raised indicating
+            the file has changed. The default is false. This query parameter is
+            set to true by the Hadoop ABFS driver to indicate that the file stream
+            has been closed."
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :param str if_match:
+        :keyword str if_match:
             An ETag value, or the wildcard character (*). Specify this header to perform
             the operation only if the resource's ETag matches the value specified.
-        :param str if_none_match:
+        :keyword str if_none_match:
             An ETag value, or the wildcard character (*). Specify this header
             to perform the operation only if the resource's ETag does not match
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param kwargs:
-        :return:
+        :return: response header in dict
         """
         options = self._flush_data_options(
             offset,
@@ -236,10 +307,53 @@ class DataLakeFileClient(PathClient):
                   length=None,   # type: Optional[int]
                   stream=None,  # type: Optional[IO]
                   **kwargs):
-        # type: (...) -> Union[int, byte, str]
-        """
-        Download a file from the service, including its metadata and properties
-        :return:
+        # type: (...) -> Union[int, byte]
+        """Download a file from the service.
+
+        :param int offset:
+            Start of byte range to use for downloading a section of the file.
+            Must be set if length is provided.
+        :param int length:
+            Number of bytes to read from the stream. This is optional, but
+            should be supplied for optimal performance.
+        :keyword lease:
+            If specified, download_blob only succeeds if the blob's lease is active
+            and matches this ID. Required if the blob has an active lease.
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
+        :keyword int max_concurrency:
+            The number of parallel connections with which to download.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds. This method may make
+            multiple calls to the Azure service and the timeout will apply to
+            each call individually.
+        :returns: downloaded data or the size of data written into the provided stream
+        :rtype: bytes or int
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../tests/test_blob_samples_hello_world.py
+                :start-after: [START download_a_blob]
+                :end-before: [END download_a_blob]
+                :language: python
+                :dedent: 12
+                :caption: Download a blob.
         """
         downloader = self._blob_client.download_blob(offset=offset, length=length, **kwargs)
         if stream:
