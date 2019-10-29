@@ -466,7 +466,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Container-updated property dict (Etag and last modified).
-        :rtype: dict[str, str or datetime]
+        :rtype: dict[str, str or ~datetime.datetime]
 
         .. admonition:: Example:
 

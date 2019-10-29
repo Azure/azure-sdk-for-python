@@ -158,7 +158,8 @@ class QueueClient(StorageAccountHostsMixin):
         """Create QueueClient from a Connection String.
 
         :param str conn_str:
-            A connection string to an Azure Storage account.
+            A connection string to an Azure Storage account. If you are using the Azure portal,
+            this can be found in the Access Keys section.
         :param queue_name: The queue name.
         :type queue_name: str
         :param credential:
@@ -302,6 +303,7 @@ class QueueClient(StorageAccountHostsMixin):
         :type metadata: dict(str, str)
         :keyword int timeout:
             The server timeout, expressed in seconds.
+        :rtype: None
 
         .. admonition:: Example:
 
@@ -369,6 +371,7 @@ class QueueClient(StorageAccountHostsMixin):
         :type signed_identifiers: dict(str, ~azure.storage.queue.AccessPolicy)
         :keyword int timeout:
             The server timeout, expressed in seconds.
+        :rtype: None
 
         .. admonition:: Example:
 
@@ -699,6 +702,7 @@ class QueueClient(StorageAccountHostsMixin):
 
         :keyword int timeout:
             The server timeout, expressed in seconds.
+        :rtype: None
 
         .. admonition:: Example:
 
@@ -738,6 +742,7 @@ class QueueClient(StorageAccountHostsMixin):
             to the :func:`~receive_messages` or :func:`~update_message`.
         :keyword int timeout:
             The server timeout, expressed in seconds.
+        :rtype: None
 
         .. admonition:: Example:
 

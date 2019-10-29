@@ -221,6 +221,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :type metadata: dict(str, str)
         :keyword int timeout:
             The server timeout, expressed in seconds.
+        :rtype: None
 
         .. admonition:: Example:
 
@@ -285,6 +286,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :type signed_identifiers: dict(str, ~azure.storage.queue.AccessPolicy)
         :keyword int timeout:
             The server timeout, expressed in seconds.
+        :rtype: None
 
         .. admonition:: Example:
 
@@ -622,6 +624,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         :keyword int timeout:
             The server timeout, expressed in seconds.
+        :rtype: None
 
         .. admonition:: Example:
 
@@ -661,6 +664,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             to the :func:`~receive_messages` or :func:`~update_message`.
         :keyword int timeout:
             The server timeout, expressed in seconds.
+        :rtype: None
 
         .. admonition:: Example:
 
