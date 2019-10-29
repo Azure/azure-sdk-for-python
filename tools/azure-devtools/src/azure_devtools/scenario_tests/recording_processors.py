@@ -171,7 +171,8 @@ class GeneralNameReplacer(RecordingProcessor):
 
     def process_request(self, request):
         for old, new in self.names_name:
-            request.uri = request.uri.replace(old, new)
+            print(str(old) + "xxx" + str(new))
+            request.uri = request.uri.replace(old, str(new))
 
             if is_text_payload(request) and request.body:
                 body = str(request.body)
