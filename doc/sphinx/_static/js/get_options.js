@@ -45,7 +45,7 @@ function hideSelectors(selectors){
 
 function populateOptions(optionSelector, otherSelectors){
   if(currentPackage()){
-    var versionRequestUrl = "https://azuresdkdocs.blob.core.windows.net/$web?restype=container&comp=list&prefix=python/" + currentPackage() + "/versions/"
+    var versionRequestUrl = "https://azuresdkdocs.blob.core.windows.net/$web?restype=container&comp=list&prefix=" + SELECTED_LANGUAGE + "/" + currentPackage() + "/versions/"
     
     httpGetAsync(versionRequestUrl, function(responseText){
       if(responseText){
@@ -108,7 +108,7 @@ function populateIndexList(selector, packageName)
       }
 
       for (var i in options){
-        $(selector).append('<li><a target="new" href="' + getPackageUrl('python', packageName, options[i]) + '">' + options[i] + '</a></li>')
+        $(selector).append('<li><a target="new" href="' + getPackageUrl(SELECTED_LANGUAGE, packageName, options[i]) + '">' + options[i] + '</a></li>')
       }
     }
     else {
