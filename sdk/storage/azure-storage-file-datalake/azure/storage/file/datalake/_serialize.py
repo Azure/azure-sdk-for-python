@@ -4,7 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.storage.blob._shared import encode_base64
-from azure.storage.file.datalake._generated.models import ModifiedAccessConditions, PathHTTPHeaders
+from azure.storage.file.datalake._generated.models import ModifiedAccessConditions, PathHTTPHeaders, \
+    SourceModifiedAccessConditions
 
 
 def convert_dfs_url_to_blob_url(dfs_account_url):
@@ -35,6 +36,15 @@ def get_mod_conditions(kwargs):
     return mod_conditions
 
 
+def get_source_mod_conditions(kwargs):
+    mod_conditions = SourceModifiedAccessConditions(
+        source_if_modified_since=kwargs.pop('source_if_modified_since', None),
+        source_if_unmodified_since=kwargs.pop('source_if_unmodified_since', None),
+        source_if_match=kwargs.pop('source_if_match', None),
+        source_if_none_match=kwargs.pop('source_if_none_match', None))
+    return mod_conditions
+
+
 def get_path_http_headers(content_settings):
     path_headers = PathHTTPHeaders(
         cache_control=content_settings.cache_control,
@@ -45,3 +55,13 @@ def get_path_http_headers(content_settings):
         content_disposition=content_settings.content_disposition
     )
     return path_headers
+
+
+def get_lease_id(lease):
+    if not lease:
+        return ""
+    try:
+        lease_id = lease.id
+    except AttributeError:
+        lease_id = lease
+    return lease_id

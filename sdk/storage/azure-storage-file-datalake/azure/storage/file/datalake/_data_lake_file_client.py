@@ -155,11 +155,47 @@ class DataLakeFileClient(PathClient):
             The timeout parameter is expressed in seconds.
         :return: None
         """
-        self._
         return self._delete(**kwargs)
 
     def get_file_properties(self, **kwargs):
         # type: (**Any) -> FileProperties
+        """Returns all user-defined metadata, standard HTTP properties, and
+        system properties for the file. It does not return the content of the file.
+
+        :keyword lease:
+            Required if the directory or file has an active lease. Value can be a DataLakeLeaseClient object
+            or the lease ID as a string.
+        :type lease: ~azure.storage.file.datalake.DataLakeLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: FileProperties
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../tests/test_blob_samples_common.py
+                :start-after: [START get_blob_properties]
+                :end-before: [END get_blob_properties]
+                :language: python
+                :dedent: 8
+                :caption: Getting the properties for a file/directory.
+        """
         return self._get_path_properties(**kwargs)
 
     @staticmethod

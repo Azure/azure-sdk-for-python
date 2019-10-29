@@ -393,7 +393,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         props.content_settings.content_language = 'spanish'
         props.content_settings.content_disposition = 'inline'
-        blob.set_http_headers(content_settings=props.content_settings)
+        aaa = blob.set_http_headers(content_settings=props.content_settings)
 
         # Assert
         props = blob.get_blob_properties()

@@ -149,25 +149,173 @@ class DataLakeDirectoryClient(PathClient):
 
     def get_directory_properties(self, **kwargs):
         # type: (**Any) -> DirectoryProperties
+        """Returns all user-defined metadata, standard HTTP properties, and
+        system properties for the directory. It does not return the content of the directory.
+
+        :keyword lease:
+            Required if the directory or file has an active lease. Value can be a DataLakeLeaseClient object
+            or the lease ID as a string.
+        :type lease: ~azure.storage.file.datalake.DataLakeLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword :class:`MatchConditions` match_condition:
+            The match condition to use upon the etag.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: DirectoryProperties
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../tests/test_blob_samples_common.py
+                :start-after: [START get_blob_properties]
+                :end-before: [END get_blob_properties]
+                :language: python
+                :dedent: 8
+                :caption: Getting the properties for a file/directory.
+        """
         return self._get_path_properties(**kwargs)
 
     def create_sub_directory(self, sub_directory,  # type: Union[DirectoryProperties, str]
                              content_settings=None,  # type: Optional[ContentSettings]
                              metadata=None,  # type: Optional[Dict[str, str]]
                              **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+        # type: (...) -> DataLakeDirectoryClient
+        """
+        Create subdirectory
+
+        :param sub_directory:
+            The directory with which to interact. This can either be the name of the directory,
+            or an instance of DirectoryProperties.
+        :type sub_directory: str or ~azure.storage.file.datalake.DirectoryProperties
+        :param ~azure.storage.file.datalake.ContentSettings content_settings:
+            ContentSettings object used to set path properties.
+        :param metadata:
+            Name-value pairs associated with the blob as metadata.
+        :type metadata: dict(str, str)
+        :keyword ~azure.storage.file.datalake.DataLakeLeaseClient or str lease:
+            Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
+            or the lease ID as a string.
+        :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
+            When creating a file or directory and the parent folder does not have a default ACL,
+            the umask restricts the permissions of the file or directory to be created.
+            The resulting permission is given by p & ^u, where p is the permission and u is the umask.
+            For example, if p is 0777 and u is 0057, then the resulting permission is 0720.
+            The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
+            The umask must be specified in 4-digit octal notation (e.g. 0766).
+        :keyword str permissions: Optional and only valid if Hierarchical Namespace
+         is enabled for the account. Sets POSIX access permissions for the file
+         owner, the file owning group, and others. Each class may be granted
+         read, write, or execute permission.  The sticky bit is also supported.
+         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
+         supported.
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :keyword str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: DataLakeDirectoryClient for the subdirectory.
+        """
         subdir = self.get_sub_directory_client(sub_directory)
-        return subdir.create_directory(content_settings=content_settings, metadata=metadata, **kwargs)
+        subdir.create_directory(content_settings=content_settings, metadata=metadata, **kwargs)
+        return subdir
 
     def delete_sub_directory(self, sub_directory,  # type: Union[DirectoryProperties, str]
                              **kwargs):
-        # type: (...) -> ItemPaged[Response]
+        # type: (...) -> DataLakeDirectoryClient
+        """
+        Marks the specified subdirectory for deletion.
+
+        :param sub_directory:
+            The directory with which to interact. This can either be the name of the directory,
+            or an instance of DirectoryProperties.
+        :type sub_directory: str or ~azure.storage.file.datalake.DirectoryProperties
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a LeaseClient object
+            or the lease ID as a string.
+        :type lease: ~azure.storage.blob.LeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :keyword str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: DataLakeDirectoryClient for the subdirectory
+        """
         subdir = self.get_sub_directory_client(sub_directory)
-        return subdir.delete_directory(**kwargs)
+        subdir.delete_directory(**kwargs)
+        return subdir
 
     def get_file_client(self, file  # type: Union[FileProperties, str]
                         ):
         # type: (...) -> DataLakeFileClient
+        """Get a client to interact with the specified file.
+
+        The file need not already exist.
+
+        :param file:
+            The file with which to interact. This can either be the name of the file,
+            or an instance of FileProperties.
+        :type file: str or ~azure.storage.file.datalake.FileProperties
+        :returns: A DataLakeFileClient.
+        :rtype: ~azure.storage.file.datalake..DataLakeFileClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/test_datalake_service_samples.py
+                :start-after: [START bsc_get_file_client]
+                :end-before: [END bsc_get_file_client]
+                :language: python
+                :dedent: 12
+                :caption: Getting the file client to interact with a specific file.
+        """
         return DataLakeFileClient(
             self.url, self.file_system_name, self.path_name, file, credential=self.credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
@@ -178,6 +326,26 @@ class DataLakeDirectoryClient(PathClient):
     def get_sub_directory_client(self, sub_directory  # type: Union[DirectoryProperties, str]
                                  ):
         # type: (...) -> DataLakeDirectoryClient
+        """Get a client to interact with the specified subdirectory of the current directory.
+
+        The sub subdirectory need not already exist.
+
+        :param sub_directory:
+            The directory with which to interact. This can either be the name of the directory,
+            or an instance of DirectoryProperties.
+        :type sub_directory: str or ~azure.storage.file.datalake.DirectoryProperties
+        :returns: A DataLakeDirectoryClient.
+        :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/test_datalake_service_samples.py
+                :start-after: [START bsc_get_directory_client]
+                :end-before: [END bsc_get_directory_client]
+                :language: python
+                :dedent: 12
+                :caption: Getting the directory client to interact with a specific directory.
+        """
         directory = self.path_name.rstrip('/') + "/" + sub_directory
         return DataLakeDirectoryClient(
             self.url, self.file_system_name, directory, credential=self.credential,

@@ -788,7 +788,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def set_http_headers(self, content_settings=None, **kwargs):
-        # type: (Optional[ContentSettings], **Any) -> None
+        # type: (Optional[ContentSettings], **Any) -> Dict[str, Any]
         """Sets system properties on the blob.
 
         If one property is set for the content_settings, all properties will be overriden.
