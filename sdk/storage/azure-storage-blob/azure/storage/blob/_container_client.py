@@ -204,7 +204,8 @@ class ContainerClient(StorageAccountHostsMixin):
         """Create ContainerClient from a Connection String.
 
         :param str conn_str:
-            A connection string to an Azure Storage account.
+            A connection string to an Azure Storage account. If you are using the Azure portal,
+            this can be found in the Access Keys section.
         :param container_name:
             The container name for the blob.
         :type container_name: str

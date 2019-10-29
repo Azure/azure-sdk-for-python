@@ -236,7 +236,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """Create BlobClient from a Connection String.
 
         :param str conn_str:
-            A connection string to an Azure Storage account.
+            A connection string to an Azure Storage account. If you are using the Azure portal,
+            this can be found in the Access Keys section.
         :param container_name: The container name for the blob.
         :type container_name: str
         :param blob_name: The name of the blob with which to interact.
@@ -2420,6 +2421,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             a secure connection must be established to transfer the key.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :returns: Blob updated property dict.
+        :rtype: dict[str, Any]
         """
 
         options = self._upload_pages_from_url_options(
@@ -2796,6 +2799,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             a secure connection must be established to transfer the key.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :returns: Blob updated property dict.
+        :rtype: dict[str, Any]
         """
         options = self._append_block_from_url_options(
             copy_source_url,

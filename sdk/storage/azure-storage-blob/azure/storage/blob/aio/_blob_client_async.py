@@ -1572,6 +1572,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             a secure connection must be established to transfer the key.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :returns: Blob updated property dict.
+        :rtype: dict[str, Any]
         """
 
         options = self._upload_pages_from_url_options(
@@ -1798,6 +1800,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             a secure connection must be established to transfer the key.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :returns: Blob updated property dict.
+        :rtype: dict[str, Any]
         """
         options = self._append_block_from_url_options(
             copy_source_url,

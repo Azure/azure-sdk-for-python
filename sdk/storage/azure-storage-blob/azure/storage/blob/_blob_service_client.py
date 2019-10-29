@@ -137,7 +137,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
         """Create BlobServiceClient from a Connection String.
 
         :param str conn_str:
-            A connection string to an Azure Storage account.
+            A connection string to an Azure Storage account.  If you are using the Azure portal,
+            this can be found in the Access Keys section.
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
