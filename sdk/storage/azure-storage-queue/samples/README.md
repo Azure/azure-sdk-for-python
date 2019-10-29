@@ -10,6 +10,8 @@ products:
 # Azure Storage Queues client library for Python Samples
 
 These are code samples that show common scenario operations with the Azure Storage Queue client library.
+The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations 
+with queues and require Python 3.5 or later. 
 
 ## Contents
 
@@ -44,7 +46,7 @@ These are code samples that show common scenario operations with the Azure Stora
     * Enabling the logger for the service and printing any logging messages
 
 ## Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package.
+* Python 2.7, or 3.5 or later is required to use this package (3.5 or later if using asyncio)
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to run these samples.
 
