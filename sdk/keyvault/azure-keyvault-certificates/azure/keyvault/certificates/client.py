@@ -92,7 +92,9 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Create a certificate
                 :dedent: 8
         """
-
+        polling_interval = kwargs.pop("_polling_interval", None)
+        if polling_interval == None:
+            polling_interval = 5
         enabled = kwargs.pop("enabled", None)
         tags = kwargs.pop("tags", None)
 
@@ -116,7 +118,10 @@ class CertificateClient(KeyVaultClientBase):
 
         get_certificate_command = partial(self.get_certificate, name=name, **kwargs)
 
-        create_certificate_polling = CreateCertificatePoller(get_certificate_command=get_certificate_command)
+        create_certificate_polling = CreateCertificatePoller(
+            get_certificate_command=get_certificate_command,
+            interval=polling_interval
+        )
         return LROPoller(command, create_certificate_operation, None, create_certificate_polling)
 
     @distributed_trace
@@ -213,7 +218,9 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Delete a certificate
                 :dedent: 8
         """
-        polling_interval = kwargs.pop("_polling_interval", 2)
+        polling_interval = kwargs.pop("_polling_interval", None)
+        if polling_interval == None:
+            polling_interval = 2
         deleted_cert = DeletedCertificate._from_deleted_certificate_bundle(
             self._client.delete_certificate(
                 vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs

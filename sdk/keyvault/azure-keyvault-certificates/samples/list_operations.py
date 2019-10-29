@@ -91,8 +91,8 @@ try:
         )
 
     # The bank account and storage accounts got closed. Let's delete bank and storage accounts certificates.
-    client.delete_certificate(name=bank_cert_name)
-    client.delete_certificate(name=storage_cert_name)
+    client.begin_delete_certificate(name=bank_cert_name).wait()
+    client.begin_delete_certificate(name=storage_cert_name).wait()
 
     # You can list all the deleted and non-purged certificates, assuming Key Vault is soft-delete enabled.
     print("\n.. List deleted certificates from the Key Vault")
