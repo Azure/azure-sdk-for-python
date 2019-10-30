@@ -39,8 +39,6 @@ class PartitionManager(ABC):
         """
         Tries to claim a list of specified ownership.
 
-        :param fully_qualified_namespace: The fully qualified namespace that the event hub belongs to.
-         The format is like "<namespace>.servicebus.windows.net"
         :param ownership_list: Iterable of dictionaries containing all the ownership to claim.
         :type ownership_list: Iterable of dict
         :return: Iterable of dictionaries containing the following partition ownership information:
