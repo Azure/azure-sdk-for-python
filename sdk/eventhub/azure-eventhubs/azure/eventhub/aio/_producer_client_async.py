@@ -174,7 +174,8 @@ class EventHubProducerClient(EventHubClient):
                 :caption: Close down the handler.
 
         """
-        for p in self._producers:
-            if p:
-                await p.close()
+        if self._producers:
+            for p in self._producers:
+                if p:
+                    await p.close()
         await self._conn_manager.close_connection()
