@@ -98,7 +98,7 @@ def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
         pass
 
 
-def test_example_eventhub_producer_ops():
+def test_example_eventhub_producer_ops(live_eventhub_config):
     # [START eventhub_producer_client_close_sync]
     import os
     from azure.eventhub import EventHubProducerClient, EventData
@@ -116,7 +116,7 @@ def test_example_eventhub_producer_ops():
     # [END eventhub_producer_client_close_sync]
 
 
-def test_example_eventhub_consumer_ops():
+def test_example_eventhub_consumer_ops(live_eventhub_config):
     # [START eventhub_consumer_client_close_sync]
     import os
 
