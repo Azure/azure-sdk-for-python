@@ -35,11 +35,11 @@ class ContainerSamplesAsync(object):
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
-        async with blob_service_client:
-            # Instantiate a ContainerClient
-            container_client = blob_service_client.get_container_client("mynewcontainerasync")
-            # [END create_container_client_from_service]
+        # Instantiate a ContainerClient
+        container_client = blob_service_client.get_container_client("mynewcontainerasync")
+        # [END create_container_client_from_service]
 
+        async with blob_service_client:
             # [START create_container_client_sasurl]
             from azure.storage.blob.aio import ContainerClient
 
