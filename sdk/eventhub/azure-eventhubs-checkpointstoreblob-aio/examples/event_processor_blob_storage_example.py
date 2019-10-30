@@ -18,7 +18,7 @@ async def do_operation(event):
     print(event)
 
 
-async def process_events(events, partition_context):
+async def process_events(partition_context, events):
     if events:
         await asyncio.gather(*[do_operation(event) for event in events])
         await partition_context.update_checkpoint(events[-1])
