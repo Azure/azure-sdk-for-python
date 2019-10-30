@@ -858,6 +858,36 @@ class CRUDTests(unittest.TestCase):
             if_match=old_etag,
         )
 
+        # should fail if only etag specified
+        with self.assertRaises(ValueError):
+            created_collection.replace_item(
+                etag=replaced_document['_etag'],
+                item=replaced_document['id'],
+                body=replaced_document
+            )
+
+        # should fail if only match condition specified
+        with self.assertRaises(ValueError):
+            created_collection.replace_item(
+                match_condition=MatchConditions.IfNotModified,
+                item=replaced_document['id'],
+                body=replaced_document
+            )
+        with self.assertRaises(ValueError):
+            created_collection.replace_item(
+                match_condition=MatchConditions.IfModified,
+                item=replaced_document['id'],
+                body=replaced_document
+            )
+
+        # should fail if invalid match condition specified
+        with self.assertRaises(TypeError):
+            created_collection.replace_item(
+                match_condition=replaced_document['_etag'],
+                item=replaced_document['id'],
+                body=replaced_document
+            )
+
         # should pass for most recent etag
         replaced_document_conditional = created_collection.replace_item(
                 match_condition=MatchConditions.IfNotModified,
