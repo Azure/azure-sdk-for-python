@@ -45,6 +45,6 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 credentials.append(shared_cache)
             except ImportError as ex:
                 # transitive dependency pywin32 doesn't support 3.8 (https://github.com/mhammond/pywin32/issues/1431)
-                _LOGGER.info("Shared token cache is unavailable: '{}'".format(ex))
+                _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
 
         super().__init__(*credentials)
