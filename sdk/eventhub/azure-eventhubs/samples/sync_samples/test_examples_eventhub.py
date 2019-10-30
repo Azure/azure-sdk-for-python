@@ -117,35 +117,6 @@ def test_example_eventhub_producer_ops():
 
 
 def test_example_eventhub_consumer_ops():
-    # [START eventhub_client_consumer_get_last_enqueued_info_sync]
-    import os
-
-    EVENT_HUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
-    EVENT_HUB = os.environ['EVENT_HUB_NAME']
-
-    from azure.eventhub import EventHubConsumerClient
-    consumer = EventHubConsumerClient.from_connection_string(
-        conn_str=EVENT_HUB_CONNECTION_STR,
-        event_hub_path=EVENT_HUB,
-        track_last_enqueued_event_properties=True
-    )
-
-    logger = logging.getLogger("azure.eventhub")
-
-    def event_handler(partition_context, events):
-        if events:
-            logger.info("Received {} messages from partition: {}".format(
-                len(events), partition_context.partition_id))
-            print("Last enqueued event properties from partition: {} is: {}".
-                  format(partition_context.partition_id,
-                         events[-1].last_enqueued_event_properties))
-        # Do ops on received events
-
-    with consumer:
-        consumer.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
-        time.sleep(3)  # keep receiving from partition 0 for 3 seconds
-    # [END eventhub_client_consumer_get_last_enqueued_info_sync]
-
     # [START eventhub_consumer_client_close_sync]
     import os
 
