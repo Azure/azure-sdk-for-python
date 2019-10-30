@@ -51,6 +51,7 @@ async def test_send_with_invalid_key_async(invalid_key, connstr_receivers):
     with pytest.raises(AuthenticationError):
         await sender.send(EventData("test data"))
     await sender.close()
+    await client.close()
 
 
 @pytest.mark.liveTest
