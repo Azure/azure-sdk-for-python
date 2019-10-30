@@ -23,18 +23,17 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import sys
-
-# fixture needs to be visible from conftest
-from _shared.testcase import storage_account
-
-# Ignore async tests for Python < 3.5
-collect_ignore_glob = []
-if sys.version_info < (3, 5):
-    collect_ignore_glob.append("*_async.py")
+import pytest
 
 def pytest_configure(config):
     # register an additional marker
     config.addinivalue_line(
-        "usefixtures", "storage_account"
+        "markers", "live_test_only: mark test to be a live test only"
     )
+
+def pytest_runtest_setup(item):
+    is_live_only_test_marked = bool([mark for mark in item.iter_markers(name="live_test_only")])
+    if is_live_only_test_marked:
+        from devtools_testutils import is_live
+        if not is_live():
+            pytest.skip("live test only")
