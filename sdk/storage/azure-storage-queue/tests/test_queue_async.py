@@ -600,13 +600,11 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         fake_credential = self.generate_fake_token()
         service = QueueServiceClient(self.account_url(storage_account.name, "queue"), credential=fake_credential)
         with self.assertRaises(ClientAuthenticationError):
-            queue_li = service.list_queues()
-            list(queue_li)
+            await service.get_service_properties()
 
         # Action 3: update token to make it working again
         service = QueueServiceClient(self.account_url(storage_account.name, "queue"), credential=token_credential)
-        queue_li = await service.list_queues()
-        queues = list(queue_li)
+        queues = await service.get_service_properties()  # Not raise means success
         self.assertIsNotNone(queues)
 
     @pytest.mark.live_test_only

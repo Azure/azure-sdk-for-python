@@ -260,8 +260,7 @@ class StorageTestCase(AzureMgmtTestCase):
                 self.get_settings_value("CLIENT_ID"),
                 self.get_settings_value("CLIENT_SECRET"),
             )
-        else:
-            return self.generate_fake_token()
+        return self.generate_fake_token()
 
     def generate_fake_token(self):
         return FakeTokenCredential()
