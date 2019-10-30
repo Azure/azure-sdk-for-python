@@ -57,6 +57,29 @@ Several Storage Blobs Python SDK samples are available to you in the SDK's GitHu
     * List files or directories at a single level or recursively
     * Delete a single file or recursively delete a directory
 
+* [blob_samples_batch_delete_blobs.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_batch_delete_blobs.py) - Examples for batch
+deleting blobs
+    * Delete multiple blobs at the same time.
+
+* [blob_samples_container_access_policy.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_container_access_policy.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_container_access_policy_async.py)) - Examples to
+get and set access policies:
+    * Get and Set container Access Policy
+
+* [blob_samples_copy_blob.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_copy_blob.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_copy_blob_async.py)) - Examples to start and abort copy:
+    * Start a copy from url and abort it.
+
+* [blob_samples_enumerate_blobs.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_enumerate_blobs.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_enumerate_blobs_async.py)) - Example to enumerate blobs
+    * List all the blobs in a container.
+
+* [blob_samples_walk_blob_hierarchy.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_walk_blob_hierarchy.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_walk_blob_hierarchy_async.py)) - Example to walk through containers and blobs in a hierarchical structure.
+    * Walk through the container.
+
+* [blob_samples_network_activity_logging.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_network_activity_logging.py) - Examples to enable logging to the console.
+    * Log the network activity at different levels.
+
+* [blob_samples_proxy_configuration.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_proxy_configuration.py) - Examples to work with a proxy.
+    * Work with a proxy using the storage account.
+
 ## Prerequisites
 * Python 2.7, or 3.5 or later is required to use this package (3.5 or later if using asyncio)
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an

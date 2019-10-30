@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: container_access_policy_async.py
+FILE: blob_samples_container_access_policy_async.py
 
 DESCRIPTION:
     This example shows how to set the container access policy when creating the container
     and also how to get the access policy of a container after the container has been
     created.
 
-USAGE: python container_access_policy_async.py
+USAGE: python blob_samples_container_access_policy_async.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 

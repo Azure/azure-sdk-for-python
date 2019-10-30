@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: client_side_encryption_keyvault.py
+FILE: blob_samples_client_side_encryption_keyvault.py
 
 DESCRIPTION:
     This sample contains code demonstrating how to conifgure the storage blob
@@ -18,7 +18,7 @@ DESCRIPTION:
     variables, listed below, must be set. Since these often contain sensitive information,
     they SHOULD NOT be replaced with hardcoded values in any code derived from this sample.
 
-USAGE: python client_side_encryption_keyvault.py
+USAGE: python blob_samples_client_side_encryption_keyvault.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_STORAGE_ACCOUNT_URL - the storage account url
     2) ACTIVE_DIRECTORY_APPLICATION_ID - Azure Active Directory application ID

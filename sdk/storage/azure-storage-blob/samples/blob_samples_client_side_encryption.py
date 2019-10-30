@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: client_side_encryption.py
+FILE: blob_samples_client_side_encryption.py
 
 DESCRIPTION:
     This example contains sample code for the KeyWrapper and KeyResolver classes
@@ -16,7 +16,7 @@ DESCRIPTION:
     the `AZURE_STORAGE_CONNECTION_STRING` environment variable is set. It SHOULD NOT
     be hardcoded in any code derived from this sample.
 
-USAGE: python client_side_encryption.py
+USAGE: python blob_samples_client_side_encryption.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """

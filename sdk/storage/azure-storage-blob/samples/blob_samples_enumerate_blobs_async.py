@@ -7,10 +7,10 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: enumerate_blobs_async.py
+FILE: blob_samples_enumerate_blobs_async.py
 DESCRIPTION:
     This sample demos how to enumerate a container and print all blobs.
-USAGE: python enumerate_blobs_async.py
+USAGE: python blob_samples_enumerate_blobs_async.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """

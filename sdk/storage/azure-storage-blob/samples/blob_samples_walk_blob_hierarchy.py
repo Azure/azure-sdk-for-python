@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: walk_blob_hierarchy.py
+FILE: blob_samples_walk_blob_hierarchy.py
 
 DESCRIPTION:
     This example walks the containers and blobs within a storage account,
@@ -16,7 +16,7 @@ DESCRIPTION:
     that the `AZURE_STORAGE_CONNECTION_STRING` environment variable is set.
     It SHOULD NOT be hardcoded in any code derived from this sample.
 
-USAGE: python walk_blob_hierarchy.py
+USAGE: python blob_samples_walk_blob_hierarchy.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 
