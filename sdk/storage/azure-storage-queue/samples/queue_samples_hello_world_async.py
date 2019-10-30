@@ -28,7 +28,7 @@ import os
 class QueueHelloWorldSamplesAsync(object):
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
-    connection_string = "DefaultEndpointsProtocol=https;AccountName=krpraticstorageacc;AccountKey=7aFPACy2GgO6tpOOTd15ZPL/vntsgIJMm2yg1an3eFtWK/6r/8CDWtGcsXBL4MGra2k2jlpcwLShW+QfAt8upA==;EndpointSuffix=core.windows.net"
+
     async def create_client_with_connection_string_async(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
