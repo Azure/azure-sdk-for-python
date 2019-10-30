@@ -15,7 +15,9 @@ DESCRIPTION:
 
 USAGE:
     python file_samples_hello_world_async.py
-    Set the environment variables with your own values before running the sample.
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 import os
@@ -27,7 +29,7 @@ DEST_FILE = './SampleDestination.txt'
 
 class HelloWorldSamplesAsync(object):
 
-    connection_string = os.getenv('CONNECTION_STRING')
+    connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
 
     async def create_client_with_connection_string_async(self):
         # Instantiate the ShareServiceClient from a connection string
