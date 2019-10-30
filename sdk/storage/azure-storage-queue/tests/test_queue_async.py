@@ -160,7 +160,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
 
         # Asserts
         self.assertIsNotNone(queues)
-        self.assertEqual(len(queues), 1)
+        assert len(queues) >= 1
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

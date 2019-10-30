@@ -141,7 +141,7 @@ class StorageQueueTest(StorageTestCase):
 
         # Asserts
         self.assertIsNotNone(queues)
-        self.assertEqual(len(queues), 1)
+        assert len(queues) >= 1
 
     @GlobalStorageAccountPreparer()
     def test_list_queues_with_options(self, resource_group, location, storage_account, storage_account_key):
