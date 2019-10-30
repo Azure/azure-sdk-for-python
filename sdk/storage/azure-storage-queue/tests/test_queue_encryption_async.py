@@ -22,7 +22,7 @@ from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.padding import PKCS7
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, live_test
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.queue._shared.encryption import (
     _ERROR_OBJECT_INVALID,
@@ -158,16 +158,15 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         # Assert
         self.assertEqual(li[0].content, u'encrypted_message_4')
 
+    @live_test
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_peek_messages_encrypted_kek_RSA(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # We can only generate random RSA keys, so this must be run live or
         # the playback test will fail due to a change in kek values.
-        if not self.is_live:
-            return
 
-            # Arrange
+        # Arrange
         qsc.key_encryption_key = RSAKeyWrapper('key2')
         queue = await self._create_queue(qsc)
         await queue.send_message(u'encrypted_message_3')
@@ -178,13 +177,12 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         # Assert
         self.assertEqual(li[0].content, u'encrypted_message_3')
 
+    @live_test
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_encrypted_message(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # TODO: Recording doesn't work
-        if not self.is_live:
-            return
         # Arrange
         queue = await self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper('key1')
@@ -232,13 +230,12 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         # Assert
         self.assertEqual(binary_message, list_result2.content)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_encrypted_raw_text_message(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # TODO: Recording doesn't work
-        if not self.is_live:
-            return
         # Arrange
         queue = await self._create_queue(qsc, message_encode_policy=None, message_decode_policy=None)
         queue.key_encryption_key = KeyWrapper('key1')
@@ -260,13 +257,12 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         # Assert
         self.assertEqual(raw_text, list_result2.content)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_encrypted_json_message(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # TODO: Recording doesn't work
-        if not self.is_live:
-            return
         # Arrange
         queue = await self._create_queue(qsc, message_encode_policy=None, message_decode_policy=None)
         queue.key_encryption_key = KeyWrapper('key1')

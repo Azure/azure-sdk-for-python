@@ -16,7 +16,7 @@ from datetime import (
     timedelta,
     date,
 )
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, live_test
 from azure.mgmt.storage.models import Endpoints
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
@@ -505,11 +505,10 @@ class StorageQueueTest(StorageTestCase):
         self.assertIsNotNone(message.expires_on)
         self.assertIsNotNone(message.next_visible_on)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     def test_account_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            return
 
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
@@ -541,10 +540,9 @@ class StorageQueueTest(StorageTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     def test_token_credential(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            return
         token_credential = self.generate_oauth_token()
 
         # Action 1: make sure token works
@@ -563,11 +561,10 @@ class StorageQueueTest(StorageTestCase):
         queues = list(service.list_queues())
         self.assertIsNotNone(queues)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     def test_sas_read(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            return
 
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
@@ -598,11 +595,10 @@ class StorageQueueTest(StorageTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     def test_sas_add(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            return
 
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
@@ -627,11 +623,10 @@ class StorageQueueTest(StorageTestCase):
         result = next(queue_client.receive_messages())
         self.assertEqual(u'addedmessage', result.content)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     def test_sas_update(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            return
 
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
@@ -664,11 +659,10 @@ class StorageQueueTest(StorageTestCase):
         result = next(messages)
         self.assertEqual(u'updatedmessage1', result.content)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     def test_sas_process(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            return
 
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
@@ -695,11 +689,10 @@ class StorageQueueTest(StorageTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            return
 
         # Arrange
         access_policy = AccessPolicy()
@@ -937,10 +930,9 @@ class StorageQueueTest(StorageTestCase):
         self.assertIsInstance(message.expires_on, datetime)
         self.assertIsInstance(message.next_visible_on, datetime)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     def test_transport_closed_only_once(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            return
         transport = RequestsTransport()
         prefix = TEST_QUEUE_PREFIX
         queue_name = self.get_resource_name(prefix)

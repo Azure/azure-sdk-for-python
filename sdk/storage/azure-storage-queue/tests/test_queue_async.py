@@ -14,7 +14,7 @@ from datetime import (
     timedelta,
     date,
 )
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, live_test
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.exceptions import (
@@ -549,13 +549,12 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertIsNotNone(message.expires_on)
         self.assertIsNotNone(message.next_visible_on)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_account_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
-        if self.is_playback():
-            return
 
         # Arrange
         queue_client = await self._create_queue(qsc)
@@ -585,13 +584,12 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_token_credential(self, resource_group, location, storage_account, storage_account_key):
         pytest.skip("")
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
-        if self.is_playback():
-            return
         token_credential = self.generate_oauth_token()
 
         # Action 1: make sure token works
@@ -612,13 +610,12 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         queues = list(queue_li)
         self.assertIsNotNone(queues)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_sas_read(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # SAS URL is calculated from storage key, so this test runs live only
-        if self.is_playback():
-            return
 
         # Arrange
         queue_client = await self._create_queue(qsc)
@@ -647,13 +644,12 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_sas_add(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # SAS URL is calculated from storage key, so this test runs live only
-        if self.is_playback():
-            return
 
         # Arrange
         queue_client = await self._create_queue(qsc)
@@ -679,13 +675,12 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         result = messages[0]
         self.assertEqual(u'addedmessage', result.content)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_sas_update(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # SAS URL is calculated from storage key, so this test runs live only
-        if self.is_playback():
-            return
 
         # Arrange
         queue_client = await self._create_queue(qsc)
@@ -721,13 +716,12 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         result = messages[0]
         self.assertEqual(u'updatedmessage1', result.content)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_sas_process(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # SAS URL is calculated from storage key, so this test runs live only
-        if self.is_playback():
-            return
 
         # Arrange
         queue_client = await self._create_queue(qsc)
@@ -755,13 +749,12 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # SAS URL is calculated from storage key, so this test runs live only
-        if self.is_playback():
-            return
 
         # Arrange
         access_policy = AccessPolicy()
@@ -1001,11 +994,10 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertIsInstance(message.expires_on, datetime)
         self.assertIsInstance(message.next_visible_on, datetime)
 
+    @live_test
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_transport_closed_only_once_async(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            return
         transport = AioHttpTransport()
         prefix = TEST_QUEUE_PREFIX
         queue_name = self.get_resource_name(prefix)
