@@ -61,8 +61,6 @@ setup(
     packages=find_packages(
         exclude=[
             "samples",
-            "samples.Shared",
-            "samples.Shared.config",
             "test",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
