@@ -433,6 +433,27 @@ class MachineExtensionInstanceViewStatus(Model):
         self.time = time
 
 
+class MachineExtensionsListResult(Model):
+    """Describes the Machine Extensions List Result.
+
+    :param value: The list of extensions
+    :type value: list[~azure.mgmt.hybridcompute.models.MachineExtension]
+    :param next_link: The uri to fetch the next page of machine extensions.
+     Call ListNext() with this to fetch the next page of extensions.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[MachineExtension]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, *, value=None, next_link: str=None, **kwargs) -> None:
+        super(MachineExtensionsListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class UpdateResource(Model):
     """The Update Resource model definition.
 
