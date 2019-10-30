@@ -78,6 +78,6 @@ async def main():
     await sample.authentication_shared_access_key_async()
     await sample.authentication_shared_access_signature_async()
 
-
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

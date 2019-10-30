@@ -113,5 +113,6 @@ async def main():
     await sample.list_shares_in_service_async()
     await sample.get_share_client_async()
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

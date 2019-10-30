@@ -116,6 +116,6 @@ async def main():
     await sample.simple_file_operations_async()
     await sample.file_copy_from_url_async()
 
-
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

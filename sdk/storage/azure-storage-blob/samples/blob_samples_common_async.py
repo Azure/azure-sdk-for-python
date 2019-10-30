@@ -224,5 +224,6 @@ async def main():
     await sample.acquire_lease_on_blob_async()
     await sample.copy_blob_from_url_and_abort_copy_async()
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

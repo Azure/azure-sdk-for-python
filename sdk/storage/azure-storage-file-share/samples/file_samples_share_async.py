@@ -125,6 +125,6 @@ async def main():
     await sample.list_directories_and_files_async()
     await sample.get_directory_or_file_client_async()
 
-
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

@@ -225,5 +225,6 @@ async def main():
     await sample.list_blobs_in_container_async()
     await sample.get_blob_client_from_container_async()
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
