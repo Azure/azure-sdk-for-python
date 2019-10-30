@@ -253,7 +253,7 @@ def generate_account_sas(
     :param str account_name:
         The storage account name used to generate the shared access signature.
     :param str account_key:
-        The access key to generate the shared access signature.
+        The account key, also called shared key or access key, to generate the shared access signature.
     :param ~azure.storage.fileshare.ResourceTypes resource_types:
         Specifies the resource types that are accessible with the account SAS.
     :param ~azure.storage.fileshare.AccountSasPermissions permission:
@@ -330,7 +330,7 @@ def generate_share_sas(
     :param str share_name:
         The name of the share.
     :param str account_key:
-        The access key to generate the shared access signature.
+        The account key, also called shared key or access key, to generate the shared access signature.
     :param ~azure.storage.fileshare.ShareSasPermissions permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
@@ -421,7 +421,7 @@ def generate_file_sas(
         The file path represented as a list of path segments, including the file name.
     :type file_path: List[str]
     :param str account_key:
-        The access key to generate the shared access signature.
+        The account key, also called shared key or access key, to generate the shared access signature.
     :param ~azure.storage.fileshare.FileSasPermissions permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
