@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import abc
 import binascii
 
 from cryptography import x509
@@ -10,6 +11,11 @@ from cryptography.hazmat.backends import default_backend
 from msal.oauth2cli import JwtSigner
 
 from ._constants import Endpoints
+
+try:
+    ABC = abc.ABC
+except AttributeError:  # Python 2.7, abc exists, but not ABC
+    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
 try:
     from typing import TYPE_CHECKING
@@ -38,7 +44,7 @@ class ClientSecretCredentialBase(object):
         super(ClientSecretCredentialBase, self).__init__()
 
 
-class CertificateCredentialBase(object):
+class CertificateCredentialBase(ABC):
     """Sans I/O base for certificate credentials"""
 
     def __init__(self, tenant_id, client_id, certificate_path, **kwargs):  # pylint:disable=unused-argument
