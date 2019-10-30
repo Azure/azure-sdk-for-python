@@ -5,20 +5,40 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
+"""
+FILE: blob_samples_authentication_async.py
+DESCRIPTION:
+    These samples demonstrate authenticating a client via a connection string,
+    shared access key, or by generating a sas token with which the returned signature
+    can be used with the credential parameter of any BlobServiceClient,
+    ContainerClient, BlobClient.
+USAGE:
+    python blob_samples_authentication_async.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    2) OAUTH_STORAGE_ACCOUNT_NAME - the oath storage account name
+    3) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
+    4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
+    5) ACTIVE_DIRECTORY_APPLICATION_ID - Azure Active Directory application ID
+    6) ACTIVE_DIRECTORY_APPLICATION_SECRET - Azure Active Directory application secret
+    7) ACTIVE_DIRECTORY_TENANT_ID - Azure Active Directory tenant ID
+"""
+
+
 import os
+import asyncio
 
 class AuthSamplesAsync(object):
-    url = "{}://{}.blob.core.windows.net".format(
-        os.getenv("PROTOCOL"),
-        os.getenv("BLOB_STORAGE_ACCOUNT_NAME")
+    url = "https://{}.blob.core.windows.net".format(
+        os.getenv("AZURE_STORAGE_ACCOUNT_NAME")
     )
-    oauth_url = "{}://{}.blob.core.windows.net".format(
-        os.getenv("PROTOCOL"),
+    oauth_url = "https://{}.blob.core.windows.net".format(
         os.getenv("OAUTH_STORAGE_ACCOUNT_NAME")
     )
 
-    connection_string = os.getenv("CONNECTION_STRING")
-    shared_access_key = os.getenv("STORAGE_ACCOUNT_KEY")
+    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    shared_access_key = os.getenv("AZURE_STORAGE_ACCESS_KEY")
     active_directory_application_id = os.getenv("ACTIVE_DIRECTORY_APPLICATION_ID")
     active_directory_application_secret = os.getenv("ACTIVE_DIRECTORY_APPLICATION_SECRET")
     active_directory_tenant_id = os.getenv("ACTIVE_DIRECTORY_TENANT_ID")
@@ -41,17 +61,11 @@ class AuthSamplesAsync(object):
             self.connection_string, container_name="mycontainer", blob_name="blobname.txt")
         # [END auth_from_connection_string_blob]
 
-        # Get account information for the Blob Service
-        account_info = await blob_service_client.get_account_information()
-
     async def auth_shared_key_async(self):
         # [START create_blob_service_client]
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient(account_url=self.url, credential=self.shared_access_key)
         # [END create_blob_service_client]
-
-        # Get account information for the Blob Service
-        account_info = await blob_service_client.get_account_information()
 
     async def auth_blob_url_async(self):
         # [START create_blob_client]
@@ -78,14 +92,7 @@ class AuthSamplesAsync(object):
         blob_service_client = BlobServiceClient(account_url=self.oauth_url, credential=token_credential)
         # [END create_blob_service_client_oauth]
 
-        # Get account information for the Blob Service
-        account_info = await blob_service_client.get_service_properties()
-
     async def auth_shared_access_signature_async(self):
-        # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
-            return
-
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -103,3 +110,15 @@ class AuthSamplesAsync(object):
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         # [END create_sas_token]
+
+async def main():
+    sample = AuthSamplesAsync()
+    # Uncomment the methods you want to execute.
+    await sample.auth_connection_string_async()
+    # await sample.auth_active_directory()
+    await sample.auth_shared_access_signature_async()
+    await sample.auth_blob_url_async()
+
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

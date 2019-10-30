@@ -6,17 +6,35 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: queue_samples_message.py
+
+DESCRIPTION:
+    These samples demonstrate the following: creating and setting an access policy to generate a
+    sas token, getting a queue client from a queue URL, setting and getting queue
+    metadata, sending messages and receiving them individually or by batch, deleting and
+    clearing all messages, and peeking and updating messages.
+
+USAGE:
+    python queue_samples_message.py
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+"""
+
+
 from datetime import datetime, timedelta
 import os
 
+
 class QueueMessageSamples(object):
 
-    connection_string = os.getenv("CONNECTION_STRING")
+    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
     def set_access_policy(self):
         # [START create_queue_client_from_connection_string]
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "my_queue")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueue1")
         # [END create_queue_client_from_connection_string]
 
         # Create the queue
@@ -68,7 +86,7 @@ class QueueMessageSamples(object):
     def queue_metadata(self):
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "my_queue")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueue2")
 
         # Create the queue
         queue.create_queue()
@@ -90,7 +108,7 @@ class QueueMessageSamples(object):
     def send_and_receive_messages(self):
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "my_queue")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueue3")
 
         # Create the queue
         queue.create_queue()
@@ -131,7 +149,7 @@ class QueueMessageSamples(object):
     def delete_and_clear_messages(self):
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "my_queue")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueue4")
 
         # Create the queue
         queue.create_queue()
@@ -163,7 +181,7 @@ class QueueMessageSamples(object):
     def peek_messages(self):
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "my_queue")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueue5")
 
         # Create the queue
         queue.create_queue()
@@ -195,7 +213,7 @@ class QueueMessageSamples(object):
     def update_message(self):
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "my_queue")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueue6")
 
         # Create the queue
         queue.create_queue()
@@ -220,3 +238,13 @@ class QueueMessageSamples(object):
         finally:
             # Delete the queue
             queue.delete_queue()
+
+
+if __name__ == '__main__':
+    sample = QueueMessageSamples()
+    sample.set_access_policy()
+    sample.queue_metadata()
+    sample.send_and_receive_messages()
+    sample.delete_and_clear_messages()
+    sample.peek_messages()
+    sample.update_message()

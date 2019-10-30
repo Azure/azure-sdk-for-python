@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: walk_blob_hierarchy.py
+FILE: blob_samples_walk_blob_hierarchy_async.py
 
 DESCRIPTION:
     This example walks the containers and blobs within a storage account,
@@ -16,7 +16,9 @@ DESCRIPTION:
     that the `AZURE_STORAGE_CONNECTION_STRING` environment variable is set.
     It SHOULD NOT be hardcoded in any code derived from this sample.
 
-USAGE: python walk_blob_hierarchy.py
+USAGE: python blob_samples_walk_blob_hierarchy_async.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 
 EXAMPLE OUTPUT:
 
@@ -36,10 +38,11 @@ C: container3
 C: container4
 """
 
+import asyncio
 import os
 import sys
 
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob.aio import BlobServiceClient
 
 # I should be able to import this directly from azure.storage.blob
 from azure.storage.blob._models import BlobPrefix
@@ -50,38 +53,45 @@ except KeyError:
     print("AZURE_STORAGE_CONNECTION_STRING must be set.")
     sys.exit(1)
 
-def walk_container(client, container):
+async def walk_container(client, container):
     container_client = client.get_container_client(container.name)
     print('C: {}'.format(container.name))
     depth = 1
     separator = '   '
 
-    def walk_blob_hierarchy(prefix=""):
+    async def walk_blob_hierarchy(prefix=""):
         nonlocal depth
         # if I try to include=['snapshots'] here, I get an error that delimiter and snapshots are mutually exclusive
-        for item in container_client.walk_blobs(name_starts_with=prefix):
+        async for item in container_client.walk_blobs(name_starts_with=prefix):
             short_name = item.name[len(prefix):]
             if isinstance(item, BlobPrefix):
                 print('F: ' + separator * depth + short_name)
                 depth += 1
-                walk_blob_hierarchy(prefix=item.name)
+                await walk_blob_hierarchy(prefix=item.name)
                 depth -= 1
             else:
                 message = 'B: ' + separator * depth + short_name
                 # because delimiter and snapshots are mutually exclusive, the only way for me to check for the presence
                 # of snapshots is to re-query for each blob. This is very inefficient.
-                results = list(container_client.list_blobs(name_starts_with=item.name, include=['snapshots']))
-                num_snapshots = len(results) - 1
+                snapshots = []
+                async for snapshot in container_client.list_blobs(name_starts_with=item.name, include=['snapshots']):
+                    snapshots.append(snapshot)
+                num_snapshots = len(snapshots) - 1
                 if num_snapshots:
                     message += " ({} snapshots)".format(num_snapshots)
                 print(message)
-    walk_blob_hierarchy()
+    await walk_blob_hierarchy()
 
-try:
-    service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
-    containers = service_client.list_containers()
-    for container in containers:
-        walk_container(service_client, container)
-except Exception as error:
-    print(error)
-    sys.exit(1)
+async def main():
+    try:
+        async with BlobServiceClient.from_connection_string(CONNECTION_STRING) as service_client:
+            containers = service_client.list_containers()
+            async for container in containers:
+                await walk_container(service_client, container)
+    except Exception as error:
+        print(error)
+        sys.exit(1)
+
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
