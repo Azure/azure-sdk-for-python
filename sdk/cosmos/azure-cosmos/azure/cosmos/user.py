@@ -72,8 +72,6 @@ class UserProxy(object):
         # type: (Any) -> Dict[str, Any]
         """Read user propertes.
 
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
-
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dictionary of the retrieved user properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be retrieved.
@@ -93,8 +91,6 @@ class UserProxy(object):
     def list_permissions(self, max_item_count=None, **kwargs):
         # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
         """List all permission for the user.
-
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param max_item_count: Max number of permissions to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -124,8 +120,6 @@ class UserProxy(object):
         # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
         """Return all permissions matching the given `query`.
 
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
-
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of permissions to be returned in the enumeration operation.
@@ -154,8 +148,6 @@ class UserProxy(object):
     def get_permission(self, permission, **kwargs):
         # type: (str, Any) -> Permission
         """Get the permission identified by `id`.
-
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be retrieved.
@@ -188,7 +180,6 @@ class UserProxy(object):
         """Create a permission for the user.
 
         To update or replace an existing permision, use the :func:`UserProxy.upsert_permission` method.
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param body: A dict-like object representing the permission to create.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -220,7 +211,6 @@ class UserProxy(object):
         """Insert or update the specified permission.
 
         If the permission already exists in the container, it is replaced. If it does not, it is inserted.
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param body: A dict-like object representing the permission to update or insert.
         :param Callable response_hook: A callable invoked with the response metadata.
@@ -250,8 +240,6 @@ class UserProxy(object):
     def replace_permission(self, permission, body, **kwargs):
         # type: (str, Dict[str, Any], Any) -> Permission
         """Replaces the specified permission if it exists for the user.
-
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be replaced.
@@ -284,8 +272,6 @@ class UserProxy(object):
     def delete_permission(self, permission, **kwargs):
         # type: (str, Any) -> None
         """Delete the specified permission from the user.
-
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be replaced.

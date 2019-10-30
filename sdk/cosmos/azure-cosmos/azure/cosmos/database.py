@@ -116,8 +116,6 @@ class DatabaseProxy(object):
         # type: (Optional[bool], Any) -> Dict[str, Any]
         """Read the database properties.
 
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
-
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
@@ -160,7 +158,6 @@ class DatabaseProxy(object):
         """Create a new container with the given ID (name).
 
         If a container with the given ID already exists, a CosmosResourceExistsError is raised.
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
@@ -245,7 +242,6 @@ class DatabaseProxy(object):
         If the container already exists, the existing settings are returned.
         Note: it does not check or update the existing container settings or offer throughput
         if they differ from what was passed into the method.
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param id: ID (name) of container to read or create.
         :param partition_key: The partition key to use for the container.
@@ -294,8 +290,6 @@ class DatabaseProxy(object):
     ):
         # type: (...) -> None
         """Delete the container.
-
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param container: The ID (name) of the container to delete. You can either
             pass in the ID of the container to delete, a :class:`ContainerProxy` instance or
@@ -352,8 +346,6 @@ class DatabaseProxy(object):
         # type: (Optional[int], Optional[bool], Any) -> Iterable[Dict[str, Any]]
         """List the containers in the database.
 
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
-
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
@@ -398,8 +390,6 @@ class DatabaseProxy(object):
         # type: (...) -> Iterable[Dict[str, Any]]
         """List properties for containers in the current database.
 
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
-
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -443,7 +433,6 @@ class DatabaseProxy(object):
 
         Property changes are persisted immediately. Any properties not specified will be reset to
         their default values.
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param container: The ID (name), dict representing the properties or
             :class:`ContainerProxy` instance of the container to be replaced.
@@ -509,8 +498,6 @@ class DatabaseProxy(object):
         # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
         """List all users in the container.
 
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
-
         :param max_item_count: Max number of users to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of user properties (dicts).
@@ -532,8 +519,6 @@ class DatabaseProxy(object):
     def query_users(self, query, parameters=None, max_item_count=None, **kwargs):
         # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
         """Return all users matching the given `query`.
-
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
@@ -582,7 +567,6 @@ class DatabaseProxy(object):
         """Create a user in the container.
 
         To update or replace an existing user, use the :func:`ContainerProxy.upsert_user` method.
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param body: A dict-like object with an `id` key and value representing the user to be created.
          The user ID must be unique within the database, and consist of no more than 255 characters.
@@ -620,7 +604,6 @@ class DatabaseProxy(object):
         """Insert or update the specified user.
 
         If the user already exists in the container, it is replaced. If it does not, it is inserted.
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param body: A dict-like object representing the user to update or insert.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -652,8 +635,6 @@ class DatabaseProxy(object):
         # type: (...) -> UserProxy
         """Replaces the specified user if it exists in the container.
 
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
-
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be replaced.
         :param body: A dict-like object representing the user to replace.
@@ -684,8 +665,6 @@ class DatabaseProxy(object):
     def delete_user(self, user, **kwargs):
         # type: (Union[str, UserProxy, Dict[str, Any]], Any) -> None
         """Delete the specified user from the container.
-
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be deleted.

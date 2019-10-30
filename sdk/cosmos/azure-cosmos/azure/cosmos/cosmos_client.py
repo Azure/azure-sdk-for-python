@@ -230,8 +230,6 @@ class CosmosClient(object):
         """
         Create a new database with the given ID (name).
 
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
-
         :param id: ID (name) of the database to create.
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :param int offer_throughput: The provisioned throughput for this offer.
@@ -283,7 +281,6 @@ class CosmosClient(object):
         If the database already exists, the existing settings are returned.
         Note: it does not check or update the existing database settings or offer throughput
         if they differ from what was passed into the method.
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param id: ID (name) of the database to read or create.
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
@@ -342,8 +339,6 @@ class CosmosClient(object):
         # type: (...) -> Iterable[Dict[str, Any]]
         """List the databases in a Cosmos DB SQL database account.
 
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
-
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
@@ -375,10 +370,7 @@ class CosmosClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
-        """
-        Query the databases in a Cosmos DB SQL database account.
-
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
+        """Query the databases in a Cosmos DB SQL database account.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
         :param list[str] parameters: Optional array of parameters to the query. Ignored if no query is provided.
@@ -423,10 +415,7 @@ class CosmosClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """
-        Delete the database with the given ID (name).
-
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
+        """Delete the database with the given ID (name).
 
         :param database: The ID (name), dict representing the properties or :class:`DatabaseProxy`
             instance of the database to delete.

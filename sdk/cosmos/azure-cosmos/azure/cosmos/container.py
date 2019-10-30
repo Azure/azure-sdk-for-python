@@ -122,8 +122,6 @@ class ContainerProxy(object):
         # type: (...) -> Dict[str, Any]
         """Read the container properties.
 
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
-
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param populate_partition_key_range_statistics: Enable returning partition key
             range statistics in response headers.
@@ -166,8 +164,6 @@ class ContainerProxy(object):
     ):
         # type: (...) -> Dict[str, str]
         """Get the item identified by `item`.
-
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param item: The ID (name) or dict representing item to retrieve.
         :param partition_key: Partition key for the item to retrieve.
@@ -216,8 +212,6 @@ class ContainerProxy(object):
         # type: (...) -> Iterable[Dict[str, Any]]
         """List all items in the container.
 
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
-
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
@@ -254,8 +248,6 @@ class ContainerProxy(object):
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """Get a sorted list of items that were changed, in the order in which they were modified.
-
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param partition_key_range_id: ChangeFeed requests can be executed against specific partition key ranges.
             This is used to process the change feed in parallel across multiple consumers.
@@ -306,7 +298,6 @@ class ContainerProxy(object):
         You can use any value for the container name in the FROM clause, but typically the container name is used.
         In the examples below, the container name is "products," and is aliased as "p" for easier referencing
         in the WHERE clause.
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
@@ -383,8 +374,6 @@ class ContainerProxy(object):
         # type: (...) -> Dict[str, str]
         """Replaces the specified item if it exists in the container.
 
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
-
         :param item: The ID (name) or dict representing item to be replaced.
         :param body: A dict-like object representing the item to replace.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -432,7 +421,6 @@ class ContainerProxy(object):
         """Insert or update the specified item.
 
         If the item already exists in the container, it is replaced. If it does not, it is inserted.
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param body: A dict-like object representing the item to update or insert.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -478,7 +466,6 @@ class ContainerProxy(object):
         """Create an item in the container.
 
         To update or replace an existing item, use the :func:`ContainerProxy.upsert_item` method.
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param body: A dict-like object representing the item to create.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -527,8 +514,6 @@ class ContainerProxy(object):
     ):
         # type: (...) -> None
         """Delete the specified item from the container.
-
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param item: The ID (name) or dict representing item to be deleted.
         :param partition_key: Specifies the partition key value for the item.
@@ -628,8 +613,6 @@ class ContainerProxy(object):
         # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
         """List all conflicts in the container.
 
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
-
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of conflicts (dicts).
@@ -659,8 +642,6 @@ class ContainerProxy(object):
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """Return all conflicts matching the given `query`.
-
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
@@ -697,8 +678,6 @@ class ContainerProxy(object):
         # type: (Union[str, Dict[str, Any]], Any, Any) -> Dict[str, str]
         """Get the conflict identified by `conflict`.
 
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
-
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
         :param partition_key: Partition key for the conflict to retrieve.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -722,8 +701,6 @@ class ContainerProxy(object):
     def delete_conflict(self, conflict, partition_key, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any, Any) -> None
         """Delete the specified conflict from the container.
-
-        See aka.ms/{} for a full list of optional request and feed keyword arguments.
 
         :param conflict: The ID (name) or dict representing the conflict to be deleted.
         :param partition_key: Partition key for the conflict to delete.
