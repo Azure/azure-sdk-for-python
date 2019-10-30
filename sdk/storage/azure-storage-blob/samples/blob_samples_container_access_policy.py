@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: container_access_policy.py
+FILE: blob_samples_container_access_policy.py
 
 DESCRIPTION:
     This example shows how to set the container access policy when creating the container
@@ -15,7 +15,9 @@ DESCRIPTION:
     created. This sample expects that the `AZURE_STORAGE_CONNECTION_STRING` environment
     variable is set. It SHOULD NOT be hardcoded in any code derived from this sample.
 
-USAGE: python container_access_policy.py
+USAGE: python blob_samples_container_access_policy.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 
 EXAMPLE OUTPUT:
 

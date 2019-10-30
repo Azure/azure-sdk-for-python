@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: network_activity_logging.py
+FILE: blob_samples_network_activity_logging.py
 
 DESCRIPTION:
     This example shows how to enable logging to console, using the storage
@@ -15,7 +15,9 @@ DESCRIPTION:
     `AZURE_STORAGE_CONNECTION_STRING` environment variable is set.
     It SHOULD NOT be hardcoded in any code derived from this sample.
 
-USAGE: python network_activity_logging.py
+USAGE: python blob_samples_network_activity_logging.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 
 EXAMPLE OUTPUT:
 Request with logging enabled and log level set to DEBUG.
