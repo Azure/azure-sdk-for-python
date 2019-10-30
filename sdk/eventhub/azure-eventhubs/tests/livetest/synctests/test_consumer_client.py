@@ -46,7 +46,6 @@ def test_receive_partition(connstr_senders):
 
 @pytest.mark.liveTest
 def test_receive_load_balancing(connstr_senders):
-    pytest.skip("This may hang as the underlying uses multi-thread")
     connection_str, senders = connstr_senders
     pm = InMemoryPartitionManager()
     client1 = EventHubConsumerClient.from_connection_string(
@@ -57,7 +56,7 @@ def test_receive_load_balancing(connstr_senders):
     def process_events(partition_context, events):
         pass
 
-    with client1 and client2:
+    with client1, client2:
         client1.receive(process_events, consumer_group="$default", initial_event_position="-1")
         client2.receive(process_events, consumer_group="$default", initial_event_position="-1")
         time.sleep(10)

@@ -196,7 +196,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                         " has an error during running initialize(). The exception is %r.",
                         owner_id, eventhub_name, partition_id, consumer_group_name, err
                     )
-            while not self._threads_stop_flags[partition_id]:
+            while self._running and not self._threads_stop_flags[partition_id]:
                 try:
                     events = partition_consumer.receive()
                     self._last_enqueued_event_properties[partition_id] = \

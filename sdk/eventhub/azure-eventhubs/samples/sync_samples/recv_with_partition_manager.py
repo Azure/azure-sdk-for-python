@@ -47,11 +47,11 @@ def receive_for_a_while(client, duration):
     partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
     which also try to receive events from all partitions and use the same storage resource.
     """
-    task = client.receive(event_handler=event_handler, consumer_group='$Default')
+    client.receive(event_handler=event_handler, consumer_group='$Default')
     # With specified partition_id, load-balance will be disabled
-    # task = client.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
+    # client.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
     time.sleep(5)
-    task.cancel()
+    client.close()
 
 
 def receive_forever(client):
@@ -60,16 +60,16 @@ def receive_forever(client):
     partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
     which also try to receive events from all partitions and use the same storage resource.
     """
-    task = client.receive(event_handler=event_handler, consumer_group='$Default')
+    client.receive(event_handler=event_handler, consumer_group='$Default')
     # With specified partition_id, load-balance will be disabled
-    # task = client.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
+    # client.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
     try:
         while True:
             time.sleep(0.05)
             pass
     except KeyboardInterrupt:
-        print('Task is being cancelled.')
-        task.cancel()
+        print('Stop receiving.')
+        client.close()
 
 
 if __name__ == '__main__':

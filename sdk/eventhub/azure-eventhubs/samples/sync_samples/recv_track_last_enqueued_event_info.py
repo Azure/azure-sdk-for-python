@@ -47,22 +47,22 @@ def event_handler(partition_context, events):
 
 
 def receive_for_a_while(client, duration):
-    task = client.receive(event_handler=event_handler, consumer_group='$Default',
+    client.receive(event_handler=event_handler, consumer_group='$Default',
                           partition_id='0', track_last_enqueued_event_properties=True)
     time.sleep(duration)
-    task.cancel()
+    client.close()
 
 
 def receive_forever(client):
-    task = client.receive(event_handler=event_handler, consumer_group='$Default',
+    client.receive(event_handler=event_handler, consumer_group='$Default',
                           partition_id='0', track_last_enqueued_event_properties=True)
     try:
         while True:
             time.sleep(0.05)
             pass
     except KeyboardInterrupt:
-        print('Task is being cancelled.')
-        task.cancel()
+        print('Stop receiving.')
+        client.close()
 
 
 if __name__ == '__main__':

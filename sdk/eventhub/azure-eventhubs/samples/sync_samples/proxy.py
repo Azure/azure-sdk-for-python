@@ -54,8 +54,7 @@ with producer_client:
 
 with consumer_client:
     receiving_time = 5
-    task = consumer_client.receive(event_handler=event_handler, consumer_group='$Default')
+    consumer_client.receive(event_handler=event_handler, consumer_group='$Default')
     time.sleep(receiving_time)
-    task.cancel()
     print('Finish receiving.')
 
