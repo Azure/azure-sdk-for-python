@@ -313,7 +313,7 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [ref_cosmosclient_create_database]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b5/azure.cosmos.html#azure.cosmos.CosmosClient.create_database
 [ref_cosmosclient]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b5/azure.cosmos.html#azure.cosmos.CosmosClient
 [ref_database]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b5/azure.cosmos.html#azure.cosmos.DatabaseProxy
-[ref_httpfailure]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b5/azure.cosmos.html#azure.cosmos.exception s.CosmosHttpResponseError
+[ref_httpfailure]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b5/azure.cosmos.html#azure.cosmos.exceptions.CosmosHttpResponseError
 [sample_database_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/database_management.py
 [sample_document_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/document_management.py
 [sample_examples_misc]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/examples.py
