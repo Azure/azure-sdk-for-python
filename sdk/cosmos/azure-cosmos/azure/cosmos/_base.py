@@ -72,26 +72,26 @@ _COMMON_OPTIONS = {
     'query_version': 'queryVersion'
 }
 
-def _get_match_headers(kwargs, match_param, etag_param):
-    # type: (str) -> Tuple(Dict[str, Any], Optional[str], Optional[str])
+def _get_match_headers(kwargs):
+    # type: (str) -> Tuple(Dict[str, Any])
     if_match = kwargs.pop('if_match', None)
     if_none_match = kwargs.pop('if_none_match', None)
-    match_condition = kwargs.pop(match_param, None)
+    match_condition = kwargs.pop('match_condition', None)
     if match_condition == MatchConditions.IfNotModified:
-        if_match = kwargs.pop(etag_param, None)
+        if_match = kwargs.pop('etag', None)
         if not if_match:
-            raise ValueError("'{}' specified without '{}'.".format(match_param, etag_param))
+            raise ValueError("'match_condition' specified without 'etag'.")
     elif match_condition == MatchConditions.IfPresent:
         if_match = '*'
     elif match_condition == MatchConditions.IfModified:
-        if_none_match = kwargs.pop(etag_param, None)
+        if_none_match = kwargs.pop('etag', None)
         if not if_none_match:
-            raise ValueError("'{}' specified without '{}'.".format(match_param, etag_param))
+            raise ValueError("'match_condition' specified without 'etag'.")
     elif match_condition == MatchConditions.IfMissing:
         if_none_match = '*'
     elif match_condition is None:
-        if etag_param in kwargs:
-            raise ValueError("'{}' specified without '{}'.".format(etag_param, match_param))
+        if 'etag' in kwargs:
+            raise ValueError("'etag' specified without 'match_condition'.")
     else:
         raise TypeError("Invalid match condition: {}".format(match_condition))
     return if_match, if_none_match
@@ -104,7 +104,7 @@ def build_options(kwargs):
         if key in kwargs:
             options[value] = kwargs.pop(key)
 
-    if_match, if_none_match = _get_match_headers(kwargs, 'match_condition', 'etag')
+    if_match, if_none_match = _get_match_headers(kwargs)
     if if_match:
         options['accessCondition'] = {'type': 'IfMatch', 'condition': if_match}
     if if_none_match:
