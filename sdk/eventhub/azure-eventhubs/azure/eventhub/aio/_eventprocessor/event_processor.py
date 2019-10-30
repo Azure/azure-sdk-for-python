@@ -268,8 +268,10 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
 
         """
         self._running = False
-        for _ in range(len(self._tasks)):
-            _, task = self._tasks.popitem()
+        tasks = list(self._tasks.values())
+        for task in tasks:
             task.cancel()
-        log.info("EventProcessor %r has been cancelled.", self._id)
-        await asyncio.gather(*self._tasks.values())
+        log.info("EventProcessor %r tasks have been cancelled.", self._id)
+        while self._tasks:
+            await asyncio.sleep(1)
+        log.info("EventProcessor %r has been stopped.", self._id)
