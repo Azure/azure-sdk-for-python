@@ -6,11 +6,20 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: blob_samples_service.py
+DESCRIPTION:
+    This sample demos basic operations of the blob service client.
+USAGE: python blob_samples_service.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+"""
+import os
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 
 class BlobServiceSamples(object):
 
-    connection_string = os.getenv("CONNECTION_STRING")
+    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
     def get_storage_account_information(self):
 
@@ -129,3 +138,11 @@ class BlobServiceSamples(object):
         finally:
             # Delete the container
             blob_service_client.delete_container("containertest")
+
+if __name__ == '__main__':
+    sample = BlobServiceSamples()
+    sample.get_storage_account_information()
+    sample.get_blob_and_container_clients()
+    sample.container_operations()
+    sample.blob_service_properties()
+    sample.blob_service_stats()

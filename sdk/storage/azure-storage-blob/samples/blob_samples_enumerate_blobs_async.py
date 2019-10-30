@@ -7,10 +7,12 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: enumerate_blobs_async.py
+FILE: blob_samples_enumerate_blobs_async.py
 DESCRIPTION:
     This sample demos how to enumerate a container and print all blobs.
-USAGE: python enumerate_blobs_async.py
+USAGE: python blob_samples_enumerate_blobs_async.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 from __future__ import print_function
@@ -28,8 +30,9 @@ async def main():
 
     container = ContainerClient.from_connection_string(CONNECTION_STRING, container_name="mycontainer")
 
-    async for blob in container.list_blobs():
-        print(blob.name + '\n')
+    async with container:
+        async for blob in container.list_blobs():
+            print(blob.name + '\n')
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()

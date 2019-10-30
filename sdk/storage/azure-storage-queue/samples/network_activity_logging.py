@@ -17,6 +17,9 @@ DESCRIPTION:
 
 USAGE: python network_activity_logging.py
 
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+
 EXAMPLE OUTPUT:
 Request with logging enabled and log level set to DEBUG.
 Queue test
@@ -50,9 +53,8 @@ logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 # Logging policy logs network activity at the DEBUG level. Set the level on the logger prior to the call.
 logger.setLevel(logging.DEBUG)
 
-# The logger level must be set to DEBUG, AND one of the following must be true:
-# a) (PREFERRED) `logging_enable=True` passed as kwarg to the client constructor OR the API call OR,
-# b) service_client._config.logging_policy.enable_http_logger = True
+# The logger level must be set to DEBUG, AND the following must be true:
+# `logging_enable=True` passed as kwarg to the client constructor OR the API call
 print('Request with logging enabled and log level set to DEBUG.')
 queues = service_client.list_queues(logging_enable=True)
 for queue in queues:

@@ -17,7 +17,12 @@ DESCRIPTION:
 
 USAGE:
     python file_samples_authentication_async.py
-    Set the environment variables with your own values before running the sample.
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    2) AZURE_STORAGE_ACCOUNT_URL - the queue service account URL
+    3) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
+    4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
 """
 
 import os
@@ -27,12 +32,11 @@ from datetime import datetime, timedelta
 
 class FileAuthSamplesAsync(object):
 
-    connection_string = os.getenv('CONNECTION_STRING')
-    shared_access_key = os.getenv('STORAGE_ACCOUNT_KEY')
-    account_url = "{}://{}.blob.core.windows.net".format(
-        os.getenv('PROTOCOL'),
-        os.getenv('STORAGE_ACCOUNT_NAME')
-    )
+    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+
+    account_url = os.getenv("AZURE_STORAGE_ACCOUNT_URL")
+    account_name = os.getenv("AZURE_STORAGE_ACCOUNT_NAME")
+    access_key = os.getenv("AZURE_STORAGE_ACCESS_KEY")
 
     async def authentication_connection_string_async(self):
         # Instantiate the ShareServiceClient from a connection string
@@ -47,7 +51,7 @@ class FileAuthSamplesAsync(object):
         from azure.storage.fileshare.aio import ShareServiceClient
         share_service_client = ShareServiceClient(
             account_url=self.account_url,
-            credential=self.shared_access_key
+            credential=self.access_key
         )
         # [END create_share_service_client]
 
@@ -57,13 +61,13 @@ class FileAuthSamplesAsync(object):
         share_service_client = ShareServiceClient.from_connection_string(self.connection_string)
 
         # Create a SAS token to use to authenticate a new client
-        from azure.storage.fileshare import generate_account_sas
+        from azure.storage.fileshare import generate_account_sas, ResourceTypes, AccountSasPermissions
 
         sas_token = generate_account_sas(
             share_service_client.account_name,
             share_service_client.credential.account_key,
-            resource_types="object",
-            permission="read",
+            resource_types=ResourceTypes(service=True),
+            permission=AccountSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
 
@@ -74,6 +78,6 @@ async def main():
     await sample.authentication_shared_access_key_async()
     await sample.authentication_shared_access_signature_async()
 
-
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

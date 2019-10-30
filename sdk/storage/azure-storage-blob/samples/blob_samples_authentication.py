@@ -6,20 +6,37 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: blob_samples_authentication.py
+DESCRIPTION:
+    These samples demonstrate authenticating a client via a connection string,
+    shared access key, or by generating a sas token with which the returned signature
+    can be used with the credential parameter of any BlobServiceClient,
+    ContainerClient, BlobClient.
+USAGE:
+    python blob_samples_authentication.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    2) OAUTH_STORAGE_ACCOUNT_NAME - the oath storage account name
+    3) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
+    4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
+    5) ACTIVE_DIRECTORY_APPLICATION_ID - Azure Active Directory application ID
+    6) ACTIVE_DIRECTORY_APPLICATION_SECRET - Azure Active Directory application secret
+    7) ACTIVE_DIRECTORY_TENANT_ID - Azure Active Directory tenant ID
+"""
+
 import os
 
 class AuthSamples(object):
-    url = "{}://{}.blob.core.windows.net".format(
-        os.getenv("PROTOCOL"),
-        os.getenv("STORAGE_ACCOUNT_NAME")
+    url = "https://{}.blob.core.windows.net".format(
+        os.getenv("AZURE_STORAGE_ACCOUNT_NAME")
     )
-    oauth_url = "{}://{}.blob.core.windows.net".format(
-        os.getenv("PROTOCOL"),
+    oauth_url = "https://{}.blob.core.windows.net".format(
         os.getenv("OAUTH_STORAGE_ACCOUNT_NAME")
     )
 
-    connection_string = os.getenv("CONNECTION_STRING")
-    shared_access_key = os.getenv("STORAGE_ACCOUNT_KEY")
+    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    shared_access_key = os.getenv("AZURE_STORAGE_ACCESS_KEY")
     active_directory_application_id = os.getenv("ACTIVE_DIRECTORY_APPLICATION_ID")
     active_directory_application_secret = os.getenv("ACTIVE_DIRECTORY_APPLICATION_SECRET")
     active_directory_tenant_id = os.getenv("ACTIVE_DIRECTORY_TENANT_ID")
@@ -86,10 +103,6 @@ class AuthSamples(object):
         account_info = blob_service_client.get_service_properties()
 
     def auth_shared_access_signature(self):
-        # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
-            return
-
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -117,7 +130,7 @@ class AuthSamples(object):
         # The docs above specify all mechanisms which the defaultCredential internally support.
         from azure.identity import DefaultAzureCredential
         default_credential = DefaultAzureCredential()
- 
+
         # Instantiate a BlobServiceClient using a token credential
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient(
@@ -128,3 +141,11 @@ class AuthSamples(object):
  
         # Get account information for the Blob Service
         account_info = blob_service_client.get_service_properties()
+
+if __name__ == '__main__':
+    sample = AuthSamples()
+    sample.auth_connection_string()
+    sample.auth_active_directory()
+    sample.auth_shared_access_signature()
+    sample.auth_blob_url()
+    sample.auth_default_azure_credential

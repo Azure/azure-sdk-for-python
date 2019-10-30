@@ -96,7 +96,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             :start-after: [START create_container_client_sasurl]
             :end-before: [END create_container_client_sasurl]
             :language: python
-            :dedent: 8
+            :dedent: 12
             :caption: Creating the container client directly.
     """
     def __init__(
@@ -138,7 +138,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :start-after: [START create_container]
                 :end-before: [END create_container]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Creating a container to store blobs.
         """
         headers = kwargs.pop('headers', {})
@@ -194,7 +194,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :start-after: [START delete_container]
                 :end-before: [END delete_container]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Delete a container.
         """
         lease = kwargs.pop('lease', None)
@@ -257,7 +257,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :start-after: [START acquire_lease_on_container]
                 :end-before: [END acquire_lease_on_container]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Acquiring a lease on the container.
         """
         lease = BlobLeaseClient(self, lease_id=lease_id) # type: ignore
@@ -303,7 +303,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :start-after: [START get_container_properties]
                 :end-before: [END get_container_properties]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Getting properties on the container.
         """
         lease = kwargs.pop('lease', None)
@@ -355,7 +355,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :start-after: [START set_container_metadata]
                 :end-before: [END set_container_metadata]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Setting metadata on the container.
         """
         headers = kwargs.pop('headers', {})
@@ -396,7 +396,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :start-after: [START get_container_access_policy]
                 :end-before: [END get_container_access_policy]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Getting the access policy on the container.
         """
         lease = kwargs.pop('lease', None)
@@ -459,7 +459,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :start-after: [START set_container_access_policy]
                 :end-before: [END set_container_access_policy]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Setting access policy on the container.
         """
         timeout = kwargs.pop('timeout', None)
@@ -514,7 +514,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :start-after: [START list_blobs_in_container]
                 :end-before: [END list_blobs_in_container]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: List the blobs in the container.
         """
         if include and not isinstance(include, list):
@@ -679,7 +679,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :start-after: [START upload_blob_to_container]
                 :end-before: [END upload_blob_to_container]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Upload blob to the container.
         """
         blob = self.get_blob_client(name)
@@ -819,7 +819,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :start-after: [START delete_multiple_blobs]
                 :end-before: [END delete_multiple_blobs]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Deleting multiple blobs.
         """
         raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
@@ -996,7 +996,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :start-after: [START get_blob_client]
                 :end-before: [END get_blob_client]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Get the blob client.
         """
         blob_name = _get_blob_name(blob)

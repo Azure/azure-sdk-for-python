@@ -6,6 +6,17 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: blob_samples_container.py
+DESCRIPTION:
+    This sample demonstrates common container operations including list blobs, create a container,
+    set metadata etc.
+USAGE:
+    python blob_samples_container.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+"""
+
 import os
 from datetime import datetime, timedelta
 
@@ -15,7 +26,7 @@ SOURCE_FILE = 'SampleSource.txt'
 
 class ContainerSamples(object):
 
-    connection_string = os.getenv("CONNECTION_STRING")
+    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
     #--Begin Blob Samples-----------------------------------------------------------------
 
@@ -61,7 +72,10 @@ class ContainerSamples(object):
         container_client = blob_service_client.get_container_client("myleasecontainer")
 
         # Create new Container
-        container_client.create_container()
+        try:
+            container_client.create_container()
+        except ResourceExistsError:
+            pass
 
         # [START acquire_lease_on_container]
         # Acquire a lease on the container
@@ -78,7 +92,7 @@ class ContainerSamples(object):
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a ContainerClient
-        container_client = blob_service_client.get_container_client("mymetadatacontainer")
+        container_client = blob_service_client.get_container_client("mymetadatacontainersync")
 
         try:
             # Create new Container
@@ -100,10 +114,6 @@ class ContainerSamples(object):
             container_client.delete_container()
 
     def container_access_policy(self):
-        # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
-            return
-
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -195,7 +205,10 @@ class ContainerSamples(object):
         container_client = blob_service_client.get_container_client("blobcontainer")
 
         # Create new Container
-        container_client.create_container()
+        try:
+            container_client.create_container()
+        except ResourceExistsError:
+            pass
 
         # [START get_blob_client]
         # Get the BlobClient from the ContainerClient to interact with a specific blob
@@ -204,3 +217,12 @@ class ContainerSamples(object):
 
         # Delete container
         container_client.delete_container()
+
+if __name__ == '__main__':
+    sample = ContainerSamples()
+    sample.container_sample()
+    sample.acquire_lease_on_container()
+    sample.set_metadata_on_container()
+    sample.container_access_policy()
+    sample.list_blobs_in_container()
+    sample.get_blob_client_from_container()

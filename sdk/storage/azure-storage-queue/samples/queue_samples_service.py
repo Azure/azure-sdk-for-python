@@ -6,11 +6,26 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: queue_samples_service.py
+
+DESCRIPTION:
+    These samples demonstrate the following: setting and getting queue service properties,
+    listing the queues in the service, and getting a QueueClient from a QueueServiceClient.
+
+USAGE:
+    python queue_samples_service.py
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+"""
+
 import os
+
 
 class QueueServiceSamples(object):
 
-    connection_string = os.getenv("CONNECTION_STRING")
+    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
     def queue_service_properties(self):
         # Instantiate the QueueServiceClient from a connection string
@@ -59,7 +74,7 @@ class QueueServiceSamples(object):
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START qsc_create_queue]
-        queue_service.create_queue("my_queue")
+        queue_service.create_queue("myqueue1")
         # [END qsc_create_queue]
 
         try:
@@ -69,15 +84,15 @@ class QueueServiceSamples(object):
             for queue in list_queues:
                 print(queue)
 
-            # List the queues in the service that start with the name "my_"
-            list_my_queues = queue_service.list_queues(name_starts_with="my_")
+            # List the queues in the service that start with the name "my"
+            list_my_queues = queue_service.list_queues(name_starts_with="my")
             for queue in list_my_queues:
                 print(queue)
             # [END qsc_list_queues]
 
         finally:
             # [START qsc_delete_queue]
-            queue_service.delete_queue("my_queue")
+            queue_service.delete_queue("myqueue1")
             # [END qsc_delete_queue]
 
     def get_queue_client(self):
@@ -87,5 +102,12 @@ class QueueServiceSamples(object):
 
         # [START get_queue_client]
         # Get the queue client to interact with a specific queue
-        queue = queue_service.get_queue_client(queue_name="my_queue")
+        queue = queue_service.get_queue_client(queue="myqueue2")
         # [END get_queue_client]
+
+
+if __name__ == '__main__':
+    sample = QueueServiceSamples()
+    sample.queue_service_properties()
+    sample.queues_in_account()
+    sample.get_queue_client()

@@ -149,7 +149,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
                 :start-after: [START async_get_queue_service_properties]
                 :end-before: [END async_get_queue_service_properties]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Getting queue service properties.
         """
         timeout = kwargs.pop('timeout', None)
@@ -200,7 +200,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
                 :start-after: [START async_set_queue_service_properties]
                 :end-before: [END async_set_queue_service_properties]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Setting queue service properties.
         """
         timeout = kwargs.pop('timeout', None)
@@ -247,7 +247,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
                 :start-after: [START async_qsc_list_queues]
                 :end-before: [END async_qsc_list_queues]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: List queues in the service.
         """
         results_per_page = kwargs.pop('results_per_page', None)
@@ -291,7 +291,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
                 :start-after: [START async_qsc_create_queue]
                 :end-before: [END async_qsc_create_queue]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Create a queue in the service.
         """
         timeout = kwargs.pop('timeout', None)
@@ -331,7 +331,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
                 :start-after: [START async_qsc_delete_queue]
                 :end-before: [END async_qsc_delete_queue]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Delete a queue in the service.
         """
         timeout = kwargs.pop('timeout', None)

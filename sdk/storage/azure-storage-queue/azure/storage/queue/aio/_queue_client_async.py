@@ -80,7 +80,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             :start-after: [START async_create_queue_client]
             :end-before: [END async_create_queue_client]
             :language: python
-            :dedent: 12
+            :dedent: 16
             :caption: Create the queue client with url and credential.
 
         .. literalinclude:: ../samples/queue_samples_message_async.py
@@ -131,7 +131,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 :start-after: [START async_create_queue]
                 :end-before: [END async_create_queue]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Create a queue.
         """
         metadata = kwargs.pop('metadata', None)
@@ -168,7 +168,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 :start-after: [START async_delete_queue]
                 :end-before: [END async_delete_queue]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Delete a queue.
         """
         timeout = kwargs.pop('timeout', None)
@@ -195,7 +195,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 :start-after: [START async_get_queue_properties]
                 :end-before: [END async_get_queue_properties]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Get the properties on the queue.
         """
         timeout = kwargs.pop('timeout', None)
@@ -228,7 +228,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 :start-after: [START async_set_queue_metadata]
                 :end-before: [END async_set_queue_metadata]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Set metadata on the queue.
         """
         timeout = kwargs.pop('timeout', None)
@@ -292,7 +292,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 :start-after: [START async_set_access_policy]
                 :end-before: [END async_set_access_policy]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Set an access policy on the queue.
         """
         timeout = kwargs.pop('timeout', None)
@@ -362,7 +362,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 :start-after: [START async_send_messages]
                 :end-before: [END async_send_messages]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Send messages.
         """
         visibility_timeout = kwargs.pop('visibility_timeout', None)
@@ -432,7 +432,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 :start-after: [START async_receive_messages]
                 :end-before: [END async_receive_messages]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Receive messages from the queue.
         """
         messages_per_page = kwargs.pop('messages_per_page', None)
@@ -507,7 +507,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 :start-after: [START async_update_message]
                 :end-before: [END async_update_message]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Update a message.
         """
         visibility_timeout = kwargs.pop('visibility_timeout', None)
@@ -593,7 +593,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 :start-after: [START async_peek_message]
                 :end-before: [END async_peek_message]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Peek messages.
         """
         timeout = kwargs.pop('timeout', None)
@@ -629,7 +629,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 :start-after: [START async_clear_messages]
                 :end-before: [END async_clear_messages]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Clears all messages.
         """
         timeout = kwargs.pop('timeout', None)
@@ -668,7 +668,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 :start-after: [START async_delete_message]
                 :end-before: [END async_delete_message]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Delete a message.
         """
         timeout = kwargs.pop('timeout', None)

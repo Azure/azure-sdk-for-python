@@ -6,6 +6,16 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: blob_samples_hello_world.py
+DESCRIPTION:
+    This sample demos basic blob operations like getting a blob client from container, uploading and downloading
+    a blob using the blob_client.
+USAGE: python blob_samples_hello_world.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+"""
+
 import os
 
 
@@ -15,7 +25,7 @@ DEST_FILE = 'BlockDestination.txt'
 
 class BlobSamples(object):
 
-    connection_string = os.getenv("CONNECTION_STRING")
+    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
     #--Begin Blob Samples-----------------------------------------------------------------
 
@@ -46,7 +56,7 @@ class BlobSamples(object):
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a new ContainerClient
-        container_client = blob_service_client.get_container_client("myblockcontainer")
+        container_client = blob_service_client.get_container_client("myblockcontainersync")
 
         try:
             # Create new Container in the service
@@ -82,7 +92,7 @@ class BlobSamples(object):
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a new ContainerClient
-        container_client = blob_service_client.get_container_client("mypagecontainer")
+        container_client = blob_service_client.get_container_client("mypagecontainersync")
 
         try:
             # Create new Container in the Service
@@ -92,7 +102,7 @@ class BlobSamples(object):
             blob_client = container_client.get_blob_client("mypageblob")
 
             # Upload content to the Page Blob
-            data = self.get_random_bytes(512)
+            data = b'abcd'*128
             blob_client.upload_blob(data, blob_type="PageBlob")
 
             # Download Page Blob
@@ -114,7 +124,7 @@ class BlobSamples(object):
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a new ContainerClient
-        container_client = blob_service_client.get_container_client("myappendcontainer")
+        container_client = blob_service_client.get_container_client("myappendcontainersync")
 
         try:
             # Create new Container in the Service
@@ -138,3 +148,10 @@ class BlobSamples(object):
         finally:
             # Delete container
             container_client.delete_container()
+
+if __name__ == '__main__':
+    sample = BlobSamples()
+    sample.create_container_sample()
+    sample.block_blob_sample()
+    sample.append_blob_sample()
+    sample.page_blob_sample()

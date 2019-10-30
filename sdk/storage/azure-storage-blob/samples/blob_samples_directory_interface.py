@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 '''
-FILE: directory_interface.py
+FILE: blob_samples_directory_interface.py
 DESCRIPTION:
     This example shows how to perform common filesystem-like operations on a
     container. This includes uploading and downloading files to and from the
@@ -20,6 +20,9 @@ DESCRIPTION:
     This sample expects that the `AZURE_STORAGE_CONNECTION_STRING` environment
     variable is set. It SHOULD NOT be hardcoded in any code derived from this
     sample.
+  USAGE: python blob_samples_directory_interface.py CONTAINER_NAME
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 '''
 
 import os
@@ -98,7 +101,8 @@ class DirectoryClient:
     os.makedirs(os.path.dirname(blob_dest), exist_ok=True)
     bc = self.client.get_blob_client(blob=source)
     with open(blob_dest, 'wb') as file:
-      file.writelines(bc.download_blob())
+      data = bc.download_blob()
+      file.write(data.readall())
 
   def ls_files(self, path, recursive=False):
     '''

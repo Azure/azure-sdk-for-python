@@ -7,15 +7,15 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: proxy_configuration.py
+FILE: blob_samples_proxy_configuration.py
 
 DESCRIPTION:
     This example shows how to work with a proxy, using the storage
-    library as an example. This sample expects that the
-    `AZURE_STORAGE_CONNECTION_STRING` environment variable is set.
-    It SHOULD NOT be hardcoded in any code derived from this sample.
+    library as an example.
 
-USAGE: python proxy_configuration.py
+USAGE: python blob_samples_proxy_configuration.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 
 EXAMPLE OUTPUT:
 X containers.

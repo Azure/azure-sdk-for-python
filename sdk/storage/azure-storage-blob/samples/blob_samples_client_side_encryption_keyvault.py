@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: client_side_encryption_keyvault.py
+FILE: blob_samples_client_side_encryption_keyvault.py
 
 DESCRIPTION:
     This sample contains code demonstrating how to conifgure the storage blob
@@ -18,7 +18,13 @@ DESCRIPTION:
     variables, listed below, must be set. Since these often contain sensitive information,
     they SHOULD NOT be replaced with hardcoded values in any code derived from this sample.
 
-USAGE: python client_side_encryption_keyvault.py
+USAGE: python blob_samples_client_side_encryption_keyvault.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_ACCOUNT_URL - the storage account url
+    2) ACTIVE_DIRECTORY_APPLICATION_ID - Azure Active Directory application ID
+    3) ACTIVE_DIRECTORY_APPLICATION_SECRET - Azure Active Directory application secret
+    4) ACTIVE_DIRECTORY_TENANT_ID - Azure Active Directory tenant ID
+    5) AZURE_KEYVAULT_DNS_NAME: The keyvault account dns name
 """
 
 import base64
@@ -35,11 +41,11 @@ from azure.keyvault.secrets import SecretClient
 from azure.storage.blob import BlobServiceClient, BlobType
 
 # Environment variable keys which must be set to run this sample
-STORAGE_URL = 'AZURE_BLOB_ENDPOINT'
+STORAGE_URL = 'AZURE_STORAGE_ACCOUNT_URL'
 KEYVAULT_URL = 'AZURE_KEYVAULT_DNS_NAME'
-CLIENT_ID = 'AZURE_CLIENT_ID'
-CLIENT_SECRET = 'AZURE_CLIENT_SECRET'
-TENANT_ID = 'AZURE_TENANT_ID'
+CLIENT_ID = 'ACTIVE_DIRECTORY_APPLICATION_ID'
+CLIENT_SECRET = 'ACTIVE_DIRECTORY_APPLICATION_SECRET'
+TENANT_ID = 'ACTIVE_DIRECTORY_TENANT_ID'
 
 def get_env_var(key):
     try:
