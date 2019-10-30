@@ -18,7 +18,7 @@ if sys.version_info < (3, 5):
     collect_ignore.append("tests/livetest/asynctests")
     collect_ignore.append("tests/eventprocessor")
     collect_ignore.append("features")
-    collect_ignore.append("examples/async_examples")
+    collect_ignore.append("samples/async_samples")
 
 from azure.eventhub._client import EventHubClient
 from azure.eventhub import EventPosition
