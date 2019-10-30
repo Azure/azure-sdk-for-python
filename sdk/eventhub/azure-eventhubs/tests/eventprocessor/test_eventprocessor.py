@@ -80,61 +80,6 @@ async def test_loadbalancer_balance(connstr_senders):
     await eventhub_client.close()
 
 
-@pytest.mark.asyncio
-async def test_load_balancer_abandon():
-    async def event_handler(partition_context, events):
-        await asyncio.sleep(0.1)
-
-    class MockEventhubConsumer(object):
-        async def receive(self):
-            return []
-
-    class MockEventHubClient(object):
-        eh_name = "test_eh_name"
-
-        def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
-
-        def create_consumer(self, consumer_group_name, partition_id, event_position):
-            return MockEventhubConsumer()
-
-        async def get_partition_ids(self):
-            return [str(pid) for pid in range(6)]
-
-    partition_manager = InMemoryPartitionManager()
-
-    event_processor = EventProcessor(eventhub_client=MockEventHubClient(),
-                                     consumer_group_name='$default',
-                                     partition_manager=partition_manager,
-                                     event_handler=event_handler,
-                                     error_handler=None,
-                                     partition_initialize_handler=None,
-                                     partition_close_handler=None,
-                                     polling_interval=0.5)
-    tasks = []
-    tasks.append(asyncio.ensure_future(event_processor.start()))
-    await asyncio.sleep(5)
-
-    ep_list = []
-    for _ in range(2):
-        ep = EventProcessor(eventhub_client=MockEventHubClient(),
-                            consumer_group_name='$default',
-                            partition_manager=partition_manager,
-                            event_handler=event_handler,
-                            error_handler=None,
-                            partition_initialize_handler=None,
-                            partition_close_handler=None,
-                            polling_interval=0.5)
-        tasks.append(asyncio.ensure_future(ep.start()))
-        ep_list.append(ep)
-    await asyncio.sleep(5)
-    assert len(event_processor._tasks) == 2
-    for ep in ep_list:
-        await ep.stop()
-    await event_processor.stop()
-    await asyncio.gather(*tasks)
-
-
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_loadbalancer_list_ownership_error(connstr_senders):
@@ -283,7 +228,7 @@ async def test_partition_processor_process_eventhub_consumer_error():
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
 
-        def create_consumer(self, consumer_group_name, partition_id, event_position):
+        def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
             return MockEventhubConsumer()
 
         async def get_partition_ids(self):
@@ -292,6 +237,8 @@ async def test_partition_processor_process_eventhub_consumer_error():
     class MockEventhubConsumer(object):
         async def receive(self):
             raise EventHubError("Mock EventHubConsumer EventHubError")
+        async def close(self):
+            pass
 
     eventhub_client = MockEventHubClient()
     partition_manager = InMemoryPartitionManager()
@@ -332,7 +279,7 @@ async def test_partition_processor_process_error_close_error():
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
 
-        def create_consumer(self, consumer_group_name, partition_id, event_position):
+        def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
             return MockEventhubConsumer()
 
         async def get_partition_ids(self):
@@ -341,6 +288,8 @@ async def test_partition_processor_process_error_close_error():
     class MockEventhubConsumer(object):
         async def receive(self):
             return [EventData("mock events")]
+        async def close(self):
+            pass
 
     eventhub_client = MockEventHubClient() #EventHubClient.from_connection_string(connection_str, receive_timeout=3)
     partition_manager = InMemoryPartitionManager()
