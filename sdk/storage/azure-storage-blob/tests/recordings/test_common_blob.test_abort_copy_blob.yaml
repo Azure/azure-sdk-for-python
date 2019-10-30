@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer207e0f24?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -57,7 +57,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
+    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
     body:
       string: ''
@@ -101,7 +101,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt?copyid=c1d192f4-9fc2-437b-a08f-3e3d0800a6e8&comp=copy
+    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt?copyid=c1d192f4-9fc2-437b-a08f-3e3d0800a6e8&comp=copy
   response:
     body:
       string: ''
@@ -133,7 +133,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
+    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
     body:
       string: ''
@@ -199,7 +199,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
+    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
@@ -238,7 +238,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
+    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
     body:
       string: ''

@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer508f1053?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer508f1053?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -57,7 +57,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/container508f1053?restype=container
+    uri: https://storagename.blob.core.windows.net/container508f1053?restype=container
   response:
     body:
       string: ''
@@ -99,7 +99,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/container508f1053/blob1.txt
+    uri: https://storagename.blob.core.windows.net/container508f1053/blob1.txt
   response:
     body:
       string: ''
@@ -137,7 +137,7 @@ interactions:
       User-Agent:
       - python-requests/2.22.0
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/container508f1053/blob1.txt
+    uri: https://storagename.blob.core.windows.net/container508f1053/blob1.txt
   response:
     body:
       string: a public blob can be read without a shared access signature

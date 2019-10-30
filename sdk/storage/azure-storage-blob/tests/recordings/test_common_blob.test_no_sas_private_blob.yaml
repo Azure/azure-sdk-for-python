@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer61f810cf?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer61f810cf?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -61,7 +61,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer61f810cf/blob61f810cf
+    uri: https://storagename.blob.core.windows.net/utcontainer61f810cf/blob61f810cf
   response:
     body:
       string: ''
@@ -99,7 +99,7 @@ interactions:
       User-Agent:
       - python-requests/2.22.0
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer61f810cf/blob61f810cf
+    uri: https://storagename.blob.core.windows.net/utcontainer61f810cf/blob61f810cf
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The

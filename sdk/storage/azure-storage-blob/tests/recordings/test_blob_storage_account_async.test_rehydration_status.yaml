@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer7bdc16d5?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer7bdc16d5?restype=container
   response:
     body:
       string: ''
@@ -49,7 +49,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_1
+    uri: https://storagename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_1
   response:
     body:
       string: ''
@@ -86,7 +86,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_1?comp=tier
+    uri: https://storagename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_1?comp=tier
   response:
     body:
       string: ''
@@ -118,7 +118,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_1?comp=tier
+    uri: https://storagename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_1?comp=tier
   response:
     body:
       string: ''
@@ -148,7 +148,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_1
+    uri: https://storagename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_1
   response:
     body:
       string: ''
@@ -193,11 +193,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer7bdc16d5?restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/utcontainer7bdc16d5?restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"utcontainer7bdc16d5\"><Blobs><Blob><Name>rehydration_test_blob_1</Name><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"utcontainer7bdc16d5\"><Blobs><Blob><Name>rehydration_test_blob_1</Name><Properties><Creation-Time>Fri,
         25 Oct 2019 18:43:36 GMT</Creation-Time><Last-Modified>Fri, 25 Oct 2019 18:43:36
         GMT</Last-Modified><Etag>0x8D7597B3EB84C00</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
@@ -231,7 +231,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_1
+    uri: https://storagename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_1
   response:
     body:
       string: ''
@@ -270,7 +270,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_2
+    uri: https://storagename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_2
   response:
     body:
       string: ''
@@ -307,7 +307,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_2?comp=tier
+    uri: https://storagename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_2?comp=tier
   response:
     body:
       string: ''
@@ -339,7 +339,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_2?comp=tier
+    uri: https://storagename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_2?comp=tier
   response:
     body:
       string: ''
@@ -369,7 +369,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_2
+    uri: https://storagename.blob.core.windows.net/utcontainer7bdc16d5/rehydration_test_blob_2
   response:
     body:
       string: ''
@@ -414,11 +414,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer7bdc16d5?restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/utcontainer7bdc16d5?restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"utcontainer7bdc16d5\"><Blobs><Blob><Name>rehydration_test_blob_2</Name><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"utcontainer7bdc16d5\"><Blobs><Blob><Name>rehydration_test_blob_2</Name><Properties><Creation-Time>Fri,
         25 Oct 2019 18:43:36 GMT</Creation-Time><Last-Modified>Fri, 25 Oct 2019 18:43:36
         GMT</Last-Modified><Etag>0x8D7597B3EFBCA18</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control

@@ -39,7 +39,7 @@ from encryption_test_helper import (
     KeyResolver,
     RSAKeyWrapper,
 )
-from testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'encryption_container'
@@ -54,7 +54,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
     # --Helpers-----------------------------------------------------------------
     def _setup(self, name, key):
         self.bsc = BlobServiceClient(
-            self._account_url(name),
+            self.account_url(name, "blob"),
             credential=key,
             max_single_put_size=32 * 1024,
             max_block_size=4 * 1024,
@@ -172,10 +172,9 @@ class StorageBlobEncryptionTest(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             blob.download_blob().content_as_bytes()
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_invalid_value_kek_unwrap(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
         self._setup(storage_account.name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
@@ -220,13 +219,11 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Assert
         self.assertEqual(content, self.bytes)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_get_blob_kek_RSA(self, resource_group, location, storage_account, storage_account_key):
         # We can only generate random RSA keys, so this must be run live or
         # the playback test will fail due to a change in kek values.
-        if not self.is_live:
-            pytest.skip("live only")
-
         self._setup(storage_account.name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = RSAKeyWrapper('key2')
@@ -238,10 +235,9 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Assert
         self.assertEqual(b"".join(list(content.chunks())), self.bytes)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_get_blob_nonmatching_kid(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
         self._setup(storage_account.name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
@@ -276,13 +272,11 @@ class StorageBlobEncryptionTest(StorageTestCase):
             blob.upload_blob(large_stream)
         self.assertTrue('Blob data should be of type bytes.' in str(e.exception))
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_put_blob_chunking_required_mult_of_block_size(self, resource_group, location, storage_account,
                                                            storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
-
         self._setup(storage_account.name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -298,13 +292,11 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_put_blob_chunking_required_non_mult_of_block_size(self, resource_group, location, storage_account,
                                                                storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
-
         self._setup(storage_account.name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -319,13 +311,11 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_put_blob_chunking_required_range_specified(self, resource_group, location, storage_account,
                                                         storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
-
         self._setup(storage_account.name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
