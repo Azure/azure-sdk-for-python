@@ -11,13 +11,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 22 Oct 2019 21:19:48 GMT
+      - Wed, 30 Oct 2019 19:51:20 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://pyacrstorage665a1100.queue.core.windows.net/pythonqueue665a1100
+    uri: https://storagename.queue.core.windows.net/pyqueuesync665a1100
   response:
     body:
       string: ''
@@ -25,7 +25,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 22 Oct 2019 21:19:47 GMT
+      - Wed, 30 Oct 2019 19:51:19 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -45,9 +45,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 22 Oct 2019 21:19:49 GMT
+      - Wed, 30 Oct 2019 19:51:20 GMT
       x-ms-meta-val1:
       - test
       x-ms-meta-val2:
@@ -55,7 +55,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://pyacrstorage665a1100.queue.core.windows.net/pythonqueue665a1100?comp=metadata
+    uri: https://storagename.queue.core.windows.net/pyqueuesync665a1100?comp=metadata
   response:
     body:
       string: ''
@@ -63,7 +63,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 22 Oct 2019 21:19:48 GMT
+      - Wed, 30 Oct 2019 19:51:19 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -81,17 +81,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 22 Oct 2019 21:19:49 GMT
+      - Wed, 30 Oct 2019 19:51:20 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://pyacrstorage665a1100.queue.core.windows.net/?prefix=pythonqueue665a1100&maxresults=1&include=metadata&comp=list
+    uri: https://storagename.queue.core.windows.net/?prefix=pyqueuesync665a1100&maxresults=1&include=metadata&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorage665a1100.queue.core.windows.net/\"><Prefix>pythonqueue665a1100</Prefix><MaxResults>1</MaxResults><Queues><Queue><Name>pythonqueue665a1100</Name><Metadata><val1>test</val1><val2>blah</val2></Metadata></Queue></Queues><NextMarker
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>pyqueuesync665a1100</Prefix><MaxResults>1</MaxResults><Queues><Queue><Name>pyqueuesync665a1100</Name><Metadata><val1>test</val1><val2>blah</val2></Metadata></Queue></Queues><NextMarker
         /></EnumerationResults>"
     headers:
       cache-control:
@@ -99,7 +99,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Tue, 22 Oct 2019 21:19:48 GMT
+      - Wed, 30 Oct 2019 19:51:19 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

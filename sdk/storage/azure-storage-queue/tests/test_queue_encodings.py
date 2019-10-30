@@ -20,9 +20,7 @@ from azure.storage.queue import (
 )
 from azure.storage.queue._message_encoding import NoEncodePolicy, NoDecodePolicy
 
-from queuetestcase import (
-    QueueTestCase
-)
+from _shared.testcase import GlobalStorageAccountPreparer, StorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = 'mytestqueue'
@@ -30,7 +28,7 @@ TEST_QUEUE_PREFIX = 'mytestqueue'
 
 # ------------------------------------------------------------------------------
 
-class StorageQueueEncodingTest(QueueTestCase):
+class StorageQueueEncodingTest(StorageTestCase):
     # --Helpers-----------------------------------------------------------------
     def _get_queue_reference(self, qsc, prefix=TEST_QUEUE_PREFIX):
         queue_name = self.get_resource_name(prefix)
@@ -61,11 +59,10 @@ class StorageQueueEncodingTest(QueueTestCase):
 
     # --------------------------------------------------------------------------
 
-    @ResourceGroupPreparer()              
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_message_text_xml(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
-        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
         message = u'<message1>'
         queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
@@ -74,22 +71,20 @@ class StorageQueueEncodingTest(QueueTestCase):
         assert isinstance(queue._config.message_decode_policy, NoDecodePolicy)
         self._validate_encoding(queue, message)
 
-    @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_message_text_xml_whitespace(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
-        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
         message = u'  mess\t age1\n'
         queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
         # Asserts
         self._validate_encoding(queue, message)
 
-    @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_message_text_xml_invalid_chars(self, resource_group, location, storage_account, storage_account_key):
         # Action.
-        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
         queue = self._get_queue_reference(qsc)
         message = u'\u0001'
 
@@ -97,13 +92,12 @@ class StorageQueueEncodingTest(QueueTestCase):
         with self.assertRaises(HttpResponseError):
             queue.send_message(message)
 
-    @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_message_text_base64(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
-        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
         queue = QueueClient(
-            account_url=self._account_url(storage_account.name),
+            account_url=self.account_url(storage_account.name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
             message_encode_policy=TextBase64EncodePolicy(),
@@ -114,13 +108,12 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Asserts
         self._validate_encoding(queue, message)
 
-    @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_message_bytes_base64(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
-        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
         queue = QueueClient(
-            account_url=self._account_url(storage_account.name),
+            account_url=self.account_url(storage_account.name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
             message_encode_policy=BinaryBase64EncodePolicy(),
@@ -132,11 +125,10 @@ class StorageQueueEncodingTest(QueueTestCase):
         self._validate_encoding(queue, message)
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Not applicable on Python 2.7")
-    @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_message_bytes_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
         queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
         queue.create_queue()
 
@@ -149,13 +141,12 @@ class StorageQueueEncodingTest(QueueTestCase):
             # Asserts
             self.assertTrue(str(e.exception).startswith('Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes.'))
 
-    @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_message_text_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
         queue = QueueClient(
-            account_url=self._account_url(storage_account.name),
+            account_url=self.account_url(storage_account.name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
             message_encode_policy=BinaryBase64EncodePolicy(),
@@ -169,13 +160,12 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be bytes'))
 
-    @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     def test_message_base64_decode_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key)
         queue = QueueClient(
-            account_url=self._account_url(storage_account.name),
+            account_url=self.account_url(storage_account.name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
             credential=storage_account_key,
             message_encode_policy=None,
@@ -193,7 +183,7 @@ class StorageQueueEncodingTest(QueueTestCase):
 
         # Asserts
         self.assertNotEqual(-1, str(e.exception).find('Message content is not valid base 64'))
-        
+
     def test_message_no_encoding(self):
         # Arrange
         queue = QueueClient(
@@ -202,7 +192,7 @@ class StorageQueueEncodingTest(QueueTestCase):
             credential="account_key",
             message_encode_policy=None,
             message_decode_policy=None)
-        
+
         # Asserts
         assert isinstance(queue._config.message_encode_policy, NoEncodePolicy)
         assert isinstance(queue._config.message_decode_policy, NoDecodePolicy)
