@@ -305,7 +305,6 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_sql_queries]: https://docs.microsoft.com/azure/cosmos-db/how-to-sql-query
 [cosmos_ttl]: https://docs.microsoft.com/azure/cosmos-db/time-to-live
 [python]: https://www.python.org/downloads/
-<<<<<<< HEAD
 [ref_container_delete_item]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html#azure.cosmos.ContainerProxy.delete_item
 [ref_container_query_items]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html#azure.cosmos.ContainerProxy.query_items
 [ref_container_upsert_item]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html#azure.cosmos.ContainerProxy.upsert_item
@@ -317,7 +316,6 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [ref_httpfailure]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.exceptions.html#azure.cosmos.exceptions.CosmosHttpResponseError
 [sample_database_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/DatabaseManagement
 [sample_document_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/DocumentManagement
-=======
 [ref_container_delete_item]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b5/azure.cosmos.html#azure.cosmos.ContainerProxy.delete_item
 [ref_container_query_items]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b5/azure.cosmos.html#azure.cosmos.ContainerProxy.query_items
 [ref_container_upsert_item]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b5/azure.cosmos.html#azure.cosmos.ContainerProxy.upsert_item
