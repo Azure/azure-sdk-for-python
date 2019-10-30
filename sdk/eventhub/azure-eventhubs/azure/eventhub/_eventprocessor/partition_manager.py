@@ -4,18 +4,18 @@
 # -----------------------------------------------------------------------------------
 
 from typing import Iterable, Dict, Any
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 
-class PartitionManager(ABC):
+class PartitionManager(object):
     """
     PartitionManager deals with the interaction with the chosen storage service.
     It's able to list/claim ownership and save checkpoint.
     """
 
     @abstractmethod
-    def list_ownership(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group_name: str) \
-            -> Iterable[Dict[str, Any]]:
+    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
+        # type: (str, str, str) -> Iterable[Dict[str, Any]]
         """
         Retrieves a complete ownership list from the chosen storage service.
 
@@ -35,12 +35,11 @@ class PartitionManager(ABC):
         """
 
     @abstractmethod
-    def claim_ownership(self, ownership_list: Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]:
+    def claim_ownership(self, ownership_list):
+        # type: (Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]
         """
         Tries to claim a list of specified ownership.
 
-        :param fully_qualified_namespace: The fully qualified namespace that the event hub belongs to.
-         The format is like "<namespace>.servicebus.windows.net"
         :param ownership_list: Iterable of dictionaries containing all the ownership to claim.
         :type ownership_list: Iterable of dict
         :return: Iterable of dictionaries containing the following partition ownership information:
@@ -54,8 +53,9 @@ class PartitionManager(ABC):
         """
 
     @abstractmethod
-    def update_checkpoint(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group_name: str,
-                                partition_id: str, offset: str, sequence_number: int) -> None:
+    def update_checkpoint(self, fully_qualified_namespace, eventhub_name, consumer_group_name,
+                                partition_id, offset, sequence_number):
+        # type: (str, str, str, str, str, int) -> None
         """
         Updates the checkpoint using the given information for the associated partition and
         consumer group in the chosen storage service.
@@ -81,7 +81,8 @@ class PartitionManager(ABC):
         """
 
     @abstractmethod
-    def list_checkpoints(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group_name: str):
+    def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
+        # type: (str, str, str) -> Iterable[Dict[str, Any]]
         """List the updated checkpoints from the store
 
         :param fully_qualified_namespace: The fully qualified namespace that the event hub belongs to.

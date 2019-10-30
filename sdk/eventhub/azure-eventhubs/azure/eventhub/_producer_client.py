@@ -51,8 +51,8 @@ class EventHubProducerClient(EventHubClient):
                     self._producers = [None] * num_of_producers
                     self._producers_locks = [threading.Lock()] * num_of_producers
 
-    def send(self, event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
-            *, partition_key: Union[str, bytes] = None, partition_id: str = None, timeout: float = None):
+    def send(self, event_data, partition_key=None, partition_id=None, timeout=None):
+        # type: (Union[EventData, EventDataBatch, Iterable[EventData]], Union[str, bytes], str, float) -> None
         """
         Sends an event data and blocks until acknowledgement is received or operation times out.
 

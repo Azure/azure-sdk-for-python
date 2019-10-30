@@ -12,7 +12,7 @@ from .partition_manager import PartitionManager
 logger = logging.getLogger(__name__)
 
 
-def _check_table_name(table_name: str):
+def _check_table_name(table_name):
     for c in table_name:
         if not (c.isalnum() or c == "_"):
             raise ValueError("Table name \"{}\" is not in correct format".format(table_name))
@@ -31,17 +31,20 @@ class Sqlite3PartitionManager(PartitionManager):
     primary_keys = list(primary_keys_dict.keys())
 
     ownership_data_fields_dict = {"owner_id": "text", "last_modified_time": "real", "etag": "text"}
-    ownership_fields_dict = {**primary_keys_dict, **ownership_data_fields_dict}
+    ownership_fields_dict = dict(primary_keys_dict)
+    ownership_fields_dict.update(ownership_data_fields_dict)
     ownership_data_fields = list(ownership_data_fields_dict.keys())
     ownership_fields = primary_keys + ownership_data_fields
 
     checkpoint_data_fields_dict = {"sequence_number": "integer", "offset": "text"}
     checkpoint_data_fields = list(checkpoint_data_fields_dict.keys())
-    checkpoint_fields_dict = {**primary_keys_dict, **checkpoint_data_fields_dict}
+    checkpoint_fields_dict = dict(primary_keys_dict)
+    checkpoint_fields_dict.update(checkpoint_data_fields_dict)
     checkpoint_fields = primary_keys + checkpoint_data_fields
 
-    def __init__(self, db_filename: str = ":memory:",
-                 ownership_table: str = "ownership", checkpoint_table: str = "checkpoint"):
+    def __init__(self, db_filename=":memory:",
+                 ownership_table="ownership", checkpoint_table="checkpoint"):
+        # type: (str, str, str) -> None
         """
 
         :param db_filename: name of file that saves the sql data.
