@@ -6,6 +6,7 @@ omitted_paths:
   - "sdk/azure-mgmt*/*"
   - "sdk/*/azure-mgmt*/*"
   - "doc/*"
+  - "sdk/keyvault/azure-keyvault-*/samples/*"
 language: python
 root_check_enabled: True
 required_readme_sections:
@@ -67,6 +68,7 @@ known_content_issues:
   - ['sdk/core/azure-core/README.md', 'nspkg and common']
   - ['sdk/core/azure-core/samples/README.md', 'nspkg and common']
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'nspkg and common']
+  - ['sdk/appconfiguration/azure-appconfiguration/samples/README.md', 'nspkg and common']
   - ['sdk/keyvault/azure-keyvault-nspkg/README.md', 'nspkg and common']
 
   # root readme

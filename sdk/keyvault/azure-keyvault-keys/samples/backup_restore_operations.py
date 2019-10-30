@@ -59,7 +59,4 @@ try:
     print("Restored Key with name '{0}'".format(key.name))
 
 except HttpResponseError as e:
-    print("\nrun_sample has caught an error. {0}".format(e.message))
-
-finally:
-    print("\nrun_sample done")
+    print("\nThis sample has caught an error. {0}".format(e.message))
