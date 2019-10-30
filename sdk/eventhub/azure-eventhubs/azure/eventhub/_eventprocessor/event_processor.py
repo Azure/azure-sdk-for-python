@@ -34,20 +34,21 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
 
     """
     def __init__(
-            self, eventhub_client, consumer_group_name: str,
-            event_handler: Callable[[PartitionContext, List[EventData]], None],
-            *,
-            partition_id: str = None,
-            partition_manager: PartitionManager = None,
-            initial_event_position=EventPosition("-1"), polling_interval: float = 10.0,
-            owner_level=None, prefetch=None, track_last_enqueued_event_properties=False,
-            error_handler,
-            partition_initialize_handler,
-            partition_close_handler,
+            self, eventhub_client, consumer_group_name,
+            event_handler,
+            partition_id=None,
+            partition_manager=None,
+            initial_event_position=EventPosition("-1"),
+            polling_interval=10.0,
+            owner_level=None, prefetch=None,
+            track_last_enqueued_event_properties=False,
+            error_handler=None,
+            partition_initialize_handler=None,
+            partition_close_handler=None,
     ):
         self._consumer_group_name = consumer_group_name
         self._eventhub_client = eventhub_client
-        self._namespace = eventhub_client._address.hostname
+        self._namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
         self._eventhub_name = eventhub_client.eh_name
         self._partition_id = partition_id
 
@@ -144,7 +145,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             )
             self._partition_contexts[partition_id] = partition_context
 
-        partition_consumer = self._eventhub_client._create_consumer(
+        partition_consumer = self._eventhub_client._create_consumer(  # pylint: disable=protected-access
             consumer_group_name,
             partition_id,
             initial_event_position,

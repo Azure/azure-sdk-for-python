@@ -90,10 +90,10 @@ class EventHubConsumerClient(EventHubClient):
                 del eventhub_client._event_processors[(consumer_group, "-1")]
 
     def receive(
-            self, event_handler, consumer_group, *, partition_id=None,
+            self, event_handler, consumer_group, partition_id=None,
             owner_level=None, prefetch=None, track_last_enqueued_event_properties=False,
             initial_event_position=None,
-            error_handler=None, partition_initialize_handler=None, partition_close_handler=None,
+            error_handler=None, partition_initialize_handler=None, partition_close_handler=None
     ):
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
@@ -171,7 +171,7 @@ class EventHubConsumerClient(EventHubClient):
             for _ in range(len(self._event_processors)):
                 _, ep = self._event_processors.popitem()
                 ep.stop()
-            super().close()
+            super(EventHubConsumerClient, self).close()
 
 
 class Task:

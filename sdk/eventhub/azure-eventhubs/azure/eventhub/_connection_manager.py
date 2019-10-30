@@ -4,7 +4,13 @@
 # --------------------------------------------------------------------------------------------
 
 from threading import RLock
+from enum import Enum
 from uamqp import Connection, TransportType, c_uamqp  # type: ignore
+
+
+class _ConnectionMode(Enum):
+    ShareConnection = 1
+    SeparateConnection = 2
 
 
 class _SharedConnectionManager(object):  #pylint:disable=too-many-instance-attributes
@@ -74,4 +80,8 @@ class _SeparateConnectionManager(object):
 
 
 def get_connection_manager(**kwargs):
-    return _SeparateConnectionManager(**kwargs)
+    connection_mode = kwargs.get("connection_mode", _ConnectionMode.ShareConnection)
+    if connection_mode == _ConnectionMode.ShareConnection:
+        return _SharedConnectionManager(**kwargs)
+    else:
+        return _SeparateConnectionManager(**kwargs)

@@ -12,8 +12,9 @@ class PartitionContext(object):
 
     Users can use update_checkpoint() of this class to save checkpoint data.
     """
-    def __init__(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group_name: str,
-                 partition_id: str, owner_id: str, partition_manager: PartitionManager=None):
+    def __init__(self, fully_qualified_namespace, eventhub_name, consumer_group_name,
+                 partition_id, owner_id, partition_manager=None):
+        # type: (str, str, str, str, str, PartitionManager) -> None
         self.fully_qualified_namespace = fully_qualified_namespace
         self.partition_id = partition_id
         self.eventhub_name = eventhub_name

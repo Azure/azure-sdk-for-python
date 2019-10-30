@@ -36,6 +36,6 @@ def test_client_secret_credential(aad_credential, live_eventhub):
         assert list(events[0].body)[0] == 'A single message'.encode('utf-8')
 
     with consumer_client:
-        task = consumer_client.receive(event_handler=event_handler, consumer_group='$default', partition_id=0)
+        task = consumer_client.receive(event_handler=event_handler, consumer_group='$default', partition_id='0')
         time.sleep(2)
         task.cancel()
