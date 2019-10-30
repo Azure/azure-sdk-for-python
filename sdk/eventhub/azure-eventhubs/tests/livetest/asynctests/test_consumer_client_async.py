@@ -19,11 +19,11 @@ async def test_receive_no_partition_async(connstr_senders):
         received += len(events)
 
     async with client:
-        asyncio.ensure_future(
+        task = asyncio.ensure_future(
             client.receive(process_events, consumer_group="$default", initial_event_position="-1"))
         await asyncio.sleep(3)
         assert received == 2
-
+        task.cancel()
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
@@ -42,10 +42,11 @@ async def test_receive_partition_async(connstr_senders):
         assert partition_context.eventhub_name == senders[0]._client.eh_name
 
     async with client:
-        asyncio.ensure_future(
+        task = asyncio.ensure_future(
             client.receive(process_events, consumer_group="$default", partition_id="0", initial_event_position="-1"))
-        await asyncio.sleep(2)
+        await asyncio.sleep(5)
         assert received == 1
+        task.cancel()
 
 
 @pytest.mark.liveTest
@@ -61,11 +62,13 @@ async def test_receive_load_balancing_async(connstr_senders):
     async def process_events(partition_context, events):
         pass
 
-    async with client1 and client2:
-        asyncio.ensure_future(
+    async with client1, client2:
+        task1 = asyncio.ensure_future(
             client1.receive(process_events, consumer_group="$default", initial_event_position="-1"))
-        asyncio.ensure_future(
+        task2 = asyncio.ensure_future(
             client2.receive(process_events, consumer_group="$default", initial_event_position="-1"))
         await asyncio.sleep(5)
         assert len(client1._event_processors[("$default", "-1")]._tasks) == 1
         assert len(client2._event_processors[("$default", "-1")]._tasks) == 1
+        task1.cancel()
+        task2.cancel()
