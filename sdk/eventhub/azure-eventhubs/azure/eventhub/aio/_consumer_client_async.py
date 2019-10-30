@@ -3,10 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import logging
-from typing import Any, Union, TYPE_CHECKING
+from typing import Any, Union, TYPE_CHECKING, Callable, Dict, List
 from .._common import EventPosition,\
     EventHubSharedKeyCredential, EventHubSASTokenCredential
-from ._eventprocessor.event_processor import EventProcessor
+from .._common import EventData
+from ._eventprocessor.event_processor import EventProcessor, CloseReason
+from ._eventprocessor.partition_context import PartitionContext
 from ._client_async import EventHubClient
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
@@ -18,7 +20,7 @@ class EventHubConsumerClient(EventHubClient):
     """Represents an AMQP connection to an EventHub and receives event data from it.
 
     Example:
-        .. literalinclude:: ../examples/test_examples_eventhub_async.py
+        .. literalinclude:: ../samples/test_examples_eventhub_async.py
             :start-after: [START create_eventhub_consumer_client_async]
             :end-before: [END create_eventhub_consumer_client_async]
             :language: python
@@ -71,27 +73,46 @@ class EventHubConsumerClient(EventHubClient):
         self._closed = False
 
     async def receive(
-            self, event_handler, consumer_group, *, partition_id=None,
-            owner_level=None, prefetch=None, track_last_enqueued_event_properties=False,
-            initial_event_position=None,
-            error_handler=None, partition_initialize_handler=None, partition_close_handler=None,
+            self, event_handler: Callable[[PartitionContext, List[EventData]], None], consumer_group: str,
+            *,
+            partition_id: str = None,
+            owner_level: int = None,
+            prefetch: int = None,
+            track_last_enqueued_event_properties: bool = False,
+            initial_event_position: Union[EventPosition, Dict[str, EventPosition]] = None,
+            error_handler: Callable[[PartitionContext, Exception], None] = None,
+            partition_initialize_handler: Callable[[PartitionContext], None] = None,
+            partition_close_handler: Callable[[PartitionContext, CloseReason], None] = None,
     ):
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
-        :param event_handler:
-        :param consumer_group:
-        :param partition_id:
-        :param owner_level:
-        :param prefetch:
-        :param track_last_enqueued_event_properties:
-        :param initial_event_position:
-        :param error_handler:
-        :param partition_initialize_handler:
-        :param partition_close_handler:
-        :return: None
+        :param event_handler: The callback function that process received events
+        :param consumer_group: Receive events from the event hub for this consumer group
+        :param partition_id: Receive from this partition only if it's not None. Receive from all partition otherwise.
+        :param owner_level: The priority of the exclusive consumer. An exclusive
+         consumer will be created if owner_level is set. Higher owner_level has higher exclusive priority.
+        :param prefetch: The number of events to prefetch from the service
+         for processing. Default is 300.
+        :param track_last_enqueued_event_properties: Indicates whether or not the consumer should request information
+         on the last enqueued event on its associated partition, and track that information as events are received.
+         When information about the partition's last enqueued event is being tracked, each event received from the
+         Event Hubs service will carry metadata about the partition. This results in a small amount of additional
+         network bandwidth consumption that is generally a favorable trade-off when considered against periodically
+         making requests for partition properties using the Event Hub client.
+         It is set to `False` by default.
+        :param initial_event_position: Start receiving from this initial_event_position
+         if there isn't checkpoint data for a partition. Use the checkpoint data if there it's available. This can be a
+         a dict with partition id as the key and position as the value for individual partitions, or a single
+         EventPosition instance for all partitions.
+        :param error_handler: The callback function that is called when there is error during receiving events.
+        :param partition_initialize_handler: The callback function that is called right before
+         a partition is initialized.
+        :param partition_close_handler: The callback function that is called when this receive method finishes receiving
+         from a partition.
+        :rtype: None
 
         Example:
-            .. literalinclude:: ../examples/test_examples_eventhub_async.py
+            .. literalinclude:: ../samples/test_examples_eventhub_async.py
                 :start-after: [START eventhub_consumer_client_receive_async]
                 :end-before: [END eventhub_consumer_client_receive_async]
                 :language: python

@@ -17,7 +17,7 @@ class InMemoryPartitionManager(Sqlite3PartitionManager):
 
 class FileBasedPartitionManager(Sqlite3PartitionManager):
     """A partition manager that stores checkpoint and load balancer partition ownership data in a file.
-    Do not use this
+    This is for internal test only.
 
     """
     def __init__(self, filename):

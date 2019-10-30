@@ -23,7 +23,7 @@ class EventHubProducerClient(EventHubClient):
     """Represents an AMQP connection to an EventHub and receives event data from it.
 
     Example:
-        .. literalinclude:: ../examples/test_examples_eventhub_async.py
+        .. literalinclude:: ../samples/test_examples_eventhub_async.py
             :start-after: [START create_eventhub_producer_client_async]
             :end-before: [END create_eventhub_producer_client_async]
             :language: python
@@ -100,7 +100,7 @@ class EventHubProducerClient(EventHubClient):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../examples/test_examples_eventhub_async.py
+            .. literalinclude:: ../samples/test_examples_eventhub_async.py
                 :start-after: [START eventhub_producer_client_send_async]
                 :end-before: [END eventhub_producer_client_send_async]
                 :language: python

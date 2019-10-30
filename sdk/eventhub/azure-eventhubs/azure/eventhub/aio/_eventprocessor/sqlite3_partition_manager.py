@@ -22,7 +22,7 @@ def _check_table_name(table_name: str):
 class Sqlite3PartitionManager(PartitionManager):
     """An implementation of PartitionManager by using the sqlite3 in Python standard library.
     Sqlite3 is a mini sql database that runs in memory or files.
-    Please don't use this PartitionManager for production use.
+    This is for test only.
 
 
     """
@@ -43,10 +43,8 @@ class Sqlite3PartitionManager(PartitionManager):
     def __init__(self, db_filename: str = ":memory:",
                  ownership_table: str = "ownership", checkpoint_table: str = "checkpoint"):
         """
-
         :param db_filename: name of file that saves the sql data.
          Sqlite3 will run in memory without a file when db_filename is ":memory:".
-        :param ownership_table: The table name of the sqlite3 database.
         """
         super(Sqlite3PartitionManager, self).__init__()
         self.ownership_table = _check_table_name(ownership_table)

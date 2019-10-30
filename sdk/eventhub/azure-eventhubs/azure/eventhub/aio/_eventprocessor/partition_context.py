@@ -26,15 +26,12 @@ class PartitionContext(object):
         Updates the checkpoint using the given information for the associated partition and consumer group in the
         chosen storage service.
 
-        :param offset: The offset of the ~azure.eventhub.EventData the new checkpoint will be associated with.
-        :type offset: str
-        :param sequence_number: The sequence_number of the ~azure.eventhub.EventData the new checkpoint will be
-         associated with.
-        :type sequence_number: int
+        :param event: The EventData instance. Its offset and sequence number are to be saved in the checkpoint store.
+        :type event: EventData
         :return: None
         """
-        assert self._partition_manager is not None
-        await self._partition_manager.update_checkpoint(
-            self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name, self.partition_id, event.offset,
-            event.sequence_number
-        )
+        if self._partition_manager:
+            await self._partition_manager.update_checkpoint(
+                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name,
+                self.partition_id, event.offset, event.sequence_number
+            )

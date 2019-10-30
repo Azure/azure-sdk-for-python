@@ -67,15 +67,12 @@ class PartitionManager(ABC):
         :type consumer_group_name: str
         :param partition_id: The partition id which the checkpoint is created for.
         :type partition_id: str
-        :param owner_id: The identifier of the ~azure.eventhub.eventprocessor.EventProcessor.
-        :type owner_id: str
         :param offset: The offset of the ~azure.eventhub.EventData the new checkpoint will be associated with.
         :type offset: str
         :param sequence_number: The sequence_number of the ~azure.eventhub.EventData the new checkpoint
          will be associated with.
         :type sequence_number: int
         :return: None
-        :raise: `OwnershipLostError`
         """
 
     @abstractmethod
@@ -84,13 +81,12 @@ class PartitionManager(ABC):
 
         :param fully_qualified_namespace: The fully qualified namespace that the event hub belongs to.
          The format is like "<namespace>.servicebus.windows.net"
-        :param eventhub_name:
-        :param consumer_group_name:
-        :return:
+        :param eventhub_name: name of the eventhub that the consumer client is receiving from
+        :param consumer_group_name: the consumer group name that is used to receive from the eventhub
         """
 
 
 class OwnershipLostError(Exception):
-    """Raises when update_checkpoint detects the ownership to a partition has been lost
+    """Raises when an EventHubConsumerClient fails to renew the ownership of a partition
 
     """
