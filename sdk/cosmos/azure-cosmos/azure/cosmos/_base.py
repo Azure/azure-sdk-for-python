@@ -73,7 +73,7 @@ _COMMON_OPTIONS = {
 }
 
 def _get_match_headers(kwargs):
-    # type: (str) -> Tuple(Dict[str, Any])
+    # type: (Dict[str, Any]) -> Tuple(Optional[str], Optional[str])
     if_match = kwargs.pop('if_match', None)
     if_none_match = kwargs.pop('if_none_match', None)
     match_condition = kwargs.pop('match_condition', None)
