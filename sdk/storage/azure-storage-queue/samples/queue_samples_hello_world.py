@@ -6,11 +6,27 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: queue_samples_hello_world.py
+
+DESCRIPTION:
+    These samples demonstrate common scenarios like instantiating a client,
+    creating a queue, and sending and receiving messages.
+
+USAGE:
+    python queue_samples_hello_world.py
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+"""
+
+
 import os
+
 
 class QueueHelloWorldSamples(object):
 
-    connection_string = os.getenv("CONNECTION_STRING")
+    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
     def create_client_with_connection_string(self):
         # Instantiate the QueueServiceClient from a connection string
@@ -23,7 +39,7 @@ class QueueHelloWorldSamples(object):
     def queue_and_messages_example(self):
         # Instantiate the QueueClient from a connection string
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(conn_str=self.connection_string, queue_name="my_queue")
+        queue = QueueClient.from_connection_string(conn_str=self.connection_string, queue_name="myqueue")
 
         # Create the queue
         # [START create_queue]
@@ -46,3 +62,9 @@ class QueueHelloWorldSamples(object):
             # [START delete_queue]
             queue.delete_queue()
             # [END delete_queue]
+
+
+if __name__ == '__main__':
+    sample = QueueHelloWorldSamples()
+    sample.create_client_with_connection_string()
+    sample.queue_and_messages_example()

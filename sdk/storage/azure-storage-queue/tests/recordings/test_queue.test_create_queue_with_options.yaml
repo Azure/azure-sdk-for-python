@@ -11,9 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 22 Oct 2019 21:19:35 GMT
+      - Wed, 30 Oct 2019 19:51:16 GMT
       x-ms-meta:
       - '{''val1'': ''test'', ''val2'': ''blah''}'
       x-ms-meta-val1:
@@ -23,7 +23,7 @@ interactions:
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://pyacrstorage63ff1110.queue.core.windows.net/pythonqueue63ff1110
+    uri: https://storagename.queue.core.windows.net/pyqueuesync63ff1110
   response:
     body:
       string: ''
@@ -31,7 +31,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 22 Oct 2019 21:19:34 GMT
+      - Wed, 30 Oct 2019 19:51:15 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -49,13 +49,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 22 Oct 2019 21:19:35 GMT
+      - Wed, 30 Oct 2019 19:51:16 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://pyacrstorage63ff1110.queue.core.windows.net/pythonqueue63ff1110?comp=metadata
+    uri: https://storagename.queue.core.windows.net/pyqueuesync63ff1110?comp=metadata
   response:
     body:
       string: ''
@@ -65,7 +65,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 22 Oct 2019 21:19:34 GMT
+      - Wed, 30 Oct 2019 19:51:15 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-approximate-messages-count:

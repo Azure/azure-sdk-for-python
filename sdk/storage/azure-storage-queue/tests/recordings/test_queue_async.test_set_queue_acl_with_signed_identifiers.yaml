@@ -3,19 +3,19 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 22 Oct 2019 21:24:42 GMT
+      - Wed, 30 Oct 2019 19:51:38 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://pyacrstoragedbd21857.queue.core.windows.net/pythonqueuedbd21857
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncdbd21857
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 22 Oct 2019 21:24:41 GMT
+      date: Wed, 30 Oct 2019 19:51:36 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -25,33 +25,33 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragedbd21857.queue.core.windows.net
-        - /pythonqueuedbd21857
+        - pyacrstoragekiq3q5uw4eso.queue.core.windows.net
+        - /pyqueueasyncdbd21857
         - ''
         - ''
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-10-22T21:19:42Z</Start><Expiry>2019-10-22T22:24:42Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
+      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-10-30T19:46:38Z</Start><Expiry>2019-10-30T20:51:38Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
     headers:
       Content-Length:
       - '257'
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 22 Oct 2019 21:24:42 GMT
+      - Wed, 30 Oct 2019 19:51:38 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://pyacrstoragedbd21857.queue.core.windows.net/pythonqueuedbd21857?comp=acl
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncdbd21857?comp=acl
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 22 Oct 2019 21:24:41 GMT
+      date: Wed, 30 Oct 2019 19:51:36 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -61,8 +61,8 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragedbd21857.queue.core.windows.net
-        - /pythonqueuedbd21857
+        - pyacrstoragekiq3q5uw4eso.queue.core.windows.net
+        - /pyqueueasyncdbd21857
         - comp=acl
         - ''
 - request:
@@ -71,20 +71,20 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 22 Oct 2019 21:24:42 GMT
+      - Wed, 30 Oct 2019 19:51:38 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://pyacrstoragedbd21857.queue.core.windows.net/pythonqueuedbd21857?comp=acl
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncdbd21857?comp=acl
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-10-22T21:19:42.0000000Z</Start><Expiry>2019-10-22T22:24:42.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-10-30T19:46:38.0000000Z</Start><Expiry>2019-10-30T20:51:38.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
     headers:
       cache-control: no-cache
       content-type: application/xml
-      date: Tue, 22 Oct 2019 21:24:41 GMT
+      date: Wed, 30 Oct 2019 19:51:36 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2018-03-28'
@@ -95,8 +95,8 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragedbd21857.queue.core.windows.net
-        - /pythonqueuedbd21857
+        - pyacrstoragekiq3q5uw4eso.queue.core.windows.net
+        - /pyqueueasyncdbd21857
         - comp=acl
         - ''
 version: 1
