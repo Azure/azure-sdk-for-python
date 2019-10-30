@@ -1,7 +1,8 @@
 import pytest
 import asyncio
 from azure.eventhub import EventData, EventPosition
-from azure.eventhub.aio import EventHubConsumerClient, FileBasedPartitionManager
+from azure.eventhub.aio import EventHubConsumerClient
+from azure.eventhub.aio._eventprocessor.local_partition_manager import InMemoryPartitionManager
 
 
 @pytest.mark.liveTest
@@ -51,7 +52,7 @@ async def test_receive_partition_async(connstr_senders):
 @pytest.mark.asyncio
 async def test_receive_load_balancing_async(connstr_senders):
     connection_str, senders = connstr_senders
-    pm = FileBasedPartitionManager(":memory:")
+    pm = InMemoryPartitionManager()
     client1 = EventHubConsumerClient.from_connection_string(
         connection_str, partition_manager=pm, network_tracing=False, load_balancing_interval=1)
     client2 = EventHubConsumerClient.from_connection_string(

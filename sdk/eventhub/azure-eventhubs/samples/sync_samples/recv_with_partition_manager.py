@@ -13,11 +13,15 @@ If partition id is specified, the partition_manager can only be used for checkpo
 """
 import os
 import time
-from azure.eventhub import EventHubConsumerClient, FileBasedPartitionManager
+from azure.storage.blob import ContainerClient
+from azure.eventhub import EventHubConsumerClient
+from azure.eventhub.extensions.checkpointstoreblob import BlobPartitionManager
+
 
 RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
 RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 
 
 def do_operation(event):
@@ -69,7 +73,8 @@ def receive_forever(client):
 
 
 if __name__ == '__main__':
-    partition_manager = FileBasedPartitionManager('consumer_pm_store')
+    container_client = ContainerClient.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
+    partition_manager = BlobPartitionManager(container_client)
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         partition_manager=partition_manager,  # For load balancing and checkpoint. Leave None for no load balancing
@@ -78,6 +83,6 @@ if __name__ == '__main__':
     )
 
     with consumer_client:
-        receiving_time = 5
-        # receive_for_a_while(consumer_client, receiving_time)
-        receive_forever(consumer_client)
+        receiving_time = 60
+        receive_for_a_while(consumer_client, receiving_time)
+        # receive_forever(consumer_client)
