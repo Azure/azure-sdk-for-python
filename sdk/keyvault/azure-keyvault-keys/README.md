@@ -13,17 +13,14 @@ create, manage, and deploy public and private SSL/TLS certificates
 [Source code][key_client_src] | [Package (PyPI)][pypi_package_keys] | [API reference documentation][reference_docs] | [Product documentation][keyvault_docs] | [Samples][key_samples]
 
 ## Getting started
-### Install the package
-Install the Azure Key Vault Keys client library for Python with [pip][pip]:
-
+### Install packages
+Install [azure-keyvault-keys][pypi_package_keys] and
+[azure-identity][azure_identity] with [pip][pip]:
 ```Bash
-pip install azure-keyvault-keys
+pip install azure-keyvault-keys azure-identity
 ```
-
-Additionally, install the [azure-identity][azure_identity]:
-```sh
-pip install azure-identity
-```
+[azure-identity][azure_identity] is used for Azure Active Directory
+authentication as demonstrated below.
 
 ### Prerequisites
 * An [Azure subscription][azure_sub]
