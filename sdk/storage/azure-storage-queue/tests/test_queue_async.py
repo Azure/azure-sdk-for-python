@@ -14,7 +14,7 @@ from datetime import (
     timedelta,
     date,
 )
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, live_test
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.exceptions import (
@@ -549,7 +549,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertIsNotNone(message.expires_on)
         self.assertIsNotNone(message.next_visible_on)
 
-    @live_test
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_account_sas(self, resource_group, location, storage_account, storage_account_key):
@@ -584,11 +584,10 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
-    @live_test
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_token_credential(self, resource_group, location, storage_account, storage_account_key):
-        pytest.skip("")
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         token_credential = self.generate_oauth_token()
 
@@ -610,7 +609,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         queues = list(queue_li)
         self.assertIsNotNone(queues)
 
-    @live_test
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_sas_read(self, resource_group, location, storage_account, storage_account_key):
@@ -644,7 +643,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
-    @live_test
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_sas_add(self, resource_group, location, storage_account, storage_account_key):
@@ -675,7 +674,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         result = messages[0]
         self.assertEqual(u'addedmessage', result.content)
 
-    @live_test
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_sas_update(self, resource_group, location, storage_account, storage_account_key):
@@ -716,7 +715,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         result = messages[0]
         self.assertEqual(u'updatedmessage1', result.content)
 
-    @live_test
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_sas_process(self, resource_group, location, storage_account, storage_account_key):
@@ -749,7 +748,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
-    @live_test
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
@@ -994,7 +993,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertIsInstance(message.expires_on, datetime)
         self.assertIsInstance(message.next_visible_on, datetime)
 
-    @live_test
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_transport_closed_only_once_async(self, resource_group, location, storage_account, storage_account_key):

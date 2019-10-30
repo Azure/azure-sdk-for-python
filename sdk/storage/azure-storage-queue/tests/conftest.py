@@ -23,6 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import pytest
+from devtools_testutils import is_live
 from _shared.testcase import storage_account
 
 import sys
@@ -31,3 +33,14 @@ import sys
 collect_ignore_glob = []
 if sys.version_info < (3, 5):
     collect_ignore_glob.append("*_async.py")
+
+def pytest_configure(config):
+    # register an additional marker
+    config.addinivalue_line(
+        "markers", "live_test_only: mark test to be a live test only"
+    )
+
+def pytest_runtest_setup(item):
+    is_live_only_test_marked = bool([mark for mark in item.iter_markers(name="live_test_only")])
+    if not is_live() and is_live_only_test_marked:
+        pytest.skip("live test only")

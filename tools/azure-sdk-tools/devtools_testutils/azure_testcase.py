@@ -59,9 +59,6 @@ def is_live():
     return TestConfig(config_file=config_file).record_mode
 
 
-live_test = pytest.mark.skipif(not is_live(), reason="live test only")
-
-
 class AzureTestCase(ReplayableTest):
     def __init__(self, method_name, config_file=None,
                  recording_dir=None, recording_name=None,

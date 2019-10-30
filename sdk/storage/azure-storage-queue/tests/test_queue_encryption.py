@@ -19,7 +19,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher
 from cryptography.hazmat.primitives.ciphers.algorithms import AES
 from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.padding import PKCS7
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, live_test
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.queue._shared import decode_base64_to_bytes
 from azure.storage.queue._shared.encryption import (
@@ -135,7 +135,7 @@ class StorageQueueEncryptionTest(StorageTestCase):
         # Assert
         self.assertEqual(li[0].content, u'encrypted_message_4')
 
-    @live_test
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_peek_messages_encrypted_kek_RSA(self, resource_group, location, storage_account, storage_account_key):
 
@@ -154,7 +154,7 @@ class StorageQueueEncryptionTest(StorageTestCase):
         # Assert
         self.assertEqual(li[0].content, u'encrypted_message_3')
 
-    @live_test
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_update_encrypted_message(self, resource_group, location, storage_account, storage_account_key):
         # TODO: Recording doesn't work
@@ -202,7 +202,7 @@ class StorageQueueEncryptionTest(StorageTestCase):
         # Assert
         self.assertEqual(binary_message, list_result2.content)
 
-    @live_test
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_update_encrypted_raw_text_message(self, resource_group, location, storage_account, storage_account_key):
         # TODO: Recording doesn't work
@@ -226,7 +226,7 @@ class StorageQueueEncryptionTest(StorageTestCase):
         # Assert
         self.assertEqual(raw_text, list_result2.content)
 
-    @live_test
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_update_encrypted_json_message(self, resource_group, location, storage_account, storage_account_key):
         # TODO: Recording doesn't work
