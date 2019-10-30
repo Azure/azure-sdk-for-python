@@ -39,7 +39,7 @@ from _shared.asynctestcase import AsyncStorageTestCase
 from _shared.testcase import GlobalStorageAccountPreparer
 
 # ------------------------------------------------------------------------------
-TEST_QUEUE_PREFIX = 'pythonqueue'
+TEST_QUEUE_PREFIX = 'pyqueueasync'
 
 # ------------------------------------------------------------------------------
 
@@ -94,8 +94,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         # Asserts
         self.assertTrue(created)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_queue_fail_on_exist_different_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -108,8 +107,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         # Asserts
         self.assertTrue(created)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_queue_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -125,8 +123,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertEqual('test', props.metadata['val1'])
         self.assertEqual('blah', props.metadata['val2'])
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_non_existing_queue(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -137,8 +134,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await queue_client.delete_queue()
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_existing_queue_fail_not_exist(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -151,8 +147,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         # Asserts
         self.assertIsNone(deleted)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_queues(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -167,8 +162,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertIsNotNone(queues)
         self.assertEqual(len(queues), 1)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_queues_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -205,8 +199,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertIsNotNone(queues2[0])
         self.assertNotEqual('', queues2[0].name)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_queues_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -229,8 +222,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertEqual(len(listed_queue.metadata), 2)
         self.assertEqual(listed_queue.metadata['val1'], 'test')
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_queue_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -245,8 +237,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         # Assert
         self.assertDictEqual(md, metadata)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_queue_metadata_message_count(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -259,8 +250,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertTrue(props.approximate_message_count >= 1)
         self.assertEqual(0, len(props.metadata))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_queue_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -273,8 +263,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         # Assert
         self.assertTrue(exists)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_queue_not_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -286,8 +275,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
 
         # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_message(self, resource_group, location, storage_account, storage_account_key):
         # Action.  No exception means pass. No asserts needed.
@@ -306,8 +294,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual(u'message4', message.content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_message_large_time_to_live(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -324,8 +311,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
             messages[0].expires_on,
             messages[0].inserted_on + timedelta(seconds=1024 * 1024 * 1024 - 3600))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_message_infinite_time_to_live(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -339,8 +325,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         # Assert
         self.assertEqual(messages[0].expires_on.year, date.max.year)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_messages(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -368,8 +353,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertIsInstance(message.expires_on, datetime)
         self.assertIsInstance(message.next_visible_on, datetime)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_messages_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -398,8 +382,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
             self.assertNotEqual('', message.expires_on)
             self.assertNotEqual('', message.next_visible_on)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_peek_messages(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -424,8 +407,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertNotEqual('', message.expires_on)
         self.assertIsNone(message.next_visible_on)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_peek_messages_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -450,8 +432,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
             self.assertNotEqual('', message.expires_on)
             self.assertIsNone(message.next_visible_on)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_clear_messages(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -468,8 +449,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertIsNotNone(result)
         self.assertEqual(0, len(result))
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_message(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -489,8 +469,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertIsNotNone(messages)
         self.assertEqual(3, len(messages)-1)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_message(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -529,8 +508,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertIsNotNone(message.expires_on)
         self.assertIsNotNone(message.next_visible_on)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_message_content(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -571,8 +549,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertIsNotNone(message.expires_on)
         self.assertIsNotNone(message.next_visible_on)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_account_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -608,8 +585,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_token_credential(self, resource_group, location, storage_account, storage_account_key):
         pytest.skip("")
@@ -636,8 +612,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         queues = list(queue_li)
         self.assertIsNotNone(queues)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_sas_read(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -672,8 +647,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_sas_add(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -705,8 +679,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         result = messages[0]
         self.assertEqual(u'addedmessage', result.content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_sas_update(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -748,8 +721,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         result = messages[0]
         self.assertEqual(u'updatedmessage1', result.content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_sas_process(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -783,8 +755,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -827,8 +798,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertNotEqual('', message.id)
         self.assertEqual(u'message1', message.content)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_queue_acl(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -842,8 +812,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl), 0)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_queue_acl_iter(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -859,8 +828,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl), 0)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_queue_acl_with_non_existing_queue(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -873,8 +841,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
 
             # Assert
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_queue_acl(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -889,8 +856,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         acl = await queue_client.get_queue_access_policy()
         self.assertIsNotNone(acl)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_queue_acl_with_empty_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -905,8 +871,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl), 0)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_queue_acl_with_empty_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         qsc = QueueServiceClient(self.account_url(storage_account.name, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -925,8 +890,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertIsNone(acl['empty'].expiry)
         self.assertIsNone(acl['empty'].start)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_queue_acl_with_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -948,8 +912,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertEqual(len(acl), 1)
         self.assertTrue('testid' in acl)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_queue_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -965,8 +928,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         with self.assertRaises(ValueError):
             await queue_client.set_queue_access_policy(identifiers)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_queue_acl_with_non_existing_queue(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -977,8 +939,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await queue_client.set_queue_access_policy(signed_identifiers=dict())
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_unicode_create_queue_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -992,8 +953,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
 
             # Asserts
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_unicode_get_messages_unicode_data(self, resource_group, location, storage_account, storage_account_key):
         # Action
@@ -1013,8 +973,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         self.assertIsInstance(message.expires_on, datetime)
         self.assertIsInstance(message.next_visible_on, datetime)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_unicode_update_message_unicode_data(self, resource_group, location, storage_account, storage_account_key):
         # Action
