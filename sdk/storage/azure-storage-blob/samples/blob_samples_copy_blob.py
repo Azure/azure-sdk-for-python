@@ -11,6 +11,8 @@ FILE: copy_blob.py
 DESCRIPTION:
     This sample demos how to copy a blob from a URL.
 USAGE: python copy_blob.py
+    Set the environment variables with your own values before running the sample.
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 from __future__ import print_function

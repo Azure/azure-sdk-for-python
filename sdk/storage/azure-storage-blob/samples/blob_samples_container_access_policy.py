@@ -16,6 +16,8 @@ DESCRIPTION:
     variable is set. It SHOULD NOT be hardcoded in any code derived from this sample.
 
 USAGE: python container_access_policy.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 
 EXAMPLE OUTPUT:
 

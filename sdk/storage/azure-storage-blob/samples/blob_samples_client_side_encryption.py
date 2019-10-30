@@ -17,6 +17,8 @@ DESCRIPTION:
     be hardcoded in any code derived from this sample.
 
 USAGE: python client_side_encryption.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 import os
@@ -135,7 +137,6 @@ class BlobEncryptionSamples():
         self._create_container()
         try:
             block_blob_name = self._get_blob_reference(prefix='block_blob_')
-            page_blob_name = self._get_blob_reference(prefix='page_blob_')
 
             # KeyWrapper implements the key encryption key interface. Setting
             # this property will tell the service to encrypt the blob. Blob encryption
@@ -144,7 +145,6 @@ class BlobEncryptionSamples():
             self.container_client.key_resolver_function = kek
 
             self.container_client.upload_blob(block_blob_name, u'ABC', )
-            self.container_client.upload_blob(page_blob_name, b'ABC.' * 128, blob_type=BlobType.PageBlob)
 
             # Even when encrypting, uploading large blobs will still automatically 
             # chunk the data and parallelize the upload with max_connections

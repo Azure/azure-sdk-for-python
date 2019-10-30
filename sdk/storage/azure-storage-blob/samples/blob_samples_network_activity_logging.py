@@ -16,6 +16,8 @@ DESCRIPTION:
     It SHOULD NOT be hardcoded in any code derived from this sample.
 
 USAGE: python network_activity_logging.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 
 EXAMPLE OUTPUT:
 Request with logging enabled and log level set to DEBUG.

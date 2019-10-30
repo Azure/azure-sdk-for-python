@@ -11,6 +11,8 @@ FILE: enumerate_blobs.py
 DESCRIPTION:
     This sample demos how to enumerate a container and print all blobs.
 USAGE: python enumerate_blobs.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 from __future__ import print_function
