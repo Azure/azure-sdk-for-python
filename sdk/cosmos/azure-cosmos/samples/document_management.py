@@ -1,5 +1,5 @@
 import azure.cosmos.cosmos_client as cosmos_client
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
 import datetime
 
@@ -163,7 +163,7 @@ def run_sample():
         try:
             db = client.create_database(id=DATABASE_ID)
 
-        except errors.CosmosResourceExistsError:
+        except exceptions.CosmosResourceExistsError:
             pass
 
         # setup container for this sample
@@ -171,7 +171,7 @@ def run_sample():
             container = db.create_container(id=CONTAINER_ID, partition_key=PartitionKey(path='/id', kind='Hash'))
             print('Container with id \'{0}\' created'.format(CONTAINER_ID))
 
-        except errors.CosmosResourceExistsError:
+        except exceptions.CosmosResourceExistsError:
             print('Container with id \'{0}\' was found'.format(CONTAINER_ID))
 
         create_items(container)
@@ -186,10 +186,10 @@ def run_sample():
         try:
             client.delete_database(db)
 
-        except errors.CosmosResourceNotFoundError:
+        except exceptions.CosmosResourceNotFoundError:
             pass
 
-    except errors.CosmosHttpResponseError as e:
+    except exceptions.CosmosHttpResponseError as e:
         print('\nrun_sample has caught an error. {0}'.format(e.message))
     
     finally:
