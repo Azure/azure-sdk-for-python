@@ -10,6 +10,7 @@ resources:
 jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
+      MaxParallel: 1
       BuildTargetingString: $(BuildTargetingString)
       ServiceDirectory: storage
       EnvVars:
