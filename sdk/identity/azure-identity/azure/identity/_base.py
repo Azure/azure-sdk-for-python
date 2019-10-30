@@ -64,6 +64,7 @@ class CertificateCredentialBase(ABC):
         cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())
         fingerprint = cert.fingerprint(hashes.SHA1())
 
+        self._client = self._get_auth_client(tenant_id, **kwargs)
         self._auth_url = Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id)
         self._client_id = client_id
         self._signer = JwtSigner(private_key, "RS256", sha1_thumbprint=binascii.hexlify(fingerprint))
@@ -77,3 +78,7 @@ class CertificateCredentialBase(ABC):
             "grant_type": "client_credentials",
             "scope": " ".join(scopes)
         }
+
+    @abc.abstractmethod
+    def _get_auth_client(self, tenant_id, **kwargs):
+        pass

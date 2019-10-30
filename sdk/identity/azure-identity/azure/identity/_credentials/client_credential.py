@@ -63,11 +63,6 @@ class CertificateCredential(CertificateCredentialBase):
           defines authorities for other clouds.
     """
 
-    def __init__(self, tenant_id, client_id, certificate_path, **kwargs):
-        # type: (str, str, str, **Any) -> None
-        self._client = AuthnClient(tenant=tenant_id, **kwargs)
-        super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
-
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
@@ -83,3 +78,6 @@ class CertificateCredential(CertificateCredentialBase):
             data = self._get_request_data(*scopes)
             token = self._client.request_token(scopes, form_data=data)
         return token
+
+    def _get_auth_client(self, tenant_id, **kwargs):
+        return AuthnClient(tenant=tenant_id, **kwargs)
