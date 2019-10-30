@@ -25,19 +25,6 @@ class MachinePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(MachinePaged, self).__init__(*args, **kwargs)
-class MachineExtensionPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`MachineExtension <azure.mgmt.hybridcompute.models.MachineExtension>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[MachineExtension]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(MachineExtensionPaged, self).__init__(*args, **kwargs)
 class OperationValuePaged(Paged):
     """
     A paging container for iterating over a list of :class:`OperationValue <azure.mgmt.hybridcompute.models.OperationValue>` object

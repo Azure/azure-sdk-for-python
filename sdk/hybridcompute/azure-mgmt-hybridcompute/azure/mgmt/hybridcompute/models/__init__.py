@@ -16,6 +16,7 @@ try:
     from ._models_py3 import MachineExtension
     from ._models_py3 import MachineExtensionInstanceView
     from ._models_py3 import MachineExtensionInstanceViewStatus
+    from ._models_py3 import MachineExtensionsListResult
     from ._models_py3 import MachineExtensionUpdate
     from ._models_py3 import MachineReconnect
     from ._models_py3 import MachineUpdate
@@ -30,6 +31,7 @@ except (SyntaxError, ImportError):
     from ._models import MachineExtension
     from ._models import MachineExtensionInstanceView
     from ._models import MachineExtensionInstanceViewStatus
+    from ._models import MachineExtensionsListResult
     from ._models import MachineExtensionUpdate
     from ._models import MachineReconnect
     from ._models import MachineUpdate
@@ -37,7 +39,6 @@ except (SyntaxError, ImportError):
     from ._models import OSProfile
     from ._models import Resource
     from ._models import UpdateResource
-from ._paged_models import MachineExtensionPaged
 from ._paged_models import MachinePaged
 from ._paged_models import OperationValuePaged
 from ._hybrid_compute_management_client_enums import (
@@ -53,6 +54,7 @@ __all__ = [
     'MachineExtension',
     'MachineExtensionInstanceView',
     'MachineExtensionInstanceViewStatus',
+    'MachineExtensionsListResult',
     'MachineExtensionUpdate',
     'MachineReconnect',
     'MachineUpdate',
@@ -61,7 +63,6 @@ __all__ = [
     'Resource',
     'UpdateResource',
     'MachinePaged',
-    'MachineExtensionPaged',
     'OperationValuePaged',
     'StatusTypes',
     'StatusLevelTypes',

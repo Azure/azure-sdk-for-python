@@ -14,7 +14,6 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import HybridComputeManagementClientConfiguration
 from .operations import MachinesOperations
-from .operations import MachineExtensionsOperations
 from .operations import Operations
 from . import models
 
@@ -27,8 +26,6 @@ class HybridComputeManagementClient(SDKClient):
 
     :ivar machines: Machines operations
     :vartype machines: azure.mgmt.hybridcompute.operations.MachinesOperations
-    :ivar machine_extensions: MachineExtensions operations
-    :vartype machine_extensions: azure.mgmt.hybridcompute.operations.MachineExtensionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.hybridcompute.operations.Operations
 
@@ -54,8 +51,6 @@ class HybridComputeManagementClient(SDKClient):
         self._deserialize = Deserializer(client_models)
 
         self.machines = MachinesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.machine_extensions = MachineExtensionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
