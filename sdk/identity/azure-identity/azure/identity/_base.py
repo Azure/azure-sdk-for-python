@@ -10,8 +10,6 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.backends import default_backend
 from msal.oauth2cli import JwtSigner
 
-from ._constants import Endpoints
-
 try:
     ABC = abc.ABC
 except AttributeError:  # Python 2.7, abc exists, but not ABC
@@ -65,12 +63,11 @@ class CertificateCredentialBase(ABC):
         fingerprint = cert.fingerprint(hashes.SHA1())
 
         self._client = self._get_auth_client(tenant_id, **kwargs)
-        self._auth_url = Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id)
         self._client_id = client_id
         self._signer = JwtSigner(private_key, "RS256", sha1_thumbprint=binascii.hexlify(fingerprint))
 
     def _get_request_data(self, *scopes):
-        assertion = self._signer.sign_assertion(audience=self._auth_url, issuer=self._client_id)
+        assertion = self._signer.sign_assertion(audience=self._client.auth_url, issuer=self._client_id)
         return {
             "client_assertion": assertion,
             "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
