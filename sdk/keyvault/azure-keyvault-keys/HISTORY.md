@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0b5
+## 2019-10-31 4.0.0
 ### Breaking changes:
 - Removed `KeyClient.get_cryptography_client()` and `CryptographyClient.get_key()`
 - Moved the optional parameters of several methods into kwargs (

@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0b5
+## 2019-10-31 4.0.0
 ### Breaking changes:
 - Moved optional parameters of two methods into kwargs (
 [docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.secrets.html)

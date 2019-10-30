@@ -71,7 +71,7 @@ setup(
     author_email='ascl@microsoft.com',
     url='https://github.com/Azure/azure-storage-python',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
