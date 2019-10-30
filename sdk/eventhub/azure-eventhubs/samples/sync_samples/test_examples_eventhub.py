@@ -49,9 +49,9 @@ def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
                 len(events), partition_context.partition_id))
             # Do ops on received events
 
-        recv_task = consumer.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
+        consumer.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
         time.sleep(1)
-        recv_task.cancel()
+        consumer.close()
 
         # [START create_event_data]
         from azure.eventhub import EventData
@@ -91,9 +91,8 @@ def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
             # Do ops on received events
 
         with consumer:
-            recv_task = consumer.receive(event_handler=event_handler, consumer_group='$Default')
+            consumer.receive(event_handler=event_handler, consumer_group='$Default')
             time.sleep(3)  # keep receiving for 3 seconds
-            recv_task.cancel()  # stop receiving
         # [END eventhub_consumer_client_receive_sync]
     finally:
         pass
@@ -134,17 +133,17 @@ def test_example_eventhub_consumer_ops():
     logger = logging.getLogger("azure.eventhub")
 
     def event_handler(partition_context, events):
-        logger.info("Received {} messages from partition: {}".format(
-            len(events), partition_context.partition_id))
+        if events:
+            logger.info("Received {} messages from partition: {}".format(
+                len(events), partition_context.partition_id))
+            print("Last enqueued event properties from partition: {} is: {}".
+                  format(partition_context.partition_id,
+                         events[-1].last_enqueued_event_properties))
         # Do ops on received events
 
     with consumer:
-        recv_task = consumer.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
+        consumer.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
         time.sleep(3)  # keep receiving from partition 0 for 3 seconds
-        recv_task.cancel()  # stop receiving
-        last_enqueued_event_properties = \
-            consumer.get_last_enqueued_event_properties(consumer_group='$Default', partition_id='0')
-        logger.info(last_enqueued_event_properties)
     # [END eventhub_client_consumer_get_last_enqueued_info_sync]
 
     # [START eventhub_consumer_client_close_sync]
@@ -166,9 +165,8 @@ def test_example_eventhub_consumer_ops():
             len(events), partition_context.partition_id))
         # Do ops on received events
 
-    recv_task = consumer.receive(event_handler=event_handler, consumer_group='$Default')
+    consumer.receive(event_handler=event_handler, consumer_group='$Default')
     time.sleep(3)  # keep receiving for 3 seconds
-    recv_task.cancel()  # stop receiving
 
     # Close down the consumer handler explicitly.
     consumer.close()
