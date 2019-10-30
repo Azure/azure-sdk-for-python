@@ -8,6 +8,8 @@ from azure.eventhub._eventprocessor.local_partition_manager import InMemoryParti
 @pytest.mark.liveTest
 def test_receive_no_partition(connstr_senders):
     connection_str, senders = connstr_senders
+    senders[0].send(EventData("Test EventData"))
+    senders[1].send(EventData("Test EventData"))
     client = EventHubConsumerClient.from_connection_string(connection_str, receive_timeout=1, network_tracing=False)
     received = 0
 
@@ -17,15 +19,14 @@ def test_receive_no_partition(connstr_senders):
 
     with client:
         client.receive(process_events, consumer_group="$default", initial_event_position="-1")
-        senders[0].send(EventData("Test EventData"))
-        senders[1].send(EventData("Test EventData"))
-        time.sleep(5)
+        time.sleep(3)
         assert received == 2
 
 
 @pytest.mark.liveTest
 def test_receive_partition(connstr_senders):
     connection_str, senders = connstr_senders
+    senders[0].send(EventData("Test EventData"))
     client = EventHubConsumerClient.from_connection_string(connection_str, network_tracing=False)
     received = 0
 
@@ -39,7 +40,6 @@ def test_receive_partition(connstr_senders):
 
     with client:
         client.receive(process_events, consumer_group="$default", partition_id="0", initial_event_position="-1")
-        senders[0].send(EventData("Test EventData"))
         time.sleep(2)
         assert received == 1
 

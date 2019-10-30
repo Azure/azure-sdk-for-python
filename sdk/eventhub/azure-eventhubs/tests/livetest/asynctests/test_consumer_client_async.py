@@ -9,6 +9,8 @@ from azure.eventhub.aio._eventprocessor.local_partition_manager import InMemoryP
 @pytest.mark.asyncio
 async def test_receive_no_partition_async(connstr_senders):
     connection_str, senders = connstr_senders
+    senders[0].send(EventData("Test EventData"))
+    senders[1].send(EventData("Test EventData"))
     client = EventHubConsumerClient.from_connection_string(connection_str, network_tracing=False)
     received = 0
 
@@ -19,9 +21,7 @@ async def test_receive_no_partition_async(connstr_senders):
     async with client:
         asyncio.ensure_future(
             client.receive(process_events, consumer_group="$default", initial_event_position="-1"))
-        senders[0].send(EventData("Test EventData"))
-        senders[1].send(EventData("Test EventData"))
-        await asyncio.sleep(2)
+        await asyncio.sleep(3)
         assert received == 2
 
 
@@ -29,6 +29,7 @@ async def test_receive_no_partition_async(connstr_senders):
 @pytest.mark.asyncio
 async def test_receive_partition_async(connstr_senders):
     connection_str, senders = connstr_senders
+    senders[0].send(EventData("Test EventData"))
     client = EventHubConsumerClient.from_connection_string(connection_str, network_tracing=False)
     received = 0
 
@@ -43,7 +44,6 @@ async def test_receive_partition_async(connstr_senders):
     async with client:
         asyncio.ensure_future(
             client.receive(process_events, consumer_group="$default", partition_id="0", initial_event_position="-1"))
-        senders[0].send(EventData("Test EventData"))
         await asyncio.sleep(2)
         assert received == 1
 
