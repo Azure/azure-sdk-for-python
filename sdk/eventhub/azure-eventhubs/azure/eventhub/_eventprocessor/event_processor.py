@@ -208,9 +208,8 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     break
                     # Go to finally to stop this partition processor.
                     # Later an EventProcessor(this one or another one) will pick up this partition again
-            self._running = False
         finally:
-            if self._running is False:
+            if self._running is False or self._threads_stop_flags[partition_id]:
                 close(CloseReason.SHUTDOWN)
             else:
                 close(CloseReason.OWNERSHIP_LOST)
@@ -241,7 +240,8 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     else:
                         log.info("EventProcessor %r hasn't claimed an ownership. It keeps claiming.", self._id)
                         to_cancel_list = set(self._working_threads.keys())
-                    self._cancel_tasks_for_partitions(to_cancel_list)
+                    if to_cancel_list:
+                        self._cancel_tasks_for_partitions(to_cancel_list)
                 except Exception as err:  # pylint:disable=broad-except
                     log.warning("An exception (%r) occurred during balancing and claiming ownership for "
                                 "eventhub %r consumer group %r. Retrying after %r seconds",
@@ -259,6 +259,12 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     '''
                     # TODO: This exception handling requires more thinking
                 time.sleep(self._polling_interval)
+
+    def _get_last_enqueued_event_properties(self, partition_id):
+        if partition_id in self._working_threads and partition_id in self._last_enqueued_event_properties:
+            return self._last_enqueued_event_properties[partition_id]
+        else:
+            raise ValueError("You're not receiving events from partition {}".format(partition_id))
 
     def start(self):
         if not self._running:
@@ -294,9 +300,3 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         self._threads_stop_flags.clear()
 
         log.info("EventProcessor %r has been stopped.", self._id)
-
-    def get_last_enqueued_event_properties(self, partition_id):
-        if partition_id in self._working_threads and partition_id in self._last_enqueued_event_properties:
-            return self._last_enqueued_event_properties[partition_id]
-        else:
-            raise ValueError("You're not receiving events from partition {}".format(partition_id))
