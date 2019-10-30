@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-from functools import lru_cache
 import inspect
 import os.path
 import zlib
@@ -49,14 +48,15 @@ def get_qualified_method_name(obj, method_name):
     return '{0}.{1}'.format(module_name, method_name)
 
 
-@lru_cache(maxsize=1)
 def is_live():
     """A module version of is_live, that could be used in pytest marker.
     """
-    config_file = os.path.join(os.path.dirname(__file__), TEST_SETTING_FILENAME)
-    if not os.path.exists(config_file):
-        config_file = None
-    return TestConfig(config_file=config_file).record_mode
+    if not hasattr(is_live, '_cache'):
+        config_file = os.path.join(os.path.dirname(__file__), TEST_SETTING_FILENAME)
+        if not os.path.exists(config_file):
+            config_file = None
+        is_live._cache = TestConfig(config_file=config_file).record_mode
+    return is_live._cache
 
 
 class AzureTestCase(ReplayableTest):
