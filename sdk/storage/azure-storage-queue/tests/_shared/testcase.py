@@ -1,36 +1,43 @@
-﻿# coding: utf-8
+# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 from __future__ import division
-import pytest
 from contextlib import contextmanager
 import copy
 import inspect
 import os
 import os.path
+import time
 
-from unittest import SkipTest
+try:
+    import unittest.mock as mock
+except ImportError:
+    import mock
 
-import adal
-import vcr
 import zlib
 import math
-import uuid
-import unittest
 import sys
 import random
+import re
 import logging
-import time
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtTestCase, AzureMgmtPreparer, ResourceGroupPreparer, StorageAccountPreparer, FakeResource
+from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError, create_random_name
 try:
     from cStringIO import StringIO      # Python 2
 except ImportError:
     from io import StringIO
 
 from azure.core.credentials import AccessToken
+
+try:
+    from devtools_testutils import mgmt_settings_real as settings
+except ImportError:
+    from devtools_testutils import mgmt_settings_fake as settings
+
+import pytest
 
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
@@ -45,12 +52,100 @@ class FakeTokenCredential(object):
     def get_token(self, *args):
         return self.token
 
-class QueueTestCase(AzureMgmtTestCase):
+
+class XMSRequestIDBody(RecordingProcessor):
+    """This process is used for Storage batch call only, to avoid the echo policy.
+    """
+    def process_response(self, response):
+        content_type = None
+        for key, value in response.get('headers', {}).items():
+            if key.lower() == 'content-type':
+                content_type = (value[0] if isinstance(value, list) else value).lower()
+                break
+
+        if content_type and 'multipart/mixed' in content_type:
+            response['body']['string'] = re.sub(b"x-ms-client-request-id: [a-f0-9-]+\r\n", b"", response['body']['string'])
+
+        return response
+
+
+class GlobalStorageAccountPreparer(AzureMgmtPreparer):
+    def __init__(self):
+        super(GlobalStorageAccountPreparer, self).__init__(
+            name_prefix='',
+            random_name_length=42
+        )
+
+    def create_resource(self, name, **kwargs):
+        storage_account = StorageTestCase._STORAGE_ACCOUNT
+        if self.is_live:
+            self.test_class_instance.scrubber.register_name_pair(
+                storage_account.name,
+                "storagename"
+            )
+        else:
+            storage_account = FakeResource(
+                id=storage_account.id,
+                name="storagename"
+            )
+
+        return {
+            'location': 'westus',
+            'resource_group': StorageTestCase._RESOURCE_GROUP,
+            'storage_account': storage_account,
+            'storage_account_key': StorageTestCase._STORAGE_KEY,
+        }
+
+class GlobalResourceGroupPreparer(AzureMgmtPreparer):
+    def __init__(self):
+        super(GlobalResourceGroupPreparer, self).__init__(
+            name_prefix='',
+            random_name_length=42
+        )
+
+    def create_resource(self, name, **kwargs):
+        rg = StorageTestCase._RESOURCE_GROUP
+        if self.is_live:
+            self.test_class_instance.scrubber.register_name_pair(
+                rg.name,
+                "rgname"
+            )
+        else:
+            rg = FakeResource(
+                name="rgname",
+                id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname"
+            )
+
+        return {
+            'location': 'westus',
+            'resource_group': rg,
+        }
+
+
+class StorageTestCase(AzureMgmtTestCase):
+
+    def __init__(self, *args, **kwargs):
+        super(StorageTestCase, self).__init__(*args, **kwargs)
+        self.replay_processors.append(XMSRequestIDBody())
+
     def connection_string(self, account, key):
         return "DefaultEndpointsProtocol=https;AccountName=" + account.name + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
 
-    def _account_url (self, name):
-        return 'https://{}.queue.core.windows.net'.format(name)
+    def account_url(self, name, storage_type):
+        """Return an url of storage account.
+
+        :param str name: Storage account name
+        :param str storage_type: The Storage type part of the URL. Should be "blob", or "queue", etc.
+        """
+        return 'https://{}.{}.core.windows.net'.format(name, storage_type)
+
+    def configure_logging(self):
+        try:
+            enable_logging = self.get_settings_value("ENABLE_LOGGING")
+        except AzureTestError:
+            enable_logging = True  # That's the default value in fake settings
+
+        self.enable_logging() if enable_logging else self.disable_logging()
 
     def enable_logging(self):
         handler = logging.StreamHandler()
@@ -66,19 +161,13 @@ class QueueTestCase(AzureMgmtTestCase):
         self.logger.handlers = []
 
     def sleep(self, seconds):
-        if not self.is_playback():
+        if self.is_live:
             time.sleep(seconds)
 
     def get_random_bytes(self, size):
-        if self.is_live:
-            rand = random.Random()
-        else:
-            checksum = zlib.adler32(self.qualified_test_name.encode()) & 0xffffffff
-            rand = random.Random(checksum)
-        result = bytearray(size)
-        for i in range(size):
-            result[i] = int(rand.random()*255)  # random() is consistent between python 2 and 3
-        return bytes(result)
+        # recordings don't like random stuff. making this more
+        # deterministic.
+        return b'a'*size
 
     def get_random_text_data(self, size):
         '''Returns random unicode text data exceeding the size threshold for
@@ -103,7 +192,14 @@ class QueueTestCase(AzureMgmtTestCase):
                 settings.PROXY_PASSWORD,
             )
 
-    def assert_named_item_in_container(self, container, item_name, msg=None):
+    def _create_storage_service(self, service_class, account, key, connection_string=None, **kwargs):
+        if connection_string:
+            service = service_class.from_connection_string(connection_string, **kwargs)
+        else:
+            service = service_class(self._account_url(account.name), credential=key, **kwargs)
+        return service
+
+    def assertNamedItemInContainer(self, container, item_name, msg=None):
         def _is_string(obj):
             if sys.version_info >= (3,):
                 return isinstance(obj, str)
@@ -121,14 +217,14 @@ class QueueTestCase(AzureMgmtTestCase):
 
         standardMsg = '{0} not found in {1}'.format(
             repr(item_name), [str(c) for c in container])
-        pytest.fail(self._formatMessage(msg, standardMsg))
+        self.fail(self._formatMessage(msg, standardMsg))
 
-    def assert_named_item_not_in_container(self, container, item_name, msg=None):
+    def assertNamedItemNotInContainer(self, container, item_name, msg=None):
         for item in container:
             if item.name == item_name:
                 standardMsg = '{0} unexpectedly found in {1}'.format(
                     repr(item_name), repr(container))
-            pytest.fail(self._formatMessage(msg, standardMsg))
+                self.fail(self._formatMessage(msg, standardMsg))
 
     def assert_upload_progress(self, size, max_chunk_size, progress, unknown_size=False):
         '''Validates that the progress chunks align with our chunking procedure.'''
@@ -156,20 +252,24 @@ class QueueTestCase(AzureMgmtTestCase):
                 self.assertTrue(i[0] % max_chunk_size == 0 or i[0] % max_chunk_size == small_chunk_size)
                 self.assertEqual(i[1], size)
 
-    def is_file_encryption_enabled(self):
-        return self.settings.IS_SERVER_SIDE_FILE_ENCRYPTION_ENABLED
-
     def generate_oauth_token(self):
-        from azure.identity import ClientSecretCredential
-
-        return ClientSecretCredential(
-            self.settings.ACTIVE_DIRECTORY_TENANT_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET
-        )
+        if self.is_live:
+            from azure.identity import ClientSecretCredential
+            return ClientSecretCredential(
+                self.get_settings_value("TENANT_ID"),
+                self.get_settings_value("CLIENT_ID"),
+                self.get_settings_value("CLIENT_SECRET"),
+            )
+        return self.generate_fake_token()
 
     def generate_fake_token(self):
         return FakeTokenCredential()
+
+
+def not_for_emulator(test):
+    def skip_test_if_targeting_emulator(self):
+        test(self)
+    return skip_test_if_targeting_emulator
 
 
 class RetryCounter(object):
@@ -188,14 +288,14 @@ class ResponseCallback(object):
         self.count = 0
 
     def override_first_status(self, response):
-        if self.first and response.status == self.status:
-            response.status = self.new_status
+        if self.first and response.http_response.status_code == self.status:
+            response.http_response.status_code = self.new_status
             self.first = False
         self.count += 1
 
     def override_status(self, response):
-        if response.status == self.status:
-            response.status = self.new_status
+        if response.http_response.status_code == self.status:
+            response.http_response.status_code = self.new_status
         self.count += 1
 
 
@@ -218,7 +318,7 @@ class LogCaptured(object):
 
         # get and enable the logger to send the outputs to the string stream
         self.logger = logging.getLogger('azure.storage')
-        self.logger.level = logging.INFO
+        self.logger.level = logging.DEBUG
         self.logger.addHandler(self.handler)
 
         # the stream is returned to the user so that the capture logs can be retrieved
@@ -231,3 +331,41 @@ class LogCaptured(object):
 
         # reset logging since we messed with the setting
         self.test_case.configure_logging()
+
+
+@pytest.fixture(scope="session")
+def storage_account():
+    test_case = AzureMgmtTestCase("__init__")
+    rg_preparer = ResourceGroupPreparer()
+    storage_preparer = StorageAccountPreparer(name_prefix='pyacrstorage')
+
+    # Set what the decorator is supposed to set for us
+    for prep in [rg_preparer, storage_preparer]:
+        prep.live_test = False
+        prep.test_class_instance = test_case
+
+    # Create
+    rg_name = create_random_name("pystorage", 24)
+    storage_name = create_random_name("pyacrstorage", 24)
+    try:
+        rg = rg_preparer.create_resource(rg_name)
+        StorageTestCase._RESOURCE_GROUP = rg['resource_group']
+        try:
+            storage_dict = storage_preparer.create_resource(
+                storage_name,
+                resource_group=rg['resource_group']
+            )
+            # Now the magic begins
+            StorageTestCase._STORAGE_ACCOUNT = storage_dict['storage_account']
+            StorageTestCase._STORAGE_KEY = storage_dict['storage_account_key']
+            yield
+        finally:
+            storage_preparer.remove_resource(
+                storage_name,
+                resource_group=rg['resource_group']
+            )
+            StorageTestCase._STORAGE_ACCOUNT = None
+            StorageTestCase._STORAGE_KEY = None
+    finally:
+        rg_preparer.remove_resource(rg_name)
+        StorageTestCase._RESOURCE_GROUP = None
