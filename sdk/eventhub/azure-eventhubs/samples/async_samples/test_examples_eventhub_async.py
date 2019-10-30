@@ -71,7 +71,7 @@ async def test_example_eventhub_async_send_and_receive(live_eventhub_config):
                 len(events), partition_context.partition_id))
             # Do ops on received events
         async with consumer:
-            task = asyncio.ensure_futre(consumer.receive(event_handler=event_handler, consumer_group="$default"))
+            task = asyncio.ensure_future(consumer.receive(event_handler=event_handler, consumer_group="$default"))
             await asyncio.sleep(3)  # keep receiving for 3 seconds
             task.cancel()  # stop receiving
         # [END eventhub_consumer_client_receive_async]
@@ -125,5 +125,5 @@ async def test_example_eventhub_async_consumer_ops(live_eventhub_config, connect
     recv_task.cancel()  # stop receiving
 
     # Close down the consumer handler explicitly.
-    consumer.close()
+    await consumer.close()
     # [END eventhub_consumer_client_close_sync]

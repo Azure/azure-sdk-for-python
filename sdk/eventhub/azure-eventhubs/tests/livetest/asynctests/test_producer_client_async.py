@@ -42,7 +42,6 @@ async def test_send_partition_async(connstr_receivers):
     assert len(partition_0) == 0
     partition_1 = receivers[1].receive(timeout=2)
     assert len(partition_1) == 1
-    await client.close()
 
 
 @pytest.mark.liveTest
