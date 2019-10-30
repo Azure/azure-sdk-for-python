@@ -218,6 +218,6 @@ if __name__ == '__main__':
     sample = CommonBlobSamples()
     sample.blob_snapshots()
     sample.soft_delete_and_undelete_blob()
-    # sample.delete_multiple_blobs()
     sample.acquire_lease_on_blob()
     sample.start_copy_blob_from_url_and_abort_copy()
+    sample.delete_multiple_blobs()
