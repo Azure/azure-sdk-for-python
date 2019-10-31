@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerb8c517c2?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainerb8c517c2?restype=container
   response:
     body:
       string: ''
@@ -55,7 +55,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainersourceb8c517c2?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainersourceb8c517c2?restype=container
   response:
     body:
       string: ''
@@ -99,7 +99,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerb8c517c2/blobb8c517c2
+    uri: https://storagename.blob.core.windows.net/utcontainerb8c517c2/blobb8c517c2
   response:
     body:
       string: ''
@@ -147,7 +147,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerb8c517c2/blobb8c517c2?comp=page
+    uri: https://storagename.blob.core.windows.net/utcontainerb8c517c2/blobb8c517c2?comp=page
   response:
     body:
       string: ''
@@ -191,7 +191,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerb8c517c2/blobb8c517c2
+    uri: https://storagename.blob.core.windows.net/utcontainerb8c517c2/blobb8c517c2
   response:
     body:
       string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
@@ -245,7 +245,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerb8c517c2/blobb8c517c2?comp=pagelist
+    uri: https://storagename.blob.core.windows.net/utcontainerb8c517c2/blobb8c517c2?comp=pagelist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><PageList><PageRange><Start>0</Start><End>511</End></PageRange></PageList>"

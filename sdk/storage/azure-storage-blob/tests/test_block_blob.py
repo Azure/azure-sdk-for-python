@@ -21,7 +21,7 @@ from azure.storage.blob import (
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
-from testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -34,7 +34,7 @@ class StorageBlockBlobTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         self.bsc = BlobServiceClient(
-            self._account_url(name),
+            self.account_url(name, "blob"),
             credential=key,
             connection_data_block_size=4 * 1024,
             max_single_put_size=32 * 1024,
@@ -402,11 +402,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_from_bytes_blob_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob = self._create_blob()
@@ -422,11 +421,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(output.properties.etag, create_resp.get('etag'))
         self.assertEqual(output.properties.last_modified, create_resp.get('last_modified'))
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -441,11 +439,10 @@ class StorageBlockBlobTest(StorageTestCase):
         md = blob.get_blob_properties().metadata
         self.assertDictEqual(md, metadata)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -464,11 +461,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -492,11 +488,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_index(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -570,11 +565,10 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         self.assertEqual(blob_properties.blob_tier, blob_tier)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_path(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -636,11 +630,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.blob_tier, blob_tier)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -666,11 +659,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_path_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -694,11 +686,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -719,11 +710,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_frm_stream_nonseek_chunk_upld_knwn_size(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -743,11 +733,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_from_stream_nonseek_chunk_upld_unkwn_size(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -766,11 +755,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_with_progress_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -796,11 +784,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_chunked_upload_with_count(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -819,11 +806,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_from_stream_chunk_upload_with_cntandrops(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -848,11 +834,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_chnked_upload_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -876,11 +861,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_chunked_upload_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         self._setup(storage_account.name, storage_account_key)
@@ -958,11 +942,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_text_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
@@ -991,11 +974,10 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_md5_chunked(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()

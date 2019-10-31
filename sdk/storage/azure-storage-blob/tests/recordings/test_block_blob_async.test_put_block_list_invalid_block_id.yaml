@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerbc4c17ad?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainerbc4c17ad?restype=container
   response:
     body:
       string: ''
@@ -45,7 +45,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerbc4c17ad/blobbc4c17ad?blockid=MQ%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainerbc4c17ad/blobbc4c17ad?blockid=MQ%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -81,7 +81,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerbc4c17ad/blobbc4c17ad?blockid=Mg%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainerbc4c17ad/blobbc4c17ad?blockid=Mg%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -117,7 +117,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerbc4c17ad/blobbc4c17ad?blockid=Mw%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainerbc4c17ad/blobbc4c17ad?blockid=Mw%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -155,7 +155,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerbc4c17ad/blobbc4c17ad?comp=blocklist
+    uri: https://storagename.blob.core.windows.net/utcontainerbc4c17ad/blobbc4c17ad?comp=blocklist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidBlockList</Code><Message>The

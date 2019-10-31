@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer20e41502?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer20e41502?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -41,7 +41,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/?restype=account&comp=properties
+    uri: https://storagename.blob.core.windows.net/?restype=account&comp=properties
   response:
     body:
       string: ''

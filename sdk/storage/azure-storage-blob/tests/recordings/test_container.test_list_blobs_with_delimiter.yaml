@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containerab171296?restype=container
+    uri: https://storagename.blob.core.windows.net/containerab171296?restype=container
   response:
     body:
       string: ''
@@ -61,7 +61,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containerab171296/a%2Fblob1
+    uri: https://storagename.blob.core.windows.net/containerab171296/a%2Fblob1
   response:
     body:
       string: ''
@@ -111,7 +111,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containerab171296/a%2Fblob2
+    uri: https://storagename.blob.core.windows.net/containerab171296/a%2Fblob2
   response:
     body:
       string: ''
@@ -161,7 +161,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containerab171296/b%2Fblob3
+    uri: https://storagename.blob.core.windows.net/containerab171296/b%2Fblob3
   response:
     body:
       string: ''
@@ -211,7 +211,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containerab171296/blob4
+    uri: https://storagename.blob.core.windows.net/containerab171296/blob4
   response:
     body:
       string: ''
@@ -253,11 +253,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/containerab171296?delimiter=%2F&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/containerab171296?delimiter=%2F&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"containerab171296\"><Delimiter>/</Delimiter><Blobs><BlobPrefix><Name>a/</Name></BlobPrefix><BlobPrefix><Name>b/</Name></BlobPrefix><Blob><Name>blob4</Name><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"containerab171296\"><Delimiter>/</Delimiter><Blobs><BlobPrefix><Name>a/</Name></BlobPrefix><BlobPrefix><Name>b/</Name></BlobPrefix><Blob><Name>blob4</Name><Properties><Creation-Time>Fri,
         25 Oct 2019 17:59:36 GMT</Creation-Time><Last-Modified>Fri, 25 Oct 2019 17:59:36
         GMT</Last-Modified><Etag>0x8D75975194FED1E</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control

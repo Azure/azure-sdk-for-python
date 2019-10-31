@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerf6781424?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainerf6781424?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -49,7 +49,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerf6781424/blobf6781424
+    uri: https://storagename.blob.core.windows.net/utcontainerf6781424/blobf6781424
   response:
     body:
       string: ''
@@ -84,7 +84,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerf6781424/blobf6781424?comp=snapshot
+    uri: https://storagename.blob.core.windows.net/utcontainerf6781424/blobf6781424?comp=snapshot
   response:
     body:
       string: ''
@@ -120,7 +120,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerf6781424/blobf6781424
+    uri: https://storagename.blob.core.windows.net/utcontainerf6781424/blobf6781424
   response:
     body:
       string: ''
@@ -153,11 +153,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerf6781424?include=snapshots&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/utcontainerf6781424?include=snapshots&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"utcontainerf6781424\"><Blobs><Blob><Name>blobf6781424</Name><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"utcontainerf6781424\"><Blobs><Blob><Name>blobf6781424</Name><Properties><Creation-Time>Fri,
         25 Oct 2019 18:34:06 GMT</Creation-Time><Last-Modified>Fri, 25 Oct 2019 18:34:06
         GMT</Last-Modified><Etag>0x8D75979EB18FB03</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>yaNM/IXZgmmMasifdgcavQ==</Content-MD5><Cache-Control

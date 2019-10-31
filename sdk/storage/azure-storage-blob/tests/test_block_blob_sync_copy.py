@@ -18,7 +18,7 @@ from azure.storage.blob import (
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from azure.storage.blob._shared.policies import StorageContentValidation
-from testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 # ------------------------------------------------------------------------------
 SOURCE_BLOB_SIZE = 8 * 1024
@@ -30,7 +30,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def _setup(self, name, key):
         self.bsc = BlobServiceClient(
-            self._account_url(name),
+            self.account_url(name, "blob"),
             credential=key,
             connection_data_block_size=4 * 1024,
             max_single_put_size=32 * 1024,

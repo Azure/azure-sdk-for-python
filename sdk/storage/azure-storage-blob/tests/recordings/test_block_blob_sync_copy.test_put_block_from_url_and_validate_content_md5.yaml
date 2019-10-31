@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer740d1e2e?restype=container
   response:
     body:
       string: ''
@@ -61,7 +61,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e/srcblob740d1e2e
+    uri: https://storagename.blob.core.windows.net/utcontainer740d1e2e/srcblob740d1e2e
   response:
     body:
       string: ''
@@ -111,7 +111,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blockid=MQ%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blockid=MQ%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -147,7 +147,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blocklisttype=all&comp=blocklist
+    uri: https://storagename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blocklisttype=all&comp=blocklist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><BlockList><CommittedBlocks
@@ -190,7 +190,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blockid=Mg%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blockid=Mg%3D%3D&comp=block
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Md5Mismatch</Code><Message>The
@@ -229,7 +229,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blocklisttype=all&comp=blocklist
+    uri: https://storagename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blocklisttype=all&comp=blocklist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><BlockList><CommittedBlocks

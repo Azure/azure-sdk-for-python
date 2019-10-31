@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer4aaa15bf?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer4aaa15bf?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -55,7 +55,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer4aaa15bf/blob4aaa15bf
+    uri: https://storagename.blob.core.windows.net/utcontainer4aaa15bf/blob4aaa15bf
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The

@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer60d190a?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer60d190a?restype=container
   response:
     body:
       string: ''
@@ -47,7 +47,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer60d190a/byteblob60d190a
+    uri: https://storagename.blob.core.windows.net/utcontainer60d190a/byteblob60d190a
   response:
     body:
       string: ''
@@ -91,7 +91,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer60d190a/blob60d190a
+    uri: https://storagename.blob.core.windows.net/utcontainer60d190a/blob60d190a
   response:
     body:
       string: ''
@@ -130,7 +130,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer60d190a/blob60d190a
+    uri: https://storagename.blob.core.windows.net/utcontainer60d190a/blob60d190a
   response:
     body:
       string: !!binary |

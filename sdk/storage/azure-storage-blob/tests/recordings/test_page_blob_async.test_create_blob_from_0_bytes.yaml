@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer42e141f?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer42e141f?restype=container
   response:
     body:
       string: ''
@@ -41,7 +41,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainersource42e141f?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainersource42e141f?restype=container
   response:
     body:
       string: ''
@@ -81,7 +81,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer42e141f/blob42e141f
+    uri: https://storagename.blob.core.windows.net/utcontainer42e141f/blob42e141f
   response:
     body:
       string: ''
@@ -114,7 +114,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer42e141f/blob42e141f
+    uri: https://storagename.blob.core.windows.net/utcontainer42e141f/blob42e141f
   response:
     body:
       string: ''
@@ -158,7 +158,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer42e141f/blob42e141f
+    uri: https://storagename.blob.core.windows.net/utcontainer42e141f/blob42e141f
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
@@ -194,7 +194,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer42e141f/blob42e141f
+    uri: https://storagename.blob.core.windows.net/utcontainer42e141f/blob42e141f
   response:
     body:
       string: ''
@@ -236,7 +236,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer42e141f/blob42e141f?comp=pagelist
+    uri: https://storagename.blob.core.windows.net/utcontainer42e141f/blob42e141f?comp=pagelist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><PageList />"

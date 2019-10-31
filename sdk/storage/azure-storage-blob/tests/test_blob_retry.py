@@ -15,7 +15,7 @@ from azure.storage.blob import (
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import ResourceExistsError, HttpResponseError
-from testcase import (
+from _shared.testcase import (
     StorageTestCase,
     ResponseCallback,
     GlobalStorageAccountPreparer
@@ -54,13 +54,11 @@ class StorageBlobRetryTest(StorageTestCase):
         def tell(self):
             return self.wrapped_stream.tell()
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_retry_put_block_with_seekable_stream(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
-
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key,
                                 retry_policy=self.retry)
         self._setup(bsc)
         blob_name = self.get_resource_name('blob')
@@ -88,14 +86,12 @@ class StorageBlobRetryTest(StorageTestCase):
         content = blob.download_blob().readall()
         self.assertEqual(content, data)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_retry_put_block_with_non_seekable_stream(self, resource_group, location, storage_account,
                                                       storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
-
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key,
                                 retry_policy=self.retry)
         self._setup(bsc)
         blob_name = self.get_resource_name('blob')
@@ -124,14 +120,12 @@ class StorageBlobRetryTest(StorageTestCase):
         content = blob.download_blob().readall()
         self.assertEqual(content, data)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_retry_put_block_with_non_seekable_stream_fail(self, resource_group, location, storage_account,
                                                            storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
-
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key,
                                 retry_policy=self.retry)
         self._setup(bsc)
         blob_name = self.get_resource_name('blob')

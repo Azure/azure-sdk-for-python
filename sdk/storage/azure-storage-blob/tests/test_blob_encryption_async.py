@@ -43,10 +43,8 @@ from encryption_test_helper import (
     KeyResolver,
     RSAKeyWrapper,
 )
-from testcase import GlobalStorageAccountPreparer
-from asyncblobtestcase import (
-    AsyncBlobTestCase,
-)
+from _shared.testcase import GlobalStorageAccountPreparer
+from _shared.asynctestcase import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'encryption_container'
@@ -72,7 +70,7 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
+class StorageBlobEncryptionTestAsync(AsyncStorageTestCase):
     # --Helpers-----------------------------------------------------------------
 
     async def _setup(self, name, key):
@@ -80,7 +78,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
         self.bsc = BlobServiceClient(
-            self._account_url(name),
+            self.account_url(name, "blob"),
             credential=key,
             max_single_put_size=32 * 1024,
             max_block_size=4 * 1024,
@@ -121,7 +119,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
     # --Test cases for blob encryption ----------------------------------------
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_missing_attribute_kek_wrap_async(self, resource_group, location, storage_account,
                                                     storage_account_key):
         # In the shared method _generate_blob_encryption_key
@@ -155,7 +153,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
             await self._create_small_blob(BlobType.BlockBlob)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_invalid_value_kek_wrap_async(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
         self.bsc.require_encryption = True
@@ -179,7 +177,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
             await self._create_small_blob(BlobType.BlockBlob)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_missing_attribute_kek_unwrap_async(self, resource_group, location, storage_account,
                                                       storage_account_key):
         # Shared between all services in decrypt_blob
@@ -206,11 +204,10 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         with self.assertRaises(HttpResponseError):
             await (await blob.download_blob()).content_as_bytes()
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_invalid_value_kek_unwrap_async(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
         await self._setup(storage_account.name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
@@ -225,7 +222,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(str(e.exception), 'Decryption failed.')
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_kek_async(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
         self.bsc.require_encryption = True
@@ -239,7 +236,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(content, self.bytes)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_resolver_async(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
         self.bsc.require_encryption = True
@@ -256,13 +253,12 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(content, self.bytes)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_kek_RSA_async(self, resource_group, location, storage_account, storage_account_key):
         # We can only generate random RSA keys, so this must be run live or
         # the playback test will fail due to a change in kek values.
-        if not self.is_live:
-            pytest.skip("live only")
 
         await self._setup(storage_account.name, storage_account_key)
         self.bsc.require_encryption = True
@@ -278,11 +274,10 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(data, self.bytes)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_nonmatching_kid_async(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
         await self._setup(storage_account.name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
@@ -297,7 +292,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(str(e.exception), 'Decryption failed.')
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_invalid_stream_type_async(self, resource_group, location, storage_account,
                                                       storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
@@ -319,14 +314,12 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
             await blob.upload_blob(large_stream)
         self.assertTrue('Blob data should be of type bytes.' in str(e.exception))
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_chnking_reqd_mult_of_block_size_async(self, resource_group, location, storage_account,
                                                                        storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
-
         await self._setup(storage_account.name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -342,14 +335,12 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_chnking_reqd_non_mult_of_block_size_async(self, resource_group, location,
                                                                            storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
-
         await self._setup(storage_account.name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -364,14 +355,12 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_chunking_required_range_specified_async(self, resource_group, location, storage_account,
                                                                     storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
-
         await self._setup(storage_account.name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -390,7 +379,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(content[:self.config.max_single_put_size + 53], blob_content)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_blob_single_shot_async(self, resource_group, location, storage_account,
                                                     storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
@@ -408,7 +397,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(content, blob_content)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_range_async(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
         self.bsc.require_encryption = True
@@ -431,7 +420,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(content[2:2 + self.config.max_single_put_size + 5], blob_content)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_empty_async(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
@@ -448,7 +437,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(content, blob_content)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_serial_upload_chunking_async(self, resource_group, location, storage_account,
                                                          storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
@@ -466,7 +455,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(content, blob_content)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_range_beginning_to_middle_async(self, resource_group, location, storage_account,
                                                             storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
@@ -484,7 +473,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(content[:50], blob_content)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_range_middle_to_end_async(self, resource_group, location, storage_account,
                                                       storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
@@ -504,7 +493,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(content[100:], blob_content2)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_range_middle_to_middle_async(self, resource_group, location, storage_account,
                                                          storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
@@ -522,7 +511,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(content[5:98], blob_content)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_range_aligns_on_16_byte_block_async(self, resource_group, location, storage_account,
                                                                 storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
@@ -540,7 +529,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(content[48:64], blob_content)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_range_expnded_to_begin_bloc_align_async(self, resource_group, location,
                                                                           storage_account, storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
@@ -558,7 +547,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(content[5:55], blob_content)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_range_expanded_to_beginning_iv_async(self, resource_group, location, storage_account,
                                                                  storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
@@ -576,7 +565,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(content[22:42], blob_content)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_strict_mode_async(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
         self.bsc.require_encryption = True
@@ -606,7 +595,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
             self._teardown(file_name)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_strict_mode_no_policy_async(self, resource_group, location, storage_account,
                                                         storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
@@ -622,7 +611,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
             await (await blob.download_blob()).content_as_bytes()
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_strict_mode_unencrypted_blob_async(self, resource_group, location, storage_account,
                                                                storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
@@ -637,7 +626,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
             await (await blob.download_blob()).content_as_bytes()
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_invalid_methods_fail_block_async(self, resource_group, location, storage_account,
                                                     storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
@@ -655,7 +644,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_invalid_methods_fail_append_async(self, resource_group, location, storage_account,
                                                      storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
@@ -678,7 +667,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_invalid_methods_fail_page_async(self, resource_group, location, storage_account,
                                                    storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
@@ -696,7 +685,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_validate_encryption_async(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
         self.bsc.require_encryption = True
@@ -723,7 +712,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(self.bytes, content)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_block_blob_from_star_async(self, resource_group, location, storage_account,
                                                      storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
@@ -742,7 +731,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self._teardown(file_name)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_page_blob_from_star_async(self, resource_group, location, storage_account,
                                                     storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
@@ -770,7 +759,7 @@ class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
         self.assertEqual(content, blob_content)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_star_async(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
         self.bsc.require_encryption = True

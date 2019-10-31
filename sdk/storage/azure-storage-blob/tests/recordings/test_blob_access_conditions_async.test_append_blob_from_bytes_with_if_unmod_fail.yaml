@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer2fec20c8?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer2fec20c8?restype=container
   response:
     body:
       string: ''
@@ -45,7 +45,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer2fec20c8/blob2fec20c8
+    uri: https://storagename.blob.core.windows.net/utcontainer2fec20c8/blob2fec20c8
   response:
     body:
       string: ''
@@ -84,7 +84,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer2fec20c8/blob2fec20c8?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainer2fec20c8/blob2fec20c8?comp=appendblock
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The

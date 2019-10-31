@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerab71945?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainerab71945?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -49,7 +49,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerab71945/blobab71945
+    uri: https://storagename.blob.core.windows.net/utcontainerab71945/blobab71945
   response:
     body:
       string: ''
@@ -84,7 +84,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerab71945/blobab71945?comp=snapshot
+    uri: https://storagename.blob.core.windows.net/utcontainerab71945/blobab71945?comp=snapshot
   response:
     body:
       string: ''
@@ -120,11 +120,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerab71945?include=snapshots&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/utcontainerab71945?include=snapshots&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"utcontainerab71945\"><Blobs><Blob><Name>blobab71945</Name><Snapshot>2019-10-25T18:36:52.5196015Z</Snapshot><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"utcontainerab71945\"><Blobs><Blob><Name>blobab71945</Name><Snapshot>2019-10-25T18:36:52.5196015Z</Snapshot><Properties><Creation-Time>Fri,
         25 Oct 2019 18:36:52 GMT</Creation-Time><Last-Modified>Fri, 25 Oct 2019 18:36:52
         GMT</Last-Modified><Etag>0x8D7597A4DEF0009</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>yaNM/IXZgmmMasifdgcavQ==</Content-MD5><Cache-Control
@@ -161,7 +161,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerab71945/blobab71945?snapshot=2019-10-25T18:36:52.5196015Z
+    uri: https://storagename.blob.core.windows.net/utcontainerab71945/blobab71945?snapshot=2019-10-25T18:36:52.5196015Z
   response:
     body:
       string: ''

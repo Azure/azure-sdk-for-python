@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containeraa031289?restype=container
+    uri: https://storagename.blob.core.windows.net/containeraa031289?restype=container
   response:
     body:
       string: ''
@@ -61,7 +61,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containeraa031289/a%2Fblob1
+    uri: https://storagename.blob.core.windows.net/containeraa031289/a%2Fblob1
   response:
     body:
       string: ''
@@ -111,7 +111,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containeraa031289/a%2Fblob2
+    uri: https://storagename.blob.core.windows.net/containeraa031289/a%2Fblob2
   response:
     body:
       string: ''
@@ -161,7 +161,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containeraa031289/b%2Fc%2Fblob3
+    uri: https://storagename.blob.core.windows.net/containeraa031289/b%2Fc%2Fblob3
   response:
     body:
       string: ''
@@ -211,7 +211,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containeraa031289/blob4
+    uri: https://storagename.blob.core.windows.net/containeraa031289/blob4
   response:
     body:
       string: ''
@@ -253,11 +253,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/containeraa031289?delimiter=%2F&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/containeraa031289?delimiter=%2F&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"containeraa031289\"><Delimiter>/</Delimiter><Blobs><BlobPrefix><Name>a/</Name></BlobPrefix><BlobPrefix><Name>b/</Name></BlobPrefix><Blob><Name>blob4</Name><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"containeraa031289\"><Delimiter>/</Delimiter><Blobs><BlobPrefix><Name>a/</Name></BlobPrefix><BlobPrefix><Name>b/</Name></BlobPrefix><Blob><Name>blob4</Name><Properties><Creation-Time>Fri,
         25 Oct 2019 17:59:48 GMT</Creation-Time><Last-Modified>Fri, 25 Oct 2019 17:59:48
         GMT</Last-Modified><Etag>0x8D75975208D3162</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
@@ -293,11 +293,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/containeraa031289?prefix=a%2F&delimiter=%2F&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/containeraa031289?prefix=a%2F&delimiter=%2F&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"containeraa031289\"><Prefix>a/</Prefix><Delimiter>/</Delimiter><Blobs><Blob><Name>a/blob1</Name><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"containeraa031289\"><Prefix>a/</Prefix><Delimiter>/</Delimiter><Blobs><Blob><Name>a/blob1</Name><Properties><Creation-Time>Fri,
         25 Oct 2019 17:59:48 GMT</Creation-Time><Last-Modified>Fri, 25 Oct 2019 17:59:48
         GMT</Last-Modified><Etag>0x8D7597520731354</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
@@ -337,11 +337,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/containeraa031289?prefix=b%2F&delimiter=%2F&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/containeraa031289?prefix=b%2F&delimiter=%2F&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"containeraa031289\"><Prefix>b/</Prefix><Delimiter>/</Delimiter><Blobs><BlobPrefix><Name>b/c/</Name></BlobPrefix></Blobs><NextMarker
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"containeraa031289\"><Prefix>b/</Prefix><Delimiter>/</Delimiter><Blobs><BlobPrefix><Name>b/c/</Name></BlobPrefix></Blobs><NextMarker
         /></EnumerationResults>"
     headers:
       content-type:
@@ -373,11 +373,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/containeraa031289?prefix=b%2Fc%2F&delimiter=%2F&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/containeraa031289?prefix=b%2Fc%2F&delimiter=%2F&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"containeraa031289\"><Prefix>b/c/</Prefix><Delimiter>/</Delimiter><Blobs><Blob><Name>b/c/blob3</Name><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"containeraa031289\"><Prefix>b/c/</Prefix><Delimiter>/</Delimiter><Blobs><Blob><Name>b/c/blob3</Name><Properties><Creation-Time>Fri,
         25 Oct 2019 17:59:48 GMT</Creation-Time><Last-Modified>Fri, 25 Oct 2019 17:59:48
         GMT</Last-Modified><Etag>0x8D759752084CAE4</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control

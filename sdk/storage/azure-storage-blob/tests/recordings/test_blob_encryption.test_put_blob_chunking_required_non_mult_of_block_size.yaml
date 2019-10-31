@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06?restype=container
   response:
     body:
       string: ''
@@ -129,7 +129,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURRd09UWSUzRA%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURRd09UWSUzRA%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -241,7 +241,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TVRJeU9EZyUzRA%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TVRJeU9EZyUzRA%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -353,7 +353,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TVRZek9EUSUzRA%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TVRZek9EUSUzRA%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -465,7 +465,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TWpBME9EQSUzRA%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TWpBME9EQSUzRA%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -506,7 +506,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TXpJM05qZyUzRA%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TXpJM05qZyUzRA%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -618,7 +618,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TWpRMU56WSUzRA%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TWpRMU56WSUzRA%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -667,7 +667,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06?comp=blocklist
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06?comp=blocklist
   response:
     body:
       string: ''
@@ -709,7 +709,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -788,7 +788,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -868,7 +868,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -948,7 +948,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -1028,7 +1028,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -1108,7 +1108,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -1188,7 +1188,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -1268,7 +1268,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -1348,7 +1348,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -1428,7 +1428,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -1508,7 +1508,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -1588,7 +1588,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -1668,7 +1668,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -1748,7 +1748,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -1828,7 +1828,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -1908,7 +1908,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -1988,7 +1988,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -2068,7 +2068,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -2148,7 +2148,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |
@@ -2210,7 +2210,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
+    uri: https://storagename.blob.core.windows.net/utcontainer9b151f06/encryption_block_blob9b151f06
   response:
     body:
       string: !!binary |

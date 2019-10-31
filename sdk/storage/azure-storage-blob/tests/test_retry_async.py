@@ -28,15 +28,13 @@ from azure.storage.blob.aio import (
     BlobClient,
 )
 
-from testcase import (
+from _shared.testcase import (
     ResponseCallback,
     RetryCounter,
     GlobalStorageAccountPreparer
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from asyncblobtestcase import (
-    AsyncBlobTestCase,
-)
+from _shared.asynctestcase import AsyncStorageTestCase
 
 
 class AiohttpTestTransport(AioHttpTransport):
@@ -51,10 +49,18 @@ class AiohttpTestTransport(AioHttpTransport):
 
 
 # --Test Class -----------------------------------------------------------------
-class StorageRetryTestAsync(AsyncBlobTestCase):
+class StorageRetryTestAsync(AsyncStorageTestCase):
+
+    def _create_storage_service(self, service_class, account, key, connection_string=None, **kwargs):
+        if connection_string:
+            service = service_class.from_connection_string(connection_string, **kwargs)
+        else:
+            service = service_class(self.account_url(account.name, "blob"), credential=key, **kwargs)
+        return service
+
     # --Test Cases --------------------------------------------
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_retry_on_server_error_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
@@ -75,7 +81,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
         # Assert
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_retry_on_timeout_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
@@ -97,7 +103,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
         # Assert
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_retry_callback_and_retry_context_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
@@ -124,11 +130,10 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
         finally:
             await service.delete_container(container_name)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_retry_on_socket_timeout_async(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
         # Arrange
         container_name = self.get_resource_name('utcontainer')
         retry = LinearRetry(backoff=1)
@@ -160,7 +165,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
                 pass
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_no_retry_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
@@ -182,7 +187,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
             await service.delete_container(container_name)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_linear_retry_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
@@ -205,7 +210,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
         # Assert
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_exponential_retry_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
@@ -292,7 +297,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
             self.assertTrue(12 <= backoff <= 18)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_invalid_retry_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')
@@ -313,7 +318,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
             await service.delete_container(container_name)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_retry_with_deserialization_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('retry')
@@ -337,7 +342,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
             await service.delete_container(container_name)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_retry_secondary_async(self, resource_group, location, storage_account, storage_account_key):
         """Secondary location test.
 
@@ -433,7 +438,7 @@ class StorageRetryTestAsync(AsyncBlobTestCase):
         assert retry_callback.called
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_invalid_account_key_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name('utcontainer')

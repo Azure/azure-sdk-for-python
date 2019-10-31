@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer74a6114f?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer74a6114f?restype=container
   response:
     body:
       string: ''
@@ -67,7 +67,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer74a6114f/encryption_block_blob74a6114f
+    uri: https://storagename.blob.core.windows.net/utcontainer74a6114f/encryption_block_blob74a6114f
   response:
     body:
       string: ''
@@ -111,7 +111,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer74a6114f/encryption_block_blob74a6114f
+    uri: https://storagename.blob.core.windows.net/utcontainer74a6114f/encryption_block_blob74a6114f
   response:
     body:
       string: !!binary |
@@ -173,7 +173,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer74a6114f/encryption_block_blob74a6114f
+    uri: https://storagename.blob.core.windows.net/utcontainer74a6114f/encryption_block_blob74a6114f
   response:
     body:
       string: !!binary |
@@ -235,7 +235,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer74a6114f/encryption_block_blob74a6114f
+    uri: https://storagename.blob.core.windows.net/utcontainer74a6114f/encryption_block_blob74a6114f
   response:
     body:
       string: !!binary |
@@ -297,7 +297,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer74a6114f/encryption_block_blob74a6114f
+    uri: https://storagename.blob.core.windows.net/utcontainer74a6114f/encryption_block_blob74a6114f
   response:
     body:
       string: !!binary |

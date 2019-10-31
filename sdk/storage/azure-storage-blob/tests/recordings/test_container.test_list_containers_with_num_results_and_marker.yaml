@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/listcontainersync044a81a2f?restype=container
+    uri: https://storagename.blob.core.windows.net/listcontainersync044a81a2f?restype=container
   response:
     body:
       string: ''
@@ -55,7 +55,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/listcontainersync144a81a2f?restype=container
+    uri: https://storagename.blob.core.windows.net/listcontainersync144a81a2f?restype=container
   response:
     body:
       string: ''
@@ -93,7 +93,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/listcontainersync244a81a2f?restype=container
+    uri: https://storagename.blob.core.windows.net/listcontainersync244a81a2f?restype=container
   response:
     body:
       string: ''
@@ -131,7 +131,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/listcontainersync344a81a2f?restype=container
+    uri: https://storagename.blob.core.windows.net/listcontainersync344a81a2f?restype=container
   response:
     body:
       string: ''
@@ -167,13 +167,13 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/?prefix=listcontainersync&maxresults=2&comp=list
+    uri: https://storagename.blob.core.windows.net/?prefix=listcontainersync&maxresults=2&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><Prefix>listcontainersync</Prefix><MaxResults>2</MaxResults><Containers><Container><Name>listcontainersync044a81a2f</Name><Properties><Last-Modified>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Prefix>listcontainersync</Prefix><MaxResults>2</MaxResults><Containers><Container><Name>listcontainersync044a81a2f</Name><Properties><Last-Modified>Fri,
         25 Oct 2019 17:59:40 GMT</Last-Modified><Etag>\"0x8D759751B5778CA\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>listcontainersync144a81a2f</Name><Properties><Last-Modified>Fri,
-        25 Oct 2019 17:59:40 GMT</Last-Modified><Etag>\"0x8D759751B600669\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker>/blobstoragename/listcontainersync244a81a2f</NextMarker></EnumerationResults>"
+        25 Oct 2019 17:59:40 GMT</Last-Modified><Etag>\"0x8D759751B600669\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker>/storagename/listcontainersync244a81a2f</NextMarker></EnumerationResults>"
     headers:
       content-type:
       - application/xml
@@ -204,11 +204,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/?prefix=listcontainersync&marker=%2Fblobstoragename%2Flistcontainersync244a81a2f&maxresults=2&comp=list
+    uri: https://storagename.blob.core.windows.net/?prefix=listcontainersync&marker=%2Fstoragename%2Flistcontainersync244a81a2f&maxresults=2&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><Prefix>listcontainersync</Prefix><Marker>/blobstoragename/listcontainersync244a81a2f</Marker><MaxResults>2</MaxResults><Containers><Container><Name>listcontainersync244a81a2f</Name><Properties><Last-Modified>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Prefix>listcontainersync</Prefix><Marker>/storagename/listcontainersync244a81a2f</Marker><MaxResults>2</MaxResults><Containers><Container><Name>listcontainersync244a81a2f</Name><Properties><Last-Modified>Fri,
         25 Oct 2019 17:59:40 GMT</Last-Modified><Etag>\"0x8D759751B6B53C6\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>listcontainersync344a81a2f</Name><Properties><Last-Modified>Fri,
         25 Oct 2019 17:59:40 GMT</Last-Modified><Etag>\"0x8D759751B747DCB\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker
         /></EnumerationResults>"

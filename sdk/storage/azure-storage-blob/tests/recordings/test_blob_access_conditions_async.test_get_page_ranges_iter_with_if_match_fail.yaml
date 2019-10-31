@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerec981fd1?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainerec981fd1?restype=container
   response:
     body:
       string: ''
@@ -47,7 +47,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerec981fd1/blob1
+    uri: https://storagename.blob.core.windows.net/utcontainerec981fd1/blob1
   response:
     body:
       string: ''
@@ -88,7 +88,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerec981fd1/blob1?comp=page
+    uri: https://storagename.blob.core.windows.net/utcontainerec981fd1/blob1?comp=page
   response:
     body:
       string: ''
@@ -131,7 +131,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerec981fd1/blob1?comp=page
+    uri: https://storagename.blob.core.windows.net/utcontainerec981fd1/blob1?comp=page
   response:
     body:
       string: ''
@@ -170,7 +170,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerec981fd1/blob1?comp=pagelist
+    uri: https://storagename.blob.core.windows.net/utcontainerec981fd1/blob1?comp=pagelist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The

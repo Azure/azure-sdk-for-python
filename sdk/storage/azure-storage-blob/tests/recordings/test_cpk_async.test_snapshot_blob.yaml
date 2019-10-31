@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainere74d0d96?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainere74d0d96?restype=container
   response:
     body:
       string: ''
@@ -55,7 +55,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainere74d0d96/cpke74d0d96
+    uri: https://storagename.blob.core.windows.net/utcontainere74d0d96/cpke74d0d96
   response:
     body:
       string: ''
@@ -91,7 +91,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainere74d0d96/cpke74d0d96?comp=snapshot
+    uri: https://storagename.blob.core.windows.net/utcontainere74d0d96/cpke74d0d96?comp=snapshot
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobUsesCustomerSpecifiedEncryption</Code><Message>The
@@ -132,7 +132,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainere74d0d96/cpke74d0d96?comp=snapshot
+    uri: https://storagename.blob.core.windows.net/utcontainere74d0d96/cpke74d0d96?comp=snapshot
   response:
     body:
       string: ''

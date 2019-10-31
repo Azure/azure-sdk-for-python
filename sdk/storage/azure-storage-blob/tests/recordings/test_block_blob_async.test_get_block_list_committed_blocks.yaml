@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerba1017ba?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainerba1017ba?restype=container
   response:
     body:
       string: ''
@@ -45,7 +45,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerba1017ba/blobba1017ba?blockid=MQ%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainerba1017ba/blobba1017ba?blockid=MQ%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -81,7 +81,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerba1017ba/blobba1017ba?blockid=Mg%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainerba1017ba/blobba1017ba?blockid=Mg%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -117,7 +117,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerba1017ba/blobba1017ba?blockid=Mw%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainerba1017ba/blobba1017ba?blockid=Mw%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -155,7 +155,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerba1017ba/blobba1017ba?comp=blocklist
+    uri: https://storagename.blob.core.windows.net/utcontainerba1017ba/blobba1017ba?comp=blocklist
   response:
     body:
       string: ''
@@ -191,7 +191,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerba1017ba/blobba1017ba?blocklisttype=committed&comp=blocklist
+    uri: https://storagename.blob.core.windows.net/utcontainerba1017ba/blobba1017ba?blocklisttype=committed&comp=blocklist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><BlockList><CommittedBlocks><Block><Name>MQ==</Name><Size>3</Size></Block><Block><Name>Mg==</Name><Size>3</Size></Block><Block><Name>Mw==</Name><Size>3</Size></Block></CommittedBlocks></BlockList>"

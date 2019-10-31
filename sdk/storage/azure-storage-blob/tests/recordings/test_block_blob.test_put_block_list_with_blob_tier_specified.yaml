@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerecab188b?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainerecab188b?restype=container
   response:
     body:
       string: ''
@@ -57,7 +57,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerecab188b/blobecab188b?blockid=MQ%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainerecab188b/blobecab188b?blockid=MQ%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -97,7 +97,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerecab188b/blobecab188b?blockid=Mg%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainerecab188b/blobecab188b?blockid=Mg%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -137,7 +137,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerecab188b/blobecab188b?blockid=Mw%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainerecab188b/blobecab188b?blockid=Mw%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -181,7 +181,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerecab188b/blobecab188b?comp=blocklist
+    uri: https://storagename.blob.core.windows.net/utcontainerecab188b/blobecab188b?comp=blocklist
   response:
     body:
       string: ''
@@ -221,7 +221,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerecab188b/blobecab188b
+    uri: https://storagename.blob.core.windows.net/utcontainerecab188b/blobecab188b
   response:
     body:
       string: ''

@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/%24web?restype=container
+    uri: https://storagename.blob.core.windows.net/%24web?restype=container
   response:
     body:
       string: ''
@@ -53,7 +53,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/%24web?restype=container
+    uri: https://storagename.blob.core.windows.net/%24web?restype=container
   response:
     body:
       string: ''
@@ -121,7 +121,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/%24web/blobda5b187b
+    uri: https://storagename.blob.core.windows.net/%24web/blobda5b187b
   response:
     body:
       string: ''
@@ -165,7 +165,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/%24web/blobda5b187b
+    uri: https://storagename.blob.core.windows.net/%24web/blobda5b187b
   response:
     body:
       string: ' python world hello python world hello world hello world world world
@@ -234,7 +234,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://blobstoragename.blob.core.windows.net/%24web?restype=container
+    uri: https://storagename.blob.core.windows.net/%24web?restype=container
   response:
     body:
       string: ''

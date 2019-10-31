@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerb4271745?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainerb4271745?restype=container
   response:
     body:
       string: ''
@@ -41,7 +41,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainersourceb4271745?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainersourceb4271745?restype=container
   response:
     body:
       string: ''
@@ -79,7 +79,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerb4271745/blobb4271745
+    uri: https://storagename.blob.core.windows.net/utcontainerb4271745/blobb4271745
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidHeaderValue</Code><Message>The

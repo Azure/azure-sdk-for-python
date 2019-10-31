@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer7f71938?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer7f71938?restype=container
   response:
     body:
       string: ''
@@ -47,7 +47,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer7f71938/byteblob7f71938
+    uri: https://storagename.blob.core.windows.net/utcontainer7f71938/byteblob7f71938
   response:
     body:
       string: ''
@@ -507,7 +507,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer7f71938/textblob7f71938
+    uri: https://storagename.blob.core.windows.net/utcontainer7f71938/textblob7f71938
   response:
     body:
       string: ''
@@ -546,7 +546,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer7f71938/textblob7f71938
+    uri: https://storagename.blob.core.windows.net/utcontainer7f71938/textblob7f71938
   response:
     body:
       string: ' world hello python hello world world world world world world python
@@ -1023,7 +1023,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer7f71938/textblob7f71938
+    uri: https://storagename.blob.core.windows.net/utcontainer7f71938/textblob7f71938
   response:
     body:
       string: hello

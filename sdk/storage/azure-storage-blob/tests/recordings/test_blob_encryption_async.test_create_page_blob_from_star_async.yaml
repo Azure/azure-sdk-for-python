@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer58411a4a?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer58411a4a?restype=container
   response:
     body:
       string: ''
@@ -54,7 +54,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer58411a4a/blob1
+    uri: https://storagename.blob.core.windows.net/utcontainer58411a4a/blob1
   response:
     body:
       string: ''
@@ -106,7 +106,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer58411a4a/blob1?comp=page
+    uri: https://storagename.blob.core.windows.net/utcontainer58411a4a/blob1?comp=page
   response:
     body:
       string: ''
@@ -145,7 +145,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer58411a4a/blob1
+    uri: https://storagename.blob.core.windows.net/utcontainer58411a4a/blob1
   response:
     body:
       string: !!binary |
@@ -202,7 +202,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer58411a4a/blob1?comp=pagelist
+    uri: https://storagename.blob.core.windows.net/utcontainer58411a4a/blob1?comp=pagelist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><PageList><PageRange><Start>0</Start><End>511</End></PageRange></PageList>"
@@ -249,7 +249,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer58411a4a/blob2
+    uri: https://storagename.blob.core.windows.net/utcontainer58411a4a/blob2
   response:
     body:
       string: ''
@@ -301,7 +301,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer58411a4a/blob2?comp=page
+    uri: https://storagename.blob.core.windows.net/utcontainer58411a4a/blob2?comp=page
   response:
     body:
       string: ''
@@ -340,7 +340,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer58411a4a/blob2
+    uri: https://storagename.blob.core.windows.net/utcontainer58411a4a/blob2
   response:
     body:
       string: !!binary |
@@ -397,7 +397,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer58411a4a/blob2?comp=pagelist
+    uri: https://storagename.blob.core.windows.net/utcontainer58411a4a/blob2?comp=pagelist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><PageList><PageRange><Start>0</Start><End>511</End></PageRange></PageList>"
@@ -444,7 +444,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer58411a4a/blob3
+    uri: https://storagename.blob.core.windows.net/utcontainer58411a4a/blob3
   response:
     body:
       string: ''
@@ -496,7 +496,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer58411a4a/blob3?comp=page
+    uri: https://storagename.blob.core.windows.net/utcontainer58411a4a/blob3?comp=page
   response:
     body:
       string: ''
@@ -535,7 +535,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer58411a4a/blob3
+    uri: https://storagename.blob.core.windows.net/utcontainer58411a4a/blob3
   response:
     body:
       string: !!binary |
@@ -592,7 +592,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer58411a4a/blob3?comp=pagelist
+    uri: https://storagename.blob.core.windows.net/utcontainer58411a4a/blob3?comp=pagelist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><PageList><PageRange><Start>0</Start><End>511</End></PageRange></PageList>"

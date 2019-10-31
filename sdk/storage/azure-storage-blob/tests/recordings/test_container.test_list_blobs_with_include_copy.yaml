@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containere54813d5?restype=container
+    uri: https://storagename.blob.core.windows.net/containere54813d5?restype=container
   response:
     body:
       string: ''
@@ -63,7 +63,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containere54813d5/blob1
+    uri: https://storagename.blob.core.windows.net/containere54813d5/blob1
   response:
     body:
       string: ''
@@ -111,7 +111,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containere54813d5/blob1copy
+    uri: https://storagename.blob.core.windows.net/containere54813d5/blob1copy
   response:
     body:
       string: ''
@@ -151,11 +151,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/containere54813d5?include=copy&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/containere54813d5?include=copy&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"containere54813d5\"><Blobs><Blob><Name>blob1</Name><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"containere54813d5\"><Blobs><Blob><Name>blob1</Name><Properties><Creation-Time>Fri,
         25 Oct 2019 17:59:37 GMT</Creation-Time><Last-Modified>Fri, 25 Oct 2019 17:59:37
         GMT</Last-Modified><Etag>0x8D759751984C5A7</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
@@ -163,7 +163,7 @@ interactions:
         25 Oct 2019 17:59:37 GMT</Creation-Time><Last-Modified>Fri, 25 Oct 2019 17:59:37
         GMT</Last-Modified><Etag>0x8D75975199480F2</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
-        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><CopyId>530e75bb-3f05-457e-9ea7-67ab48b5dabc</CopyId><CopySource>https://blobstoragename.blob.core.windows.net/containere54813d5/blob1</CopySource><CopyStatus>success</CopyStatus><CopyProgress>11/11</CopyProgress><CopyCompletionTime>Fri,
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><CopyId>530e75bb-3f05-457e-9ea7-67ab48b5dabc</CopyId><CopySource>https://storagename.blob.core.windows.net/containere54813d5/blob1</CopySource><CopyStatus>success</CopyStatus><CopyProgress>11/11</CopyProgress><CopyCompletionTime>Fri,
         25 Oct 2019 17:59:37 GMT</CopyCompletionTime><ServerEncrypted>true</ServerEncrypted></Properties></Blob></Blobs><NextMarker
         /></EnumerationResults>"
     headers:

@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/container4760e81?restype=container
+    uri: https://storagename.blob.core.windows.net/container4760e81?restype=container
   response:
     body:
       string: ''
@@ -53,11 +53,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/?comp=list
+    uri: https://storagename.blob.core.windows.net/?comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><Containers><Container><Name>container11d00ec6</Name><Properties><Last-Modified>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Containers><Container><Name>container11d00ec6</Name><Properties><Last-Modified>Fri,
         25 Oct 2019 17:58:37 GMT</Last-Modified><Etag>\"0x8D75974F64FBE9F\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>container1e4e193b</Name><Properties><Last-Modified>Fri,
         25 Oct 2019 17:58:53 GMT</Last-Modified><Etag>\"0x8D75974FF5A1986\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>container1ea014b6</Name><Properties><Last-Modified>Fri,
         25 Oct 2019 17:58:53 GMT</Last-Modified><Etag>\"0x8D75974FF965A89\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>infinite</LeaseDuration><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>container202c14d1</Name><Properties><Last-Modified>Fri,

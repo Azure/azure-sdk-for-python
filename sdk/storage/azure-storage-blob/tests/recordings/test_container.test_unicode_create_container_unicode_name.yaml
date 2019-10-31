@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=container
+    uri: https://storagename.blob.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=container
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The

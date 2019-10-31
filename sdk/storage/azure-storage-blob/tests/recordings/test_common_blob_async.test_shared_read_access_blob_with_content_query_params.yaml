@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainercbd11f9f?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainercbd11f9f?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -49,7 +49,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainercbd11f9f/blobcbd11f9f
+    uri: https://storagename.blob.core.windows.net/utcontainercbd11f9f/blobcbd11f9f
   response:
     body:
       string: ''
@@ -86,7 +86,7 @@ interactions:
       User-Agent:
       - python-requests/2.22.0
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainercbd11f9f/blobcbd11f9f?se=2019-10-25T19%3A37%3A23Z&sp=r&sv=2019-02-02&sr=b&rscc=no-cache&rscd=inline&rsce=utf-8&rscl=fr&rsct=text&sig=P4YWrK6FDrYg7lKgKjrYuA%2BqZsFCUE4lQdB/O4h1UvM%3D
+    uri: https://storagename.blob.core.windows.net/utcontainercbd11f9f/blobcbd11f9f?se=2019-10-25T19%3A37%3A23Z&sp=r&sv=2019-02-02&sr=b&rscc=no-cache&rscd=inline&rsce=utf-8&rscl=fr&rsct=text&sig=P4YWrK6FDrYg7lKgKjrYuA%2BqZsFCUE4lQdB/O4h1UvM%3D
   response:
     body:
       string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa

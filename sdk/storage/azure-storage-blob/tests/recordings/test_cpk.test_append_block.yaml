@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer8edc0a8d?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer8edc0a8d?restype=container
   response:
     body:
       string: ''
@@ -63,7 +63,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer8edc0a8d/cpk8edc0a8d
+    uri: https://storagename.blob.core.windows.net/utcontainer8edc0a8d/cpk8edc0a8d
   response:
     body:
       string: ''
@@ -113,7 +113,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer8edc0a8d/cpk8edc0a8d?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainer8edc0a8d/cpk8edc0a8d?comp=appendblock
   response:
     body:
       string: ''
@@ -169,7 +169,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer8edc0a8d/cpk8edc0a8d?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainer8edc0a8d/cpk8edc0a8d?comp=appendblock
   response:
     body:
       string: ''
@@ -225,7 +225,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer8edc0a8d/cpk8edc0a8d?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainer8edc0a8d/cpk8edc0a8d?comp=appendblock
   response:
     body:
       string: ''
@@ -273,7 +273,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer8edc0a8d/cpk8edc0a8d
+    uri: https://storagename.blob.core.windows.net/utcontainer8edc0a8d/cpk8edc0a8d
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobUsesCustomerSpecifiedEncryption</Code><Message>The
@@ -320,7 +320,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer8edc0a8d/cpk8edc0a8d
+    uri: https://storagename.blob.core.windows.net/utcontainer8edc0a8d/cpk8edc0a8d
   response:
     body:
       string: AAABBBCCC

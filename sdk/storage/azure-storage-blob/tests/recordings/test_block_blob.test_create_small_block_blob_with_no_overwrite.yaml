@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer197b1967?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer197b1967?restype=container
   response:
     body:
       string: ''
@@ -59,7 +59,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer197b1967/blob197b1967
+    uri: https://storagename.blob.core.windows.net/utcontainer197b1967/blob197b1967
   response:
     body:
       string: ''
@@ -109,7 +109,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer197b1967/blob197b1967
+    uri: https://storagename.blob.core.windows.net/utcontainer197b1967/blob197b1967
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobAlreadyExists</Code><Message>The
@@ -146,7 +146,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer197b1967/blob197b1967
+    uri: https://storagename.blob.core.windows.net/utcontainer197b1967/blob197b1967
   response:
     body:
       string: ''
@@ -204,7 +204,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer197b1967/blob197b1967
+    uri: https://storagename.blob.core.windows.net/utcontainer197b1967/blob197b1967
   response:
     body:
       string: hello world

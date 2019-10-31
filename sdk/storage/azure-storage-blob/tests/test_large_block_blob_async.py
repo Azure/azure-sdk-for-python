@@ -29,10 +29,8 @@ if sys.version_info >= (3,):
 else:
     from cStringIO import StringIO as BytesIO
 
-from testcase import GlobalStorageAccountPreparer
-from asyncblobtestcase import (
-    AsyncBlobTestCase,
-)
+from _shared.testcase import GlobalStorageAccountPreparer
+from _shared.asynctestcase import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'largeblob'
@@ -52,7 +50,7 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
+class StorageLargeBlockBlobTestAsync(AsyncStorageTestCase):
     # --Helpers-----------------------------------------------------------------
 
     async def _setup(self, name, key):
@@ -60,7 +58,7 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
         self.bsc = BlobServiceClient(
-            self._account_url(name),
+            self.account_url(name, "blob"),
             credential=key,
             max_single_put_size=32 * 1024,
             max_block_size=2 * 1024 * 1024,
@@ -100,12 +98,10 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(actual_bytes, expected_data)
 
     # --Test cases for block blobs --------------------------------------------
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_bytes_large_async(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
-
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         blob = await self._create_blob()
@@ -120,12 +116,10 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
 
             # Assert
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_bytes_large_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
-
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         blob = await self._create_blob()
@@ -138,12 +132,10 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
                 validate_content=True)
             self.assertIsNone(resp)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_stream_large_async(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
-
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         blob = await self._create_blob()
@@ -159,12 +151,10 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
 
             # Assert
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_stream_large_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
-
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         blob = await self._create_blob()
@@ -181,12 +171,11 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_large_blob_from_path_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -207,12 +196,11 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         finally:
             self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_large_blob_from_path_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -233,11 +221,10 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         finally:
             self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_large_blob_from_path_non_parallel_async(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -258,12 +245,11 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         finally:
             self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_large_blob_from_path_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -292,12 +278,11 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         finally:
             self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_large_blob_from_path_with_properties_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -324,12 +309,11 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         finally:
             self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_creat_lrg_blob_frm_stream_chnkd_upload_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -350,12 +334,11 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         finally:
             self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_creat_lrgblob_frm_strm_w_prgrss_chnkduplod_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -384,12 +367,11 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         finally:
             self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_creat_lrgblob_frm_strm_chnkd_uplod_w_cnt_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -411,12 +393,11 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         finally:
             self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_creat_lrg_frm_stream_chnk_upload_w_cntnprops(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -445,12 +426,11 @@ class StorageLargeBlockBlobTestAsync(AsyncBlobTestCase):
         finally:
             self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_large_from_stream_chunk_upld_with_props(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)

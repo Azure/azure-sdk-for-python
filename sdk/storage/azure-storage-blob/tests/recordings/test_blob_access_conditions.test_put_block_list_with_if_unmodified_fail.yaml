@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer19a21d1b?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer19a21d1b?restype=container
   response:
     body:
       string: ''
@@ -61,7 +61,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer19a21d1b/blob1
+    uri: https://storagename.blob.core.windows.net/utcontainer19a21d1b/blob1
   response:
     body:
       string: ''
@@ -107,7 +107,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer19a21d1b/blob1?blockid=MQ%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainer19a21d1b/blob1?blockid=MQ%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -147,7 +147,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer19a21d1b/blob1?blockid=Mg%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainer19a21d1b/blob1?blockid=Mg%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -187,7 +187,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer19a21d1b/blob1?blockid=Mw%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainer19a21d1b/blob1?blockid=Mw%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -231,7 +231,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer19a21d1b/blob1?comp=blocklist
+    uri: https://storagename.blob.core.windows.net/utcontainer19a21d1b/blob1?comp=blocklist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The

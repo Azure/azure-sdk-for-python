@@ -35,10 +35,8 @@ from azure.storage.blob.aio import (
     BlobClient,
 )
 
-from testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
-from asyncblobtestcase import (
-    AsyncBlobTestCase
-)
+from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
+from _shared.asynctestcase import AsyncStorageTestCase
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -58,7 +56,7 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StoragePageBlobTestAsync(AsyncBlobTestCase):
+class StoragePageBlobTestAsync(AsyncStorageTestCase):
     #--Helpers-----------------------------------------------------------------
 
     async def _setup(self, bsc):
@@ -141,9 +139,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
     #--Test cases for page blobs --------------------------------------------
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
 
@@ -156,9 +154,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertTrue(await blob.get_blob_properties())
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_with_metadata(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         # Arrange
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
@@ -172,9 +170,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertDictEqual(md.metadata, metadata)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_page_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         lease = await blob.acquire_lease()
@@ -189,9 +187,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(actual, data)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_update_page(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -206,9 +204,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         await self.assertBlobEqual(self.container_name, blob.blob_name, data, bsc)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_8tb_blob(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
 
@@ -225,9 +223,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(0, len(page_ranges))
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_larger_than_8tb_blob_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
 
@@ -236,9 +234,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
             await blob.create_page_blob(EIGHT_TB + 1)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_update_8tb_blob_page(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         await blob.create_page_blob(EIGHT_TB)
@@ -262,9 +260,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(page_ranges[0]['end'], start_offset + length - 1)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_update_page_with_md5(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -274,9 +272,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         # Assert
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_clear_page(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -289,9 +287,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         await self.assertBlobEqual(self.container_name, blob.blob_name, b'\x00' * 512, bsc)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_page_if_sequence_number_lt_success(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -306,9 +304,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         await self.assertBlobEqual(self.container_name, blob.blob_name, data, bsc)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_update_page_if_sequence_number_lt_failure(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -322,9 +320,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         # Assert
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_update_page_if_sequence_number_lte_success(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -338,9 +336,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         await self.assertBlobEqual(self.container_name, blob.blob_name, data, bsc)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_update_page_if_sequence_number_lte_failure(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -354,9 +352,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         # Assert
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_update_page_if_sequence_number_eq_success(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -370,9 +368,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         await self.assertBlobEqual(self.container_name, blob.blob_name, data, bsc)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_update_page_if_sequence_number_eq_failure(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -386,10 +384,10 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         # Assert
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_pages_from_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -422,10 +420,10 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(blob_properties.get('last_modified'), resp.get('last_modified'))
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_pages_from_url_and_validate_content_md5(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -465,10 +463,10 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                     b"POTATO"))
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_source_if_modified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -510,10 +508,10 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                     'last_modified'))
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_source_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -555,10 +553,10 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                     hours=15))
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_source_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -596,10 +594,10 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                 source_match_condition=MatchConditions.IfNotModified)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_source_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -635,10 +633,10 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                 source_etag=source_properties.get('etag'), source_match_condition=MatchConditions.IfModified)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -680,10 +678,10 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                     'last_modified'))
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -725,10 +723,10 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                     minutes=15))
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -766,10 +764,10 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                 match_condition=MatchConditions.IfNotModified)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -809,10 +807,10 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                 match_condition=MatchConditions.IfModified)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_sequence_number_lt(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
@@ -851,10 +849,10 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                 if_sequence_number_lt=start_sequence)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_sequence_number_lte(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
@@ -893,10 +891,10 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                 if_sequence_number_lte=start_sequence - 1)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_pages_from_url_with_sequence_number_eq(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
@@ -935,9 +933,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                                                                 if_sequence_number_eq=start_sequence + 1)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_update_page_unicode(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -950,9 +948,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertIsNotNone(resp.get('last_modified'))
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_page_ranges_no_pages(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -965,9 +963,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(len(ranges), 0)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_page_ranges_2_pages(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = await self._create_blob(bsc, 2048)
         data = self.get_random_bytes(512)
@@ -987,9 +985,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(ranges[1]['end'], 1535)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_page_ranges_diff(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = await self._create_blob(bsc, 2048)
         data = self.get_random_bytes(1536)
@@ -1023,10 +1021,11 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(cleared2[0]['start'], 512)
         self.assertEqual(cleared2[0]['end'], 1023)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_update_page_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = await self._create_blob(bsc, 2048)
         data = self.get_random_bytes(512)
@@ -1036,15 +1035,15 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
             await blob.upload_page(data, offset=1024, length=513)
         except ValueError as e:
             self.assertEqual(str(e), 'length must be an integer that aligns with 512 page size')
-            pytest.skip("live only")
+            return
 
         # Assert
         raise Exception('Page range validation failed to throw on failure case')
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_resize_blob(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = await self._create_blob(bsc, 1024)
 
@@ -1060,9 +1059,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.size, 512)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_set_sequence_number_blob(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -1078,9 +1077,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.page_blob_sequence_number, 6)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_page_blob_with_no_overwrite(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1111,9 +1110,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.blob_type, BlobType.PageBlob)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_page_blob_with_overwrite(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1141,14 +1140,13 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.size, LARGE_BLOB_SIZE + 512)
         self.assertEqual(props.blob_type, BlobType.PageBlob)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_from_bytes(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1162,14 +1160,13 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_from_0_bytes(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(0)
@@ -1183,14 +1180,13 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_from_bytes_with_progress_first(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1213,14 +1209,13 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self.assert_upload_progress(LARGE_BLOB_SIZE, self.config.max_page_size, progress)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_from_bytes_with_index(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1233,9 +1228,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         await self.assertBlobEqual(self.container_name, blob.blob_name, data[1024:], bsc)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_from_bytes_with_index_and_count(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1251,14 +1246,13 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_from_path(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1277,14 +1271,13 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_from_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1308,14 +1301,13 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assert_upload_progress(len(data), self.config.max_page_size, progress)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_from_stream(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1335,14 +1327,13 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_from_stream_with_empty_pages(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         # data is almost all empty (0s) except two ranges
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
@@ -1373,14 +1364,13 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_from_stream_non_seekable(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1402,14 +1392,13 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size], bsc)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_from_stream_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1435,14 +1424,13 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self.assert_upload_progress(len(data), self.config.max_page_size, progress)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_from_stream_truncated(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1459,14 +1447,13 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size], bsc)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_from_stream_with_progress_truncated(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1493,9 +1480,9 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_with_md5_small(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -1505,15 +1492,14 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_with_md5_large(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
@@ -1522,14 +1508,13 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_incremental_copy_blob(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         source_blob = await self._create_blob(bsc, 2048)
         data = self.get_random_bytes(512)
@@ -1567,17 +1552,16 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
         # strip off protocol
         self.assertTrue(copy_blob.copy.source.endswith(sas_blob.url[5:]))
 
+    @pytest.mark.live_test_only
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_blob_tier_on_create(self, resource_group, location, storage_account, storage_account_key):
         # Test can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
-        url = self._account_url(storage_account.name)
+        url = self.account_url(storage_account.name, "blob")
         credential = storage_account_key
         pbs = BlobServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
@@ -1634,11 +1618,11 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_blob_tier_set_tier_api(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
-        url = self._account_url(storage_account.name)
+        url = self.account_url(storage_account.name, "blob")
         credential = storage_account_key
         pbs = BlobServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
@@ -1693,11 +1677,11 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_blob_tier_copy_blob(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
-        url = self._account_url(storage_account.name)
+        url = self.account_url(storage_account.name, "blob")
         credential = storage_account_key
         pbs = BlobServiceClient(url, credential=credential, transport=AiohttpTestTransport())
 
@@ -1711,7 +1695,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
                 except ResourceExistsError:
                     pass
 
-            bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+            bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
             source_blob = pbs.get_blob_client(
                 container_name,
                 self.get_resource_name(TEST_BLOB_PREFIX))
@@ -1719,7 +1703,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
             # Act
             source_blob_url = '{0}/{1}/{2}'.format(
-                self._account_url(storage_account.name), container_name, source_blob.blob_name)
+                self.account_url(storage_account.name, "blob"), container_name, source_blob.blob_name)
 
             copy_blob = pbs.get_blob_client(container_name, 'blob1copy')
             copy = await copy_blob.start_copy_from_url(source_blob_url, premium_page_blob_tier=PremiumPageBlobTier.P30)
@@ -1738,7 +1722,7 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
 
             await source_blob2.create_page_blob(1024)
             source_blob2_url = '{0}/{1}/{2}'.format(
-                self._account_url(storage_account.name), source_blob2.container_name, source_blob2.blob_name)
+                self.account_url(storage_account.name, "blob"), source_blob2.container_name, source_blob2.blob_name)
 
             copy_blob2 = pbs.get_blob_client(container_name, 'blob2copy')
             copy2 = await copy_blob2.start_copy_from_url(source_blob2_url, premium_page_blob_tier=PremiumPageBlobTier.P60)
@@ -1763,10 +1747,10 @@ class StoragePageBlobTestAsync(AsyncBlobTestCase):
             await container.delete_container()
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def _test_download_sparse_page_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
         self.config.max_single_get_size = 4*1024
         self.config.max_chunk_get_size = 1024

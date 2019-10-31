@@ -48,10 +48,8 @@ from azure.storage.blob import (
     StandardBlobTier)
 
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from testcase import GlobalStorageAccountPreparer
-from asyncblobtestcase import (
-    AsyncBlobTestCase,
-)
+from _shared.testcase import GlobalStorageAccountPreparer
+from _shared.asynctestcase import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -71,11 +69,11 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageCommonBlobTestAsync(AsyncBlobTestCase):
+class StorageCommonBlobTestAsync(AsyncStorageTestCase):
     # --Helpers-----------------------------------------------------------------
 
     async def _setup(self, name, key):
-        self.bsc = BlobServiceClient(self._account_url(name), credential=key, transport=AiohttpTestTransport())
+        self.bsc = BlobServiceClient(self.account_url(name, "blob"), credential=key, transport=AiohttpTestTransport())
         self.container_name = self.get_resource_name('utcontainer')
         self.byte_data = self.get_random_bytes(1024)
         if self.is_live:
@@ -86,7 +84,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
                 pass
 
     async def _setup_remote(self, name, key):
-        self.bsc2 = BlobServiceClient(self._account_url(name), credential=key)
+        self.bsc2 = BlobServiceClient(self.account_url(name, "blob"), credential=key)
         self.remote_container_name = 'rmt'
 
     def _teardown(self, FILE_PATH):
@@ -159,7 +157,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
     # -- Common test cases for blobs ----------------------------------------------
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_blob_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -174,7 +172,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_blob_not_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -187,7 +185,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_blob_snapshot_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -204,7 +202,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_blob_snapshot_not_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -217,7 +215,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_blob_container_not_exists(self, resource_group, location, storage_account, storage_account_key):
         # In this case both the blob and container do not exist
         # Arrange
@@ -231,7 +229,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_with_question_mark(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -251,7 +249,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_with_special_chars(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -269,7 +267,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -289,7 +287,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -308,7 +306,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_with_existing_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -324,7 +322,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -343,7 +341,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_with_snapshot_previous(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -368,7 +366,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_with_range(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -384,7 +382,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_with_lease(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -402,7 +400,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_with_non_existing_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -416,7 +414,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Assert
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_properties_with_existing_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -437,7 +435,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_properties_with_blob_settings_param(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -457,7 +455,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -476,7 +474,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_properties_fail(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -496,7 +494,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
     # This test is to validate that the ErrorCode is retrieved from the header during a
     # GET request. This is preferred to relying on the ErrorCode in the body.
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_metadata_fail(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -513,7 +511,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # self.assertEqual(StorageErrorCode.invalid_query_parameter_value, e.exception.error_code)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_server_encryption(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -528,7 +526,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_properties_server_encryption(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -541,13 +539,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertTrue(props.server_encrypted)
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_list_blobs_server_encryption(self, resource_group, location, storage_account, storage_account_key):
         # test can only run live
-        if not self.is_live:
-            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         await self._create_block_blob()
@@ -562,13 +558,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         for blob in blob_list:
             self.assertTrue(blob.server_encrypted)
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_no_server_encryption(self, resource_group, location, storage_account, storage_account_key):
         pytest.skip("Aiohttp headers dict (CIMultiDictProxy) is immutable.")
-        if not self.is_live:
-            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         blob_name = await self._create_block_blob()
@@ -585,7 +579,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_properties_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -610,7 +604,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_properties_with_leased_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -631,7 +625,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -644,14 +638,12 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertIsNotNone(md)
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_metadata_with_upper_case(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            # bug in devtools...converts upper case header to lowercase
-            # passes live.
-            pytest.skip("live only")
+        # bug in devtools...converts upper case header to lowercase
+        # passes live.
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
@@ -671,7 +663,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_with_existing_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -686,7 +678,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_with_non_existing_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -701,7 +693,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -725,7 +717,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_snapshots(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -746,7 +738,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_with_snapshots(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -769,7 +761,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_soft_delete_blob_without_snapshots(self, resource_group, location, storage_account, storage_account_key):
         try:
             # Arrange
@@ -814,7 +806,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_soft_delete_single_blob_snapshot(self, resource_group, location, storage_account, storage_account_key):
         try:
             # Arrange
@@ -869,7 +861,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_soft_delete_only_snapshots_of_blob(self, resource_group, location, storage_account, storage_account_key):
         try:
             # Arrange
@@ -921,7 +913,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_soft_delete_blob_including_all_snapshots(self, resource_group, location, storage_account, storage_account_key):
         try:
             # Arrange
@@ -968,7 +960,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_soft_delete_with_leased_blob(self, resource_group, location, storage_account, storage_account_key):
         try:
             # Arrange
@@ -1016,7 +1008,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_copy_blob_with_existing_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1025,7 +1017,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
         # Act
         sourceblob = '{0}/{1}/{2}'.format(
-            self._account_url(storage_account.name), self.container_name, blob_name)
+            self.account_url(storage_account.name, "blob"), self.container_name, blob_name)
 
         copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
         copy = await copyblob.start_copy_from_url(sourceblob)
@@ -1041,7 +1033,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     # @GlobalStorageAccountPreparer()
-    # @AsyncBlobTestCase.await_prepared_test
+    # @AsyncStorageTestCase.await_prepared_test
     # TODO: external copy was supported since 2019-02-02
     # async def test_copy_blob_with_external_blob_fails(self):
     #     # Arrange
@@ -1066,7 +1058,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
     @GlobalStorageAccountPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_copy_blob_async_private_blob_no_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1085,7 +1077,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
     @GlobalStorageAccountPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_copy_blob_async_private_blob_with_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1117,7 +1109,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_abort_copy_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1140,7 +1132,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_abort_copy_blob_with_synchronous_copy_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1160,7 +1152,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_snapshot_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1176,7 +1168,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_lease_blob_acquire_and_release(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1194,7 +1186,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_lease_blob_with_duration(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1212,7 +1204,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_lease_blob_with_proposed_lease_id(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1228,7 +1220,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_lease_blob_change_lease_id(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1248,7 +1240,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_lease_blob_break_period(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1272,7 +1264,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_lease_blob_acquire_and_renew(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1289,7 +1281,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_lease_blob_acquire_twice_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1306,7 +1298,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_unicode_get_blob_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1323,7 +1315,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_blob_unicode_data(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1339,7 +1331,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_no_sas_private_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1353,13 +1345,10 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertFalse(response.ok)
         self.assertNotEqual(-1, response.text.find('ResourceNotFound'))
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_no_sas_public_blob(self, resource_group, location, storage_account, storage_account_key):
-        # test is live only
-        if not self.is_live:
-            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'a public blob can be read without a shared access signature'
@@ -1378,13 +1367,10 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertTrue(response.ok)
         self.assertEqual(data, response.content)
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_public_access_blob(self, resource_group, location, storage_account, storage_account_key):
-        # test is live only
-        if not self.is_live:
-            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'public access blob'
@@ -1404,13 +1390,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(data, content)
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_sas_access_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1435,13 +1419,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(self.byte_data, content)
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1473,13 +1455,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(self.byte_data, result)
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_account_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1507,41 +1487,35 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(self.byte_data, blob_response.content)
         self.assertTrue(container_response.ok)
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_token_credential(self, resource_group, location, storage_account, storage_account_key):
-        pytest.skip("")
-        if not self.is_live:
-            pytest.skip("live only")
 
         await self._setup(storage_account.name, storage_account_key)
         token_credential = self.generate_oauth_token()
-        get_token = token_credential.get_token
 
         # Action 1: make sure token works
-        service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential, transport=AiohttpTestTransport())
+        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=token_credential, transport=AiohttpTestTransport())
         result = await service.get_service_properties()
         self.assertIsNotNone(result)
 
         # Action 2: change token value to make request fail
         fake_credential = self.generate_fake_token()
-        service = BlobServiceClient(self._get_oauth_account_url(), credential=fake_credential, transport=AiohttpTestTransport())
+        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=fake_credential, transport=AiohttpTestTransport())
         with self.assertRaises(ClientAuthenticationError):
             await service.get_service_properties()
 
         # Action 3: update token to make it working again
-        service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential, transport=AiohttpTestTransport())
+        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=token_credential, transport=AiohttpTestTransport())
         result = await service.get_service_properties()
         self.assertIsNotNone(result)
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_shared_read_access_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            pytest.skip("live only")
 
         await self._setup(storage_account.name, storage_account_key)
         # Arrange
@@ -1567,13 +1541,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertTrue(response.ok)
         self.assertEqual(self.byte_data, response.content)
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_shared_read_access_blob_with_content_query_params(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1608,13 +1580,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(response.headers['content-language'], 'fr')
         self.assertEqual(response.headers['content-type'], 'text')
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_shared_write_access_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1643,13 +1613,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         data = await (await blob.download_blob()).readall()
         self.assertEqual(updated_data, data)
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_shared_delete_access_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1678,7 +1646,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_account_information(self, resource_group, location, storage_account, storage_account_key):
         # Act
         await self._setup(storage_account.name, storage_account_key)
@@ -1690,7 +1658,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_account_information_with_container_name(self, resource_group, location, storage_account, storage_account_key):
         # Act
         # Container name gets ignored
@@ -1704,7 +1672,7 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
 
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_account_information_with_blob_name(self, resource_group, location, storage_account, storage_account_key):
         # Act
         # Both container and blob names get ignored
@@ -1716,13 +1684,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertIsNotNone(info.get('sku_name'))
         self.assertIsNotNone(info.get('account_kind'))
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_account_information_with_container_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1743,13 +1709,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertIsNotNone(info.get('sku_name'))
         self.assertIsNotNone(info.get('account_kind'))
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_account_information_with_blob_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1774,13 +1738,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self.assertIsNotNone(info.get('sku_name'))
         self.assertIsNotNone(info.get('account_kind'))
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_download_to_file_with_sas(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
-        if not self.is_live:
-            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -1808,12 +1770,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
             self.assertEqual(data, actual)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_download_to_file_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
-        if not self.is_live:
-            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -1833,12 +1794,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
             self.assertEqual(data, actual)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_download_to_stream_with_credential(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
-        if not self.is_live:
-            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -1859,12 +1819,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
             self.assertEqual(data, actual)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_download_to_file_with_existing_file(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
-        if not self.is_live:
-            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -1886,12 +1845,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
             self.assertEqual(data, actual)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyrmtstorage', parameter_name='rmt')
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_download_to_file_with_existing_file_overwrite(self, resource_group, location, storage_account, storage_account_key, rmt, rmt_key):
-        if not self.is_live:
-            pytest.skip("live only")
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
         data = b'12345678' * 1024 * 1024
@@ -1916,12 +1874,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
             self.assertEqual(data2, actual)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_to_url_bytes_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1948,13 +1905,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         content = await (await blob.download_blob()).readall()
         self.assertEqual(data, content)
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_to_url_bytes_with_credential(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1971,13 +1926,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         content = await (await blob.download_blob()).readall()
         self.assertEqual(data, content)
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_to_url_bytes_with_existing_blob(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -1995,13 +1948,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         content = await (await blob.download_blob()).readall()
         self.assertEqual(b"existing_data", content)
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_to_url_bytes_with_existing_blob_overwrite(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -2021,13 +1972,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         content = await (await blob.download_blob()).readall()
         self.assertEqual(data, content)
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_to_url_text_with_credential(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -2045,13 +1994,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         content = await stream.readall()
         self.assertEqual(data, content)
 
-
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_to_url_file_with_credential(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -2074,11 +2021,11 @@ class StorageCommonBlobTestAsync(AsyncBlobTestCase):
         self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_transport_closed_only_once(self, resource_group, location, storage_account, storage_account_key):
         container_name = self.get_resource_name('utcontainerasync')
         transport = AioHttpTransport()
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=transport)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, transport=transport)
         blob_name = self._get_blob_reference()
         async with bsc:
             await bsc.get_service_properties()

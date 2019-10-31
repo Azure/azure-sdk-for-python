@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/retry7a5d119a?restype=container
+    uri: https://storagename.blob.core.windows.net/retry7a5d119a?restype=container
   response:
     body:
       string: ''
@@ -53,11 +53,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/?prefix=retry&comp=list
+    uri: https://storagename.blob.core.windows.net/?prefix=retry&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><Prefix>retry</Prefix><Containers><Container><Name>retry7a5d119a</Name><Properties><Last-Modified>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Prefix>retry</Prefix><Containers><Container><Name>retry7a5d119a</Name><Properties><Last-Modified>Fri,
         25 Oct 2019 18:03:48 GMT</Last-Modified><Etag>\"0x8D75975AF1B7807\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker
         /></EnumerationResults>"
     headers:
@@ -90,11 +90,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/?prefix=retry&comp=list
+    uri: https://storagename.blob.core.windows.net/?prefix=retry&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><Prefix>retry</Prefix><Containers><Container><Name>retry7a5d119a</Name><Properties><Last-Modified>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Prefix>retry</Prefix><Containers><Container><Name>retry7a5d119a</Name><Properties><Last-Modified>Fri,
         25 Oct 2019 18:03:48 GMT</Last-Modified><Etag>\"0x8D75975AF1B7807\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker
         /></EnumerationResults>"
     headers:
@@ -129,7 +129,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://blobstoragename.blob.core.windows.net/retry7a5d119a?restype=container
+    uri: https://storagename.blob.core.windows.net/retry7a5d119a?restype=container
   response:
     body:
       string: ''

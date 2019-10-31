@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/acontainerc2c617d8?restype=container
+    uri: https://storagename.blob.core.windows.net/acontainerc2c617d8?restype=container
   response:
     body:
       string: ''
@@ -53,7 +53,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/acontainerc2c617d8/blob1
+    uri: https://storagename.blob.core.windows.net/acontainerc2c617d8/blob1
   response:
     body:
       string: ''
@@ -88,7 +88,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/acontainerc2c617d8/blob1?comp=snapshot
+    uri: https://storagename.blob.core.windows.net/acontainerc2c617d8/blob1?comp=snapshot
   response:
     body:
       string: ''
@@ -134,7 +134,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/acontainerc2c617d8/blob2
+    uri: https://storagename.blob.core.windows.net/acontainerc2c617d8/blob2
   response:
     body:
       string: ''
@@ -171,11 +171,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/acontainerc2c617d8?include=metadata&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/acontainerc2c617d8?include=metadata&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"acontainerc2c617d8\"><Blobs><Blob><Name>blob1</Name><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"acontainerc2c617d8\"><Blobs><Blob><Name>blob1</Name><Properties><Creation-Time>Fri,
         25 Oct 2019 18:00:45 GMT</Creation-Time><Last-Modified>Fri, 25 Oct 2019 18:00:45
         GMT</Last-Modified><Etag>0x8D759754251D6CB</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
