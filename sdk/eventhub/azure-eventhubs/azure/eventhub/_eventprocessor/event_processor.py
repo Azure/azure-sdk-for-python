@@ -204,7 +204,6 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             else:
                 close(CloseReason.OWNERSHIP_LOST)
             partition_consumer.close()
-            # TODO: remove thread from the working_threads?
 
     def _start(self):
         """Start the EventProcessor.
@@ -244,10 +243,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     If it keeps failing, other EventProcessors will start to claim ownership of the partitions
                     that this EventProcessor is working on. So two or multiple EventProcessors may be working
                     on the same partition.
-
-                    Should we raise this exception out to users?
                     '''
-                    # TODO: This exception handling requires more thinking
                 time.sleep(self._polling_interval)
 
     def _get_last_enqueued_event_properties(self, partition_id):
