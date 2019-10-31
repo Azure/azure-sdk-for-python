@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainere25413b1?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainere25413b1?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -49,7 +49,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainere25413b1/blobe25413b1
+    uri: https://storagename.blob.core.windows.net/utcontainere25413b1/blobe25413b1
   response:
     body:
       string: ''
@@ -84,7 +84,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainere25413b1/blobe25413b1?comp=snapshot
+    uri: https://storagename.blob.core.windows.net/utcontainere25413b1/blobe25413b1?comp=snapshot
   response:
     body:
       string: ''
@@ -118,7 +118,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://blobstoragename.blob.core.windows.net/utcontainere25413b1/blobe25413b1?snapshot=2019-10-25T18:34:06.3059098Z
+    uri: https://storagename.blob.core.windows.net/utcontainere25413b1/blobe25413b1?snapshot=2019-10-25T18:34:06.3059098Z
   response:
     body:
       string: ''
@@ -151,11 +151,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainere25413b1?include=snapshots&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/utcontainere25413b1?include=snapshots&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"utcontainere25413b1\"><Blobs><Blob><Name>blobe25413b1</Name><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"utcontainere25413b1\"><Blobs><Blob><Name>blobe25413b1</Name><Properties><Creation-Time>Fri,
         25 Oct 2019 18:34:06 GMT</Creation-Time><Last-Modified>Fri, 25 Oct 2019 18:34:06
         GMT</Last-Modified><Etag>0x8D75979EADDB851</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>yaNM/IXZgmmMasifdgcavQ==</Content-MD5><Cache-Control

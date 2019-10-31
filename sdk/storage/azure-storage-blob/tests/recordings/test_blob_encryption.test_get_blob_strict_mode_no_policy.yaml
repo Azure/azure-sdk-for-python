@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9237171b?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer9237171b?restype=container
   response:
     body:
       string: ''
@@ -67,7 +67,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9237171b/encryption_block_blob9237171b
+    uri: https://storagename.blob.core.windows.net/utcontainer9237171b/encryption_block_blob9237171b
   response:
     body:
       string: ''

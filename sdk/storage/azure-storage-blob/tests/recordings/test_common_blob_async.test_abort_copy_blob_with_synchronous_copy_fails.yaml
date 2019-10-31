@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer1e951d6e?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer1e951d6e?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -49,7 +49,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer1e951d6e/blob1e951d6e
+    uri: https://storagename.blob.core.windows.net/utcontainer1e951d6e/blob1e951d6e
   response:
     body:
       string: ''
@@ -86,7 +86,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer1e951d6e/targetblob
+    uri: https://storagename.blob.core.windows.net/utcontainer1e951d6e/targetblob
   response:
     body:
       string: ''
@@ -122,7 +122,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer1e951d6e/targetblob?copyid=4ffa938b-b8bc-4c1a-89f5-3fa04737bcbc&comp=copy
+    uri: https://storagename.blob.core.windows.net/utcontainer1e951d6e/targetblob?copyid=4ffa938b-b8bc-4c1a-89f5-3fa04737bcbc&comp=copy
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>NoPendingCopyOperation</Code><Message>There

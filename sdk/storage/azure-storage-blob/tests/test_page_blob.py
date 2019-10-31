@@ -27,7 +27,7 @@ from azure.storage.blob import (
     generate_blob_sas)
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob._shared.policies import StorageContentValidation
-from testcase import StorageTestCase, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
+from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -116,7 +116,7 @@ class StoragePageBlobTest(StorageTestCase):
     #--Test cases for page blobs --------------------------------------------
     @GlobalStorageAccountPreparer()
     def test_create_blob(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
 
@@ -130,7 +130,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_metadata(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         metadata = {'hello': 'world', 'number': '42'}
@@ -144,7 +144,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_put_page_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         lease = blob.acquire_lease()
@@ -159,7 +159,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_update_page(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
@@ -175,7 +175,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_8tb_blob(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
 
@@ -193,7 +193,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_larger_than_8tb_blob_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
 
@@ -203,7 +203,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_update_8tb_blob_page(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         blob.create_page_blob(EIGHT_TB)
@@ -228,7 +228,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_update_page_with_md5(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
@@ -240,7 +240,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_clear_page(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
@@ -255,7 +255,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_put_page_if_sequence_number_lt_success(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -271,7 +271,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_update_page_if_sequence_number_lt_failure(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -286,7 +286,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_update_page_if_sequence_number_lte_success(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -301,7 +301,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_update_page_if_sequence_number_lte_failure(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -316,7 +316,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_update_page_if_sequence_number_eq_success(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -331,7 +331,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_update_page_if_sequence_number_eq_failure(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -344,7 +344,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_update_page_unicode(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
@@ -359,7 +359,7 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -396,7 +396,7 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_and_validate_content_md5(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -439,7 +439,7 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_source_if_modified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -484,7 +484,7 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_source_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -528,7 +528,7 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_source_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -573,7 +573,7 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_source_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -618,7 +618,7 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -662,7 +662,7 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_if_unmodified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -707,7 +707,7 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -747,7 +747,7 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_if_none_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -792,7 +792,7 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_sequence_number_lt(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
@@ -835,7 +835,7 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_sequence_number_lte(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
@@ -878,7 +878,7 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_with_sequence_number_eq(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
@@ -920,7 +920,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_page_ranges_no_pages(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
@@ -934,7 +934,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_page_ranges_2_pages(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc, length=2048)
         data = self.get_random_bytes(512)
@@ -955,7 +955,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_get_page_ranges_diff(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc, length=2048)
         data = self.get_random_bytes(1536)
@@ -991,7 +991,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_update_page_fail(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc, length=2048)
         data = self.get_random_bytes(512)
@@ -1006,7 +1006,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_resize_blob(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc, length=1024)
 
@@ -1023,7 +1023,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_set_sequence_number_blob(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
@@ -1040,7 +1040,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_page_blob_with_no_overwrite(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1072,7 +1072,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_page_blob_with_overwrite(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1100,13 +1100,12 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.size, LARGE_BLOB_SIZE + 512)
         self.assertEqual(props.blob_type, BlobType.PageBlob)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1120,13 +1119,12 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_0_bytes(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(0)
@@ -1140,13 +1138,12 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_progress_first(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1169,13 +1166,12 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self.assert_upload_progress(LARGE_BLOB_SIZE, self.config.max_page_size, progress)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_index(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1189,7 +1185,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_bytes_with_index_and_count(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1205,13 +1201,12 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_path(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1230,13 +1225,12 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1260,13 +1254,12 @@ class StoragePageBlobTest(StorageTestCase):
         self.assert_upload_progress(len(data), self.config.max_page_size, progress)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1286,13 +1279,12 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_with_empty_pages(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         # data is almost all empty (0s) except two ranges
         blob = self._get_blob_reference(bsc)
@@ -1322,13 +1314,12 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_non_seekable(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1350,13 +1341,12 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size], bsc)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1382,13 +1372,12 @@ class StoragePageBlobTest(StorageTestCase):
         self.assert_upload_progress(len(data), self.config.max_page_size, progress)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_truncated(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1405,13 +1394,12 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size], bsc)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_from_stream_with_progress_truncated(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1439,7 +1427,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_md5_small(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -1449,13 +1437,12 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_md5_large(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1465,13 +1452,12 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_incremental_copy_blob(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob = self._create_blob(bsc, length=2048)
         data = self.get_random_bytes(512)
@@ -1512,9 +1498,9 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
     def test_blob_tier_on_create(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
-        url = self._account_url(storage_account.name)
+        url = self.account_url(storage_account.name, "blob")
         credential = storage_account_key
         pbs = BlobServiceClient(url, credential=credential)
 
@@ -1571,9 +1557,9 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
     def test_blob_tier_set_tier_api(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
-        url = self._account_url(storage_account.name)
+        url = self.account_url(storage_account.name, "blob")
         credential = storage_account_key
         pbs = BlobServiceClient(url, credential=credential)
 
@@ -1625,9 +1611,9 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
     def test_blob_tier_copy_blob(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
-        url = self._account_url(storage_account.name)
+        url = self.account_url(storage_account.name, "blob")
         credential = storage_account_key
         pbs = BlobServiceClient(url, credential=credential)
 
@@ -1648,7 +1634,7 @@ class StoragePageBlobTest(StorageTestCase):
 
             # Act
             source_blob_url = '{0}/{1}/{2}'.format(
-                self._account_url(storage_account.name), container_name, source_blob.blob_name)
+                self.account_url(storage_account.name, "blob"), container_name, source_blob.blob_name)
 
             copy_blob = pbs.get_blob_client(container_name, 'blob1copy')
             copy = copy_blob.start_copy_from_url(source_blob_url, premium_page_blob_tier=PremiumPageBlobTier.P30)
@@ -1667,7 +1653,7 @@ class StoragePageBlobTest(StorageTestCase):
 
             source_blob2.create_page_blob(1024)
             source_blob2_url = '{0}/{1}/{2}'.format(
-                self._account_url(storage_account.name), source_blob2.container_name, source_blob2.blob_name)
+                self.account_url(storage_account.name, "blob"), source_blob2.container_name, source_blob2.blob_name)
 
             copy_blob2 = pbs.get_blob_client(container_name, 'blob2copy')
             copy2 = copy_blob2.start_copy_from_url(source_blob2_url, premium_page_blob_tier=PremiumPageBlobTier.P60)
@@ -1694,7 +1680,7 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_download_sparse_page_blob_non_parallel(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         self.config.max_single_get_size = 4*1024
         self.config.max_chunk_get_size = 1024
@@ -1726,14 +1712,13 @@ class StoragePageBlobTest(StorageTestCase):
             except:
                 self.assertEqual(byte, 0)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_download_sparse_page_blob_parallel(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         self.config.max_single_get_size = 4 * 1024
         self.config.max_chunk_get_size = 1024

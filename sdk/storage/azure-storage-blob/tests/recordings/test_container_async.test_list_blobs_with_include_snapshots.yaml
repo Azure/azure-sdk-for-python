@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/acontainerdbe2187a?restype=container
+    uri: https://storagename.blob.core.windows.net/acontainerdbe2187a?restype=container
   response:
     body:
       string: ''
@@ -49,7 +49,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/acontainerdbe2187a/blob1
+    uri: https://storagename.blob.core.windows.net/acontainerdbe2187a/blob1
   response:
     body:
       string: ''
@@ -84,7 +84,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/acontainerdbe2187a/blob1?comp=snapshot
+    uri: https://storagename.blob.core.windows.net/acontainerdbe2187a/blob1?comp=snapshot
   response:
     body:
       string: ''
@@ -126,7 +126,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/acontainerdbe2187a/blob2
+    uri: https://storagename.blob.core.windows.net/acontainerdbe2187a/blob2
   response:
     body:
       string: ''
@@ -163,11 +163,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/acontainerdbe2187a?include=snapshots&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/acontainerdbe2187a?include=snapshots&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"acontainerdbe2187a\"><Blobs><Blob><Name>blob1</Name><Snapshot>2019-10-25T18:00:46.3846218Z</Snapshot><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"acontainerdbe2187a\"><Blobs><Blob><Name>blob1</Name><Snapshot>2019-10-25T18:00:46.3846218Z</Snapshot><Properties><Creation-Time>Fri,
         25 Oct 2019 18:00:46 GMT</Creation-Time><Last-Modified>Fri, 25 Oct 2019 18:00:46
         GMT</Last-Modified><Etag>0x8D7597542D3534D</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
