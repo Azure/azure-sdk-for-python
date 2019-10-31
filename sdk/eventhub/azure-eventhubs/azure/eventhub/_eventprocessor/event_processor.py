@@ -34,41 +34,28 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
     in the context of a given consumer group.
 
     """
-    def __init__(
-            self, eventhub_client, consumer_group_name,
-            event_handler,
-            partition_id=None,
-            partition_manager=None,
-            initial_event_position=EventPosition("-1"),
-            polling_interval=10.0,
-            owner_level=None, prefetch=None,
-            track_last_enqueued_event_properties=False,
-            error_handler=None,
-            partition_initialize_handler=None,
-            partition_close_handler=None,
-    ):
+    def __init__(self, eventhub_client, consumer_group_name, event_handler, **kwargs):
         self._consumer_group_name = consumer_group_name
         self._eventhub_client = eventhub_client
         self._namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
         self._eventhub_name = eventhub_client.eh_name
-        self._partition_id = partition_id
-
         self._event_handler = event_handler
-        self._error_handler = error_handler
-        self._partition_initialize_handler = partition_initialize_handler
-        self._partition_close_handler = partition_close_handler
-        self._partition_manager = partition_manager
-        self._initial_event_position = initial_event_position  # will be replaced by reset event position in preview 4
+        self._partition_id = kwargs.get("partition_id", None)
+        self._error_handler = kwargs.get("error_handler", None)
+        self._partition_initialize_handler = kwargs.get("partition_initialize_handler", None)
+        self._partition_close_handler = kwargs.get("partition_close_handler", None)
+        self._partition_manager = kwargs.get("partition_manager", None)
+        self._initial_event_position = kwargs.get("initial_event_position", EventPosition("-1"))
 
-        self._polling_interval = polling_interval
+        self._polling_interval = kwargs.get("polling_interval", 10.0)
         self._ownership_timeout = self._polling_interval * 2
 
         self._partition_contexts = {}
 
         # Receive parameters
-        self._owner_level = owner_level
-        self._prefetch = prefetch
-        self._track_last_enqueued_event_properties = track_last_enqueued_event_properties,
+        self._owner_level = kwargs.get("owner_level", None)
+        self._prefetch = kwargs.get("prefetch", None)
+        self._track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
         self._last_enqueued_event_properties = {}
         self._id = str(uuid.uuid4())
         self._running = False
