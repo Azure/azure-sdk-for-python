@@ -24,7 +24,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         usages = list(self.storage_client.usages.list_by_location("eastus"))
         self.assertGreater(len(usages), 0)
 
-    @ResourceGroupPreparer(name_prefix='storageaccount',random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     def test_storage_accounts(self, resource_group, location):
         account_name = self.get_resource_name('pyarmstorage')
 
