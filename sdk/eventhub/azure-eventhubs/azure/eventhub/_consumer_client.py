@@ -89,12 +89,7 @@ class EventHubConsumerClient(EventHubClient):
             elif (consumer_group, '-1') in eventhub_client._event_processors:
                 del eventhub_client._event_processors[(consumer_group, "-1")]
 
-    def receive(
-            self, event_handler, consumer_group, partition_id=None,
-            owner_level=None, prefetch=None, track_last_enqueued_event_properties=False,
-            initial_event_position=None,
-            error_handler=None, partition_initialize_handler=None, partition_close_handler=None
-    ):
+    def receive(self, event_handler, consumer_group, **kwargs):
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
         :param event_handler:
@@ -117,18 +112,27 @@ class EventHubConsumerClient(EventHubClient):
                 :dedent: 4
                 :caption: Receive events from the EventHub.
         """
+        partition_id = kwargs.get("partition_id", None)
+        owner_level = kwargs.get("owner_level", None)
+        prefetch = kwargs.get("prefetch", None)
+        track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
+        initial_event_position = kwargs.get("initial_event_position", None)
+        error_handler = kwargs.get("error_handler", None)
+        partition_initialize_handler = kwargs.get("partition_initialize_handler", None)
+        partition_close_handler = kwargs.get("partition_close_handler", None)
+
         with self._lock:
             error = None
             if (consumer_group, '-1') in self._event_processors:
                 error = ValueError("This consumer client is already receiving events from all partitions for"
-                                 " consumer group {}. "
-                                 "Shouldn't receive from any other partitions again".format(consumer_group))
-            elif partition_id is None and [x for x in self._event_processors.keys() if x[0] == consumer_group]:
+                                   " consumer group {}. "
+                                   "Shouldn't receive from any other partitions again".format(consumer_group))
+            elif partition_id is None and any(x[0] == consumer_group for x in self._event_processors.keys()):
                 error = ValueError("This consumer client is already receiving events for consumer group {}. "
-                                 "Shouldn't receive from all partitions again".format(consumer_group))
+                                   "Shouldn't receive from all partitions again".format(consumer_group))
             elif (consumer_group, partition_id) in self._event_processors:
                 error = ValueError("This consumer is already receiving events from partition {} for consumer group {}. "
-                                 "Shouldn't receive from it again.".format(partition_id, consumer_group))
+                                   "Shouldn't receive from it again.".format(partition_id, consumer_group))
             if error:
                 log.warning(error)
                 raise error
@@ -151,8 +155,7 @@ class EventHubConsumerClient(EventHubClient):
             else:
                 self._event_processors[(consumer_group, "-1")] = event_processor
 
-            event_processor.start()
-            return Task(event_processor)
+        event_processor.start()
 
     def close(self):
         # type: () -> None
@@ -172,13 +175,3 @@ class EventHubConsumerClient(EventHubClient):
                 _, ep = self._event_processors.popitem()
                 ep.stop()
             super(EventHubConsumerClient, self).close()
-
-
-class Task:
-    def __init__(self, event_processor):
-        self._event_processor = event_processor
-
-    def cancel(self):
-        # pylint: disable=protected-access
-        EventHubConsumerClient._stop_eventprocessor(self._event_processor)
-        log.info("Task of EventProcessor %r has been cancelled successfully.", self._event_processor._id)

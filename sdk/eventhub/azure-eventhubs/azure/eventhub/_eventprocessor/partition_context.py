@@ -34,8 +34,8 @@ class PartitionContext(object):
         :type sequence_number: int
         :return: None
         """
-        assert self._partition_manager is not None
-        self._partition_manager.update_checkpoint(
-            self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name, self.partition_id, event.offset,
-            event.sequence_number
-        )
+        if self._partition_manager:
+            self._partition_manager.update_checkpoint(
+                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name,
+                self.partition_id, event.offset, event.sequence_number
+            )

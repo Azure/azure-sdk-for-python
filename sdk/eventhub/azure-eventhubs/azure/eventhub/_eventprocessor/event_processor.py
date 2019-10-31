@@ -4,7 +4,7 @@
 # -----------------------------------------------------------------------------------
 
 from contextlib import contextmanager
-from typing import Dict, Type, Callable, List
+from typing import Dict, Type
 import uuid
 import logging
 import time
@@ -18,6 +18,7 @@ from azure.eventhub import EventPosition, EventHubError, EventData
 from .partition_context import PartitionContext
 from .partition_manager import PartitionManager, OwnershipLostError
 from .ownership_manager import OwnershipManager
+from uamqp.compat import queue
 
 log = logging.getLogger(__name__)
 
@@ -75,6 +76,8 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         # Each partition consumer is working in its own thread
         self._working_threads = {}  # type: Dict[str, threading.Thread]
         self._threads_stop_flags = {}  # type: Dict[str, bool]
+
+        self._callback_queue = queue.Queue(maxsize=10000)  # Right now the limitation of receiving speed is ~10k
 
     def __repr__(self):
         return 'EventProcessor: id {}'.format(self._id)
@@ -162,7 +165,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             )
             if self._error_handler:
                 try:
-                    self._error_handler(partition_context, err)
+                    self._callback_queue.put((self._error_handler, partition_context, err), block=True)
                 except Exception as err_again:  # pylint:disable=broad-except
                     log.warning(
                         "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
@@ -178,7 +181,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     owner_id, eventhub_name, partition_id, consumer_group_name, reason
                 )
                 try:
-                    self._partition_close_handler(partition_context, reason)
+                    self._callback_queue.put((self._partition_close_handler, partition_context, reason), block=True)
                 except Exception as err:  # pylint:disable=broad-except
                     log.warning(
                         "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
@@ -189,7 +192,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         try:
             if self._partition_initialize_handler:
                 try:
-                    self._partition_initialize_handler(partition_context)
+                    self._callback_queue.put((self._partition_initialize_handler, partition_context), block=True)
                 except Exception as err:  # pylint:disable=broad-except
                     log.warning(
                         "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
@@ -202,7 +205,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     self._last_enqueued_event_properties[partition_id] = \
                         partition_consumer.last_enqueued_event_properties
                     with self._context(events):
-                        self._event_handler(partition_context, events)
+                        self._callback_queue.put((self._event_handler, partition_context, events), block=True)
                 except Exception as error:  # pylint:disable=broad-except
                     process_error(error)
                     break
@@ -270,6 +273,12 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         if not self._running:
             thread = threading.Thread(target=self._start)
             thread.start()
+            while not self._running:
+                time.sleep(0.1)
+            while self._running or self._callback_queue.qsize() > 0:
+                callback_and_args = self._callback_queue.get(True)
+                callback = callback_and_args[0]
+                callback(*callback_and_args[1:])
         else:
             log.info("EventProcessor %r has already started.", self._id)
 

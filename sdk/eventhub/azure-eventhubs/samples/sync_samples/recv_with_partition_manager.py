@@ -41,37 +41,6 @@ def event_handler(partition_context, events):
         print("No event received from partition: {}".format(partition_context.partition_id))
 
 
-def receive_for_a_while(client, duration):
-    """
-    Without specified partition_id, the receive will try to receive events from all partitions and if provided with
-    partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
-    which also try to receive events from all partitions and use the same storage resource.
-    """
-    client.receive(event_handler=event_handler, consumer_group='$Default')
-    # With specified partition_id, load-balance will be disabled
-    # client.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
-    time.sleep(5)
-    client.close()
-
-
-def receive_forever(client):
-    """
-    Without specified partition_id, the receive will try to receive events from all partitions and if provided with
-    partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
-    which also try to receive events from all partitions and use the same storage resource.
-    """
-    client.receive(event_handler=event_handler, consumer_group='$Default')
-    # With specified partition_id, load-balance will be disabled
-    # client.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
-    try:
-        while True:
-            time.sleep(0.05)
-            pass
-    except KeyboardInterrupt:
-        print('Stop receiving.')
-        client.close()
-
-
 if __name__ == '__main__':
     container_client = ContainerClient.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
     partition_manager = BlobPartitionManager(container_client)
@@ -82,7 +51,16 @@ if __name__ == '__main__':
         retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
     )
 
-    with consumer_client:
-        receiving_time = 60
-        receive_for_a_while(consumer_client, receiving_time)
-        # receive_forever(consumer_client)
+    try:
+        with consumer_client:
+            """
+            Without specified partition_id, the receive will try to receive events from all partitions and if provided with
+            partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
+            which also try to receive events from all partitions and use the same storage resource.
+            """
+            consumer_client.receive(event_handler=event_handler, consumer_group='$Default')
+            # With specified partition_id, load-balance will be disabled
+            # client.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
+    except KeyboardInterrupt:
+        print('Stop receiving.')
+        consumer_client.close()

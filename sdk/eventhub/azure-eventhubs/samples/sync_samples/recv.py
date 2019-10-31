@@ -41,27 +41,6 @@ def event_handler(partition_context, events):
         print("No event received from partition: {}".format(partition_context.partition_id))
 
 
-def receive_for_a_while(client, duration):
-    client.receive(event_handler=event_handler, consumer_group='$Default')
-    # Receive with owner level:
-    # consumer_client.receive(event_handler=event_handler, consumer_group='$Default', owner_level=1)
-    time.sleep(duration)
-    client.close()
-
-
-def receive_forever(client):
-    client.receive(event_handler=event_handler, consumer_group='$Default')
-    # Receive with owner level:
-    # consumer_client.receive(event_handler=event_handler, consumer_group='$Default', owner_level=1)
-    try:
-        while True:
-            time.sleep(0.05)
-            pass
-    except KeyboardInterrupt:
-        print('Stop receiving.')
-        client.close()
-
-
 if __name__ == '__main__':
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
@@ -70,9 +49,11 @@ if __name__ == '__main__':
         retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
     )
 
-    with consumer_client:
-        receiving_time = 5
-        receive_for_a_while(consumer_client, receiving_time)
-        # receive_forever(consumer_client)
-
-        print("Received {} messages in {} seconds".format(total, receiving_time))
+    try:
+        with consumer_client:
+            consumer_client.receive(event_handler=event_handler, consumer_group='$Default')
+            # Receive with owner level:
+            # consumer_client.receive(event_handler=event_handler, consumer_group='$Default', owner_level=1)
+    except KeyboardInterrupt:
+        print('Stop receiving.')
+        consumer_client.close()
