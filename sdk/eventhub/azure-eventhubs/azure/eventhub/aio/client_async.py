@@ -13,9 +13,9 @@ from typing import Any, List, Dict, Union, TYPE_CHECKING
 from uamqp import authentication, constants  # type: ignore
 from uamqp import Message, AMQPClientAsync  # type: ignore
 
-from .._common import parse_sas_token, EventPosition, \
+from ..common import parse_sas_token, EventPosition, \
     EventHubSharedKeyCredential, EventHubSASTokenCredential
-from .._client_abstract import EventHubClientAbstract
+from ..client_abstract import EventHubClientAbstract
 
 from .producer_async import EventHubProducer
 from .consumer_async import EventHubConsumer

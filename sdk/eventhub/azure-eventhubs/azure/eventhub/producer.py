@@ -15,8 +15,8 @@ from uamqp import SendClient  # type: ignore
 from azure.core.tracing import SpanKind, AbstractSpan  # type: ignore
 from azure.core.settings import settings  # type: ignore
 
-from ._common import EventData, EventDataBatch
-from ._error import _error_handler, OperationTimeoutError, EventDataError
+from .common import EventData, EventDataBatch
+from .error import _error_handler, OperationTimeoutError, EventDataError
 from ._consumer_producer_mixin import ConsumerProducerMixin
 
 

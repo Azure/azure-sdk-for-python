@@ -11,7 +11,7 @@ import time
 import threading
 from enum import Enum
 
-from uamqp.compat import queue
+from uamqp.compat import queue  # type: ignore
 
 from azure.core.tracing import SpanKind  # type: ignore
 from azure.core.settings import settings  # type: ignore

@@ -11,7 +11,7 @@ import json
 import sys
 
 from azure.eventhub import EventData, TransportType
-from azure.eventhub._client import EventHubClient
+from azure.eventhub.client import EventHubClient
 
 
 @pytest.mark.liveTest

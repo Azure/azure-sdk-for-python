@@ -7,10 +7,10 @@ import logging
 
 from typing import Any, Union, TYPE_CHECKING, Iterable, List
 from uamqp import constants  # type: ignore
-from .client_async import EventHubClient
-from .producer_async import EventHubProducer
 from azure.eventhub import EventData, \
     EventHubSharedKeyCredential, EventHubSASTokenCredential, EventDataBatch
+from .client_async import EventHubClient
+from .producer_async import EventHubProducer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
@@ -73,7 +73,7 @@ class EventHubProducerClient(EventHubClient):
                 if not self._producers:
                     num_of_producers = len(await self.get_partition_ids()) + 1
                     self._producers = [None] * num_of_producers
-                    for i in range(num_of_producers):
+                    for _ in range(num_of_producers):
                         self._producers_locks.append(asyncio.Lock())
                         # self._producers_locks = [asyncio.Lock()] * num_of_producers
 

@@ -15,7 +15,7 @@ from azure.eventhub import (
     ConnectError,
     EventDataSendError)
 
-from azure.eventhub._client import EventHubClient
+from azure.eventhub.client import EventHubClient
 
 
 @pytest.mark.liveTest

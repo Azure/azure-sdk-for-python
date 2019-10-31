@@ -7,7 +7,7 @@
 import pytest
 
 from azure.eventhub import EventData, EventPosition
-from azure.eventhub._client import EventHubClient
+from azure.eventhub.client import EventHubClient
 
 
 @pytest.mark.liveTest

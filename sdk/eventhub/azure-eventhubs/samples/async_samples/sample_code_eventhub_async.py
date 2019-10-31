@@ -4,68 +4,49 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import time
+import pytest
 import logging
+import asyncio
 
 
-def create_eventhub_producer_client():
-    # [START create_eventhub_producer_client_sync]
+def create_async_eventhub_producer_client():
+    # [START create_eventhub_producer_client_async]
     import os
-    from azure.eventhub import EventHubProducerClient
+    from azure.eventhub.aio import EventHubProducerClient
 
     EVENT_HUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
     EVENT_HUB = os.environ['EVENT_HUB_NAME']
 
     producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONNECTION_STR,
                                                              event_hub_path=EVENT_HUB)
-    # [END create_eventhub_producer_client_sync]
+    # [END create_eventhub_producer_client_async]
     return producer
 
 
-def create_eventhub_consumer_client():
-    # [START create_eventhub_consumer_client_sync]
+def create_async_eventhub_consumer_client():
+    # [START create_eventhub_consumer_client_async]
     import os
 
     EVENT_HUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
     EVENT_HUB = os.environ['EVENT_HUB_NAME']
 
-    from azure.eventhub import EventHubConsumerClient
+    from azure.eventhub.aio import EventHubConsumerClient
     consumer = EventHubConsumerClient.from_connection_string(
         conn_str=EVENT_HUB_CONNECTION_STR,
         event_hub_path=EVENT_HUB
     )
-    # [END create_eventhub_consumer_client_sync]
+    # [END create_eventhub_consumer_client_async]
     return consumer
 
 
-def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
-    producer = create_eventhub_producer_client()
-    consumer = create_eventhub_consumer_client()
+@pytest.mark.asyncio
+async def test_example_eventhub_async_send_and_receive(live_eventhub_config):
+    producer = create_async_eventhub_producer_client()
+    consumer = create_async_eventhub_consumer_client()
     try:
-        logger = logging.getLogger("azure.eventhub")
-
-        def event_handler(partition_context, events):
-            logger.info("Received {} messages from partition: {}".format(
-                len(events), partition_context.partition_id))
-            # Do ops on received events
-
-        consumer.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
-        time.sleep(1)
-        consumer.close()
-
-        # [START create_event_data]
+        # [START eventhub_producer_client_create_batch_async]
         from azure.eventhub import EventData
-
-        event_data = EventData("String data")
-        event_data = EventData(b"Bytes data")
-        event_data = EventData([b"A", b"B", b"C"])
-
-        list_data = ['Message {}'.format(i) for i in range(10)]
-        event_data = EventData(body=list_data)
-        # [END create_event_data]
-
-        # [START eventhub_producer_client_create_batch_sync]
-        event_data_batch = producer.create_batch(max_size=10000)
+        event_data_batch = await producer.create_batch(max_size=10000)
         while True:
             try:
                 event_data_batch.try_add(EventData('Message inside EventBatchData'))
@@ -73,35 +54,36 @@ def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
                 # The EventDataBatch object reaches its max_size.
                 # You can send the full EventDataBatch object and create a new one here.
                 break
-        # [END eventhub_producer_client_create_batch_sync]
+        # [END eventhub_producer_client_create_batch_async]
 
-        # [START eventhub_producer_client_send_sync]
-        with producer:
+        # [START eventhub_producer_client_send_async]
+        async with producer:
             event_data = EventData(b"A single event")
-            producer.send(event_data)
-        # [END eventhub_producer_client_send_sync]
-        time.sleep(1)
+            await producer.send(event_data)
+        # [END eventhub_producer_client_send_async]
+        await asyncio.sleep(1)
 
-        # [START eventhub_consumer_client_receive_sync]
+        # [START eventhub_consumer_client_receive_async]
         logger = logging.getLogger("azure.eventhub")
 
-        def event_handler(partition_context, events):
+        async def event_handler(partition_context, events):
             logger.info("Received {} messages from partition: {}".format(
                 len(events), partition_context.partition_id))
             # Do ops on received events
-
-        with consumer:
-            consumer.receive(event_handler=event_handler, consumer_group='$Default')
-            time.sleep(3)  # keep receiving for 3 seconds
-        # [END eventhub_consumer_client_receive_sync]
+        async with consumer:
+            task = asyncio.ensure_future(consumer.receive(on_event=event_handler, consumer_group="$default"))
+            await asyncio.sleep(3)  # keep receiving for 3 seconds
+            task.cancel()  # stop receiving
+        # [END eventhub_consumer_client_receive_async]
     finally:
         pass
 
 
-def test_example_eventhub_producer_ops(live_eventhub_config):
-    # [START eventhub_producer_client_close_sync]
+async def example_eventhub_async_producer_ops(live_eventhub_config, connection_str):
+    # [START eventhub_producer_client_close_async]
     import os
-    from azure.eventhub import EventHubProducerClient, EventData
+    from azure.eventhub.aio import EventHubProducerClient
+    from azure.eventhub import EventData
 
     EVENT_HUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
     EVENT_HUB = os.environ['EVENT_HUB_NAME']
@@ -109,21 +91,21 @@ def test_example_eventhub_producer_ops(live_eventhub_config):
     producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONNECTION_STR,
                                                              event_hub_path=EVENT_HUB)
     try:
-        producer.send(EventData(b"A single event"))
+        await producer.send(EventData(b"A single event"))
     finally:
         # Close down the producer handler.
-        producer.close()
-    # [END eventhub_producer_client_close_sync]
+        await producer.close()
+    # [END eventhub_producer_client_close_async]
 
 
-def test_example_eventhub_consumer_ops(live_eventhub_config):
+async def example_eventhub_async_consumer_ops(live_eventhub_config, connection_str):
     # [START eventhub_consumer_client_close_sync]
     import os
 
     EVENT_HUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
     EVENT_HUB = os.environ['EVENT_HUB_NAME']
 
-    from azure.eventhub import EventHubConsumerClient
+    from azure.eventhub.aio import EventHubConsumerClient
     consumer = EventHubConsumerClient.from_connection_string(
         conn_str=EVENT_HUB_CONNECTION_STR,
         event_hub_path=EVENT_HUB
@@ -131,14 +113,15 @@ def test_example_eventhub_consumer_ops(live_eventhub_config):
 
     logger = logging.getLogger("azure.eventhub")
 
-    def event_handler(partition_context, events):
+    async def event_handler(partition_context, events):
         logger.info("Received {} messages from partition: {}".format(
             len(events), partition_context.partition_id))
         # Do ops on received events
 
-    consumer.receive(event_handler=event_handler, consumer_group='$Default')
-    time.sleep(3)  # keep receiving for 3 seconds
+    recv_task = asyncio.ensure_future(consumer.receive(on_event=event_handler, consumer_group='$Default'))
+    await asyncio.sleep(3)  # keep receiving for 3 seconds
+    recv_task.cancel()  # stop receiving
 
     # Close down the consumer handler explicitly.
-    consumer.close()
+    await consumer.close()
     # [END eventhub_consumer_client_close_sync]

@@ -3,10 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import logging
-from typing import Any, Union, TYPE_CHECKING
-from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
+from typing import Any, Union, TYPE_CHECKING, Callable, Dict, List, Tuple
+from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, EventData
 from ._eventprocessor.event_processor import EventProcessor
-from ._client import EventHubClient
+from ._eventprocessor.partition_context import PartitionContext
+from .client import EventHubClient
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
 
@@ -69,10 +70,11 @@ class EventHubConsumerClient(EventHubClient):
 
         kwargs['receive_timeout'] = receive_timeout
 
-        super(EventHubConsumerClient, self).__init__(host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
+        super(EventHubConsumerClient, self).__init__(
+            host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
         self._partition_manager = kwargs.get("partition_manager")
         self._load_balancing_interval = kwargs.get("load_balancing_interval", 10)
-        self._event_processors = dict()
+        self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
         self._closed = False
 
     @classmethod
@@ -89,6 +91,7 @@ class EventHubConsumerClient(EventHubClient):
                 del eventhub_client._event_processors[(consumer_group, "-1")]
 
     def receive(self, on_event, consumer_group, **kwargs):
+        # type: (Callable[[PartitionContext, List[EventData]], None], str, Any) -> None
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
         :param on_event:
@@ -111,7 +114,7 @@ class EventHubConsumerClient(EventHubClient):
                 :dedent: 4
                 :caption: Receive events from the EventHub.
         """
-        partition_id = kwargs.get("partition_id", None)
+        partition_id = kwargs.get("partition_id")
 
         with self._lock:
             error = None
@@ -119,7 +122,7 @@ class EventHubConsumerClient(EventHubClient):
                 error = ValueError("This consumer client is already receiving events from all partitions for"
                                    " consumer group {}. "
                                    "Cannot receive from any other partitions again.".format(consumer_group))
-            elif partition_id is None and any(x[0] == consumer_group for x in self._event_processors.keys()):
+            elif partition_id is None and any(x[0] == consumer_group for x in self._event_processors):
                 error = ValueError("This consumer client is already receiving events for consumer group {}. "
                                    "Cannot receive from all partitions again.".format(consumer_group))
             elif (consumer_group, partition_id) in self._event_processors:
@@ -132,7 +135,6 @@ class EventHubConsumerClient(EventHubClient):
             event_processor = EventProcessor(
                 self, consumer_group, on_event,
                 partition_manager=self._partition_manager,
-                partition_id=partition_id,
                 polling_interval=self._load_balancing_interval,
                 **kwargs
             )
