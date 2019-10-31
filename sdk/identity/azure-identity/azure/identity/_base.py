@@ -9,6 +9,7 @@ from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.backends import default_backend
 from msal.oauth2cli import JwtSigner
+import six
 
 try:
     ABC = abc.ABC
@@ -68,12 +69,15 @@ class CertificateCredentialBase(ABC):
 
     def _get_request_data(self, *scopes):
         assertion = self._signer.sign_assertion(audience=self._client.auth_url, issuer=self._client_id)
+        if isinstance(assertion, six.binary_type):
+            assertion = assertion.decode("utf-8")
+
         return {
             "client_assertion": assertion,
             "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
             "client_id": self._client_id,
             "grant_type": "client_credentials",
-            "scope": " ".join(scopes)
+            "scope": " ".join(scopes),
         }
 
     @abc.abstractmethod
