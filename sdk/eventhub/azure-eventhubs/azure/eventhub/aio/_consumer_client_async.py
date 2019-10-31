@@ -82,7 +82,7 @@ class EventHubConsumerClient(EventHubClient):
             initial_event_position: Union[EventPosition, Dict[str, EventPosition]] = None,
             error_handler: Callable[[PartitionContext, Exception], None] = None,
             partition_initialize_handler: Callable[[PartitionContext], None] = None,
-            partition_close_handler: Callable[[PartitionContext, CloseReason], None] = None,
+            partition_close_handler: Callable[[PartitionContext, CloseReason], None] = None
     ):
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
