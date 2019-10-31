@@ -4,8 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import logging
 from typing import Any, Union, TYPE_CHECKING
-from ._common import EventPosition,\
-    EventHubSharedKeyCredential, EventHubSASTokenCredential
+from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
 from ._eventprocessor.event_processor import EventProcessor
 from ._client import EventHubClient
 if TYPE_CHECKING:
@@ -89,19 +88,19 @@ class EventHubConsumerClient(EventHubClient):
             elif (consumer_group, '-1') in eventhub_client._event_processors:
                 del eventhub_client._event_processors[(consumer_group, "-1")]
 
-    def receive(self, event_handler, consumer_group, **kwargs):
+    def receive(self, on_event, consumer_group, **kwargs):
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
-        :param event_handler:
+        :param on_event:
         :param consumer_group:
         :param partition_id:
         :param owner_level:
         :param prefetch:
         :param track_last_enqueued_event_properties:
         :param initial_event_position:
-        :param error_handler:
-        :param partition_initialize_handler:
-        :param partition_close_handler:
+        :param on_error:
+        :param on_partition_initialize:
+        :param on_partition_close:
         :return: None
 
         Example:
@@ -113,47 +112,31 @@ class EventHubConsumerClient(EventHubClient):
                 :caption: Receive events from the EventHub.
         """
         partition_id = kwargs.get("partition_id", None)
-        owner_level = kwargs.get("owner_level", None)
-        prefetch = kwargs.get("prefetch", None)
-        track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
-        initial_event_position = kwargs.get("initial_event_position", None)
-        error_handler = kwargs.get("error_handler", None)
-        partition_initialize_handler = kwargs.get("partition_initialize_handler", None)
-        partition_close_handler = kwargs.get("partition_close_handler", None)
 
         with self._lock:
             error = None
             if (consumer_group, '-1') in self._event_processors:
                 error = ValueError("This consumer client is already receiving events from all partitions for"
                                    " consumer group {}. "
-                                   "Shouldn't receive from any other partitions again".format(consumer_group))
+                                   "Cannot receive from any other partitions again.".format(consumer_group))
             elif partition_id is None and any(x[0] == consumer_group for x in self._event_processors.keys()):
                 error = ValueError("This consumer client is already receiving events for consumer group {}. "
-                                   "Shouldn't receive from all partitions again".format(consumer_group))
+                                   "Cannot receive from all partitions again.".format(consumer_group))
             elif (consumer_group, partition_id) in self._event_processors:
                 error = ValueError("This consumer is already receiving events from partition {} for consumer group {}. "
-                                   "Shouldn't receive from it again.".format(partition_id, consumer_group))
+                                   "Cannot receive from it again.".format(partition_id, consumer_group))
             if error:
                 log.warning(error)
                 raise error
 
             event_processor = EventProcessor(
-                self, consumer_group, event_handler,
-                partition_id=partition_id,
+                self, consumer_group, on_event,
                 partition_manager=self._partition_manager,
-                error_handler=error_handler,
-                partition_initialize_handler=partition_initialize_handler,
-                partition_close_handler=partition_close_handler,
-                initial_event_position=initial_event_position or EventPosition("-1"),
+                partition_id=partition_id,
                 polling_interval=self._load_balancing_interval,
-                owner_level=owner_level,
-                prefetch=prefetch,
-                track_last_enqueued_event_properties=track_last_enqueued_event_properties,
+                **kwargs
             )
-            if partition_id:
-                self._event_processors[(consumer_group, partition_id)] = event_processor
-            else:
-                self._event_processors[(consumer_group, "-1")] = event_processor
+            self._event_processors[(consumer_group, partition_id or "-1")] = event_processor
 
         event_processor.start()
 

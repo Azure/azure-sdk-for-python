@@ -71,9 +71,7 @@ class EventHubProducerClient(EventHubClient):
                 :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
 
         """
-        partition_key = kwargs.get("partition_key", None)
-        partition_id = kwargs.get("partition_id", None)
-        timeout = kwargs.get("timeout",None)
+        partition_id = kwargs.pop("partition_id", None)
 
         self._init_locks_for_producers()
 
@@ -84,7 +82,7 @@ class EventHubProducerClient(EventHubClient):
                 if self._producers[producer_index] is None:
                     self._producers[producer_index] = self._create_producer(partition_id=partition_id)
 
-        self._producers[producer_index].send(event_data, partition_key=partition_key, timeout=timeout)
+        self._producers[producer_index].send(event_data, **kwargs)
 
     def create_batch(self, max_size=None):
         # type:(int) -> EventDataBatch

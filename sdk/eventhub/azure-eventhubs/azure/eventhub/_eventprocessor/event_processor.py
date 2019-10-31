@@ -34,16 +34,16 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
     in the context of a given consumer group.
 
     """
-    def __init__(self, eventhub_client, consumer_group_name, event_handler, **kwargs):
+    def __init__(self, eventhub_client, consumer_group_name, on_event, **kwargs):
         self._consumer_group_name = consumer_group_name
         self._eventhub_client = eventhub_client
         self._namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
         self._eventhub_name = eventhub_client.eh_name
-        self._event_handler = event_handler
+        self._event_handler = on_event
         self._partition_id = kwargs.get("partition_id", None)
-        self._error_handler = kwargs.get("error_handler", None)
-        self._partition_initialize_handler = kwargs.get("partition_initialize_handler", None)
-        self._partition_close_handler = kwargs.get("partition_close_handler", None)
+        self._error_handler = kwargs.get("on_error", None)
+        self._partition_initialize_handler = kwargs.get("on_partition_initialize", None)
+        self._partition_close_handler = kwargs.get("on_partition_close", None)
         self._partition_manager = kwargs.get("partition_manager", None)
         self._initial_event_position = kwargs.get("initial_event_position", EventPosition("-1"))
 
@@ -260,6 +260,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                 callback_and_args = self._callback_queue.get(True)
                 callback = callback_and_args[0]
                 callback(*callback_and_args[1:])
+                self._callback_queue.task_done()
         else:
             log.info("EventProcessor %r has already started.", self._id)
 
