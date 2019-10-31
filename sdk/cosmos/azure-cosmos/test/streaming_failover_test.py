@@ -2,7 +2,7 @@ import unittest
 import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import pytest
 import azure.cosmos.documents as documents
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 from azure.cosmos import _retry_utility
@@ -85,7 +85,7 @@ class TestStreamingFailover(unittest.TestCase):
         else:
             self.endpoint_sequence.append(args[1].location_endpoint_to_route)
             response = test_config.FakeResponse({HttpHeaders.SubStatus: SubStatusCodes.WRITE_FORBIDDEN})
-            raise errors.CosmosHttpResponseError(
+            raise exceptions.CosmosHttpResponseError(
                 status_code=StatusCodes.FORBIDDEN,
                 message="Request is not permitted in this region",
                 response=response)
@@ -112,7 +112,7 @@ class TestStreamingFailover(unittest.TestCase):
         self._write_counter = 0
         request = RequestObject(http_constants.ResourceType.Document, documents._OperationType.Read)
         endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(documents.ConnectionPolicy(), endpoint_manager, request)
-        endpointDiscovery_retry_policy.ShouldRetry(errors.CosmosHttpResponseError(
+        endpointDiscovery_retry_policy.ShouldRetry(exceptions.CosmosHttpResponseError(
             status_code=http_constants.StatusCodes.FORBIDDEN))
         self.assertEqual(self._read_counter, 0)
         self.assertEqual(self._write_counter, 0)
@@ -121,7 +121,7 @@ class TestStreamingFailover(unittest.TestCase):
         self._write_counter = 0
         request = RequestObject(http_constants.ResourceType.Document, documents._OperationType.Create)
         endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(documents.ConnectionPolicy(), endpoint_manager, request)
-        endpointDiscovery_retry_policy.ShouldRetry(errors.CosmosHttpResponseError(
+        endpointDiscovery_retry_policy.ShouldRetry(exceptions.CosmosHttpResponseError(
             status_code=http_constants.StatusCodes.FORBIDDEN))
         self.assertEqual(self._read_counter, 0)
         self.assertEqual(self._write_counter, 0)

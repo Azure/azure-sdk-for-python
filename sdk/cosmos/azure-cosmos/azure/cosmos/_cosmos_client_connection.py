@@ -2625,6 +2625,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         options=None,
         partition_key_range_id=None,
         response_hook=None,
+        is_query_plan=False,
         **kwargs
     ):
         """Query for more than one Azure Cosmos resources.
@@ -2639,6 +2640,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The request options for the request.
         :param str partition_key_range_id:
             Specifies partition key range id.
+        :param function response_hook:
+        :param bool is_query_plan:
+            Specififes if the call is to fetch query plan
 
         :rtype:
             list
@@ -2664,7 +2668,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Copy to make sure that default_headers won't be changed.
         if query is None:
             # Query operations will use ReadEndpoint even though it uses GET(for feed requests)
-            request_params = _request_object.RequestObject(typ, documents._OperationType.ReadFeed)
+            request_params = _request_object.RequestObject(typ,
+                        documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed)
             headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
             result, self.last_response_headers = self.__Get(path, request_params, headers, **kwargs)
             if response_hook:
@@ -2674,6 +2679,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         query = self.__CheckAndUnifyQueryFormat(query)
 
         initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
+        if not is_query_plan:
+            initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
+
         if (
             self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
             or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
@@ -2693,6 +2701,36 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             response_hook(self.last_response_headers, result)
 
         return __GetBodiesFromQueryResult(result)
+
+    def _GetQueryPlanThroughGateway(self, query, resource_link, **kwargs):
+        supported_query_features = (documents._QueryFeature.Aggregate + "," +
+                                    documents._QueryFeature.CompositeAggregate + "," +
+                                    documents._QueryFeature.Distinct + "," +
+                                    documents._QueryFeature.MultipleOrderBy + "," +
+                                    documents._QueryFeature.OffsetAndLimit + "," +
+                                    documents._QueryFeature.OrderBy + "," +
+                                    documents._QueryFeature.Top)
+
+        options = {
+            "contentType": runtime_constants.MediaTypes.Json,
+            "isQueryPlanRequest": True,
+            "supportedQueryFeatures": supported_query_features,
+            "queryVersion": http_constants.Versions.QueryVersion
+            }
+
+        resource_link = base.TrimBeginningAndEndingSlashes(resource_link)
+        path = base.GetPathFromLink(resource_link, "docs")
+        resource_id = base.GetResourceIdOrFullNameFromLink(resource_link)
+
+        return self.__QueryFeed(path,
+                                "docs",
+                                resource_id,
+                                lambda r: r,
+                                None,
+                                query,
+                                options,
+                                is_query_plan=True,
+                                **kwargs)
 
     def __CheckAndUnifyQueryFormat(self, query_body):
         """Checks and unifies the format of the query body.

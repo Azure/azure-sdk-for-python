@@ -27,7 +27,7 @@ import time
 from azure.core.exceptions import AzureError, ClientAuthenticationError
 from azure.core.pipeline.policies import RetryPolicy
 
-from . import errors
+from . import exceptions
 from . import _endpoint_discovery_retry_policy
 from . import _resource_throttle_retry_policy
 from . import _default_retry_policy
@@ -85,7 +85,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             ] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
 
             return result
-        except errors.CosmosHttpResponseError as e:
+        except exceptions.CosmosHttpResponseError as e:
             retry_policy = None
             if e.status_code == StatusCodes.FORBIDDEN and e.sub_status == SubStatusCodes.WRITE_FORBIDDEN:
                 retry_policy = endpointDiscovery_retry_policy
@@ -121,7 +121,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             if client_timeout:
                 kwargs['timeout'] = client_timeout - (time.time() - start_time)
                 if kwargs['timeout'] <= 0:
-                    raise errors.CosmosClientTimeoutError()
+                    raise exceptions.CosmosClientTimeoutError()
 
 
 def ExecuteFunction(function, *args, **kwargs):
@@ -134,7 +134,7 @@ def _configure_timeout(request, absolute, per_request):
     # type: (azure.core.pipeline.PipelineRequest, Optional[int], int) -> Optional[AzureError]
     if absolute is not None:
         if absolute <= 0:
-            raise errors.CosmosClientTimeoutError()
+            raise exceptions.CosmosClientTimeoutError()
         if per_request:
             # Both socket timeout and client timeout have been provided - use the shortest value.
             request.context.options['connection_timeout'] = min(per_request, absolute)
@@ -161,7 +161,7 @@ class ConnectionRetryPolicy(RetryPolicy):
         :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
         :rtype: ~azure.core.pipeline.PipelineResponse
         :raises ~azure.core.exceptions.AzureError: Maximum retries exceeded.
-        :raises ~azure.cosmos.errors.CosmosClientTimeoutError: Specified timeout exceeded.
+        :raises ~azure.cosmos.exceptions.CosmosClientTimeoutError: Specified timeout exceeded.
         :raises ~azure.core.exceptions.ClientAuthenticationError: Authentication failed.
         """
         absolute_timeout = request.context.options.pop('timeout', None)
@@ -187,7 +187,7 @@ class ConnectionRetryPolicy(RetryPolicy):
                 # the authentication policy failed such that the client's request can't
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise
-            except errors.CosmosClientTimeoutError as timeout_error:
+            except exceptions.CosmosClientTimeoutError as timeout_error:
                 timeout_error.inner_exception = retry_error
                 timeout_error.response = response
                 timeout_error.history = retry_settings['history']

@@ -63,7 +63,7 @@ export ACCOUNT_KEY=$(az cosmosdb list-keys --resource-group $RES_GROUP --name $A
 Once you've populated the `ACCOUNT_URI` and `ACCOUNT_KEY` environment variables, you can create the [CosmosClient][ref_cosmosclient].
 
 ```Python
-from azure.cosmos import CosmosClient, PartitionKey, errors
+from azure.cosmos import CosmosClient, PartitionKey, exceptions
 
 import os
 url = os.environ['ACCOUNT_URI']
@@ -104,7 +104,7 @@ After authenticating your [CosmosClient][ref_cosmosclient], you can work with an
 database_name = 'testDatabase'
 try:
     database = client.create_database(database_name)
-except errors.CosmosResourceExistsError:
+except exceptions.CosmosResourceExistsError:
     database = client.get_database_client(database_name)
 ```
 
@@ -116,9 +116,9 @@ This example creates a container with default settings. If a container with the 
 container_name = 'products'
 try:
     container = database.create_container(id=container_name, partition_key=PartitionKey(path="/productName"))
-except errors.CosmosResourceExistsError:
+except exceptions.CosmosResourceExistsError:
     container = database.get_container_client(container_name)
-except errors.CosmosHttpResponseError:
+except exceptions.CosmosHttpResponseError:
     raise
 ```
 
@@ -264,7 +264,7 @@ the client level to enable it for all requests.
 
 ### General
 
-When you interact with Cosmos DB using the Python SDK, errors returned by the service correspond to the same HTTP status codes returned for REST API requests:
+When you interact with Cosmos DB using the Python SDK, exceptions returned by the service correspond to the same HTTP status codes returned for REST API requests:
 
 [HTTP Status Codes for Azure Cosmos DB][cosmos_http_status_codes]
 
@@ -273,7 +273,7 @@ For example, if you try to create a container using an ID (name) that's already 
 ```Python
 try:
     database.create_container(id=container_name, partition_key=PartitionKey(path="/productName")
-except errors.CosmosResourceExistsError:
+except exceptions.CosmosResourceExistsError:
     print("""Error creating container
 HTTP status code 409: The ID (name) provided for the container is already in use.
 The container name must be unique within the database.""")
@@ -305,22 +305,21 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_sql_queries]: https://docs.microsoft.com/azure/cosmos-db/how-to-sql-query
 [cosmos_ttl]: https://docs.microsoft.com/azure/cosmos-db/time-to-live
 [python]: https://www.python.org/downloads/
-[ref_container_delete_item]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html#azure.cosmos.ContainerProxy.delete_item
-[ref_container_query_items]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html#azure.cosmos.ContainerProxy.query_items
-[ref_container_upsert_item]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html#azure.cosmos.ContainerProxy.upsert_item
-[ref_container]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html#azure.cosmos.ContainerProxy
-[ref_cosmos_sdk]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html
-[ref_cosmosclient_create_database]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html#azure.cosmos.CosmosClient.create_database
-[ref_cosmosclient]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html#azure.cosmos.CosmosClient
-[ref_database]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html#azure.cosmos.DatabaseProxy
-[ref_httpfailure]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.errors.html#azure.cosmos.errors.CosmosHttpResponseError
-[sample_database_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/DatabaseManagement
-[sample_document_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/DocumentManagement
+[ref_container_delete_item]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b5/azure.cosmos.html#azure.cosmos.ContainerProxy.delete_item
+[ref_container_query_items]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b5/azure.cosmos.html#azure.cosmos.ContainerProxy.query_items
+[ref_container_upsert_item]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b5/azure.cosmos.html#azure.cosmos.ContainerProxy.upsert_item
+[ref_container]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b5/azure.cosmos.html#azure.cosmos.ContainerProxy
+[ref_cosmos_sdk]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b5/azure.cosmos.html
+[ref_cosmosclient_create_database]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b5/azure.cosmos.html#azure.cosmos.CosmosClient.create_database
+[ref_cosmosclient]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b5/azure.cosmos.html#azure.cosmos.CosmosClient
+[ref_database]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b5/azure.cosmos.html#azure.cosmos.DatabaseProxy
+[ref_httpfailure]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cosmos/4.0.0b5/azure.cosmos.html#azure.cosmos.exceptions.CosmosHttpResponseError
+[sample_database_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/database_management.py
+[sample_document_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/document_management.py
 [sample_examples_misc]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/examples.py
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
-
 
 # Contributing
 
