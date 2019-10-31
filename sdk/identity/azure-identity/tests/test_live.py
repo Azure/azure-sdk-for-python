@@ -106,11 +106,11 @@ def test_device_code(prints):
         print("opening a browser to '{}', enter device code {}".format(url, user_code))
         webbrowser.open_new_tab(url)
 
-    credential = DeviceCodeCredential(client_id=AZURE_CLI_CLIENT_ID, prompt_callback=prompt, timeout=25)
+    credential = DeviceCodeCredential(client_id=AZURE_CLI_CLIENT_ID, prompt_callback=prompt, timeout=40)
     get_token(credential)
 
 
 @pytest.mark.manual
 def test_browser_auth():
-    credential = InteractiveBrowserCredential(client_id=AZURE_CLI_CLIENT_ID, timeout=25)
+    credential = InteractiveBrowserCredential(client_id=AZURE_CLI_CLIENT_ID, timeout=40)
     get_token(credential)
