@@ -24,7 +24,7 @@
 
 import platform
 import re
-from .version import VERSION
+from ._version import VERSION
 
 
 def get_user_agent():

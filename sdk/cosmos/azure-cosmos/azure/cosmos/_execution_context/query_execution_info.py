@@ -23,6 +23,7 @@
 """
 
 import six
+from azure.cosmos.documents import _DistinctType
 
 
 class _PartitionedQueryExecutionInfo(object):
@@ -32,7 +33,11 @@ class _PartitionedQueryExecutionInfo(object):
     """
 
     QueryInfoPath = "queryInfo"
+    HasSelectValue = [QueryInfoPath, "hasSelectValue"]
     TopPath = [QueryInfoPath, "top"]
+    OffsetPath = [QueryInfoPath, "offset"]
+    LimitPath = [QueryInfoPath, "limit"]
+    DistinctTypePath = [QueryInfoPath, "distinctType"]
     OrderByPath = [QueryInfoPath, "orderBy"]
     AggregatesPath = [QueryInfoPath, "aggregates"]
     QueryRangesPath = "queryRanges"
@@ -49,6 +54,21 @@ class _PartitionedQueryExecutionInfo(object):
         """Returns the top count (if any) or None
         """
         return self._extract(_PartitionedQueryExecutionInfo.TopPath)
+
+    def get_limit(self):
+        """Returns the limit count (if any) or None
+        """
+        return self._extract(_PartitionedQueryExecutionInfo.LimitPath)
+
+    def get_offset(self):
+        """Returns the offset count (if any) or None
+        """
+        return self._extract(_PartitionedQueryExecutionInfo.OffsetPath)
+
+    def get_distinct_type(self):
+        """Returns the offset count (if any) or None
+        """
+        return self._extract(_PartitionedQueryExecutionInfo.DistinctTypePath)
 
     def get_order_by(self):
         """Returns order by items (if any) or None
@@ -73,6 +93,32 @@ class _PartitionedQueryExecutionInfo(object):
             # Hardcode formattable filter to true for now
             rewrittenQuery = rewrittenQuery.replace("{documentdb-formattableorderbyquery-filter}", "true")
         return rewrittenQuery
+
+    def has_select_value(self):
+        return self._extract(self.HasSelectValue)
+
+    def has_top(self):
+        return self.get_top() is not None
+
+    def has_limit(self):
+        return self.get_limit() is not None
+
+    def has_offset(self):
+        return self.get_offset() is not None
+
+    def has_distinct_type(self):
+        return self.get_distinct_type() != _DistinctType.NoneType
+
+    def has_order_by(self):
+        order_by = self.get_order_by()
+        return order_by is not None and len(order_by) > 0
+
+    def has_aggregates(self):
+        aggregates = self.get_aggregates()
+        return aggregates is not None and len(aggregates) > 0
+
+    def has_rewritten_query(self):
+        return self.get_rewritten_query() is not None
 
     def _extract(self, path):
 
