@@ -1,7 +1,6 @@
 # Release History
 
-## 4.0.0b5
-### Breaking changes
+### 4.0.0b5
 - Removed redundant method `get_pending_certificate_signing_request()`. A pending CSR can be retrieved via `get_certificate_operation()`.
 - Renamed the sync method `create_certificate` to `begin_create_certificate`
 - Renamed `restore_certificate` to `restore_certificate_backup`
@@ -9,7 +8,6 @@
 - Renamed `get_certificate_with_policy` to `get_certificate`
 - `create_certificate` now has policy as a required parameter
 - All optional positional parameters besides `version` have been moved to kwargs
-
 - Renamed enum `ActionType` to `CertificatePolicyAction`
 - Renamed `Certificate` to `KeyVaultCertificate`
 - Renamed `Contact` to `CertificateContact`
@@ -19,12 +17,10 @@
 - Renamed `updated` property of `CertificateProperties`, `CertificatePolicy`, and `CertificateIssuer` to `updated_on`
 - The `vault_endpoint` parameter of `CertificateClient` has been renamed to `vault_url`
 - The property `vault_endpoint` has been renamed to `vault_url` in all models
-
-### New Features
 - `CertificatePolicy` now has a public class method `get_default` allowing users to get the default `CertificatePolicy`
+- Logging can now be enabled properly on the client level
 
-## 4.0.0b4 (2019-10-08)
-### Breaking changes
+### 4.0.0b4 (2019-10-08)
 - Enums `JsonWebKeyCurveName` and `JsonWebKeyType` have been renamed to `KeyCurveName` and `KeyType`, respectively.
 - Both async and sync versions of `create_certificate` now return pollers that return the created `Certificate` if creation is successful,
 and a `CertificateOperation` if not.
@@ -37,8 +33,7 @@ for details.
 - The `vault_url` parameter of `CertificateClient` has been renamed to `vault_endpoint`
 - The property `vault_url` has been renamed to `vault_endpoint` in all models
 
-
-## 4.0.0b3 (2019-09-11)
+### 4.0.0b3 (2019-09-11)
 Version 4.0.0b3 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Key Vault's certificates.
 
  This library is not a direct replacement for `azure-keyvault`. Applications
