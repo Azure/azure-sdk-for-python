@@ -39,7 +39,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             owner_level=None, prefetch=None, track_last_enqueued_event_properties=False,
             error_handler,
             partition_initialize_handler,
-            partition_close_handler,
+            partition_close_handler
     ):
         self._consumer_group_name = consumer_group_name
         self._eventhub_client = eventhub_client

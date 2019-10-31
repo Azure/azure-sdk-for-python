@@ -24,7 +24,7 @@ class OwnershipManager(object):
     def __init__(
             self, eventhub_client, consumer_group_name: str, owner_id: str,
             partition_manager: PartitionManager, ownership_timeout: float,
-            partition_id: str,
+            partition_id: str
     ):
         self.cached_parition_ids = []  # type: List[str]
         self.eventhub_client = eventhub_client
