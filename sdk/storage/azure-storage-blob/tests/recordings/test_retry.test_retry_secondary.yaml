@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containername?restype=container
+    uri: https://storagename.blob.core.windows.net/containername?restype=container
   response:
     body:
       string: ''
@@ -55,7 +55,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containername?restype=container
+    uri: https://storagename.blob.core.windows.net/containername?restype=container
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
@@ -92,12 +92,12 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/?maxresults=1&comp=list
+    uri: https://storagename.blob.core.windows.net/?maxresults=1&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><MaxResults>1</MaxResults><Containers><Container><Name>containername</Name><Properties><Last-Modified>Fri,
-        25 Oct 2019 18:03:35 GMT</Last-Modified><Etag>\"0x8D75975A7897646\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker>/blobstoragename/utcontainer270d0f94</NextMarker></EnumerationResults>"
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><MaxResults>1</MaxResults><Containers><Container><Name>containername</Name><Properties><Last-Modified>Fri,
+        25 Oct 2019 18:03:35 GMT</Last-Modified><Etag>\"0x8D75975A7897646\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker>/storagename/utcontainer270d0f94</NextMarker></EnumerationResults>"
     headers:
       content-type:
       - application/xml
@@ -128,12 +128,12 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/?maxresults=1&comp=list
+    uri: https://storagename.blob.core.windows.net/?maxresults=1&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><MaxResults>1</MaxResults><Containers><Container><Name>containername</Name><Properties><Last-Modified>Fri,
-        25 Oct 2019 18:03:35 GMT</Last-Modified><Etag>\"0x8D75975A7897646\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker>/blobstoragename/utcontainer270d0f94</NextMarker></EnumerationResults>"
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><MaxResults>1</MaxResults><Containers><Container><Name>containername</Name><Properties><Last-Modified>Fri,
+        25 Oct 2019 18:03:35 GMT</Last-Modified><Etag>\"0x8D75975A7897646\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker>/storagename/utcontainer270d0f94</NextMarker></EnumerationResults>"
     headers:
       content-type:
       - application/xml
@@ -164,7 +164,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/containername?restype=container
+    uri: https://storagename.blob.core.windows.net/containername?restype=container
   response:
     body:
       string: ''
@@ -212,7 +212,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/containername?restype=container
+    uri: https://storagename.blob.core.windows.net/containername?restype=container
   response:
     body:
       string: ''

@@ -22,7 +22,7 @@ from azure.storage.blob import (
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
 
-from testcase import (
+from _shared.testcase import (
     StorageTestCase,
     LogCaptured,
     GlobalStorageAccountPreparer
@@ -65,7 +65,7 @@ class StorageLoggingTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_authorization_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         self._setup(bsc)
         container = bsc.get_container_client(self.container_name)
         # Act
@@ -78,12 +78,11 @@ class StorageLoggingTest(StorageTestCase):
             self.assertTrue(_AUTHORIZATION_HEADER_NAME in log_as_str)
             self.assertFalse('SharedKey' in log_as_str)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_sas_signature_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            pytest.skip("live only")
-        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         self._setup(bsc)
         # Arrange
         container = bsc.get_container_client(self.container_name)
@@ -110,12 +109,11 @@ class StorageLoggingTest(StorageTestCase):
             self.assertTrue(QueryStringConstants.SIGNED_SIGNATURE in log_as_str)
             self.assertFalse(signed_signature in log_as_str)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_copy_source_sas_is_scrubbed_off(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            pytest.skip("live only")
-        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         self._setup(bsc)
         # Arrange
         dest_blob_name = self.get_resource_name('destblob')
