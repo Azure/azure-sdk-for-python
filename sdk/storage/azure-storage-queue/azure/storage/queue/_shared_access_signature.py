@@ -4,12 +4,23 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from typing import (  # pylint: disable=unused-import
+    Union, Optional, Any, TYPE_CHECKING
+)
+
 from azure.storage.queue._shared import sign_string
 from azure.storage.queue._shared.constants import X_MS_VERSION
 from azure.storage.queue._shared.models import Services
 from azure.storage.queue._shared.shared_access_signature import SharedAccessSignature, _SharedAccessHelper, \
     QueryStringConstants
 
+if TYPE_CHECKING:
+    from datetime import datetime
+    from azure.storage.queue import (
+        ResourceTypes,
+        AccountSasPermissions,
+        QueueSasPermissions
+    )
 
 class QueueSharedAccessSignature(SharedAccessSignature):
     '''
@@ -128,7 +139,7 @@ def generate_account_sas(
     :param str account_name:
         The storage account name used to generate the shared access signature.
     :param str account_key:
-        The access key to generate the shared access signature.
+        The account key, also called shared key or access key, to generate the shared access signature.
     :param ~azure.storage.queue.ResourceTypes resource_types:
         Specifies the resource types that are accessible with the account SAS.
     :param ~azure.storage.queue.AccountSasPermissions permission:
@@ -192,7 +203,7 @@ def generate_queue_sas(
     :param str queue_name:
         The name of the queue.
     :param str account_key:
-        The access key to generate the shared access signature.
+        The account key, also called shared key or access key, to generate the shared access signature.
     :param ~azure.storage.queue.QueueSasPermissions permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
@@ -206,14 +217,14 @@ def generate_queue_sas(
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: datetime or str
+    :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
-    :type start: datetime or str
+    :type start: ~datetime.datetime or str
     :param str policy_id:
         A unique value up to 64 characters in length that correlates to a
         stored access policy. To create a stored access policy, use
@@ -231,7 +242,7 @@ def generate_queue_sas(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_queue_samples_message.py
+        .. literalinclude:: ../samples/queue_samples_message.py
             :start-after: [START queue_client_sas_token]
             :end-before: [END queue_client_sas_token]
             :language: python

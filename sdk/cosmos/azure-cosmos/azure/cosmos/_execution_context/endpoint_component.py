@@ -22,6 +22,10 @@
 """Internal class for query execution endpoint component implementation in the Azure Cosmos database service.
 """
 import numbers
+import copy
+import hashlib
+import json
+import six
 
 from azure.cosmos._execution_context.aggregators import (
     _AverageAggregator,
@@ -73,6 +77,86 @@ class _QueryExecutionTopEndpointComponent(_QueryExecutionEndpointComponent):
             self._top_count -= 1
             return res
         raise StopIteration
+
+
+class _QueryExecutionDistinctOrderedEndpointComponent(_QueryExecutionEndpointComponent):
+    """Represents an endpoint in handling distinct query.
+
+    It returns only those values not already returned.
+    """
+    def __init__(self, execution_context):
+        super(_QueryExecutionDistinctOrderedEndpointComponent, self).__init__(execution_context)
+        self.last_result = None
+
+    def next(self):
+        res = next(self._execution_context)
+        while self.last_result == res:
+            res = next(self._execution_context)
+        self.last_result = res
+        return res
+
+
+class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointComponent):
+    """Represents an endpoint in handling distinct query.
+
+    It returns only those values not already returned.
+    """
+    def __init__(self, execution_context):
+        super(_QueryExecutionDistinctUnorderedEndpointComponent, self).__init__(execution_context)
+        self.last_result = set()
+
+    def make_hash(self, value):
+        if isinstance(value, (set, tuple, list)):
+            return tuple([self.make_hash(v) for v in value])
+        if not isinstance(value, dict):
+            if isinstance(value, numbers.Number):
+                return float(value)
+            return value
+        new_value = copy.deepcopy(value)
+        for k, v in new_value.items():
+            new_value[k] = self.make_hash(v)
+
+        return tuple(frozenset(sorted(new_value.items())))
+
+    def next(self):
+        res = next(self._execution_context)
+
+        json_repr = json.dumps(self.make_hash(res))
+        if six.PY3:
+            json_repr = json_repr.encode("utf-8")
+
+        hash_object = hashlib.sha1(json_repr)
+        hashed_result = hash_object.hexdigest()
+
+        while hashed_result in self.last_result:
+            res = next(self._execution_context)
+            json_repr = json.dumps(self.make_hash(res))
+            if six.PY3:
+                json_repr = json_repr.encode("utf-8")
+
+            hash_object = hashlib.sha1(json_repr)
+            hashed_result = hash_object.hexdigest()
+        self.last_result.add(hashed_result)
+        return res
+
+
+class _QueryExecutionOffsetEndpointComponent(_QueryExecutionEndpointComponent):
+    """Represents an endpoint in handling offset query.
+
+    It returns results offset by as many results as offset arg specified.
+    """
+    def __init__(self, execution_context, offset_count):
+        super(_QueryExecutionOffsetEndpointComponent, self).__init__(execution_context)
+        self._offset_count = offset_count
+
+    def next(self):
+        while self._offset_count > 0:
+            res = next(self._execution_context)
+            if res is not None:
+                self._offset_count -= 1
+            else:
+                raise StopIteration
+        return next(self._execution_context)
 
 
 class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent):

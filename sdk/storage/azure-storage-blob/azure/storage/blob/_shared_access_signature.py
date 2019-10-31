@@ -4,12 +4,25 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from typing import (  # pylint: disable=unused-import
+    Union, Optional, Any, TYPE_CHECKING
+)
+
 from azure.storage.blob._shared import sign_string, url_quote
 from azure.storage.blob._shared.constants import X_MS_VERSION
 from azure.storage.blob._shared.models import Services
 from azure.storage.blob._shared.shared_access_signature import SharedAccessSignature, _SharedAccessHelper, \
     QueryStringConstants
 
+if TYPE_CHECKING:
+    from datetime import datetime
+    from azure.storage.blob import (
+        ResourceTypes,
+        AccountSasPermissions,
+        UserDelegationKey,
+        ContainerSasPermissions,
+        BlobSasPermissions
+    )
 
 class BlobQueryStringConstants(object):
     SIGNED_TIMESTAMP = 'snapshot'
@@ -281,7 +294,7 @@ def generate_account_sas(
     :param str account_name:
         The storage account name used to generate the shared access signature.
     :param str account_key:
-        The access key to generate the shared access signature.
+        The account key, also called shared key or access key, to generate the shared access signature.
     :param resource_types:
         Specifies the resource types that are accessible with the account SAS.
     :type resource_types: str or ~azure.storage.blob.ResourceTypes
@@ -320,7 +333,7 @@ def generate_account_sas(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_blob_samples_authentication.py
+        .. literalinclude:: ../samples/blob_samples_authentication.py
             :start-after: [START create_sas_token]
             :end-before: [END create_sas_token]
             :language: python
@@ -362,10 +375,10 @@ def generate_container_sas(
     :param str container_name:
         The name of the container.
     :param str account_key:
-        The access key to generate the shared access signature. Either `account_key` or
-        `user_delegation_key` must be specified.
+        The account key, also called shared key or access key, to generate the shared access signature.
+        Either `account_key` or `user_delegation_key` must be specified.
     :param ~azure.storage.blob.UserDelegationKey user_delegation_key:
-        Instead of an account key, the user could pass in a user delegation key.
+        Instead of an account shared key, the user could pass in a user delegation key.
         A user delegation key can be obtained from the service by authenticating with an AAD identity;
         this can be accomplished by calling :func:`~azure.storage.blob.BlobServiceClient.get_user_delegation_key`.
         When present, the SAS is signed with the user delegation key instead.
@@ -384,14 +397,14 @@ def generate_container_sas(
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: datetime or str
+    :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
-    :type start: datetime or str
+    :type start: ~datetime.datetime or str
     :param str policy_id:
         A unique value up to 64 characters in length that correlates to a
         stored access policy. To create a stored access policy, use
@@ -424,7 +437,7 @@ def generate_container_sas(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_blob_samples_containers.py
+        .. literalinclude:: ../samples/blob_samples_containers.py
             :start-after: [START generate_sas_token]
             :end-before: [END generate_sas_token]
             :language: python
@@ -478,10 +491,10 @@ def generate_blob_sas(
     :param str snapshot:
         An optional blob snapshot ID.
     :param str account_key:
-        The access key to generate the shared access signature. Either `account_key` or
-        `user_delegation_key` must be specified.
+        The account key, also called shared key or access key, to generate the shared access signature.
+        Either `account_key` or `user_delegation_key` must be specified.
     :param ~azure.storage.blob.UserDelegationKey user_delegation_key:
-        Instead of an account key, the user could pass in a user delegation key.
+        Instead of an account shared key, the user could pass in a user delegation key.
         A user delegation key can be obtained from the service by authenticating with an AAD identity;
         this can be accomplished by calling :func:`~azure.storage.blob.BlobServiceClient.get_user_delegation_key`.
         When present, the SAS is signed with the user delegation key instead.

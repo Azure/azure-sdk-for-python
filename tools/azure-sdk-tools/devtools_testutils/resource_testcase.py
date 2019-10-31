@@ -23,7 +23,8 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                  parameter_name=RESOURCE_GROUP_PARAM,
                  parameter_name_for_location='location', location='westus',
                  disable_recording=True, playback_fake_resource=None,
-                 client_kwargs=None):
+                 client_kwargs=None,
+                 random_name_enabled=False):
         super(ResourceGroupPreparer, self).__init__(name_prefix, random_name_length,
                                                     disable_recording=disable_recording,
                                                     playback_fake_resource=playback_fake_resource,
@@ -31,12 +32,18 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         self.location = location
         self.parameter_name = parameter_name
         self.parameter_name_for_location = parameter_name_for_location
+        if random_name_enabled:
+            self.resource_moniker = self.name_prefix + "rgname"
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
             self.client = self.create_mgmt_client(ResourceManagementClient)
             self.resource = self.client.resource_groups.create_or_update(
                 name, {'location': self.location}
+            )
+            self.test_class_instance.scrubber.register_name_pair(
+                name,
+                self.moniker
             )
         else:
             self.resource = self.resource or FakeResource(

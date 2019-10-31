@@ -447,7 +447,7 @@ class AgentPoolsOperations(object):
     get_upgrade_profile.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}/upgradeProfiles/default'}
 
     def get_available_agent_pool_versions(
-            self, resource_group_name, resource_name, agent_pool_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
         """Gets a list of supported versions for the specified agent pool.
 
         Gets a list of supported versions for the specified agent pool.
@@ -456,8 +456,6 @@ class AgentPoolsOperations(object):
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
-        :param agent_pool_name: The name of the agent pool.
-        :type agent_pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -474,8 +472,7 @@ class AgentPoolsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$'),
-            'agentPoolName': self._serialize.url("agent_pool_name", agent_pool_name, 'str')
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -511,4 +508,4 @@ class AgentPoolsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_available_agent_pool_versions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}/availableAgentPoolVersions'}
+    get_available_agent_pool_versions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/availableAgentPoolVersions'}

@@ -24,8 +24,7 @@ class ManagedIdentityCredential(object):
     See the Azure Active Directory documentation for more information about managed identities:
     https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview
 
-    Keyword arguments
-        - **client_id** (str): ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
+    :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
     def __new__(cls, *args, **kwargs):
@@ -41,9 +40,11 @@ class ManagedIdentityCredential(object):
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """Asynchronously request an access token for `scopes`.
 
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
         return AccessToken()
 
@@ -61,8 +62,7 @@ class _AsyncManagedIdentityBase(_ManagedIdentityBase):
 class ImdsCredential(_AsyncManagedIdentityBase):
     """Asynchronously authenticates with a managed identity via the IMDS endpoint.
 
-    Keyword arguments:
-        - **client_id** (str): ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
+    :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
     def __init__(self, **kwargs: "Any") -> None:
@@ -74,7 +74,7 @@ class ImdsCredential(_AsyncManagedIdentityBase):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
         if self._endpoint_available is None:
             # Lacking another way to determine whether the IMDS endpoint is listening,
@@ -122,7 +122,7 @@ class MsiCredential(_AsyncManagedIdentityBase):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
         if not self._endpoint:
             raise ClientAuthenticationError(message="MSI endpoint unavailable")

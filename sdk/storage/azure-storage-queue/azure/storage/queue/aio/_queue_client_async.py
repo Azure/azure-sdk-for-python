@@ -54,46 +54,36 @@ if TYPE_CHECKING:
 
 
 class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
-    """A async client to interact with a specific Queue.
+    """A client to interact with a specific Queue.
 
-    :ivar str url:
-        The full endpoint URL to the Queue, including SAS token if used. This could be
-        either the primary endpoint, or the secondard endpint depending on the current `location_mode`.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
-    :ivar str secondary_endpoint:
-        The full secondard endpoint URL if configured. If not available
-        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str secondary_hostname:
-        The hostname of the secondary endpoint. If not available this
-        will be None. To explicitly specify a secondary hostname, use the optional
-        `secondary_hostname` keyword argument on instantiation.
-    :ivar str location_mode:
-        The location mode that the client is currently using. By default
-        this will be "primary". Options include "primary" and "secondary".
     :param str account_url:
         The URL to the storage account. In order to create a client given the full URI to the queue,
-        use the from_queue_url classmethod.
+        use the :func:`from_queue_url` classmethod.
     :param queue_name: The name of the queue.
     :type queue_name: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
+    :keyword str secondary_hostname:
+        The hostname of the secondary endpoint.
+    :keyword encode_policy: The encoding policy to use on outgoing messages.
+        Default is not to encode messages. Other options include :class:`TextBase64EncodePolicy`,
+        :class:`BinaryBase64EncodePolicy` or `None`.
+    :keyword decode_policy: The decoding policy to use on incoming messages.
+        Default value is not to decode messages. Other options include :class:`TextBase64DecodePolicy`,
+        :class:`BinaryBase64DecodePolicy` or `None`.
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../tests/test_queue_samples_message_async.py
+        .. literalinclude:: ../samples/queue_samples_message_async.py
             :start-after: [START async_create_queue_client]
             :end-before: [END async_create_queue_client]
             :language: python
-            :dedent: 12
+            :dedent: 16
             :caption: Create the queue client with url and credential.
 
-        .. literalinclude:: ../tests/test_queue_samples_message_async.py
+        .. literalinclude:: ../samples/queue_samples_message_async.py
             :start-after: [START async_create_queue_client_from_connection_string]
             :end-before: [END async_create_queue_client_from_connection_string]
             :language: python
@@ -122,27 +112,26 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         # type: (Optional[Any]) -> None
         """Creates a new queue in the storage account.
 
-        If a queue with the same name already exists, the operation fails.
+        If a queue with the same name already exists, the operation fails with
+        a `ResourceExistsError`.
 
-        :keyword metadata:
+        :keyword dict(str,str) metadata:
             A dict containing name-value pairs to associate with the queue as
             metadata. Note that metadata names preserve the case with which they
             were created, but are case-insensitive when set or read.
-        :type metadata: dict(str, str)
         :keyword int timeout:
             The server timeout, expressed in seconds.
         :return: None or the result of cls(response)
         :rtype: None
-        :raises:
-            ~azure.storage.queue._generated.models._models.StorageErrorException
+        :raises: StorageErrorException
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_hello_world_async.py
+            .. literalinclude:: ../samples/queue_samples_hello_world_async.py
                 :start-after: [START async_create_queue]
                 :end-before: [END async_create_queue]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Create a queue.
         """
         metadata = kwargs.pop('metadata', None)
@@ -175,11 +164,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_hello_world_async.py
+            .. literalinclude:: ../samples/queue_samples_hello_world_async.py
                 :start-after: [START async_delete_queue]
                 :end-before: [END async_delete_queue]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Delete a queue.
         """
         timeout = kwargs.pop('timeout', None)
@@ -197,16 +186,16 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :return: Properties for the specified container within a container object.
+        :return: User-defined metadata for the queue.
         :rtype: ~azure.storage.queue.QueueProperties
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_get_queue_properties]
                 :end-before: [END async_get_queue_properties]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Get the properties on the queue.
         """
         timeout = kwargs.pop('timeout', None)
@@ -235,11 +224,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_set_queue_metadata]
                 :end-before: [END async_set_queue_metadata]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Set metadata on the queue.
         """
         timeout = kwargs.pop('timeout', None)
@@ -258,7 +247,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         """Returns details about any stored access policies specified on the
         queue that may be used with Shared Access Signatures.
 
-        :param int timeout:
+        :keyword int timeout:
             The server timeout, expressed in seconds.
         :return: A dictionary of access policies associated with the queue.
         :rtype: dict(str, ~azure.storage.queue.AccessPolicy)
@@ -290,8 +279,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         :class:`HttpResponseError` until the access policy becomes active.
 
         :param signed_identifiers:
-            A list of SignedIdentifier access policies to associate with the queue.
-            The list may contain up to 5 elements. An empty list
+            SignedIdentifier access policies to associate with the queue.
+            This may contain up to 5 elements. An empty dict
             will clear the access policies set on the service.
         :type signed_identifiers: dict(str, ~azure.storage.queue.AccessPolicy)
         :keyword int timeout:
@@ -299,11 +288,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_set_access_policy]
                 :end-before: [END async_set_access_policy]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Set an access policy on the queue.
         """
         timeout = kwargs.pop('timeout', None)
@@ -369,11 +358,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_send_messages]
                 :end-before: [END async_send_messages]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Send messages.
         """
         visibility_timeout = kwargs.pop('visibility_timeout', None)
@@ -439,11 +428,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_receive_messages]
                 :end-before: [END async_receive_messages]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Receive messages from the queue.
         """
         messages_per_page = kwargs.pop('messages_per_page', None)
@@ -489,8 +478,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         If the key-encryption-key field is set on the local service object, this method will
         encrypt the content before uploading.
 
-        :param str message:
+        :param message:
             The message object or id identifying the message to update.
+        :type message: str or ~azure.storage.queue.QueueMessage
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message` operation.
@@ -513,11 +503,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_update_message]
                 :end-before: [END async_update_message]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Update a message.
         """
         visibility_timeout = kwargs.pop('visibility_timeout', None)
@@ -579,7 +569,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         is set to 1. If it is not deleted and is subsequently retrieved again, the
         dequeue_count property is incremented. The client may use this value to
         determine how many times a message has been retrieved. Note that a call
-        to peek_messages does not increment the value of DequeueCount, but returns
+        to peek_messages does not increment the value of dequeue_count, but returns
         this value for the client to read.
 
         If the key-encryption-key or resolver field is set on the local service object,
@@ -599,11 +589,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_peek_message]
                 :end-before: [END async_peek_message]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Peek messages.
         """
         timeout = kwargs.pop('timeout', None)
@@ -635,11 +625,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_clear_messages]
                 :end-before: [END async_clear_messages]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Clears all messages.
         """
         timeout = kwargs.pop('timeout', None)
@@ -663,8 +653,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         pop_receipt returned from the :func:`~receive_messages` or :func:`~update_message`
         operation.
 
-        :param str message:
+        :param message:
             The message object or id identifying the message to delete.
+        :type message: str or ~azure.storage.queue.QueueMessage
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message`.
@@ -673,11 +664,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../tests/test_queue_samples_message_async.py
+            .. literalinclude:: ../samples/queue_samples_message_async.py
                 :start-after: [START async_delete_message]
                 :end-before: [END async_delete_message]
                 :language: python
-                :dedent: 12
+                :dedent: 16
                 :caption: Delete a message.
         """
         timeout = kwargs.pop('timeout', None)

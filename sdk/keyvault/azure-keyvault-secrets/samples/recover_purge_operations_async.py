@@ -14,11 +14,11 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-secrets and azure-identity libraries (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic list operations on a vault(secret) resource for Azure Key Vault.
+# Sample - demonstrates deleting and purging a vault(secret) resource for Azure Key Vault.
 # The vault has to be soft-delete enabled to perform one of the following operations. See
 # https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
 #
@@ -35,9 +35,9 @@ async def run_sample():
     # Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-    VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
+    VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
-    client = SecretClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
+    client = SecretClient(vault_url=VAULT_URL, credential=credential)
     try:
         # Let's create secrets holding storage and bank accounts credentials. If the secret
         # already exists in the Key Vault, then a new version of the secret is created.
@@ -59,11 +59,12 @@ async def run_sample():
         print("Recovered Secret with name '{0}'.".format(recovered_secret.name))
 
         # Let's delete storage account now.
-        # If the keyvault is soft-delete enabled, then for permanent deletion deleted secret needs to be purged.
+        # If the keyvault is soft-delete enabled, then for permanent deletion, the deleted secret needs to be purged.
         print("\n.. Deleting secret...")
         await client.delete_secret(storage_secret.name)
 
-        # To ensure permanent deletion, we might need to purge the secret.
+        # Secrets will still purge eventually on their scheduled purge date, but calling `purge_deleted_secret` immediately
+        # purges.
         print("\n.. Purge Deleted Secret")
         await client.purge_deleted_secret(storage_secret.name)
         print("Secret has been permanently deleted.")

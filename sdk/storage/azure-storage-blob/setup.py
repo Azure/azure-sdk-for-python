@@ -71,7 +71,7 @@ setup(
     author_email='ascl@microsoft.com',
     url='https://github.com/Azure/azure-storage-python',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -92,7 +92,7 @@ setup(
         'tests.common'
     ]),
     install_requires=[
-        "azure-core<2.0.0,>=1.0.0b5",
+        "azure-core<2.0.0,>=1.0.0",
         "msrest>=0.6.10",
         "cryptography>=2.1.4"
     ],

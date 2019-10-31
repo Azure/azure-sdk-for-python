@@ -13,6 +13,11 @@ import asyncio
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from testcase import GlobalStorageAccountPreparer
+from asyncblobtestcase import (
+    AsyncBlobTestCase,
+)
 
 from azure.storage.blob import (
     BlobType,
@@ -26,18 +31,11 @@ from azure.storage.blob.aio import (
     ContainerClient,
     BlobClient,
 )
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record,
-)
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
-FILE_PATH = 'blob_input.temp.dat'
 LARGE_BLOB_SIZE = 64 * 1024 + 5
 #------------------------------------------------------------------------------
-
 
 class AiohttpTestTransport(AioHttpTransport):
     """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
@@ -50,61 +48,45 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageBlockBlobTestAsync(StorageTestCase):
-
-    def setUp(self):
-        super(StorageBlockBlobTestAsync, self).setUp()
-
-        url = self._get_account_url()
-
+class StorageBlockBlobTestAsync(AsyncBlobTestCase):
+    #--Helpers-----------------------------------------------------------------
+    async def _setup(self, name, key):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         self.bsc = BlobServiceClient(
-            url,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            self._account_url(name),
+            credential=key,
             connection_data_block_size=4 * 1024,
             max_single_put_size=32 * 1024,
             max_block_size=4 * 1024,
             transport=AiohttpTestTransport())
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
-
-    def tearDown(self):
-        if not self.is_playback():
-            loop = asyncio.get_event_loop()
+        if self.is_live:
             try:
-                loop.run_until_complete(self.bsc.delete_container(self.container_name))
-            except:
+                await self.bsc.create_container(self.container_name)
+            except ResourceExistsError:
                 pass
 
+    def _teardown(self, FILE_PATH):
         if os.path.isfile(FILE_PATH):
             try:
                 os.remove(FILE_PATH)
             except:
                 pass
 
-        return super(StorageBlockBlobTestAsync, self).tearDown()
-
-    #--Helpers-----------------------------------------------------------------
-    async def _setup(self):
-        if not self.is_playback():
-            try:
-                await self.bsc.create_container(self.container_name)
-            except ResourceExistsError:
-                pass
-
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
     async def _create_blob(self):
-        await self._setup()
+        #await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         await blob.upload_blob(b'')
         return blob
 
     async def assertBlobEqual(self, container_name, blob_name, expected_data):
-        await self._setup()
+        #await self._setup(storage_account.name, storage_account_key)
         blob = self.bsc.get_blob_client(container_name, blob_name)
         stream = await blob.download_blob()
         actual_data = await stream.readall()
@@ -122,9 +104,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
     #--Test cases for block blobs --------------------------------------------
 
-    
-    async def _test_put_block(self):
-        await self._setup()
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_put_block(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account.name, storage_account_key)
         # Arrange
         blob = await self._create_blob()
 
@@ -134,13 +117,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
             self.assertIsNone(resp)
 
         # Assert
-    @record
-    def test_put_block(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_block())
-    
-    async def _test_put_block_unicode(self):
-        await self._setup()
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_put_block_unicode(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account.name, storage_account_key)
         # Arrange
         blob = await self._create_blob()
 
@@ -150,14 +130,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_put_block_unicode(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_block_unicode())
-    
-    async def _test_put_block_with_md5(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_put_block_with_md5(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob = await self._create_blob()
 
         # Act
@@ -165,14 +142,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_put_block_with_md5(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_block_with_md5())
-    
-    async def _test_put_block_list(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_put_block_list(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         await blob.stage_block('1', b'AAA')
@@ -190,14 +164,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(content.properties.etag, put_block_list_resp.get('etag'))
         self.assertEqual(content.properties.last_modified, put_block_list_resp.get('last_modified'))
 
-    @record
-    def test_put_block_list(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_block_list())
-
-    async def _test_put_block_list_invalid_block_id(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_put_block_list_invalid_block_id(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         await blob.stage_block('1', b'AAA')
@@ -214,14 +185,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_put_block_list_invalid_block_id(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_block_list_invalid_block_id())
-
-    async def _test_put_block_list_with_md5(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_put_block_list_with_md5(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         await blob.stage_block('1', b'AAA')
@@ -233,14 +201,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         await blob.commit_block_list(block_list, validate_content=True)
 
         # Assert
-    @record
-    def test_put_block_list_with_md5(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_block_list_with_md5())
-
-    async def _test_put_block_list_with_blob_tier_specified(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def _test_put_block_list_with_blob_tier_specified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
         await blob_client.stage_block('1', b'AAA')
@@ -257,14 +222,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         blob_properties = await blob_client.get_blob_properties()
         self.assertEqual(blob_properties.blob_tier, blob_tier)
 
-    @record
-    def test_put_block_list_with_blob_tier_specified_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_block_list_with_blob_tier_specified())
-
-    async def _test_get_block_list_no_blocks(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_get_block_list_no_blocks(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob = await self._create_blob()
 
         # Act
@@ -275,14 +237,12 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(len(block_list[1]), 0)
         self.assertEqual(len(block_list[0]), 0)
 
-    @record
-    def test_get_block_list_no_blocks(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_block_list_no_blocks())
 
-    async def _test_get_block_list_uncommitted_blocks(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_get_block_list_uncommitted_blocks(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         await blob.stage_block('1', b'AAA')
@@ -304,14 +264,12 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(block_list[1][2].id, '3')
         self.assertEqual(block_list[1][2].size, 3)
 
-    @record
-    def test_get_block_list_uncommitted_blocks(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_block_list_uncommitted_blocks())
 
-    async def _test_get_block_list_committed_blocks(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_get_block_list_committed_blocks(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         await blob.stage_block('1', b'AAA')
@@ -336,14 +294,12 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(block_list[0][2].id, '3')
         self.assertEqual(block_list[0][2].size, 3)
 
-    @record
-    def test_get_block_list_committed_blocks(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_block_list_committed_blocks())
 
-    async def _test_create_small_block_blob_with_no_overwrite(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_small_block_blob_with_no_overwrite(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data1 = b'hello world'
@@ -363,14 +319,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self.assertEqual(props.blob_type, BlobType.BlockBlob)
 
-    @record
-    def test_create_small_block_blob_with_no_overwrite(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_small_block_blob_with_no_overwrite())
-
-    async def _test_create_small_block_blob_with_overwrite(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_small_block_blob_with_overwrite(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data1 = b'hello world'
@@ -388,24 +341,21 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(props.last_modified, update_resp.get('last_modified'))
         self.assertEqual(props.blob_type, BlobType.BlockBlob)
 
-    @record
-    def test_create_small_block_blob_with_overwrite(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_small_block_blob_with_overwrite())
-
-    async def _test_create_large_block_blob_with_no_overwrite(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_large_block_blob_with_no_overwrite(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
         data2 = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        create_resp = await blob.upload_blob(data1, overwrite=True, metadata={'BlobData': 'Data1'})
+        create_resp = await blob.upload_blob(data1, overwrite=True, metadata={'blobdata': 'data1'})
 
         with self.assertRaises(ResourceExistsError):
-            await blob.upload_blob(data2, overwrite=False, metadata={'BlobData': 'Data2'})
+            await blob.upload_blob(data2, overwrite=False, metadata={'blobdata': 'data2'})
 
         props = await blob.get_blob_properties()
 
@@ -414,25 +364,22 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self.assertEqual(props.blob_type, BlobType.BlockBlob)
-        self.assertEqual(props.metadata, {'BlobData': 'Data1'})
+        self.assertEqual(props.metadata, {'blobdata': 'data1'})
         self.assertEqual(props.size, LARGE_BLOB_SIZE)
 
-    @record
-    def test_create_large_block_blob_with_no_overwrite(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_large_block_blob_with_no_overwrite())
-
-    async def _test_create_large_block_blob_with_overwrite(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_large_block_blob_with_overwrite(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
         data2 = self.get_random_bytes(LARGE_BLOB_SIZE + 512)
 
         # Act
-        create_resp = await blob.upload_blob(data1, overwrite=True, metadata={'BlobData': 'Data1'})
-        update_resp = await blob.upload_blob(data2, overwrite=True, metadata={'BlobData': 'Data2'})
+        create_resp = await blob.upload_blob(data1, overwrite=True, metadata={'blobdata': 'data1'})
+        update_resp = await blob.upload_blob(data2, overwrite=True, metadata={'blobdata': 'data2'})
 
         props = await blob.get_blob_properties()
 
@@ -441,17 +388,14 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(props.etag, update_resp.get('etag'))
         self.assertEqual(props.last_modified, update_resp.get('last_modified'))
         self.assertEqual(props.blob_type, BlobType.BlockBlob)
-        self.assertEqual(props.metadata, {'BlobData': 'Data2'})
+        self.assertEqual(props.metadata, {'blobdata': 'data2'})
         self.assertEqual(props.size, LARGE_BLOB_SIZE + 512)
 
-    @record
-    def test_create_large_block_blob_with_overwrite(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_large_block_blob_with_overwrite())
-
-    async def _test_create_blob_from_bytes_single_put(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_bytes_single_put(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = b'hello world'
@@ -465,14 +409,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @record
-    def test_create_blob_from_bytes_single_put(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_bytes_single_put())
-
-    async def _test_create_blob_from_0_bytes(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_0_bytes(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = b''
@@ -486,14 +427,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @record
-    def test_create_blob_from_0_bytes(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_0_bytes())
-
-    async def _test_create_from_bytes_blob_unicode(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_from_bytes_blob_unicode(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = b'hello world'
@@ -507,16 +445,13 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @record
-    def test_create_from_bytes_blob_unicode(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_from_bytes_blob_unicode())
-
-    async def _test_create_from_bytes_blob_with_lease_id(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_from_bytes_blob_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        await self._setup(storage_account.name, storage_account_key)
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
         blob = await self._create_blob()
@@ -533,16 +468,13 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(output.properties.etag, create_resp.get('etag'))
         self.assertEqual(output.properties.last_modified, create_resp.get('last_modified'))
 
-    @record
-    def test_create_from_bytes_blob_with_lease_id(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_from_bytes_blob_with_lease_id())
-
-    async def _test_create_blob_from_bytes_with_metadata(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_bytes_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        await self._setup(storage_account.name, storage_account_key)
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -558,16 +490,13 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         md = md.metadata
         self.assertDictEqual(md, metadata)
 
-    @record
-    def test_create_blob_from_bytes_with_metadata(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_bytes_with_metadata())
-
-    async def _test_create_blob_from_bytes_with_properties(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_bytes_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        await self._setup(storage_account.name, storage_account_key)
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -586,16 +515,13 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
-    @record
-    def test_create_blob_from_bytes_with_properties(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_bytes_with_properties())
-    
-    async def _test_create_blob_from_bytes_with_progress(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_bytes_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        await self._setup(storage_account.name, storage_account_key)
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -619,16 +545,13 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @record
-    def test_create_blob_from_bytes_with_progress(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_bytes_with_progress())
-
-    async def _test_create_blob_from_bytes_with_index(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_bytes_with_index(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        await self._setup(storage_account.name, storage_account_key)
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -643,14 +566,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         output = await db.readall()
         self.assertEqual(data[3:], output)
 
-    @record
-    def test_create_blob_from_bytes_with_index(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_bytes_with_index())
-
-    async def _test_create_blob_from_bytes_with_index_and_count(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_bytes_with_index_and_count(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -663,14 +583,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         output = await db.readall()
         self.assertEqual(data[3:8], output)
 
-    @record
-    def test_create_blob_from_bytes_with_index_and_count(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_bytes_with_index_and_count())
-
-    async def _test_create_blob_from_bytes_with_index_and_count_and_properties(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_frm_bytes_with_index_cnt_props(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -689,14 +606,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
-    @record
-    def test_create_blob_from_bytes_with_index_and_count_and_properties(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_bytes_with_index_and_count_and_properties())
-
-    async def _test_create_blob_from_bytes_non_parallel(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_bytes_non_parallel(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -707,14 +621,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data)
 
-    @record
-    def test_create_blob_from_bytes_non_parallel(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_bytes_non_parallel())
-
-    async def _test_create_blob_from_bytes_with_blob_tier_specified(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def _test_create_blob_from_bytes_with_blob_tier_specified(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
         data = b'hello world'
@@ -727,21 +638,19 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(blob_properties.blob_tier, blob_tier)
 
-    @record
-    def test_create_blob_from_bytes_with_blob_tier_specified_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_bytes_with_blob_tier_specified())
-
-    async def _test_create_blob_from_path(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_path(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        await self._setup(storage_account.name, storage_account_key)
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        FILE_PATH = 'create_blob_from_path.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -754,18 +663,17 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         await self.assertBlobEqual(self.container_name, blob_name, data)
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
+        self._teardown(FILE_PATH)
 
-    @record
-    def test_create_blob_from_path(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_path())
-
-    async def _test_create_blob_from_path_non_parallel(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_path_non_parallel(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(100)
+        FILE_PATH = 'from_path_non_parallel.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -778,17 +686,16 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         await self.assertBlobEqual(self.container_name, blob_name, data)
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
+        self._teardown(FILE_PATH)
 
-    @record
-    def test_create_blob_from_path_non_parallel(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_path_non_parallel())
-
-    async def _test_upload_blob_from_path_non_parallel_with_standard_blob_tier(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def _test_upload_blob_from_path_non_parallel_with_standard_blob_tier(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        FILE_PATH = 'non_parallel_with_standard_blob_tier.temp.dat'
         data = self.get_random_bytes(100)
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
@@ -800,22 +707,21 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # Assert
         self.assertEqual(props.blob_tier, blob_tier)
+        self._teardown(FILE_PATH)
 
-    @record
-    def test_upload_blob_from_path_non_parallel_with_standard_blob_tier_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_upload_blob_from_path_non_parallel_with_standard_blob_tier())
-
-    async def _test_create_blob_from_path_with_progress(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        await self._setup(storage_account.name, storage_account_key)
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        FILE_PATH = 'blob_from_path_with_progressasync.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -833,22 +739,21 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
+        self._teardown(FILE_PATH)
 
-    @record
-    def test_create_blob_from_path_with_progress(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_path_with_progress())
-
-    async def _test_create_blob_from_path_with_properties(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_path_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        await self._setup(storage_account.name, storage_account_key)
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        FILE_PATH = 'create_blob_from_path_with_propertiesasync.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -864,22 +769,21 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         properties = await blob.get_blob_properties()
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
+        self._teardown(FILE_PATH)
 
-    @record
-    def test_create_blob_from_path_with_properties(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_path_with_properties())
-
-    async def _test_create_blob_from_stream_chunked_upload(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_stream_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        await self._setup(storage_account.name, storage_account_key)
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        FILE_PATH = 'create_blob_from_stream_chunked_uploadasync.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -892,23 +796,22 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         await self.assertBlobEqual(self.container_name, blob_name, data)
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
+        self._teardown(FILE_PATH)
 
-    @record
-    def test_create_blob_from_stream_chunked_upload(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_stream_chunked_upload())
-
-    async def _test_create_blob_from_stream_non_seekable_chunked_upload_known_size(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_frm_stream_nonseek_chunk_upload_knwn_size(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        await self._setup(storage_account.name, storage_account_key)
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         blob_size = len(data) - 66
+        FILE_PATH = 'create_frm_stream_nonseek_chunk_upload_knwn_sizeasync.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -919,22 +822,21 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
+        self._teardown(FILE_PATH)
 
-    @record
-    def test_create_blob_from_stream_non_seekable_chunked_upload_known_size(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_stream_non_seekable_chunked_upload_known_size())
-
-    async def _test_create_blob_from_stream_non_seekable_chunked_upload_unknown_size(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_blob_frm_strm_nonseek_chunk_upld_unkwn_size(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        await self._setup(storage_account.name, storage_account_key)
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        FILE_PATH = 'strm_nonseek_chunk_upld_unkwn_size_async.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -945,22 +847,21 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
+        self._teardown(FILE_PATH)
 
-    @record
-    def test_create_blob_from_stream_non_seekable_chunked_upload_unknown_size(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_stream_non_seekable_chunked_upload_unknown_size())
-
-    async def _test_create_blob_from_stream_with_progress_chunked_upload(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_stream_with_progress_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        await self._setup(storage_account.name, storage_account_key)
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        FILE_PATH = 'from_stream_with_progress_chunked_upload.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -978,22 +879,21 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
+        self._teardown(FILE_PATH)
 
-    @record
-    def test_create_blob_from_stream_with_progress_chunked_upload(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_stream_with_progress_chunked_upload())
-
-    async def _test_create_blob_from_stream_chunked_upload_with_count(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_stream_chunked_upload_with_count(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        await self._setup(storage_account.name, storage_account_key)
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        FILE_PATH = 'blob_from_stream_chunked_upload_with.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1004,22 +904,21 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
+        self._teardown(FILE_PATH)
 
-    @record
-    def test_create_blob_from_stream_chunked_upload_with_count(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_stream_chunked_upload_with_count())
-
-    async def _test_create_blob_from_stream_chunked_upload_with_count_and_properties(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_frm_stream_chu_upld_with_countandprops(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        await self._setup(storage_account.name, storage_account_key)
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        FILE_PATH = '_frm_stream_chu_upld_with_count.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1036,22 +935,21 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         properties = await blob.get_blob_properties()
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
+        self._teardown(FILE_PATH)
 
-    @record
-    def test_create_blob_from_stream_chunked_upload_with_count_and_properties(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_stream_chunked_upload_with_count_and_properties())
-
-    async def _test_create_blob_from_stream_chunked_upload_with_properties(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_stream_chunked_upload_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        if not self.is_live:
+            pytest.skip("live only")
 
+        await self._setup(storage_account.name, storage_account_key)
         # Arrange
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        FILE_PATH = '_from_stream_chunked_upload_with_propert.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -1067,22 +965,21 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         properties = await blob.get_blob_properties()
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
+        self._teardown(FILE_PATH)
 
-    @record
-    def test_create_blob_from_stream_chunked_upload_with_properties(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_stream_chunked_upload_with_properties())
-
-    async def _test_create_blob_from_stream_chunked_upload_with_properties(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def _test_create_blob_from_stream_chunked_upload_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        FILE_PATH = 'tream_chunked_upload_with_properti.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
         blob_tier = StandardBlobTier.Cool
@@ -1099,15 +996,13 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # Assert
         self.assertEqual(properties.blob_tier, blob_tier)
+        self._teardown(FILE_PATH)
 
-    @record
-    def test_create_blob_from_stream_chunked_upload_with_properties_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_stream_chunked_upload_with_properties())
-
-    async def _test_create_blob_from_text(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_text(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         text = u'hello 啊齄丂狛狜 world'
@@ -1122,16 +1017,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @record
-    def test_create_blob_from_text(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_text())
-
-    async def _test_create_blob_from_text_with_encoding(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_text_with_encoding(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         text = u'hello 啊齄丂狛狜 world'
@@ -1143,14 +1033,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
 
-    @record
-    def test_create_blob_from_text_with_encoding(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_text_with_encoding())
-
-    async def _test_create_blob_from_text_with_encoding_and_progress(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_text_with_encoding_and_progress(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         text = u'hello 啊齄丂狛狜 world'
@@ -1170,16 +1057,13 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         await self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
-    @record
-    def test_create_blob_from_text_with_encoding_and_progress(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_text_with_encoding_and_progress())
-
-    async def _test_create_blob_from_text_chunked_upload(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_from_text_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        await self._setup(storage_account.name, storage_account_key)
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
         blob_name = self._get_blob_reference()
@@ -1196,14 +1080,11 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, encoded_data)
 
-    @record
-    def test_create_blob_from_text_chunked_upload(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_from_text_chunked_upload())
-
-    async def _test_create_blob_with_md5(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_with_md5(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = b'hello world'
@@ -1213,18 +1094,15 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_create_blob_with_md5(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_with_md5())
-
-    async def _test_create_blob_with_md5_chunked(self):
+    @GlobalStorageAccountPreparer()
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_blob_with_md5_chunked(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
-            return
+        if not self.is_live:
+            pytest.skip("live only")
 
         # Arrange
-        await self._setup()
+        await self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1234,11 +1112,5 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_create_blob_with_md5_chunked(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_blob_with_md5_chunked())
 
 #------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

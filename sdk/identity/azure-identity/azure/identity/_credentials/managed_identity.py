@@ -35,8 +35,7 @@ class ManagedIdentityCredential(object):
     See the Azure Active Directory documentation for more information about managed identities:
     https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview
 
-    Keyword arguments
-        - **client_id** (str): ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
+    :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
     def __new__(cls, **kwargs):
@@ -54,9 +53,11 @@ class ManagedIdentityCredential(object):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
         return AccessToken()
 
@@ -112,8 +113,8 @@ class _ManagedIdentityBase(object):
 class ImdsCredential(_ManagedIdentityBase):
     """Authenticates with a managed identity via the IMDS endpoint.
 
-    Keyword arguments:
-        - **client_id** (str): ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
+
+    :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
     def __init__(self, **kwargs):
@@ -127,7 +128,7 @@ class ImdsCredential(_ManagedIdentityBase):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
         if self._endpoint_available is None:
             # Lacking another way to determine whether the IMDS endpoint is listening,
@@ -164,8 +165,8 @@ class ImdsCredential(_ManagedIdentityBase):
 class MsiCredential(_ManagedIdentityBase):
     """Authenticates via the MSI endpoint in an App Service or Cloud Shell environment.
 
-    Keyword arguments:
-      - **client_id** (str): ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
+
+  :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
     def __init__(self, **kwargs):
@@ -180,7 +181,7 @@ class MsiCredential(_ManagedIdentityBase):
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
 
         if not self._endpoint:

@@ -294,7 +294,7 @@ class DedicatedCloudServicesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'dedicatedCloudServiceName': self._serialize.url("dedicated_cloud_service_name", dedicated_cloud_service_name, 'str', pattern=r'^[-a-zA-Z0-9]+$')
+            'dedicatedCloudServiceName': self._serialize.url("dedicated_cloud_service_name", dedicated_cloud_service_name, 'str', pattern=r'^[a-zA-Z0-9]([-_.a-zA-Z0-9]*[a-zA-Z0-9])?$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

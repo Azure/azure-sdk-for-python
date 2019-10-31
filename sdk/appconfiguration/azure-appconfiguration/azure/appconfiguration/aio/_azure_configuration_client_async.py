@@ -56,9 +56,9 @@ class AzureAppConfigurationClient:
     # pylint:disable=protected-access
 
     def __init__(self, base_url, credential, **kwargs):
-        # type: (str, AppConfigConnectionStringCredential, Any) -> None
-        self.config = AzureAppConfigurationConfiguration(credential, **kwargs)
-        self.config.user_agent_policy = UserAgentPolicy(
+        # type: (str, AppConfigConnectionStringCredential, dict) -> None
+        self._config = AzureAppConfigurationConfiguration(credential, **kwargs)
+        self._config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs
         )
 
@@ -75,10 +75,10 @@ class AzureAppConfigurationClient:
     @classmethod
     def from_connection_string(
         cls,
-        connection_string,  # type: str
+        connection_string,
         **kwargs
     ):
-        # type: (...) -> AzureAppConfigurationClient
+        # type: (string, dict) -> AzureAppConfigurationClient
         """Create AzureAppConfigurationClient from a Connection String.
 
                 :param connection_string: Connection String
@@ -109,11 +109,11 @@ class AzureAppConfigurationClient:
 
         if policies is None:  # [] is a valid policy list
             policies = [
-                self.config.headers_policy,
-                self.config.user_agent_policy,
-                AppConfigRequestsCredentialsPolicy(self.config.credentials),
-                self.config.retry_policy,
-                self.config.logging_policy,  # HTTP request/response log
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                AppConfigRequestsCredentialsPolicy(self._config.credentials),
+                self._config.retry_policy,
+                self._config.logging_policy,  # HTTP request/response log
                 DistributedTracingPolicy(**kwargs),
                 HttpLoggingPolicy(**kwargs),
             ]
@@ -189,7 +189,7 @@ class AzureAppConfigurationClient:
     @distributed_trace_async
     async def get_configuration_setting(
             self, key, label=None, etag='*', match_condition=MatchConditions.Unconditionally, **kwargs):
-        # type: (str, str, str, MatchConditions, dict) -> ConfigurationSetting
+        # type: (str, Optional[str], Optional[str], Optional[MatchConditions], dict) -> ConfigurationSetting
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
@@ -199,13 +199,12 @@ class AzureAppConfigurationClient:
         :type label: str
         :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
         :type etag: str or None
-        :param match_condition: the match condition to use upon the etag
-        :type MatchConditions: :class:`MatchConditions`
+        :param ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
         :keyword datetime accept_datetime: the retrieved ConfigurationSetting that created no later than this datetime
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The matched ConfigurationSetting object
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`,
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \
         :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`ResourceExistsError`
 
         Example
@@ -301,22 +300,21 @@ class AzureAppConfigurationClient:
     @distributed_trace_async
     async def set_configuration_setting(
         self, configuration_setting, match_condition=MatchConditions.Unconditionally, **kwargs
-    ):  # type: (ConfigurationSetting, MatchConditions, dict) -> ConfigurationSetting
+    ):  # type: (ConfigurationSetting, Optional[MatchConditions], dict) -> ConfigurationSetting
 
         """Add or update a ConfigurationSetting.
         If the configuration setting identified by key and label does not exist, this is a create.
         Otherwise this is an update.
 
-        :param configuration_setting: the ConfigurationSetting to be added (if not exists)
+        :param configuration_setting: the ConfigurationSetting to be added (if not exists) \
         or updated (if exists) to the service
         :type configuration_setting: :class:`ConfigurationSetting`
-        :param match_condition: the match condition to use upon the etag
-        :type MatchConditions: :class:`MatchConditions`
+        :param ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`,
-        :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`ResourceNotModifiedError`,
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \
+        :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`ResourceNotModifiedError`, \
         :class:`ResourceNotFoundError`, :class:`ResourceExistsError`
 
         Example
@@ -370,8 +368,8 @@ class AzureAppConfigurationClient:
 
     @distributed_trace_async
     async def delete_configuration_setting(
-        self, key, label=None, etag=None, match_condition=MatchConditions.Unconditionally, **kwargs
-    ):  # type: (str, str, str, MatchConditions, dict) -> ConfigurationSetting
+        self, key, label=None, **kwargs
+    ):  # type: (str, Optional[str], dict) -> ConfigurationSetting
 
         """Delete a ConfigurationSetting if it exists
 
@@ -379,15 +377,13 @@ class AzureAppConfigurationClient:
         :type key: str
         :param label: label used to identify the ConfigurationSetting
         :type label: str
-        :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
-        :type etag: str or None
-        :param match_condition: the match condition to use upon the etag
-        :type MatchConditions: :class:`MatchConditions`
+        :keyword str etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
+        :keyword ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`,
-        :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`ResourceNotModifiedError`,
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \
+        :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`ResourceNotModifiedError`, \
         :class:`ResourceNotFoundError`, :class:`ResourceExistsError`
 
         Example
@@ -399,6 +395,9 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
+
+        etag = kwargs.pop("etag", None)
+        match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         error_map = {
             401: ClientAuthenticationError,
@@ -428,7 +427,7 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def list_revisions(
         self, keys=None, labels=None, **kwargs
-    ):  # type: (list, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
+    ):  # type: (Optional[list], Optional[list], dict) -> azure.core.paging.AsyncItemPaged[ConfigurationSetting]
 
         """
         Find the ConfigurationSetting revision history.
