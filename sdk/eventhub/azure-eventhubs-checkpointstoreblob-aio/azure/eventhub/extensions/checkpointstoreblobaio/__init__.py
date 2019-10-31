@@ -5,7 +5,7 @@
 
 __version__ = "1.0.0b5"
 
-from .blobstoragepm import BlobPartitionManager
+from .blobstoragepmaio import BlobPartitionManager
 
 __all__ = [
     "BlobPartitionManager",
