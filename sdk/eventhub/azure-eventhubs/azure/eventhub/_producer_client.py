@@ -51,7 +51,7 @@ class EventHubProducerClient(EventHubClient):
                     self._producers = [None] * num_of_producers
                     self._producers_locks = [threading.Lock()] * num_of_producers
 
-    def send(self, event_data, partition_key=None, partition_id=None, timeout=None):
+    def send(self, event_data, **kwargs):
         # type: (Union[EventData, EventDataBatch, Iterable[EventData]], Union[str, bytes], str, float) -> None
         """
         Sends an event data and blocks until acknowledgement is received or operation times out.
@@ -71,16 +71,18 @@ class EventHubProducerClient(EventHubClient):
                 :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
 
         """
+        partition_id = kwargs.pop("partition_id", None)
 
         self._init_locks_for_producers()
 
         producer_index = int(partition_id) if partition_id is not None else -1
-        if self._producers[producer_index] is None or self._producers[producer_index]._closed:  # pylint:disable=protected-access
+        if self._producers[producer_index] is None or\
+                self._producers[producer_index]._closed:  # pylint:disable=protected-access
             with self._producers_locks[producer_index]:
                 if self._producers[producer_index] is None:
                     self._producers[producer_index] = self._create_producer(partition_id=partition_id)
 
-        self._producers[producer_index].send(event_data, partition_key=partition_key, timeout=timeout)
+        self._producers[producer_index].send(event_data, **kwargs)
 
     def create_batch(self, max_size=None):
         # type:(int) -> EventDataBatch
@@ -102,6 +104,7 @@ class EventHubProducerClient(EventHubClient):
                 :caption: Create EventDataBatch object within limited size
 
         """
+        # pylint: disable=protected-access
         if not self._max_message_size_on_link:
             self._init_locks_for_producers()
             with self._producers_locks[-1]:
@@ -111,7 +114,7 @@ class EventHubProducerClient(EventHubClient):
             with self._client_lock:
                 self._max_message_size_on_link =\
                     self._producers[-1]._handler.message_handler._link.peer_max_message_size \
-                    or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
+                    or constants.MAX_MESSAGE_LENGTH_BYTES
 
         if max_size and max_size > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'

@@ -4,19 +4,20 @@
 # -----------------------------------------------------------------------------------
 
 from contextlib import contextmanager
-from typing import Dict, Type, Callable, List
+from typing import Dict, Type
 import uuid
 import logging
 import time
 import threading
 from enum import Enum
 
+from uamqp.compat import queue
+
 from azure.core.tracing import SpanKind  # type: ignore
 from azure.core.settings import settings  # type: ignore
 
-from azure.eventhub import EventPosition, EventHubError, EventData
+from azure.eventhub import EventPosition
 from .partition_context import PartitionContext
-from .partition_manager import PartitionManager, OwnershipLostError
 from .ownership_manager import OwnershipManager
 
 log = logging.getLogger(__name__)
@@ -33,41 +34,28 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
     in the context of a given consumer group.
 
     """
-    def __init__(
-            self, eventhub_client, consumer_group_name,
-            event_handler,
-            partition_id=None,
-            partition_manager=None,
-            initial_event_position=EventPosition("-1"),
-            polling_interval=10.0,
-            owner_level=None, prefetch=None,
-            track_last_enqueued_event_properties=False,
-            error_handler=None,
-            partition_initialize_handler=None,
-            partition_close_handler=None,
-    ):
+    def __init__(self, eventhub_client, consumer_group_name, on_event, **kwargs):
         self._consumer_group_name = consumer_group_name
         self._eventhub_client = eventhub_client
         self._namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
         self._eventhub_name = eventhub_client.eh_name
-        self._partition_id = partition_id
+        self._event_handler = on_event
+        self._partition_id = kwargs.get("partition_id", None)
+        self._error_handler = kwargs.get("on_error", None)
+        self._partition_initialize_handler = kwargs.get("on_partition_initialize", None)
+        self._partition_close_handler = kwargs.get("on_partition_close", None)
+        self._partition_manager = kwargs.get("partition_manager", None)
+        self._initial_event_position = kwargs.get("initial_event_position", EventPosition("-1"))
 
-        self._event_handler = event_handler
-        self._error_handler = error_handler
-        self._partition_initialize_handler = partition_initialize_handler
-        self._partition_close_handler = partition_close_handler
-        self._partition_manager = partition_manager
-        self._initial_event_position = initial_event_position  # will be replaced by reset event position in preview 4
-
-        self._polling_interval = polling_interval
+        self._polling_interval = kwargs.get("polling_interval", 10.0)
         self._ownership_timeout = self._polling_interval * 2
 
         self._partition_contexts = {}
 
         # Receive parameters
-        self._owner_level = owner_level
-        self._prefetch = prefetch
-        self._track_last_enqueued_event_properties = track_last_enqueued_event_properties,
+        self._owner_level = kwargs.get("owner_level", None)
+        self._prefetch = kwargs.get("prefetch", None)
+        self._track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
         self._last_enqueued_event_properties = {}
         self._id = str(uuid.uuid4())
         self._running = False
@@ -75,6 +63,8 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         # Each partition consumer is working in its own thread
         self._working_threads = {}  # type: Dict[str, threading.Thread]
         self._threads_stop_flags = {}  # type: Dict[str, bool]
+
+        self._callback_queue = queue.Queue(maxsize=10000)  # Right now the limitation of receiving speed is ~10k
 
     def __repr__(self):
         return 'EventProcessor: id {}'.format(self._id)
@@ -96,7 +86,8 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         for partition_id in claimed_partitions:
             checkpoint = checkpoints.get(partition_id) if checkpoints else None
             if partition_id not in self._working_threads or not self._working_threads[partition_id].is_alive():
-                self._working_threads[partition_id] = threading.Thread(target=self._receive, args=(partition_id, checkpoint))
+                self._working_threads[partition_id] = threading.Thread(target=self._receive,
+                                                                       args=(partition_id, checkpoint))
                 self._threads_stop_flags[partition_id] = False
                 self._working_threads[partition_id].start()
                 log.info("Working thread started, ownership %r, checkpoint %r", partition_id, checkpoint)
@@ -162,7 +153,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             )
             if self._error_handler:
                 try:
-                    self._error_handler(partition_context, err)
+                    self._callback_queue.put((self._error_handler, partition_context, err), block=True)
                 except Exception as err_again:  # pylint:disable=broad-except
                     log.warning(
                         "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
@@ -178,7 +169,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     owner_id, eventhub_name, partition_id, consumer_group_name, reason
                 )
                 try:
-                    self._partition_close_handler(partition_context, reason)
+                    self._callback_queue.put((self._partition_close_handler, partition_context, reason), block=True)
                 except Exception as err:  # pylint:disable=broad-except
                     log.warning(
                         "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
@@ -189,7 +180,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         try:
             if self._partition_initialize_handler:
                 try:
-                    self._partition_initialize_handler(partition_context)
+                    self._callback_queue.put((self._partition_initialize_handler, partition_context), block=True)
                 except Exception as err:  # pylint:disable=broad-except
                     log.warning(
                         "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
@@ -202,7 +193,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     self._last_enqueued_event_properties[partition_id] = \
                         partition_consumer.last_enqueued_event_properties
                     with self._context(events):
-                        self._event_handler(partition_context, events)
+                        self._callback_queue.put((self._event_handler, partition_context, events), block=True)
                 except Exception as error:  # pylint:disable=broad-except
                     process_error(error)
                     break
@@ -214,7 +205,6 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             else:
                 close(CloseReason.OWNERSHIP_LOST)
             partition_consumer.close()
-            # TODO: remove thread from the working_threads?
 
     def _start(self):
         """Start the EventProcessor.
@@ -246,30 +236,31 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     log.warning("An exception (%r) occurred during balancing and claiming ownership for "
                                 "eventhub %r consumer group %r. Retrying after %r seconds",
                                 err, self._eventhub_name, self._consumer_group_name, self._polling_interval)
-                    '''
-                    ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
-                    when there are load balancing and/or checkpointing (partition_manager isn't None).
-                    They're swallowed here to retry every self._polling_interval seconds. Meanwhile this event processor
-                    won't lose the partitions it has claimed before.
-                    If it keeps failing, other EventProcessors will start to claim ownership of the partitions
-                    that this EventProcessor is working on. So two or multiple EventProcessors may be working
-                    on the same partition.
-
-                    Should we raise this exception out to users?
-                    '''
-                    # TODO: This exception handling requires more thinking
+                    # ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
+                    # when there are load balancing and/or checkpointing (partition_manager isn't None).
+                    # They're swallowed here to retry every self._polling_interval seconds.
+                    # Meanwhile this event processor won't lose the partitions it has claimed before.
+                    # If it keeps failing, other EventProcessors will start to claim ownership of the partitions
+                    # that this EventProcessor is working on. So two or multiple EventProcessors may be working
+                    # on the same partition.
                 time.sleep(self._polling_interval)
 
     def _get_last_enqueued_event_properties(self, partition_id):
         if partition_id in self._working_threads and partition_id in self._last_enqueued_event_properties:
             return self._last_enqueued_event_properties[partition_id]
-        else:
-            raise ValueError("You're not receiving events from partition {}".format(partition_id))
+        raise ValueError("You're not receiving events from partition {}".format(partition_id))
 
     def start(self):
         if not self._running:
             thread = threading.Thread(target=self._start)
             thread.start()
+            while not self._running:
+                time.sleep(0.1)
+            while self._running or self._callback_queue.qsize() > 0:
+                callback_and_args = self._callback_queue.get(True)
+                callback = callback_and_args[0]
+                callback(*callback_and_args[1:])
+                self._callback_queue.task_done()
         else:
             log.info("EventProcessor %r has already started.", self._id)
 
