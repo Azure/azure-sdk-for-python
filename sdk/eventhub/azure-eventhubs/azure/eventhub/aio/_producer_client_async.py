@@ -119,17 +119,14 @@ class EventHubProducerClient(EventHubClient):
 
         await self._producers[producer_index].send(event_data, partition_key=partition_key, timeout=timeout)
 
-    async def create_batch(self, max_size=None, partition_key=None):
-        # type:(int, str) -> EventDataBatch
+    async def create_batch(self, max_size=None):
+        # type:(int) -> EventDataBatch
         """
         Create an EventDataBatch object with max size being max_size.
         The max_size should be no greater than the max allowed message size defined by the service side.
 
         :param max_size: The maximum size of bytes data that an EventDataBatch object can hold.
         :type max_size: int
-        :param partition_key: With the given partition_key, event data will land to
-         a particular partition of the Event Hub decided by the service.
-        :type partition_key: str
         :return: an EventDataBatch instance
         :rtype: ~azure.eventhub.EventDataBatch
 
@@ -157,7 +154,7 @@ class EventHubProducerClient(EventHubClient):
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
                              .format(max_size, self._max_message_size_on_link))
 
-        return EventDataBatch(max_size=(max_size or self._max_message_size_on_link), partition_key=partition_key)
+        return EventDataBatch(max_size=(max_size or self._max_message_size_on_link))
 
     async def close(self):
         # type: () -> None
