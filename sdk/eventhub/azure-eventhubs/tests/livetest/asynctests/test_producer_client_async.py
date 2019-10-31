@@ -46,6 +46,21 @@ async def test_send_partition_async(connstr_receivers):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
+async def test_send_partitio_concurrent_async(connstr_receivers):
+    connection_str, receivers = connstr_receivers
+    client = EventHubProducerClient.from_connection_string(connection_str, network_tracing=False)
+    async with client:
+        await asyncio.gather(client.send(EventData(b"Data"), partition_id="1"),
+                             client.send(EventData(b"Data"), partition_id="1"))
+
+    partition_0 = receivers[0].receive(timeout=2)
+    assert len(partition_0) == 0
+    partition_1 = receivers[1].receive(timeout=2)
+    assert len(partition_1) == 2
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
 async def test_send_no_partition_batch_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(connection_str, network_tracing=False)
