@@ -9,9 +9,8 @@ import time
 import os
 import uuid
 import warnings
-import asyncio
 
-from azure.eventhub.extensions.checkpointstoreblobaio import BlobPartitionManager
+from azure.eventhub.extensions.checkpointstoreblob import BlobPartitionManager
 
 
 def get_live_storage_blob_client():
@@ -21,7 +20,7 @@ def get_live_storage_blob_client():
         return None, None
     try:
         from azure.storage.blob import BlobServiceClient
-        from azure.storage.blob.aio import ContainerClient
+        from azure.storage.blob import ContainerClient
     except ImportError or ModuleNotFoundError:
         return None, None
 
@@ -42,21 +41,25 @@ def remove_live_storage_blob_client(container_str):
         warnings.warn(UserWarning("storage container teardown failed"))
 
 
-async def _claim_and_list_ownership(live_storage_blob_client):
+def _claim_and_list_ownership(live_storage_blob_client):
+    fully_qualified_namespace = 'test_namespace'
     eventhub_name = 'eventhub'
     consumer_group_name = '$default'
     ownership_cnt = 8
-    async with live_storage_blob_client:
+    with live_storage_blob_client:
         partition_manager = BlobPartitionManager(container_client=live_storage_blob_client)
 
-        ownership_list = await partition_manager.list_ownership(eventhub_name=eventhub_name,
-                                                                consumer_group_name=consumer_group_name)
+        ownership_list = partition_manager.list_ownership(
+            fully_qualified_namespace=fully_qualified_namespace,
+            eventhub_name=eventhub_name,
+            consumer_group_name=consumer_group_name)
         assert len(ownership_list) == 0
 
         ownership_list = []
 
         for i in range(ownership_cnt):
             ownership = {}
+            ownership['fully_qualified_namespace'] = fully_qualified_namespace
             ownership['eventhub_name'] = eventhub_name
             ownership['consumer_group_name'] = consumer_group_name
             ownership['owner_id'] = 'ownerid'
@@ -66,10 +69,12 @@ async def _claim_and_list_ownership(live_storage_blob_client):
             ownership["sequence_number"] = "1"
             ownership_list.append(ownership)
 
-        await partition_manager.claim_ownership(ownership_list)
+        partition_manager.claim_ownership(ownership_list)
 
-        ownership_list = await partition_manager.list_ownership(eventhub_name=eventhub_name,
-                                                                consumer_group_name=consumer_group_name)
+        ownership_list = partition_manager.list_ownership(
+            fully_qualified_namespace=fully_qualified_namespace,
+            eventhub_name=eventhub_name,
+            consumer_group_name=consumer_group_name)
         assert len(ownership_list) == ownership_cnt
 
 
@@ -79,53 +84,32 @@ def test_claim_and_list_ownership():
     if not live_storage_blob_client:
         pytest.skip("Storage blob client can't be created")
     try:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(_claim_and_list_ownership(live_storage_blob_client))
+        _claim_and_list_ownership(live_storage_blob_client)
     finally:
         remove_live_storage_blob_client(container_str)
 
 
-async def _update_checkpoint(live_storage_blob_client):
+def _update_checkpoint(live_storage_blob_client):
+    fully_qualified_namespace = 'test_namespace'
     eventhub_name = 'eventhub'
     consumer_group_name = '$default'
-    owner_id = 'owner'
     partition_cnt = 8
 
-    async with live_storage_blob_client:
+    with live_storage_blob_client:
         partition_manager = BlobPartitionManager(container_client=live_storage_blob_client)
-
-        ownership_list = await partition_manager.list_ownership(eventhub_name=eventhub_name,
-                                                                consumer_group_name=consumer_group_name)
-        assert len(ownership_list) == 0
-
-        ownership_list = []
-
         for i in range(partition_cnt):
-            ownership = {}
-            ownership['eventhub_name'] = eventhub_name
-            ownership['consumer_group_name'] = consumer_group_name
-            ownership['owner_id'] = owner_id
-            ownership['partition_id'] = str(i)
-            ownership['last_modified_time'] = time.time()
-            ownership['offset'] = '1'
-            ownership['sequence_number'] = '10'
-            ownership_list.append(ownership)
+            partition_manager.update_checkpoint(
+                fully_qualified_namespace, eventhub_name, consumer_group_name, str(i),
+                '2', 20)
 
-        await partition_manager.claim_ownership(ownership_list)
-
-        ownership_list = await partition_manager.list_ownership(eventhub_name=eventhub_name,
-                                                                consumer_group_name=consumer_group_name)
-        assert len(ownership_list) == partition_cnt
-
-        for i in range(partition_cnt):
-            await partition_manager.update_checkpoint(eventhub_name, consumer_group_name, str(i),
-                                                      owner_id, '2', '20')
-
-        ownership_list = await partition_manager.list_ownership(eventhub_name=eventhub_name,
-                                                                consumer_group_name=consumer_group_name)
-        for ownership in ownership_list:
-            assert ownership['offset'] == '2'
-            assert ownership['sequence_number'] == '20'
+        checkpoint_list = partition_manager.list_checkpoints(
+            fully_qualified_namespace=fully_qualified_namespace,
+            eventhub_name=eventhub_name,
+            consumer_group_name=consumer_group_name)
+        assert len(checkpoint_list) == partition_cnt
+        for checkpoint in checkpoint_list:
+            assert checkpoint['offset'] == '2'
+            assert checkpoint['sequence_number'] == '20'
 
 
 @pytest.mark.liveTest
@@ -134,7 +118,6 @@ def test_update_checkpoint():
     if not live_storage_blob_client:
         pytest.skip("Storage blob client can't be created")
     try:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(_update_checkpoint(live_storage_blob_client))
+        _update_checkpoint(live_storage_blob_client)
     finally:
         remove_live_storage_blob_client(container_str)
