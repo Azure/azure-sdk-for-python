@@ -22,16 +22,15 @@ class EventHubConsumerClient(EventHubClient):
     The main goal of `EventHubConsumerClient` is to receive events from all partitions of an EventHub with
     load balancing and checkpointing.
 
-    When multiple `EventHubConsumerClient` works within one process, multiple processes, or multiple computer machines
+    When multiple `EventHubConsumerClient` works with one process, multiple processes, or multiple computer machines
     and if they use the same repository as the load balancing and checkpointing store, they will balance automatically.
     To enable the load balancing and / or checkpointing, partition_manager must be set when creating the
     `EventHubConsumerClient`.
 
-    It can also receive from a specific partition when you call its method `receive()` and specifi the partition_id.
+    An `EventHubConsumerClient` can also receive from a specific partition when you call its method `receive()`
+    and specify the partition_id.
     Load balancing won't work in single-partition mode. But users can still save checkpoint if the partition_manager
     is set.
-
-
 
     Example:
         .. literalinclude:: ../samples/test_examples_eventhub_async.py
@@ -80,27 +79,28 @@ class EventHubConsumerClient(EventHubClient):
         :type load_balancing_interval: float
         """
 
-        super(EventHubConsumerClient, self).__init__(host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
+        super(EventHubConsumerClient, self).__init__(
+            host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
         self._partition_manager = kwargs.get("partition_manager")
         self._load_balancing_interval = kwargs.get("load_balancing_interval", 10)
         self._event_processors = dict()
         self._closed = False
 
     async def receive(
-            self, event_handler: Callable[[PartitionContext, List[EventData]], None], consumer_group: str,
+            self, on_event: Callable[[PartitionContext, List[EventData]], None], consumer_group: str,
             *,
             partition_id: str = None,
             owner_level: int = None,
             prefetch: int = None,
             track_last_enqueued_event_properties: bool = False,
             initial_event_position: Union[EventPosition, Dict[str, EventPosition]] = None,
-            error_handler: Callable[[PartitionContext, Exception], None] = None,
-            partition_initialize_handler: Callable[[PartitionContext], None] = None,
-            partition_close_handler: Callable[[PartitionContext, CloseReason], None] = None
-    ):
+            on_error: Callable[[PartitionContext, Exception], None] = None,
+            on_partition_initialize: Callable[[PartitionContext], None] = None,
+            on_partition_close: Callable[[PartitionContext, CloseReason], None] = None
+    ) -> None:
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
-        :param event_handler: The callback function that process received events
+        :param on_event: The callback function that process received events
         :param consumer_group: Receive events from the event hub for this consumer group
         :param partition_id: Receive from this partition only if it's not None. Receive from all partition otherwise.
         :param owner_level: The priority of the exclusive consumer. An exclusive
@@ -118,10 +118,10 @@ class EventHubConsumerClient(EventHubClient):
          if there isn't checkpoint data for a partition. Use the checkpoint data if there it's available. This can be a
          a dict with partition id as the key and position as the value for individual partitions, or a single
          EventPosition instance for all partitions.
-        :param error_handler: The callback function that is called when there is error during receiving events.
-        :param partition_initialize_handler: The callback function that is called right before
+        :param on_error: The callback function that is called when there is error during receiving events.
+        :param on_partition_initialize: The callback function that is called right before
          a partition is initialized.
-        :param partition_close_handler: The callback function that is called when this receive method finishes receiving
+        :param on_partition_close: The callback function that is called when this receive method finishes receiving
          from a partition.
         :rtype: None
 
@@ -139,7 +139,7 @@ class EventHubConsumerClient(EventHubClient):
                 error = ValueError("This consumer client is already receiving events from all partitions for"
                                  " consumer group {}. "
                                  "Shouldn't receive from any other partitions again".format(consumer_group))
-            elif partition_id is None and [x for x in self._event_processors.keys() if x[0] == consumer_group]:
+            elif partition_id is None and any(x[0] == consumer_group for x in self._event_processors):
                 error = ValueError("This consumer client is already receiving events for consumer group {}. "
                                  "Shouldn't receive from all partitions again".format(consumer_group))
             elif (consumer_group, partition_id) in self._event_processors:
@@ -150,12 +150,12 @@ class EventHubConsumerClient(EventHubClient):
                 raise error
 
             event_processor = EventProcessor(
-                self, consumer_group, event_handler,
+                self, consumer_group, on_event,
                 partition_id=partition_id,
                 partition_manager=self._partition_manager,
-                error_handler=error_handler,
-                partition_initialize_handler=partition_initialize_handler,
-                partition_close_handler=partition_close_handler,
+                error_handler=on_error,
+                partition_initialize_handler=on_partition_initialize,
+                partition_close_handler=on_partition_close,
                 initial_event_position=initial_event_position or EventPosition("-1"),
                 polling_interval=self._load_balancing_interval,
                 owner_level=owner_level,

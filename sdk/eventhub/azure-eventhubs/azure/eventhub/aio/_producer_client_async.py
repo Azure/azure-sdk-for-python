@@ -6,12 +6,11 @@ import asyncio
 import logging
 
 from typing import Any, Union, TYPE_CHECKING, Iterable, List
+from uamqp import constants
 from ._client_async import EventHubClient
 from ._producer_async import EventHubProducer
 from .._common import EventData, \
     EventHubSharedKeyCredential, EventHubSASTokenCredential, EventDataBatch
-
-from uamqp import constants
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
@@ -61,7 +60,8 @@ class EventHubProducerClient(EventHubClient):
          the Event Hubs service. Default is ~azure.eventhub.TransportType.Amqp.
         :type transport_type: ~azure.eventhub.TransportType
         """
-        super(EventHubProducerClient, self).__init__(host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
+        super(EventHubProducerClient, self).__init__(
+            host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
         self._producers = None  # type: List[EventHubProducer]
         self._client_lock = asyncio.Lock()  # sync the creation of self._producers
         self._producers_locks = None  # sync the creation of
@@ -76,7 +76,7 @@ class EventHubProducerClient(EventHubClient):
                     self._producers_locks = [asyncio.Lock()] * num_of_producers
 
     async def send(self, event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
-            *, partition_key: Union[str, bytes] = None, partition_id: str = None, timeout: float = None):
+            *, partition_key: Union[str, bytes] = None, partition_id: str = None, timeout: float = None) -> None:
         """Sends an event data and blocks until acknowledgement is received or operation times out.
 
         :param event_data: The event(s) to be sent. It can be an EventData object, an iterable of EventData objects
@@ -105,14 +105,14 @@ class EventHubProducerClient(EventHubClient):
                 :end-before: [END eventhub_producer_client_send_async]
                 :language: python
                 :dedent: 4
-                :caption: Asynchronously sends an event data and blocks until acknowledgement is received or operation times out.
+                :caption: Asynchronously sends an event data
 
         """
 
         await self._init_locks_for_producers()
 
         producer_index = int(partition_id) if partition_id is not None else -1
-        if self._producers[producer_index] is None or self._producers[producer_index]._closed:
+        if self._producers[producer_index] is None or self._producers[producer_index]._closed:  # pylint:disable=protected-access
             async with self._producers_locks[producer_index]:
                 if self._producers[producer_index] is None:
                     self._producers[producer_index] = self._create_producer(partition_id=partition_id)
@@ -147,8 +147,7 @@ class EventHubProducerClient(EventHubClient):
                     await self._producers[-1]._open_with_retry()  # pylint: disable=protected-access
             async with self._client_lock:
                 self._max_message_size_on_link = \
-                    self._producers[-1]._handler.message_handler._link.peer_max_message_size \
-                    or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
+                    self._producers[-1]._handler.message_handler._link.peer_max_message_size or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access, line-too-long
 
         if max_size and max_size > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
