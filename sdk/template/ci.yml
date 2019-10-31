@@ -10,7 +10,7 @@ resources:
     - repository: azure-sdk-build-tools
       type: git
       name: internal/azure-sdk-build-tools
-      ref: refs/head/feature/add_devbuild
+      ref: refs/heads/feature/add_devbuild
 
 trigger:
   branches:
