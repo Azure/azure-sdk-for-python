@@ -13,8 +13,8 @@ import uamqp  # type: ignore
 from uamqp import errors, types, utils  # type: ignore
 from uamqp import ReceiveClientAsync, Source  # type: ignore
 
-from azure.eventhub import EventData, EventPosition
-from azure.eventhub.error import _error_handler
+from .._common import EventData, EventPosition
+from .._error import _error_handler
 from ._consumer_producer_mixin_async import ConsumerProducerMixin
 
 log = logging.getLogger(__name__)
