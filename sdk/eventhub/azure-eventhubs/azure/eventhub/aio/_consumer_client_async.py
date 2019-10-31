@@ -4,12 +4,11 @@
 # --------------------------------------------------------------------------------------------
 import logging
 from typing import Any, Union, TYPE_CHECKING, Callable, Dict, List, Tuple
-from .._common import EventPosition,\
+from azure.eventhub import EventPosition, EventData, \
     EventHubSharedKeyCredential, EventHubSASTokenCredential
-from .._common import EventData
-from ._eventprocessor.event_processor import EventProcessor, CloseReason
-from ._eventprocessor.partition_context import PartitionContext
-from ._client_async import EventHubClient
+from .eventprocessor.event_processor import EventProcessor, CloseReason
+from .eventprocessor.partition_context import PartitionContext
+from .client_async import EventHubClient
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
 

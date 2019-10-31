@@ -8,7 +8,7 @@ import time
 
 from uamqp import errors, constants, compat  # type: ignore
 from .._error import EventHubError
-from ..aio._error_async import _handle_exception
+from ..aio.error_async import _handle_exception
 
 log = logging.getLogger(__name__)
 

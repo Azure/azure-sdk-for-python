@@ -17,10 +17,10 @@ from .._common import parse_sas_token, EventPosition, \
     EventHubSharedKeyCredential, EventHubSASTokenCredential
 from .._client_abstract import EventHubClientAbstract
 
-from ._producer_async import EventHubProducer
-from ._consumer_async import EventHubConsumer
+from .producer_async import EventHubProducer
+from .consumer_async import EventHubConsumer
 from ._connection_manager_async import get_connection_manager
-from ._error_async import _handle_exception
+from .error_async import _handle_exception
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore

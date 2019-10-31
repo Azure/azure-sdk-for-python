@@ -16,7 +16,7 @@ from azure.eventhub import EventPosition, EventData
 from ..._eventprocessor.event_processor import CloseReason
 from .partition_context import PartitionContext
 from .partition_manager import PartitionManager
-from .ownership_manager import OwnershipManager
+from ._ownership_manager import OwnershipManager
 from .utils import get_running_loop
 
 log = logging.getLogger(__name__)
