@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainera85e1275?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainera85e1275?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -59,7 +59,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=userdelegationkey
+    uri: https://storagename.blob.core.windows.net/?restype=service&comp=userdelegationkey
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><UserDelegationKey><SignedOid>e33fbfd4-bc19-47c6-be55-5f5a7f950b7a</SignedOid><SignedTid>00000000-0000-0000-0000-000000000000</SignedTid><SignedStart>2019-10-25T18:28:25Z</SignedStart><SignedExpiry>2019-10-25T19:28:25Z</SignedExpiry><SignedService>b</SignedService><SignedVersion>2019-02-02</SignedVersion><Value>xmEMVC0hEq01teD2RUKpu9qgeIuS1RGGL+fcjI1RtUo=</Value></UserDelegationKey>"
@@ -99,7 +99,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=userdelegationkey
+    uri: https://storagename.blob.core.windows.net/?restype=service&comp=userdelegationkey
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><UserDelegationKey><SignedOid>e33fbfd4-bc19-47c6-be55-5f5a7f950b7a</SignedOid><SignedTid>00000000-0000-0000-0000-000000000000</SignedTid><SignedStart>2019-10-25T18:28:25Z</SignedStart><SignedExpiry>2019-10-25T19:28:25Z</SignedExpiry><SignedService>b</SignedService><SignedVersion>2019-02-02</SignedVersion><Value>xmEMVC0hEq01teD2RUKpu9qgeIuS1RGGL+fcjI1RtUo=</Value></UserDelegationKey>"

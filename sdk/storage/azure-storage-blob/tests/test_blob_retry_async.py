@@ -18,10 +18,8 @@ from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import ResourceExistsError, HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from testcase import ResponseCallback, GlobalStorageAccountPreparer
-from asyncblobtestcase import (
-    AsyncBlobTestCase,
-)
+from _shared.testcase import ResponseCallback, GlobalStorageAccountPreparer
+from _shared.asynctestcase import AsyncStorageTestCase
 
 # test constants
 PUT_BLOCK_SIZE = 4 * 1024
@@ -38,7 +36,7 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageBlobRetryTestAsync(AsyncBlobTestCase):
+class StorageBlobRetryTestAsync(AsyncStorageTestCase):
     # --Helpers-----------------------------------------------------------------
     def setUp(self):
         self.retry = ExponentialRetry(initial_backoff=1, increment_base=2, retry_total=3)
@@ -67,16 +65,15 @@ class StorageBlobRetryTestAsync(AsyncBlobTestCase):
         def tell(self):
             return self.wrapped_stream.tell()
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_retry_put_block_with_seekable_stream_async(self, resource_group, location, storage_account,
                                                               storage_account_key):
         pytest.skip("Aiohttp closes stream after request - cannot rewind.")
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key,
                                 retry_policy=self.retry, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob_name = self.get_resource_name('blob')
@@ -104,15 +101,13 @@ class StorageBlobRetryTestAsync(AsyncBlobTestCase):
         content = await (await blob.download_blob()).readall()
         self.assertEqual(content, data)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_retry_put_block_with_non_seekable_stream_async(self, resource_group, location, storage_account,
                                                                   storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
-
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key,
                                 retry_policy=self.retry, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob_name = self.get_resource_name('blob')
@@ -141,15 +136,13 @@ class StorageBlobRetryTestAsync(AsyncBlobTestCase):
         content = await (await blob.download_blob()).readall()
         self.assertEqual(content, data)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_retry_put_block_with_non_seekable_stream_fail_async(self, resource_group, location, storage_account,
                                                                        storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
-
         # Arrange
-        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key,
                                 retry_policy=self.retry, transport=AiohttpTestTransport())
         await self._setup(bsc)
         blob_name = self.get_resource_name('blob')

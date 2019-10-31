@@ -25,7 +25,7 @@ from azure.storage.blob import (
     ExponentialRetry,
 )
 
-from testcase import (
+from _shared.testcase import (
     StorageTestCase,
     ResponseCallback,
     RetryCounter,
@@ -35,6 +35,14 @@ from testcase import (
 
 # --Test Class -----------------------------------------------------------------
 class StorageRetryTest(StorageTestCase):
+
+    def _create_storage_service(self, service_class, account, key, connection_string=None, **kwargs):
+        if connection_string:
+            service = service_class.from_connection_string(connection_string, **kwargs)
+        else:
+            service = service_class(self.account_url(account.name, "blob"), credential=key, **kwargs)
+        return service
+
     # --Test Cases --------------------------------------------
     @GlobalStorageAccountPreparer()
     def test_retry_on_server_error(self, resource_group, location, storage_account, storage_account_key):
@@ -104,10 +112,9 @@ class StorageRetryTest(StorageTestCase):
         finally:
             service.delete_container(container_name)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_retry_on_socket_timeout(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
         # Arrange
         container_name = self.get_resource_name('utcontainer')
         retry = LinearRetry(backoff=1)

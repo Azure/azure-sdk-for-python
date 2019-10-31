@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/acontainer42a919fc?restype=container
+    uri: https://storagename.blob.core.windows.net/acontainer42a919fc?restype=container
   response:
     body:
       string: ''
@@ -45,7 +45,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/acontainer42a919fc?restype=container&comp=metadata
+    uri: https://storagename.blob.core.windows.net/acontainer42a919fc?restype=container&comp=metadata
   response:
     body:
       string: ''
@@ -79,11 +79,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/?prefix=acontainer42a919fc&include=metadata&comp=list
+    uri: https://storagename.blob.core.windows.net/?prefix=acontainer42a919fc&include=metadata&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\"><Prefix>acontainer42a919fc</Prefix><Containers><Container><Name>acontainer42a919fc</Name><Properties><Last-Modified>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Prefix>acontainer42a919fc</Prefix><Containers><Container><Name>acontainer42a919fc</Name><Properties><Last-Modified>Fri,
         25 Oct 2019 18:00:48 GMT</Last-Modified><Etag>\"0x8D759754431E4A3\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Container></Containers><NextMarker
         /></EnumerationResults>"
     headers:

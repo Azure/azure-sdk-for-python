@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9651c99?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainerf9651c99?restype=container
   response:
     body:
       string: ''
@@ -45,7 +45,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9651c99/blob1
+    uri: https://storagename.blob.core.windows.net/utcontainerf9651c99/blob1
   response:
     body:
       string: ''
@@ -84,7 +84,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9651c99/blob1?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainerf9651c99/blob1?comp=appendblock
   response:
     body:
       string: ''
@@ -126,7 +126,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9651c99/blob1?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainerf9651c99/blob1?comp=appendblock
   response:
     body:
       string: ''
@@ -168,7 +168,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9651c99/blob1?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainerf9651c99/blob1?comp=appendblock
   response:
     body:
       string: ''
@@ -210,7 +210,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9651c99/blob1?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainerf9651c99/blob1?comp=appendblock
   response:
     body:
       string: ''
@@ -252,7 +252,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9651c99/blob1?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainerf9651c99/blob1?comp=appendblock
   response:
     body:
       string: ''
@@ -292,7 +292,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerf9651c99/blob1
+    uri: https://storagename.blob.core.windows.net/utcontainerf9651c99/blob1
   response:
     body:
       string: block 0block 1block 2block 3block 4
