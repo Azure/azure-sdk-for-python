@@ -4,7 +4,7 @@
 # -----------------------------------------------------------------------------------
 
 from contextlib import contextmanager
-from typing import Dict, Type, Callable, List
+from typing import Dict, Type, Callable, List, Any
 import uuid
 import asyncio
 import logging
@@ -54,11 +54,11 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         self._polling_interval = polling_interval
         self._ownership_timeout = self._polling_interval * 2
         self._tasks = {}  # type: Dict[str, asyncio.Task]
-        self._partition_contexts = {}
+        self._partition_contexts = {}  # type: Dict[str, PartitionContext]
         self._owner_level = owner_level
         self._prefetch = prefetch
         self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
-        self._last_enqueued_event_properties = {}
+        self._last_enqueued_event_properties = {}  # type: Dict[str, Dict[str, Any]]
         self._id = str(uuid.uuid4())
         self._running = False
 

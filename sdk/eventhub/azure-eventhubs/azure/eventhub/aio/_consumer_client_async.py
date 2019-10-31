@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import logging
-from typing import Any, Union, TYPE_CHECKING, Callable, Dict, List
+from typing import Any, Union, TYPE_CHECKING, Callable, Dict, List, Tuple
 from .._common import EventPosition,\
     EventHubSharedKeyCredential, EventHubSASTokenCredential
 from .._common import EventData
@@ -83,7 +83,7 @@ class EventHubConsumerClient(EventHubClient):
             host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
         self._partition_manager = kwargs.get("partition_manager")
         self._load_balancing_interval = kwargs.get("load_balancing_interval", 10)
-        self._event_processors = dict()
+        self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
         self._closed = False
 
     async def receive(

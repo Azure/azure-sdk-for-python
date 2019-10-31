@@ -6,7 +6,7 @@ import asyncio
 import logging
 
 from typing import Any, Union, TYPE_CHECKING, Iterable, List
-from uamqp import constants
+from uamqp import constants  # type: ignore
 from ._client_async import EventHubClient
 from ._producer_async import EventHubProducer
 from .._common import EventData, \
@@ -62,18 +62,20 @@ class EventHubProducerClient(EventHubClient):
         """
         super(EventHubProducerClient, self).__init__(
             host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
-        self._producers = None  # type: List[EventHubProducer]
+        self._producers = []  # type: List[EventHubProducer]
         self._client_lock = asyncio.Lock()  # sync the creation of self._producers
-        self._producers_locks = None  # sync the creation of
-        self._max_message_size_on_link = None
+        self._producers_locks = []  # type: List[asyncio.Lock]
+        self._max_message_size_on_link = 0
 
     async def _init_locks_for_producers(self):
-        if self._producers is None:
+        if not self._producers:
             async with self._client_lock:
-                if self._producers is None:
+                if not self._producers:
                     num_of_producers = len(await self.get_partition_ids()) + 1
                     self._producers = [None] * num_of_producers
-                    self._producers_locks = [asyncio.Lock()] * num_of_producers
+                    for i in range(num_of_producers):
+                        self._producers_locks.append(asyncio.Lock())
+                        # self._producers_locks = [asyncio.Lock()] * num_of_producers
 
     async def send(self, event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
             *, partition_key: Union[str, bytes] = None, partition_id: str = None, timeout: float = None) -> None:
@@ -116,8 +118,8 @@ class EventHubProducerClient(EventHubClient):
             async with self._producers_locks[producer_index]:
                 if self._producers[producer_index] is None:
                     self._producers[producer_index] = self._create_producer(partition_id=partition_id)
-
-        await self._producers[producer_index].send(event_data, partition_key=partition_key, timeout=timeout)
+        async with self._producers_locks[producer_index]:
+            await self._producers[producer_index].send(event_data, partition_key=partition_key, timeout=timeout)
 
     async def create_batch(self, max_size=None):
         # type:(int) -> EventDataBatch
