@@ -250,19 +250,19 @@ class QueryTest(unittest.TestCase):
         query_plan_dict = self.client.client_connection._GetQueryPlanThroughGateway(query, container_link)
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan_dict)
         self.assertTrue(query_execution_info.has_rewritten_query())
-        self.assertEquals(query_execution_info.has_distinct_type(), distinct != "None")
-        self.assertEquals(query_execution_info.get_distinct_type(), distinct)
-        self.assertEquals(query_execution_info.has_top(), top is not None)
-        self.assertEquals(query_execution_info.get_top(), top)
-        self.assertEquals(query_execution_info.has_order_by(), len(order_by) > 0)
+        self.assertEqual(query_execution_info.has_distinct_type(), distinct != "None")
+        self.assertEqual(query_execution_info.get_distinct_type(), distinct)
+        self.assertEqual(query_execution_info.has_top(), top is not None)
+        self.assertEqual(query_execution_info.get_top(), top)
+        self.assertEqual(query_execution_info.has_order_by(), len(order_by) > 0)
         self.assertListEqual(query_execution_info.get_order_by(), order_by)
-        self.assertEquals(query_execution_info.has_aggregates(), len(aggregate) > 0)
+        self.assertEqual(query_execution_info.has_aggregates(), len(aggregate) > 0)
         self.assertListEqual(query_execution_info.get_aggregates(), aggregate)
-        self.assertEquals(query_execution_info.has_select_value(), select_value)
-        self.assertEquals(query_execution_info.has_offset(), offset is not None)
-        self.assertEquals(query_execution_info.get_offset(), offset)
-        self.assertEquals(query_execution_info.has_limit(), limit is not None)
-        self.assertEquals(query_execution_info.get_limit(), limit)
+        self.assertEqual(query_execution_info.has_select_value(), select_value)
+        self.assertEqual(query_execution_info.has_offset(), offset is not None)
+        self.assertEqual(query_execution_info.get_offset(), offset)
+        self.assertEqual(query_execution_info.has_limit(), limit is not None)
+        self.assertEqual(query_execution_info.get_limit(), limit)
 
     def test_unsupported_queries(self):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
@@ -431,7 +431,7 @@ class QueryTest(unittest.TestCase):
         )
         query_results = list(query_iterable)
 
-        self.assertEquals(len(results), len(query_results))
+        self.assertEqual(len(results), len(query_results))
         query_results_strings = []
         result_strings = []
         for i in range(len(results)):
@@ -530,7 +530,7 @@ class QueryTest(unittest.TestCase):
             elif isinstance(results[i], list):
                 self.assertListEqual(results[i], expected_results[i])
             else:
-                self.assertEquals(results[i], expected_results[i])
+                self.assertEqual(results[i], expected_results[i])
         self.count = 0
 
     def _MockNextFunction(self):
