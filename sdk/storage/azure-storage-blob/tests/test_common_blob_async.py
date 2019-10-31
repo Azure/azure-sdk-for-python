@@ -1494,21 +1494,20 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
 
         await self._setup(storage_account.name, storage_account_key)
         token_credential = self.generate_oauth_token()
-        get_token = token_credential.get_token
 
         # Action 1: make sure token works
-        service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential, transport=AiohttpTestTransport())
+        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=token_credential, transport=AiohttpTestTransport())
         result = await service.get_service_properties()
         self.assertIsNotNone(result)
 
         # Action 2: change token value to make request fail
         fake_credential = self.generate_fake_token()
-        service = BlobServiceClient(self._get_oauth_account_url(), credential=fake_credential, transport=AiohttpTestTransport())
+        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=fake_credential, transport=AiohttpTestTransport())
         with self.assertRaises(ClientAuthenticationError):
             await service.get_service_properties()
 
         # Action 3: update token to make it working again
-        service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential, transport=AiohttpTestTransport())
+        service = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=token_credential, transport=AiohttpTestTransport())
         result = await service.get_service_properties()
         self.assertIsNotNone(result)
 
