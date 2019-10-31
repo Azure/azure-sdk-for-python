@@ -868,7 +868,9 @@
   "azure-mgmt-appconfiguration": {
     "category": "Management",
     "service_name": "App Configuration",
-    "manually_generated": true
+    "namespaces": [
+      "azure.mgmt.appconfiguration"
+    ]
   },
   "azure-servicefabric": {
     "category": "Client",
