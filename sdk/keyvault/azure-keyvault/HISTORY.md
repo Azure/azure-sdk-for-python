@@ -1,6 +1,6 @@
 ## Release History
 
-### 2019-10-XX 4.0.0b5
+### 2019-10-31 4.0.0
 
 **Disclaimer**
 
@@ -8,7 +8,8 @@ This package and the `azure.keyvault` namespace does not contain code anymore. T
 
 * azure-keyvault-keys
 * azure-keyvault-secrets
-* azure-keyvault-certificates
+
+Certificates scenarios are in preview with the additional package `azure-keyvault-certificates`.
 
 All code needs to be adapted to use the new namespaces. See individual package readme for details.
 
