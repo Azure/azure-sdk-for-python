@@ -2,6 +2,10 @@
 
 ## 1.0.1
 
+- `ClientCertificateCredential` uses application and tenant IDs correctly
+([#8315](https://github.com/Azure/azure-sdk-for-python/pull/8315))
+
+
 ## 1.0.0 (2019-10-29)
 ### Breaking changes:
 - Async credentials now default to [`aiohttp`](https://pypi.org/project/aiohttp/)
