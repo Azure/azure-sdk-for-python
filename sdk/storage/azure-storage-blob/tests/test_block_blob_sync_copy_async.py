@@ -21,10 +21,8 @@ from azure.storage.blob.aio import (
 
 from azure.storage.blob._shared.policies import StorageContentValidation
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from testcase import GlobalStorageAccountPreparer
-from asyncblobtestcase import (
-    AsyncBlobTestCase,
-)
+from _shared.testcase import GlobalStorageAccountPreparer
+from _shared.asynctestcase import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 SOURCE_BLOB_SIZE = 8 * 1024
@@ -43,12 +41,12 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageBlockBlobTestAsync(AsyncBlobTestCase):
+class StorageBlockBlobTestAsync(AsyncStorageTestCase):
     async def _setup(self, name, key):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         self.bsc = BlobServiceClient(
-            self._account_url(name),
+            self.account_url(name, "blob"),
             credential=key,
             connection_data_block_size=4 * 1024,
             max_single_put_size=32 * 1024,
@@ -83,7 +81,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_from_url_and_commit_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -119,7 +117,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(len(content), 8 * 1024)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_from_url_and_vldte_content_md5(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -157,7 +155,7 @@ class StorageBlockBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(len(committed), 0)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_copy_blob_sync_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)

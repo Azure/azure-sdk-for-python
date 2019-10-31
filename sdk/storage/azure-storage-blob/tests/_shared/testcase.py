@@ -23,8 +23,8 @@ import sys
 import random
 import re
 import logging
-from devtools_testutils import AzureMgmtTestCase, AzureMgmtPreparer, FakeResource
-from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError
+from devtools_testutils import AzureMgmtTestCase, AzureMgmtPreparer, ResourceGroupPreparer, StorageAccountPreparer, FakeResource
+from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError, create_random_name
 try:
     from cStringIO import StringIO      # Python 2
 except ImportError:
@@ -36,6 +36,8 @@ try:
     from devtools_testutils import mgmt_settings_real as settings
 except ImportError:
     from devtools_testutils import mgmt_settings_fake as settings
+
+import pytest
 
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
@@ -79,12 +81,12 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
         if self.is_live:
             self.test_class_instance.scrubber.register_name_pair(
                 storage_account.name,
-                "blobstoragename"
+                "storagename"
             )
         else:
             storage_account = FakeResource(
                 id=storage_account.id,
-                name="blobstoragename"
+                name="storagename"
             )
 
         return {
@@ -129,8 +131,13 @@ class StorageTestCase(AzureMgmtTestCase):
     def connection_string(self, account, key):
         return "DefaultEndpointsProtocol=https;AccountName=" + account.name + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
 
-    def _account_url (self, name):
-        return 'https://{}.blob.core.windows.net'.format(name)
+    def account_url(self, name, storage_type):
+        """Return an url of storage account.
+
+        :param str name: Storage account name
+        :param str storage_type: The Storage type part of the URL. Should be "blob", or "queue", etc.
+        """
+        return 'https://{}.{}.core.windows.net'.format(name, storage_type)
 
     def configure_logging(self):
         try:
@@ -184,13 +191,6 @@ class StorageTestCase(AzureMgmtTestCase):
                 settings.PROXY_USER,
                 settings.PROXY_PASSWORD,
             )
-
-    def _create_storage_service(self, service_class, account, key, connection_string=None, **kwargs):
-        if connection_string:
-            service = service_class.from_connection_string(connection_string, **kwargs)
-        else:
-            service = service_class(self._account_url(account.name), credential=key, **kwargs)
-        return service
 
     def assertNamedItemInContainer(self, container, item_name, msg=None):
         def _is_string(obj):
@@ -253,8 +253,7 @@ class StorageTestCase(AzureMgmtTestCase):
                 self.get_settings_value("CLIENT_ID"),
                 self.get_settings_value("CLIENT_SECRET"),
             )
-        else:
-            return self.generate_fake_token()
+        return self.generate_fake_token()
 
     def generate_fake_token(self):
         return FakeTokenCredential()
@@ -311,7 +310,7 @@ class LogCaptured(object):
         self.handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
 
         # get and enable the logger to send the outputs to the string stream
-        self.logger = logging.getLogger('azure.storage.blob')
+        self.logger = logging.getLogger('azure.storage')
         self.logger.level = logging.DEBUG
         self.logger.addHandler(self.handler)
 
@@ -325,3 +324,41 @@ class LogCaptured(object):
 
         # reset logging since we messed with the setting
         self.test_case.configure_logging()
+
+
+@pytest.fixture(scope="session")
+def storage_account():
+    test_case = AzureMgmtTestCase("__init__")
+    rg_preparer = ResourceGroupPreparer()
+    storage_preparer = StorageAccountPreparer(name_prefix='pyacrstorage')
+
+    # Set what the decorator is supposed to set for us
+    for prep in [rg_preparer, storage_preparer]:
+        prep.live_test = False
+        prep.test_class_instance = test_case
+
+    # Create
+    rg_name = create_random_name("pystorage", 24)
+    storage_name = create_random_name("pyacrstorage", 24)
+    try:
+        rg = rg_preparer.create_resource(rg_name)
+        StorageTestCase._RESOURCE_GROUP = rg['resource_group']
+        try:
+            storage_dict = storage_preparer.create_resource(
+                storage_name,
+                resource_group=rg['resource_group']
+            )
+            # Now the magic begins
+            StorageTestCase._STORAGE_ACCOUNT = storage_dict['storage_account']
+            StorageTestCase._STORAGE_KEY = storage_dict['storage_account_key']
+            yield
+        finally:
+            storage_preparer.remove_resource(
+                storage_name,
+                resource_group=rg['resource_group']
+            )
+            StorageTestCase._STORAGE_ACCOUNT = None
+            StorageTestCase._STORAGE_KEY = None
+    finally:
+        rg_preparer.remove_resource(rg_name)
+        StorageTestCase._RESOURCE_GROUP = None

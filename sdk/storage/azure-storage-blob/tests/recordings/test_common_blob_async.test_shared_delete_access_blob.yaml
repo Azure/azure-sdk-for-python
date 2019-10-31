@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer49a21589?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer49a21589?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -49,7 +49,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer49a21589/blob49a21589
+    uri: https://storagename.blob.core.windows.net/utcontainer49a21589/blob49a21589
   response:
     body:
       string: ''
@@ -88,7 +88,7 @@ interactions:
       User-Agent:
       - python-requests/2.22.0
     method: DELETE
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer49a21589/blob49a21589?se=2019-10-25T19%3A37%3A22Z&sp=d&sv=2019-02-02&sr=b&sig=kwGReT9qPEGtSL556LxTqwQxYuqaB7cUupnUT2VEZyg%3D
+    uri: https://storagename.blob.core.windows.net/utcontainer49a21589/blob49a21589?se=2019-10-25T19%3A37%3A22Z&sp=d&sv=2019-02-02&sr=b&sig=kwGReT9qPEGtSL556LxTqwQxYuqaB7cUupnUT2VEZyg%3D
   response:
     body:
       string: ''
@@ -120,7 +120,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer49a21589/blob49a21589?se=2019-10-25T19:37:22Z&sp=d&sv=2019-02-02&sr=b&sig=kwGReT9qPEGtSL556LxTqwQxYuqaB7cUupnUT2VEZyg%3D
+    uri: https://storagename.blob.core.windows.net/utcontainer49a21589/blob49a21589?se=2019-10-25T19:37:22Z&sp=d&sv=2019-02-02&sr=b&sig=kwGReT9qPEGtSL556LxTqwQxYuqaB7cUupnUT2VEZyg%3D
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthorizationPermissionMismatch</Code><Message>This

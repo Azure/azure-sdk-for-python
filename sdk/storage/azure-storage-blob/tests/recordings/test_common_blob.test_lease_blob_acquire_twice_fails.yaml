@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer3206152e?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer3206152e?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -61,7 +61,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer3206152e/blob3206152e
+    uri: https://storagename.blob.core.windows.net/utcontainer3206152e/blob3206152e
   response:
     body:
       string: ''
@@ -111,7 +111,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer3206152e/blob3206152e?comp=lease
+    uri: https://storagename.blob.core.windows.net/utcontainer3206152e/blob3206152e?comp=lease
   response:
     body:
       string: ''
@@ -157,7 +157,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer3206152e/blob3206152e?comp=lease
+    uri: https://storagename.blob.core.windows.net/utcontainer3206152e/blob3206152e?comp=lease
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseAlreadyPresent</Code><Message>There
