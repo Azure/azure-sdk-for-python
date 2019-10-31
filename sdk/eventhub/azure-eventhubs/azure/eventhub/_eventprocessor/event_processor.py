@@ -11,14 +11,14 @@ import time
 import threading
 from enum import Enum
 
+from uamqp.compat import queue
+
 from azure.core.tracing import SpanKind  # type: ignore
 from azure.core.settings import settings  # type: ignore
 
-from azure.eventhub import EventPosition, EventHubError, EventData
+from azure.eventhub import EventPosition
 from .partition_context import PartitionContext
-from .partition_manager import PartitionManager, OwnershipLostError
 from .ownership_manager import OwnershipManager
-from uamqp.compat import queue
 
 log = logging.getLogger(__name__)
 
@@ -86,7 +86,8 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         for partition_id in claimed_partitions:
             checkpoint = checkpoints.get(partition_id) if checkpoints else None
             if partition_id not in self._working_threads or not self._working_threads[partition_id].is_alive():
-                self._working_threads[partition_id] = threading.Thread(target=self._receive, args=(partition_id, checkpoint))
+                self._working_threads[partition_id] = threading.Thread(target=self._receive,
+                                                                       args=(partition_id, checkpoint))
                 self._threads_stop_flags[partition_id] = False
                 self._working_threads[partition_id].start()
                 log.info("Working thread started, ownership %r, checkpoint %r", partition_id, checkpoint)
@@ -235,22 +236,19 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     log.warning("An exception (%r) occurred during balancing and claiming ownership for "
                                 "eventhub %r consumer group %r. Retrying after %r seconds",
                                 err, self._eventhub_name, self._consumer_group_name, self._polling_interval)
-                    '''
-                    ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
-                    when there are load balancing and/or checkpointing (partition_manager isn't None).
-                    They're swallowed here to retry every self._polling_interval seconds. Meanwhile this event processor
-                    won't lose the partitions it has claimed before.
-                    If it keeps failing, other EventProcessors will start to claim ownership of the partitions
-                    that this EventProcessor is working on. So two or multiple EventProcessors may be working
-                    on the same partition.
-                    '''
+                    # ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
+                    # when there are load balancing and/or checkpointing (partition_manager isn't None).
+                    # They're swallowed here to retry every self._polling_interval seconds.
+                    # Meanwhile this event processor won't lose the partitions it has claimed before.
+                    # If it keeps failing, other EventProcessors will start to claim ownership of the partitions
+                    # that this EventProcessor is working on. So two or multiple EventProcessors may be working
+                    # on the same partition.
                 time.sleep(self._polling_interval)
 
     def _get_last_enqueued_event_properties(self, partition_id):
         if partition_id in self._working_threads and partition_id in self._last_enqueued_event_properties:
             return self._last_enqueued_event_properties[partition_id]
-        else:
-            raise ValueError("You're not receiving events from partition {}".format(partition_id))
+        raise ValueError("You're not receiving events from partition {}".format(partition_id))
 
     def start(self):
         if not self._running:
