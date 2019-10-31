@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerc2121bf3?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainerc2121bf3?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -47,7 +47,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=properties
+    uri: https://storagename.blob.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: ''
@@ -85,7 +85,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerc2121bf3/blobc2121bf3
+    uri: https://storagename.blob.core.windows.net/utcontainerc2121bf3/blobc2121bf3
   response:
     body:
       string: ''
@@ -120,7 +120,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerc2121bf3/blobc2121bf3?comp=snapshot
+    uri: https://storagename.blob.core.windows.net/utcontainerc2121bf3/blobc2121bf3?comp=snapshot
   response:
     body:
       string: ''
@@ -154,7 +154,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerc2121bf3/blobc2121bf3?comp=snapshot
+    uri: https://storagename.blob.core.windows.net/utcontainerc2121bf3/blobc2121bf3?comp=snapshot
   response:
     body:
       string: ''
@@ -190,7 +190,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerc2121bf3/blobc2121bf3
+    uri: https://storagename.blob.core.windows.net/utcontainerc2121bf3/blobc2121bf3
   response:
     body:
       string: ''
@@ -223,11 +223,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerc2121bf3?include=snapshots,deleted&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/utcontainerc2121bf3?include=snapshots,deleted&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"utcontainerc2121bf3\"><Blobs><Blob><Name>blobc2121bf3</Name><Snapshot>2019-10-25T18:37:55.1654130Z</Snapshot><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"utcontainerc2121bf3\"><Blobs><Blob><Name>blobc2121bf3</Name><Snapshot>2019-10-25T18:37:55.1654130Z</Snapshot><Deleted>true</Deleted><Properties><Creation-Time>Fri,
         25 Oct 2019 18:37:55 GMT</Creation-Time><Last-Modified>Fri, 25 Oct 2019 18:37:55
         GMT</Last-Modified><Etag>0x8D7597A7345D6FA</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>yaNM/IXZgmmMasifdgcavQ==</Content-MD5><Cache-Control
@@ -274,11 +274,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerc2121bf3?include=snapshots&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/utcontainerc2121bf3?include=snapshots&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"utcontainerc2121bf3\"><Blobs
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"utcontainerc2121bf3\"><Blobs
         /><NextMarker /></EnumerationResults>"
     headers:
       content-type: application/xml
@@ -307,7 +307,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerc2121bf3/blobc2121bf3?comp=undelete
+    uri: https://storagename.blob.core.windows.net/utcontainerc2121bf3/blobc2121bf3?comp=undelete
   response:
     body:
       string: ''
@@ -339,11 +339,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerc2121bf3?include=snapshots,deleted&restype=container&comp=list
+    uri: https://storagename.blob.core.windows.net/utcontainerc2121bf3?include=snapshots,deleted&restype=container&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"utcontainerc2121bf3\"><Blobs><Blob><Name>blobc2121bf3</Name><Snapshot>2019-10-25T18:37:55.1654130Z</Snapshot><Properties><Creation-Time>Fri,
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"utcontainerc2121bf3\"><Blobs><Blob><Name>blobc2121bf3</Name><Snapshot>2019-10-25T18:37:55.1654130Z</Snapshot><Properties><Creation-Time>Fri,
         25 Oct 2019 18:37:55 GMT</Creation-Time><Last-Modified>Fri, 25 Oct 2019 18:37:55
         GMT</Last-Modified><Etag>0x8D7597A7345D6FA</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
         /><Content-Language /><Content-CRC64 /><Content-MD5>yaNM/IXZgmmMasifdgcavQ==</Content-MD5><Cache-Control
@@ -390,7 +390,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=properties
+    uri: https://storagename.blob.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: ''

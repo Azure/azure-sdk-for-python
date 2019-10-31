@@ -192,13 +192,6 @@ class StorageTestCase(AzureMgmtTestCase):
                 settings.PROXY_PASSWORD,
             )
 
-    def _create_storage_service(self, service_class, account, key, connection_string=None, **kwargs):
-        if connection_string:
-            service = service_class.from_connection_string(connection_string, **kwargs)
-        else:
-            service = service_class(self._account_url(account.name), credential=key, **kwargs)
-        return service
-
     def assertNamedItemInContainer(self, container, item_name, msg=None):
         def _is_string(obj):
             if sys.version_info >= (3,):

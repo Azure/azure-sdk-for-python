@@ -19,7 +19,7 @@ from azure.storage.blob import (
     generate_blob_sas
 )
 from azure.storage.blob import CustomerProvidedEncryptionKey, BlobSasPermissions
-from testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 # ------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self._account_url(storage_account.name),
+            self.account_url(storage_account.name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -123,15 +123,14 @@ class StorageCPKTest(StorageTestCase):
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
         self._teardown(bsc)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_block_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
         # parallel operation
-        if not self.is_live:
-            pytest.skip("live only")
-                # test chunking functionality by reducing the size of each chunk,
+        # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self._account_url(storage_account.name),
+            self.account_url(storage_account.name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -168,15 +167,14 @@ class StorageCPKTest(StorageTestCase):
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
         self._teardown(bsc)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_block_blob_with_sub_streams(self, resource_group, location, storage_account, storage_account_key):
         # problem with the recording framework can only run live
-        if not self.is_live:
-            pytest.skip("live only")
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self._account_url(storage_account.name),
+            self.account_url(storage_account.name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -216,7 +214,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self._account_url(storage_account.name),
+            self.account_url(storage_account.name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -254,7 +252,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self._account_url(storage_account.name),
+            self.account_url(storage_account.name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -325,7 +323,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self._account_url(storage_account.name),
+            self.account_url(storage_account.name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -362,7 +360,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self._account_url(storage_account.name),
+            self.account_url(storage_account.name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -418,7 +416,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self._account_url(storage_account.name),
+            self.account_url(storage_account.name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -456,7 +454,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self._account_url(storage_account.name),
+            self.account_url(storage_account.name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -498,7 +496,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self._account_url(storage_account.name),
+            self.account_url(storage_account.name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -551,16 +549,14 @@ class StorageCPKTest(StorageTestCase):
         self.assertEqual(blob.properties.encryption_key_sha256, TEST_ENCRYPTION_KEY.key_hash)
         self._teardown(bsc)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_page_blob_with_chunks(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            pytest.skip("live only")
-
         # Act
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self._account_url(storage_account.name),
+            self.account_url(storage_account.name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -625,7 +621,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self._account_url(storage_account.name),
+            self.account_url(storage_account.name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
@@ -671,7 +667,7 @@ class StorageCPKTest(StorageTestCase):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         bsc = BlobServiceClient(
-            self._account_url(storage_account.name),
+            self.account_url(storage_account.name, "blob"),
             credential=storage_account_key,
             connection_data_block_size=1024,
             max_single_put_size=1024,
