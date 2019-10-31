@@ -57,7 +57,8 @@ class DefaultRetryPolicy(object):
     def needsRetry(self, error_code):
         if error_code in DefaultRetryPolicy.CONNECTION_ERROR_CODES:
             if self.args:
-                if (self.args[3].method == "GET") or (http_constants.HttpHeaders.IsQuery in self.args[3].headers):
+                if (self.args[3].method == "GET") or (http_constants.HttpHeaders.IsQuery in self.args[3].headers) \
+                        or (http_constants.HttpHeaders.IsQueryPlanRequest in self.args[3].headers):
                     return True
                 return False
             return True
@@ -66,7 +67,7 @@ class DefaultRetryPolicy(object):
     def ShouldRetry(self, exception):
         """Returns true if should retry based on the passed-in exception.
 
-        :param (errors.CosmosHttpResponseError instance) exception:
+        :param (exceptions.CosmosHttpResponseError instance) exception:
 
         :rtype:
             boolean

@@ -93,7 +93,7 @@ def _second_range_is_after_first_range(range1, range2):
         ##r.min < #previous_r.max
         return False
 
-    if range2.min == range2.min and range1.isMaxInclusive and range2.isMinInclusive:
+    if range2.min == range1.max and range1.isMaxInclusive and range2.isMinInclusive:
         # the inclusive ending endpoint of previous_r is the same as the inclusive beginning endpoint of r
         return False
 

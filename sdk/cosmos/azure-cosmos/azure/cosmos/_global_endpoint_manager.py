@@ -27,7 +27,7 @@ import threading
 from six.moves.urllib.parse import urlparse
 
 from . import _constants as constants
-from . import errors
+from . import exceptions
 from ._location_cache import LocationCache
 
 # pylint: disable=protected-access
@@ -126,13 +126,13 @@ class _GlobalEndpointManager(object):
         # specified (by creating a locational endpoint) and keeping eating the exception
         # until we get the database account and return None at the end, if we are not able
         # to get that info from any endpoints
-        except errors.CosmosHttpResponseError:
+        except exceptions.CosmosHttpResponseError:
             for location_name in self.PreferredLocations:
                 locational_endpoint = _GlobalEndpointManager.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
                     database_account = self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
                     return database_account
-                except errors.CosmosHttpResponseError:
+                except exceptions.CosmosHttpResponseError:
                     pass
 
             return None
