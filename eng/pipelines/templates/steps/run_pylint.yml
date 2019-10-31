@@ -10,6 +10,10 @@ steps:
     inputs:
      versionSpec: '3.7'
 
+  - script: |
+      pip install pathlib tox tox-monorepo packaging
+    displayName: 'Prep Environment'
+
   - task: PythonScript@0
     displayName: 'Run Pylint'
     inputs:
