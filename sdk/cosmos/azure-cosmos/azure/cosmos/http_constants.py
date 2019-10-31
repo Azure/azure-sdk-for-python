@@ -89,6 +89,9 @@ class HttpHeaders(object):
     # Query
     Query = "x-ms-documentdb-query"
     IsQuery = "x-ms-documentdb-isquery"
+    IsQueryPlanRequest = "x-ms-cosmos-is-query-plan-request"
+    SupportedQueryFeatures = "x-ms-cosmos-supported-query-features"
+    QueryVersion = "x-ms-cosmos-query-version"
 
     # Our custom DocDB headers
     Continuation = "x-ms-continuation"
@@ -262,9 +265,9 @@ class CookieHeaders(object):
 class Versions(object):
     """Constants of versions.
     """
-
     CurrentVersion = "2018-12-31"
     SDKName = "azure-cosmos"
+    QueryVersion = "1.0"
 
 
 class Delimiters(object):

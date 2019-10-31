@@ -29,7 +29,7 @@ import threading
 from . import _base
 from . import http_constants
 from ._vector_session_token import VectorSessionToken
-from .errors import CosmosHttpResponseError
+from .exceptions import CosmosHttpResponseError
 
 
 class SessionContainer(object):

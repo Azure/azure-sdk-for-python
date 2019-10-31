@@ -15,7 +15,10 @@ DESCRIPTION:
 
 USAGE:
     python file_samples_client.py
-    Set the environment variables with your own values before running the sample.
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    2) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
 """
 
 import os
@@ -26,9 +29,8 @@ DEST_FILE = './SampleDestination.txt'
 
 class FileSamples(object):
 
-    connection_string = os.getenv('CONNECTION_STRING')
-    protocol = os.getenv('PROTOCOL')
-    storage_account_name = os.getenv('STORAGE_ACCOUNT_NAME')
+    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    account_name = os.getenv("AZURE_STORAGE_ACCOUNT_NAME")
 
     def simple_file_operations(self):
         # Instantiate the ShareClient from a connection string
@@ -89,9 +91,8 @@ class FileSamples(object):
             destination_file = share.get_file_client("destinationfile")
 
             # Build the url from which to copy the file
-            source_url = "{}://{}.file.core.windows.net/{}/{}".format(
-                self.protocol,
-                self.storage_account_name,
+            source_url = "https://{}.file.core.windows.net/{}/{}".format(
+                self.account_name,
                 "filesamples2",
                 "sourcefile"
             )

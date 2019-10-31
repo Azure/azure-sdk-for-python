@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containera687174a?restype=container
+    uri: https://storagename.blob.core.windows.net/containera687174a?restype=container
   response:
     body:
       string: ''
@@ -66,7 +66,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
+    uri: https://storagename.blob.core.windows.net/?comp=batch
   response:
     body:
       string: "--batchresponse_1fa1b1e1-cb81-49f6-906f-92d3f519bd85\r\nContent-Type:
@@ -126,7 +126,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
+    uri: https://storagename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -176,7 +176,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob2
+    uri: https://storagename.blob.core.windows.net/containera687174a/blob2
   response:
     body:
       string: ''
@@ -226,7 +226,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob3
+    uri: https://storagename.blob.core.windows.net/containera687174a/blob3
   response:
     body:
       string: ''
@@ -268,7 +268,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
+    uri: https://storagename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -339,7 +339,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
+    uri: https://storagename.blob.core.windows.net/?comp=batch
   response:
     body:
       string: "--batchresponse_81dabea3-88e1-4c0e-80c6-daa10ec2dfef\r\nContent-Type:
@@ -382,7 +382,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
+    uri: https://storagename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -451,7 +451,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
+    uri: https://storagename.blob.core.windows.net/?comp=batch
   response:
     body:
       string: "--batchresponse_241fa89e-0f0c-48ae-ac89-94ac18fae8e5\r\nContent-Type:
@@ -505,7 +505,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
+    uri: https://storagename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -555,7 +555,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob2
+    uri: https://storagename.blob.core.windows.net/containera687174a/blob2
   response:
     body:
       string: ''
@@ -605,7 +605,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob3
+    uri: https://storagename.blob.core.windows.net/containera687174a/blob3
   response:
     body:
       string: ''
@@ -647,7 +647,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
+    uri: https://storagename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -718,7 +718,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
+    uri: https://storagename.blob.core.windows.net/?comp=batch
   response:
     body:
       string: "--batchresponse_fe57d07c-a4d0-4f92-aaf5-f60d563e27f9\r\nContent-Type:
@@ -761,7 +761,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
+    uri: https://storagename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -830,7 +830,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
+    uri: https://storagename.blob.core.windows.net/?comp=batch
   response:
     body:
       string: "--batchresponse_d2628766-b811-43b5-954b-f79364c9c4de\r\nContent-Type:
@@ -884,7 +884,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
+    uri: https://storagename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -934,7 +934,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob2
+    uri: https://storagename.blob.core.windows.net/containera687174a/blob2
   response:
     body:
       string: ''
@@ -984,7 +984,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob3
+    uri: https://storagename.blob.core.windows.net/containera687174a/blob3
   response:
     body:
       string: ''
@@ -1026,7 +1026,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
+    uri: https://storagename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -1097,7 +1097,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
+    uri: https://storagename.blob.core.windows.net/?comp=batch
   response:
     body:
       string: "--batchresponse_410b9d09-c84f-4c5d-82a2-5c6c8b6550f1\r\nContent-Type:
@@ -1140,7 +1140,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://blobstoragename.blob.core.windows.net/containera687174a/blob1
+    uri: https://storagename.blob.core.windows.net/containera687174a/blob1
   response:
     body:
       string: ''
@@ -1209,7 +1209,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://blobstoragename.blob.core.windows.net/?comp=batch
+    uri: https://storagename.blob.core.windows.net/?comp=batch
   response:
     body:
       string: "--batchresponse_7986fd2d-7c3c-4f46-ab25-6cc25507d4d6\r\nContent-Type:

@@ -3,19 +3,19 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 22 Oct 2019 21:23:45 GMT
+      - Wed, 30 Oct 2019 19:51:37 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://pyacrstorage78391ae5.queue.core.windows.net/pythonqueue78391ae5
+    uri: https://storagename.queue.core.windows.net/pyqueueasync78391ae5
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 22 Oct 2019 21:23:44 GMT
+      date: Wed, 30 Oct 2019 19:51:36 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -25,8 +25,8 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage78391ae5.queue.core.windows.net
-        - /pythonqueue78391ae5
+        - pyacrstoragekiq3q5uw4eso.queue.core.windows.net
+        - /pyqueueasync78391ae5
         - ''
         - ''
 - request:
@@ -35,19 +35,19 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 22 Oct 2019 21:23:46 GMT
+      - Wed, 30 Oct 2019 19:51:37 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://pyacrstorage78391ae5.queue.core.windows.net/pythonqueue78391ae5?comp=acl
+    uri: https://storagename.queue.core.windows.net/pyqueueasync78391ae5?comp=acl
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 22 Oct 2019 21:23:45 GMT
+      date: Wed, 30 Oct 2019 19:51:36 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -57,8 +57,8 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage78391ae5.queue.core.windows.net
-        - /pythonqueue78391ae5
+        - pyacrstoragekiq3q5uw4eso.queue.core.windows.net
+        - /pyqueueasync78391ae5
         - comp=acl
         - ''
 - request:
@@ -67,13 +67,13 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 22 Oct 2019 21:23:46 GMT
+      - Wed, 30 Oct 2019 19:51:37 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://pyacrstorage78391ae5.queue.core.windows.net/pythonqueue78391ae5?comp=acl
+    uri: https://storagename.queue.core.windows.net/pyqueueasync78391ae5?comp=acl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers
@@ -81,7 +81,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/xml
-      date: Tue, 22 Oct 2019 21:23:45 GMT
+      date: Wed, 30 Oct 2019 19:51:36 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2018-03-28'
@@ -92,8 +92,8 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage78391ae5.queue.core.windows.net
-        - /pythonqueue78391ae5
+        - pyacrstoragekiq3q5uw4eso.queue.core.windows.net
+        - /pyqueueasync78391ae5
         - comp=acl
         - ''
 version: 1

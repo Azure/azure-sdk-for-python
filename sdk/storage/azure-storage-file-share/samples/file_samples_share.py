@@ -16,7 +16,9 @@ DESCRIPTION:
 
 USAGE:
     python file_samples_share.py
-    Set the environment variables with your own values before running the sample.
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 import os
@@ -27,7 +29,7 @@ DEST_FILE = './SampleDestination.txt'
 
 class ShareSamples(object):
 
-    connection_string = os.getenv('CONNECTION_STRING')
+    connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
 
     def create_share_snapshot(self):
         # Instantiate the ShareClient from a connection string

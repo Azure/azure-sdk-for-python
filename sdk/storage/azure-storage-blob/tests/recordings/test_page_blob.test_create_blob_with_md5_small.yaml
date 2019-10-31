@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerb3e31272?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainerb3e31272?restype=container
   response:
     body:
       string: ''
@@ -55,7 +55,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainersourceb3e31272?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainersourceb3e31272?restype=container
   response:
     body:
       string: ''
@@ -99,7 +99,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerb3e31272/blobb3e31272
+    uri: https://storagename.blob.core.windows.net/utcontainerb3e31272/blobb3e31272
   response:
     body:
       string: ''
@@ -149,7 +149,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainerb3e31272/blobb3e31272?comp=page
+    uri: https://storagename.blob.core.windows.net/utcontainerb3e31272/blobb3e31272?comp=page
   response:
     body:
       string: ''

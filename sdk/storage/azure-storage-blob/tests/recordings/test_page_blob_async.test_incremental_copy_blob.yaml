@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainercc06132f?restype=container
   response:
     body:
       string: ''
@@ -41,7 +41,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainersourcecc06132f?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainersourcecc06132f?restype=container
   response:
     body:
       string: ''
@@ -79,7 +79,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/blobcc06132f
+    uri: https://storagename.blob.core.windows.net/utcontainercc06132f/blobcc06132f
   response:
     body:
       string: ''
@@ -120,7 +120,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/blobcc06132f?comp=page
+    uri: https://storagename.blob.core.windows.net/utcontainercc06132f/blobcc06132f?comp=page
   response:
     body:
       string: ''
@@ -163,7 +163,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/blobcc06132f?comp=page
+    uri: https://storagename.blob.core.windows.net/utcontainercc06132f/blobcc06132f?comp=page
   response:
     body:
       string: ''
@@ -198,7 +198,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/blobcc06132f?comp=snapshot
+    uri: https://storagename.blob.core.windows.net/utcontainercc06132f/blobcc06132f?comp=snapshot
   response:
     body:
       string: ''
@@ -234,7 +234,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/dest_blob?comp=incrementalcopy
+    uri: https://storagename.blob.core.windows.net/utcontainercc06132f/dest_blob?comp=incrementalcopy
   response:
     body:
       string: ''
@@ -268,7 +268,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/dest_blob
+    uri: https://storagename.blob.core.windows.net/utcontainercc06132f/dest_blob
   response:
     body:
       string: ''
@@ -313,7 +313,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://blobstoragename.blob.core.windows.net/utcontainercc06132f/dest_blob
+    uri: https://storagename.blob.core.windows.net/utcontainercc06132f/dest_blob
   response:
     body:
       string: ''

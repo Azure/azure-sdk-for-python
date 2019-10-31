@@ -19,7 +19,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/container70e51ab2?restype=container
+    uri: https://storagename.blob.core.windows.net/container70e51ab2?restype=container
   response:
     body:
       string: ''

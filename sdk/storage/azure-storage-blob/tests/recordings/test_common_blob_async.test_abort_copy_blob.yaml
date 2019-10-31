@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer853e11a1?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer853e11a1?timeout=5&restype=container
   response:
     body:
       string: ''
@@ -43,7 +43,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer853e11a1/59466-0.txt
+    uri: https://storagename.blob.core.windows.net/utcontainer853e11a1/59466-0.txt
   response:
     body:
       string: ''
@@ -79,7 +79,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer853e11a1/59466-0.txt?copyid=84a205bb-f74e-43a4-b4c0-ffda461e139b&comp=copy
+    uri: https://storagename.blob.core.windows.net/utcontainer853e11a1/59466-0.txt?copyid=84a205bb-f74e-43a4-b4c0-ffda461e139b&comp=copy
   response:
     body:
       string: ''
@@ -109,7 +109,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer853e11a1/59466-0.txt
+    uri: https://storagename.blob.core.windows.net/utcontainer853e11a1/59466-0.txt
   response:
     body:
       string: ''
@@ -159,7 +159,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer853e11a1/59466-0.txt
+    uri: https://storagename.blob.core.windows.net/utcontainer853e11a1/59466-0.txt
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
@@ -195,7 +195,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer853e11a1/59466-0.txt
+    uri: https://storagename.blob.core.windows.net/utcontainer853e11a1/59466-0.txt
   response:
     body:
       string: ''
@@ -243,7 +243,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer853e11a1/59466-0.txt
+    uri: https://storagename.blob.core.windows.net/utcontainer853e11a1/59466-0.txt
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
@@ -279,7 +279,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer853e11a1/59466-0.txt
+    uri: https://storagename.blob.core.windows.net/utcontainer853e11a1/59466-0.txt
   response:
     body:
       string: ''
