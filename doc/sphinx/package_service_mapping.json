@@ -509,7 +509,21 @@
     "namespaces": [
       "azure.mgmt.machinelearningcompute"
     ],
-    "service_name": "Machine Learning Compute"
+    "service_name": "Machine Learning"
+  },
+  "azure-mgmt-machinelearningservices": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.machinelearningservices"
+    ],
+    "service_name": "Machine Learning"
+  },
+  "azure-mgmt-managedservices": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.managedservices"
+    ],
+    "service_name": "Managed Services"
   },
   "azure-mgmt-managementgroups": {
     "category": "Management",
@@ -870,6 +884,20 @@
     "service_name": "App Configuration",
     "namespaces": [
       "azure.mgmt.appconfiguration"
+    ]
+  },
+  "azure-mgmt-hybridcompute": {
+    "category": "Management",
+    "service_name": "Hybrid Compute",
+    "namespaces": [
+      "azure.mgmt.hybridcompute"
+    ]
+  },
+  "azure-mgmt-peering": {
+    "category": "Management",
+    "service_name": "Peering",
+    "namespaces": [
+      "azure.mgmt.peering"
     ]
   },
   "azure-servicefabric": {
