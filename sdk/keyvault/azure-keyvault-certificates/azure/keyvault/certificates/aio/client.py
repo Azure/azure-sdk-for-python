@@ -60,7 +60,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :param policy: The management policy for the certificate.
         :type policy:
          ~azure.keyvault.certificates.models.CertificatePolicy
-        :keyword bool enabled: Whether the key is enabled for use.
+        :keyword bool enabled: Whether the certificate is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :returns: A coroutine for the creation of the certificate. Awaiting the coroutine
