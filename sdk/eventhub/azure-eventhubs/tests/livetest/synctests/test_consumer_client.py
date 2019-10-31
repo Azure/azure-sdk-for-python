@@ -11,16 +11,15 @@ def test_receive_no_partition(connstr_senders):
     senders[0].send(EventData("Test EventData"))
     senders[1].send(EventData("Test EventData"))
     client = EventHubConsumerClient.from_connection_string(connection_str, receive_timeout=1, network_tracing=False)
-    received = 0
+    received = []
 
     def process_events(partition_context, events):
-        nonlocal received
-        received += len(events)
+        received.extend(events)
 
     with client:
         client.receive(process_events, consumer_group="$default", initial_event_position="-1")
         time.sleep(3)
-        assert received == 2
+        assert len(received) == 2
 
 
 @pytest.mark.liveTest
@@ -28,11 +27,10 @@ def test_receive_partition(connstr_senders):
     connection_str, senders = connstr_senders
     senders[0].send(EventData("Test EventData"))
     client = EventHubConsumerClient.from_connection_string(connection_str, network_tracing=False)
-    received = 0
+    received = []
 
     def process_events(partition_context, events):
-        nonlocal received
-        received += len(events)
+        received.extend(events)
         assert partition_context.partition_id == "0"
         assert partition_context.consumer_group_name == "$default"
         assert partition_context.fully_qualified_namespace in connection_str
@@ -41,7 +39,7 @@ def test_receive_partition(connstr_senders):
     with client:
         client.receive(process_events, consumer_group="$default", partition_id="0", initial_event_position="-1")
         time.sleep(2)
-        assert received == 1
+        assert len(received) == 1
 
 
 @pytest.mark.liveTest
