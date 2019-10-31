@@ -21,7 +21,8 @@ class BlobPartitionManager(PartitionManager):
     azure.eventhub.eventprocessor.PartitionManager of package azure-eventhub.
 
     """
-    def __init__(self, container_client: ContainerClient):
+    def __init__(self, container_client):
+        # type(ContainerClient) -> None
         """Create a BlobPartitionManager
 
         :param container_client: The Azure Blob Storage Container client that is used to save checkpoint data to Azure
