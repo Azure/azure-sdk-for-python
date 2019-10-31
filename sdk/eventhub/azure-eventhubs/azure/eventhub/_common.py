@@ -43,8 +43,12 @@ class EventData(object):
     """
     The EventData class is a holder of event content.
 
-    Example:
-        .. literalinclude:: ../examples/test_examples_eventhub.py
+    :param body: The data to send in a single message.
+        :class: str, bytes or list
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sync_samples/test_examples_eventhub.py
             :start-after: [START create_event_data]
             :end-before: [END create_event_data]
             :language: python
@@ -64,13 +68,6 @@ class EventData(object):
     PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC = b"runtime_info_retrieval_time_utc"
 
     def __init__(self, body=None):
-        """
-        Initialize EventData.
-
-        :param body: The data to send in a single message.
-        :type body: str, bytes or list
-        """
-
         self._last_enqueued_event_properties = {}
         if body and isinstance(body, list):
             self.message = Message(body[0])
