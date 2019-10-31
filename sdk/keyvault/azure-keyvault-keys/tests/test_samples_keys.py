@@ -196,7 +196,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END backup_key]
 
-        key_client.begin_delete_key(key_name).wait()
+        polling_interval = 0 if self.is_playback() else 2
+
+        key_client.begin_delete_key(key_name, _polling_interval=polling_interval).wait()
 
         # [START restore_key_backup]
 

@@ -128,7 +128,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         updated = await _update_secret(created)
 
         # delete secret
-        if self.is_playback:
+        if self.is_playback():
             polling_interval = 0
         else:
             polling_interval = None
@@ -172,7 +172,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secret_name = "secret{}".format(i)
             secret_value = "value{}".format(i)
             expected[secret_name] = await client.set_secret(secret_name, secret_value)
-        if self.is_playback:
+        if self.is_playback():
             polling_interval = 0
         else:
             polling_interval = None
@@ -235,7 +235,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         self.assertIsNotNone(secret_backup, "secret_backup")
 
         # delete secret
-        if self.is_playback:
+        if self.is_playback():
             polling_interval = 0
         else:
             polling_interval = None
@@ -262,7 +262,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secrets[secret_name] = await client.set_secret(secret_name, secret_value)
 
         # delete all secrets
-        if self.is_playback:
+        if self.is_playback():
             polling_interval = 0
         else:
             polling_interval = None
@@ -298,7 +298,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secrets[secret_name] = await client.set_secret(secret_name, secret_value)
 
         # delete all secrets
-        if self.is_playback:
+        if self.is_playback():
             polling_interval = 0
         else:
             polling_interval = None

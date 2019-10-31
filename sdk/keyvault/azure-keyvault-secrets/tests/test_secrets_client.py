@@ -132,7 +132,7 @@ class SecretClientTests(KeyVaultTestCase):
         updated = _update_secret(created)
 
         # delete secret
-        if self.is_playback:
+        if self.is_playback():
             polling_interval = 0
         else:
             polling_interval = None
@@ -207,7 +207,7 @@ class SecretClientTests(KeyVaultTestCase):
             expected[secret_name] = client.set_secret(secret_name, secret_value)
 
         # delete them
-        if self.is_playback:
+        if self.is_playback():
             polling_interval = 0
         else:
             polling_interval = None
@@ -238,7 +238,7 @@ class SecretClientTests(KeyVaultTestCase):
         self.assertIsNotNone(secret_backup, "secret_backup")
 
         # delete secret
-        if self.is_playback:
+        if self.is_playback():
             polling_interval = 0
         else:
             polling_interval = None
@@ -262,7 +262,7 @@ class SecretClientTests(KeyVaultTestCase):
             secret_value = "value{}".format(i)
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
 
-        if self.is_playback:
+        if self.is_playback():
             polling_interval = 0
         else:
             polling_interval = None
@@ -299,7 +299,7 @@ class SecretClientTests(KeyVaultTestCase):
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
 
         # delete all secrets
-        if self.is_playback:
+        if self.is_playback():
             polling_interval = 0
         else:
             polling_interval = None

@@ -202,7 +202,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         await self._update_key_properties(client, created_rsa_key)
 
         # delete the new key
-        if self.is_playback:
+        if self.is_playback():
             polling_interval = 0
         else:
             polling_interval = None
@@ -285,7 +285,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             expected[key_name] = await client.create_key(key_name, key_type)
 
         # delete all keys
-        if self.is_playback:
+        if self.is_playback():
             polling_interval = 0
         else:
             polling_interval = None
@@ -323,7 +323,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         self.assertIsNotNone(key_backup, "key_backup")
 
         # delete key
-        if self.is_playback:
+        if self.is_playback():
             polling_interval = 0
         else:
             polling_interval = None
@@ -349,7 +349,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             keys[key_name] = await client.create_key(key_name, "RSA")
 
         # delete them
-        if self.is_playback:
+        if self.is_playback():
             polling_interval = 0
         else:
             polling_interval = None
@@ -385,7 +385,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             keys[key_name] = await client.create_key(key_name, "RSA")
 
         # delete them
-        if self.is_playback:
+        if self.is_playback():
             polling_interval = 0
         else:
             polling_interval = None
