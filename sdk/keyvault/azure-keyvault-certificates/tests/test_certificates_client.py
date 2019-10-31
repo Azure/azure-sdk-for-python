@@ -666,7 +666,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
         expected_issuers = [expected_base_1, expected_base_2]
 
-        issuers = list(client.list_issuers())
+        issuers = list(client.list_properties_of_issuers())
         self.assertEqual(len(issuers), len(expected_issuers))
         for issuer in issuers:
             exp_issuer = next((i for i in expected_issuers if i.name == issuer.name), None)

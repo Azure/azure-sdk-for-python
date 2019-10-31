@@ -699,7 +699,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
         expected_issuers = [expected_base_1, expected_base_2]
 
-        issuers = client.list_issuers()
+        issuers = client.list_properties_of_issuers()
         async for issuer in issuers:
             exp_issuer = next((i for i in expected_issuers if i.name == issuer.name), None)
             self.assertIsNotNone(exp_issuer)

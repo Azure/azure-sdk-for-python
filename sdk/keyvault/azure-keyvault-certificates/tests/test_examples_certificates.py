@@ -362,7 +362,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [START list_issuers]
 
-        issuers = certificate_client.list_issuers()
+        issuers = certificate_client.list_properties_of_issuers()
 
         for issuer in issuers:
             print(issuer.name)

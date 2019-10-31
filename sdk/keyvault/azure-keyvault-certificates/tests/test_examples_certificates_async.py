@@ -365,7 +365,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [START list_issuers]
 
-        issuers = certificate_client.list_issuers()
+        issuers = certificate_client.list_properties_of_issuers()
 
         async for issuer in issuers:
             print(issuer.name)

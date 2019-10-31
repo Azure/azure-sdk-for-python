@@ -941,8 +941,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
-    def list_issuers(self, **kwargs: "**Any") -> AsyncIterable[IssuerProperties]:
-        """List certificate issuers for the key vault.
+    def list_properties_of_issuers(self, **kwargs: "**Any") -> AsyncIterable[IssuerProperties]:
+        """Lists properties of the certificate issuers for the key vault.
 
         Returns the set of certificate issuer resources in the key
         vault. This operation requires the certificates/manageissuers/getissuers
