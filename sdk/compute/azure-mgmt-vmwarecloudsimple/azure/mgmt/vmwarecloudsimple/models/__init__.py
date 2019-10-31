@@ -16,8 +16,18 @@ try:
     from ._models_py3 import AvailableOperationDisplayPropertyServiceSpecificationMetricsList
     from ._models_py3 import CSRPError, CSRPErrorException
     from ._models_py3 import CSRPErrorBody
+    from ._models_py3 import CustomizationHostName
+    from ._models_py3 import CustomizationIdentity
+    from ._models_py3 import CustomizationIdentityUserData
+    from ._models_py3 import CustomizationIPAddress
+    from ._models_py3 import CustomizationIPSettings
+    from ._models_py3 import CustomizationNicSetting
+    from ._models_py3 import CustomizationPolicy
+    from ._models_py3 import CustomizationSpecification
     from ._models_py3 import DedicatedCloudNode
     from ._models_py3 import DedicatedCloudService
+    from ._models_py3 import GuestOSCustomization
+    from ._models_py3 import GuestOSNICCustomization
     from ._models_py3 import OperationError
     from ._models_py3 import OperationResource
     from ._models_py3 import PatchPayload
@@ -41,8 +51,18 @@ except (SyntaxError, ImportError):
     from ._models import AvailableOperationDisplayPropertyServiceSpecificationMetricsList
     from ._models import CSRPError, CSRPErrorException
     from ._models import CSRPErrorBody
+    from ._models import CustomizationHostName
+    from ._models import CustomizationIdentity
+    from ._models import CustomizationIdentityUserData
+    from ._models import CustomizationIPAddress
+    from ._models import CustomizationIPSettings
+    from ._models import CustomizationNicSetting
+    from ._models import CustomizationPolicy
+    from ._models import CustomizationSpecification
     from ._models import DedicatedCloudNode
     from ._models import DedicatedCloudService
+    from ._models import GuestOSCustomization
+    from ._models import GuestOSNICCustomization
     from ._models import OperationError
     from ._models import OperationResource
     from ._models import PatchPayload
@@ -60,6 +80,7 @@ except (SyntaxError, ImportError):
     from ._models import VirtualNetwork
     from ._models import VirtualNic
 from ._paged_models import AvailableOperationPaged
+from ._paged_models import CustomizationPolicyPaged
 from ._paged_models import DedicatedCloudNodePaged
 from ._paged_models import DedicatedCloudServicePaged
 from ._paged_models import PrivateCloudPaged
@@ -90,8 +111,18 @@ __all__ = [
     'AvailableOperationDisplayPropertyServiceSpecificationMetricsList',
     'CSRPError', 'CSRPErrorException',
     'CSRPErrorBody',
+    'CustomizationHostName',
+    'CustomizationIdentity',
+    'CustomizationIdentityUserData',
+    'CustomizationIPAddress',
+    'CustomizationIPSettings',
+    'CustomizationNicSetting',
+    'CustomizationPolicy',
+    'CustomizationSpecification',
     'DedicatedCloudNode',
     'DedicatedCloudService',
+    'GuestOSCustomization',
+    'GuestOSNICCustomization',
     'OperationError',
     'OperationResource',
     'PatchPayload',
@@ -113,6 +144,7 @@ __all__ = [
     'DedicatedCloudServicePaged',
     'SkuAvailabilityPaged',
     'PrivateCloudPaged',
+    'CustomizationPolicyPaged',
     'ResourcePoolPaged',
     'VirtualMachineTemplatePaged',
     'VirtualNetworkPaged',

@@ -271,7 +271,7 @@ class VirtualMachinesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'virtualMachineName': self._serialize.url("virtual_machine_name", virtual_machine_name, 'str', pattern=r'^[-a-zA-Z0-9]+$')
+            'virtualMachineName': self._serialize.url("virtual_machine_name", virtual_machine_name, 'str', pattern=r'^[a-zA-Z0-9]([-_.a-zA-Z0-9]*[a-zA-Z0-9])?$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

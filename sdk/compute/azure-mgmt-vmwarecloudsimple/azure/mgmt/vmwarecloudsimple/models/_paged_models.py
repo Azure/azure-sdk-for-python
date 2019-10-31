@@ -77,6 +77,19 @@ class PrivateCloudPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PrivateCloudPaged, self).__init__(*args, **kwargs)
+class CustomizationPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`CustomizationPolicy <azure.mgmt.vmwarecloudsimple.models.CustomizationPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[CustomizationPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(CustomizationPolicyPaged, self).__init__(*args, **kwargs)
 class ResourcePoolPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ResourcePool <azure.mgmt.vmwarecloudsimple.models.ResourcePool>` object

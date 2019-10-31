@@ -212,6 +212,226 @@ class CSRPErrorBody(Model):
         self.target = kwargs.get('target', None)
 
 
+class CustomizationHostName(Model):
+    """Host name model.
+
+    :param name: Hostname
+    :type name: str
+    :param type: Type of host name. Possible values include: 'USER_DEFINED',
+     'PREFIX_BASED', 'FIXED', 'VIRTUAL_MACHINE_NAME', 'CUSTOM_NAME'
+    :type type: str or ~azure.mgmt.vmwarecloudsimple.models.enum
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CustomizationHostName, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+
+
+class CustomizationIdentity(Model):
+    """CustomizationIdentity.
+
+    :param data: Windows Text Identity. Prepared data
+    :type data: str
+    :param host_name: Virtual machine host name settings
+    :type host_name:
+     ~azure.mgmt.vmwarecloudsimple.models.CustomizationHostName
+    :param type: Identity type. Possible values include: 'WINDOWS_TEXT',
+     'WINDOWS', 'LINUX'
+    :type type: str or ~azure.mgmt.vmwarecloudsimple.models.enum
+    :param user_data: Windows Identity. User data customization
+    :type user_data:
+     ~azure.mgmt.vmwarecloudsimple.models.CustomizationIdentityUserData
+    """
+
+    _attribute_map = {
+        'data': {'key': 'data', 'type': 'str'},
+        'host_name': {'key': 'hostName', 'type': 'CustomizationHostName'},
+        'type': {'key': 'type', 'type': 'str'},
+        'user_data': {'key': 'userData', 'type': 'CustomizationIdentityUserData'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CustomizationIdentity, self).__init__(**kwargs)
+        self.data = kwargs.get('data', None)
+        self.host_name = kwargs.get('host_name', None)
+        self.type = kwargs.get('type', None)
+        self.user_data = kwargs.get('user_data', None)
+
+
+class CustomizationIdentityUserData(Model):
+    """Windows Identity. User data customization.
+
+    :param is_password_predefined: Is password predefined in customization
+     policy. Default value: False .
+    :type is_password_predefined: bool
+    """
+
+    _attribute_map = {
+        'is_password_predefined': {'key': 'isPasswordPredefined', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CustomizationIdentityUserData, self).__init__(**kwargs)
+        self.is_password_predefined = kwargs.get('is_password_predefined', False)
+
+
+class CustomizationIPAddress(Model):
+    """CustomizationIPAddress.
+
+    :param argument: Argument when Custom ip type is selected
+    :type argument: str
+    :param ip_address: Defined Ip Address when Fixed ip type is selected
+    :type ip_address: str
+    :param type: Customization Specification ip type. Possible values include:
+     'CUSTOM', 'DHCP_IP', 'FIXED_IP', 'USER_DEFINED'
+    :type type: str or ~azure.mgmt.vmwarecloudsimple.models.enum
+    """
+
+    _attribute_map = {
+        'argument': {'key': 'argument', 'type': 'str'},
+        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CustomizationIPAddress, self).__init__(**kwargs)
+        self.argument = kwargs.get('argument', None)
+        self.ip_address = kwargs.get('ip_address', None)
+        self.type = kwargs.get('type', None)
+
+
+class CustomizationIPSettings(Model):
+    """CustomizationIPSettings.
+
+    :param gateway: The list of gateways
+    :type gateway: list[str]
+    :param ip: Ip address customization settings
+    :type ip: ~azure.mgmt.vmwarecloudsimple.models.CustomizationIPAddress
+    :param subnet_mask: Adapter subnet mask
+    :type subnet_mask: str
+    """
+
+    _attribute_map = {
+        'gateway': {'key': 'gateway', 'type': '[str]'},
+        'ip': {'key': 'ip', 'type': 'CustomizationIPAddress'},
+        'subnet_mask': {'key': 'subnetMask', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CustomizationIPSettings, self).__init__(**kwargs)
+        self.gateway = kwargs.get('gateway', None)
+        self.ip = kwargs.get('ip', None)
+        self.subnet_mask = kwargs.get('subnet_mask', None)
+
+
+class CustomizationNicSetting(Model):
+    """CustomizationNicSetting.
+
+    :param adapter: The list of adapters' settings
+    :type adapter:
+     ~azure.mgmt.vmwarecloudsimple.models.CustomizationIPSettings
+    :param mac_address: NIC mac address
+    :type mac_address: str
+    """
+
+    _attribute_map = {
+        'adapter': {'key': 'adapter', 'type': 'CustomizationIPSettings'},
+        'mac_address': {'key': 'macAddress', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CustomizationNicSetting, self).__init__(**kwargs)
+        self.adapter = kwargs.get('adapter', None)
+        self.mac_address = kwargs.get('mac_address', None)
+
+
+class CustomizationPolicy(Model):
+    """The virtual machine customization policy.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param id: Customization policy azure id
+    :type id: str
+    :param location: Azure region
+    :type location: str
+    :ivar name: Customization policy name
+    :vartype name: str
+    :param description: Policy description
+    :type description: str
+    :param private_cloud_id: The Private cloud id
+    :type private_cloud_id: str
+    :param specification: Detailed customization policy specification
+    :type specification:
+     ~azure.mgmt.vmwarecloudsimple.models.CustomizationSpecification
+    :param customization_policy_properties_type: The type of customization
+     (Linux or Windows). Possible values include: 'LINUX', 'WINDOWS'
+    :type customization_policy_properties_type: str or
+     ~azure.mgmt.vmwarecloudsimple.models.enum
+    :param version: Policy version
+    :type version: str
+    :ivar type:
+    :vartype type: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'private_cloud_id': {'key': 'properties.privateCloudId', 'type': 'str'},
+        'specification': {'key': 'properties.specification', 'type': 'CustomizationSpecification'},
+        'customization_policy_properties_type': {'key': 'properties.type', 'type': 'str'},
+        'version': {'key': 'properties.version', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CustomizationPolicy, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.location = kwargs.get('location', None)
+        self.name = None
+        self.description = kwargs.get('description', None)
+        self.private_cloud_id = kwargs.get('private_cloud_id', None)
+        self.specification = kwargs.get('specification', None)
+        self.customization_policy_properties_type = kwargs.get('customization_policy_properties_type', None)
+        self.version = kwargs.get('version', None)
+        self.type = None
+
+
+class CustomizationSpecification(Model):
+    """The specification for Customization Policy.
+
+    :param identity: Customization Identity. It contains data about user and
+     hostname
+    :type identity: ~azure.mgmt.vmwarecloudsimple.models.CustomizationIdentity
+    :param nic_settings: Network interface settings
+    :type nic_settings:
+     list[~azure.mgmt.vmwarecloudsimple.models.CustomizationNicSetting]
+    """
+
+    _attribute_map = {
+        'identity': {'key': 'identity', 'type': 'CustomizationIdentity'},
+        'nic_settings': {'key': 'nicSettings', 'type': '[CustomizationNicSetting]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CustomizationSpecification, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)
+        self.nic_settings = kwargs.get('nic_settings', None)
+
+
 class DedicatedCloudNode(Model):
     """Dedicated cloud node model.
 
@@ -270,7 +490,7 @@ class DedicatedCloudNode(Model):
     _validation = {
         'id': {'readonly': True},
         'location': {'required': True},
-        'name': {'readonly': True, 'pattern': r'^[-a-zA-Z0-9]+$'},
+        'name': {'readonly': True, 'pattern': r'^[a-zA-Z0-9]([-_.a-zA-Z0-9]*[a-zA-Z0-9])?$'},
         'availability_zone_id': {'required': True},
         'availability_zone_name': {'readonly': True},
         'cloud_rack_name': {'readonly': True},
@@ -361,10 +581,10 @@ class DedicatedCloudService(Model):
      'onBoardingFailed', 'onBoarding'
     :vartype is_account_onboarded: str or
      ~azure.mgmt.vmwarecloudsimple.models.OnboardingStatus
-    :param nodes: total nodes purchased
-    :type nodes: int
-    :param service_url: link to a service management web portal
-    :type service_url: str
+    :ivar nodes: total nodes purchased
+    :vartype nodes: int
+    :ivar service_url: link to a service management web portal
+    :vartype service_url: str
     :param tags: The list of tags
     :type tags: dict[str, str]
     :ivar type: {resourceProviderNamespace}/{resourceType}
@@ -374,9 +594,11 @@ class DedicatedCloudService(Model):
     _validation = {
         'id': {'readonly': True},
         'location': {'required': True},
-        'name': {'readonly': True, 'pattern': r'^[-a-zA-Z0-9]+$'},
+        'name': {'readonly': True, 'pattern': r'^[a-zA-Z0-9]([-_.a-zA-Z0-9]*[a-zA-Z0-9])?$'},
         'gateway_subnet': {'required': True},
         'is_account_onboarded': {'readonly': True},
+        'nodes': {'readonly': True},
+        'service_url': {'readonly': True},
         'type': {'readonly': True},
     }
 
@@ -399,10 +621,83 @@ class DedicatedCloudService(Model):
         self.name = None
         self.gateway_subnet = kwargs.get('gateway_subnet', None)
         self.is_account_onboarded = None
-        self.nodes = kwargs.get('nodes', None)
-        self.service_url = kwargs.get('service_url', None)
+        self.nodes = None
+        self.service_url = None
         self.tags = kwargs.get('tags', None)
         self.type = None
+
+
+class GuestOSCustomization(Model):
+    """Guest OS Customization properties.
+
+    :param dns_servers: List of dns servers to use
+    :type dns_servers: list[str]
+    :param host_name: Virtual Machine hostname
+    :type host_name: str
+    :param password: Password for login
+    :type password: str
+    :param policy_id: id of customization policy
+    :type policy_id: str
+    :param username: Username for login
+    :type username: str
+    """
+
+    _attribute_map = {
+        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
+        'host_name': {'key': 'hostName', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
+        'policy_id': {'key': 'policyId', 'type': 'str'},
+        'username': {'key': 'username', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GuestOSCustomization, self).__init__(**kwargs)
+        self.dns_servers = kwargs.get('dns_servers', None)
+        self.host_name = kwargs.get('host_name', None)
+        self.password = kwargs.get('password', None)
+        self.policy_id = kwargs.get('policy_id', None)
+        self.username = kwargs.get('username', None)
+
+
+class GuestOSNICCustomization(Model):
+    """Guest OS nic customization.
+
+    :param allocation: IP address allocation method. Possible values include:
+     'static', 'dynamic'
+    :type allocation: str or ~azure.mgmt.vmwarecloudsimple.models.enum
+    :param dns_servers: List of dns servers to use
+    :type dns_servers: list[str]
+    :param gateway: Gateway addresses assigned to nic
+    :type gateway: list[str]
+    :param ip_address: Static ip address for nic
+    :type ip_address: str
+    :param mask: Network mask for nic
+    :type mask: str
+    :param primary_wins_server: primary WINS server for Windows
+    :type primary_wins_server: str
+    :param secondary_wins_server: secondary WINS server for Windows
+    :type secondary_wins_server: str
+    """
+
+    _attribute_map = {
+        'allocation': {'key': 'allocation', 'type': 'str'},
+        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
+        'gateway': {'key': 'gateway', 'type': '[str]'},
+        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+        'mask': {'key': 'mask', 'type': 'str'},
+        'primary_wins_server': {'key': 'primaryWinsServer', 'type': 'str'},
+        'secondary_wins_server': {'key': 'secondaryWinsServer', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GuestOSNICCustomization, self).__init__(**kwargs)
+        self.allocation = kwargs.get('allocation', None)
+        self.dns_servers = kwargs.get('dns_servers', None)
+        self.gateway = kwargs.get('gateway', None)
+        self.ip_address = kwargs.get('ip_address', None)
+        self.mask = kwargs.get('mask', None)
+        self.primary_wins_server = kwargs.get('primary_wins_server', None)
+        self.secondary_wins_server = kwargs.get('secondary_wins_server', None)
 
 
 class OperationError(Model):
@@ -928,6 +1223,9 @@ class VirtualMachine(Model):
     :ivar controllers: The list of Virtual Disks' Controllers
     :vartype controllers:
      list[~azure.mgmt.vmwarecloudsimple.models.VirtualDiskController]
+    :param customization: Virtual machine properties
+    :type customization:
+     ~azure.mgmt.vmwarecloudsimple.models.GuestOSCustomization
     :param disks: The list of Virtual Disks
     :type disks: list[~azure.mgmt.vmwarecloudsimple.models.VirtualDisk]
     :ivar dnsname: The DNS name of Virtual Machine in VCenter
@@ -946,7 +1244,8 @@ class VirtualMachine(Model):
     :type nics: list[~azure.mgmt.vmwarecloudsimple.models.VirtualNic]
     :param number_of_cores: Required. The number of CPU cores
     :type number_of_cores: int
-    :param password: Password for login
+    :param password: Password for login. Deprecated - use customization
+     property
     :type password: str
     :param private_cloud_id: Required. Private Cloud Id
     :type private_cloud_id: str
@@ -963,7 +1262,8 @@ class VirtualMachine(Model):
      ~azure.mgmt.vmwarecloudsimple.models.VirtualMachineStatus
     :param template_id: Virtual Machine Template Id
     :type template_id: str
-    :param username: Username for login
+    :param username: Username for login. Deprecated - use customization
+     property
     :type username: str
     :param v_sphere_networks: The list of Virtual VSphere Networks
     :type v_sphere_networks: list[str]
@@ -980,7 +1280,7 @@ class VirtualMachine(Model):
     _validation = {
         'id': {'readonly': True},
         'location': {'required': True},
-        'name': {'readonly': True, 'pattern': r'^[-a-zA-Z0-9]+$'},
+        'name': {'readonly': True, 'pattern': r'^[a-zA-Z0-9]([-_.a-zA-Z0-9]*[a-zA-Z0-9])?$'},
         'amount_of_ram': {'required': True},
         'controllers': {'readonly': True},
         'dnsname': {'readonly': True},
@@ -1003,6 +1303,7 @@ class VirtualMachine(Model):
         'name': {'key': 'name', 'type': 'str'},
         'amount_of_ram': {'key': 'properties.amountOfRam', 'type': 'int'},
         'controllers': {'key': 'properties.controllers', 'type': '[VirtualDiskController]'},
+        'customization': {'key': 'properties.customization', 'type': 'GuestOSCustomization'},
         'disks': {'key': 'properties.disks', 'type': '[VirtualDisk]'},
         'dnsname': {'key': 'properties.dnsname', 'type': 'str'},
         'expose_to_guest_vm': {'key': 'properties.exposeToGuestVM', 'type': 'bool'},
@@ -1033,6 +1334,7 @@ class VirtualMachine(Model):
         self.name = None
         self.amount_of_ram = kwargs.get('amount_of_ram', None)
         self.controllers = None
+        self.customization = kwargs.get('customization', None)
         self.disks = kwargs.get('disks', None)
         self.dnsname = None
         self.expose_to_guest_vm = kwargs.get('expose_to_guest_vm', None)
@@ -1232,6 +1534,9 @@ class VirtualNic(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param customization: guest OS customization for nic
+    :type customization:
+     ~azure.mgmt.vmwarecloudsimple.models.GuestOSNICCustomization
     :param ip_addresses: NIC ip address
     :type ip_addresses: list[str]
     :param mac_address: NIC MAC address
@@ -1256,6 +1561,7 @@ class VirtualNic(Model):
     }
 
     _attribute_map = {
+        'customization': {'key': 'customization', 'type': 'GuestOSNICCustomization'},
         'ip_addresses': {'key': 'ipAddresses', 'type': '[str]'},
         'mac_address': {'key': 'macAddress', 'type': 'str'},
         'network': {'key': 'network', 'type': 'VirtualNetwork'},
@@ -1267,6 +1573,7 @@ class VirtualNic(Model):
 
     def __init__(self, **kwargs):
         super(VirtualNic, self).__init__(**kwargs)
+        self.customization = kwargs.get('customization', None)
         self.ip_addresses = kwargs.get('ip_addresses', None)
         self.mac_address = kwargs.get('mac_address', None)
         self.network = kwargs.get('network', None)
