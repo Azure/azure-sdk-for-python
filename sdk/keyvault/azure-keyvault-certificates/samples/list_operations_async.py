@@ -24,7 +24,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 1. Create certificate (create_certificate)
 #
-# 2. List certificates from the Key Vault (list_certificates)
+# 2. List certificates from the Key Vault (list_properties_of_certificates)
 #
 # 3. List certificate versions from the Key Vault (list_certificate_versions)
 #
@@ -59,7 +59,7 @@ async def run_sample():
 
         # Let's list the certificates.
         print("\n.. List certificates from the Key Vault")
-        certificates = client.list_certificates()
+        certificates = client.list_properties_of_certificates()
         async for certificate in certificates:
             print("Certificate with name '{0}' was found.".format(certificate.name))
 

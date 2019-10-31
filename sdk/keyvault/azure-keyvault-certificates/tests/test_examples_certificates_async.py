@@ -136,7 +136,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START list_certificates]
 
         # list certificates
-        certificates = certificate_client.list_certificates()
+        certificates = certificate_client.list_properties_of_certificates()
 
         async for certificate in certificates:
             print(certificate.id)

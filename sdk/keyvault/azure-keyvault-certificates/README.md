@@ -222,7 +222,7 @@ print(create_certificate_result)
 ### Asynchronously list properties of Certificates
 This example lists all the certificates in the client's vault:
 ```python
-certificates = certificate_client.list_certificates()
+certificates = certificate_client.list_properties_of_certificates()
 
 async for certificate in certificates:
     print(certificate.name)

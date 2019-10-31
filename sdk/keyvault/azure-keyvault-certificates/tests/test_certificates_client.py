@@ -287,7 +287,7 @@ class CertificateClientTests(KeyVaultTestCase):
                     raise ex
 
         # list certificates
-        result = client.list_certificates()
+        result = client.list_properties_of_certificates()
         self._validate_certificate_list(certificates=result, expected=expected)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)

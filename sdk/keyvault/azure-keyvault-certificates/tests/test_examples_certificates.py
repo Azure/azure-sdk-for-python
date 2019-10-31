@@ -135,7 +135,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START list_certificates]
 
         # get an iterator of certificates
-        certificates = certificate_client.list_certificates()
+        certificates = certificate_client.list_properties_of_certificates()
 
         for certificate in certificates:
             print(certificate.id)

@@ -524,7 +524,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_certificates(self, **kwargs):
+    def list_properties_of_certificates(self, **kwargs):
         # type: (**Any) -> Iterable[CertificateProperties]
         """List certificates in the key vault.
 
