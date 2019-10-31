@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, Optional
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpTransport
+    from azure.core.configuration import Configuration
 
 KEY_VAULT_SCOPE = "https://vault.azure.net/.default"
 
@@ -75,7 +76,7 @@ class KeyVaultClientBase(object):
         config = self._create_config(credential, **kwargs)
         transport = kwargs.pop("transport", None)
         pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport=transport, **kwargs)
-        self._client = KeyVaultClient(credential, pipeline=pipeline, aio=False, **kwargs)
+        self._client = KeyVaultClient(credential, pipeline=pipeline, aio=False)
 
     # pylint:disable=no-self-use
     def _build_pipeline(self, config, transport, **kwargs):

@@ -27,7 +27,7 @@ class AsyncKeyVaultClientBase:
     """Base class for async Key Vault clients"""
 
     @staticmethod
-    def _create_config(credential: "TokenCredential", api_version: str = None, **kwargs: "**Any") -> Configuration:
+    def _create_config(credential: "TokenCredential", api_version: str = None, **kwargs: "Any") -> Configuration:
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=True)(credential, **kwargs)
@@ -76,10 +76,10 @@ class AsyncKeyVaultClientBase:
         config = self._create_config(credential, **kwargs)
         transport = kwargs.pop("transport", None)
         pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport=transport, **kwargs)
-        self._client = KeyVaultClient(credential, pipeline=pipeline, aio=True, **kwargs)
+        self._client = KeyVaultClient(credential, pipeline=pipeline, aio=True)
 
     @staticmethod
-    def _build_pipeline(config: Configuration, transport: AsyncHttpTransport, **kwargs: "**Any") -> AsyncPipeline:
+    def _build_pipeline(config: Configuration, transport: AsyncHttpTransport, **kwargs: "Any") -> AsyncPipeline:
         logging_policy = HttpLoggingPolicy(**kwargs)
         logging_policy.allowed_header_names.add("x-ms-keyvault-network-info")
         policies = [
