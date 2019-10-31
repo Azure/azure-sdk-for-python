@@ -76,7 +76,8 @@ async def test_loadbalancer_balance(connstr_senders):
     assert len(event_processor2._tasks) == 2  # event_procesor2 takes another one after event_processor1 stops
     await event_processor2.stop()
 
-    await asyncio.gather(*tasks)
+    for task in tasks:
+        task.cancel()
     await eventhub_client.close()
 
 
@@ -106,7 +107,7 @@ async def test_loadbalancer_list_ownership_error(connstr_senders):
     assert event_processor._running is True
     assert len(event_processor._tasks) == 0
     await event_processor.stop()
-    await asyncio.gather(*[task])
+    task.cancel()
     await eventhub_client.close()
 
 
@@ -161,7 +162,7 @@ async def test_partition_processor(connstr_senders):
     await asyncio.sleep(10)
     assert len(event_processor._tasks) == 2
     await event_processor.stop()
-    await asyncio.gather(*[task])
+    task.cancel()
     await eventhub_client.close()
     assert event_map['0'] == 1 and event_map['1'] == 1
     assert checkpoint is not None
@@ -207,7 +208,7 @@ async def test_partition_processor_process_events_error(connstr_senders):
     task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(10)
     await event_processor.stop()
-    await asyncio.gather(*[task])
+    task.cancel()
     await eventhub_client.close()
 
 
@@ -254,7 +255,7 @@ async def test_partition_processor_process_eventhub_consumer_error():
     task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(5)
     await event_processor.stop()
-    await asyncio.gather(*[task])
+    task.cancel()
 
 
 @pytest.mark.asyncio
@@ -305,7 +306,7 @@ async def test_partition_processor_process_error_close_error():
     task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(5)
     await event_processor.stop()
-    await asyncio.gather(*[task])
+    task.cancel()
 
 
 @pytest.mark.liveTest
@@ -348,5 +349,5 @@ async def test_partition_processor_process_update_checkpoint_error(connstr_sende
     task = asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(10)
     await event_processor.stop()
-    await asyncio.gather(*[task])
+    task.cancel()
     await eventhub_client.close()
