@@ -62,7 +62,22 @@ class InteractiveBrowserCredential(PublicClientCredential):
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
+        return self._get_token_from_cache(scopes, **kwargs) or self._get_token_by_auth_code(scopes, **kwargs)
 
+    def _get_token_from_cache(self, scopes, **kwargs):
+        """if the user has already signed in, we can redeem a refresh token for a new access token"""
+        app = self._get_app()
+        accounts = app.get_accounts()
+        if accounts:  # => user has already authenticated
+            # MSAL asserts scopes is a list
+            scopes = list(scopes)  # type: ignore
+            now = int(time.time())
+            token = app.acquire_token_silent(scopes, account=accounts[0], **kwargs)
+            if "access_token" in token and "expires_in" in token:
+                return AccessToken(token["access_token"], now + int(token["expires_in"]))
+        return None
+
+    def _get_token_by_auth_code(self, scopes, **kwargs):
         # start an HTTP server on localhost to receive the redirect
         for port in range(8400, 9000):
             try:

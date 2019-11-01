@@ -13,32 +13,39 @@ from azure.identity._internal import AuthCodeRedirectServer
 import pytest
 from six.moves import urllib
 
-from helpers import mock_response, Request, validating_transport
+from helpers import build_aad_response, build_id_token, mock_response, Request, validating_transport
 
 try:
     from unittest.mock import Mock, patch
 except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
-@patch(
-    "azure.identity._credentials.browser.webbrowser.open", lambda _: None
-)  # prevent the credential opening a browser
-def test_interactive_credential():
-    oauth_state = "state"
-    expected_token = "access-token"
 
+@patch("azure.identity._credentials.browser.webbrowser.open")  # prevent the credential opening a browser
+def test_interactive_credential(mock_open):
+    oauth_state = "state"
+    client_id = "client-id"
+    expected_token = "access-token"
+    authority = "authority"
+    tenant_id = "tenant_id"
+    endpoint = "https://{}/{}".format(authority, tenant_id)
+
+    id_token = build_id_token(aud=client_id, preferred_username="user")
     transport = validating_transport(
-        requests=[Request()] * 2,  # not validating requests because they're formed by MSAL
+        requests=[Request(url_substring=endpoint)] * 3,  # not validating requests in detail because they're formed by MSAL
         responses=[
-            # expecting tenant discovery then a token request
-            mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
+            # expecting instance discovery, tenant discovery, then token request
+            mock_response(json_payload={"authorization_endpoint": endpoint, "token_endpoint": endpoint, "tenant_discovery_endpoint": endpoint}),
+            mock_response(json_payload={"authorization_endpoint": endpoint, "token_endpoint": endpoint, "tenant_discovery_endpoint": endpoint}),
             mock_response(
-                json_payload={
-                    "access_token": expected_token,
-                    "expires_in": 42,
-                    "token_type": "Bearer",
-                    "ext_expires_in": 42,
-                }
+                json_payload=build_aad_response(
+                    access_token=expected_token,
+                    expires_in=3600,
+                    id_token=id_token,
+                    uid="uid",
+                    utid="utid",
+                    token_type="Bearer",
+                )
             ),
         ],
     )
@@ -48,17 +55,26 @@ def test_interactive_credential():
     server_class = Mock(return_value=Mock(wait_for_redirect=lambda: auth_code_response))
 
     credential = InteractiveBrowserCredential(
-        client_id="guid",
+        authority=authority,
+        tenant_id=tenant_id,
+        client_id=client_id,
         client_secret="secret",
         server_class=server_class,
         transport=transport,
         instance_discovery=False,  # kwargs are passed to MSAL; this one prevents an AAD verification request
+        validate_authority=False,
     )
 
     # ensure the request beginning the flow has a known state value
     with patch("azure.identity._credentials.browser.uuid.uuid4", lambda: oauth_state):
         token = credential.get_token("scope")
-    assert token.token == expected_token
+        assert token.token == expected_token
+        assert mock_open.call_count == 1
+
+        # token should be cached, get_token shouldn't prompt again
+        token = credential.get_token("scope")
+        assert token.token == expected_token
+        assert mock_open.call_count == 1
 
 
 @patch(
