@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class AzureFileshareProtectedItemExtendedInfo(Model):
     """Additional information about Azure File Share backup item.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param oldest_recovery_point: The oldest backup copy available for this
      item in the service.
     :type oldest_recovery_point: datetime
@@ -24,12 +27,25 @@ class AzureFileshareProtectedItemExtendedInfo(Model):
     :param policy_state: Indicates consistency of policy object and policy
      applied to this backup item.
     :type policy_state: str
+    :ivar resource_state: Indicates the state of this resource. Possible
+     values are from enum ResourceState {Invalid, Active, SoftDeleted, Deleted}
+    :vartype resource_state: str
+    :ivar resource_state_sync_time: The resource state sync time for this
+     backup item.
+    :vartype resource_state_sync_time: datetime
     """
+
+    _validation = {
+        'resource_state': {'readonly': True},
+        'resource_state_sync_time': {'readonly': True},
+    }
 
     _attribute_map = {
         'oldest_recovery_point': {'key': 'oldestRecoveryPoint', 'type': 'iso-8601'},
         'recovery_point_count': {'key': 'recoveryPointCount', 'type': 'int'},
         'policy_state': {'key': 'policyState', 'type': 'str'},
+        'resource_state': {'key': 'resourceState', 'type': 'str'},
+        'resource_state_sync_time': {'key': 'resourceStateSyncTime', 'type': 'iso-8601'},
     }
 
     def __init__(self, **kwargs):
@@ -37,3 +53,5 @@ class AzureFileshareProtectedItemExtendedInfo(Model):
         self.oldest_recovery_point = kwargs.get('oldest_recovery_point', None)
         self.recovery_point_count = kwargs.get('recovery_point_count', None)
         self.policy_state = kwargs.get('policy_state', None)
+        self.resource_state = None
+        self.resource_state_sync_time = None

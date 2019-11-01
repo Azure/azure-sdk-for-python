@@ -23,9 +23,9 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_type: OLR/ALR, RestoreDisks is invalid option. Possible
-     values include: 'Invalid', 'OriginalLocation', 'AlternateLocation',
-     'RestoreDisks'
+    :param recovery_type: Type of this recovery. Possible values include:
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
     :type recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
     :param source_resource_id: Fully qualified ARM ID of the VM on which
@@ -36,6 +36,11 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
     :param target_info: Details of target database
     :type target_info:
      ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
+    :param recovery_mode: Defines whether the current recovery mode is file
+     restore or database restore. Possible values include: 'Invalid',
+     'FileRecovery', 'WorkloadRecovery'
+    :type recovery_mode: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
     """
 
     _validation = {
@@ -48,16 +53,18 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
         'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
+        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
     }
 
     _subtype_map = {
         'object_type': {'AzureWorkloadPointInTimeRestoreRequest': 'AzureWorkloadPointInTimeRestoreRequest', 'AzureWorkloadSAPHanaRestoreRequest': 'AzureWorkloadSAPHanaRestoreRequest', 'AzureWorkloadSQLRestoreRequest': 'AzureWorkloadSQLRestoreRequest'}
     }
 
-    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, **kwargs) -> None:
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode=None, **kwargs) -> None:
         super(AzureWorkloadRestoreRequest, self).__init__(**kwargs)
         self.recovery_type = recovery_type
         self.source_resource_id = source_resource_id
         self.property_bag = property_bag
         self.target_info = target_info
+        self.recovery_mode = recovery_mode
         self.object_type = 'AzureWorkloadRestoreRequest'

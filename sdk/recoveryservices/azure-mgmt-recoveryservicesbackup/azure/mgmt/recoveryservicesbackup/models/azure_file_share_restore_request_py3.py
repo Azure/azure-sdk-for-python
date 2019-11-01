@@ -20,7 +20,8 @@ class AzureFileShareRestoreRequest(RestoreRequest):
     :param object_type: Required. Constant filled by server.
     :type object_type: str
     :param recovery_type: Type of this recovery. Possible values include:
-     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks'
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
     :type recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
     :param source_resource_id: Source storage account ARM Id

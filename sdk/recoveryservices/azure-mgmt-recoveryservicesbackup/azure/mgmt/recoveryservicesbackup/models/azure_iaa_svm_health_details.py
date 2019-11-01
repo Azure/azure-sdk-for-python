@@ -15,15 +15,25 @@ from msrest.serialization import Model
 class AzureIaaSVMHealthDetails(Model):
     """Azure IaaS VM workload-specific Health Details.
 
-    :param code: Health Code
-    :type code: int
-    :param title: Health Title
-    :type title: str
-    :param message: Health Message
-    :type message: str
-    :param recommendations: Health Recommended Actions
-    :type recommendations: list[str]
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: Health Code
+    :vartype code: int
+    :ivar title: Health Title
+    :vartype title: str
+    :ivar message: Health Message
+    :vartype message: str
+    :ivar recommendations: Health Recommended Actions
+    :vartype recommendations: list[str]
     """
+
+    _validation = {
+        'code': {'readonly': True},
+        'title': {'readonly': True},
+        'message': {'readonly': True},
+        'recommendations': {'readonly': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'int'},
@@ -34,7 +44,7 @@ class AzureIaaSVMHealthDetails(Model):
 
     def __init__(self, **kwargs):
         super(AzureIaaSVMHealthDetails, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.title = kwargs.get('title', None)
-        self.message = kwargs.get('message', None)
-        self.recommendations = kwargs.get('recommendations', None)
+        self.code = None
+        self.title = None
+        self.message = None
+        self.recommendations = None

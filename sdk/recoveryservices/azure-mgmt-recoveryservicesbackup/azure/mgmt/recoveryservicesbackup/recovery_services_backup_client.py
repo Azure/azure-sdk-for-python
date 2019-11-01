@@ -13,38 +13,38 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.backup_resource_vault_configs_operations import BackupResourceVaultConfigsOperations
+from .operations.protected_items_operations import ProtectedItemsOperations
+from .operations.protected_item_operation_results_operations import ProtectedItemOperationResultsOperations
+from .operations.recovery_points_operations import RecoveryPointsOperations
+from .operations.restores_operations import RestoresOperations
+from .operations.backup_policies_operations import BackupPoliciesOperations
+from .operations.protection_policies_operations import ProtectionPoliciesOperations
+from .operations.protection_policy_operation_results_operations import ProtectionPolicyOperationResultsOperations
+from .operations.backup_jobs_operations import BackupJobsOperations
+from .operations.job_details_operations import JobDetailsOperations
+from .operations.job_cancellations_operations import JobCancellationsOperations
+from .operations.job_operation_results_operations import JobOperationResultsOperations
+from .operations.export_jobs_operation_results_operations import ExportJobsOperationResultsOperations
+from .operations.jobs_operations import JobsOperations
+from .operations.backup_protected_items_operations import BackupProtectedItemsOperations
+from .operations.operation_operations import OperationOperations
 from .operations.protection_intent_operations import ProtectionIntentOperations
 from .operations.backup_status_operations import BackupStatusOperations
 from .operations.feature_support_operations import FeatureSupportOperations
-from .operations.backup_jobs_operations import BackupJobsOperations
-from .operations.job_details_operations import JobDetailsOperations
-from .operations.export_jobs_operation_results_operations import ExportJobsOperationResultsOperations
-from .operations.jobs_operations import JobsOperations
-from .operations.backup_policies_operations import BackupPoliciesOperations
-from .operations.backup_protected_items_operations import BackupProtectedItemsOperations
 from .operations.backup_protection_intent_operations import BackupProtectionIntentOperations
 from .operations.backup_usage_summaries_operations import BackupUsageSummariesOperations
-from .operations.operation_operations import OperationOperations
-from .operations.backup_resource_vault_configs_operations import BackupResourceVaultConfigsOperations
 from .operations.backup_engines_operations import BackupEnginesOperations
 from .operations.protection_container_refresh_operation_results_operations import ProtectionContainerRefreshOperationResultsOperations
 from .operations.protectable_containers_operations import ProtectableContainersOperations
 from .operations.protection_containers_operations import ProtectionContainersOperations
 from .operations.backup_workload_items_operations import BackupWorkloadItemsOperations
 from .operations.protection_container_operation_results_operations import ProtectionContainerOperationResultsOperations
-from .operations.protected_items_operations import ProtectedItemsOperations
 from .operations.backups_operations import BackupsOperations
-from .operations.protected_item_operation_results_operations import ProtectedItemOperationResultsOperations
 from .operations.protected_item_operation_statuses_operations import ProtectedItemOperationStatusesOperations
-from .operations.recovery_points_operations import RecoveryPointsOperations
 from .operations.item_level_recovery_connections_operations import ItemLevelRecoveryConnectionsOperations
-from .operations.restores_operations import RestoresOperations
-from .operations.job_cancellations_operations import JobCancellationsOperations
-from .operations.job_operation_results_operations import JobOperationResultsOperations
 from .operations.backup_operation_results_operations import BackupOperationResultsOperations
 from .operations.backup_operation_statuses_operations import BackupOperationStatusesOperations
-from .operations.protection_policies_operations import ProtectionPoliciesOperations
-from .operations.protection_policy_operation_results_operations import ProtectionPolicyOperationResultsOperations
 from .operations.protection_policy_operation_statuses_operations import ProtectionPolicyOperationStatusesOperations
 from .operations.backup_protectable_items_operations import BackupProtectableItemsOperations
 from .operations.backup_protection_containers_operations import BackupProtectionContainersOperations
@@ -92,32 +92,48 @@ class RecoveryServicesBackupClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: RecoveryServicesBackupClientConfiguration
 
+    :ivar backup_resource_vault_configs: BackupResourceVaultConfigs operations
+    :vartype backup_resource_vault_configs: azure.mgmt.recoveryservicesbackup.operations.BackupResourceVaultConfigsOperations
+    :ivar protected_items: ProtectedItems operations
+    :vartype protected_items: azure.mgmt.recoveryservicesbackup.operations.ProtectedItemsOperations
+    :ivar protected_item_operation_results: ProtectedItemOperationResults operations
+    :vartype protected_item_operation_results: azure.mgmt.recoveryservicesbackup.operations.ProtectedItemOperationResultsOperations
+    :ivar recovery_points: RecoveryPoints operations
+    :vartype recovery_points: azure.mgmt.recoveryservicesbackup.operations.RecoveryPointsOperations
+    :ivar restores: Restores operations
+    :vartype restores: azure.mgmt.recoveryservicesbackup.operations.RestoresOperations
+    :ivar backup_policies: BackupPolicies operations
+    :vartype backup_policies: azure.mgmt.recoveryservicesbackup.operations.BackupPoliciesOperations
+    :ivar protection_policies: ProtectionPolicies operations
+    :vartype protection_policies: azure.mgmt.recoveryservicesbackup.operations.ProtectionPoliciesOperations
+    :ivar protection_policy_operation_results: ProtectionPolicyOperationResults operations
+    :vartype protection_policy_operation_results: azure.mgmt.recoveryservicesbackup.operations.ProtectionPolicyOperationResultsOperations
+    :ivar backup_jobs: BackupJobs operations
+    :vartype backup_jobs: azure.mgmt.recoveryservicesbackup.operations.BackupJobsOperations
+    :ivar job_details: JobDetails operations
+    :vartype job_details: azure.mgmt.recoveryservicesbackup.operations.JobDetailsOperations
+    :ivar job_cancellations: JobCancellations operations
+    :vartype job_cancellations: azure.mgmt.recoveryservicesbackup.operations.JobCancellationsOperations
+    :ivar job_operation_results: JobOperationResults operations
+    :vartype job_operation_results: azure.mgmt.recoveryservicesbackup.operations.JobOperationResultsOperations
+    :ivar export_jobs_operation_results: ExportJobsOperationResults operations
+    :vartype export_jobs_operation_results: azure.mgmt.recoveryservicesbackup.operations.ExportJobsOperationResultsOperations
+    :ivar jobs: Jobs operations
+    :vartype jobs: azure.mgmt.recoveryservicesbackup.operations.JobsOperations
+    :ivar backup_protected_items: BackupProtectedItems operations
+    :vartype backup_protected_items: azure.mgmt.recoveryservicesbackup.operations.BackupProtectedItemsOperations
+    :ivar operation: Operation operations
+    :vartype operation: azure.mgmt.recoveryservicesbackup.operations.OperationOperations
     :ivar protection_intent: ProtectionIntent operations
     :vartype protection_intent: azure.mgmt.recoveryservicesbackup.operations.ProtectionIntentOperations
     :ivar backup_status: BackupStatus operations
     :vartype backup_status: azure.mgmt.recoveryservicesbackup.operations.BackupStatusOperations
     :ivar feature_support: FeatureSupport operations
     :vartype feature_support: azure.mgmt.recoveryservicesbackup.operations.FeatureSupportOperations
-    :ivar backup_jobs: BackupJobs operations
-    :vartype backup_jobs: azure.mgmt.recoveryservicesbackup.operations.BackupJobsOperations
-    :ivar job_details: JobDetails operations
-    :vartype job_details: azure.mgmt.recoveryservicesbackup.operations.JobDetailsOperations
-    :ivar export_jobs_operation_results: ExportJobsOperationResults operations
-    :vartype export_jobs_operation_results: azure.mgmt.recoveryservicesbackup.operations.ExportJobsOperationResultsOperations
-    :ivar jobs: Jobs operations
-    :vartype jobs: azure.mgmt.recoveryservicesbackup.operations.JobsOperations
-    :ivar backup_policies: BackupPolicies operations
-    :vartype backup_policies: azure.mgmt.recoveryservicesbackup.operations.BackupPoliciesOperations
-    :ivar backup_protected_items: BackupProtectedItems operations
-    :vartype backup_protected_items: azure.mgmt.recoveryservicesbackup.operations.BackupProtectedItemsOperations
     :ivar backup_protection_intent: BackupProtectionIntent operations
     :vartype backup_protection_intent: azure.mgmt.recoveryservicesbackup.operations.BackupProtectionIntentOperations
     :ivar backup_usage_summaries: BackupUsageSummaries operations
     :vartype backup_usage_summaries: azure.mgmt.recoveryservicesbackup.operations.BackupUsageSummariesOperations
-    :ivar operation: Operation operations
-    :vartype operation: azure.mgmt.recoveryservicesbackup.operations.OperationOperations
-    :ivar backup_resource_vault_configs: BackupResourceVaultConfigs operations
-    :vartype backup_resource_vault_configs: azure.mgmt.recoveryservicesbackup.operations.BackupResourceVaultConfigsOperations
     :ivar backup_engines: BackupEngines operations
     :vartype backup_engines: azure.mgmt.recoveryservicesbackup.operations.BackupEnginesOperations
     :ivar protection_container_refresh_operation_results: ProtectionContainerRefreshOperationResults operations
@@ -130,32 +146,16 @@ class RecoveryServicesBackupClient(SDKClient):
     :vartype backup_workload_items: azure.mgmt.recoveryservicesbackup.operations.BackupWorkloadItemsOperations
     :ivar protection_container_operation_results: ProtectionContainerOperationResults operations
     :vartype protection_container_operation_results: azure.mgmt.recoveryservicesbackup.operations.ProtectionContainerOperationResultsOperations
-    :ivar protected_items: ProtectedItems operations
-    :vartype protected_items: azure.mgmt.recoveryservicesbackup.operations.ProtectedItemsOperations
     :ivar backups: Backups operations
     :vartype backups: azure.mgmt.recoveryservicesbackup.operations.BackupsOperations
-    :ivar protected_item_operation_results: ProtectedItemOperationResults operations
-    :vartype protected_item_operation_results: azure.mgmt.recoveryservicesbackup.operations.ProtectedItemOperationResultsOperations
     :ivar protected_item_operation_statuses: ProtectedItemOperationStatuses operations
     :vartype protected_item_operation_statuses: azure.mgmt.recoveryservicesbackup.operations.ProtectedItemOperationStatusesOperations
-    :ivar recovery_points: RecoveryPoints operations
-    :vartype recovery_points: azure.mgmt.recoveryservicesbackup.operations.RecoveryPointsOperations
     :ivar item_level_recovery_connections: ItemLevelRecoveryConnections operations
     :vartype item_level_recovery_connections: azure.mgmt.recoveryservicesbackup.operations.ItemLevelRecoveryConnectionsOperations
-    :ivar restores: Restores operations
-    :vartype restores: azure.mgmt.recoveryservicesbackup.operations.RestoresOperations
-    :ivar job_cancellations: JobCancellations operations
-    :vartype job_cancellations: azure.mgmt.recoveryservicesbackup.operations.JobCancellationsOperations
-    :ivar job_operation_results: JobOperationResults operations
-    :vartype job_operation_results: azure.mgmt.recoveryservicesbackup.operations.JobOperationResultsOperations
     :ivar backup_operation_results: BackupOperationResults operations
     :vartype backup_operation_results: azure.mgmt.recoveryservicesbackup.operations.BackupOperationResultsOperations
     :ivar backup_operation_statuses: BackupOperationStatuses operations
     :vartype backup_operation_statuses: azure.mgmt.recoveryservicesbackup.operations.BackupOperationStatusesOperations
-    :ivar protection_policies: ProtectionPolicies operations
-    :vartype protection_policies: azure.mgmt.recoveryservicesbackup.operations.ProtectionPoliciesOperations
-    :ivar protection_policy_operation_results: ProtectionPolicyOperationResults operations
-    :vartype protection_policy_operation_results: azure.mgmt.recoveryservicesbackup.operations.ProtectionPolicyOperationResultsOperations
     :ivar protection_policy_operation_statuses: ProtectionPolicyOperationStatuses operations
     :vartype protection_policy_operation_statuses: azure.mgmt.recoveryservicesbackup.operations.ProtectionPolicyOperationStatusesOperations
     :ivar backup_protectable_items: BackupProtectableItems operations
@@ -187,31 +187,47 @@ class RecoveryServicesBackupClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.backup_resource_vault_configs = BackupResourceVaultConfigsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.protected_items = ProtectedItemsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.protected_item_operation_results = ProtectedItemOperationResultsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.recovery_points = RecoveryPointsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.restores = RestoresOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_policies = BackupPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.protection_policies = ProtectionPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.protection_policy_operation_results = ProtectionPolicyOperationResultsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_jobs = BackupJobsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_details = JobDetailsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_cancellations = JobCancellationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_operation_results = JobOperationResultsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.export_jobs_operation_results = ExportJobsOperationResultsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.jobs = JobsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_protected_items = BackupProtectedItemsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operation = OperationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.protection_intent = ProtectionIntentOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_status = BackupStatusOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.feature_support = FeatureSupportOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.backup_jobs = BackupJobsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_details = JobDetailsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.export_jobs_operation_results = ExportJobsOperationResultsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.jobs = JobsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_policies = BackupPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_protected_items = BackupProtectedItemsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.backup_protection_intent = BackupProtectionIntentOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_usage_summaries = BackupUsageSummariesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.operation = OperationOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_resource_vault_configs = BackupResourceVaultConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_engines = BackupEnginesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -225,31 +241,15 @@ class RecoveryServicesBackupClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.protection_container_operation_results = ProtectionContainerOperationResultsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.protected_items = ProtectedItemsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.backups = BackupsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.protected_item_operation_results = ProtectedItemOperationResultsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.protected_item_operation_statuses = ProtectedItemOperationStatusesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.recovery_points = RecoveryPointsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.item_level_recovery_connections = ItemLevelRecoveryConnectionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.restores = RestoresOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_cancellations = JobCancellationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_operation_results = JobOperationResultsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_operation_results = BackupOperationResultsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_operation_statuses = BackupOperationStatusesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.protection_policies = ProtectionPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.protection_policy_operation_results = ProtectionPolicyOperationResultsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.protection_policy_operation_statuses = ProtectionPolicyOperationStatusesOperations(
             self._client, self.config, self._serialize, self._deserialize)

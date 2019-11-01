@@ -15,13 +15,22 @@ from msrest.serialization import Model
 class ErrorDetail(Model):
     """Error Detail class which encapsulates Code, Message and Recommendations.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error Message related to the Code.
-    :type message: str
-    :param recommendations: List of recommendation strings.
-    :type recommendations: list[str]
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error Message related to the Code.
+    :vartype message: str
+    :ivar recommendations: List of recommendation strings.
+    :vartype recommendations: list[str]
     """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'recommendations': {'readonly': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
@@ -31,6 +40,6 @@ class ErrorDetail(Model):
 
     def __init__(self, **kwargs):
         super(ErrorDetail, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.recommendations = kwargs.get('recommendations', None)
+        self.code = None
+        self.message = None
+        self.recommendations = None

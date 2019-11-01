@@ -13,7 +13,7 @@ from .resource_py3 import Resource
 
 
 class ILRRequestResource(Resource):
-    """Parameters to restore file/folders API.
+    """Parameters to Provision ILR API.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

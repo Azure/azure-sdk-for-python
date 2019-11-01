@@ -15,18 +15,26 @@ from msrest.serialization import Model
 class MabErrorInfo(Model):
     """MAB workload-specific error information.
 
-    :param error_string: Localized error string.
-    :type error_string: str
-    :param recommendations: List of localized recommendations.
-    :type recommendations: list[str]
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar error_string: Localized error string.
+    :vartype error_string: str
+    :ivar recommendations: List of localized recommendations.
+    :vartype recommendations: list[str]
     """
+
+    _validation = {
+        'error_string': {'readonly': True},
+        'recommendations': {'readonly': True},
+    }
 
     _attribute_map = {
         'error_string': {'key': 'errorString', 'type': 'str'},
         'recommendations': {'key': 'recommendations', 'type': '[str]'},
     }
 
-    def __init__(self, *, error_string: str=None, recommendations=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(MabErrorInfo, self).__init__(**kwargs)
-        self.error_string = error_string
-        self.recommendations = recommendations
+        self.error_string = None
+        self.recommendations = None

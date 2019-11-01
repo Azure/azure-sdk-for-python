@@ -47,6 +47,20 @@ class DPMProtectedItem(ProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
+    :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
+     is scheduled for deferred delete
+    :type is_scheduled_for_deferred_delete: bool
+    :param deferred_delete_time_remaining: Time remaining before the DS marked
+     for deferred delete is permanently deleted
+    :type deferred_delete_time_remaining: str
+    :param is_deferred_delete_schedule_upcoming: Flag to identify whether the
+     deferred deleted DS is to be purged soon
+    :type is_deferred_delete_schedule_upcoming: bool
+    :param is_rehydrate: Flag to identify that deferred deleted DS is to be
+     moved into Pause state
+    :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the managed item
@@ -59,9 +73,6 @@ class DPMProtectedItem(ProtectedItem):
      'ProtectionStopped', 'ProtectionPaused'
     :type protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemState
-    :param is_scheduled_for_deferred_delete: To check if backup item is
-     scheduled for deferred delete
-    :type is_scheduled_for_deferred_delete: bool
     :param extended_info: Extended info of the backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.DPMProtectedItemExtendedInfo
@@ -80,11 +91,15 @@ class DPMProtectedItem(ProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
+        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
+        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'backup_engine_name': {'key': 'backupEngineName', 'type': 'str'},
         'protection_state': {'key': 'protectionState', 'type': 'str'},
-        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'extended_info': {'key': 'extendedInfo', 'type': 'DPMProtectedItemExtendedInfo'},
     }
 
@@ -93,6 +108,5 @@ class DPMProtectedItem(ProtectedItem):
         self.friendly_name = kwargs.get('friendly_name', None)
         self.backup_engine_name = kwargs.get('backup_engine_name', None)
         self.protection_state = kwargs.get('protection_state', None)
-        self.is_scheduled_for_deferred_delete = kwargs.get('is_scheduled_for_deferred_delete', None)
         self.extended_info = kwargs.get('extended_info', None)
         self.protected_item_type = 'DPMProtectedItem'

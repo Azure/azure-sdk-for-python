@@ -22,9 +22,9 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_type: OLR/ALR, RestoreDisks is invalid option. Possible
-     values include: 'Invalid', 'OriginalLocation', 'AlternateLocation',
-     'RestoreDisks'
+    :param recovery_type: Type of this recovery. Possible values include:
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
     :type recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
     :param source_resource_id: Fully qualified ARM ID of the VM on which
@@ -35,6 +35,11 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
     :param target_info: Details of target database
     :type target_info:
      ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
+    :param recovery_mode: Defines whether the current recovery mode is file
+     restore or database restore. Possible values include: 'Invalid',
+     'FileRecovery', 'WorkloadRecovery'
+    :type recovery_mode: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
     """
 
     _validation = {
@@ -47,6 +52,7 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
         'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
+        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
     }
 
     _subtype_map = {

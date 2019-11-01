@@ -13,10 +13,11 @@ from msrest.serialization import Model
 
 
 class ILRRequest(Model):
-    """Parameters to restore file/folders API.
+    """Parameters to Provision ILR API.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: IaasVMILRRegistrationRequest
+    sub-classes are: AzureFileShareProvisionILRRequest,
+    IaasVMILRRegistrationRequest
 
     All required parameters must be populated in order to send to Azure.
 
@@ -33,7 +34,7 @@ class ILRRequest(Model):
     }
 
     _subtype_map = {
-        'object_type': {'IaasVMILRRegistrationRequest': 'IaasVMILRRegistrationRequest'}
+        'object_type': {'AzureFileShareProvisionILRRequest': 'AzureFileShareProvisionILRRequest', 'IaasVMILRRegistrationRequest': 'IaasVMILRRegistrationRequest'}
     }
 
     def __init__(self, **kwargs) -> None:

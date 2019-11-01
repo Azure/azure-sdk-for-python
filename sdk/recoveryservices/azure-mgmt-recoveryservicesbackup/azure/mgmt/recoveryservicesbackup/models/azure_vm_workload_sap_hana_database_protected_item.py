@@ -47,6 +47,20 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
+    :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
+     is scheduled for deferred delete
+    :type is_scheduled_for_deferred_delete: bool
+    :param deferred_delete_time_remaining: Time remaining before the DS marked
+     for deferred delete is permanently deleted
+    :type deferred_delete_time_remaining: str
+    :param is_deferred_delete_schedule_upcoming: Flag to identify whether the
+     deferred deleted DS is to be purged soon
+    :type is_deferred_delete_schedule_upcoming: bool
+    :param is_rehydrate: Flag to identify that deferred deleted DS is to be
+     moved into Pause state
+    :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the DB represented by this backup
@@ -103,6 +117,11 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
+        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
+        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'server_name': {'key': 'serverName', 'type': 'str'},

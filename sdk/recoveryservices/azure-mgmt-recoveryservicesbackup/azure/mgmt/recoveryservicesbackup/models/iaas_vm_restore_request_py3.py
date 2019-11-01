@@ -22,7 +22,8 @@ class IaasVMRestoreRequest(RestoreRequest):
     :param recovery_point_id: ID of the backup copy to be recovered.
     :type recovery_point_id: str
     :param recovery_type: Type of this recovery. Possible values include:
-     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks'
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
     :type recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
     :param source_resource_id: Fully qualified ARM ID of the VM which is being
@@ -69,6 +70,8 @@ class IaasVMRestoreRequest(RestoreRequest):
      time of backup.
     :type encryption_details:
      ~azure.mgmt.recoveryservicesbackup.models.EncryptionDetails
+    :param restore_disk_lun_list: List of Disk LUNs for partial restore
+    :type restore_disk_lun_list: list[int]
     """
 
     _validation = {
@@ -91,9 +94,10 @@ class IaasVMRestoreRequest(RestoreRequest):
         'create_new_cloud_service': {'key': 'createNewCloudService', 'type': 'bool'},
         'original_storage_account_option': {'key': 'originalStorageAccountOption', 'type': 'bool'},
         'encryption_details': {'key': 'encryptionDetails', 'type': 'EncryptionDetails'},
+        'restore_disk_lun_list': {'key': 'restoreDiskLunList', 'type': '[int]'},
     }
 
-    def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, **kwargs) -> None:
+    def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, restore_disk_lun_list=None, **kwargs) -> None:
         super(IaasVMRestoreRequest, self).__init__(**kwargs)
         self.recovery_point_id = recovery_point_id
         self.recovery_type = recovery_type
@@ -109,4 +113,5 @@ class IaasVMRestoreRequest(RestoreRequest):
         self.create_new_cloud_service = create_new_cloud_service
         self.original_storage_account_option = original_storage_account_option
         self.encryption_details = encryption_details
+        self.restore_disk_lun_list = restore_disk_lun_list
         self.object_type = 'IaasVMRestoreRequest'

@@ -27,7 +27,7 @@ class JobQueryObject(Model):
      ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param operation: Type of operation. Possible values include: 'Invalid',
      'Register', 'UnRegister', 'ConfigureBackup', 'Backup', 'Restore',
-     'DisableBackup', 'DeleteBackupData'
+     'DisableBackup', 'DeleteBackupData', 'CrossRegionRestore', 'Undelete'
     :type operation: str or
      ~azure.mgmt.recoveryservicesbackup.models.JobOperationType
     :param job_id: JobID represents the job uniquely.

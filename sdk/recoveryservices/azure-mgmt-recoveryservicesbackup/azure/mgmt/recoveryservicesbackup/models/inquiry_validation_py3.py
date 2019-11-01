@@ -19,14 +19,19 @@ class InquiryValidation(Model):
     :type status: str
     :param error_detail: Error Detail in case the status is non-success.
     :type error_detail: ~azure.mgmt.recoveryservicesbackup.models.ErrorDetail
+    :param additional_detail: Error Additional Detail in case the status is
+     non-success.
+    :type additional_detail: str
     """
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
         'error_detail': {'key': 'errorDetail', 'type': 'ErrorDetail'},
+        'additional_detail': {'key': 'additionalDetail', 'type': 'str'},
     }
 
-    def __init__(self, *, status: str=None, error_detail=None, **kwargs) -> None:
+    def __init__(self, *, status: str=None, error_detail=None, additional_detail: str=None, **kwargs) -> None:
         super(InquiryValidation, self).__init__(**kwargs)
         self.status = status
         self.error_detail = error_detail
+        self.additional_detail = additional_detail

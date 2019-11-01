@@ -47,6 +47,20 @@ class GenericProtectedItem(ProtectedItem):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
+    :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
+     is scheduled for deferred delete
+    :type is_scheduled_for_deferred_delete: bool
+    :param deferred_delete_time_remaining: Time remaining before the DS marked
+     for deferred delete is permanently deleted
+    :type deferred_delete_time_remaining: str
+    :param is_deferred_delete_schedule_upcoming: Flag to identify whether the
+     deferred deleted DS is to be purged soon
+    :type is_deferred_delete_schedule_upcoming: bool
+    :param is_rehydrate: Flag to identify that deferred deleted DS is to be
+     moved into Pause state
+    :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the container.
@@ -81,6 +95,11 @@ class GenericProtectedItem(ProtectedItem):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
+        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
+        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'policy_state': {'key': 'policyState', 'type': 'str'},
@@ -90,8 +109,8 @@ class GenericProtectedItem(ProtectedItem):
         'fabric_name': {'key': 'fabricName', 'type': 'str'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, friendly_name: str=None, policy_state: str=None, protection_state=None, protected_item_id: int=None, source_associations=None, fabric_name: str=None, **kwargs) -> None:
-        super(GenericProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, policy_state: str=None, protection_state=None, protected_item_id: int=None, source_associations=None, fabric_name: str=None, **kwargs) -> None:
+        super(GenericProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
         self.friendly_name = friendly_name
         self.policy_state = policy_state
         self.protection_state = protection_state

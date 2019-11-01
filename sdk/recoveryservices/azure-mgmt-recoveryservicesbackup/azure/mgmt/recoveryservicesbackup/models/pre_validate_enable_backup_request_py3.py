@@ -29,7 +29,7 @@ class PreValidateEnableBackupRequest(Model):
      ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param resource_id: ARM Virtual Machine Id
     :type resource_id: str
-    :param vault_id: Specifies the arm resource id of the vault
+    :param vault_id: ARM id of the Recovery Services Vault
     :type vault_id: str
     :param properties: Configuration of VM if any needs to be validated like
      OS type etc

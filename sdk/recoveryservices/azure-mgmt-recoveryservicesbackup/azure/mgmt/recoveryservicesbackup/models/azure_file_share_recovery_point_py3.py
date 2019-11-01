@@ -15,22 +15,31 @@ from .recovery_point_py3 import RecoveryPoint
 class AzureFileShareRecoveryPoint(RecoveryPoint):
     """Azure File Share workload specific backup copy.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_type: Type of the backup copy. Specifies whether it
+    :ivar recovery_point_type: Type of the backup copy. Specifies whether it
      is a crash consistent backup or app consistent.
-    :type recovery_point_type: str
-    :param recovery_point_time: Time at which this backup copy was created.
-    :type recovery_point_time: datetime
-    :param file_share_snapshot_uri: Contains Url to the snapshot of fileshare,
+    :vartype recovery_point_type: str
+    :ivar recovery_point_time: Time at which this backup copy was created.
+    :vartype recovery_point_time: datetime
+    :ivar file_share_snapshot_uri: Contains Url to the snapshot of fileshare,
      if applicable
-    :type file_share_snapshot_uri: str
+    :vartype file_share_snapshot_uri: str
+    :ivar recovery_point_size_in_gb: Contains recovery point size
+    :vartype recovery_point_size_in_gb: int
     """
 
     _validation = {
         'object_type': {'required': True},
+        'recovery_point_type': {'readonly': True},
+        'recovery_point_time': {'readonly': True},
+        'file_share_snapshot_uri': {'readonly': True},
+        'recovery_point_size_in_gb': {'readonly': True},
     }
 
     _attribute_map = {
@@ -38,11 +47,13 @@ class AzureFileShareRecoveryPoint(RecoveryPoint):
         'recovery_point_type': {'key': 'recoveryPointType', 'type': 'str'},
         'recovery_point_time': {'key': 'recoveryPointTime', 'type': 'iso-8601'},
         'file_share_snapshot_uri': {'key': 'fileShareSnapshotUri', 'type': 'str'},
+        'recovery_point_size_in_gb': {'key': 'recoveryPointSizeInGB', 'type': 'int'},
     }
 
-    def __init__(self, *, recovery_point_type: str=None, recovery_point_time=None, file_share_snapshot_uri: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(AzureFileShareRecoveryPoint, self).__init__(**kwargs)
-        self.recovery_point_type = recovery_point_type
-        self.recovery_point_time = recovery_point_time
-        self.file_share_snapshot_uri = file_share_snapshot_uri
+        self.recovery_point_type = None
+        self.recovery_point_time = None
+        self.file_share_snapshot_uri = None
+        self.recovery_point_size_in_gb = None
         self.object_type = 'AzureFileShareRecoveryPoint'

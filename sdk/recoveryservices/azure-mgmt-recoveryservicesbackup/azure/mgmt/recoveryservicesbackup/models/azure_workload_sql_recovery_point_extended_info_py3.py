@@ -15,21 +15,29 @@ from msrest.serialization import Model
 class AzureWorkloadSQLRecoveryPointExtendedInfo(Model):
     """Extended info class details.
 
-    :param data_directory_time_in_utc: UTC time at which data directory info
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar data_directory_time_in_utc: UTC time at which data directory info
      was captured
-    :type data_directory_time_in_utc: datetime
-    :param data_directory_paths: List of data directory paths during restore
+    :vartype data_directory_time_in_utc: datetime
+    :ivar data_directory_paths: List of data directory paths during restore
      operation.
-    :type data_directory_paths:
+    :vartype data_directory_paths:
      list[~azure.mgmt.recoveryservicesbackup.models.SQLDataDirectory]
     """
+
+    _validation = {
+        'data_directory_time_in_utc': {'readonly': True},
+        'data_directory_paths': {'readonly': True},
+    }
 
     _attribute_map = {
         'data_directory_time_in_utc': {'key': 'dataDirectoryTimeInUTC', 'type': 'iso-8601'},
         'data_directory_paths': {'key': 'dataDirectoryPaths', 'type': '[SQLDataDirectory]'},
     }
 
-    def __init__(self, *, data_directory_time_in_utc=None, data_directory_paths=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(AzureWorkloadSQLRecoveryPointExtendedInfo, self).__init__(**kwargs)
-        self.data_directory_time_in_utc = data_directory_time_in_utc
-        self.data_directory_paths = data_directory_paths
+        self.data_directory_time_in_utc = None
+        self.data_directory_paths = None

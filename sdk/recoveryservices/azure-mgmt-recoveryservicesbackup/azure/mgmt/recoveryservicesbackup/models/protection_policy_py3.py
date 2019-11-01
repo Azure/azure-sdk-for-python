@@ -17,10 +17,9 @@ class ProtectionPolicy(Model):
     from this class.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureFileShareProtectionPolicy,
-    AzureIaaSVMProtectionPolicy, AzureSqlProtectionPolicy,
-    AzureVmWorkloadProtectionPolicy, GenericProtectionPolicy,
-    MabProtectionPolicy
+    sub-classes are: AzureVmWorkloadProtectionPolicy,
+    AzureFileShareProtectionPolicy, AzureIaaSVMProtectionPolicy,
+    AzureSqlProtectionPolicy, GenericProtectionPolicy, MabProtectionPolicy
 
     All required parameters must be populated in order to send to Azure.
 
@@ -40,7 +39,7 @@ class ProtectionPolicy(Model):
     }
 
     _subtype_map = {
-        'backup_management_type': {'AzureStorage': 'AzureFileShareProtectionPolicy', 'AzureIaasVM': 'AzureIaaSVMProtectionPolicy', 'AzureSql': 'AzureSqlProtectionPolicy', 'AzureWorkload': 'AzureVmWorkloadProtectionPolicy', 'GenericProtectionPolicy': 'GenericProtectionPolicy', 'MAB': 'MabProtectionPolicy'}
+        'backup_management_type': {'AzureWorkload': 'AzureVmWorkloadProtectionPolicy', 'AzureStorage': 'AzureFileShareProtectionPolicy', 'AzureIaasVM': 'AzureIaaSVMProtectionPolicy', 'AzureSql': 'AzureSqlProtectionPolicy', 'GenericProtectionPolicy': 'GenericProtectionPolicy', 'MAB': 'MabProtectionPolicy'}
     }
 
     def __init__(self, *, protected_items_count: int=None, **kwargs) -> None:

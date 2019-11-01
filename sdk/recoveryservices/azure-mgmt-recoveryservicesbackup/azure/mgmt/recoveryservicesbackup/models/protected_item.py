@@ -52,6 +52,20 @@ class ProtectedItem(Model):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
+    :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
+     is scheduled for deferred delete
+    :type is_scheduled_for_deferred_delete: bool
+    :param deferred_delete_time_remaining: Time remaining before the DS marked
+     for deferred delete is permanently deleted
+    :type deferred_delete_time_remaining: str
+    :param is_deferred_delete_schedule_upcoming: Flag to identify whether the
+     deferred deleted DS is to be purged soon
+    :type is_deferred_delete_schedule_upcoming: bool
+    :param is_rehydrate: Flag to identify that deferred deleted DS is to be
+     moved into Pause state
+    :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     """
@@ -69,6 +83,11 @@ class ProtectedItem(Model):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
+        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
+        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
     }
 
@@ -86,4 +105,9 @@ class ProtectedItem(Model):
         self.last_recovery_point = kwargs.get('last_recovery_point', None)
         self.backup_set_name = kwargs.get('backup_set_name', None)
         self.create_mode = kwargs.get('create_mode', None)
+        self.deferred_delete_time_in_utc = kwargs.get('deferred_delete_time_in_utc', None)
+        self.is_scheduled_for_deferred_delete = kwargs.get('is_scheduled_for_deferred_delete', None)
+        self.deferred_delete_time_remaining = kwargs.get('deferred_delete_time_remaining', None)
+        self.is_deferred_delete_schedule_upcoming = kwargs.get('is_deferred_delete_schedule_upcoming', None)
+        self.is_rehydrate = kwargs.get('is_rehydrate', None)
         self.protected_item_type = None

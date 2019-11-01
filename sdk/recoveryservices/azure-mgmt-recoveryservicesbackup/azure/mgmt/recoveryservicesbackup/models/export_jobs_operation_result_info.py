@@ -24,6 +24,12 @@ class ExportJobsOperationResultInfo(OperationResultInfoBase):
     :type blob_url: str
     :param blob_sas_key: SAS key to access the blob. It expires in 15 mins.
     :type blob_sas_key: str
+    :param excel_file_blob_url: URL of the blob into which the ExcelFile is
+     uploaded.
+    :type excel_file_blob_url: str
+    :param excel_file_blob_sas_key: SAS key to access the blob. It expires in
+     15 mins.
+    :type excel_file_blob_sas_key: str
     """
 
     _validation = {
@@ -34,10 +40,14 @@ class ExportJobsOperationResultInfo(OperationResultInfoBase):
         'object_type': {'key': 'objectType', 'type': 'str'},
         'blob_url': {'key': 'blobUrl', 'type': 'str'},
         'blob_sas_key': {'key': 'blobSasKey', 'type': 'str'},
+        'excel_file_blob_url': {'key': 'excelFileBlobUrl', 'type': 'str'},
+        'excel_file_blob_sas_key': {'key': 'excelFileBlobSasKey', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ExportJobsOperationResultInfo, self).__init__(**kwargs)
         self.blob_url = kwargs.get('blob_url', None)
         self.blob_sas_key = kwargs.get('blob_sas_key', None)
+        self.excel_file_blob_url = kwargs.get('excel_file_blob_url', None)
+        self.excel_file_blob_sas_key = kwargs.get('excel_file_blob_sas_key', None)
         self.object_type = 'ExportJobsOperationResultInfo'

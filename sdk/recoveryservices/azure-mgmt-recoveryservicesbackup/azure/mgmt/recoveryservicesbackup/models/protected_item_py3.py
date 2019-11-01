@@ -52,6 +52,20 @@ class ProtectedItem(Model):
      include: 'Invalid', 'Default', 'Recover'
     :type create_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.CreateMode
+    :param deferred_delete_time_in_utc: Time for deferred deletion in UTC
+    :type deferred_delete_time_in_utc: datetime
+    :param is_scheduled_for_deferred_delete: Flag to identify whether the DS
+     is scheduled for deferred delete
+    :type is_scheduled_for_deferred_delete: bool
+    :param deferred_delete_time_remaining: Time remaining before the DS marked
+     for deferred delete is permanently deleted
+    :type deferred_delete_time_remaining: str
+    :param is_deferred_delete_schedule_upcoming: Flag to identify whether the
+     deferred deleted DS is to be purged soon
+    :type is_deferred_delete_schedule_upcoming: bool
+    :param is_rehydrate: Flag to identify that deferred deleted DS is to be
+     moved into Pause state
+    :type is_rehydrate: bool
     :param protected_item_type: Required. Constant filled by server.
     :type protected_item_type: str
     """
@@ -69,6 +83,11 @@ class ProtectedItem(Model):
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
         'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
+        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
+        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
+        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
     }
 
@@ -76,7 +95,7 @@ class ProtectedItem(Model):
         'protected_item_type': {'AzureFileShareProtectedItem': 'AzureFileshareProtectedItem', 'AzureIaaSVMProtectedItem': 'AzureIaaSVMProtectedItem', 'Microsoft.Sql/servers/databases': 'AzureSqlProtectedItem', 'AzureVmWorkloadProtectedItem': 'AzureVmWorkloadProtectedItem', 'DPMProtectedItem': 'DPMProtectedItem', 'GenericProtectedItem': 'GenericProtectedItem', 'MabFileFolderProtectedItem': 'MabFileFolderProtectedItem'}
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, **kwargs) -> None:
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, **kwargs) -> None:
         super(ProtectedItem, self).__init__(**kwargs)
         self.backup_management_type = backup_management_type
         self.workload_type = workload_type
@@ -86,4 +105,9 @@ class ProtectedItem(Model):
         self.last_recovery_point = last_recovery_point
         self.backup_set_name = backup_set_name
         self.create_mode = create_mode
+        self.deferred_delete_time_in_utc = deferred_delete_time_in_utc
+        self.is_scheduled_for_deferred_delete = is_scheduled_for_deferred_delete
+        self.deferred_delete_time_remaining = deferred_delete_time_remaining
+        self.is_deferred_delete_schedule_upcoming = is_deferred_delete_schedule_upcoming
+        self.is_rehydrate = is_rehydrate
         self.protected_item_type = None

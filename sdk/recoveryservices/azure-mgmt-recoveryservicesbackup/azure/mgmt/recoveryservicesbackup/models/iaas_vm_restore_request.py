@@ -22,7 +22,8 @@ class IaasVMRestoreRequest(RestoreRequest):
     :param recovery_point_id: ID of the backup copy to be recovered.
     :type recovery_point_id: str
     :param recovery_type: Type of this recovery. Possible values include:
-     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks'
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
     :type recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
     :param source_resource_id: Fully qualified ARM ID of the VM which is being
@@ -69,6 +70,8 @@ class IaasVMRestoreRequest(RestoreRequest):
      time of backup.
     :type encryption_details:
      ~azure.mgmt.recoveryservicesbackup.models.EncryptionDetails
+    :param restore_disk_lun_list: List of Disk LUNs for partial restore
+    :type restore_disk_lun_list: list[int]
     """
 
     _validation = {
@@ -91,6 +94,7 @@ class IaasVMRestoreRequest(RestoreRequest):
         'create_new_cloud_service': {'key': 'createNewCloudService', 'type': 'bool'},
         'original_storage_account_option': {'key': 'originalStorageAccountOption', 'type': 'bool'},
         'encryption_details': {'key': 'encryptionDetails', 'type': 'EncryptionDetails'},
+        'restore_disk_lun_list': {'key': 'restoreDiskLunList', 'type': '[int]'},
     }
 
     def __init__(self, **kwargs):
@@ -109,4 +113,5 @@ class IaasVMRestoreRequest(RestoreRequest):
         self.create_new_cloud_service = kwargs.get('create_new_cloud_service', None)
         self.original_storage_account_option = kwargs.get('original_storage_account_option', None)
         self.encryption_details = kwargs.get('encryption_details', None)
+        self.restore_disk_lun_list = kwargs.get('restore_disk_lun_list', None)
         self.object_type = 'IaasVMRestoreRequest'

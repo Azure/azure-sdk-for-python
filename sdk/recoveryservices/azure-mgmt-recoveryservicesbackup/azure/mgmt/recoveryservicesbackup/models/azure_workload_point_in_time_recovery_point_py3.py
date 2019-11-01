@@ -18,16 +18,19 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AzureWorkloadSAPHanaPointInTimeRecoveryPoint
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_time_in_utc: UTC time at which recovery point was
+    :ivar recovery_point_time_in_utc: UTC time at which recovery point was
      created
-    :type recovery_point_time_in_utc: datetime
-    :param type: Type of restore point. Possible values include: 'Invalid',
+    :vartype recovery_point_time_in_utc: datetime
+    :ivar type: Type of restore point. Possible values include: 'Invalid',
      'Full', 'Log', 'Differential'
-    :type type: str or
+    :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
     :param time_ranges: List of log ranges
     :type time_ranges:
@@ -36,6 +39,8 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
 
     _validation = {
         'object_type': {'required': True},
+        'recovery_point_time_in_utc': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -49,7 +54,7 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
         'object_type': {'AzureWorkloadSAPHanaPointInTimeRecoveryPoint': 'AzureWorkloadSAPHanaPointInTimeRecoveryPoint'}
     }
 
-    def __init__(self, *, recovery_point_time_in_utc=None, type=None, time_ranges=None, **kwargs) -> None:
-        super(AzureWorkloadPointInTimeRecoveryPoint, self).__init__(recovery_point_time_in_utc=recovery_point_time_in_utc, type=type, **kwargs)
+    def __init__(self, *, time_ranges=None, **kwargs) -> None:
+        super(AzureWorkloadPointInTimeRecoveryPoint, self).__init__(**kwargs)
         self.time_ranges = time_ranges
         self.object_type = 'AzureWorkloadPointInTimeRecoveryPoint'

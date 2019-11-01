@@ -15,23 +15,26 @@ from .recovery_point_py3 import RecoveryPoint
 class IaasVMRecoveryPoint(RecoveryPoint):
     """IaaS VM workload specific backup copy.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_type: Type of the backup copy.
-    :type recovery_point_type: str
-    :param recovery_point_time: Time at which this backup copy was created.
-    :type recovery_point_time: datetime
-    :param recovery_point_additional_info: Additional information associated
+    :ivar recovery_point_type: Type of the backup copy.
+    :vartype recovery_point_type: str
+    :ivar recovery_point_time: Time at which this backup copy was created.
+    :vartype recovery_point_time: datetime
+    :ivar recovery_point_additional_info: Additional information associated
      with this backup copy.
-    :type recovery_point_additional_info: str
-    :param source_vm_storage_type: Storage type of the VM whose backup copy is
+    :vartype recovery_point_additional_info: str
+    :ivar source_vm_storage_type: Storage type of the VM whose backup copy is
      created.
-    :type source_vm_storage_type: str
-    :param is_source_vm_encrypted: Identifies whether the VM was encrypted
-     when the backup copy is created.
-    :type is_source_vm_encrypted: bool
+    :vartype source_vm_storage_type: str
+    :ivar is_source_vm_encrypted: Identifies whether the VM was encrypted when
+     the backup copy is created.
+    :vartype is_source_vm_encrypted: bool
     :param key_and_secret: Required details for recovering an encrypted VM.
      Applicable only when IsSourceVMEncrypted is true.
     :type key_and_secret:
@@ -50,10 +53,18 @@ class IaasVMRecoveryPoint(RecoveryPoint):
     :type original_storage_account_option: bool
     :param os_type: OS type
     :type os_type: str
+    :param recovery_point_disk_configuration: Disk configuration
+    :type recovery_point_disk_configuration:
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointDiskConfiguration
     """
 
     _validation = {
         'object_type': {'required': True},
+        'recovery_point_type': {'readonly': True},
+        'recovery_point_time': {'readonly': True},
+        'recovery_point_additional_info': {'readonly': True},
+        'source_vm_storage_type': {'readonly': True},
+        'is_source_vm_encrypted': {'readonly': True},
     }
 
     _attribute_map = {
@@ -70,15 +81,16 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         'virtual_machine_size': {'key': 'virtualMachineSize', 'type': 'str'},
         'original_storage_account_option': {'key': 'originalStorageAccountOption', 'type': 'bool'},
         'os_type': {'key': 'osType', 'type': 'str'},
+        'recovery_point_disk_configuration': {'key': 'recoveryPointDiskConfiguration', 'type': 'RecoveryPointDiskConfiguration'},
     }
 
-    def __init__(self, *, recovery_point_type: str=None, recovery_point_time=None, recovery_point_additional_info: str=None, source_vm_storage_type: str=None, is_source_vm_encrypted: bool=None, key_and_secret=None, is_instant_ilr_session_active: bool=None, recovery_point_tier_details=None, is_managed_virtual_machine: bool=None, virtual_machine_size: str=None, original_storage_account_option: bool=None, os_type: str=None, **kwargs) -> None:
+    def __init__(self, *, key_and_secret=None, is_instant_ilr_session_active: bool=None, recovery_point_tier_details=None, is_managed_virtual_machine: bool=None, virtual_machine_size: str=None, original_storage_account_option: bool=None, os_type: str=None, recovery_point_disk_configuration=None, **kwargs) -> None:
         super(IaasVMRecoveryPoint, self).__init__(**kwargs)
-        self.recovery_point_type = recovery_point_type
-        self.recovery_point_time = recovery_point_time
-        self.recovery_point_additional_info = recovery_point_additional_info
-        self.source_vm_storage_type = source_vm_storage_type
-        self.is_source_vm_encrypted = is_source_vm_encrypted
+        self.recovery_point_type = None
+        self.recovery_point_time = None
+        self.recovery_point_additional_info = None
+        self.source_vm_storage_type = None
+        self.is_source_vm_encrypted = None
         self.key_and_secret = key_and_secret
         self.is_instant_ilr_session_active = is_instant_ilr_session_active
         self.recovery_point_tier_details = recovery_point_tier_details
@@ -86,4 +98,5 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         self.virtual_machine_size = virtual_machine_size
         self.original_storage_account_option = original_storage_account_option
         self.os_type = os_type
+        self.recovery_point_disk_configuration = recovery_point_disk_configuration
         self.object_type = 'IaasVMRecoveryPoint'

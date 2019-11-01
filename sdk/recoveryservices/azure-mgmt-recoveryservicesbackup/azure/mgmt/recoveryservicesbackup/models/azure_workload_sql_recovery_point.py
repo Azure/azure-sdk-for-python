@@ -13,22 +13,25 @@ from .azure_workload_recovery_point import AzureWorkloadRecoveryPoint
 
 
 class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
-    """SQL specific recovery point, specifically encapsulates full/diff recovery
-    point along with extended info.
+    """SQL specific recoverypoint, specifically encapsulates full/diff
+    recoverypoint along with extended info.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AzureWorkloadSQLPointInTimeRecoveryPoint
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_time_in_utc: UTC time at which recovery point was
+    :ivar recovery_point_time_in_utc: UTC time at which recovery point was
      created
-    :type recovery_point_time_in_utc: datetime
-    :param type: Type of restore point. Possible values include: 'Invalid',
+    :vartype recovery_point_time_in_utc: datetime
+    :ivar type: Type of restore point. Possible values include: 'Invalid',
      'Full', 'Log', 'Differential'
-    :type type: str or
+    :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
     :param extended_info: Extended Info that provides data directory details.
      Will be populated in two cases:
@@ -41,6 +44,8 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
 
     _validation = {
         'object_type': {'required': True},
+        'recovery_point_time_in_utc': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {

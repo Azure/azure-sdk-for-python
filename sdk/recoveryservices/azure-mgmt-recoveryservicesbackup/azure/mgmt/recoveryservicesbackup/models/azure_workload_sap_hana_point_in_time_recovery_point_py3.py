@@ -15,16 +15,19 @@ from .azure_workload_point_in_time_recovery_point_py3 import AzureWorkloadPointI
 class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecoveryPoint):
     """Recovery point specific to PointInTime in SAPHana.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_point_time_in_utc: UTC time at which recovery point was
+    :ivar recovery_point_time_in_utc: UTC time at which recovery point was
      created
-    :type recovery_point_time_in_utc: datetime
-    :param type: Type of restore point. Possible values include: 'Invalid',
+    :vartype recovery_point_time_in_utc: datetime
+    :ivar type: Type of restore point. Possible values include: 'Invalid',
      'Full', 'Log', 'Differential'
-    :type type: str or
+    :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
     :param time_ranges: List of log ranges
     :type time_ranges:
@@ -33,6 +36,8 @@ class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecov
 
     _validation = {
         'object_type': {'required': True},
+        'recovery_point_time_in_utc': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -42,6 +47,6 @@ class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecov
         'time_ranges': {'key': 'timeRanges', 'type': '[PointInTimeRange]'},
     }
 
-    def __init__(self, *, recovery_point_time_in_utc=None, type=None, time_ranges=None, **kwargs) -> None:
-        super(AzureWorkloadSAPHanaPointInTimeRecoveryPoint, self).__init__(recovery_point_time_in_utc=recovery_point_time_in_utc, type=type, time_ranges=time_ranges, **kwargs)
+    def __init__(self, *, time_ranges=None, **kwargs) -> None:
+        super(AzureWorkloadSAPHanaPointInTimeRecoveryPoint, self).__init__(time_ranges=time_ranges, **kwargs)
         self.object_type = 'AzureWorkloadSAPHanaPointInTimeRecoveryPoint'
