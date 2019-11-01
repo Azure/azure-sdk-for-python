@@ -509,14 +509,14 @@
     "namespaces": [
       "azure.mgmt.machinelearningcompute"
     ],
-    "service_name": "Machine Learning"
+    "service_name": "Machine Learning Compute"
   },
   "azure-mgmt-machinelearningservices": {
     "category": "Management",
     "namespaces": [
       "azure.mgmt.machinelearningservices"
     ],
-    "service_name": "Machine Learning"
+    "service_name": "Machine Learning Compute"
   },
   "azure-mgmt-managedservices": {
     "category": "Management",
@@ -660,7 +660,7 @@
     "namespaces": [
       "azure.mgmt.rdbms"
     ],
-    "service_name": "RDBMS"
+    "service_name": "OSS RDBMS"
   },
   "azure-mgmt-reservations": {
     "category": "Management",
