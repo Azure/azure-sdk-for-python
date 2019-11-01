@@ -38,20 +38,11 @@ def create_eventhub_consumer_client():
     return consumer
 
 
-def example_eventhub_sync_send_and_receive(live_eventhub_config):
+def example_eventhub_sync_send_and_receive():
     producer = create_eventhub_producer_client()
     consumer = create_eventhub_consumer_client()
     try:
         logger = logging.getLogger("azure.eventhub")
-
-        def on_event(partition_context, events):
-            logger.info("Received {} messages from partition: {}".format(
-                len(events), partition_context.partition_id))
-            # Do ops on received events
-
-        consumer.receive(on_event=on_event, consumer_group='$Default', partition_id='0')
-        time.sleep(1)
-        consumer.close()
 
         # [START create_event_data]
         from azure.eventhub import EventData
@@ -92,13 +83,12 @@ def example_eventhub_sync_send_and_receive(live_eventhub_config):
 
         with consumer:
             consumer.receive(on_event=on_event, consumer_group='$Default')
-            time.sleep(3)  # keep receiving for 3 seconds
         # [END eventhub_consumer_client_receive_sync]
     finally:
         pass
 
 
-def example_eventhub_producer_ops(live_eventhub_config):
+def example_eventhub_producer_ops():
     # [START eventhub_producer_client_close_sync]
     import os
     from azure.eventhub import EventHubProducerClient, EventData
@@ -116,9 +106,10 @@ def example_eventhub_producer_ops(live_eventhub_config):
     # [END eventhub_producer_client_close_sync]
 
 
-def example_eventhub_consumer_ops(live_eventhub_config):
+def example_eventhub_consumer_ops():
     # [START eventhub_consumer_client_close_sync]
     import os
+    import threading
 
     EVENT_HUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
     EVENT_HUB = os.environ['EVENT_HUB_NAME']
@@ -136,9 +127,20 @@ def example_eventhub_consumer_ops(live_eventhub_config):
             len(events), partition_context.partition_id))
         # Do ops on received events
 
-    consumer.receive(on_event=on_event, consumer_group='$Default')
-    time.sleep(3)  # keep receiving for 3 seconds
+    # The receive method is blocking call, so execute it in a thread to
+    # better demonstrate how to stop the receiving by calling he close method.
 
+    worker = threading.Thread(target=consumer.receive,
+                              kwargs={"on_event": on_event,
+                                      "consumer_group": "$Default"})
+    worker.start()
+    time.sleep(10)  # Keep receiving for 10s then close.
     # Close down the consumer handler explicitly.
     consumer.close()
     # [END eventhub_consumer_client_close_sync]
+
+
+if __name__ == '__main__':
+    example_eventhub_producer_ops()
+    example_eventhub_consumer_ops()
+    # example_eventhub_sync_send_and_receive()

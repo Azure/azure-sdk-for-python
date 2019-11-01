@@ -24,8 +24,14 @@ log = logging.getLogger(__name__)
 
 
 class CloseReason(Enum):
-    SHUTDOWN = 0  # user call EventProcessor.stop()
-    OWNERSHIP_LOST = 1  # lose the ownership of a partition.
+    """
+    A partition consumer is closed due to two reasons:
+    SHUTDOWN: It is explicitly required to stop, this would happen when the EventHubConsumerClient is closed.
+    OWNERSHIP_LOST: It loses the ownership of a partition, this would happend when other EventHubConsumerClient
+    instance claims ownership of the partition.
+    """
+    SHUTDOWN = 0
+    OWNERSHIP_LOST = 1
 
 
 class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
@@ -203,12 +209,14 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     process_error(error)
                     break
                     # Go to finally to stop this partition processor.
-                    # Later an EventProcessor(this one or another one) will pick up this partition again
+                    # Later an EventProcessor(this one or another one) will pick up this partition again.
         finally:
-            if self._running is False or self._threads_stop_flags[partition_id]:
-                close(CloseReason.SHUTDOWN)
-            else:
+            if self._running and self._threads_stop_flags[partition_id]:
+                # Event processor is running but the partition consumer has been stopped.
                 close(CloseReason.OWNERSHIP_LOST)
+            else:
+                close(CloseReason.SHUTDOWN)
+
             partition_consumer.close()
 
     def _start(self):
