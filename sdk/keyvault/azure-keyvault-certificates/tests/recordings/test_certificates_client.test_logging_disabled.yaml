@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-secrets/4.0.0 Python/3.7.4 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.7.4 (Windows-10-10.0.18362-SP0)
     method: PUT
-    uri: https://vault458ad70cc7526c1055.vault.azure.net/secrets/secret-name?api-version=7.0
+    uri: https://vault458ad70cc7bbec12bf.vault.azure.net/certificates/issuers/cert-name?api-version=7.0
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 31 Oct 2019 18:32:00 GMT
+      - Thu, 31 Oct 2019 16:48:30 GMT
       expires:
       - '-1'
       pragma:
@@ -56,7 +56,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: '{"value": "secret-value"}'
+    body: '{"provider": "Test"}'
     headers:
       Accept:
       - application/json
@@ -65,25 +65,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '25'
+      - '20'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-secrets/4.0.0 Python/3.7.4 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.7.4 (Windows-10-10.0.18362-SP0)
     method: PUT
-    uri: https://vault458ad70cc7526c1055.vault.azure.net/secrets/secret-name?api-version=7.0
+    uri: https://vault458ad70cc7bbec12bf.vault.azure.net/certificates/issuers/cert-name?api-version=7.0
   response:
     body:
-      string: '{"value":"secret-value","id":"https://vault458ad70cc7526c1055.vault.azure.net/secrets/secret-name/a6f48eb00bdd4d78bddcda49fe86509c","attributes":{"enabled":true,"created":1572546721,"updated":1572546721,"recoveryLevel":"Purgeable"}}'
+      string: '{"id":"https://vault458ad70cc7bbec12bf.vault.azure.net/certificates/issuers/cert-name","provider":"Test","attributes":{"enabled":true,"created":1572540511,"updated":1572540511}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '232'
+      - '177'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 31 Oct 2019 18:32:00 GMT
+      - Thu, 31 Oct 2019 16:48:30 GMT
       expires:
       - '-1'
       pragma:
