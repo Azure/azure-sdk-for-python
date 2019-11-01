@@ -17,9 +17,9 @@ logging.getLogger().setLevel(logging.INFO)
 # azure.core.tracing.opencensus and azure.eventhub.checkpointstoreblob.aio are skipped due to a known issue in loading azure.core.tracing.opencensus
 excluded_packages = [
     "azure",
-    "azure.mgmt",
-    "azure.keyvault",
-]
+    "azure-mgmt",
+    "azure-storage-file-share"  # Name space and package name are different. Skipping this package for now.
+    ]
 
 def should_run_import_all(package_name):
     return not (package_name in excluded_packages or "nspkg" in package_name)
@@ -49,7 +49,7 @@ if __name__ == "__main__":
                 package_name
             )
         )
-        import_script_all = "from . import *"
+        import_script_all = "from {0} import *".format(package_name)
         exec(import_script_all)
         logging.info("Verified module dependency, no issues found")
     else:
