@@ -4,7 +4,8 @@
 # ------------------------------------
 import asyncio
 import os
-from azure.keyvault.certificates.aio import CertificateClient, CertificatePolicy
+from azure.keyvault.certificates.aio import CertificateClient
+from azure.keyvault.certificates import CertificatePolicy
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
