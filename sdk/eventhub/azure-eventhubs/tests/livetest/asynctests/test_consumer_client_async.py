@@ -23,7 +23,7 @@ async def test_receive_no_partition_async(connstr_senders):
             client.receive(process_events, consumer_group="$default", initial_event_position="-1"))
         await asyncio.sleep(3)
         assert received == 2
-        task.cancel()
+        # task.cancel()
 
 
 @pytest.mark.liveTest
@@ -47,7 +47,7 @@ async def test_receive_partition_async(connstr_senders):
             client.receive(process_events, consumer_group="$default", partition_id="0", initial_event_position="-1"))
         await asyncio.sleep(5)
         assert received == 1
-        task.cancel()
+        # task.cancel()
 
 
 @pytest.mark.liveTest
@@ -71,5 +71,5 @@ async def test_receive_load_balancing_async(connstr_senders):
         await asyncio.sleep(5)
         assert len(client1._event_processors[("$default", "-1")]._tasks) == 1
         assert len(client2._event_processors[("$default", "-1")]._tasks) == 1
-        task1.cancel()
-        task2.cancel()
+        # task1.cancel()
+        # task2.cancel()
