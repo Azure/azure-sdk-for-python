@@ -190,8 +190,7 @@ class EventHubClient(EventHubClientAbstract):
             -'last_enqueued_time_utc'
             -'is_empty'
 
-        :param partition: The target partition id.
-        :type partition: str
+        :param str partition: The target partition id.
         :rtype: dict
         :raises: ~azure.eventhub.ConnectError
         """

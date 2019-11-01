@@ -190,10 +190,11 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             while self._running and not self._threads_stop_flags[partition_id]:
                 try:
                     events = partition_consumer.receive()
-                    self._last_enqueued_event_properties[partition_id] = \
-                        partition_consumer.last_enqueued_event_properties
-                    with self._context(events):
-                        self._callback_queue.put((self._event_handler, partition_context, events), block=True)
+                    if events:
+                        self._last_enqueued_event_properties[partition_id] = \
+                            partition_consumer.last_enqueued_event_properties
+                        with self._context(events):
+                            self._callback_queue.put((self._event_handler, partition_context, events), block=True)
                 except Exception as error:  # pylint:disable=broad-except
                     process_error(error)
                     break
@@ -280,12 +281,12 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             log.info("EventProcessor %r has already been stopped.", self._id)
             return
 
-        self._running = False
-
         for _ in range(len(self._working_threads)):
             partition_id, thread = self._working_threads.popitem()
             self._threads_stop_flags[partition_id] = True
             thread.join()
+
+        self._running = False
 
         self._working_threads.clear()
         self._threads_stop_flags.clear()

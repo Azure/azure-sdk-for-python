@@ -30,13 +30,10 @@ async def do_operation(event):
     # print(event)
 
 
-async def event_handler(partition_context, events):
-    if events:
-        print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
-        await asyncio.gather(*[do_operation(event) for event in events])
-        await partition_context.update_checkpoint(events[-1])
-    else:
-        print("No event received from partition: {}".format(partition_context.partition_id))
+async def on_event(partition_context, events):
+    print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
+    await asyncio.gather(*[do_operation(event) for event in events])
+    await partition_context.update_checkpoint(events[-1])
 
 
 async def receive_for_a_while(client, duration):
@@ -45,9 +42,9 @@ async def receive_for_a_while(client, duration):
     partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
     which also try to receive events from all partitions and use the same storage resource.
     """
-    task = asyncio.ensure_future(client.receive(event_handler=event_handler, consumer_group="$default"))
+    task = asyncio.ensure_future(client.receive(on_event=on_event, consumer_group="$default"))
     # With specified partition_id, load-balance will be disabled
-    # task = asyncio.ensure_future(client.receive(event_handler=event_handler, consumer_group="$default", partition_id = '0'))
+    # task = asyncio.ensure_future(client.receive(on_event=on_event, consumer_group="$default", partition_id = '0'))
     await asyncio.sleep(duration)
     task.cancel()
 
@@ -59,7 +56,7 @@ async def receive_forever(client):
         partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
         which also try to receive events from all partitions and use the same storage resource.
         """
-        await client.receive(event_handler=event_handler, consumer_group="$default")
+        await client.receive(on_event=on_event, consumer_group="$default")
         # With specified partition_id, load-balance will be disabled
         # await client.receive(event_handler=event_handler, consumer_group="$default", partition_id = '0'))
     except KeyboardInterrupt:

@@ -31,19 +31,16 @@ def do_operation(event):
     # print(event)
 
 
-def event_handler(partition_context, events):
+def on_event(partition_context, events):
     global total
-    if events:
-        print("received events: {} from partition {}".format(len(events), partition_context.partition_id))
-        total += len(events)
-        for event in events:
-            do_operation(event)
+    print("received events: {} from partition {}".format(len(events), partition_context.partition_id))
+    total += len(events)
+    for event in events:
+        do_operation(event)
 
-        print("Last enqueued event properties from partition: {} is: {}".
-              format(partition_context.partition_id,
-                     events[-1].last_enqueued_event_properties))
-    else:
-        print("No event received from partition: {}".format(partition_context.partition_id))
+    print("Last enqueued event properties from partition: {} is: {}".
+          format(partition_context.partition_id,
+                 events[-1].last_enqueued_event_properties))
 
 
 if __name__ == '__main__':
@@ -56,7 +53,7 @@ if __name__ == '__main__':
 
     try:
         with consumer_client:
-            consumer_client.receive(event_handler=event_handler, consumer_group='$Default',
+            consumer_client.receive(on_event=on_event, consumer_group='$Default',
                                     partition_id='0', track_last_enqueued_event_properties=True)
 
     except KeyboardInterrupt:

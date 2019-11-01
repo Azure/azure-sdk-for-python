@@ -25,6 +25,7 @@ async def test_receive_no_partition_async(connstr_senders):
         assert received == 2
         task.cancel()
 
+
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_partition_async(connstr_senders):

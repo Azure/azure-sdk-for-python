@@ -183,10 +183,11 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                 while True:
                     try:
                         events = await partition_consumer.receive()
-                        self._last_enqueued_event_properties[partition_id] = \
-                            partition_consumer.last_enqueued_event_properties
-                        with self._context(events):
-                            await self._event_handler(partition_context, events)
+                        if events:
+                            self._last_enqueued_event_properties[partition_id] = \
+                                partition_consumer.last_enqueued_event_properties
+                            with self._context(events):
+                                await self._event_handler(partition_context, events)
                     except asyncio.CancelledError:
                         log.info(
                             "EventProcessor instance %r of eventhub %r partition %r consumer group %r"

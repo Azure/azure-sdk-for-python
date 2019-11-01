@@ -24,16 +24,13 @@ async def do_operation(event):
     # print(event)
 
 
-async def event_handler(partition_context, events):
-    if events:
-        print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
-        await asyncio.gather(*[do_operation(event) for event in events])
-    else:
-        print("No event received from partition: {}".format(partition_context.partition_id))
+async def on_event(partition_context, events):
+    print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
+    await asyncio.gather(*[do_operation(event) for event in events])
 
 
 async def receive_for_a_while(client, duration):
-    task = asyncio.ensure_future(client.receive(event_handler=event_handler,
+    task = asyncio.ensure_future(client.receive(on_event=on_event,
                                                 consumer_group="$default"))
     await asyncio.sleep(duration)
     task.cancel()
@@ -41,7 +38,7 @@ async def receive_for_a_while(client, duration):
 
 async def receive_forever(client):
     try:
-        await client.receive(event_handler=event_handler,
+        await client.receive(on_event=on_event,
                              consumer_group="$default")
     except KeyboardInterrupt:
         client.close()
