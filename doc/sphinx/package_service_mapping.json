@@ -1007,7 +1007,7 @@
   },
   "azure-mgmt-vmwarecloudsimple": {
     "category": "Management",
-    "service_name": "Virtual Machines",
+    "service_name": "VMWare by CloudSimple",
     "namespaces": [
       "azure.mgmt.vmwarecloudsimple"
     ]
