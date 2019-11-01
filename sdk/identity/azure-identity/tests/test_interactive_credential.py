@@ -3,11 +3,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
+import socket
+import threading
 import time
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import InteractiveBrowserCredential
+from azure.identity._internal import AuthCodeRedirectServer
 import pytest
+from six.moves import urllib
 
 from helpers import mock_response, Request, validating_transport
 
@@ -85,3 +89,28 @@ def test_interactive_credential_timeout():
     with pytest.raises(ClientAuthenticationError) as ex:
         credential.get_token("scope")
     assert "timed out" in ex.value.message.lower()
+
+
+def test_redirect_server():
+    for port in range(8400, 9000):
+        try:
+            server = AuthCodeRedirectServer(port, timeout=10)
+            redirect_uri = "http://localhost:{}".format(port)
+            break
+        except socket.error:
+            continue  # keep looking for an open port
+
+    expected_param = "expected-param"
+    expected_value = "expected-value"
+
+    # the server's wait is blocking, so we do it on another thread
+    thread = threading.Thread(target=server.wait_for_redirect, name=__name__)
+    thread.daemon = True
+    thread.start()
+
+    # send a request, verify the server exposes the query
+    url = "http://localhost:{}/?{}={}".format(port, expected_param, expected_value)
+    response = urllib.request.urlopen(url)
+
+    assert response.code == 200
+    assert server.query_params[expected_param] == [expected_value]
