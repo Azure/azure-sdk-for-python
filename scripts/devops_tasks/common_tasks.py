@@ -42,8 +42,7 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "azure-servicefabric",
     "nspkg"
 ]
-NON_MANAGEMENT_CODE_5_ALLOWED = 
-[
+NON_MANAGEMENT_CODE_5_ALLOWED = [
     "azure-keyvault"
 ]
 
