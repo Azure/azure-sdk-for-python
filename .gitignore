@@ -90,5 +90,6 @@ code_reports
 sdk/storage/azure-storage-blob/tests/settings_real.py
 sdk/storage/azure-storage-queue/tests/settings_real.py
 sdk/storage/azure-storage-file-share/tests/settings_real.py
+sdk/storage/azure-storage-file-datalake/tests/settings_real.py
 *.code-workspace
 sdk/cosmos/azure-cosmos/test/test_config.py
