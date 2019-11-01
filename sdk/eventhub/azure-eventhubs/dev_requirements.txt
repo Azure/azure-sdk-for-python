@@ -6,4 +6,3 @@ docutils>=0.14
 pygments>=2.2.0
 behave==1.2.6
 wheel
-aiohttp>=3.0
