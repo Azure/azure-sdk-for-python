@@ -6,12 +6,16 @@
 - Renamed `restore_certificate` to `restore_certificate_backup`
 - Renamed `get_certificate` to `get_certificate_version`
 - Renamed `get_certificate_with_policy` to `get_certificate`
+- Renamed `list_certificates` to `list_properties_of_certificates`
+- Renamed `list_properties_of_issuers` to `list_properties_of_issuers`
+- Renamed `list_certificate_versions` to `list_properties_of_certificate_versions`
 - `create_certificate` now has policy as a required parameter
 - All optional positional parameters besides `version` have been moved to kwargs
 - Renamed enum `ActionType` to `CertificatePolicyAction`
 - Renamed `Certificate` to `KeyVaultCertificate`
 - Renamed `Contact` to `CertificateContact`
 - Renamed `Issuer` to `CertificateIssuer`
+- Renamed `CertificateError` to `CertificateOperationError`
 - Renamed `expires` property of `CertificateProperties` and `CertificatePolicy` to `expires_on`
 - Renamed `created` property of `CertificateProperties`, `CertificatePolicy`, and `CertificateIssuer` to `created_on`
 - Renamed `updated` property of `CertificateProperties`, `CertificatePolicy`, and `CertificateIssuer` to `updated_on`
