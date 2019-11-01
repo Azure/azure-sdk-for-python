@@ -27,7 +27,9 @@ excluded_packages = [
     "azure.storage.fileshare", # Github issue 7879.
     "azure.storage.queue", # Github issue 7879.
     "azure",
-    "azure-mgmt"]
+    "azure.mgmt",
+    "azure.keyvault",
+]
 
 def should_run_import_all(package_name):
     return not (package_name in excluded_packages or "nspkg" in package_name)
