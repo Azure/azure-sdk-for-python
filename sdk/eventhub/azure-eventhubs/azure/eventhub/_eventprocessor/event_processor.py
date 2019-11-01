@@ -96,8 +96,8 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                 checkpoint = checkpoints.get(partition_id) if checkpoints else None
                 if partition_id not in self._working_threads or not self._working_threads[partition_id].is_alive():
                     self._working_threads[partition_id] = threading.Thread(target=self._receive,
-                                                                           args=(partition_id, checkpoint),
-                                                                           daemon=True)
+                                                                           args=(partition_id, checkpoint))
+                    self._working_threads[partition_id].daemon = True
                     self._threads_stop_flags[partition_id] = False
                     self._working_threads[partition_id].start()
                     log.info("Working thread started, ownership %r, checkpoint %r", partition_id, checkpoint)
@@ -265,7 +265,8 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
 
     def start(self):
         if not self._running:
-            thread = threading.Thread(target=self._start, daemon=True)
+            thread = threading.Thread(target=self._start)
+            thread.daemon = True
             thread.start()
             while not self._running:
                 time.sleep(0.1)
