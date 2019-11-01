@@ -21,7 +21,7 @@ async def test_receive_no_partition_async(connstr_senders):
     async with client:
         task = asyncio.ensure_future(
             client.receive(process_events, consumer_group="$default", initial_event_position="-1"))
-        await asyncio.sleep(3)
+        await asyncio.sleep(5)
         assert received == 2
         # task.cancel()
 
