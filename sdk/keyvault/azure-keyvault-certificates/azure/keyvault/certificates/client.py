@@ -521,7 +521,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_certificates(self, **kwargs):
+    def list_properties_of_certificates(self, **kwargs):
         # type: (**Any) -> Iterable[CertificateProperties]
         """List certificates in the key vault.
 
@@ -538,8 +538,8 @@ class CertificateClient(KeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
-                :start-after: [START list_certificates]
-                :end-before: [END list_certificates]
+                :start-after: [START list_properties_of_certificates]
+                :end-before: [END list_properties_of_certificates]
                 :language: python
                 :caption: List all certificates
                 :dedent: 8
@@ -554,7 +554,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_certificate_versions(self, name, **kwargs):
+    def list_properties_of_certificate_versions(self, name, **kwargs):
         # type: (str, **Any) -> Iterable[CertificateProperties]
         """List the versions of a certificate.
 
@@ -570,8 +570,8 @@ class CertificateClient(KeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
-                :start-after: [START list_certificate_versions]
-                :end-before: [END list_certificate_versions]
+                :start-after: [START list_properties_of_certificate_versions]
+                :end-before: [END list_properties_of_certificate_versions]
                 :language: python
                 :caption: List all versions of a certificate
                 :dedent: 8
@@ -955,9 +955,9 @@ class CertificateClient(KeyVaultClientBase):
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
-    def list_issuers(self, **kwargs):
+    def list_properties_of_issuers(self, **kwargs):
         # type: (**Any) -> Iterable[IssuerProperties]
-        """List certificate issuers for the key vault.
+        """Lists properties of the certificate issuers for the key vault.
 
         Returns the set of certificate issuer resources in the key
         vault. This operation requires the certificates/manageissuers/getissuers
@@ -969,8 +969,8 @@ class CertificateClient(KeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
-                :start-after: [START list_issuers]
-                :end-before: [END list_issuers]
+                :start-after: [START list_properties_of_issuers]
+                :end-before: [END list_properties_of_issuers]
                 :language: python
                 :caption: List issuers of a vault
                 :dedent: 8
