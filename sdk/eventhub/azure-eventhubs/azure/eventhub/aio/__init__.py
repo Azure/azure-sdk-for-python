@@ -4,9 +4,9 @@
 # --------------------------------------------------------------------------------------------
 from ._consumer_client_async import EventHubConsumerClient
 from ._producer_client_async import EventHubProducerClient
-from ._eventprocessor.partition_manager import PartitionManager
-from ._eventprocessor.partition_context import PartitionContext
-from ._eventprocessor.event_processor import CloseReason
+from .eventprocessor.partition_manager import PartitionManager
+from .eventprocessor.partition_context import PartitionContext
+from .eventprocessor.event_processor import CloseReason
 
 __all__ = [
     "EventHubConsumerClient",

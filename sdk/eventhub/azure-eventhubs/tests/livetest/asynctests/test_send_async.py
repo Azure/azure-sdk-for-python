@@ -12,7 +12,7 @@ import time
 import json
 
 from azure.eventhub import EventData, TransportType
-from azure.eventhub.aio._client_async import EventHubClient
+from azure.eventhub.aio.client_async import EventHubClient
 
 
 @pytest.mark.liveTest

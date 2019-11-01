@@ -25,20 +25,17 @@ async def do_operation(event):
     # print(event)
 
 
-async def event_handler(partition_context, events):
-    if events:
-        print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
-        await asyncio.gather(*[do_operation(event) for event in events])
+async def on_event(partition_context, events):
+    print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
+    await asyncio.gather(*[do_operation(event) for event in events])
 
-        print("Last enqueued event properties from partition: {} is: {}".
-              format(partition_context.partition_id,
-                     events[-1].last_enqueued_event_properties))
-    else:
-        print("No event received from partition: {}".format(partition_context.partition_id))
+    print("Last enqueued event properties from partition: {} is: {}".
+          format(partition_context.partition_id,
+                 events[-1].last_enqueued_event_properties))
 
 
 async def receive_for_a_while(client, duration):
-    task = asyncio.ensure_future(client.receive(event_handler=event_handler,
+    task = asyncio.ensure_future(client.receive(on_event=on_event,
                                                 consumer_group="$default",
                                                 partition_id='0'))
     await asyncio.sleep(duration)
@@ -47,7 +44,7 @@ async def receive_for_a_while(client, duration):
 
 async def receive_forever(client):
     try:
-        await client.receive(event_handler=event_handler,
+        await client.receive(on_event=on_event,
                              consumer_group="$default",
                              partition_id='0')
     except KeyboardInterrupt:

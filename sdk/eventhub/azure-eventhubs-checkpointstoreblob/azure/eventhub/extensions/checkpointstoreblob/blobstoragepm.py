@@ -2,13 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Iterable, Dict, Any
+from typing import Dict
 import logging
 from collections import defaultdict
 
-from azure.eventhub import PartitionManager, OwnershipLostError  # type: ignore
+from azure.eventhub import PartitionManager, OwnershipLostError  # type: ignore # pylint:disable=no-name-in-module
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError  # type: ignore
-from azure.storage.blob import ContainerClient, BlobClient  # type: ignore
+from azure.storage.blob import BlobClient  # type: ignore
 
 logger = logging.getLogger(__name__)
 UPLOAD_DATA = ""
@@ -53,10 +53,11 @@ class BlobPartitionManager(PartitionManager):
         ownership["last_modified_time"] = uploaded_blob_properties["last_modified"].timestamp()
         ownership.update(metadata)
 
-    def list_ownership(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group_name: str) -> Iterable[Dict[str, Any]]:
+    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
         try:
             blobs = self._container_client.list_blobs(
-                name_starts_with="{}/{}/{}/ownership".format(fully_qualified_namespace, eventhub_name, consumer_group_name),
+                name_starts_with="{}/{}/{}/ownership".format(
+                    fully_qualified_namespace, eventhub_name, consumer_group_name),
                 include=['metadata'])
             result = []
             for b in blobs:
@@ -89,16 +90,19 @@ class BlobPartitionManager(PartitionManager):
             return ownership
         except (ResourceModifiedError, ResourceExistsError):
             logger.info(
-                "EventProcessor instance %r of namespace %r eventhub %r consumer group %r lost ownership to partition %r",
+                "EventProcessor instance %r of namespace %r eventhub %r consumer group %r "
+                "lost ownership to partition %r",
                 owner_id, fully_qualified_namespace, eventhub_name, consumer_group_name, partition_id)
             raise OwnershipLostError()
         except Exception as err:  # pylint:disable=broad-except
             logger.warning("An exception occurred when EventProcessor instance %r claim_ownership for "
-                           "namespace %r eventhub %r consumer group %r partition %r. The ownership is now lost. Exception "
-                           "is %r", owner_id, fully_qualified_namespace, eventhub_name, consumer_group_name, partition_id, err)
+                           "namespace %r eventhub %r consumer group %r partition %r. "
+                           "The ownership is now lost. Exception "
+                           "is %r",
+                           owner_id, fully_qualified_namespace, eventhub_name, consumer_group_name, partition_id, err)
             return ownership  # Keep the ownership if an unexpected error happens
 
-    def claim_ownership(self, ownership_list: Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]:
+    def claim_ownership(self, ownership_list):
         gathered_results = []
         for x in ownership_list:
             try:
@@ -108,7 +112,7 @@ class BlobPartitionManager(PartitionManager):
         return gathered_results
 
     def update_checkpoint(self, fully_qualified_namespace, eventhub_name, consumer_group_name, partition_id,
-                                offset, sequence_number) -> None:
+                                offset, sequence_number):
         metadata = {
             "Offset": offset,
             "SequenceNumber": str(sequence_number),
@@ -121,7 +125,8 @@ class BlobPartitionManager(PartitionManager):
 
     def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
         blobs = self._container_client.list_blobs(
-            name_starts_with="{}/{}/{}/checkpoint".format(fully_qualified_namespace, eventhub_name, consumer_group_name),
+            name_starts_with="{}/{}/{}/checkpoint".format(
+                fully_qualified_namespace, eventhub_name, consumer_group_name),
             include=['metadata'])
         result = []
         for b in blobs:

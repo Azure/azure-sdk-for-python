@@ -16,7 +16,7 @@ from azure.eventhub import (
     AuthenticationError,
     EventDataSendError,
 )
-from azure.eventhub.aio._client_async import EventHubClient
+from azure.eventhub.aio.client_async import EventHubClient
 
 
 @pytest.mark.liveTest

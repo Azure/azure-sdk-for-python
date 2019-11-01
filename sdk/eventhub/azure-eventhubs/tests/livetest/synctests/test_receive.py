@@ -10,7 +10,7 @@ import time
 import datetime
 
 from azure.eventhub import EventData, EventPosition, TransportType
-from azure.eventhub._client import EventHubClient
+from azure.eventhub.client import EventHubClient
 
 
 @pytest.mark.liveTest

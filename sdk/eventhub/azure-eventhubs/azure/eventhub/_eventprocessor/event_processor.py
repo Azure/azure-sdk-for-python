@@ -11,7 +11,7 @@ import time
 import threading
 from enum import Enum
 
-from uamqp.compat import queue
+from uamqp.compat import queue  # type: ignore
 
 from azure.core.tracing import SpanKind  # type: ignore
 from azure.core.settings import settings  # type: ignore
@@ -190,10 +190,11 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             while self._running and not self._threads_stop_flags[partition_id]:
                 try:
                     events = partition_consumer.receive()
-                    self._last_enqueued_event_properties[partition_id] = \
-                        partition_consumer.last_enqueued_event_properties
-                    with self._context(events):
-                        self._callback_queue.put((self._event_handler, partition_context, events), block=True)
+                    if events:
+                        self._last_enqueued_event_properties[partition_id] = \
+                            partition_consumer.last_enqueued_event_properties
+                        with self._context(events):
+                            self._callback_queue.put((self._event_handler, partition_context, events), block=True)
                 except Exception as error:  # pylint:disable=broad-except
                     process_error(error)
                     break

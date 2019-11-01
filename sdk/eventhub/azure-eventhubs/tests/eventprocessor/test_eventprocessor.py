@@ -9,11 +9,11 @@ import asyncio
 
 
 from azure.eventhub import EventData, EventHubError
-from azure.eventhub.aio._client_async import EventHubClient
-from azure.eventhub.aio._eventprocessor.event_processor import EventProcessor, CloseReason
-from azure.eventhub.aio._eventprocessor.local_partition_manager import InMemoryPartitionManager
-from azure.eventhub.aio._eventprocessor.partition_manager import OwnershipLostError
-from azure.eventhub._common import _Address
+from azure.eventhub.aio.client_async import EventHubClient
+from azure.eventhub.aio.eventprocessor.event_processor import EventProcessor, CloseReason
+from azure.eventhub.aio.eventprocessor.local_partition_manager import InMemoryPartitionManager
+from azure.eventhub.aio.eventprocessor.partition_manager import OwnershipLostError
+from azure.eventhub.common import _Address
 
 
 async def event_handler(partition_context, events):

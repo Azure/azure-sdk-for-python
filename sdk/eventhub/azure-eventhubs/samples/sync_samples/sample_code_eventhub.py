@@ -38,18 +38,18 @@ def create_eventhub_consumer_client():
     return consumer
 
 
-def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
+def example_eventhub_sync_send_and_receive(live_eventhub_config):
     producer = create_eventhub_producer_client()
     consumer = create_eventhub_consumer_client()
     try:
         logger = logging.getLogger("azure.eventhub")
 
-        def event_handler(partition_context, events):
+        def on_event(partition_context, events):
             logger.info("Received {} messages from partition: {}".format(
                 len(events), partition_context.partition_id))
             # Do ops on received events
 
-        consumer.receive(event_handler=event_handler, consumer_group='$Default', partition_id='0')
+        consumer.receive(on_event=on_event, consumer_group='$Default', partition_id='0')
         time.sleep(1)
         consumer.close()
 
@@ -85,20 +85,20 @@ def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
         # [START eventhub_consumer_client_receive_sync]
         logger = logging.getLogger("azure.eventhub")
 
-        def event_handler(partition_context, events):
+        def on_event(partition_context, events):
             logger.info("Received {} messages from partition: {}".format(
                 len(events), partition_context.partition_id))
             # Do ops on received events
 
         with consumer:
-            consumer.receive(event_handler=event_handler, consumer_group='$Default')
+            consumer.receive(on_event=on_event, consumer_group='$Default')
             time.sleep(3)  # keep receiving for 3 seconds
         # [END eventhub_consumer_client_receive_sync]
     finally:
         pass
 
 
-def test_example_eventhub_producer_ops(live_eventhub_config):
+def example_eventhub_producer_ops(live_eventhub_config):
     # [START eventhub_producer_client_close_sync]
     import os
     from azure.eventhub import EventHubProducerClient, EventData
@@ -131,12 +131,12 @@ def test_example_eventhub_consumer_ops(live_eventhub_config):
 
     logger = logging.getLogger("azure.eventhub")
 
-    def event_handler(partition_context, events):
+    def on_event(partition_context, events):
         logger.info("Received {} messages from partition: {}".format(
             len(events), partition_context.partition_id))
         # Do ops on received events
 
-    consumer.receive(event_handler=event_handler, consumer_group='$Default')
+    consumer.receive(on_event=on_event, consumer_group='$Default')
     time.sleep(3)  # keep receiving for 3 seconds
 
     # Close down the consumer handler explicitly.

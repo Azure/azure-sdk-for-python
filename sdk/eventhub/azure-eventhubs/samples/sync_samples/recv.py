@@ -45,13 +45,11 @@ def on_error(partition_context, error):
 
 def on_event(partition_context, events):
     global total
-    if events:
-        print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
-        total += len(events)
-        for event in events:
-            do_operation(event)
-    else:
-        print("No event received from partition: {}".format(partition_context.partition_id))
+
+    print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
+    total += len(events)
+    for event in events:
+        do_operation(event)
 
 
 if __name__ == '__main__':
@@ -69,7 +67,7 @@ if __name__ == '__main__':
                                     on_partition_close=on_partition_close,
                                     on_error=on_error)
             # Receive with owner level:
-            # consumer_client.receive(event_handler=event_handler, consumer_group='$Default', owner_level=1)
+            # consumer_client.receive(on_event=on_event, consumer_group='$Default', owner_level=1)
     except KeyboardInterrupt:
         print('Stop receiving.')
         consumer_client.close()

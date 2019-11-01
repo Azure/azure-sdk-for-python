@@ -20,7 +20,7 @@ if sys.version_info < (3, 5):
     collect_ignore.append("features")
     collect_ignore.append("samples/async_samples")
 
-from azure.eventhub._client import EventHubClient
+from azure.eventhub.client import EventHubClient
 from azure.eventhub import EventPosition
 
 

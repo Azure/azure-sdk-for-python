@@ -6,12 +6,11 @@ import logging
 import threading
 
 from typing import Any, Union, TYPE_CHECKING, Iterable, List
-from ._client import EventHubClient
-from ._producer import EventHubProducer
-from ._common import EventData, \
+from uamqp import constants  # type:ignore
+from .client import EventHubClient
+from .producer import EventHubProducer
+from .common import EventData, \
     EventHubSharedKeyCredential, EventHubSASTokenCredential, EventDataBatch
-
-from uamqp import constants
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
@@ -57,21 +56,22 @@ class EventHubProducerClient(EventHubClient):
         # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
         super(EventHubProducerClient, self).__init__(
             host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
-        self._producers = None  # type: List[EventHubProducer]
+        self._producers = []  # type: List[EventHubProducer]
         self._client_lock = threading.Lock()
-        self._producers_locks = None
-        self._max_message_size_on_link = None
+        self._producers_locks = []  # type: List[threading.Lock]
+        self._max_message_size_on_link = 0
 
     def _init_locks_for_producers(self):
-        if self._producers is None:
+        if not self._producers:
             with self._client_lock:
-                if self._producers is None:
+                if not self._producers:
                     num_of_producers = len(self.get_partition_ids()) + 1
                     self._producers = [None] * num_of_producers
-                    self._producers_locks = [threading.Lock()] * num_of_producers
+                    for _ in range(num_of_producers):
+                        self._producers_locks.append(threading.Lock())
 
     def send(self, event_data, **kwargs):
-        # type: (Union[EventData, EventDataBatch, Iterable[EventData]], Union[str, bytes], str, float) -> None
+        # type: (Union[EventData, EventDataBatch, Iterable[EventData]], Any) -> None
         """
         Sends an event data and blocks until acknowledgement is received or operation times out.
 
@@ -106,7 +106,8 @@ class EventHubProducerClient(EventHubClient):
                 if self._producers[producer_index] is None:
                     self._producers[producer_index] = self._create_producer(partition_id=partition_id)
 
-        self._producers[producer_index].send(event_data, **kwargs)
+        with self._producers_locks[producer_index]:
+            self._producers[producer_index].send(event_data, **kwargs)
 
     def create_batch(self, max_size=None):
         # type:(int) -> EventDataBatch

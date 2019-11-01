@@ -5,7 +5,6 @@
 
 import time
 import random
-import math
 from typing import List
 from collections import Counter, defaultdict
 from .partition_manager import PartitionManager
@@ -28,7 +27,7 @@ class OwnershipManager(object):
     ):
         self.cached_parition_ids = []  # type: List[str]
         self.eventhub_client = eventhub_client
-        self.fully_qualified_namespace = eventhub_client._address.hostname
+        self.fully_qualified_namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
         self.eventhub_name = eventhub_client.eh_name
         self.consumer_group_name = consumer_group_name
         self.owner_id = owner_id
@@ -46,21 +45,19 @@ class OwnershipManager(object):
         if self.partition_id is not None:
             if self.partition_id in self.cached_parition_ids:
                 return [self.partition_id]
-            else:
-                raise ValueError(
-                    "Wrong partition id:{}. The eventhub has partitions: {}.".
-                        format(self.partition_id, self.cached_parition_ids))
+            raise ValueError(
+                "Wrong partition id:{}. The eventhub has partitions: {}.".
+                    format(self.partition_id, self.cached_parition_ids))
 
         if self.partition_manager is None:
             return self.cached_parition_ids
 
-        else:
-            ownership_list = await self.partition_manager.list_ownership(
-                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name
-            )
-            to_claim = await self._balance_ownership(ownership_list, self.cached_parition_ids)
-            claimed_list = await self.partition_manager.claim_ownership(to_claim) if to_claim else None
-            return [x["partition_id"] for x in claimed_list]
+        ownership_list = await self.partition_manager.list_ownership(
+            self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name
+        )
+        to_claim = await self._balance_ownership(ownership_list, self.cached_parition_ids)
+        claimed_list = await self.partition_manager.claim_ownership(to_claim) if to_claim else None
+        return [x["partition_id"] for x in claimed_list]
 
     async def _retrieve_partition_ids(self):
         """List all partition ids of the event hub that the EventProcessor is working on.
@@ -143,5 +140,4 @@ class OwnershipManager(object):
             checkpoints = await self.partition_manager.list_checkpoints(
                 self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name)
             return {x["partition_id"]: x for x in checkpoints}
-        else:
-            return {}
+        return {}

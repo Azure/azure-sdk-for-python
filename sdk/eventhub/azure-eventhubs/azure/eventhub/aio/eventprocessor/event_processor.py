@@ -4,20 +4,19 @@
 # -----------------------------------------------------------------------------------
 
 from contextlib import contextmanager
-from typing import Dict, Type, Callable, List
+from typing import Dict, Type, Callable, List, Any
 import uuid
 import asyncio
 import logging
-from enum import Enum
 
 from azure.core.tracing import SpanKind  # type: ignore
 from azure.core.settings import settings  # type: ignore
 
-from azure.eventhub import EventPosition, EventHubError, EventData
+from azure.eventhub import EventPosition, EventData
 from ..._eventprocessor.event_processor import CloseReason
 from .partition_context import PartitionContext
-from .partition_manager import PartitionManager, OwnershipLostError
-from .ownership_manager import OwnershipManager
+from .partition_manager import PartitionManager
+from ._ownership_manager import OwnershipManager
 from .utils import get_running_loop
 
 log = logging.getLogger(__name__)
@@ -43,7 +42,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
     ):
         self._consumer_group_name = consumer_group_name
         self._eventhub_client = eventhub_client
-        self._namespace = eventhub_client._address.hostname
+        self._namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
         self._eventhub_name = eventhub_client.eh_name
         self._partition_id = partition_id
         self._event_handler = event_handler
@@ -55,11 +54,11 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         self._polling_interval = polling_interval
         self._ownership_timeout = self._polling_interval * 2
         self._tasks = {}  # type: Dict[str, asyncio.Task]
-        self._partition_contexts = {}
+        self._partition_contexts = {}  # type: Dict[str, PartitionContext]
         self._owner_level = owner_level
         self._prefetch = prefetch
-        self._track_last_enqueued_event_properties = track_last_enqueued_event_properties,
-        self._last_enqueued_event_properties = {}
+        self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
+        self._last_enqueued_event_properties = {}  # type: Dict[str, Dict[str, Any]]
         self._id = str(uuid.uuid4())
         self._running = False
 
@@ -69,8 +68,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
     def _get_last_enqueued_event_properties(self, partition_id):
         if partition_id in self._tasks and partition_id in self._last_enqueued_event_properties:
             return self._last_enqueued_event_properties[partition_id]
-        else:
-            raise ValueError("You're not receiving events from partition {}".format(partition_id))
+        raise ValueError("You're not receiving events from partition {}".format(partition_id))
 
     def _cancel_tasks_for_partitions(self, to_cancel_partitions):
         for partition_id in to_cancel_partitions:
@@ -131,7 +129,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                 )
                 self._partition_contexts[partition_id] = partition_context
 
-            partition_consumer = self._eventhub_client._create_consumer(
+            partition_consumer = self._eventhub_client._create_consumer(  # pylint: disable=protected-access
                 consumer_group_name,
                 partition_id,
                 initial_event_position,
@@ -185,10 +183,11 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                 while True:
                     try:
                         events = await partition_consumer.receive()
-                        self._last_enqueued_event_properties[partition_id] = \
-                            partition_consumer.last_enqueued_event_properties
-                        with self._context(events):
-                            await self._event_handler(partition_context, events)
+                        if events:
+                            self._last_enqueued_event_properties[partition_id] = \
+                                partition_consumer.last_enqueued_event_properties
+                            with self._context(events):
+                                await self._event_handler(partition_context, events)
                     except asyncio.CancelledError:
                         log.info(
                             "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
@@ -240,21 +239,18 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                         to_cancel_list = set(self._tasks.keys())
                     self._cancel_tasks_for_partitions(to_cancel_list)
                 except Exception as err:  # pylint:disable=broad-except
-                    log.warning("An exception (%r) occurred during balancing and claiming ownership for "
-                                "eventhub %r consumer group %r. Retrying after %r seconds",
-                                err, self._eventhub_name, self._consumer_group_name, self._polling_interval)
                     '''
                     ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
                     when there are load balancing and/or checkpointing (partition_manager isn't None).
                     They're swallowed here to retry every self._polling_interval seconds. Meanwhile this event processor
                     won't lose the partitions it has claimed before.
-                    If it keeps failing, other EventProcessors will start to claim ownership of the partitions 
-                    that this EventProcessor is working on. So two or multiple EventProcessors may be working 
+                    If it keeps failing, other EventProcessors will start to claim ownership of the partitions
+                    that this EventProcessor is working on. So two or multiple EventProcessors may be working
                     on the same partition.
-
-                    Should we raise this exception out to users?
-                    '''
-                    # TODO: This exception handling requires more thinking
+                    '''  # pylint:disable=pointless-string-statement
+                    log.warning("An exception (%r) occurred during balancing and claiming ownership for "
+                                "eventhub %r consumer group %r. Retrying after %r seconds",
+                                err, self._eventhub_name, self._consumer_group_name, self._polling_interval)
                 await asyncio.sleep(self._polling_interval)
 
     async def stop(self):

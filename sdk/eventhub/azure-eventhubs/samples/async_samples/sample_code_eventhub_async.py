@@ -66,12 +66,12 @@ async def test_example_eventhub_async_send_and_receive(live_eventhub_config):
         # [START eventhub_consumer_client_receive_async]
         logger = logging.getLogger("azure.eventhub")
 
-        async def event_handler(partition_context, events):
+        async def on_event(partition_context, events):
             logger.info("Received {} messages from partition: {}".format(
                 len(events), partition_context.partition_id))
             # Do ops on received events
         async with consumer:
-            task = asyncio.ensure_future(consumer.receive(event_handler=event_handler, consumer_group="$default"))
+            task = asyncio.ensure_future(consumer.receive(on_event=on_event, consumer_group="$default"))
             await asyncio.sleep(3)  # keep receiving for 3 seconds
             task.cancel()  # stop receiving
         # [END eventhub_consumer_client_receive_async]
@@ -79,8 +79,7 @@ async def test_example_eventhub_async_send_and_receive(live_eventhub_config):
         pass
 
 
-@pytest.mark.asyncio
-async def test_example_eventhub_async_producer_ops(live_eventhub_config, connection_str):
+async def example_eventhub_async_producer_ops(live_eventhub_config, connection_str):
     # [START eventhub_producer_client_close_async]
     import os
     from azure.eventhub.aio import EventHubProducerClient
@@ -99,8 +98,7 @@ async def test_example_eventhub_async_producer_ops(live_eventhub_config, connect
     # [END eventhub_producer_client_close_async]
 
 
-@pytest.mark.asyncio
-async def test_example_eventhub_async_consumer_ops(live_eventhub_config, connection_str):
+async def example_eventhub_async_consumer_ops(live_eventhub_config, connection_str):
     # [START eventhub_consumer_client_close_sync]
     import os
 
@@ -115,12 +113,12 @@ async def test_example_eventhub_async_consumer_ops(live_eventhub_config, connect
 
     logger = logging.getLogger("azure.eventhub")
 
-    async def event_handler(partition_context, events):
+    async def on_event(partition_context, events):
         logger.info("Received {} messages from partition: {}".format(
             len(events), partition_context.partition_id))
         # Do ops on received events
 
-    recv_task = asyncio.ensure_future(consumer.receive(event_handler=event_handler, consumer_group='$Default'))
+    recv_task = asyncio.ensure_future(consumer.receive(on_event=on_event, consumer_group='$Default'))
     await asyncio.sleep(3)  # keep receiving for 3 seconds
     recv_task.cancel()  # stop receiving
 

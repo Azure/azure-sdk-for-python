@@ -33,13 +33,10 @@ def do_operation(event):
     print(event)
 
 
-def event_handler(partition_context, events):
-    if events:
-        print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
-        for event in events:
-            do_operation(event)
-    else:
-        print("empty events received", "partition:", partition_context.partition_id)
+def on_event(partition_context, events):
+    print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
+    for event in events:
+        do_operation(event)
 
 
 consumer_client = EventHubConsumerClient.from_connection_string(
@@ -54,7 +51,7 @@ with producer_client:
 
 with consumer_client:
     receiving_time = 5
-    consumer_client.receive(event_handler=event_handler, consumer_group='$Default')
+    consumer_client.receive(on_event=on_event, consumer_group='$Default')
     time.sleep(receiving_time)
     print('Finish receiving.')
 

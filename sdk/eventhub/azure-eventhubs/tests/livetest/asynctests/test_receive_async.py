@@ -9,7 +9,7 @@ import pytest
 import time
 
 from azure.eventhub import EventData, EventPosition, TransportType, ConnectionLostError
-from azure.eventhub.aio._client_async import EventHubClient
+from azure.eventhub.aio.client_async import EventHubClient
 
 
 @pytest.mark.liveTest

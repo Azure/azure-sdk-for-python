@@ -15,7 +15,7 @@ from uamqp.message import MessageHeader  # type: ignore
 
 from azure.core.settings import settings # type: ignore
 
-from ._error import EventDataError
+from .error import EventDataError
 
 log = logging.getLogger(__name__)
 

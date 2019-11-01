@@ -14,8 +14,8 @@ from typing import Union, Any, TYPE_CHECKING
 
 from uamqp import types  # type: ignore
 from azure.eventhub import __version__
-from ._configuration import Configuration
-from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
+from .configuration import Configuration
+from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
 
 try:
     from urlparse import urlparse  # type: ignore
