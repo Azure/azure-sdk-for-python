@@ -94,7 +94,7 @@ class InteractiveBrowserCredential(PublicClientCredential):
         scopes = list(scopes)  # type: ignore
         request_state = str(uuid.uuid4())
         app = self._get_app()
-        auth_url = app.get_authorization_request_url(scopes, redirect_uri=redirect_uri, state=request_state)
+        auth_url = app.get_authorization_request_url(scopes, redirect_uri=redirect_uri, state=request_state, **kwargs)
 
         # open browser to that url
         webbrowser.open(auth_url)
@@ -109,7 +109,7 @@ class InteractiveBrowserCredential(PublicClientCredential):
         # redeem the authorization code for a token
         code = self._parse_response(request_state, response)
         now = int(time.time())
-        result = app.acquire_token_by_authorization_code(code, scopes=scopes, redirect_uri=redirect_uri)
+        result = app.acquire_token_by_authorization_code(code, scopes=scopes, redirect_uri=redirect_uri, **kwargs)
 
         if "access_token" not in result:
             raise ClientAuthenticationError(message="Authentication failed: {}".format(result.get("error_description")))
