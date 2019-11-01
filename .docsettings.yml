@@ -2,9 +2,8 @@ omitted_paths:
   - tools/*
   - scripts/*
   - azure-mgmt-netapp/tests/*
-  - "azure-mgmt*/*"
-  - "sdk/azure-mgmt*/*"
   - "sdk/*/azure-mgmt*/*"
+  - "sdk/keyvault/azure-keyvault/*"
   - "doc/*"
   - "sdk/keyvault/azure-keyvault-*/samples/*"
 language: python

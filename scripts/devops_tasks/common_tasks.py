@@ -31,7 +31,12 @@ from packaging.version import Version
 
 logging.getLogger().setLevel(logging.INFO)
 
-OMITTED_CI_PACKAGES = ["azure-mgmt-documentdb", "azure-servicemanagement-legacy", "azure-mgmt-scheduler"]
+OMITTED_CI_PACKAGES = [
+    "azure-mgmt-documentdb",
+    "azure-servicemanagement-legacy",
+    "azure-mgmt-scheduler",
+    "azure-keyvault",
+]
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
     "azure-cognitiveservices",
@@ -157,7 +162,7 @@ def process_glob_string(glob_string, target_root_dir, additional_contains_filter
 
     # dedup, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     collected_directories = list(set([p for p in collected_top_level_directories if additional_contains_filter in p]))
-    
+
     # if we have individually queued this specific package, it's obvious that we want to build it specifically
     # in this case, do not honor the omission list
     if len(collected_directories) == 1:
@@ -170,7 +175,7 @@ def process_glob_string(glob_string, target_root_dir, additional_contains_filter
 
         pkg_set_ci_filtered = filter_for_compatibility(allowed_package_set)
         logging.info("Package(s) omitted by CI filter: {}".format(list(set(allowed_package_set) - set(pkg_set_ci_filtered))))
-        
+
         return sorted(pkg_set_ci_filtered)
 
 def remove_omitted_packages(collected_directories):
