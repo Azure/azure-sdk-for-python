@@ -19,6 +19,7 @@ from common_tasks import (
     log_file,
     read_file,
     MANAGEMENT_PACKAGE_IDENTIFIERS,
+    NON_MANAGEMENT_CODE_5_ALLOWED,
     create_code_coverage_params,
 )
 
@@ -236,7 +237,7 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
                 ),
                 [package_dir],
             )
-        ):
+        ) or package_name in NON_MANAGEMENT_CODE_5_ALLOWED:
             local_options_array.append("--suppress-no-test-exit-code")
 
 
