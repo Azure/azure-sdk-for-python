@@ -1,5 +1,7 @@
 # Release History
 
+## 4.0.1
+
 ## 2019-10-31 4.0.0
 ### Breaking changes:
 - Removed `KeyClient.get_cryptography_client()` and `CryptographyClient.get_key()`
