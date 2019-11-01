@@ -34,14 +34,16 @@ logging.getLogger().setLevel(logging.INFO)
 OMITTED_CI_PACKAGES = [
     "azure-mgmt-documentdb",
     "azure-servicemanagement-legacy",
-    "azure-mgmt-scheduler",
-    "azure-keyvault",
+    "azure-mgmt-scheduler"
 ]
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
     "azure-cognitiveservices",
     "azure-servicefabric",
     "nspkg"
+]
+NON_MANAGEMENT_CODE_5_ALLOWED = [
+    "azure-keyvault"
 ]
 
 def log_file(file_location, is_error=False):
