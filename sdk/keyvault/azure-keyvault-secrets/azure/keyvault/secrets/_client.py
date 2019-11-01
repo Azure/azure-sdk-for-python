@@ -291,7 +291,9 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        polling_interval = kwargs.pop("_polling_interval", 2)
+        polling_interval = kwargs.pop("_polling_interval", None)
+        if polling_interval is None:
+            polling_interval = 2
         deleted_secret = DeletedSecret._from_deleted_secret_bundle(
             self._client.delete_secret(self.vault_url, name, error_map=_error_map, **kwargs)
         )
@@ -411,7 +413,9 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        polling_interval = kwargs.pop("_polling_interval", 2)
+        polling_interval = kwargs.pop("_polling_interval", None)
+        if polling_interval is None:
+            polling_interval = 2
         recovered_secret = SecretProperties._from_secret_bundle(
             self._client.recover_deleted_secret(self.vault_url, name, **kwargs)
         )
