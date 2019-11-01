@@ -53,7 +53,7 @@ class BlobPartitionManager(PartitionManager):
         ownership["last_modified_time"] = uploaded_blob_properties["last_modified"].timestamp()
         ownership.update(metadata)
 
-    def list_ownership(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group_name: str) -> Iterable[Dict[str, Any]]:
+    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
         try:
             blobs = self._container_client.list_blobs(
                 name_starts_with="{}/{}/{}/ownership".format(fully_qualified_namespace, eventhub_name, consumer_group_name),
@@ -98,7 +98,7 @@ class BlobPartitionManager(PartitionManager):
                            "is %r", owner_id, fully_qualified_namespace, eventhub_name, consumer_group_name, partition_id, err)
             return ownership  # Keep the ownership if an unexpected error happens
 
-    def claim_ownership(self, ownership_list: Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]:
+    def claim_ownership(self, ownership_list):
         gathered_results = []
         for x in ownership_list:
             try:
@@ -108,7 +108,7 @@ class BlobPartitionManager(PartitionManager):
         return gathered_results
 
     def update_checkpoint(self, fully_qualified_namespace, eventhub_name, consumer_group_name, partition_id,
-                                offset, sequence_number) -> None:
+                                offset, sequence_number):
         metadata = {
             "Offset": offset,
             "SequenceNumber": str(sequence_number),
