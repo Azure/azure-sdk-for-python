@@ -129,7 +129,8 @@ class Sqlite3PartitionManager(PartitionManager):
                             result.append(p)
                         else:
                             logger.info("EventProcessor %r failed to claim partition %r "
-                                        "because it was claimed by another EventProcessor at the same time", p["owner_id"],
+                                        "because it was claimed by another EventProcessor at the same time",
+                                        p["owner_id"],
                                         p["partition_id"])
                 self.conn.commit()
                 return result
