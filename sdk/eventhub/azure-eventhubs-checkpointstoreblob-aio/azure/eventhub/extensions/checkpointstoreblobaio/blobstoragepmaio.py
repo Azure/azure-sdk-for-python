@@ -6,7 +6,7 @@ from typing import Iterable, Dict, Any
 import logging
 from collections import defaultdict
 import asyncio
-from azure.eventhub import OwnershipLostError
+from azure.eventhub import OwnershipLostError  # type: ignore  #pylint:disable=no-name-in-module
 from azure.eventhub.aio import PartitionManager  # type: ignore
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError  # type: ignore
 from azure.storage.blob.aio import ContainerClient, BlobClient  # type: ignore
@@ -52,10 +52,12 @@ class BlobPartitionManager(PartitionManager):
         ownership["etag"] = uploaded_blob_properties["etag"]
         ownership["last_modified_time"] = uploaded_blob_properties["last_modified"].timestamp()
 
-    async def list_ownership(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group_name: str) -> Iterable[Dict[str, Any]]:
+    async def list_ownership(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group_name: str) \
+            -> Iterable[Dict[str, Any]]:
         try:
             blobs = self._container_client.list_blobs(
-                name_starts_with="{}/{}/{}/ownership".format(fully_qualified_namespace, eventhub_name, consumer_group_name),
+                name_starts_with="{}/{}/{}/ownership".format(
+                    fully_qualified_namespace, eventhub_name, consumer_group_name),
                 include=['metadata'])
             result = []
             async for b in blobs:
@@ -88,12 +90,14 @@ class BlobPartitionManager(PartitionManager):
             return ownership
         except (ResourceModifiedError, ResourceExistsError):
             logger.info(
-                "EventProcessor instance %r of namespace %r eventhub %r consumer group %r lost ownership to partition %r",
+                "EventProcessor instance %r of namespace %r eventhub %r consumer group %r "
+                "lost ownership to partition %r",
                 owner_id, namespace, eventhub_name, consumer_group_name, partition_id)
             raise OwnershipLostError()
         except Exception as err:  # pylint:disable=broad-except
             logger.warning("An exception occurred when EventProcessor instance %r claim_ownership for "
-                           "namespace %r eventhub %r consumer group %r partition %r. The ownership is now lost. Exception "
+                           "namespace %r eventhub %r consumer group %r partition %r. "
+                           "The ownership is now lost. Exception "
                            "is %r", owner_id, namespace, eventhub_name, consumer_group_name, partition_id, err)
             return ownership  # Keep the ownership if an unexpected error happens
 
@@ -117,7 +121,8 @@ class BlobPartitionManager(PartitionManager):
 
     async def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
         blobs = self._container_client.list_blobs(
-            name_starts_with="{}/{}/{}/checkpoint".format(fully_qualified_namespace, eventhub_name, consumer_group_name),
+            name_starts_with="{}/{}/{}/checkpoint".format(
+                fully_qualified_namespace, eventhub_name, consumer_group_name),
             include=['metadata'])
         result = []
         async for b in blobs:
