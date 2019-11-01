@@ -1,6 +1,6 @@
 # Release History
 
-## 4.1.0b1 (2019-##-##) - Unreleased
+## 4.1.0b1 Unreleased
 
 
 ## 2019-10-31 4.0.0
