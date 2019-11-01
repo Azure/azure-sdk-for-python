@@ -667,7 +667,7 @@
     "namespaces": [
       "azure.mgmt.reservations"
     ],
-    "service_name": "Reservation Services"
+    "service_name": "Reservations"
   },
   "azure-mgmt-recoveryservices": {
     "category": "Management",
@@ -902,7 +902,7 @@
   },
   "azure-mgmt-privatedns": {
     "category": "Management",
-    "service_name": "Network",
+    "service_name": "Private DNS",
     "namespaces": [
       "azure.mgmt.privatedns"
     ]
