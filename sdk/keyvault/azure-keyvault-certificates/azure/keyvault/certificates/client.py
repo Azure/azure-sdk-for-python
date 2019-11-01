@@ -34,7 +34,7 @@ if TYPE_CHECKING:
 
 
 class CertificateClient(KeyVaultClientBase):
-    """A high-level interface for managing a vault's keys.
+    """A high-level interface for managing a vault's certificates.
 
     :param str vault_url: URL of the vault the client will access. This is also called the vault's "DNS Name".
     :param credential: An object which can provide an access token for the vault, such as a credential from
@@ -269,7 +269,7 @@ class CertificateClient(KeyVaultClientBase):
         """Recovers the deleted certificate back to its current version under
         /certificates.
 
-        Performs the reversal of the Delete operation. THe operation is applicable
+        Performs the reversal of the Delete operation. The operation is applicable
         in vaults enabled for soft-delete, and must be issued during the retention
         interval (available in the deleted certificate's attributes). This operation
         requires the certificates/recover permission.
@@ -311,7 +311,7 @@ class CertificateClient(KeyVaultClientBase):
         :paramtype tags: dict[str, str]
         :keyword str password: If the private key in the passed in certificate is encrypted, it
          is the password used for encryption.
-        :keyword policy: THe management policy for the certificate
+        :keyword policy: The management policy for the certificate
         :paramtype policy: ~azure.keyvault.certificates.models.CertificatePolicy
         :returns: The imported KeyVaultCertificate
         :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
@@ -806,7 +806,7 @@ class CertificateClient(KeyVaultClientBase):
         :keyword str organization_id: Id of the organization
         :keyword admin_details: Details of the organization administrators of the
          certificate issuer.
-        :keyword admin_details: list[~azure.keyvault.certificates.models.AdministratorDetails]
+        :paramtype admin_details: list[~azure.keyvault.certificates.models.AdministratorDetails]
         :returns: The created CertificateIssuer
         :rtype: ~azure.keyvault.certificates.models.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
