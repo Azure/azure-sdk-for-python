@@ -4,6 +4,7 @@
 # -----------------------------------------------------------------------------------
 
 import time
+import threading
 import uuid
 import sqlite3
 import logging
@@ -55,6 +56,8 @@ class Sqlite3PartitionManager(PartitionManager):
         self.ownership_table = _check_table_name(ownership_table)
         self.checkpoint_table = _check_table_name(checkpoint_table)
         conn = sqlite3.connect(db_filename, check_same_thread=False)
+        self._lock = threading.RLock()
+
         c = conn.cursor()
         try:
             ownership_sql = "create table if not exists " + self.ownership_table\
@@ -88,65 +91,67 @@ class Sqlite3PartitionManager(PartitionManager):
             cursor.close()
 
     def claim_ownership(self, ownership_list):
-        result = []
-        cursor = self.conn.cursor()
-        try:
-            for p in ownership_list:
-                cursor.execute("select etag from " + _check_table_name(self.ownership_table) +
-                                    " where "+ " and ".join([field+"=?" for field in self.primary_keys]),
-                                    tuple(p.get(field) for field in self.primary_keys))
-                cursor_fetch = cursor.fetchall()
-                if not cursor_fetch:
-                    p["last_modified_time"] = time.time()
-                    p["etag"] = str(uuid.uuid4())
-                    try:
-                        sql = "insert into " + _check_table_name(self.ownership_table) + " (" \
-                              + ",".join(self.ownership_fields) \
-                              + ") values ("+",".join(["?"] * len(self.ownership_fields)) + ")"
-                        cursor.execute(sql, tuple(p.get(field) for field in self.ownership_fields))
-                    except sqlite3.OperationalError as op_err:
-                        logger.info("EventProcessor %r failed to claim partition %r "
-                                    "because it was claimed by another EventProcessor at the same time. "
-                                    "The Sqlite3 exception is %r", p["owner_id"], p["partition_id"], op_err)
-                        continue
-                    else:
-                        result.append(p)
-                else:
-                    if p.get("etag") == cursor_fetch[0][0]:
+        with self._lock:
+            result = []
+            cursor = self.conn.cursor()
+            try:
+                for p in ownership_list:
+                    cursor.execute("select etag from " + _check_table_name(self.ownership_table) +
+                                        " where "+ " and ".join([field+"=?" for field in self.primary_keys]),
+                                        tuple(p.get(field) for field in self.primary_keys))
+                    cursor_fetch = cursor.fetchall()
+                    if not cursor_fetch:
                         p["last_modified_time"] = time.time()
                         p["etag"] = str(uuid.uuid4())
-                        sql = "update " + _check_table_name(self.ownership_table) + " set "\
-                                       + ','.join([field+"=?" for field in self.ownership_data_fields])\
-                                       + " where "\
-                                       + " and ".join([field+"=?" for field in self.primary_keys])
-
-                        cursor.execute(sql, tuple(p.get(field) for field in self.ownership_data_fields)
-                                       + tuple(p.get(field) for field in self.primary_keys))
-                        result.append(p)
+                        try:
+                            sql = "insert into " + _check_table_name(self.ownership_table) + " (" \
+                                  + ",".join(self.ownership_fields) \
+                                  + ") values ("+",".join(["?"] * len(self.ownership_fields)) + ")"
+                            cursor.execute(sql, tuple(p.get(field) for field in self.ownership_fields))
+                        except sqlite3.OperationalError as op_err:
+                            logger.info("EventProcessor %r failed to claim partition %r "
+                                        "because it was claimed by another EventProcessor at the same time. "
+                                        "The Sqlite3 exception is %r", p["owner_id"], p["partition_id"], op_err)
+                            continue
+                        else:
+                            result.append(p)
                     else:
-                        logger.info("EventProcessor %r failed to claim partition %r "
-                                    "because it was claimed by another EventProcessor at the same time", p["owner_id"],
-                                    p["partition_id"])
-            self.conn.commit()
-            return result
-        finally:
-            cursor.close()
+                        if p.get("etag") == cursor_fetch[0][0]:
+                            p["last_modified_time"] = time.time()
+                            p["etag"] = str(uuid.uuid4())
+                            sql = "update " + _check_table_name(self.ownership_table) + " set "\
+                                           + ','.join([field+"=?" for field in self.ownership_data_fields])\
+                                           + " where "\
+                                           + " and ".join([field+"=?" for field in self.primary_keys])
+
+                            cursor.execute(sql, tuple(p.get(field) for field in self.ownership_data_fields)
+                                           + tuple(p.get(field) for field in self.primary_keys))
+                            result.append(p)
+                        else:
+                            logger.info("EventProcessor %r failed to claim partition %r "
+                                        "because it was claimed by another EventProcessor at the same time", p["owner_id"],
+                                        p["partition_id"])
+                self.conn.commit()
+                return result
+            finally:
+                cursor.close()
 
     def update_checkpoint(
             self, fully_qualified_namespace, eventhub_name, consumer_group_name, partition_id, offset, sequence_number):
-        cursor = self.conn.cursor()
-        localvars = locals()
-        try:
-            cursor.execute("insert or replace into " + self.checkpoint_table + "("
-                           + ",".join([field for field in self.checkpoint_fields])
-                           + ") values ("
-                           + ",".join(["?"] * len(self.checkpoint_fields))
-                           + ")",
-                           tuple(localvars[field] for field in self.checkpoint_fields)
-                           )
-            self.conn.commit()
-        finally:
-            cursor.close()
+        with self._lock:
+            cursor = self.conn.cursor()
+            localvars = locals()
+            try:
+                cursor.execute("insert or replace into " + self.checkpoint_table + "("
+                               + ",".join([field for field in self.checkpoint_fields])
+                               + ") values ("
+                               + ",".join(["?"] * len(self.checkpoint_fields))
+                               + ")",
+                               tuple(localvars[field] for field in self.checkpoint_fields)
+                               )
+                self.conn.commit()
+            finally:
+                cursor.close()
 
     def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
         cursor = self.conn.cursor()
@@ -164,4 +169,5 @@ class Sqlite3PartitionManager(PartitionManager):
             cursor.close()
 
     def close(self):
-        self.conn.close()
+        with self._lock:
+            self.conn.close()
