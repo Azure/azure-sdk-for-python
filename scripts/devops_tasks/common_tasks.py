@@ -34,8 +34,7 @@ logging.getLogger().setLevel(logging.INFO)
 OMITTED_CI_PACKAGES = [
     "azure-mgmt-documentdb",
     "azure-servicemanagement-legacy",
-    "azure-mgmt-scheduler",
-    "azure-keyvault",
+    "azure-mgmt-scheduler"
 ]
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
