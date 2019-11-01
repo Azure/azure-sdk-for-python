@@ -21,7 +21,7 @@ async def test_receive_no_partition_async(connstr_senders):
     async with client:
         task = asyncio.ensure_future(
             client.receive(process_events, consumer_group="$default", initial_event_position="-1"))
-        await asyncio.sleep(5)
+        await asyncio.sleep(10)
         assert received == 2
         # task.cancel()
 
@@ -45,7 +45,7 @@ async def test_receive_partition_async(connstr_senders):
     async with client:
         task = asyncio.ensure_future(
             client.receive(process_events, consumer_group="$default", partition_id="0", initial_event_position="-1"))
-        await asyncio.sleep(5)
+        await asyncio.sleep(10)
         assert received == 1
         # task.cancel()
 
@@ -68,7 +68,7 @@ async def test_receive_load_balancing_async(connstr_senders):
             client1.receive(process_events, consumer_group="$default", initial_event_position="-1"))
         task2 = asyncio.ensure_future(
             client2.receive(process_events, consumer_group="$default", initial_event_position="-1"))
-        await asyncio.sleep(5)
+        await asyncio.sleep(10)
         assert len(client1._event_processors[("$default", "-1")]._tasks) == 1
         assert len(client2._event_processors[("$default", "-1")]._tasks) == 1
         # task1.cancel()

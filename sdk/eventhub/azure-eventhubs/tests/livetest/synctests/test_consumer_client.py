@@ -23,7 +23,7 @@ def test_receive_no_partition(connstr_senders):
                                   args=(process_events,),
                                   kwargs={"consumer_group": "$default", "initial_event_position": "-1"})
         worker.start()
-        time.sleep(5)
+        time.sleep(10)
         assert recv_cnt["received"] == 2
 
 
@@ -48,7 +48,7 @@ def test_receive_partition(connstr_senders):
                                   kwargs={"consumer_group": "$default", "initial_event_position": "-1",
                                           "partition_id": "0"})
         worker.start()
-        time.sleep(5)
+        time.sleep(10)
         assert recv_cnt["received"] == 1
 
 
