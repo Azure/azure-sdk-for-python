@@ -14,6 +14,8 @@ from azure.storage.file.datalake import DataLakeServiceClient, generate_director
 from testcase import (
     StorageTestCase,
     record,
+    TestMode
+
 )
 
 # ------------------------------------------------------------------------------
@@ -309,6 +311,10 @@ class DirectoryTest(StorageTestCase):
 
     @record
     def test_using_directory_sas_to_read(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
         client = self._create_directory_and_get_directory_client()
         directory_name = client.path_name
 
@@ -330,6 +336,10 @@ class DirectoryTest(StorageTestCase):
 
     @record
     def test_using_directory_sas_to_create(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
         # generate a token with directory level create permission
         directory_name = self._get_directory_reference()
         token = generate_directory_sas(

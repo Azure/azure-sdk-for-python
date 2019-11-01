@@ -6,15 +6,16 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 from enum import Enum
+
 from azure.core.paging import PageIterator
 from azure.storage.blob import ContainerProperties, LeaseProperties, ContentSettings, ContainerSasPermissions, \
-    BlobSasPermissions, AccessPolicy, BlobProperties, ResourceTypes, AccountSasPermissions, UserDelegationKey
+    BlobSasPermissions, ResourceTypes, AccountSasPermissions, UserDelegationKey
 from azure.storage.blob._generated.models import StorageErrorException
-from azure.storage.blob._models import ContainerPropertiesPaged, BlobPropertiesPaged
-from azure.storage.blob._shared.models import DictMixin
-from azure.storage.blob._shared.response_handlers import process_storage_error, return_context_and_deserialized
-from azure.storage.file.datalake._deserialize import return_headers_and_deserialized_path_list
-from azure.storage.file.datalake._generated.models import Path
+from azure.storage.blob._models import ContainerPropertiesPaged
+from ._deserialize import return_headers_and_deserialized_path_list
+from ._generated.models import Path
+from ._shared.models import DictMixin
+from ._shared.response_handlers import process_storage_error
 
 
 class FileSystemProperties(ContainerProperties):

@@ -29,7 +29,8 @@ class FileSystemTest(StorageTestCase):
     def tearDown(self):
         if not self.is_playback():
             try:
-                self.dsc.delete_file_system(self.file_system_name)
+                for file_system in self.test_file_systems:
+                    self.dsc.delete_file_system(file_system)
             except:
                 pass
 
@@ -41,8 +42,8 @@ class FileSystemTest(StorageTestCase):
         self.test_file_systems.append(file_system_name)
         return file_system_name
 
-    def _create_file_system(self):
-        return self.dsc.create_file_system(self._get_file_system_reference())
+    def _create_file_system(self, file_system_prefix=TEST_FILE_SYSTEM_PREFIX):
+        return self.dsc.create_file_system(self._get_file_system_reference(prefix=file_system_prefix))
 
 
     # --Helpers-----------------------------------------------------------------
@@ -110,7 +111,7 @@ class FileSystemTest(StorageTestCase):
     def test_list_file_systems_by_page(self):
         # Arrange
         for i in range(0, 6):
-            self._create_file_system()
+            self._create_file_system(file_system_prefix="filesystem{}".format(i))
 
         # Act
         file_systems = list(next(self.dsc.list_file_systems(

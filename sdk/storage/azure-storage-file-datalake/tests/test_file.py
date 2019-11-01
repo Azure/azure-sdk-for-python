@@ -18,6 +18,7 @@ from azure.storage.file.datalake._generated.models import StorageErrorException
 from testcase import (
     StorageTestCase,
     record,
+    TestMode
 )
 
 # ------------------------------------------------------------------------------
@@ -173,6 +174,10 @@ class FileTest(StorageTestCase):
 
     @record
     def test_account_sas(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
         file_name = self._get_file_reference()
         # create a file under root directory
         self._create_file_and_return_client(file=file_name)
@@ -199,6 +204,10 @@ class FileTest(StorageTestCase):
 
     @record
     def test_file_sas_only_applies_to_file_level(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
         file_name = self._get_file_reference()
         directory_name = self._get_directory_reference()
         self._create_file_and_return_client(directory=directory_name, file=file_name)

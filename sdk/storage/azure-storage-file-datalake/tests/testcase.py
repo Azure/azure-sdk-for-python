@@ -359,16 +359,10 @@ class StorageTestCase(unittest.TestCase):
 
     def _scrub(self, val):
         old_to_new_dict = {
-            self.settings.STORAGE_ACCOUNT_NAME: self.fake_settings.STORAGE_ACCOUNT_NAME,
-            self.settings.STORAGE_ACCOUNT_KEY: self.fake_settings.STORAGE_ACCOUNT_KEY,
+            self.settings.STORAGE_DATA_LAKE_ACCOUNT_NAME: self.fake_settings.STORAGE_DATA_LAKE_ACCOUNT_NAME,
+            self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY: self.fake_settings.STORAGE_DATA_LAKE_ACCOUNT_KEY,
             self.settings.OAUTH_STORAGE_ACCOUNT_NAME: self.fake_settings.OAUTH_STORAGE_ACCOUNT_NAME,
             self.settings.OAUTH_STORAGE_ACCOUNT_KEY: self.fake_settings.OAUTH_STORAGE_ACCOUNT_KEY,
-            self.settings.BLOB_STORAGE_ACCOUNT_NAME: self.fake_settings.BLOB_STORAGE_ACCOUNT_NAME,
-            self.settings.BLOB_STORAGE_ACCOUNT_KEY: self.fake_settings.BLOB_STORAGE_ACCOUNT_KEY,
-            self.settings.REMOTE_STORAGE_ACCOUNT_KEY: self.fake_settings.REMOTE_STORAGE_ACCOUNT_KEY,
-            self.settings.REMOTE_STORAGE_ACCOUNT_NAME: self.fake_settings.REMOTE_STORAGE_ACCOUNT_NAME,
-            self.settings.PREMIUM_STORAGE_ACCOUNT_NAME: self.fake_settings.PREMIUM_STORAGE_ACCOUNT_NAME,
-            self.settings.PREMIUM_STORAGE_ACCOUNT_KEY: self.fake_settings.PREMIUM_STORAGE_ACCOUNT_KEY,
             self.settings.ACTIVE_DIRECTORY_APPLICATION_ID: self.fake_settings.ACTIVE_DIRECTORY_APPLICATION_ID,
             self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET: self.fake_settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
             self.settings.ACTIVE_DIRECTORY_TENANT_ID: self.fake_settings.ACTIVE_DIRECTORY_TENANT_ID,

@@ -29,8 +29,8 @@ from ._models import (
 from ._shared_access_signature import generate_account_sas, generate_file_system_sas, generate_directory_sas, \
     generate_file_sas
 
-from azure.storage.blob._shared.policies import ExponentialRetry, LinearRetry
-from azure.storage.blob._shared.models import StorageErrorCode
+from ._shared.policies import ExponentialRetry, LinearRetry
+from ._shared.models import StorageErrorCode
 from ._version import VERSION
 
 
