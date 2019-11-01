@@ -20,7 +20,7 @@ interactions:
       cache-control: no-cache
       content-length: '87'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Oct 2019 23:00:44 GMT
+      date: Thu, 31 Oct 2019 23:08:48 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -62,14 +62,14 @@ interactions:
     uri: https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/create?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending","issuer":{"name":"Self"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAx3xa94iqDQPpvlucOalyhjJK/yGaIhME8RwTdEAxjfOwTqA+Rfr6Uyg0X7xQCiom3iV7yUMlMYC8on4gmOb+f6aZkwwXR7623beezVkwmTIzTMx87L8gGmc4kRemVO0nkXjRPGsQTt6cHYZ3RDboytNhd4xOOjOGGWq4HksrYoJfvQuY5cwHeCv0FTDoCSxdblvUIsYd7DMT7eiV3BgG/4+/8kjwxf6JlS80/Ejwsvn7dc/A1Lsd84N4t4q2dElBbIw8RkwTAHrLgIgFJbYoJl7eKXl5m7sO1GsYZmgCu97lZ1JBl4VbF4fvDG6ipOE9R+9AJXAMcKGdi0ZGU61IAwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAJ/uGnaGjB3z9LDC3LbXTv8PXgSjdP8RhIu2EPTL7y0MISGwHwDVYkq6xxsQk15nZIZIt4fggXwSUUbolrlD3/ioZeTFGgZHPjgpqbbw3ZBr4HGha0GSZ3CeGtPza5VmKM35dDNqPlTzJ1yLgv+qY/57vSidgUIDHoo4kGTScy72X/1sRvZIrQ+/7aggKi/qQz2yj1Ie958OzepMCMunuKzrp5aXc2kfGUjoPaP6RDPfxokECMQM0jNMOKN/h6cC/v0s7R2dYu0OCCIxRUdJoRw0fIcnXQu9r4t7xpbMYmZpmWGujtY4KiVeIQHqIvkg5yoh8PEqknMHAAsRRWm7oy8=","cancellation_requested":false,"status":"inProgress","status_details":"Pending
+      string: '{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending","issuer":{"name":"Self"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA/aVtGaDLyKwO38QwYld5XgsEU1sBo5FCDixlIzH3fNZD/mmMs7vAoCxI4XOhCRshR2Fgz4GzYOZFkx3eCUz1QZS9GDqqq80TmqfPpA0Bl7YwyuxdBvn3tKZkjs6S7hJgte/o37ZqfBgchMCViVhS+9lvguobJ3oMCRLsQ9DDtqOQxuCiM0fE3E9MPpPsLYc4EBO7TmW9i6nEFAFGVw1zq3zyK1o0VBPDmhNAxovrTl7s7HdzGXcC3HP5zZguSJl+yk7x6r+5I8OkmRuT+VaEyvpIAls84MU/RsaD7UfDEX3g44MhoxszfWvE9OiypKn9IdDrju6FFFKP0bWLgRpQ7QIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAFBFgUjkkvvcoU3kPpsaIFJ9mKq4+FTdmcvRBAykq+fmqWbmhOVwelOCwBl01fuHYsfGEfwxa00VZ2TWEe3vdgzRNMbWQQT6mdkVE0XneAtOJ9SYUU96c2QxmxThMM6n0sVzIkDvPNtMIDj+8XC65WTwaOtft7MfUhD8Sc1DeEVOuEAmJE+AFJMRQQM/7wa+nnZf67Hp5h3MgP4upCf9MeOJHNVOvpFMMFoKsBux2a0TPWcefNoPZeSGCtRrqZfgpfjTgB0Dx5DNKGIgBIocUoMt4bfG5YAWZryWy61xPQrHhZBXdwkfewezHaFS6n7J4fmRnNNj6DSkPliAskGrs2Y=","cancellation_requested":false,"status":"inProgress","status_details":"Pending
         certificate created. Certificate request is in progress. This may take some
-        time based on the issuer provider. Please check again later.","request_id":"6e705347f3d14cbd90c024bd6bafd395"}'
+        time based on the issuer provider. Please check again later.","request_id":"aeb7d39c78a5425ab89b28b4949fba10"}'
     headers:
       cache-control: no-cache
       content-length: '1342'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Oct 2019 23:00:45 GMT
+      date: Thu, 31 Oct 2019 23:08:49 GMT
       expires: '-1'
       location:
       - h
@@ -178,38 +178,38 @@ interactions:
       - i
       - d
       - '='
-      - '6'
+      - a
       - e
-      - '7'
-      - '0'
-      - '5'
-      - '3'
-      - '4'
-      - '7'
-      - f
-      - '3'
-      - d
-      - '1'
-      - '4'
-      - c
       - b
+      - '7'
       - d
+      - '3'
       - '9'
-      - '0'
       - c
-      - '0'
-      - '2'
+      - '7'
+      - '8'
+      - a
+      - '5'
       - '4'
+      - '2'
+      - '5'
+      - a
       - b
-      - d
-      - '6'
+      - '8'
+      - '9'
+      - b
+      - '2'
+      - '8'
+      - b
+      - '4'
+      - '9'
+      - '4'
+      - '9'
+      - f
       - b
       - a
-      - f
-      - d
-      - '3'
-      - '9'
-      - '5'
+      - '1'
+      - '0'
       pragma: no-cache
       server: Microsoft-IIS/10.0
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -241,14 +241,14 @@ interactions:
     uri: https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending","issuer":{"name":"Self"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAx3xa94iqDQPpvlucOalyhjJK/yGaIhME8RwTdEAxjfOwTqA+Rfr6Uyg0X7xQCiom3iV7yUMlMYC8on4gmOb+f6aZkwwXR7623beezVkwmTIzTMx87L8gGmc4kRemVO0nkXjRPGsQTt6cHYZ3RDboytNhd4xOOjOGGWq4HksrYoJfvQuY5cwHeCv0FTDoCSxdblvUIsYd7DMT7eiV3BgG/4+/8kjwxf6JlS80/Ejwsvn7dc/A1Lsd84N4t4q2dElBbIw8RkwTAHrLgIgFJbYoJl7eKXl5m7sO1GsYZmgCu97lZ1JBl4VbF4fvDG6ipOE9R+9AJXAMcKGdi0ZGU61IAwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAJ/uGnaGjB3z9LDC3LbXTv8PXgSjdP8RhIu2EPTL7y0MISGwHwDVYkq6xxsQk15nZIZIt4fggXwSUUbolrlD3/ioZeTFGgZHPjgpqbbw3ZBr4HGha0GSZ3CeGtPza5VmKM35dDNqPlTzJ1yLgv+qY/57vSidgUIDHoo4kGTScy72X/1sRvZIrQ+/7aggKi/qQz2yj1Ie958OzepMCMunuKzrp5aXc2kfGUjoPaP6RDPfxokECMQM0jNMOKN/h6cC/v0s7R2dYu0OCCIxRUdJoRw0fIcnXQu9r4t7xpbMYmZpmWGujtY4KiVeIQHqIvkg5yoh8PEqknMHAAsRRWm7oy8=","cancellation_requested":false,"status":"inProgress","status_details":"Pending
+      string: '{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending","issuer":{"name":"Self"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA/aVtGaDLyKwO38QwYld5XgsEU1sBo5FCDixlIzH3fNZD/mmMs7vAoCxI4XOhCRshR2Fgz4GzYOZFkx3eCUz1QZS9GDqqq80TmqfPpA0Bl7YwyuxdBvn3tKZkjs6S7hJgte/o37ZqfBgchMCViVhS+9lvguobJ3oMCRLsQ9DDtqOQxuCiM0fE3E9MPpPsLYc4EBO7TmW9i6nEFAFGVw1zq3zyK1o0VBPDmhNAxovrTl7s7HdzGXcC3HP5zZguSJl+yk7x6r+5I8OkmRuT+VaEyvpIAls84MU/RsaD7UfDEX3g44MhoxszfWvE9OiypKn9IdDrju6FFFKP0bWLgRpQ7QIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAFBFgUjkkvvcoU3kPpsaIFJ9mKq4+FTdmcvRBAykq+fmqWbmhOVwelOCwBl01fuHYsfGEfwxa00VZ2TWEe3vdgzRNMbWQQT6mdkVE0XneAtOJ9SYUU96c2QxmxThMM6n0sVzIkDvPNtMIDj+8XC65WTwaOtft7MfUhD8Sc1DeEVOuEAmJE+AFJMRQQM/7wa+nnZf67Hp5h3MgP4upCf9MeOJHNVOvpFMMFoKsBux2a0TPWcefNoPZeSGCtRrqZfgpfjTgB0Dx5DNKGIgBIocUoMt4bfG5YAWZryWy61xPQrHhZBXdwkfewezHaFS6n7J4fmRnNNj6DSkPliAskGrs2Y=","cancellation_requested":false,"status":"inProgress","status_details":"Pending
         certificate created. Certificate request is in progress. This may take some
-        time based on the issuer provider. Please check again later.","request_id":"6e705347f3d14cbd90c024bd6bafd395"}'
+        time based on the issuer provider. Please check again later.","request_id":"aeb7d39c78a5425ab89b28b4949fba10"}'
     headers:
       cache-control: no-cache
       content-length: '1342'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Oct 2019 23:00:45 GMT
+      date: Thu, 31 Oct 2019 23:08:49 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -281,12 +281,12 @@ interactions:
     uri: https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending","issuer":{"name":"Self"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAx3xa94iqDQPpvlucOalyhjJK/yGaIhME8RwTdEAxjfOwTqA+Rfr6Uyg0X7xQCiom3iV7yUMlMYC8on4gmOb+f6aZkwwXR7623beezVkwmTIzTMx87L8gGmc4kRemVO0nkXjRPGsQTt6cHYZ3RDboytNhd4xOOjOGGWq4HksrYoJfvQuY5cwHeCv0FTDoCSxdblvUIsYd7DMT7eiV3BgG/4+/8kjwxf6JlS80/Ejwsvn7dc/A1Lsd84N4t4q2dElBbIw8RkwTAHrLgIgFJbYoJl7eKXl5m7sO1GsYZmgCu97lZ1JBl4VbF4fvDG6ipOE9R+9AJXAMcKGdi0ZGU61IAwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAJ/uGnaGjB3z9LDC3LbXTv8PXgSjdP8RhIu2EPTL7y0MISGwHwDVYkq6xxsQk15nZIZIt4fggXwSUUbolrlD3/ioZeTFGgZHPjgpqbbw3ZBr4HGha0GSZ3CeGtPza5VmKM35dDNqPlTzJ1yLgv+qY/57vSidgUIDHoo4kGTScy72X/1sRvZIrQ+/7aggKi/qQz2yj1Ie958OzepMCMunuKzrp5aXc2kfGUjoPaP6RDPfxokECMQM0jNMOKN/h6cC/v0s7R2dYu0OCCIxRUdJoRw0fIcnXQu9r4t7xpbMYmZpmWGujtY4KiVeIQHqIvkg5yoh8PEqknMHAAsRRWm7oy8=","cancellation_requested":false,"status":"completed","target":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name","request_id":"6e705347f3d14cbd90c024bd6bafd395"}'
+      string: '{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending","issuer":{"name":"Self"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA/aVtGaDLyKwO38QwYld5XgsEU1sBo5FCDixlIzH3fNZD/mmMs7vAoCxI4XOhCRshR2Fgz4GzYOZFkx3eCUz1QZS9GDqqq80TmqfPpA0Bl7YwyuxdBvn3tKZkjs6S7hJgte/o37ZqfBgchMCViVhS+9lvguobJ3oMCRLsQ9DDtqOQxuCiM0fE3E9MPpPsLYc4EBO7TmW9i6nEFAFGVw1zq3zyK1o0VBPDmhNAxovrTl7s7HdzGXcC3HP5zZguSJl+yk7x6r+5I8OkmRuT+VaEyvpIAls84MU/RsaD7UfDEX3g44MhoxszfWvE9OiypKn9IdDrju6FFFKP0bWLgRpQ7QIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAFBFgUjkkvvcoU3kPpsaIFJ9mKq4+FTdmcvRBAykq+fmqWbmhOVwelOCwBl01fuHYsfGEfwxa00VZ2TWEe3vdgzRNMbWQQT6mdkVE0XneAtOJ9SYUU96c2QxmxThMM6n0sVzIkDvPNtMIDj+8XC65WTwaOtft7MfUhD8Sc1DeEVOuEAmJE+AFJMRQQM/7wa+nnZf67Hp5h3MgP4upCf9MeOJHNVOvpFMMFoKsBux2a0TPWcefNoPZeSGCtRrqZfgpfjTgB0Dx5DNKGIgBIocUoMt4bfG5YAWZryWy61xPQrHhZBXdwkfewezHaFS6n7J4fmRnNNj6DSkPliAskGrs2Y=","cancellation_requested":false,"status":"completed","target":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name","request_id":"aeb7d39c78a5425ab89b28b4949fba10"}'
     headers:
       cache-control: no-cache
       content-length: '1259'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Oct 2019 23:00:55 GMT
+      date: Thu, 31 Oct 2019 23:09:00 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -319,12 +319,12 @@ interactions:
     uri: https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/5b913841130542a4a1632c4929cb2678","kid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/keys/cert-name/5b913841130542a4a1632c4929cb2678","sid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/secrets/cert-name/5b913841130542a4a1632c4929cb2678","x5t":"tHdACjey1C4FcS0VOucnYsgB8Zo","cer":"MIIDWjCCAkKgAwIBAgIQThK3ExxhRlyLJnf426k18DANBgkqhkiG9w0BAQsFADAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wHhcNMTkxMDMwMjI1MDUxWhcNMjExMDMwMjMwMDUxWjAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDHfFr3iKoNA+m+W5w5qXKGMkr/IZoiEwTxHBN0QDGN87BOoD5F+vpTKDRfvFAKKibeJXvJQyUxgLyifiCY5v5/ppmTDBdHvrbdt57NWTCZMjNMzHzsvyAaZziRF6ZU7SeReNE8axBO3pwdhndENujK02F3jE46M4YZargeSytigl+9C5jlzAd4K/QVMOgJLF1uW9Qixh3sMxPt6JXcGAb/j7/ySPDF/omVLzT8SPCy+ft1z8DUux3zg3i3irZ0SUFsjDxGTBMAesuAiAUltigmXt4peXmbuw7UaxhmaAK73uVnUkGXhVsXh+8MbqKk4T1H70AlcAxwoZ2LRkZTrUgDAgMBAAGjgZswgZgwDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MB8GA1UdIwQYMBaAFHCSfANSyjhzlhP5NopdhRU+L1WIMB0GA1UdDgQWBBRwknwDUso4c5YT+TaKXYUVPi9ViDANBgkqhkiG9w0BAQsFAAOCAQEAUK2KwJ1sU17/t5HyuFGXRUen8yrEq6O2W+s8c66y9A5Kv0XQQ2/dshhuzm+qkHVcR7nhw3OPMDTDxonY7v3rnHuHxMGw5x6R0YYH7wYpsWeXteEnV2Je0+cLbyBSgG0WM5RRd+kjxnLwvP8zYWhO6earl0EDwQ1PoMympl7DtgVZFvqMtOhfZJfe6+e+l2UMgySFqfVAziamdet2JfZtb0gu0420TWM48eQDNQIYIlrX5i1m16gK+bbKW+X53SEpuliTNahXI1orR+WNvHzsS3ViGYQpBheCeBPxKvH53ghE0XqfW6xMXPan+lTZLJ96CTaG/Fl3reTiHnw8U3iZ/w==","attributes":{"enabled":true,"nbf":1572475851,"exp":1635634851,"created":1572476451,"updated":1572476451,"recoveryLevel":"Recoverable+Purgeable"},"policy":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=*.microsoft.com","sans":{"dns_names":["sdk.azure-int.net"]},"ekus":["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],"key_usage":["digitalSignature","keyEncipherment"],"validity_months":24,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"AutoRenew"}}],"issuer":{"name":"Self"},"attributes":{"enabled":true,"created":1572476445,"updated":1572476445}},"pending":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending"}}'
+      string: '{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/a6e8ce58195c4e99a91c0706cad04b3e","kid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/keys/cert-name/a6e8ce58195c4e99a91c0706cad04b3e","sid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/secrets/cert-name/a6e8ce58195c4e99a91c0706cad04b3e","x5t":"x965KXxZkFrJB4uYMKXK9BLR2X4","cer":"MIIDWjCCAkKgAwIBAgIQXamBdr+VRgerQdFWffG9+zANBgkqhkiG9w0BAQsFADAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wHhcNMTkxMDMxMjI1ODU2WhcNMjExMDMxMjMwODU2WjAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQD9pW0ZoMvIrA7fxDBiV3leCwRTWwGjkUIOLGUjMfd81kP+aYyzu8CgLEjhc6EJGyFHYWDPgbNg5kWTHd4JTPVBlL0YOqqrzROap8+kDQGXtjDK7F0G+fe0pmSOzpLuEmC17+jftmp8GByEwJWJWFL72W+C6hsnegwJEuxD0MO2o5DG4KIzR8TcT0w+k+wthzgQE7tOZb2LqcQUAUZXDXOrfPIrWjRUE8OaE0DGi+tOXuzsd3MZdwLcc/nNmC5ImX7KTvHqv7kjw6SZG5P5VoTK+kgCWzzgxT9GxoPtR8MRfeDjgyGjGzN9a8T06LKkqf0h0OuO7oUUUo/RtYuBGlDtAgMBAAGjgZswgZgwDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MB8GA1UdIwQYMBaAFH2JZYMh+okOd2UuoV8BEvNG9dOAMB0GA1UdDgQWBBR9iWWDIfqJDndlLqFfARLzRvXTgDANBgkqhkiG9w0BAQsFAAOCAQEAxZr0d6dJwof0wXLqwYuLEUrVT3SS0aZ5JEH1VEfZXe1IFsgcQE4KRWJU2Hq9SZ9CdrH5Jm8fk9V1nrN4CmfX/nmfW/cHp/qhPj8q/Oo88b5bdhpdUTCATBeEbyvDO3cZFr5NWBCW0k1N7ZdOuI/DTUzO+pa6I/GQiWyC0TiDqmyi1Wk2VVEJvY51TOBC5pIHI/1L2TloRQW18j4a3SnvsH+RNQkRrfdCyxEJfUmvKfTI8RPvufyXEik8agam7YiNghiecug3LxFp9N2RCnxbqjroHNpURG61Jj7KmkhoZAeNgprEH1MK/CCkGeKQH82CU20o218wbncTDDqF4Sa3+w==","attributes":{"enabled":true,"nbf":1572562736,"exp":1635721736,"created":1572563336,"updated":1572563336,"recoveryLevel":"Recoverable+Purgeable"},"policy":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=*.microsoft.com","sans":{"dns_names":["sdk.azure-int.net"]},"ekus":["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],"key_usage":["digitalSignature","keyEncipherment"],"validity_months":24,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"AutoRenew"}}],"issuer":{"name":"Self"},"attributes":{"enabled":true,"created":1572563329,"updated":1572563329}},"pending":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending"}}'
     headers:
       cache-control: no-cache
       content-length: '2429'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Oct 2019 23:01:00 GMT
+      date: Thu, 31 Oct 2019 23:09:05 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -357,12 +357,12 @@ interactions:
     uri: https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/5b913841130542a4a1632c4929cb2678","kid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/keys/cert-name/5b913841130542a4a1632c4929cb2678","sid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/secrets/cert-name/5b913841130542a4a1632c4929cb2678","x5t":"tHdACjey1C4FcS0VOucnYsgB8Zo","cer":"MIIDWjCCAkKgAwIBAgIQThK3ExxhRlyLJnf426k18DANBgkqhkiG9w0BAQsFADAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wHhcNMTkxMDMwMjI1MDUxWhcNMjExMDMwMjMwMDUxWjAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDHfFr3iKoNA+m+W5w5qXKGMkr/IZoiEwTxHBN0QDGN87BOoD5F+vpTKDRfvFAKKibeJXvJQyUxgLyifiCY5v5/ppmTDBdHvrbdt57NWTCZMjNMzHzsvyAaZziRF6ZU7SeReNE8axBO3pwdhndENujK02F3jE46M4YZargeSytigl+9C5jlzAd4K/QVMOgJLF1uW9Qixh3sMxPt6JXcGAb/j7/ySPDF/omVLzT8SPCy+ft1z8DUux3zg3i3irZ0SUFsjDxGTBMAesuAiAUltigmXt4peXmbuw7UaxhmaAK73uVnUkGXhVsXh+8MbqKk4T1H70AlcAxwoZ2LRkZTrUgDAgMBAAGjgZswgZgwDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MB8GA1UdIwQYMBaAFHCSfANSyjhzlhP5NopdhRU+L1WIMB0GA1UdDgQWBBRwknwDUso4c5YT+TaKXYUVPi9ViDANBgkqhkiG9w0BAQsFAAOCAQEAUK2KwJ1sU17/t5HyuFGXRUen8yrEq6O2W+s8c66y9A5Kv0XQQ2/dshhuzm+qkHVcR7nhw3OPMDTDxonY7v3rnHuHxMGw5x6R0YYH7wYpsWeXteEnV2Je0+cLbyBSgG0WM5RRd+kjxnLwvP8zYWhO6earl0EDwQ1PoMympl7DtgVZFvqMtOhfZJfe6+e+l2UMgySFqfVAziamdet2JfZtb0gu0420TWM48eQDNQIYIlrX5i1m16gK+bbKW+X53SEpuliTNahXI1orR+WNvHzsS3ViGYQpBheCeBPxKvH53ghE0XqfW6xMXPan+lTZLJ96CTaG/Fl3reTiHnw8U3iZ/w==","attributes":{"enabled":true,"nbf":1572475851,"exp":1635634851,"created":1572476451,"updated":1572476451,"recoveryLevel":"Recoverable+Purgeable"},"policy":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=*.microsoft.com","sans":{"dns_names":["sdk.azure-int.net"]},"ekus":["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],"key_usage":["digitalSignature","keyEncipherment"],"validity_months":24,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"AutoRenew"}}],"issuer":{"name":"Self"},"attributes":{"enabled":true,"created":1572476445,"updated":1572476445}},"pending":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending"}}'
+      string: '{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/a6e8ce58195c4e99a91c0706cad04b3e","kid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/keys/cert-name/a6e8ce58195c4e99a91c0706cad04b3e","sid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/secrets/cert-name/a6e8ce58195c4e99a91c0706cad04b3e","x5t":"x965KXxZkFrJB4uYMKXK9BLR2X4","cer":"MIIDWjCCAkKgAwIBAgIQXamBdr+VRgerQdFWffG9+zANBgkqhkiG9w0BAQsFADAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wHhcNMTkxMDMxMjI1ODU2WhcNMjExMDMxMjMwODU2WjAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQD9pW0ZoMvIrA7fxDBiV3leCwRTWwGjkUIOLGUjMfd81kP+aYyzu8CgLEjhc6EJGyFHYWDPgbNg5kWTHd4JTPVBlL0YOqqrzROap8+kDQGXtjDK7F0G+fe0pmSOzpLuEmC17+jftmp8GByEwJWJWFL72W+C6hsnegwJEuxD0MO2o5DG4KIzR8TcT0w+k+wthzgQE7tOZb2LqcQUAUZXDXOrfPIrWjRUE8OaE0DGi+tOXuzsd3MZdwLcc/nNmC5ImX7KTvHqv7kjw6SZG5P5VoTK+kgCWzzgxT9GxoPtR8MRfeDjgyGjGzN9a8T06LKkqf0h0OuO7oUUUo/RtYuBGlDtAgMBAAGjgZswgZgwDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MB8GA1UdIwQYMBaAFH2JZYMh+okOd2UuoV8BEvNG9dOAMB0GA1UdDgQWBBR9iWWDIfqJDndlLqFfARLzRvXTgDANBgkqhkiG9w0BAQsFAAOCAQEAxZr0d6dJwof0wXLqwYuLEUrVT3SS0aZ5JEH1VEfZXe1IFsgcQE4KRWJU2Hq9SZ9CdrH5Jm8fk9V1nrN4CmfX/nmfW/cHp/qhPj8q/Oo88b5bdhpdUTCATBeEbyvDO3cZFr5NWBCW0k1N7ZdOuI/DTUzO+pa6I/GQiWyC0TiDqmyi1Wk2VVEJvY51TOBC5pIHI/1L2TloRQW18j4a3SnvsH+RNQkRrfdCyxEJfUmvKfTI8RPvufyXEik8agam7YiNghiecug3LxFp9N2RCnxbqjroHNpURG61Jj7KmkhoZAeNgprEH1MK/CCkGeKQH82CU20o218wbncTDDqF4Sa3+w==","attributes":{"enabled":true,"nbf":1572562736,"exp":1635721736,"created":1572563336,"updated":1572563336,"recoveryLevel":"Recoverable+Purgeable"},"policy":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=*.microsoft.com","sans":{"dns_names":["sdk.azure-int.net"]},"ekus":["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],"key_usage":["digitalSignature","keyEncipherment"],"validity_months":24,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"AutoRenew"}}],"issuer":{"name":"Self"},"attributes":{"enabled":true,"created":1572563329,"updated":1572563329}},"pending":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending"}}'
     headers:
       cache-control: no-cache
       content-length: '2429'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Oct 2019 23:01:00 GMT
+      date: Thu, 31 Oct 2019 23:09:05 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -399,13 +399,13 @@ interactions:
     uri: https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/5b913841130542a4a1632c4929cb2678","kid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/keys/cert-name/5b913841130542a4a1632c4929cb2678","sid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/secrets/cert-name/5b913841130542a4a1632c4929cb2678","x5t":"tHdACjey1C4FcS0VOucnYsgB8Zo","cer":"MIIDWjCCAkKgAwIBAgIQThK3ExxhRlyLJnf426k18DANBgkqhkiG9w0BAQsFADAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wHhcNMTkxMDMwMjI1MDUxWhcNMjExMDMwMjMwMDUxWjAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDHfFr3iKoNA+m+W5w5qXKGMkr/IZoiEwTxHBN0QDGN87BOoD5F+vpTKDRfvFAKKibeJXvJQyUxgLyifiCY5v5/ppmTDBdHvrbdt57NWTCZMjNMzHzsvyAaZziRF6ZU7SeReNE8axBO3pwdhndENujK02F3jE46M4YZargeSytigl+9C5jlzAd4K/QVMOgJLF1uW9Qixh3sMxPt6JXcGAb/j7/ySPDF/omVLzT8SPCy+ft1z8DUux3zg3i3irZ0SUFsjDxGTBMAesuAiAUltigmXt4peXmbuw7UaxhmaAK73uVnUkGXhVsXh+8MbqKk4T1H70AlcAxwoZ2LRkZTrUgDAgMBAAGjgZswgZgwDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MB8GA1UdIwQYMBaAFHCSfANSyjhzlhP5NopdhRU+L1WIMB0GA1UdDgQWBBRwknwDUso4c5YT+TaKXYUVPi9ViDANBgkqhkiG9w0BAQsFAAOCAQEAUK2KwJ1sU17/t5HyuFGXRUen8yrEq6O2W+s8c66y9A5Kv0XQQ2/dshhuzm+qkHVcR7nhw3OPMDTDxonY7v3rnHuHxMGw5x6R0YYH7wYpsWeXteEnV2Je0+cLbyBSgG0WM5RRd+kjxnLwvP8zYWhO6earl0EDwQ1PoMympl7DtgVZFvqMtOhfZJfe6+e+l2UMgySFqfVAziamdet2JfZtb0gu0420TWM48eQDNQIYIlrX5i1m16gK+bbKW+X53SEpuliTNahXI1orR+WNvHzsS3ViGYQpBheCeBPxKvH53ghE0XqfW6xMXPan+lTZLJ96CTaG/Fl3reTiHnw8U3iZ/w==","attributes":{"enabled":true,"nbf":1572475851,"exp":1635634851,"created":1572476451,"updated":1572476460,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"foo":"updated
-        tag"},"policy":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=*.microsoft.com","sans":{"dns_names":["sdk.azure-int.net"]},"ekus":["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],"key_usage":["digitalSignature","keyEncipherment"],"validity_months":24,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"AutoRenew"}}],"issuer":{"name":"Self"},"attributes":{"enabled":true,"created":1572476445,"updated":1572476445}},"pending":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending"}}'
+      string: '{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/a6e8ce58195c4e99a91c0706cad04b3e","kid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/keys/cert-name/a6e8ce58195c4e99a91c0706cad04b3e","sid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/secrets/cert-name/a6e8ce58195c4e99a91c0706cad04b3e","x5t":"x965KXxZkFrJB4uYMKXK9BLR2X4","cer":"MIIDWjCCAkKgAwIBAgIQXamBdr+VRgerQdFWffG9+zANBgkqhkiG9w0BAQsFADAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wHhcNMTkxMDMxMjI1ODU2WhcNMjExMDMxMjMwODU2WjAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQD9pW0ZoMvIrA7fxDBiV3leCwRTWwGjkUIOLGUjMfd81kP+aYyzu8CgLEjhc6EJGyFHYWDPgbNg5kWTHd4JTPVBlL0YOqqrzROap8+kDQGXtjDK7F0G+fe0pmSOzpLuEmC17+jftmp8GByEwJWJWFL72W+C6hsnegwJEuxD0MO2o5DG4KIzR8TcT0w+k+wthzgQE7tOZb2LqcQUAUZXDXOrfPIrWjRUE8OaE0DGi+tOXuzsd3MZdwLcc/nNmC5ImX7KTvHqv7kjw6SZG5P5VoTK+kgCWzzgxT9GxoPtR8MRfeDjgyGjGzN9a8T06LKkqf0h0OuO7oUUUo/RtYuBGlDtAgMBAAGjgZswgZgwDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MB8GA1UdIwQYMBaAFH2JZYMh+okOd2UuoV8BEvNG9dOAMB0GA1UdDgQWBBR9iWWDIfqJDndlLqFfARLzRvXTgDANBgkqhkiG9w0BAQsFAAOCAQEAxZr0d6dJwof0wXLqwYuLEUrVT3SS0aZ5JEH1VEfZXe1IFsgcQE4KRWJU2Hq9SZ9CdrH5Jm8fk9V1nrN4CmfX/nmfW/cHp/qhPj8q/Oo88b5bdhpdUTCATBeEbyvDO3cZFr5NWBCW0k1N7ZdOuI/DTUzO+pa6I/GQiWyC0TiDqmyi1Wk2VVEJvY51TOBC5pIHI/1L2TloRQW18j4a3SnvsH+RNQkRrfdCyxEJfUmvKfTI8RPvufyXEik8agam7YiNghiecug3LxFp9N2RCnxbqjroHNpURG61Jj7KmkhoZAeNgprEH1MK/CCkGeKQH82CU20o218wbncTDDqF4Sa3+w==","attributes":{"enabled":true,"nbf":1572562736,"exp":1635721736,"created":1572563336,"updated":1572563345,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"foo":"updated
+        tag"},"policy":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=*.microsoft.com","sans":{"dns_names":["sdk.azure-int.net"]},"ekus":["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],"key_usage":["digitalSignature","keyEncipherment"],"validity_months":24,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"AutoRenew"}}],"issuer":{"name":"Self"},"attributes":{"enabled":true,"created":1572563329,"updated":1572563329}},"pending":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending"}}'
     headers:
       cache-control: no-cache
       content-length: '2458'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Oct 2019 23:01:00 GMT
+      date: Thu, 31 Oct 2019 23:09:05 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -438,13 +438,13 @@ interactions:
     uri: https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name?api-version=7.0
   response:
     body:
-      string: '{"recoveryId":"https://vault458ad70cc75a0a1e1c.vault.azure.net/deletedcertificates/cert-name","deletedDate":1572476461,"scheduledPurgeDate":1580252461,"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/5b913841130542a4a1632c4929cb2678","kid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/keys/cert-name/5b913841130542a4a1632c4929cb2678","sid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/secrets/cert-name/5b913841130542a4a1632c4929cb2678","x5t":"tHdACjey1C4FcS0VOucnYsgB8Zo","cer":"MIIDWjCCAkKgAwIBAgIQThK3ExxhRlyLJnf426k18DANBgkqhkiG9w0BAQsFADAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wHhcNMTkxMDMwMjI1MDUxWhcNMjExMDMwMjMwMDUxWjAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDHfFr3iKoNA+m+W5w5qXKGMkr/IZoiEwTxHBN0QDGN87BOoD5F+vpTKDRfvFAKKibeJXvJQyUxgLyifiCY5v5/ppmTDBdHvrbdt57NWTCZMjNMzHzsvyAaZziRF6ZU7SeReNE8axBO3pwdhndENujK02F3jE46M4YZargeSytigl+9C5jlzAd4K/QVMOgJLF1uW9Qixh3sMxPt6JXcGAb/j7/ySPDF/omVLzT8SPCy+ft1z8DUux3zg3i3irZ0SUFsjDxGTBMAesuAiAUltigmXt4peXmbuw7UaxhmaAK73uVnUkGXhVsXh+8MbqKk4T1H70AlcAxwoZ2LRkZTrUgDAgMBAAGjgZswgZgwDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MB8GA1UdIwQYMBaAFHCSfANSyjhzlhP5NopdhRU+L1WIMB0GA1UdDgQWBBRwknwDUso4c5YT+TaKXYUVPi9ViDANBgkqhkiG9w0BAQsFAAOCAQEAUK2KwJ1sU17/t5HyuFGXRUen8yrEq6O2W+s8c66y9A5Kv0XQQ2/dshhuzm+qkHVcR7nhw3OPMDTDxonY7v3rnHuHxMGw5x6R0YYH7wYpsWeXteEnV2Je0+cLbyBSgG0WM5RRd+kjxnLwvP8zYWhO6earl0EDwQ1PoMympl7DtgVZFvqMtOhfZJfe6+e+l2UMgySFqfVAziamdet2JfZtb0gu0420TWM48eQDNQIYIlrX5i1m16gK+bbKW+X53SEpuliTNahXI1orR+WNvHzsS3ViGYQpBheCeBPxKvH53ghE0XqfW6xMXPan+lTZLJ96CTaG/Fl3reTiHnw8U3iZ/w==","attributes":{"enabled":true,"nbf":1572475851,"exp":1635634851,"created":1572476451,"updated":1572476460,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"foo":"updated
-        tag"},"policy":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=*.microsoft.com","sans":{"dns_names":["sdk.azure-int.net"]},"ekus":["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],"key_usage":["digitalSignature","keyEncipherment"],"validity_months":24,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"AutoRenew"}}],"issuer":{"name":"Self"},"attributes":{"enabled":true,"created":1572476445,"updated":1572476445}},"pending":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending"}}'
+      string: '{"recoveryId":"https://vault458ad70cc75a0a1e1c.vault.azure.net/deletedcertificates/cert-name","deletedDate":1572563345,"scheduledPurgeDate":1580339345,"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/a6e8ce58195c4e99a91c0706cad04b3e","kid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/keys/cert-name/a6e8ce58195c4e99a91c0706cad04b3e","sid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/secrets/cert-name/a6e8ce58195c4e99a91c0706cad04b3e","x5t":"x965KXxZkFrJB4uYMKXK9BLR2X4","cer":"MIIDWjCCAkKgAwIBAgIQXamBdr+VRgerQdFWffG9+zANBgkqhkiG9w0BAQsFADAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wHhcNMTkxMDMxMjI1ODU2WhcNMjExMDMxMjMwODU2WjAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQD9pW0ZoMvIrA7fxDBiV3leCwRTWwGjkUIOLGUjMfd81kP+aYyzu8CgLEjhc6EJGyFHYWDPgbNg5kWTHd4JTPVBlL0YOqqrzROap8+kDQGXtjDK7F0G+fe0pmSOzpLuEmC17+jftmp8GByEwJWJWFL72W+C6hsnegwJEuxD0MO2o5DG4KIzR8TcT0w+k+wthzgQE7tOZb2LqcQUAUZXDXOrfPIrWjRUE8OaE0DGi+tOXuzsd3MZdwLcc/nNmC5ImX7KTvHqv7kjw6SZG5P5VoTK+kgCWzzgxT9GxoPtR8MRfeDjgyGjGzN9a8T06LKkqf0h0OuO7oUUUo/RtYuBGlDtAgMBAAGjgZswgZgwDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MB8GA1UdIwQYMBaAFH2JZYMh+okOd2UuoV8BEvNG9dOAMB0GA1UdDgQWBBR9iWWDIfqJDndlLqFfARLzRvXTgDANBgkqhkiG9w0BAQsFAAOCAQEAxZr0d6dJwof0wXLqwYuLEUrVT3SS0aZ5JEH1VEfZXe1IFsgcQE4KRWJU2Hq9SZ9CdrH5Jm8fk9V1nrN4CmfX/nmfW/cHp/qhPj8q/Oo88b5bdhpdUTCATBeEbyvDO3cZFr5NWBCW0k1N7ZdOuI/DTUzO+pa6I/GQiWyC0TiDqmyi1Wk2VVEJvY51TOBC5pIHI/1L2TloRQW18j4a3SnvsH+RNQkRrfdCyxEJfUmvKfTI8RPvufyXEik8agam7YiNghiecug3LxFp9N2RCnxbqjroHNpURG61Jj7KmkhoZAeNgprEH1MK/CCkGeKQH82CU20o218wbncTDDqF4Sa3+w==","attributes":{"enabled":true,"nbf":1572562736,"exp":1635721736,"created":1572563336,"updated":1572563345,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"foo":"updated
+        tag"},"policy":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=*.microsoft.com","sans":{"dns_names":["sdk.azure-int.net"]},"ekus":["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],"key_usage":["digitalSignature","keyEncipherment"],"validity_months":24,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"AutoRenew"}}],"issuer":{"name":"Self"},"attributes":{"enabled":true,"created":1572563329,"updated":1572563329}},"pending":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending"}}'
     headers:
       cache-control: no-cache
       content-length: '2608'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Oct 2019 23:01:00 GMT
+      date: Thu, 31 Oct 2019 23:09:05 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -483,7 +483,7 @@ interactions:
       cache-control: no-cache
       content-length: '93'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Oct 2019 23:01:00 GMT
+      date: Thu, 31 Oct 2019 23:09:05 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -522,7 +522,7 @@ interactions:
       cache-control: no-cache
       content-length: '93'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Oct 2019 23:01:02 GMT
+      date: Thu, 31 Oct 2019 23:09:07 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -561,7 +561,7 @@ interactions:
       cache-control: no-cache
       content-length: '93'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Oct 2019 23:01:04 GMT
+      date: Thu, 31 Oct 2019 23:09:09 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -600,7 +600,7 @@ interactions:
       cache-control: no-cache
       content-length: '93'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Oct 2019 23:01:06 GMT
+      date: Thu, 31 Oct 2019 23:09:11 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -639,7 +639,7 @@ interactions:
       cache-control: no-cache
       content-length: '93'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Oct 2019 23:01:08 GMT
+      date: Thu, 31 Oct 2019 23:09:13 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -672,13 +672,52 @@ interactions:
     uri: https://vault458ad70cc75a0a1e1c.vault.azure.net/deletedcertificates/cert-name?api-version=7.0
   response:
     body:
-      string: '{"recoveryId":"https://vault458ad70cc75a0a1e1c.vault.azure.net/deletedcertificates/cert-name","deletedDate":1572476461,"scheduledPurgeDate":1580252461,"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/5b913841130542a4a1632c4929cb2678","kid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/keys/cert-name/5b913841130542a4a1632c4929cb2678","sid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/secrets/cert-name/5b913841130542a4a1632c4929cb2678","x5t":"tHdACjey1C4FcS0VOucnYsgB8Zo","cer":"MIIDWjCCAkKgAwIBAgIQThK3ExxhRlyLJnf426k18DANBgkqhkiG9w0BAQsFADAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wHhcNMTkxMDMwMjI1MDUxWhcNMjExMDMwMjMwMDUxWjAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDHfFr3iKoNA+m+W5w5qXKGMkr/IZoiEwTxHBN0QDGN87BOoD5F+vpTKDRfvFAKKibeJXvJQyUxgLyifiCY5v5/ppmTDBdHvrbdt57NWTCZMjNMzHzsvyAaZziRF6ZU7SeReNE8axBO3pwdhndENujK02F3jE46M4YZargeSytigl+9C5jlzAd4K/QVMOgJLF1uW9Qixh3sMxPt6JXcGAb/j7/ySPDF/omVLzT8SPCy+ft1z8DUux3zg3i3irZ0SUFsjDxGTBMAesuAiAUltigmXt4peXmbuw7UaxhmaAK73uVnUkGXhVsXh+8MbqKk4T1H70AlcAxwoZ2LRkZTrUgDAgMBAAGjgZswgZgwDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MB8GA1UdIwQYMBaAFHCSfANSyjhzlhP5NopdhRU+L1WIMB0GA1UdDgQWBBRwknwDUso4c5YT+TaKXYUVPi9ViDANBgkqhkiG9w0BAQsFAAOCAQEAUK2KwJ1sU17/t5HyuFGXRUen8yrEq6O2W+s8c66y9A5Kv0XQQ2/dshhuzm+qkHVcR7nhw3OPMDTDxonY7v3rnHuHxMGw5x6R0YYH7wYpsWeXteEnV2Je0+cLbyBSgG0WM5RRd+kjxnLwvP8zYWhO6earl0EDwQ1PoMympl7DtgVZFvqMtOhfZJfe6+e+l2UMgySFqfVAziamdet2JfZtb0gu0420TWM48eQDNQIYIlrX5i1m16gK+bbKW+X53SEpuliTNahXI1orR+WNvHzsS3ViGYQpBheCeBPxKvH53ghE0XqfW6xMXPan+lTZLJ96CTaG/Fl3reTiHnw8U3iZ/w==","attributes":{"enabled":true,"nbf":1572475851,"exp":1635634851,"created":1572476451,"updated":1572476460,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"foo":"updated
-        tag"},"policy":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=*.microsoft.com","sans":{"dns_names":["sdk.azure-int.net"]},"ekus":["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],"key_usage":["digitalSignature","keyEncipherment"],"validity_months":24,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"AutoRenew"}}],"issuer":{"name":"Self"},"attributes":{"enabled":true,"created":1572476445,"updated":1572476445}},"pending":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending"}}'
+      string: '{"error":{"code":"CertificateNotFound","message":"Deleted Certificate
+        not found: cert-name"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '93'
+      content-type: application/json; charset=utf-8
+      date: Thu, 31 Oct 2019 23:09:15 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: westus
+      x-ms-keyvault-service-version: 1.1.0.879
+      x-powered-by: ASP.NET
+    status:
+      code: 404
+      message: Not Found
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - vault458ad70cc75a0a1e1c.vault.azure.net
+        - /deletedcertificates/cert-name
+        - api-version=7.0
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.7.4 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://vault458ad70cc75a0a1e1c.vault.azure.net/deletedcertificates/cert-name?api-version=7.0
+  response:
+    body:
+      string: '{"recoveryId":"https://vault458ad70cc75a0a1e1c.vault.azure.net/deletedcertificates/cert-name","deletedDate":1572563345,"scheduledPurgeDate":1580339345,"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/a6e8ce58195c4e99a91c0706cad04b3e","kid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/keys/cert-name/a6e8ce58195c4e99a91c0706cad04b3e","sid":"https://vault458ad70cc75a0a1e1c.vault.azure.net/secrets/cert-name/a6e8ce58195c4e99a91c0706cad04b3e","x5t":"x965KXxZkFrJB4uYMKXK9BLR2X4","cer":"MIIDWjCCAkKgAwIBAgIQXamBdr+VRgerQdFWffG9+zANBgkqhkiG9w0BAQsFADAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wHhcNMTkxMDMxMjI1ODU2WhcNMjExMDMxMjMwODU2WjAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQD9pW0ZoMvIrA7fxDBiV3leCwRTWwGjkUIOLGUjMfd81kP+aYyzu8CgLEjhc6EJGyFHYWDPgbNg5kWTHd4JTPVBlL0YOqqrzROap8+kDQGXtjDK7F0G+fe0pmSOzpLuEmC17+jftmp8GByEwJWJWFL72W+C6hsnegwJEuxD0MO2o5DG4KIzR8TcT0w+k+wthzgQE7tOZb2LqcQUAUZXDXOrfPIrWjRUE8OaE0DGi+tOXuzsd3MZdwLcc/nNmC5ImX7KTvHqv7kjw6SZG5P5VoTK+kgCWzzgxT9GxoPtR8MRfeDjgyGjGzN9a8T06LKkqf0h0OuO7oUUUo/RtYuBGlDtAgMBAAGjgZswgZgwDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MB8GA1UdIwQYMBaAFH2JZYMh+okOd2UuoV8BEvNG9dOAMB0GA1UdDgQWBBR9iWWDIfqJDndlLqFfARLzRvXTgDANBgkqhkiG9w0BAQsFAAOCAQEAxZr0d6dJwof0wXLqwYuLEUrVT3SS0aZ5JEH1VEfZXe1IFsgcQE4KRWJU2Hq9SZ9CdrH5Jm8fk9V1nrN4CmfX/nmfW/cHp/qhPj8q/Oo88b5bdhpdUTCATBeEbyvDO3cZFr5NWBCW0k1N7ZdOuI/DTUzO+pa6I/GQiWyC0TiDqmyi1Wk2VVEJvY51TOBC5pIHI/1L2TloRQW18j4a3SnvsH+RNQkRrfdCyxEJfUmvKfTI8RPvufyXEik8agam7YiNghiecug3LxFp9N2RCnxbqjroHNpURG61Jj7KmkhoZAeNgprEH1MK/CCkGeKQH82CU20o218wbncTDDqF4Sa3+w==","attributes":{"enabled":true,"nbf":1572562736,"exp":1635721736,"created":1572563336,"updated":1572563345,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"foo":"updated
+        tag"},"policy":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=*.microsoft.com","sans":{"dns_names":["sdk.azure-int.net"]},"ekus":["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],"key_usage":["digitalSignature","keyEncipherment"],"validity_months":24,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"AutoRenew"}}],"issuer":{"name":"Self"},"attributes":{"enabled":true,"created":1572563329,"updated":1572563329}},"pending":{"id":"https://vault458ad70cc75a0a1e1c.vault.azure.net/certificates/cert-name/pending"}}'
     headers:
       cache-control: no-cache
       content-length: '2608'
       content-type: application/json; charset=utf-8
-      date: Wed, 30 Oct 2019 23:01:11 GMT
+      date: Thu, 31 Oct 2019 23:09:17 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0

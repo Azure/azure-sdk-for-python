@@ -220,11 +220,7 @@ class CertificateClientTests(KeyVaultTestCase):
             ),
         )
 
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
-
+        polling_interval = 0 if self.is_playback() else 5
         # create certificate
         cert = await client.create_certificate(
             name=cert_name, policy=CertificatePolicy.get_default(), _polling_interval=polling_interval
@@ -252,6 +248,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(cert.id, cert_bundle.id)
         self.assertNotEqual(cert.properties.updated_on, cert_bundle.properties.updated_on)
 
+        polling_interval = 0 if self.is_playback() else 2
         # delete certificate
         deleted_cert_bundle = await client.delete_certificate(name=cert_name, _polling_interval=polling_interval)
         self._validate_certificate_bundle(
@@ -387,10 +384,7 @@ class CertificateClientTests(KeyVaultTestCase):
             cert_name = self.get_resource_name("certprg{}".format(str(i)))
             certs[cert_name] = await self._import_common_certificate(client=client, cert_name=cert_name)
 
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
 
         # delete all certificates
         for cert_name in certs.keys():
@@ -405,7 +399,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # recover select certificates
         for certificate_name in [c for c in certs.keys() if c.startswith("certrec")]:
-            await client.recover_deleted_certificate(name=certificate_name)
+            await client.recover_deleted_certificate(name=certificate_name, _polling_interval=polling_interval)
 
         # purge select certificates
         for certificate_name in [c for c in certs.keys() if c.startswith("certprg")]:
@@ -448,10 +442,7 @@ class CertificateClientTests(KeyVaultTestCase):
             ),
         )
 
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 5
 
         # create certificate
         await client.create_certificate(
@@ -488,13 +479,8 @@ class CertificateClientTests(KeyVaultTestCase):
             cert_policy=cert_policy,
         )
 
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
-
         # delete certificate operation
-        deleted_operation = await client.delete_certificate_operation(name=cert_name, _polling_interval=polling_interval)
+        deleted_operation = await client.delete_certificate_operation(name=cert_name)
         self.assertIsNotNone(deleted_operation)
         self._validate_certificate_operation(
             pending_cert_operation=deleted_operation,
@@ -510,6 +496,7 @@ class CertificateClientTests(KeyVaultTestCase):
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
                 raise ex
 
+        polling_interval = 0 if self.is_playback() else 2
         # delete cancelled certificate
         await client.delete_certificate(cert_name, _polling_interval=polling_interval)
 
@@ -558,10 +545,7 @@ class CertificateClientTests(KeyVaultTestCase):
             ),
         )
 
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 5
 
         # get pending certificate signing request
         await client.create_certificate(
@@ -574,6 +558,7 @@ class CertificateClientTests(KeyVaultTestCase):
         except Exception as ex:
             pass
         finally:
+            polling_interval = 0 if self.is_playback() else 2
             await client.delete_certificate(name=cert_name, _polling_interval=polling_interval)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
@@ -602,10 +587,7 @@ class CertificateClientTests(KeyVaultTestCase):
             ),
         )
 
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 5
 
         # create certificate
         await client.create_certificate(
@@ -614,6 +596,8 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # create a backup
         certificate_backup = await client.backup_certificate(name=cert_name)
+
+        polling_interval = 0 if self.is_playback() else 2
 
         # delete the certificate
         await client.delete_certificate(name=cert_name, _polling_interval=polling_interval)
@@ -648,10 +632,7 @@ class CertificateClientTests(KeyVaultTestCase):
         with open(os.path.abspath(os.path.join(dirname, "ca.crt")), "rt") as f:
             ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, f.read())
 
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 5
 
         # the poller will stop immediately because the issuer is `Unknown`
         await client.create_certificate(

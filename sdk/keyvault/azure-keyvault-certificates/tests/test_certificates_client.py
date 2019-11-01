@@ -230,10 +230,7 @@ class CertificateClientTests(KeyVaultTestCase):
             ),
         )
 
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 5
 
         # create certificate
         certificate = client.begin_create_certificate(
@@ -254,6 +251,8 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(tags, cert_bundle.properties.tags)
         self.assertEqual(cert.id, cert_bundle.id)
         self.assertNotEqual(cert.properties.updated_on, cert_bundle.properties.updated_on)
+
+        polling_interval = 0 if self.is_playback() else 2
 
         # delete certificate
         delete_cert_poller = client.begin_delete_certificate(name=cert_name, _polling_interval=polling_interval)
@@ -386,9 +385,10 @@ class CertificateClientTests(KeyVaultTestCase):
 
         pollers = []
 
+        polling_interval = 0 if self.is_playback() else 2
         # delete all certificates
         for cert_name in certs.keys():
-            pollers.append(client.begin_delete_certificate(name=cert_name))
+            pollers.append(client.begin_delete_certificate(name=cert_name, _polling_interval=polling_interval))
 
         for poller in pollers:
             poller.wait()
@@ -397,9 +397,13 @@ class CertificateClientTests(KeyVaultTestCase):
         deleted = [parse_vault_id(url=c.id).name for c in client.list_deleted_certificates()]
         self.assertTrue(all(c in deleted for c in certs.keys()))
 
+        pollers = []
         # recover select certificates
         for certificate_name in [c for c in certs.keys() if c.startswith("certrec")]:
-            client.recover_deleted_certificate(name=certificate_name)
+            pollers.append(client.begin_recover_deleted_certificate(name=certificate_name, _polling_interval=polling_interval))
+
+        for poller in pollers:
+            poller.wait()
 
         # purge select certificates
         for certificate_name in [c for c in certs.keys() if c.startswith("certprg")]:
@@ -434,10 +438,7 @@ class CertificateClientTests(KeyVaultTestCase):
                 validity_in_months=24,
             ),
         )
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 5
         # create certificate
         create_certificate_poller = client.begin_create_certificate(
             name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy), _polling_interval=polling_interval
@@ -484,7 +485,7 @@ class CertificateClientTests(KeyVaultTestCase):
                 raise ex
 
         # delete cancelled certificate
-        client.begin_delete_certificate(cert_name)
+        client.begin_delete_certificate(cert_name).result()
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
@@ -529,10 +530,7 @@ class CertificateClientTests(KeyVaultTestCase):
             ),
         )
 
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 5
 
         # get pending certificate signing request
         certificate = client.begin_create_certificate(
@@ -570,10 +568,7 @@ class CertificateClientTests(KeyVaultTestCase):
                 validity_in_months=24,
             ),
         )
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 5
         # create certificate
         create_certificate_poller = client.begin_create_certificate(
             name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy), _polling_interval=polling_interval
@@ -582,6 +577,8 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # create a backup
         certificate_backup = client.backup_certificate(name=cert_name)
+
+        polling_interval = 0 if self.is_playback() else 2
 
         # delete the certificate
         client.begin_delete_certificate(name=cert_name, _polling_interval=polling_interval).wait()
@@ -612,10 +609,7 @@ class CertificateClientTests(KeyVaultTestCase):
         with open(os.path.abspath(os.path.join(dirname, "ca.crt")), "rt") as f:
             ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, f.read())
 
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 5
 
         client.begin_create_certificate(
             name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy), _polling_interval=polling_interval

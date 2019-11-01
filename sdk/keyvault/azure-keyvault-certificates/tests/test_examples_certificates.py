@@ -129,10 +129,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             san_dns_names=["sdk.azure-int.net"],
         )
 
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 5
 
         pollers = []
 
@@ -205,10 +202,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             validity_in_months=24,
             san_dns_names=["sdk.azure-int.net"],
         )
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 5
         cert_name = "cert-name"
         certificate_client.begin_create_certificate(
             name=cert_name, policy=cert_policy, _polling_interval=polling_interval
@@ -224,10 +218,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END backup_certificate]
 
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         certificate_client.begin_delete_certificate(name=cert_name, _polling_interval=polling_interval).wait()
 
         # [START restore_certificate]
@@ -263,12 +254,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
 
+        polling_interval = 0 if self.is_playback() else 5
         certificate_client.begin_create_certificate(name=cert_name, policy=cert_policy, _polling_interval=polling_interval).wait()
+
+        polling_interval = 0 if self.is_playback() else 2
         certificate_client.begin_delete_certificate(name=cert_name, _polling_interval=polling_interval).wait()
         # [START get_deleted_certificate]
 
@@ -286,7 +276,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START recover_deleted_certificate]
 
         # recover a deleted certificate to its latest version (requires soft-delete enabled for the vault)
-        recovered_certificate = certificate_client.recover_deleted_certificate(name=cert_name)
+        recovered_certificate = certificate_client.begin_recover_deleted_certificate(name=cert_name).result()
 
         print(recovered_certificate.id)
         print(recovered_certificate.name)

@@ -24,7 +24,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. Delete a certificate (begin_delete_certificate)
 #
-# 3. Recover a deleted certificate (recover_deleted_certificate)
+# 3. Recover a deleted certificate (begin_recover_deleted_certificate)
 #
 # 4. Purge a deleted certificate (purge_deleted_certificate)
 # ----------------------------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ try:
     # We accidentally deleted the bank account certificate. Let's recover it.
     # A deleted certificate can only be recovered if the Key Vault is soft-delete enabled.
     print("\n.. Recover Deleted Certificate")
-    recovered_bank_certificate = client.recover_deleted_certificate(deleted_bank_certificate.name)
+    recovered_bank_certificate = client.begin_recover_deleted_certificate(deleted_bank_certificate.name)
     print("Recovered Certificate with name '{0}'.".format(recovered_bank_certificate.name))
 
     # Let's delete the storage certificate now.

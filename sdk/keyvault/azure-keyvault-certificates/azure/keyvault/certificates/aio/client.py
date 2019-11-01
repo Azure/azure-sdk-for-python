@@ -10,7 +10,6 @@ from azure.core.polling import async_poller
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.polling import async_poller
 
 from azure.keyvault.certificates.models import (
     KeyVaultCertificate,
@@ -82,7 +81,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         polling_interval = kwargs.pop("_polling_interval", None)
-        if polling_interval == None:
+        if polling_interval is None:
             polling_interval = 5
         enabled = kwargs.pop("enabled", None)
         tags = kwargs.pop("tags", None)
@@ -262,17 +261,15 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def recover_deleted_certificate(self, name: str, **kwargs: "**Any") -> KeyVaultCertificate:
-        """Recovers the deleted certificate back to its current version under
-        /certificates.
+        """Recover a deleted certificate to its latest version. Possible only in a vault with soft-delete enabled.
 
-        Performs the reversal of the Delete operation. THe operation is applicable
-        in vaults enabled for soft-delete, and must be issued during the retention
-        interval (available in the deleted certificate's attributes). This operation
-        requires the certificates/recover permission.
+        Requires certificates/recover permission. If the vault does not have soft-delete enabled,
+        :func:`delete_certificate` is permanent, and this method will raise an error. Attempting to recover a
+        non-deleted certificate will also raise an error.
 
         :param str name: The name of the deleted certificate
-        :return: The recovered certificate
-        :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
+        :returns: The recovered certificate
+        :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -283,10 +280,20 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :caption: Recover a deleted certificate
                 :dedent: 8
         """
-        bundle = await self._client.recover_deleted_certificate(
-            vault_base_url=self.vault_url, certificate_name=name, **kwargs
+        polling_interval = kwargs.pop("_polling_interval", None)
+        if polling_interval is None:
+            polling_interval = 2
+        recovered_certificate = KeyVaultCertificate._from_certificate_bundle(
+            await self._client.recover_deleted_certificate(
+                vault_base_url=self.vault_url, certificate_name=name, **kwargs
+            )
         )
-        return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
+        command = partial(self.get_certificate, name=name, **kwargs)
+
+        recover_cert_poller = RecoverDeletedAsyncPollingMethod(
+            initial_status="recovering", finished_status="recovered", interval=polling_interval
+        )
+        return await async_poller(command, recovered_certificate, None, recover_cert_poller)
 
     @distributed_trace_async
     async def import_certificate(

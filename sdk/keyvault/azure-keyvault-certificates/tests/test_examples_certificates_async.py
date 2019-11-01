@@ -124,10 +124,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             san_dns_names=["sdk.azure-int.net"],
         )
 
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 5
 
         create_certificate_pollers = []
         for i in range(4):
@@ -199,10 +196,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 5
         create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy, _polling_interval=polling_interval)
 
         await create_certificate_poller
@@ -217,7 +211,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END backup_certificate]
 
-        await certificate_client.delete_certificate(name=cert_name)
+        polling_interval = 0 if self.is_playback() else 2
+        await certificate_client.delete_certificate(name=cert_name, _polling_interval=polling_interval)
 
         # [START restore_certificate]
 
@@ -252,17 +247,12 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        if self.is_playback():
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 5
         create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy, _polling_interval=polling_interval)
         await create_certificate_poller
 
-        await certificate_client.delete_certificate(name=cert_name)
-        await self._poll_until_no_exception(
-            certificate_client.get_deleted_certificate, cert_name, expected_exception=HttpResponseError
-        )
+        polling_interval = 0 if self.is_playback() else 2
+        await certificate_client.delete_certificate(name=cert_name, _polling_interval=polling_interval)
 
         # [START get_deleted_certificate]
 
