@@ -23,7 +23,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. Get an issuer (get_issuer)
 #
-# 3. List issuers for the key vault (list_issuers)
+# 3. List issuers for the key vault (list_properties_of_issuers)
 #
 # 4. Update an issuer (update_issuer)
 #
@@ -66,7 +66,7 @@ try:
     # Now we will list all of the certificate issuers for this key vault. To better demonstrate this, we will first create another issuer.
     client.create_issuer(name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)
 
-    issuers = client.list_issuers()
+    issuers = client.list_properties_of_issuers()
 
     for issuer in issuers:
         print(issuer.name)

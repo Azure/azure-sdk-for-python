@@ -133,10 +133,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         for poller in create_certificate_pollers:
             await poller
 
-        # [START list_certificates]
+        # [START list_properties_of_certificates]
 
         # list certificates
-        certificates = certificate_client.list_certificates()
+        certificates = certificate_client.list_properties_of_certificates()
 
         async for certificate in certificates:
             print(certificate.id)
@@ -145,18 +145,18 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(certificate.updated_on)
             print(certificate.enabled)
 
-        # [END list_certificates]
-        # [START list_certificate_versions]
+        # [END list_properties_of_certificates]
+        # [START list_properties_of_certificate_versions]
 
         # get an iterator of all versions of a certificate
-        certificate_versions = certificate_client.list_certificate_versions(name="cert-name")
+        certificate_versions = certificate_client.list_properties_of_certificate_versions(name="cert-name")
 
         async for certificate in certificate_versions:
             print(certificate.id)
             print(certificate.properties.updated_on)
             print(certificate.properties.version)
 
-        # [END list_certificate_versions]
+        # [END list_properties_of_certificate_versions]
         # [START list_deleted_certificates]
 
         # get an iterator of deleted certificates (requires soft-delete enabled for the vault)
@@ -363,15 +363,15 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         await certificate_client.create_issuer(name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)
 
-        # [START list_issuers]
+        # [START list_properties_of_issuers]
 
-        issuers = certificate_client.list_issuers()
+        issuers = certificate_client.list_properties_of_issuers()
 
         async for issuer in issuers:
             print(issuer.name)
             print(issuer.provider)
 
-        # [END list_issuers]
+        # [END list_properties_of_issuers]
 
         # [START delete_issuer]
 

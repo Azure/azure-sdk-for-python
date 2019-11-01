@@ -296,7 +296,7 @@ class CertificateClientTests(KeyVaultTestCase):
                     raise ex
 
         # list certificates
-        result = client.list_certificates()
+        result = client.list_properties_of_certificates()
         await self._validate_certificate_list(certificates=result, expected=expected)
 
     @ResourceGroupPreparer()
@@ -336,7 +336,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # list certificate versions
         await self._validate_certificate_list(
-            certificates=(client.list_certificate_versions(cert_name)), expected=expected
+            certificates=(client.list_properties_of_certificate_versions(cert_name)), expected=expected
         )
 
     @ResourceGroupPreparer()
@@ -708,7 +708,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
         expected_issuers = [expected_base_1, expected_base_2]
 
-        issuers = client.list_issuers()
+        issuers = client.list_properties_of_issuers()
         async for issuer in issuers:
             exp_issuer = next((i for i in expected_issuers if i.name == issuer.name), None)
             self.assertIsNotNone(exp_issuer)

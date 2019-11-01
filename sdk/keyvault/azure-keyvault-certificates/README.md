@@ -228,7 +228,7 @@ print(deleted_certificate.name)
 print(deleted_certificate.deleted_date)
 ```
 ### List properties of Certificates
-[list_certificates](https://aka.ms/azsdk-python-keyvault-certs-listcerts-ref) lists the properties of all certificates in the specified Key Vault.
+[list_properties_of_certificates](https://aka.ms/azsdk-python-keyvault-certs-listcerts-ref) lists the properties of all certificates in the specified Key Vault.
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.certificates import CertificateClient
@@ -237,7 +237,7 @@ credential = DefaultAzureCredential()
 
 certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
-certificates = certificate_client.list_certificates()
+certificates = certificate_client.list_properties_of_certificates()
 
 for certificate in certificates:
     # this list doesn't include versions of the certificates
@@ -271,17 +271,21 @@ print(create_certificate_result)
 ```
 
 ### Asynchronously list properties of Certificates
-[list_certificates](https://aka.ms/azsdk-python-keyvault-certs-async-listcerts-ref) lists all the
+[list_properties_of_certificates](https://aka.ms/azsdk-python-keyvault-certs-async-listcerts-ref) lists all the
 properties of the certificates in the client's vault:
 ```python
+<<<<<<< HEAD
+certificates = certificate_client.list_properties_of_certificates()
+=======
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
 
 credential = DefaultAzureCredential()
 
 certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+>>>>>>> 9a05c74b0f87b154ad2c941b3cbc5710817ea133
 
-certificates = certificate_client.list_certificates()
+certificates = certificate_client.list_properties_of_certificates()
 async for certificate in certificates:
     print(certificate.name)
 ```

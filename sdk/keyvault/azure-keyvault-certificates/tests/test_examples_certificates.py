@@ -132,10 +132,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         for i in range(4):
             certificate_client.begin_create_certificate(name="certificate{}".format(i), policy=cert_policy).wait()
 
-        # [START list_certificates]
+        # [START list_properties_of_certificates]
 
         # get an iterator of certificates
-        certificates = certificate_client.list_certificates()
+        certificates = certificate_client.list_properties_of_certificates()
 
         for certificate in certificates:
             print(certificate.id)
@@ -144,18 +144,18 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(certificate.updated_on)
             print(certificate.enabled)
 
-        # [END list_certificates]
-        # [START list_certificate_versions]
+        # [END list_properties_of_certificates]
+        # [START list_properties_of_certificate_versions]
 
         # get an iterator of a certificate's versions
-        certificate_versions = certificate_client.list_certificate_versions(name="certificate-name")
+        certificate_versions = certificate_client.list_properties_of_certificate_versions(name="certificate-name")
 
         for certificate in certificate_versions:
             print(certificate.id)
             print(certificate.updated_on)
             print(certificate.version)
 
-        # [END list_certificate_versions]
+        # [END list_properties_of_certificate_versions]
         # [START list_deleted_certificates]
 
         # get an iterator of deleted certificates (requires soft-delete enabled for the vault)
@@ -360,15 +360,15 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         certificate_client.create_issuer(name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)
 
-        # [START list_issuers]
+        # [START list_properties_of_issuers]
 
-        issuers = certificate_client.list_issuers()
+        issuers = certificate_client.list_properties_of_issuers()
 
         for issuer in issuers:
             print(issuer.name)
             print(issuer.provider)
 
-        # [END list_issuers]
+        # [END list_properties_of_issuers]
 
         # [START delete_issuer]
 
