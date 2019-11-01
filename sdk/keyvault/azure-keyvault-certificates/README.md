@@ -245,29 +245,31 @@ except ResourceNotFoundError as e:
 Output: "certificate not found:deleted_certificate"
 ```
 ### Logging
-Network trace logging is disabled by default for this library. When enabled,
-HTTP requests will be logged at DEBUG level using the `logging` library. You
-can configure logging to print debugging information to stdout or write it
-to a file:
+This library uses the standard
+[logging](https://docs.python.org/3.5/library/logging.html) library for logging.
+Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
+level.
 
- ```python
+Detailed DEBUG level logging, including request/response bodies and unredacted
+headers, can be enabled on a client with the `logging_enable` argument:
+```py
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.certificates import CertificateClient
 import sys
 import logging
 
- # Create a logger for the 'azure' SDK
-logger = logging.getLogger(__name__)
+# Create a logger for the 'azure' SDK
+logger = logging.getLogger('azure')
 logger.setLevel(logging.DEBUG)
 
- # Configure a console output
+# Configure a console output
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
- # Configure a file output
-file_handler = logging.FileHandler(filename)
-logger.addHandler(file_handler)
+credential = DefaultAzureCredential()
 
-# Enable network trace logging. Each HTTP request will be logged at DEBUG level.
-client = CertificateClient(vault_url=url, credential=credential, logging_enable=True))
+# This client will log detailed information about its HTTP sessions, at DEBUG level
+client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential, logging_enable=True)
 ```
 
 Network trace logging can also be enabled for any single operation:
