@@ -44,7 +44,7 @@ class EventHubProducerClient(EventHubClient):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sync_samples/test_examples_eventhub.py
+        .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
             :start-after: [START create_eventhub_producer_client_sync]
             :end-before: [END create_eventhub_producer_client_sync]
             :language: python
@@ -87,7 +87,7 @@ class EventHubProducerClient(EventHubClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sync_samples/test_examples_eventhub.py
+            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
                 :start-after: [START eventhub_producer_client_send_sync]
                 :end-before: [END eventhub_producer_client_send_sync]
                 :language: python
@@ -120,7 +120,7 @@ class EventHubProducerClient(EventHubClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sync_samples/test_examples_eventhub.py
+            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
                 :start-after: [START eventhub_producer_client_create_batch_sync]
                 :end-before: [END eventhub_producer_client_create_batch_sync]
                 :language: python
@@ -155,7 +155,7 @@ class EventHubProducerClient(EventHubClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sync_samples/test_examples_eventhub.py
+            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
                 :start-after: [START eventhub_producer_client_close_sync]
                 :end-before: [END eventhub_producer_client_close_sync]
                 :language: python

@@ -24,8 +24,14 @@ log = logging.getLogger(__name__)
 
 
 class CloseReason(Enum):
-    SHUTDOWN = 0  # user call EventProcessor.stop()
-    OWNERSHIP_LOST = 1  # lose the ownership of a partition.
+    """
+    A partition consumer is closed due to two reasons:
+    SHUTDOWN: It is explicitly required to stop, this would happen when the EventHubConsumerClient is closed.
+    OWNERSHIP_LOST: It loses the ownership of a partition, this would happend when other EventHubConsumerClient
+    instance claims ownership of the partition.
+    """
+    SHUTDOWN = 0
+    OWNERSHIP_LOST = 1
 
 
 class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
@@ -59,6 +65,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         self._last_enqueued_event_properties = {}
         self._id = str(uuid.uuid4())
         self._running = False
+        self._lock = threading.RLock()
 
         # Each partition consumer is working in its own thread
         self._working_threads = {}  # type: Dict[str, threading.Thread]
@@ -71,26 +78,29 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
 
     def _cancel_tasks_for_partitions(self, to_cancel_partitions):
         to_stop_partition_threads = []
-        for partition_id in to_cancel_partitions:
-            if partition_id in self._working_threads:
-                thread = self._working_threads.pop(partition_id)
-                self._threads_stop_flags[partition_id] = True
-                to_stop_partition_threads.append((partition_id, thread))
-        for thread in to_stop_partition_threads:
-            thread[1].join()
-            del self._threads_stop_flags[thread[0]]
+        with self._lock:
+            for partition_id in to_cancel_partitions:
+                if partition_id in self._working_threads:
+                    thread = self._working_threads.pop(partition_id)
+                    self._threads_stop_flags[partition_id] = True
+                    to_stop_partition_threads.append((partition_id, thread))
+            for partition_id, thread in to_stop_partition_threads:
+                thread.join()
+                del self._threads_stop_flags[partition_id]
         if to_cancel_partitions:
             log.info("EventProcesor %r has cancelled partitions %r", self._id, to_cancel_partitions)
 
     def _create_tasks_for_claimed_ownership(self, claimed_partitions, checkpoints=None):
-        for partition_id in claimed_partitions:
-            checkpoint = checkpoints.get(partition_id) if checkpoints else None
-            if partition_id not in self._working_threads or not self._working_threads[partition_id].is_alive():
-                self._working_threads[partition_id] = threading.Thread(target=self._receive,
-                                                                       args=(partition_id, checkpoint))
-                self._threads_stop_flags[partition_id] = False
-                self._working_threads[partition_id].start()
-                log.info("Working thread started, ownership %r, checkpoint %r", partition_id, checkpoint)
+        with self._lock:
+            for partition_id in claimed_partitions:
+                checkpoint = checkpoints.get(partition_id) if checkpoints else None
+                if partition_id not in self._working_threads or not self._working_threads[partition_id].is_alive():
+                    self._working_threads[partition_id] = threading.Thread(target=self._receive,
+                                                                           args=(partition_id, checkpoint),
+                                                                           daemon=True)
+                    self._threads_stop_flags[partition_id] = False
+                    self._working_threads[partition_id].start()
+                    log.info("Working thread started, ownership %r, checkpoint %r", partition_id, checkpoint)
 
     @contextmanager
     def _context(self, events):
@@ -199,12 +209,14 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     process_error(error)
                     break
                     # Go to finally to stop this partition processor.
-                    # Later an EventProcessor(this one or another one) will pick up this partition again
+                    # Later an EventProcessor(this one or another one) will pick up this partition again.
         finally:
-            if self._running is False or self._threads_stop_flags[partition_id]:
-                close(CloseReason.SHUTDOWN)
-            else:
+            if self._running and self._threads_stop_flags[partition_id]:
+                # Event processor is running but the partition consumer has been stopped.
                 close(CloseReason.OWNERSHIP_LOST)
+            else:
+                close(CloseReason.SHUTDOWN)
+
             partition_consumer.close()
 
     def _start(self):
@@ -253,15 +265,19 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
 
     def start(self):
         if not self._running:
-            thread = threading.Thread(target=self._start)
+            thread = threading.Thread(target=self._start, daemon=True)
             thread.start()
             while not self._running:
                 time.sleep(0.1)
             while self._running or self._callback_queue.qsize() > 0:
-                callback_and_args = self._callback_queue.get(True)
-                callback = callback_and_args[0]
-                callback(*callback_and_args[1:])
-                self._callback_queue.task_done()
+                try:
+                    callback_and_args = self._callback_queue.get(block=False)
+                    callback = callback_and_args[0]
+                    callback(*callback_and_args[1:])
+                    self._callback_queue.task_done()
+                except queue.Empty:
+                    # ignore queue empty exception
+                    pass
         else:
             log.info("EventProcessor %r has already started.", self._id)
 
@@ -281,14 +297,17 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             log.info("EventProcessor %r has already been stopped.", self._id)
             return
 
+        with self._lock:
+            for _ in range(len(self._working_threads)):
+                partition_id, thread = self._working_threads.popitem()
+                self._threads_stop_flags[partition_id] = True
+
         for _ in range(len(self._working_threads)):
-            partition_id, thread = self._working_threads.popitem()
-            self._threads_stop_flags[partition_id] = True
             thread.join()
 
-        self._running = False
-
-        self._working_threads.clear()
-        self._threads_stop_flags.clear()
+        with self._lock:
+            self._running = False
+            self._working_threads.clear()
+            self._threads_stop_flags.clear()
 
         log.info("EventProcessor %r has been stopped.", self._id)

@@ -39,8 +39,7 @@ def create_async_eventhub_consumer_client():
     return consumer
 
 
-@pytest.mark.asyncio
-async def test_example_eventhub_async_send_and_receive(live_eventhub_config):
+async def example_eventhub_async_send_and_receive(live_eventhub_config):
     producer = create_async_eventhub_producer_client()
     consumer = create_async_eventhub_consumer_client()
     try:
