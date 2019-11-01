@@ -222,11 +222,10 @@ class CertificateClient(KeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
-        deleted_cert = DeletedCertificate._from_deleted_certificate_bundle(
-            self._client.delete_certificate(
-                vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
-            )
+        deleted_cert_bundle = self._client.delete_certificate(
+            vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
         )
+        deleted_cert = DeletedCertificate._from_deleted_certificate_bundle(deleted_cert_bundle)
         sd_disabled = deleted_cert.recovery_id is None
         command = partial(self.get_deleted_certificate, name=name, **kwargs)
         delete_cert_polling_method = DeletePollingMethod(
@@ -316,11 +315,10 @@ class CertificateClient(KeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
-        recovered_certificate = KeyVaultCertificate._from_certificate_bundle(
-            self._client.recover_deleted_certificate(
-                vault_base_url=self.vault_url, certificate_name=name, **kwargs
-            )
+        recovered_cert_bundle = self._client.recover_deleted_certificate(
+            vault_base_url=self.vault_url, certificate_name=name, **kwargs
         )
+        recovered_certificate = KeyVaultCertificate._from_certificate_bundle(recovered_cert_bundle)
         command = partial(self.get_certificate, name=name, **kwargs)
         recover_cert_polling_method = RecoverDeletedPollingMethod(
             command=command,

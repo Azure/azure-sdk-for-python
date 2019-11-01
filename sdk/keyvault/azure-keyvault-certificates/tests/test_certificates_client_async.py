@@ -7,6 +7,8 @@ import itertools
 import hashlib
 import os
 import pytest
+import logging
+import json
 
 from azure_devtools.scenario_tests import RecordingProcessor
 from certificates_async_test_case import AsyncKeyVaultTestCase
@@ -40,6 +42,13 @@ class RetryAfterReplacer(RecordingProcessor):
             response["headers"]["retry-after"] = "0"
         return response
 
+# used for logging tests
+class MockHandler(logging.Handler):
+    def __init__(self):
+        super(MockHandler, self).__init__()
+        self.messages = []
+    def emit(self, record):
+        self.messages.append(record)
 
 class CertificateClientTests(KeyVaultTestCase):
     FILTER_HEADERS = [
@@ -220,7 +229,7 @@ class CertificateClientTests(KeyVaultTestCase):
             ),
         )
 
-        polling_interval = 0 if self.is_playback() else 5
+        polling_interval = 0 if self.is_playback() else None
         # create certificate
         cert = await client.create_certificate(
             name=cert_name, policy=CertificatePolicy.get_default(), _polling_interval=polling_interval
@@ -248,7 +257,6 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(cert.id, cert_bundle.id)
         self.assertNotEqual(cert.properties.updated_on, cert_bundle.properties.updated_on)
 
-        polling_interval = 0 if self.is_playback() else 2
         # delete certificate
         deleted_cert_bundle = await client.delete_certificate(name=cert_name, _polling_interval=polling_interval)
         self._validate_certificate_bundle(
@@ -384,7 +392,7 @@ class CertificateClientTests(KeyVaultTestCase):
             cert_name = self.get_resource_name("certprg{}".format(str(i)))
             certs[cert_name] = await self._import_common_certificate(client=client, cert_name=cert_name)
 
-        polling_interval = 0 if self.is_playback() else 2
+        polling_interval = 0 if self.is_playback() else None
 
         # delete all certificates
         for cert_name in certs.keys():
@@ -442,7 +450,7 @@ class CertificateClientTests(KeyVaultTestCase):
             ),
         )
 
-        polling_interval = 0 if self.is_playback() else 5
+        polling_interval = 0 if self.is_playback() else None
 
         # create certificate
         await client.create_certificate(
@@ -496,7 +504,6 @@ class CertificateClientTests(KeyVaultTestCase):
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
                 raise ex
 
-        polling_interval = 0 if self.is_playback() else 2
         # delete cancelled certificate
         await client.delete_certificate(cert_name, _polling_interval=polling_interval)
 
@@ -545,7 +552,7 @@ class CertificateClientTests(KeyVaultTestCase):
             ),
         )
 
-        polling_interval = 0 if self.is_playback() else 5
+        polling_interval = 0 if self.is_playback() else None
 
         # get pending certificate signing request
         await client.create_certificate(
@@ -558,7 +565,6 @@ class CertificateClientTests(KeyVaultTestCase):
         except Exception as ex:
             pass
         finally:
-            polling_interval = 0 if self.is_playback() else 2
             await client.delete_certificate(name=cert_name, _polling_interval=polling_interval)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
@@ -587,7 +593,7 @@ class CertificateClientTests(KeyVaultTestCase):
             ),
         )
 
-        polling_interval = 0 if self.is_playback() else 5
+        polling_interval = 0 if self.is_playback() else None
 
         # create certificate
         await client.create_certificate(
@@ -596,8 +602,6 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # create a backup
         certificate_backup = await client.backup_certificate(name=cert_name)
-
-        polling_interval = 0 if self.is_playback() else 2
 
         # delete the certificate
         await client.delete_certificate(name=cert_name, _polling_interval=polling_interval)
@@ -632,7 +636,7 @@ class CertificateClientTests(KeyVaultTestCase):
         with open(os.path.abspath(os.path.join(dirname, "ca.crt")), "rt") as f:
             ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, f.read())
 
-        polling_interval = 0 if self.is_playback() else 5
+        polling_interval = 0 if self.is_playback() else None
 
         # the poller will stop immediately because the issuer is `Unknown`
         await client.create_certificate(
@@ -746,3 +750,50 @@ class CertificateClientTests(KeyVaultTestCase):
         except Exception as ex:
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
                 raise ex
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @AsyncVaultClientPreparer(client_kwargs={'logging_enable': True})
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_logging_enabled(self, vault_client, **kwargs):
+        client = vault_client.certificates
+        mock_handler = MockHandler()
+
+        logger = logging.getLogger('azure')
+        logger.addHandler(mock_handler)
+        logger.setLevel(logging.DEBUG)
+
+        await client.create_issuer(name="cert-name", provider="Test")
+
+        for message in mock_handler.messages:
+            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+                try:
+                    body = json.loads(message.message)
+                    if body['provider'] == 'Test':
+                        return
+                except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
+                    pass
+
+        assert False, "Expected request body wasn't logged"
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @AsyncVaultClientPreparer()
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_logging_disabled(self, vault_client, **kwargs):
+        client = vault_client.certificates
+        mock_handler = MockHandler()
+
+        logger = logging.getLogger('azure')
+        logger.addHandler(mock_handler)
+        logger.setLevel(logging.DEBUG)
+
+        await client.create_issuer(name="cert-name", provider="Test")
+
+        for message in mock_handler.messages:
+            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+                try:
+                    body = json.loads(message.message)
+                    assert body["provider"] != "Test", "Client request body was logged"
+                except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
+                    pass

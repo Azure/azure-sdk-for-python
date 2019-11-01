@@ -129,7 +129,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             san_dns_names=["sdk.azure-int.net"],
         )
 
-        polling_interval = 0 if self.is_playback() else 5
+        polling_interval = 0 if self.is_playback() else None
 
         pollers = []
 
@@ -202,7 +202,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             validity_in_months=24,
             san_dns_names=["sdk.azure-int.net"],
         )
-        polling_interval = 0 if self.is_playback() else 5
+        polling_interval = 0 if self.is_playback() else None
         cert_name = "cert-name"
         certificate_client.begin_create_certificate(
             name=cert_name, policy=cert_policy, _polling_interval=polling_interval
@@ -218,7 +218,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END backup_certificate]
 
-        polling_interval = 0 if self.is_playback() else 2
         certificate_client.begin_delete_certificate(name=cert_name, _polling_interval=polling_interval).wait()
 
         # [START restore_certificate]
@@ -255,10 +254,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         cert_name = "cert-name"
 
-        polling_interval = 0 if self.is_playback() else 5
+        polling_interval = 0 if self.is_playback() else None
         certificate_client.begin_create_certificate(name=cert_name, policy=cert_policy, _polling_interval=polling_interval).wait()
 
-        polling_interval = 0 if self.is_playback() else 2
         certificate_client.begin_delete_certificate(name=cert_name, _polling_interval=polling_interval).wait()
         # [START get_deleted_certificate]
 
