@@ -17,9 +17,9 @@ from uamqp import Message  # type: ignore
 from uamqp import authentication  # type: ignore
 from uamqp import constants  # type: ignore
 
-from azure.eventhub.producer import EventHubProducer
-from azure.eventhub.consumer import EventHubConsumer
-from azure.eventhub.common import parse_sas_token, EventPosition
+from .producer import EventHubProducer
+from .consumer import EventHubConsumer
+from .common import parse_sas_token, EventPosition
 from .client_abstract import EventHubClientAbstract
 from .common import EventHubSASTokenCredential, EventHubSharedKeyCredential
 from ._connection_manager import get_connection_manager
@@ -143,7 +143,6 @@ class EventHubClient(EventHubClientAbstract):
         log.info("%r returns an exception %r", self._container_id, last_exception)  # pylint:disable=specify-parameter-names-in-call
         raise last_exception
 
-
     def get_properties(self):
         # type:() -> Dict[str, Any]
         """
@@ -191,8 +190,7 @@ class EventHubClient(EventHubClientAbstract):
             -'last_enqueued_time_utc'
             -'is_empty'
 
-        :param partition: The target partition id.
-        :type partition: str
+        :param str partition: The target partition id.
         :rtype: dict
         :raises: ~azure.eventhub.ConnectError
         """
@@ -212,7 +210,7 @@ class EventHubClient(EventHubClientAbstract):
             output['is_empty'] = partition_info[b'is_partition_empty']
         return output
 
-    def create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
+    def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
         # type: (str, str, EventPosition, Any) -> EventHubConsumer
         """
         Create a consumer to the client for a particular consumer group and partition.
@@ -260,7 +258,7 @@ class EventHubClient(EventHubClientAbstract):
             track_last_enqueued_event_properties=track_last_enqueued_event_properties)
         return handler
 
-    def create_producer(self, partition_id=None, send_timeout=None):
+    def _create_producer(self, partition_id=None, send_timeout=None):
         # type: (str, float) -> EventHubProducer
         """
         Create an producer to send EventData object to an EventHub.
