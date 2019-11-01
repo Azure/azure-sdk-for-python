@@ -18,7 +18,9 @@ logging.getLogger().setLevel(logging.INFO)
 excluded_packages = [
     "azure",
     "azure-mgmt",
-    "azure-storage-file-share"  # Name space and package name are different. Skipping this package for now.
+    "azure.core.tracing.opencensus",
+    "azure.eventhub.checkpointstoreblob.aio",
+    "azure.storage.file.share" # Github issue 7879.
     ]
 
 def should_run_import_all(package_name):
