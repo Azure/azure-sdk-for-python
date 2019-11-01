@@ -3,6 +3,21 @@
 Release History
 ===============
 
+6.0.0 (2019-11-01)
+++++++++++++++++++
+
+**Features**
+
+- Model PolicySetDefinition has a new parameter policy_definition_groups
+
+**Breaking changes**
+
+- Operation DeploymentsOperations.validate_at_tenant_scope has a new signature
+- Operation DeploymentsOperations.create_or_update_at_management_group_scope has a new signature
+- Operation DeploymentsOperations.validate_at_management_group_scope has a new signature
+- Operation DeploymentsOperations.create_or_update_at_tenant_scope has a new signature
+- Model PolicyDefinitionReference has a new signature
+
 5.1.0 (2019-10-04)
 ++++++++++++++++++
 
