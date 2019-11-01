@@ -44,7 +44,7 @@ class EventData(object):
     The EventData class is a holder of event content.
 
     :param body: The data to send in a single message.
-        :class: str, bytes or list
+        :class: str, bytes
 
     .. admonition:: Example:
 
