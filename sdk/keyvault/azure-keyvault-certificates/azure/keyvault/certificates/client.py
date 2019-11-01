@@ -559,7 +559,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_certificate_versions(self, name, **kwargs):
+    def list_properties_of_certificate_versions(self, name, **kwargs):
         # type: (str, **Any) -> Iterable[CertificateProperties]
         """List the versions of a certificate.
 
@@ -575,8 +575,8 @@ class CertificateClient(KeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
-                :start-after: [START list_certificate_versions]
-                :end-before: [END list_certificate_versions]
+                :start-after: [START list_properties_of_certificate_versions]
+                :end-before: [END list_properties_of_certificate_versions]
                 :language: python
                 :caption: List all versions of a certificate
                 :dedent: 8

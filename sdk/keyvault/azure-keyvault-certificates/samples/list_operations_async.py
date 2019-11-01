@@ -26,7 +26,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. List certificates from the Key Vault (list_properties_of_certificates)
 #
-# 3. List certificate versions from the Key Vault (list_certificate_versions)
+# 3. List certificate versions from the Key Vault (list_properties_of_certificate_versions)
 #
 # 4. List deleted certificates from the Key Vault (list_deleted_certificates). The vault has to be soft-delete enabled to perform this operation.
 #
@@ -80,7 +80,7 @@ async def run_sample():
 
         # You need to check all the different tags your bank account certificate had previously. Lets print all the versions of this certificate.
         print("\n.. List versions of the certificate using its name")
-        certificate_versions = client.list_certificate_versions(bank_cert_name)
+        certificate_versions = client.list_properties_of_certificate_versions(bank_cert_name)
         async for certificate_version in certificate_versions:
             print(
                 "Bank Certificate with name '{0}' with version '{1}' has tags: '{2}'.".format(

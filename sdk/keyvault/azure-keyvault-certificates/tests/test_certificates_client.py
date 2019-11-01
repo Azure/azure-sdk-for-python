@@ -325,7 +325,7 @@ class CertificateClientTests(KeyVaultTestCase):
                     raise ex
 
         # list certificate versions
-        self._validate_certificate_list(certificates=(client.list_certificate_versions(cert_name)), expected=expected)
+        self._validate_certificate_list(certificates=(client.list_properties_of_certificate_versions(cert_name)), expected=expected)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()

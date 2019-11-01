@@ -532,7 +532,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_certificate_versions(self, name: str, **kwargs: "**Any") -> AsyncIterable[CertificateProperties]:
+    def list_properties_of_certificate_versions(self, name: str, **kwargs: "**Any") -> AsyncIterable[CertificateProperties]:
         """List the versions of a certificate.
 
         The GetCertificateVersions operation returns the versions of a
@@ -547,8 +547,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates_async.py
-                :start-after: [START list_certificate_versions]
-                :end-before: [END list_certificate_versions]
+                :start-after: [START list_properties_of_certificate_versions]
+                :end-before: [END list_properties_of_certificate_versions]
                 :language: python
                 :caption: List all versions of a certificate
                 :dedent: 8

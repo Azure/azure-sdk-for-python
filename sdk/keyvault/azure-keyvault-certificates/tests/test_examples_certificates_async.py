@@ -146,17 +146,17 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(certificate.enabled)
 
         # [END list_certificates]
-        # [START list_certificate_versions]
+        # [START list_properties_of_certificate_versions]
 
         # get an iterator of all versions of a certificate
-        certificate_versions = certificate_client.list_certificate_versions(name="cert-name")
+        certificate_versions = certificate_client.list_properties_of_certificate_versions(name="cert-name")
 
         async for certificate in certificate_versions:
             print(certificate.id)
             print(certificate.properties.updated_on)
             print(certificate.properties.version)
 
-        # [END list_certificate_versions]
+        # [END list_properties_of_certificate_versions]
         # [START list_deleted_certificates]
 
         # get an iterator of deleted certificates (requires soft-delete enabled for the vault)
