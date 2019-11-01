@@ -133,14 +133,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         pollers = []
 
-        for i in range(4):
-            pollers.append(
-                certificate_client.begin_create_certificate(
-                    name="certificate{}".format(i),
-                    policy=cert_policy,
-                    _polling_interval=polling_interval
-                )
-            )
+        pollers = [
+            certificate_client.begin_create_certificate(
+                name="certificate{}".format(i),
+                policy=cert_policy,
+                _polling_interval=polling_interval
+            ) for i in range(4)
+        ]
+
 
         for poller in pollers:
             poller.wait()

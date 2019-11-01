@@ -391,12 +391,12 @@ class CertificateClientTests(KeyVaultTestCase):
             cert_name = self.get_resource_name("certprg{}".format(str(i)))
             certs[cert_name] = self._import_common_certificate(client=client, cert_name=cert_name)
 
-        pollers = []
-
         polling_interval = 0 if self.is_playback() else None
         # delete all certificates
-        for cert_name in certs.keys():
-            pollers.append(client.begin_delete_certificate(name=cert_name, _polling_interval=polling_interval))
+        pollers = [
+            client.begin_delete_certificate(name=cert_name, _polling_interval=polling_interval)
+            for cert_name in certs.keys()
+        ]
 
         for poller in pollers:
             poller.wait()
@@ -405,10 +405,11 @@ class CertificateClientTests(KeyVaultTestCase):
         deleted = [parse_vault_id(url=c.id).name for c in client.list_deleted_certificates()]
         self.assertTrue(all(c in deleted for c in certs.keys()))
 
-        pollers = []
         # recover select certificates
-        for certificate_name in [c for c in certs.keys() if c.startswith("certrec")]:
-            pollers.append(client.begin_recover_deleted_certificate(name=certificate_name, _polling_interval=polling_interval))
+        pollers = [
+            client.begin_recover_deleted_certificate(name=certificate_name, _polling_interval=polling_interval)
+            for certificate_name in [c for c in certs.keys() if c.startswith("certrec")]
+        ]
 
         for poller in pollers:
             poller.wait()
