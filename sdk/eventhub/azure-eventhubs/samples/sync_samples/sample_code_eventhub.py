@@ -116,7 +116,7 @@ def example_eventhub_producer_ops(live_eventhub_config):
     # [END eventhub_producer_client_close_sync]
 
 
-def test_example_eventhub_consumer_ops(live_eventhub_config):
+def example_eventhub_consumer_ops(live_eventhub_config):
     # [START eventhub_consumer_client_close_sync]
     import os
 

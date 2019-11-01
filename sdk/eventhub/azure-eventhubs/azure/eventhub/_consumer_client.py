@@ -102,13 +102,16 @@ class EventHubConsumerClient(EventHubClient):
          a small amount of additional network bandwidth consumption that is generally a favorable trade-off when
          considered against periodically making requests for partition properties using the Event Hub client.
          It is set to `False` by default.
-        :keyword initial_event_position: The position within the partition where the consumer should begin
-         reading events.
+        :keyword initial_event_position: Start receiving from this initial_event_position
+         if there isn't checkpoint data for a partition. Use the checkpoint data if there it's available. This can be a
+         a dict with partition id as the key and position as the value for individual partitions, or a single
+         EventPosition instance for all partitions. This parameter could be type of ~azure.eventhub.EventPosition or
+         dict[str, ~azure.eventhub.EventPosition] where the key is partition id.
         :keyword on_error: The callback function which would be called when there is an error met during the receiving
          time. The callback takes two parameters: `partition_context` which contains partition information
           and `error` being the exception.  Please define the callback like `on_error(partition_context, error)`.
         :keyword on_partition_initialize: The callback function which will be called after a consumer for certain
-         partition finishes initialization. The callback takes onw parameter: `partition_context` which contains
+         partition finishes initialization. The callback takes two parameter: `partition_context` which contains
           the partition information. Please define the callback like
           `on_partition_initialize(partition_context)`.
         :keyword on_partition_close: The callback function which will be called after a consumer for certain
