@@ -909,14 +909,14 @@
   },
   "azure-mgmt-frontdoor": {
     "category": "Management",
-    "service_name": "Network",
+    "service_name": "Front Door",
     "namespaces": [
       "azure.mgmt.frontdoor"
     ]
   },
   "azure-mgmt-hybridcompute": {
     "category": "Management",
-    "service_name": "Hybrid Compute",
+    "service_name": "Hybrid Cloud",
     "namespaces": [
       "azure.mgmt.hybridcompute"
     ]
@@ -979,7 +979,7 @@
   },
   "azure-mgmt-datashare": {
     "category": "Management",
-    "service_name": "DataShare",
+    "service_name": "Data Share",
     "namespaces": [
       "azure.mgmt.datashare"
     ]
