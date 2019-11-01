@@ -159,7 +159,7 @@ class EventHubProducerClient(EventHubClient):
                 :end-before: [END eventhub_producer_client_close_sync]
                 :language: python
                 :dedent: 4
-                :caption: Close down the handler.
+                :caption: Close down the client.
 
         """
         if self._producers:

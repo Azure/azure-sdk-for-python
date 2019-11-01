@@ -225,7 +225,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     checkpoints = ownership_manager.get_checkpoints() if self._partition_manager else None
                     claimed_partition_ids = ownership_manager.claim_ownership()
                     if claimed_partition_ids:
-                        to_cancel_list = self._working_threads.keys() - claimed_partition_ids
+                        to_cancel_list = set(self._working_threads.keys()) - set(claimed_partition_ids)
                         self._create_tasks_for_claimed_ownership(claimed_partition_ids, checkpoints)
                     else:
                         log.info("EventProcessor %r hasn't claimed an ownership. It keeps claiming.", self._id)
@@ -280,12 +280,12 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             log.info("EventProcessor %r has already been stopped.", self._id)
             return
 
-        self._running = False
-
         for _ in range(len(self._working_threads)):
             partition_id, thread = self._working_threads.popitem()
             self._threads_stop_flags[partition_id] = True
             thread.join()
+
+        self._running = False
 
         self._working_threads.clear()
         self._threads_stop_flags.clear()

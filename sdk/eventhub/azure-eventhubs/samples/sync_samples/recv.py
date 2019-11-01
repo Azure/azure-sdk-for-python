@@ -9,7 +9,6 @@
 An example to show receiving events from an Event Hub partition.
 """
 import os
-import time
 from azure.eventhub import EventPosition, EventHubConsumerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
@@ -30,7 +29,21 @@ def do_operation(event):
     # print(event)
 
 
-def event_handler(partition_context, events):
+def on_partition_initialize(partition_context):
+    print("Partition: {} has been intialized".format(partition_context.partition_id))
+
+
+def on_partition_close(partition_context, reason):
+    print("Partition: {} has been closed, reason for closing: {}".format(partition_context.partition_id,
+                                                                         reason))
+
+
+def on_error(partition_context, error):
+    print("Partition: {} met an exception during receiving: {}".format(partition_context.partition_id,
+                                                                       error))
+
+
+def on_event(partition_context, events):
     global total
     if events:
         print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
@@ -51,7 +64,10 @@ if __name__ == '__main__':
 
     try:
         with consumer_client:
-            consumer_client.receive(event_handler=event_handler, consumer_group='$Default')
+            consumer_client.receive(on_event=on_event, consumer_group='$Default',
+                                    on_partition_initialize=on_partition_initialize,
+                                    on_partition_close=on_partition_close,
+                                    on_error=on_error)
             # Receive with owner level:
             # consumer_client.receive(event_handler=event_handler, consumer_group='$Default', owner_level=1)
     except KeyboardInterrupt:

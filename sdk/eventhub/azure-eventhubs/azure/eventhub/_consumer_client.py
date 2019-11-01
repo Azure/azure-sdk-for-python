@@ -90,19 +90,40 @@ class EventHubConsumerClient(EventHubClient):
     def receive(self, on_event, consumer_group, **kwargs):
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
-        :param on_event:
-        :param consumer_group:
-        :param partition_id:
-        :param owner_level:
-        :param prefetch:
-        :param track_last_enqueued_event_properties:
-        :param initial_event_position:
-        :param on_error:
-        :param on_partition_initialize:
-        :param on_partition_close:
-        :return: None
+        :param on_event: The callback function for handling received events. The callback takes two parameters:
+        `partition_context` which contains partition information and `events` which are the received events. Please
+         define the callback like `on_event(partition_context, events)`. For detailed partition context information,
+         please refer to ~azure.eventhub.PartitionContext.
+        :param str consumer_group: The name of the consumer group this consumer is associated with.
+         Events are read in the context of this group. The default consumer_group for an event hub is "$Default".
+        :keyword str partition_id: The identifier of the Event Hub partition from which events will be received.
+        :keyword int owner_level: The priority of the exclusive consumer. An exclusive consumer will be created
+         if owner_level is set.
+        :keyword int prefetch: The message prefetch count of the consumer. Default is 300.
+        :keyword bool track_last_enqueued_event_properties: Indicates whether or not the consumer should
+         request information on the last enqueued event on its associated partition, and track that information
+         as events are received. When information about the partition's last enqueued event is being tracked,
+         each event received from the Event Hubs service will carry metadata about the partition. This results in
+         a small amount of additional network bandwidth consumption that is generally a favorable trade-off when
+         considered against periodically making requests for partition properties using the Event Hub client.
+         It is set to `False` by default.
+        :keyword initial_event_position: The position within the partition where the consumer should begin
+         reading events.
+        :keyword on_error: The callback function which would be called when there is an error met during the receiving
+         time. The callback takes two parameters: `partition_context` which contains partition information
+          and `error` being the exception.  Please define the callback like `on_error(partition_context, error)`.
+        :keyword on_partition_initialize: The callback function which will be called after a consumer for certain
+         partition finishes initialization. The callback takes onw parameter: `partition_context` which contains
+          the partition information. Please define the callback like
+          `on_partition_initialize(partition_context)`.
+        :keyword on_partition_close: The callback function which will be called after a consumer for certain
+         partition is closed. The callback takes two parameters: `partition_context` which contains partition
+         information and `reason` for the close. Please define the callback like `on_error(partition_context, reason)`.
+         Please refer to `azure.eventhub.CloseReason` for different closing reason.
+        :rtype: None
 
-        Example:
+        .. admonition:: Example:
+
             .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START eventhub_consumer_client_receive_sync]
                 :end-before: [END eventhub_consumer_client_receive_sync]
@@ -131,7 +152,6 @@ class EventHubConsumerClient(EventHubClient):
             event_processor = EventProcessor(
                 self, consumer_group, on_event,
                 partition_manager=self._partition_manager,
-                partition_id=partition_id,
                 polling_interval=self._load_balancing_interval,
                 **kwargs
             )
@@ -143,13 +163,16 @@ class EventHubConsumerClient(EventHubClient):
         # type: () -> None
         """Stop retrieving events from event hubs and close the underlying AMQP connection and links.
 
-        Example:
+        :rtype: None
+
+        .. admonition:: Example:
+
             .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START eventhub_consumer_client_close_sync]
                 :end-before: [END eventhub_consumer_client_close_sync]
                 :language: python
                 :dedent: 4
-                :caption: Close down the handler.
+                :caption: Close down the client.
 
         """
         with self._lock:
