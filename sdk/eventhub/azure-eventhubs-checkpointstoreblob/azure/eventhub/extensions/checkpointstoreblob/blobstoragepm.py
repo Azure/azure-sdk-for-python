@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from typing import Dict
 import logging
+import time
 from collections import defaultdict
 
 from azure.eventhub import PartitionManager, OwnershipLostError  # type: ignore # pylint:disable=no-name-in-module
@@ -31,6 +32,15 @@ class BlobPartitionManager(PartitionManager):
         self._container_client = container_client
         self._cached_blob_clients = defaultdict()  # type:Dict[str, BlobClient]
 
+    @staticmethod
+    def _to_timestamp(date):
+        timestamp = None
+        try:
+            timestamp = date.timestamp()
+        except AttributeError:  # python2.7 compatible
+            timestamp = time.mktime(date.timetuple()) + date.microsecond / 1e6
+        return timestamp
+
     def _get_blob_client(self, blob_name):
         result = self._cached_blob_clients.get(blob_name)
         if not result:
@@ -50,7 +60,7 @@ class BlobPartitionManager(PartitionManager):
             data=UPLOAD_DATA, overwrite=True, metadata=metadata, **etag_match
         )
         ownership["etag"] = uploaded_blob_properties["etag"]
-        ownership["last_modified_time"] = uploaded_blob_properties["last_modified"].timestamp()
+        ownership["last_modified_time"] = self._to_timestamp(uploaded_blob_properties["last_modified"])
         ownership.update(metadata)
 
     def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
@@ -68,7 +78,7 @@ class BlobPartitionManager(PartitionManager):
                     "partition_id": b.name.split("/")[-1],
                     "owner_id": b.metadata["ownerId"],
                     "etag": b.etag,
-                    "last_modified_time": b.last_modified.timestamp() if b.last_modified else None
+                    "last_modified_time": self._to_timestamp(b.last_modified) if b.last_modified else None
                 }
                 result.append(ownership)
             return result
