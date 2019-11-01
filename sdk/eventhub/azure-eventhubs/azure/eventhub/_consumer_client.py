@@ -3,11 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import logging
-from typing import Any, Union, Dict, Tuple, TYPE_CHECKING
+from typing import Any, Union, Dict, Tuple, TYPE_CHECKING, Callable, List
 
-from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential
+from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, EventData
 from .client import EventHubClient
 from ._eventprocessor.event_processor import EventProcessor
+from ._eventprocessor.partition_context import PartitionContext
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
@@ -83,6 +84,7 @@ class EventHubConsumerClient(EventHubClient):
                 del eventhub_client._event_processors[(consumer_group, "-1")]
 
     def receive(self, on_event, consumer_group, **kwargs):
+        #  type: (Callable[[PartitionContext, List[EventData]], None], str, Any) -> None
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
         :param on_event: The callback function for handling received events. The callback takes two parameters:
