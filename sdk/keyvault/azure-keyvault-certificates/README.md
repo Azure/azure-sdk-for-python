@@ -279,7 +279,7 @@ from azure.keyvault.certificates.aio import CertificateClient
 
 credential = DefaultAzureCredential()
 
-certificate_client = CertificateClient(vault_url="https://iscai-key-vault-no-sd.vault.azure.net/", credential=credential)
+certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
 certificates = certificate_client.list_certificates()
 async for certificate in certificates:
