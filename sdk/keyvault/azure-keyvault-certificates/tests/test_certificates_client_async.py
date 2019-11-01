@@ -7,6 +7,8 @@ import itertools
 import hashlib
 import os
 import pytest
+import logging
+import json
 
 from azure_devtools.scenario_tests import RecordingProcessor
 from certificates_async_test_case import AsyncKeyVaultTestCase
@@ -40,6 +42,13 @@ class RetryAfterReplacer(RecordingProcessor):
             response["headers"]["retry-after"] = "0"
         return response
 
+# used for logging tests
+class MockHandler(logging.Handler):
+    def __init__(self):
+        super(MockHandler, self).__init__()
+        self.messages = []
+    def emit(self, record):
+        self.messages.append(record)
 
 class CertificateClientTests(KeyVaultTestCase):
     FILTER_HEADERS = [
@@ -731,3 +740,50 @@ class CertificateClientTests(KeyVaultTestCase):
         except Exception as ex:
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
                 raise ex
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @AsyncVaultClientPreparer(client_kwargs={'logging_enable': True})
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_logging_enabled(self, vault_client, **kwargs):
+        client = vault_client.certificates
+        mock_handler = MockHandler()
+
+        logger = logging.getLogger('azure')
+        logger.addHandler(mock_handler)
+        logger.setLevel(logging.DEBUG)
+
+        await client.create_issuer(name="cert-name", provider="Test")
+
+        for message in mock_handler.messages:
+            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+                try:
+                    body = json.loads(message.message)
+                    if body['provider'] == 'Test':
+                        return
+                except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
+                    pass
+
+        assert False, "Expected request body wasn't logged"
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @AsyncVaultClientPreparer()
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_logging_disabled(self, vault_client, **kwargs):
+        client = vault_client.certificates
+        mock_handler = MockHandler()
+
+        logger = logging.getLogger('azure')
+        logger.addHandler(mock_handler)
+        logger.setLevel(logging.DEBUG)
+
+        await client.create_issuer(name="cert-name", provider="Test")
+
+        for message in mock_handler.messages:
+            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+                try:
+                    body = json.loads(message.message)
+                    assert body["provider"] != "Test", "Client request body was logged"
+                except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
+                    pass

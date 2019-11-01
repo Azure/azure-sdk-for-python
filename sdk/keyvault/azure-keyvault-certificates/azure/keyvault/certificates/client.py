@@ -543,8 +543,8 @@ class CertificateClient(KeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
-                :start-after: [START list_certificates]
-                :end-before: [END list_certificates]
+                :start-after: [START list_properties_of_certificates]
+                :end-before: [END list_properties_of_certificates]
                 :language: python
                 :caption: List all certificates
                 :dedent: 8
@@ -978,8 +978,8 @@ class CertificateClient(KeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
-                :start-after: [START list_issuers]
-                :end-before: [END list_issuers]
+                :start-after: [START list_properties_of_issuers]
+                :end-before: [END list_properties_of_issuers]
                 :language: python
                 :caption: List issuers of a vault
                 :dedent: 8
