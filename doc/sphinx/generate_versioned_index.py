@@ -78,11 +78,10 @@ def check_package_against_omission(package_name):
     if "nspkg" in package_name:
         return False
 
-    if "azure" == package_name:
+    if package_name in ["azure", "azure-mgmt", "azure-keyvault", "azure-documentdb", "azure-servicemanagement-legacy"]:
         return False
 
-    if "azure-mgmt" == package_name:
-        return False
+
 
     return True
 
