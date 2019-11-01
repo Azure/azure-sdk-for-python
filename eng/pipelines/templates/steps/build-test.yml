@@ -10,8 +10,6 @@ parameters:
   BuildTargetingString: 'azure-*'
   ToxTestEnv: ""
   RunCoverage: ne(variables['CoverageArg'], '--disablecov')
-  RunMyPy: eq(variables['PythonVersion'], '3.7')
-  RunPylint: eq(variables['PythonVersion'], '3.7')
 
 steps:
   - pwsh: |
