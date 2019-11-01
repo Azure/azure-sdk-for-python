@@ -951,14 +951,14 @@
   },
   "azure-mgmt-appplatform": {
     "category": "Management",
-    "service_name": "App Platform",
+    "service_name": "App Service",
     "namespaces": [
       "azure.mgmt.appplatform"
     ]
   },
   "azure-mgmt-botservice": {
     "category": "Management",
-    "service_name": "Bot Services",
+    "service_name": "Bot Service",
     "namespaces": [
       "azure.mgmt.botservice"
     ]
