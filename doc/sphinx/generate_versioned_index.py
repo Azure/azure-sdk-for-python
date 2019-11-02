@@ -146,7 +146,7 @@ def write_landing_pages(categorized_menu_items):
 
             # write the other packages title if it exists
             if len(categorized_menu_items[service]["Other"]) > 0:
-                content += MANAGEMENT_TITLE
+                content += OTHER_TITLE
 
             # write the other packages out
             for pkg in sorted(categorized_menu_items[service]["Other"]):
