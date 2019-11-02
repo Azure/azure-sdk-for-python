@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .text_analytics_client import TextAnalyticsClient
-from .version import VERSION
+from ._text_analytics_client import TextAnalyticsClient
+from ._version import VERSION
 
 __all__ = ['TextAnalyticsClient']
 
