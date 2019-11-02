@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9f631b58?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer9f631b58?restype=container
   response:
     body:
       string: ''
@@ -41,7 +41,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainersource9f631b58?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainersource9f631b58?restype=container
   response:
     body:
       string: ''
@@ -81,7 +81,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9f631b58/blob9f631b58
+    uri: https://storagename.blob.core.windows.net/utcontainer9f631b58/blob9f631b58
   response:
     body:
       string: ''
@@ -124,7 +124,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/utcontainer9f631b58/blob9f631b58?comp=page
+    uri: https://storagename.blob.core.windows.net/utcontainer9f631b58/blob9f631b58?comp=page
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>SequenceNumberConditionNotMet</Code><Message>The

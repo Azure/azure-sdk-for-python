@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from ._version import VERSION
 from ._retry_utility import ConnectionRetryPolicy
 from .container import ContainerProxy
 from .cosmos_client import CosmosClient
@@ -40,7 +41,6 @@ from .documents import (
 )
 from .partition_key import PartitionKey
 from .permission import Permission
-from .version import VERSION
 
 __all__ = (
     "CosmosClient",

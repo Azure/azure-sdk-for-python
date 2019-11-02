@@ -7,7 +7,7 @@ from azure.cosmos.http_constants import HttpHeaders
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import test_config
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 import azure.cosmos._synchronized_request as synchronized_request
 from azure.cosmos import _retry_utility
@@ -58,7 +58,7 @@ class SessionTests(unittest.TestCase):
 
     def _MockExecuteFunctionSessionReadFailureOnce(self, function, *args, **kwargs):
         response = test_config.FakeResponse({HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
-        raise errors.CosmosHttpResponseError(
+        raise exceptions.CosmosHttpResponseError(
             status_code=StatusCodes.NOT_FOUND,
             message="Read Session not available",
             response=response)
@@ -70,7 +70,7 @@ class SessionTests(unittest.TestCase):
         _retry_utility.ExecuteFunction = self._MockExecuteFunctionSessionReadFailureOnce
         try:
             self.created_collection.read_item(item=created_document['id'], partition_key='mypk')
-        except errors.CosmosHttpResponseError as e:
+        except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(self.client.client_connection.session.get_session_token(
                 'dbs/' + self.created_db.id + '/colls/' + self.created_collection.id), "")
             self.assertEqual(e.status_code, StatusCodes.NOT_FOUND)
@@ -88,7 +88,7 @@ class SessionTests(unittest.TestCase):
         try:
             self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
             self.fail()
-        except errors.CosmosHttpResponseError as e:
+        except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.http_error_message, "Could not parse the received session token: 2")
             self.assertEqual(e.status_code, StatusCodes.INTERNAL_SERVER_ERROR)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction

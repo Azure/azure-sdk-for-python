@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/acontainer8f8b1b31?restype=container
+    uri: https://storagename.blob.core.windows.net/acontainer8f8b1b31?restype=container
   response:
     body:
       string: ''
@@ -47,7 +47,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://blobstoragename.blob.core.windows.net/acontainer8f8b1b31?restype=container&comp=acl
+    uri: https://storagename.blob.core.windows.net/acontainer8f8b1b31?restype=container&comp=acl
   response:
     body:
       string: ''
@@ -81,7 +81,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://blobstoragename.blob.core.windows.net/acontainer8f8b1b31?restype=container&comp=acl
+    uri: https://storagename.blob.core.windows.net/acontainer8f8b1b31?restype=container&comp=acl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>0</Id><AccessPolicy><Start>2019-10-25T17:59:52.0000000Z</Start><Expiry>2019-10-25T19:00:52.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier><SignedIdentifier><Id>1</Id><AccessPolicy><Start>2019-10-25T17:59:52.0000000Z</Start><Expiry>2019-10-25T19:00:52.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"

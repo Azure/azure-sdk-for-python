@@ -25,7 +25,7 @@ import pytest
 
 import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 import azure.cosmos._constants as constants
 from azure.cosmos.http_constants import StatusCodes
 import azure.cosmos._global_endpoint_manager as global_endpoint_manager
@@ -152,13 +152,13 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         else:
             self.endpoint_discovery_retry_count += 1
             location_changed = True
-            raise errors.CosmosHttpResponseError(
+            raise exceptions.CosmosHttpResponseError(
                 status_code=StatusCodes.FORBIDDEN,
                 message="Forbidden",
                 response=test_config.FakeResponse({'x-ms-substatus' : 3}))
 
     def MockGetDatabaseAccountStub(self, endpoint):
-        raise errors.CosmosHttpResponseError(
+        raise exceptions.CosmosHttpResponseError(
             status_code=StatusCodes.SERVICE_UNAVAILABLE, message="Service unavailable")
     
     def MockCreateDatabase(self, client, database):

@@ -26,10 +26,8 @@ from azure.storage.blob.aio import (
     ContainerClient,
     BlobClient,
 )
-from testcase import GlobalStorageAccountPreparer
-from asyncblobtestcase import (
-    AsyncBlobTestCase,
-)
+from _shared.testcase import GlobalStorageAccountPreparer
+from _shared.asynctestcase import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -49,13 +47,13 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageGetBlobTestAsync(AsyncBlobTestCase):
+class StorageGetBlobTestAsync(AsyncStorageTestCase):
 
     # --Helpers-----------------------------------------------------------------
 
     async def _setup(self, name, key):
         self.bsc = BlobServiceClient(
-            self._account_url(name),
+            self.account_url(name, "blob"),
             credential=key,
             max_single_get_size=32 * 1024,
             max_chunk_get_size=4 * 1024,
@@ -100,7 +98,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
     # -- Get test cases for blobs ----------------------------------------------
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_unicode_get_blob_unicode_data_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -117,7 +115,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(await content.readall(), blob_data)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_unicode_get_blob_binary_data_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -136,7 +134,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(await content.readall(), binary_data)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_no_content_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -152,12 +150,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(blob_data, await content.readall())
         self.assertEqual(0, content.properties.size)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_bytes_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -169,12 +166,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(self.byte_data, content)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_ranged_get_blob_to_bytes_with_single_byte_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -195,7 +191,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(self.byte_data[5], content[0])
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_ranged_get_blob_to_bytes_with_zero_byte_async(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
         blob_data = b''
@@ -214,7 +210,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(StorageErrorCode.invalid_range, e.exception.error_code)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_ranged_get_blob_with_missing_start_range_async(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account.name, storage_account_key)
         blob_data = b'foobar'
@@ -227,12 +223,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         with self.assertRaises(ValueError):
             await blob.download_blob(length=3)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_bytes_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -248,12 +243,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(self.byte_data, content)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_bytes_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -277,7 +271,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_bytes_non_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -301,7 +295,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_bytes_small_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -328,12 +322,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
             self.config.max_single_get_size,
             progress)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_stream_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -352,12 +345,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
             self.assertEqual(self.byte_data, actual)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_stream_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -387,7 +379,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_stream_non_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -418,7 +410,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_stream_small_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -453,12 +445,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
             progress)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_ranged_get_blob_to_path_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -478,12 +469,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
             self.assertEqual(self.byte_data[1:end_range], actual)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_ranged_get_blob_to_path_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -520,7 +510,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_ranged_get_blob_to_path_small_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -540,7 +530,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_ranged_get_blob_to_path_non_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -559,12 +549,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
             self.assertEqual(self.byte_data[1:4], actual)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_ranged_get_blob_to_path_invalid_range_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -588,12 +577,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
             self.assertEqual(blob_data[1:blob_size], actual)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_ranged_get_blob_to_path_invalid_range_non_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -618,12 +606,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         self._teardown(FILE_PATH)
             # Assert
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_text_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -639,12 +626,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(text_data, content)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_text_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -676,7 +662,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_text_non_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -708,7 +694,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_text_small_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -737,7 +723,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_text_with_encoding_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -754,7 +740,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(text, content)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_text_with_encoding_and_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -783,7 +769,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
             progress)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_non_seekable_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -803,12 +789,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
             self.assertEqual(self.byte_data, actual)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_non_seekable_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -825,7 +810,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_stream_exact_get_size_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -859,7 +844,7 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         self._teardown(FILE_PATH)
 
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_exact_get_size_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -886,12 +871,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
             self.config.max_single_get_size,
             progress)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_exact_chunk_size_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -920,12 +904,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
             self.config.max_single_get_size,
             progress)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_to_stream_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -944,12 +927,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
             self.assertEqual(self.byte_data, actual)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -961,12 +943,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(self.byte_data, content)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_range_to_stream_with_overall_md5_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         # Arrange
         await self._setup(storage_account.name, storage_account_key)
@@ -987,12 +968,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         self.assertEqual(downloader.size, 1024)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_range_with_overall_md5_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         await self._setup(storage_account.name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
@@ -1009,12 +989,11 @@ class StorageGetBlobTestAsync(AsyncBlobTestCase):
         # Assert
         self.assertEqual(b'MDAwMDAwMDA=', content.properties.content_settings.content_md5)
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncBlobTestCase.await_prepared_test
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_range_with_range_md5_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            pytest.skip("live only")
 
         await self._setup(storage_account.name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)

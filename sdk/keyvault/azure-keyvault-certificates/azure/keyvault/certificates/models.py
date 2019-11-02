@@ -75,7 +75,7 @@ class AdministratorDetails(object):
         return self._phone
 
 
-class CertificateError(object):
+class CertificateOperationError(object):
     """The key vault server error.
 
     :param str code: The error code.
@@ -92,7 +92,7 @@ class CertificateError(object):
 
     def __repr__(self):
         # type () -> str
-        return "CertificateError({}, {}, {})".format(self.code, self.message, self.inner_error)[:1024]
+        return "CertificateOperationError({}, {}, {})".format(self.code, self.message, self.inner_error)[:1024]
 
     @classmethod
     def _from_error_bundle(cls, error_bundle):
@@ -382,7 +382,7 @@ class CertificateOperation(object):
     :param str status: Status of the certificate operation.
     :param str status_details: The status details of the certificate operation
     :param error: Error encountered, if any, during the certificate operation.
-    :type error: ~azure.keyvault.certificates.CertificateError
+    :type error: ~azure.keyvault.certificates.CertificateOperationError
     :param str target: Location which contains the result of the certificate operation.
     :param str request_id: Identifier for the certificate operation.
     """
@@ -444,7 +444,7 @@ class CertificateOperation(object):
             cancellation_requested=certificate_operation_bundle.cancellation_requested,
             status=certificate_operation_bundle.status,
             status_details=certificate_operation_bundle.status_details,
-            error=(CertificateError._from_error_bundle(certificate_operation_bundle.error)  # pylint: disable=protected-access
+            error=(CertificateOperationError._from_error_bundle(certificate_operation_bundle.error)  # pylint: disable=protected-access
                    if certificate_operation_bundle.error else None),
             target=certificate_operation_bundle.target,
             request_id=certificate_operation_bundle.request_id,
@@ -576,14 +576,12 @@ class CertificatePolicy(object):
     :param str certificate_type: Type of certificate to be requested from the issuer provider.
     :param bool certificate_transparency: Indicates if the certificates generated under this policy
         should be published to certificate transparency logs.
-
-    Keyword arguments
-        - *san_emails(Iterable[str])* - Subject alternative emails of the X509 object. Only one out
-            of san_emails, san_dns_names, and san_upns may be set.
-        - *san_dns_names(Iterable[str])* - Subject alternative DNS names of the X509 object. Only one out
-            of san_emails, san_dns_names, and san_upns may be set.
-        - *san_upns(Iterable[str])* - Subject alternative user principal names of the X509 object. Only one out
-            of san_emails, san_dns_names, and san_upns may be set.
+    :keyword Iterable[str] san_emails: Subject alternative emails of the X509 object. Only one out
+        of san_emails, san_dns_names, and san_upns may be set.
+    :keyword Iterable[str] san_dns_names: Subject alternative DNS names of the X509 object. Only one out
+        of san_emails, san_dns_names, and san_upns may be set.
+    :keyword Iterable[str] san_upns: Subject alternative user principal names of the X509 object. Only one out
+        of san_emails, san_dns_names, and san_upns may be set.
     """
 
     # pylint:disable=too-many-instance-attributes

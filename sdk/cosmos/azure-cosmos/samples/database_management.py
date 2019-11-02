@@ -1,5 +1,5 @@
 import azure.cosmos.cosmos_client as cosmos_client
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 
 import config
 
@@ -52,7 +52,7 @@ def create_database(client, id):
         client.create_database(id=id)
         print('Database with id \'{0}\' created'.format(id))
 
-    except errors.CosmosResourceExistsError:
+    except exceptions.CosmosResourceExistsError:
         print('A database with id \'{0}\' already exists'.format(id))             
 
 
@@ -63,7 +63,7 @@ def read_database(client, id):
         database = client.get_database_client(id)
         print('Database with id \'{0}\' was found, it\'s link is {1}'.format(id, database.database_link))
 
-    except errors.CosmosResourceNotFoundError:
+    except exceptions.CosmosResourceNotFoundError:
         print('A database with id \'{0}\' does not exist'.format(id))   
 
 
@@ -89,7 +89,7 @@ def delete_database(client, id):
 
         print('Database with id \'{0}\' was deleted'.format(id))
 
-    except errors.CosmosResourceNotFoundError:
+    except exceptions.CosmosResourceNotFoundError:
         print('A database with id \'{0}\' does not exist'.format(id))
 
 
@@ -111,7 +111,7 @@ def run_sample():
         # delete database by id
         delete_database(client, DATABASE_ID)
 
-    except errors.CosmosHttpResponseError as e:
+    except exceptions.CosmosHttpResponseError as e:
         print('\nrun_sample has caught an error. {0}'.format(e.message))
     
     finally:
