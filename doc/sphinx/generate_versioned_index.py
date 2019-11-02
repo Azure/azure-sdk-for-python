@@ -36,6 +36,28 @@ TOC_TEMPLATE = """
 
 """
 
+
+CLIENT_TITLE = """
+***************
+Client Packages
+***************
+
+"""
+
+MANAGEMENT_TITLE = """
+*******************
+Management Packages
+*******************
+
+"""
+
+OTHER_TITLE = """
+**************
+Other Packages
+**************
+
+"""
+
 LANDING_START = """
 {service_name_title_indicator}
 {service_name}
@@ -78,10 +100,7 @@ def check_package_against_omission(package_name):
     if "nspkg" in package_name:
         return False
 
-    if "azure" == package_name:
-        return False
-
-    if "azure-mgmt" == package_name:
+    if package_name in ["azure", "azure-mgmt", "azure-keyvault", "azure-documentdb", "azure-mgmt-documentdb", "azure-servicemanagement-legacy"]:
         return False
 
     return True
@@ -106,9 +125,33 @@ def get_repo_packages(base_dir):
 def write_landing_pages(categorized_menu_items):
     for service in categorized_menu_items:
         with open(os.path.join(docs_folder, LANDING_PAGE_LOCATION.format("-".join(service.split(' ')))), 'w') as f:
+            # write header
             content = LANDING_START.format(service_name = service, service_name_title_indicator = "".join(["="] * len(service)))
-            for pkg in categorized_menu_items[service]:
+
+            # write client packages title if it exists
+            if len(categorized_menu_items[service]["Client"]) > 0:
+                content += CLIENT_TITLE
+
+            # write the client packages out
+            for pkg in sorted(categorized_menu_items[service]["Client"]):
                 content += LANDING_TEMPLATE.format(package_name = pkg, package_name_title_indicator="".join(["-"] * len(pkg)))
+
+            # write the management packages title if it exists
+            if len(categorized_menu_items[service]["Management"]) > 0:
+                content += MANAGEMENT_TITLE
+
+            # write the management packages out
+            for pkg in sorted(categorized_menu_items[service]["Management"]):
+                content += LANDING_TEMPLATE.format(package_name = pkg, package_name_title_indicator="".join(["-"] * len(pkg)))
+
+            # write the other packages title if it exists
+            if len(categorized_menu_items[service]["Other"]) > 0:
+                content += OTHER_TITLE
+
+            # write the other packages out
+            for pkg in sorted(categorized_menu_items[service]["Other"]):
+                content += LANDING_TEMPLATE.format(package_name = pkg, package_name_title_indicator="".join(["-"] * len(pkg)))
+
             f.write(content)
 
 def write_toc_tree(categorized_menu_items):
@@ -122,17 +165,27 @@ def write_toc_tree(categorized_menu_items):
 
 
 def get_categorized_menu_items(package_names):
-    categorized_menu_items = {"Other": []}
+    categorized_menu_items = {}
 
     for pkg in package_names:
         # add to the categorized menu items
         if pkg in service_mapping:
             pkg_meta = service_mapping[pkg]
             if pkg_meta["service_name"] not in categorized_menu_items.keys():
-                categorized_menu_items[pkg_meta["service_name"]] = []
-            categorized_menu_items[pkg_meta["service_name"]].append(pkg)
+                categorized_menu_items[pkg_meta["service_name"]] = {"Client":[], "Management":[], "Other": []}
+
+            try:
+                categorized_menu_items[pkg_meta["service_name"]][pkg_meta["category"]].append(pkg)
+            except Exception as e:
+                print(pkg)
+                print(pkg_meta["category"])
+                print(pkg_meta["service_name"])
+                print(categorized_menu_items[pkg_meta["service_name"]])
+                
+                exit(1)
+
         else:
-            categorized_menu_items["Other"].append(pkg)
+            categorized_menu_items["Other"]["Other"].append(pkg)
 
     return categorized_menu_items
     
