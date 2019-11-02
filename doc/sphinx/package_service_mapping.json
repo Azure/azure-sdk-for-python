@@ -1020,7 +1020,7 @@
     "service_name": "Service Fabric"
   },
   "azure-servicemanagement-legacy": {
-    "category": "Other",
+    "category": "Client",
     "service_name": "Other"
   }
 }
