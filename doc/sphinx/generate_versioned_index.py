@@ -36,6 +36,21 @@ TOC_TEMPLATE = """
 
 """
 
+
+CLIENT_TITLE = """
+***************
+Client Packages
+***************
+
+"""
+
+MANAGEMENT_TITLE = """
+***************
+Management Packages
+***************
+
+"""
+
 LANDING_START = """
 {service_name_title_indicator}
 {service_name}
@@ -78,10 +93,8 @@ def check_package_against_omission(package_name):
     if "nspkg" in package_name:
         return False
 
-    if package_name in ["azure", "azure-mgmt", "azure-keyvault", "azure-documentdb", "azure-servicemanagement-legacy"]:
+    if package_name in ["azure", "azure-mgmt", "azure-keyvault", "azure-documentdb", "azure-mgmt-documentdb", "azure-servicemanagement-legacy"]:
         return False
-
-
 
     return True
 
