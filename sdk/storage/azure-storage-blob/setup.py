@@ -69,7 +69,7 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ascl@microsoft.com',
-    url='https://github.com/Azure/azure-storage-python',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
