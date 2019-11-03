@@ -151,15 +151,6 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         :type partition_key: str
         :return: an EventDataBatch instance
         :rtype: ~azure.eventhub.EventDataBatch
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START eventhub_client_async_create_batch]
-                :end-before: [END eventhub_client_async_create_batch]
-                :language: python
-                :dedent: 4
-                :caption: Create EventDataBatch object within limited size
-
         """
 
         if not self._max_message_size_on_link:
@@ -192,15 +183,6 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                 ~azure.eventhub.EventDataError, ~azure.eventhub.EventDataSendError, ~azure.eventhub.EventHubError
         :return: None
         :rtype: None
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START eventhub_client_async_send]
-                :end-before: [END eventhub_client_async_send]
-                :language: python
-                :dedent: 4
-                :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
-
         """
         # Tracing code
         span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
@@ -241,14 +223,5 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         """
         Close down the handler. If the handler has already closed,
         this will be a no op.
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START eventhub_client_async_sender_close]
-                :end-before: [END eventhub_client_async_sender_close]
-                :language: python
-                :dedent: 4
-                :caption: Close down the handler.
-
         """
         await super(EventHubProducer, self).close()

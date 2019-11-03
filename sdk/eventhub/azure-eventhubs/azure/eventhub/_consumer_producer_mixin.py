@@ -94,15 +94,6 @@ class ConsumerProducerMixin(object):
         """
         Close down the handler. If the handler has already closed,
         this will be a no op.
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START eventhub_client_receiver_close]
-                :end-before: [END eventhub_client_receiver_close]
-                :language: python
-                :dedent: 4
-                :caption: Close down the handler.
-
         """
         if self._handler:
             self._handler.close()  # this will close link if sharing connection. Otherwise close connection

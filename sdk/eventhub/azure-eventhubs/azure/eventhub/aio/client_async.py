@@ -225,7 +225,6 @@ class EventHubClient(EventHubClientAbstract):
         :type track_last_enqueued_event_properties: bool
         :param loop: An event loop. If not specified the default event loop will be used.
         :rtype: ~azure.eventhub.aio.consumer_async.EventHubConsumer
-
         """
         owner_level = kwargs.get("owner_level")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
@@ -258,15 +257,6 @@ class EventHubClient(EventHubClientAbstract):
         :type send_timeout: float
         :param loop: An event loop. If not specified the default event loop will be used.
         :rtype: ~azure.eventhub.aio.producer_async.EventHubProducer
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START create_eventhub_client_async_sender]
-                :end-before: [END create_eventhub_client_async_sender]
-                :language: python
-                :dedent: 4
-                :caption: Add an async producer to the client to send EventData.
-
         """
 
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
