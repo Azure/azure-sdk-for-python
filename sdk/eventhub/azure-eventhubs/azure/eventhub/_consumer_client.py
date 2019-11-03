@@ -184,9 +184,9 @@ class EventHubConsumerClient(EventHubClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
-                :start-after: [START eventhub_consumer_client_close_async]
-                :end-before: [END eventhub_consumer_client_close_async]
+            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
+                :start-after: [START eventhub_consumer_client_close_sync]
+                :end-before: [END eventhub_consumer_client_close_sync]
                 :language: python
                 :dedent: 4
                 :caption: Close down the client.
