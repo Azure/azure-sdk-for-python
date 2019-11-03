@@ -98,15 +98,6 @@ class ConsumerProducerMixin(object):
         """
         Close down the handler. If the handler has already closed,
         this will be a no op.
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START eventhub_client_async_receiver_close]
-                :end-before: [END eventhub_client_async_receiver_close]
-                :language: python
-                :dedent: 4
-                :caption: Close down the handler.
-
         """
         if self._handler:
             await self._handler.close_async()

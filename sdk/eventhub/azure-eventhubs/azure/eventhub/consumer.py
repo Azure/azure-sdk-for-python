@@ -235,15 +235,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         :rtype: list[~azure.eventhub.common.EventData]
         :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
                 ~azure.eventhub.EventHubError
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START eventhub_client_sync_receive]
-                :end-before: [END eventhub_client_sync_receive]
-                :language: python
-                :dedent: 4
-                :caption: Receive events from the EventHub.
-
         """
         self._check_closed()
 
@@ -257,15 +248,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         """
         Close down the handler. If the handler has already closed,
         this will be a no op.
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START eventhub_client_receiver_close]
-                :end-before: [END eventhub_client_receiver_close]
-                :language: python
-                :dedent: 4
-                :caption: Close down the handler.
-
         """
         super(EventHubConsumer, self).close()
 

@@ -24,6 +24,8 @@ class Sqlite3PartitionManager(PartitionManager):
     Sqlite3 is a mini sql database that runs in memory or files.
     This is for test only.
 
+    :param db_filename: name of file that saves the sql data. Sqlite3 will run in memory without
+     a file when db_filename is ":memory:".
 
     """
     primary_keys_dict = {"fully_qualified_namespace": "text", "eventhub_name": "text",
@@ -42,10 +44,6 @@ class Sqlite3PartitionManager(PartitionManager):
 
     def __init__(self, db_filename: str = ":memory:",
                  ownership_table: str = "ownership", checkpoint_table: str = "checkpoint"):
-        """
-        :param db_filename: name of file that saves the sql data.
-         Sqlite3 will run in memory without a file when db_filename is ":memory:".
-        """
         super(Sqlite3PartitionManager, self).__init__()
         self.ownership_table = _check_table_name(ownership_table)
         self.checkpoint_table = _check_table_name(checkpoint_table)
