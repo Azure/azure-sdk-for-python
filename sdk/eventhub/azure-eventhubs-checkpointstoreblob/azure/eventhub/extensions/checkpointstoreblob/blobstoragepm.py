@@ -5,6 +5,8 @@
 from typing import Dict
 import logging
 import time
+import calendar
+from datetime import datetime
 from collections import defaultdict
 
 from azure.eventhub import PartitionManager, OwnershipLostError  # type: ignore # pylint:disable=no-name-in-module
@@ -33,12 +35,20 @@ class BlobPartitionManager(PartitionManager):
         self._cached_blob_clients = defaultdict()  # type:Dict[str, BlobClient]
 
     @staticmethod
+    def _utc_to_local(utc_dt):
+        # get integer timestamp to avoid precision lost
+        timestamp = calendar.timegm(utc_dt.timetuple())
+        local_dt = datetime.fromtimestamp(timestamp)
+        return local_dt.replace(microsecond=utc_dt.microsecond)
+
+    @staticmethod
     def _to_timestamp(date):
         timestamp = None
         try:
             timestamp = date.timestamp()
         except AttributeError:  # python2.7 compatible
-            timestamp = time.mktime(date.timetuple()) + date.microsecond / 1e6
+            timestamp = time.mktime(BlobPartitionManager._utc_to_local(date).timetuple())\
+                        + date.microsecond / 1e6
         return timestamp
 
     def _get_blob_client(self, blob_name):
