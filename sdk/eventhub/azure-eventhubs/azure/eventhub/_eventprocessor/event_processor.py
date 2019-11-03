@@ -71,22 +71,17 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         self._working_threads = {}  # type: Dict[str, threading.Thread]
         self._threads_stop_flags = {}  # type: Dict[str, bool]
 
-        self._callback_queue = queue.Queue(maxsize=10000)  # Right now the limitation of receiving speed is ~10k
+        self._callback_queue = queue.Queue(maxsize=100)  # Right now the limitation of receiving speed is ~10k
 
     def __repr__(self):
         return 'EventProcessor: id {}'.format(self._id)
 
     def _cancel_tasks_for_partitions(self, to_cancel_partitions):
-        to_stop_partition_threads = []
         with self._lock:
             for partition_id in to_cancel_partitions:
                 if partition_id in self._working_threads:
-                    thread = self._working_threads.pop(partition_id)
-                    self._threads_stop_flags[partition_id] = True
-                    to_stop_partition_threads.append((partition_id, thread))
-            for partition_id, thread in to_stop_partition_threads:
-                thread.join()
-                del self._threads_stop_flags[partition_id]
+                    self._threads_stop_flags[partition_id] = True  # the cancellation token sent to thread to stop
+
         if to_cancel_partitions:
             log.info("EventProcesor %r has cancelled partitions %r", self._id, to_cancel_partitions)
 
@@ -118,106 +113,118 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             with child:
                 yield
 
+    def _process_error(self, partition_context, err):
+        log.warning(
+            "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+            " has met an error. The exception is %r.",
+            partition_context.owner_id,
+            partition_context.eventhub_name,
+            partition_context.partition_id,
+            partition_context.consumer_group_name,
+            err
+        )
+        if self._error_handler:
+            self._callback_queue.put((self._error_handler, partition_context, err), block=True)
+
+    def _process_close(self, partition_context, reason):
+        if self._partition_close_handler:
+            log.info(
+                "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+                " is being closed. Reason is: %r",
+                partition_context.owner_id,
+                partition_context.eventhub_name,
+                partition_context.partition_id,
+                partition_context.consumer_group_name,
+                reason
+            )
+            if self._partition_close_handler:
+                self._callback_queue.put((self._partition_close_handler, partition_context, reason), block=True)
+
+    def _handle_callback(self, callback_and_args):
+        callback = callback_and_args[0]
+        try:
+            callback(*callback_and_args[1:])
+        except Exception as exp:  # pylint:disable=broad-except
+            partition_context = callback_and_args[1]
+            if callback != self._error_handler:
+                self._process_error(partition_context, exp)
+            else:
+                log.warning(
+                    "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+                    " has another error during running process_error(). The exception is %r.",
+                    partition_context.owner_id,
+                    partition_context.eventhub_name,
+                    partition_context.partition_id,
+                    partition_context.consumer_group_name,
+                    exp
+                )
+
     def _receive(self, partition_id, checkpoint=None):  # pylint: disable=too-many-statements
-        log.info("start ownership %r, checkpoint %r", partition_id, checkpoint)
-        namespace = self._namespace
-        eventhub_name = self._eventhub_name
-        consumer_group_name = self._consumer_group_name
-        owner_id = self._id
-        checkpoint_offset = checkpoint.get("offset") if checkpoint else None
-        if checkpoint_offset:
-            initial_event_position = EventPosition(checkpoint_offset)
-        elif isinstance(self._initial_event_position, EventPosition):
-            initial_event_position = self._initial_event_position
-        elif isinstance(self._initial_event_position, dict):
-            initial_event_position = self._initial_event_position.get(partition_id, EventPosition("-1"))
-        else:
-            initial_event_position = EventPosition(self._initial_event_position)
-        if partition_id in self._partition_contexts:
-            partition_context = self._partition_contexts[partition_id]
-        else:
-            partition_context = PartitionContext(
-                namespace,
-                eventhub_name,
+        try:  # pylint:disable =too-many-nested-blocks
+            log.info("start ownership %r, checkpoint %r", partition_id, checkpoint)
+            namespace = self._namespace
+            eventhub_name = self._eventhub_name
+            consumer_group_name = self._consumer_group_name
+            owner_id = self._id
+            checkpoint_offset = checkpoint.get("offset") if checkpoint else None
+            if checkpoint_offset:
+                initial_event_position = EventPosition(checkpoint_offset)
+            elif isinstance(self._initial_event_position, EventPosition):
+                initial_event_position = self._initial_event_position
+            elif isinstance(self._initial_event_position, dict):
+                initial_event_position = self._initial_event_position.get(partition_id, EventPosition("-1"))
+            else:
+                initial_event_position = EventPosition(self._initial_event_position)
+            if partition_id in self._partition_contexts:
+                partition_context = self._partition_contexts[partition_id]
+            else:
+                partition_context = PartitionContext(
+                    namespace,
+                    eventhub_name,
+                    consumer_group_name,
+                    partition_id,
+                    owner_id,
+                    self._partition_manager
+                )
+                self._partition_contexts[partition_id] = partition_context
+
+            partition_consumer = self._eventhub_client._create_consumer(  # pylint: disable=protected-access
                 consumer_group_name,
                 partition_id,
-                owner_id,
-                self._partition_manager
+                initial_event_position,
+                owner_level=self._owner_level,
+                track_last_enqueued_event_properties=self._track_last_enqueued_event_properties,
+                prefetch=self._prefetch,
             )
-            self._partition_contexts[partition_id] = partition_context
 
-        partition_consumer = self._eventhub_client._create_consumer(  # pylint: disable=protected-access
-            consumer_group_name,
-            partition_id,
-            initial_event_position,
-            owner_level=self._owner_level,
-            track_last_enqueued_event_properties=self._track_last_enqueued_event_properties,
-            prefetch=self._prefetch,
-        )
-
-        def process_error(err):
-            log.warning(
-                "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
-                " has met an error. The exception is %r.",
-                owner_id, eventhub_name, partition_id, consumer_group_name, err
-            )
-            if self._error_handler:
-                try:
-                    self._callback_queue.put((self._error_handler, partition_context, err), block=True)
-                except Exception as err_again:  # pylint:disable=broad-except
-                    log.warning(
-                        "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
-                        " has another error during running process_error(). The exception is %r.",
-                        owner_id, eventhub_name, partition_id, consumer_group_name, err_again
-                    )
-
-        def close(reason):
-            if self._partition_close_handler:
-                log.info(
-                    "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
-                    " is being closed. Reason is: %r",
-                    owner_id, eventhub_name, partition_id, consumer_group_name, reason
-                )
-                try:
-                    self._callback_queue.put((self._partition_close_handler, partition_context, reason), block=True)
-                except Exception as err:  # pylint:disable=broad-except
-                    log.warning(
-                        "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
-                        " has an error during running close(). The exception is %r.",
-                        owner_id, eventhub_name, partition_id, consumer_group_name, err
-                    )
-
-        try:
-            if self._partition_initialize_handler:
-                try:
+            try:
+                if self._partition_initialize_handler:
                     self._callback_queue.put((self._partition_initialize_handler, partition_context), block=True)
-                except Exception as err:  # pylint:disable=broad-except
-                    log.warning(
-                        "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
-                        " has an error during running initialize(). The exception is %r.",
-                        owner_id, eventhub_name, partition_id, consumer_group_name, err
-                    )
-            while self._running and not self._threads_stop_flags[partition_id]:
-                try:
-                    events = partition_consumer.receive()
-                    if events:
-                        self._last_enqueued_event_properties[partition_id] = \
-                            partition_consumer.last_enqueued_event_properties
-                        with self._context(events):
-                            self._callback_queue.put((self._event_handler, partition_context, events), block=True)
-                except Exception as error:  # pylint:disable=broad-except
-                    process_error(error)
-                    break
-                    # Go to finally to stop this partition processor.
-                    # Later an EventProcessor(this one or another one) will pick up this partition again.
+                while self._threads_stop_flags[partition_id] is False:
+                    try:
+                        events = partition_consumer.receive()
+                        if events:
+                            if self._track_last_enqueued_event_properties:
+                                self._last_enqueued_event_properties[partition_id] = \
+                                    partition_consumer.last_enqueued_event_properties
+                            with self._context(events):
+                                self._callback_queue.put((self._event_handler, partition_context, events), block=True)
+                    except Exception as error:  # pylint:disable=broad-except
+                        self._process_error(partition_context, error)
+                        break
+                        # Go to finally to stop this partition processor.
+                        # Later an EventProcessor(this one or another one) will pick up this partition again.
+            finally:
+                partition_consumer.close()
+                if self._running:
+                    # Event processor is running but the partition consumer has been stopped.
+                    self._process_close(partition_context, CloseReason.OWNERSHIP_LOST)
+                else:
+                    self._process_close(partition_context, CloseReason.SHUTDOWN)
         finally:
-            if self._running and self._threads_stop_flags[partition_id]:
-                # Event processor is running but the partition consumer has been stopped.
-                close(CloseReason.OWNERSHIP_LOST)
-            else:
-                close(CloseReason.SHUTDOWN)
-
-            partition_consumer.close()
+            with self._lock:
+                del self._working_threads[partition_id]
+                self._threads_stop_flags[partition_id] = True
 
     def _start(self):
         """Start the EventProcessor.
@@ -228,35 +235,32 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         :return: None
 
         """
-        log.info("EventProcessor %r is being started", self._id)
         ownership_manager = OwnershipManager(self._eventhub_client, self._consumer_group_name, self._id,
                                              self._partition_manager, self._ownership_timeout, self._partition_id)
-        if not self._running:
-            self._running = True
-            while self._running:
-                try:
-                    checkpoints = ownership_manager.get_checkpoints() if self._partition_manager else None
-                    claimed_partition_ids = ownership_manager.claim_ownership()
-                    if claimed_partition_ids:
-                        to_cancel_list = set(self._working_threads.keys()) - set(claimed_partition_ids)
-                        self._create_tasks_for_claimed_ownership(claimed_partition_ids, checkpoints)
-                    else:
-                        log.info("EventProcessor %r hasn't claimed an ownership. It keeps claiming.", self._id)
-                        to_cancel_list = set(self._working_threads.keys())
-                    if to_cancel_list:
-                        self._cancel_tasks_for_partitions(to_cancel_list)
-                except Exception as err:  # pylint:disable=broad-except
-                    log.warning("An exception (%r) occurred during balancing and claiming ownership for "
-                                "eventhub %r consumer group %r. Retrying after %r seconds",
-                                err, self._eventhub_name, self._consumer_group_name, self._polling_interval)
-                    # ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
-                    # when there are load balancing and/or checkpointing (partition_manager isn't None).
-                    # They're swallowed here to retry every self._polling_interval seconds.
-                    # Meanwhile this event processor won't lose the partitions it has claimed before.
-                    # If it keeps failing, other EventProcessors will start to claim ownership of the partitions
-                    # that this EventProcessor is working on. So two or multiple EventProcessors may be working
-                    # on the same partition.
-                time.sleep(self._polling_interval)
+        while self._running:
+            try:
+                checkpoints = ownership_manager.get_checkpoints() if self._partition_manager else None
+                claimed_partition_ids = ownership_manager.claim_ownership()
+                if claimed_partition_ids:
+                    to_cancel_list = set(self._working_threads.keys()) - set(claimed_partition_ids)
+                    self._create_tasks_for_claimed_ownership(claimed_partition_ids, checkpoints)
+                else:
+                    log.info("EventProcessor %r hasn't claimed an ownership. It keeps claiming.", self._id)
+                    to_cancel_list = set(self._working_threads.keys())
+                if to_cancel_list:
+                    self._cancel_tasks_for_partitions(to_cancel_list)
+            except Exception as err:  # pylint:disable=broad-except
+                log.warning("An exception (%r) occurred during balancing and claiming ownership for "
+                            "eventhub %r consumer group %r. Retrying after %r seconds",
+                            err, self._eventhub_name, self._consumer_group_name, self._polling_interval)
+                # ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
+                # when there are load balancing and/or checkpointing (partition_manager isn't None).
+                # They're swallowed here to retry every self._polling_interval seconds.
+                # Meanwhile this event processor won't lose the partitions it has claimed before.
+                # If it keeps failing, other EventProcessors will start to claim ownership of the partitions
+                # that this EventProcessor is working on. So two or multiple EventProcessors may be working
+                # on the same partition.
+            time.sleep(self._polling_interval)
 
     def _get_last_enqueued_event_properties(self, partition_id):
         if partition_id in self._working_threads and partition_id in self._last_enqueued_event_properties:
@@ -265,20 +269,21 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
 
     def start(self):
         if not self._running:
+            log.info("EventProcessor %r is being started", self._id)
+            self._running = True
             thread = threading.Thread(target=self._start)
             thread.daemon = True
             thread.start()
-            while not self._running:
-                time.sleep(0.1)
-            while self._running or self._callback_queue.qsize() > 0:
+
+            while self._running or self._callback_queue.qsize() or self._working_threads:
                 try:
                     callback_and_args = self._callback_queue.get(block=False)
-                    callback = callback_and_args[0]
-                    callback(*callback_and_args[1:])
+                    self._handle_callback(callback_and_args)
                     self._callback_queue.task_done()
                 except queue.Empty:
                     # ignore queue empty exception
                     pass
+
         else:
             log.info("EventProcessor %r has already started.", self._id)
 
@@ -298,17 +303,15 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             log.info("EventProcessor %r has already been stopped.", self._id)
             return
 
-        with self._lock:
-            for _ in range(len(self._working_threads)):
-                partition_id, thread = self._working_threads.popitem()
-                self._threads_stop_flags[partition_id] = True
+        self._running = False
 
-        for _ in range(len(self._working_threads)):
+        with self._lock:
+            to_join_threads = [x for x in self._working_threads.values()]
+            self._cancel_tasks_for_partitions(list(self._working_threads.keys()))
+
+        for thread in to_join_threads:
             thread.join()
 
-        with self._lock:
-            self._running = False
-            self._working_threads.clear()
-            self._threads_stop_flags.clear()
+        self._threads_stop_flags.clear()
 
         log.info("EventProcessor %r has been stopped.", self._id)
