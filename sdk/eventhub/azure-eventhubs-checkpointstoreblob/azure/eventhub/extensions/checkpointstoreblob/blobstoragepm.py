@@ -36,7 +36,6 @@ class BlobPartitionManager(PartitionManager):
 
     @staticmethod
     def _utc_to_local(utc_dt):
-        # get integer timestamp to avoid precision lost
         timestamp = calendar.timegm(utc_dt.timetuple())
         local_dt = datetime.fromtimestamp(timestamp)
         return local_dt.replace(microsecond=utc_dt.microsecond)
