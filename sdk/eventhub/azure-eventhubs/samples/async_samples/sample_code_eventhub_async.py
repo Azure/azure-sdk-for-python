@@ -98,7 +98,7 @@ async def example_eventhub_async_producer_ops(live_eventhub_config, connection_s
 
 
 async def example_eventhub_async_consumer_ops(live_eventhub_config, connection_str):
-    # [START eventhub_consumer_client_close_sync]
+    # [START eventhub_consumer_client_close_async]
     import os
 
     EVENT_HUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
@@ -123,4 +123,4 @@ async def example_eventhub_async_consumer_ops(live_eventhub_config, connection_s
 
     # Close down the consumer handler explicitly.
     await consumer.close()
-    # [END eventhub_consumer_client_close_sync]
+    # [END eventhub_consumer_client_close_async]

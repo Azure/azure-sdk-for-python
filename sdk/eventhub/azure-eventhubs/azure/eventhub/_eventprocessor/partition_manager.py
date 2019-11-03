@@ -40,8 +40,8 @@ class PartitionManager(object):
         """
         Tries to claim a list of specified ownership.
 
-        :param Iterable[Dict[str, Any]] ownership_list: Iterable of dictionaries containing all the ownership to claim.
-        :rtype: Iterable[Dict[str, Any]], Iterable of dictionaries containing partition ownership information:
+        :param Iterable[Dict[str,Any]] ownership_list: Iterable of dictionaries containing all the ownership to claim.
+        :rtype: Iterable[Dict[str,Any]], Iterable of dictionaries containing partition ownership information:
                 * fully_qualified_namespace
                 * eventhub_name
                 * consumer_group_name
@@ -77,12 +77,12 @@ class PartitionManager(object):
         # type: (str, str, str) -> Iterable[Dict[str, Any]]
         """List the updated checkpoints from the store
 
-        :param fully_qualified_namespace: The fully qualified namespace that the event hub belongs to.
+        :param str fully_qualified_namespace: The fully qualified namespace that the event hub belongs to.
          The format is like "<namespace>.servicebus.windows.net"
         :param str eventhub_name: The name of the specific Event Hub the ownership are associated with, relative to
          the Event Hubs namespace that contains it.
         :param str consumer_group_name: The name of the consumer group the ownership are associated with.
-        :rtype: Iterable[Dict[str, Any]], Iterable of dictionaries containing partition ownership information:
+        :rtype: Iterable[Dict[str,Any]], Iterable of dictionaries containing partition ownership information:
                 * fully_qualified_namespace
                 * eventhub_name
                 * consumer_group_name
