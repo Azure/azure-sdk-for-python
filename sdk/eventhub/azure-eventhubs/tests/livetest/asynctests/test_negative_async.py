@@ -224,7 +224,7 @@ async def test_create_batch_with_invalid_hostname_async(invalid_hostname):
     sender = client._create_producer()
     try:
         with pytest.raises(AuthenticationError):
-            batch_event_data = await sender.create_batch(max_size=300, partition_key="key")
+            batch_event_data = await sender.create_batch(max_size=300)
     finally:
         await sender.close()
         await client.close()
@@ -237,7 +237,7 @@ async def test_create_batch_with_too_large_size_async(connection_str):
     sender = client._create_producer()
     try:
         with pytest.raises(ValueError):
-            batch_event_data = await sender.create_batch(max_size=5 * 1024 * 1024, partition_key="key")
+            batch_event_data = await sender.create_batch(max_size=5 * 1024 * 1024)
     finally:
         await sender.close()
         await client.close()

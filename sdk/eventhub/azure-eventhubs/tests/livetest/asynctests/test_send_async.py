@@ -266,7 +266,7 @@ async def test_send_with_create_event_batch_async(connstr_receivers):
     client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket)
     sender = client._create_producer()
 
-    event_data_batch = await sender.create_batch(max_size=100000, partition_key="0")
+    event_data_batch = await sender.create_batch(max_size=100000)
     while True:
         try:
             event_data_batch.try_add(EventData('A single event data'))

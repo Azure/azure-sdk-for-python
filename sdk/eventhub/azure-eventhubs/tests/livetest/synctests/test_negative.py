@@ -230,7 +230,7 @@ def test_create_batch_with_invalid_hostname_sync(invalid_hostname):
     client = EventHubClient.from_connection_string(invalid_hostname)
     sender = client._create_producer()
     with pytest.raises(AuthenticationError):
-        sender.create_batch(max_size=300, partition_key="key")
+        sender.create_batch(max_size=300)
     sender.close()
     client.close()
 
@@ -240,6 +240,6 @@ def test_create_batch_with_too_large_size_sync(connection_str):
     client = EventHubClient.from_connection_string(connection_str)
     sender = client._create_producer()
     with pytest.raises(ValueError):
-        sender.create_batch(max_size=5 * 1024 * 1024, partition_key="key")
+        sender.create_batch(max_size=5 * 1024 * 1024)
     sender.close()
     client.close()
