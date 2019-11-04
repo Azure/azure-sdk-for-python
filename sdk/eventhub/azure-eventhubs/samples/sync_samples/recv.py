@@ -43,7 +43,7 @@ def on_error(partition_context, error):
                                                                        error))
 
 
-def on_event(partition_context, events):
+def on_events(partition_context, events):
     global total
 
     print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
@@ -62,7 +62,7 @@ if __name__ == '__main__':
 
     try:
         with consumer_client:
-            consumer_client.receive(on_event=on_event, consumer_group='$Default',
+            consumer_client.receive(on_event=on_events, consumer_group='$Default',
                                     on_partition_initialize=on_partition_initialize,
                                     on_partition_close=on_partition_close,
                                     on_error=on_error)
