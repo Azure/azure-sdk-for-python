@@ -1,5 +1,8 @@
 # Release History
 
+### 4.0.0b6
+- Renamed `AdministratorDetails` to `AdministratorContact`
+
 ### 4.0.0b5
 - Removed redundant method `get_pending_certificate_signing_request()`. A pending CSR can be retrieved via `get_certificate_operation()`.
 - Renamed the sync method `create_certificate` to `begin_create_certificate`
