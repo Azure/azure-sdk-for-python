@@ -25,25 +25,38 @@ except ImportError:  # python < 3.3
 def test_interactive_credential(mock_open):
     oauth_state = "state"
     client_id = "client-id"
+    expected_refresh_token = "refresh-token"
     expected_token = "access-token"
+    expires_in = 3600
     authority = "authority"
     tenant_id = "tenant_id"
     endpoint = "https://{}/{}".format(authority, tenant_id)
 
     id_token = build_id_token(aud=client_id, preferred_username="user")
     transport = validating_transport(
-        requests=[Request(url_substring=endpoint)] * 3,  # not validating requests in detail because they're formed by MSAL
+        requests=[Request(url_substring=endpoint)] * 4,  # not validating requests in detail because they're formed by MSAL
         responses=[
-            # expecting instance discovery, tenant discovery, then token request
+            # expecting instance discovery, tenant discovery, then token requests
             mock_response(json_payload={"authorization_endpoint": endpoint, "token_endpoint": endpoint, "tenant_discovery_endpoint": endpoint}),
             mock_response(json_payload={"authorization_endpoint": endpoint, "token_endpoint": endpoint, "tenant_discovery_endpoint": endpoint}),
             mock_response(
                 json_payload=build_aad_response(
                     access_token=expected_token,
-                    expires_in=3600,
+                    expires_in=expires_in,
                     id_token=id_token,
+                    refresh_token=expected_refresh_token,
                     uid="uid",
                     utid="utid",
+                    token_type="Bearer",
+                )
+            ),
+            mock_response(
+                json_payload=build_aad_response(
+                    access_token=expected_token,
+                    expires_in=expires_in,
+                    # id_token=id_token,
+                    # uid="uid",
+                    # utid="utid",
                     token_type="Bearer",
                 )
             ),
@@ -75,6 +88,18 @@ def test_interactive_credential(mock_open):
         token = credential.get_token("scope")
         assert token.token == expected_token
         assert mock_open.call_count == 1
+
+        # expired access token -> credential should use refresh token instead of prompting again
+        now = time.time()
+        with patch("time.time", lambda: now + expires_in):
+
+            # MSAL applications build a new client each time they redeem a refresh token
+            app = credential._get_app()
+            app._build_client = lambda *_: app.client  # pylint:disable=protected-access
+
+            token = credential.get_token("scope")
+            assert token.token == expected_token
+            assert mock_open.call_count == 1
 
 
 @patch(
@@ -130,3 +155,6 @@ def test_redirect_server():
 
     assert response.code == 200
     assert server.query_params[expected_param] == [expected_value]
+
+if __name__ == "__main__":
+    test_interactive_credential()

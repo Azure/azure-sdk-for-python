@@ -73,7 +73,7 @@ class InteractiveBrowserCredential(PublicClientCredential):
             scopes = list(scopes)  # type: ignore
             now = int(time.time())
             token = app.acquire_token_silent(scopes, account=accounts[0], **kwargs)
-            if "access_token" in token and "expires_in" in token:
+            if token and "access_token" in token and "expires_in" in token:
                 return AccessToken(token["access_token"], now + int(token["expires_in"]))
         return None
 
