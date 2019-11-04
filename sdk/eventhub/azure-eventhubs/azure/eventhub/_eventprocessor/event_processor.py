@@ -18,7 +18,7 @@ from azure.core.settings import settings  # type: ignore
 from azure.eventhub import EventPosition
 from .partition_context import PartitionContext
 from .ownership_manager import OwnershipManager
-from .close_reason import CloseReason
+from .common import CloseReason
 
 log = logging.getLogger(__name__)
 

@@ -12,8 +12,8 @@ from .error import EventHubError, EventDataError, ConnectError, \
 from ._producer_client import EventHubProducerClient
 from ._consumer_client import EventHubConsumerClient
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential
-from ._eventprocessor.partition_manager import PartitionManager, OwnershipLostError
-from ._eventprocessor.close_reason import CloseReason
+from ._eventprocessor.partition_manager import PartitionManager
+from ._eventprocessor.common import CloseReason, OwnershipLostError
 
 TransportType = constants.TransportType
 

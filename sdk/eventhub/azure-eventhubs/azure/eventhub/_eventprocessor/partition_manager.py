@@ -90,9 +90,3 @@ class PartitionManager(object):
                 * sequence_number
                 * offset
         """
-
-
-class OwnershipLostError(Exception):
-    """Raises when update_checkpoint detects the ownership to a partition has been lost.
-
-    """
