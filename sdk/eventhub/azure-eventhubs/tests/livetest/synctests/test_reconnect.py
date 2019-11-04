@@ -18,7 +18,7 @@ from azure.eventhub import (
 def test_send_with_long_interval_sync(connstr_receivers, sleep):
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    sender = client.create_producer()
+    sender = client._create_producer()
     with sender:
         sender.send(EventData(b"A single event"))
         for _ in range(1):

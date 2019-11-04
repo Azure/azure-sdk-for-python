@@ -212,7 +212,7 @@ class EventHubClient(EventHubClientAbstract):
             output['is_empty'] = partition_info[b'is_partition_empty']
         return output
 
-    def create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
+    def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
         # type: (str, str, EventPosition, Any) -> EventHubConsumer
         """
         Create a consumer to the client for a particular consumer group and partition.
@@ -260,7 +260,7 @@ class EventHubClient(EventHubClientAbstract):
             track_last_enqueued_event_properties=track_last_enqueued_event_properties)
         return handler
 
-    def create_producer(self, partition_id=None, send_timeout=None):
+    def _create_producer(self, partition_id=None, send_timeout=None):
         # type: (str, float) -> EventHubProducer
         """
         Create an producer to send EventData object to an EventHub.

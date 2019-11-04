@@ -4,24 +4,20 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import os
-import time
+
 import asyncio
 import pytest
 
-from azure.eventhub import (
-    EventData,
-    EventPosition,
-    EventHubError)
-from azure.eventhub.aio import EventHubClient
+from azure.eventhub import EventData
+from azure.eventhub.aio.client_async import EventHubClient
 
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_with_long_interval_async(connstr_receivers, sleep):
     connection_str, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    sender = client.create_producer()
+    client = EventHubClient.from_connection_string(connection_str)
+    sender = client._create_producer()
     try:
         await sender.send(EventData(b"A single event"))
         for _ in range(1):
@@ -40,3 +36,4 @@ async def test_send_with_long_interval_async(connstr_receivers, sleep):
         received.extend(r.receive(timeout=5))
     assert len(received) == 2
     assert list(received[0].body)[0] == b"A single event"
+    await client.close()
