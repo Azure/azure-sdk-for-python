@@ -12,21 +12,26 @@ from azure.identity._constants import AZURE_CLI_CLIENT_ID, EnvironmentVariables
 if sys.version_info < (3, 5):
     collect_ignore_glob = ["*_async.py"]
 
-run_manual_tests = "manual" in sys.argv
+run_manual_tests = False
 stdout_captured = True
 
 
 def pytest_configure(config):
-    config.addinivalue_line("markers", "manual: the test requires manual interaction, e.g. browser authentication")
-    global stdout_captured
+    config.addinivalue_line(
+        "markers", "manual: the tested credential requires manual interaction, e.g. InteractiveBrowserCredential"
+    )
+    config.addinivalue_line("markers", "prints: the tested credential prints to stdout, e.g. DeviceCodeCredential")
+    global run_manual_tests, stdout_captured
+    run_manual_tests = config.getoption("markexpr") == "manual"
     stdout_captured = config.getoption("capture") != "no"
 
 
 def pytest_runtest_setup(item):
     # ensure manual tests only run when manual marker is selected with 'pytest -m manual'
-    if any(mark.name == "manual" for mark in item.own_markers):
-        if not run_manual_tests:
-            pytest.skip("To run manual tests, select 'manual' marker with '-m manual'")
+    if item.get_closest_marker("manual") and not run_manual_tests:
+        pytest.skip("To run manual tests, select 'manual' marker with 'pytest -m manual'")
+    elif item.get_closest_marker("prints") and stdout_captured:
+        pytest.skip("This test prints to stdout. Run pytest with '-s' to ensure the output is visible.")
 
 
 @pytest.fixture()
@@ -84,12 +89,6 @@ def live_user_details():
         pytest.skip("To test username/password authentication, set $AZURE_USERNAME, $AZURE_PASSWORD, $USER_TENANT")
     else:
         return user_details
-
-
-@pytest.fixture()
-def prints():
-    if stdout_captured:
-        pytest.skip("This test prints to stdout. Run pytest with '-s' to ensure the output is visible.")
 
 
 @pytest.fixture()

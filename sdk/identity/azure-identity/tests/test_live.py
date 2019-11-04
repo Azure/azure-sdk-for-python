@@ -99,7 +99,8 @@ def test_username_password_auth(live_user_details):
 
 
 @pytest.mark.manual
-def test_device_code(prints):
+@pytest.mark.prints
+def test_device_code():
     import webbrowser
 
     def prompt(url, user_code, _):
