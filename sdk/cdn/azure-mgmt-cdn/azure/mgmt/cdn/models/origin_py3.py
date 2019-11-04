@@ -33,14 +33,30 @@ class Origin(TrackedResource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param host_name: Required. The address of the origin. Domain names, IPv4
-     addresses, and IPv6 addresses are supported.
+    :param host_name: The address of the origin. Domain names, IPv4 addresses,
+     and IPv6 addresses are supported.This should be unique across all origins
+     in an endpoint.
     :type host_name: str
     :param http_port: The value of the HTTP port. Must be between 1 and 65535.
     :type http_port: int
-    :param https_port: The value of the https port. Must be between 1 and
+    :param https_port: The value of the HTTPS port. Must be between 1 and
      65535.
     :type https_port: int
+    :param origin_host_header: The host header value sent to the origin with
+     each request. If you leave this blank, the request hostname determines
+     this value. Azure CDN origins, such as Web Apps, Blob Storage, and Cloud
+     Services require this host header value to match the origin hostname by
+     default. This overrides the host header defined at Endpoint
+    :type origin_host_header: str
+    :param priority: Priority of origin in given origin group for load
+     balancing. Higher priorities will not be used for load balancing if any
+     lower priority origin is healthy.Must be between 1 and 5
+    :type priority: int
+    :param weight: Weight of the origin in given origin group for load
+     balancing. Must be between 1 and 1000
+    :type weight: int
+    :param enabled: Origin is enabled for load balancing or not
+    :type enabled: bool
     :ivar resource_state: Resource status of the origin. Possible values
      include: 'Creating', 'Active', 'Deleting'
     :vartype resource_state: str or ~azure.mgmt.cdn.models.OriginResourceState
@@ -53,9 +69,10 @@ class Origin(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'host_name': {'required': True},
         'http_port': {'maximum': 65535, 'minimum': 1},
         'https_port': {'maximum': 65535, 'minimum': 1},
+        'priority': {'maximum': 5, 'minimum': 1},
+        'weight': {'maximum': 1000, 'minimum': 1},
         'resource_state': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
@@ -69,14 +86,22 @@ class Origin(TrackedResource):
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'http_port': {'key': 'properties.httpPort', 'type': 'int'},
         'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
+        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
+        'priority': {'key': 'properties.priority', 'type': 'int'},
+        'weight': {'key': 'properties.weight', 'type': 'int'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, host_name: str, tags=None, http_port: int=None, https_port: int=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, host_name: str=None, http_port: int=None, https_port: int=None, origin_host_header: str=None, priority: int=None, weight: int=None, enabled: bool=None, **kwargs) -> None:
         super(Origin, self).__init__(location=location, tags=tags, **kwargs)
         self.host_name = host_name
         self.http_port = http_port
         self.https_port = https_port
+        self.origin_host_header = origin_host_header
+        self.priority = priority
+        self.weight = weight
+        self.enabled = enabled
         self.resource_state = None
         self.provisioning_state = None

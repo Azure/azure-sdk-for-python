@@ -22,6 +22,9 @@ class CdnManagedHttpsParameters(CustomDomainHttpsParameters):
      used for secure delivery. Possible values include: 'ServerNameIndication',
      'IPBased'
     :type protocol_type: str or ~azure.mgmt.cdn.models.ProtocolType
+    :param minimum_tls_version: TLS protocol version that will be used for
+     Https. Possible values include: 'None', 'TLS10', 'TLS12'
+    :type minimum_tls_version: str or ~azure.mgmt.cdn.models.MinimumTlsVersion
     :param certificate_source: Required. Constant filled by server.
     :type certificate_source: str
     :param certificate_source_parameters: Required. Defines the certificate
@@ -38,11 +41,12 @@ class CdnManagedHttpsParameters(CustomDomainHttpsParameters):
 
     _attribute_map = {
         'protocol_type': {'key': 'protocolType', 'type': 'str'},
+        'minimum_tls_version': {'key': 'minimumTlsVersion', 'type': 'MinimumTlsVersion'},
         'certificate_source': {'key': 'certificateSource', 'type': 'str'},
         'certificate_source_parameters': {'key': 'certificateSourceParameters', 'type': 'CdnCertificateSourceParameters'},
     }
 
-    def __init__(self, *, protocol_type, certificate_source_parameters, **kwargs) -> None:
-        super(CdnManagedHttpsParameters, self).__init__(protocol_type=protocol_type, **kwargs)
+    def __init__(self, *, protocol_type, certificate_source_parameters, minimum_tls_version=None, **kwargs) -> None:
+        super(CdnManagedHttpsParameters, self).__init__(protocol_type=protocol_type, minimum_tls_version=minimum_tls_version, **kwargs)
         self.certificate_source_parameters = certificate_source_parameters
         self.certificate_source = 'Cdn'
