@@ -2,6 +2,8 @@
 
 ## 1.0.1
 
+- `ClientCertificateCredential` uses application and tenant IDs correctly
+([#8315](https://github.com/Azure/azure-sdk-for-python/pull/8315))
 - Adopted msal 1.0.0 and msal-extensions 0.1.3
 ([8359](https://github.com/Azure/azure-sdk-for-python/pull/8359))
 
