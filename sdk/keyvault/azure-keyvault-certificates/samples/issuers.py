@@ -4,7 +4,7 @@
 # ------------------------------------
 import os
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import AdministratorDetails, CertificateClient
+from azure.keyvault.certificates import AdministratorContact, CertificateClient
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -38,9 +38,9 @@ VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = CertificateClient(vault_url=VAULT_URL, credential=credential)
 try:
-    # First we specify the AdministratorDetails for our issuers.
+    # First we specify the AdministratorContact for our issuers.
     admin_details = [
-        AdministratorDetails(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+        AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
     ]
 
     # Next we create an issuer with these administrator details
