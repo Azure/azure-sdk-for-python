@@ -13,7 +13,7 @@ from typing import Any, List, Dict, Union, TYPE_CHECKING
 from uamqp import authentication, constants  # type: ignore
 from uamqp import Message, AMQPClientAsync  # type: ignore
 
-from azure.eventhub.common import parse_sas_token, EventPosition, \
+from ..common import parse_sas_token, EventPosition, \
     EventHubSharedKeyCredential, EventHubSASTokenCredential
 from ..client_abstract import EventHubClientAbstract
 
@@ -32,14 +32,6 @@ class EventHubClient(EventHubClientAbstract):
     """
     The EventHubClient class defines a high level interface for asynchronously
     sending events to and receiving events from the Azure Event Hubs service.
-
-    Example:
-        .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-            :start-after: [START create_eventhub_client_async]
-            :end-before: [END create_eventhub_client_async]
-            :language: python
-            :dedent: 4
-            :caption: Create a new instance of the Event Hub client async.
 
     """
 
@@ -202,7 +194,7 @@ class EventHubClient(EventHubClientAbstract):
             output['is_empty'] = partition_info[b'is_partition_empty']
         return output
 
-    def create_consumer(
+    def _create_consumer(
             self,
             consumer_group: str,
             partition_id: str,
@@ -233,15 +225,6 @@ class EventHubClient(EventHubClientAbstract):
         :type track_last_enqueued_event_properties: bool
         :param loop: An event loop. If not specified the default event loop will be used.
         :rtype: ~azure.eventhub.aio.consumer_async.EventHubConsumer
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START create_eventhub_client_async_receiver]
-                :end-before: [END create_eventhub_client_async_receiver]
-                :language: python
-                :dedent: 4
-                :caption: Add an async consumer to the client for a particular consumer group and partition.
-
         """
         owner_level = kwargs.get("owner_level")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
@@ -256,7 +239,7 @@ class EventHubClient(EventHubClientAbstract):
             track_last_enqueued_event_properties=track_last_enqueued_event_properties, loop=loop)
         return handler
 
-    def create_producer(
+    def _create_producer(
             self, *,
             partition_id: str = None,
             send_timeout: float = None,
@@ -274,15 +257,6 @@ class EventHubClient(EventHubClientAbstract):
         :type send_timeout: float
         :param loop: An event loop. If not specified the default event loop will be used.
         :rtype: ~azure.eventhub.aio.producer_async.EventHubProducer
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START create_eventhub_client_async_sender]
-                :end-before: [END create_eventhub_client_async_sender]
-                :language: python
-                :dedent: 4
-                :caption: Add an async producer to the client to send EventData.
-
         """
 
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)

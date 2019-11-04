@@ -3,37 +3,42 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
 
-
+import logging
 from .partition_manager import PartitionManager
 
+
+_LOGGER = logging.getLogger(__name__)
 
 class PartitionContext(object):
     """Contains partition related context information for a PartitionProcessor instance to use.
 
     Users can use update_checkpoint() of this class to save checkpoint data.
     """
-    def __init__(self, eventhub_name: str, consumer_group_name: str,
-                 partition_id: str, owner_id: str, partition_manager: PartitionManager):
+    def __init__(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group_name: str,
+                 partition_id: str, owner_id: str, partition_manager: PartitionManager = None):
+        self.fully_qualified_namespace = fully_qualified_namespace
         self.partition_id = partition_id
         self.eventhub_name = eventhub_name
         self.consumer_group_name = consumer_group_name
         self.owner_id = owner_id
         self._partition_manager = partition_manager
 
-    async def update_checkpoint(self, offset, sequence_number=None):
+    async def update_checkpoint(self, event):
         """
         Updates the checkpoint using the given information for the associated partition and consumer group in the
         chosen storage service.
 
-        :param offset: The offset of the ~azure.eventhub.EventData the new checkpoint will be associated with.
-        :type offset: str
-        :param sequence_number: The sequence_number of the ~azure.eventhub.EventData the new checkpoint will be
-         associated with.
-        :type sequence_number: int
-        :return: None
+        :param ~azure.eventhub.EventData event: The EventData instance which contains the offset and
+         sequence number information used for checkpoint.
+        :rtype: None
         """
-        # TODO: whether change this method to accept event_data as well
-        await self._partition_manager.update_checkpoint(
-            self.eventhub_name, self.consumer_group_name, self.partition_id, self.owner_id, offset,
-            sequence_number
-        )
+        if self._partition_manager:
+            await self._partition_manager.update_checkpoint(
+                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name,
+                self.partition_id, event.offset, event.sequence_number
+            )
+        else:
+            _LOGGER.info(
+                "namespace %r, eventhub %r, consumer_group %r, partition_id %r "
+                "update_checkpoint is called without partition manager. No checkpoint is updated.",
+                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name, self.partition_id)
