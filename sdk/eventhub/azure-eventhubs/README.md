@@ -309,7 +309,7 @@ a consumer group in an Event Hub instance.The `EventHubConsumerClient` uses an i
 and to store the relevant information required by the load balancing algorithm.
 
 Search pypi with the prefix `azure-eventhub-checkpointstore` to
-find packages that support this and use the PartitionManager implementation from one such package.
+find packages that support this and use the PartitionManager implementation from one such package. Please note that both sync and async libraries are provided.
 
 In the below example, we create an instance of `EventHubConsumerClient` and use a `BlobPartitionManager`. You need
 to [create an Azure Storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal)

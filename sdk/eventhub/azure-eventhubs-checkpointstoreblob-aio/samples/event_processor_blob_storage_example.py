@@ -1,8 +1,7 @@
 import asyncio
 import logging
 import os
-from azure.eventhub.aio import EventHubClient
-from azure.eventhub.aio.eventprocessor import EventProcessor, PartitionProcessor
+from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobPartitionManager
 from azure.storage.blob.aio import ContainerClient
 
@@ -19,24 +18,22 @@ async def do_operation(event):
     print(event)
 
 
-class MyPartitionProcessor(PartitionProcessor):
-    async def process_events(self, events, partition_context):
-        if events:
-            await asyncio.gather(*[do_operation(event) for event in events])
-            await partition_context.update_checkpoint(events[-1].offset, events[-1].sequence_number)
-        else:
-            print("empty events received", "partition:", partition_context.partition_id)
+async def process_events(partition_context, events):
+    if events:
+        await asyncio.gather(*[do_operation(event) for event in events])
+        await partition_context.update_checkpoint(events[-1])
+    else:
+        print("empty events received", "partition:", partition_context.partition_id)
 
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    client = EventHubClient.from_connection_string(CONNECTION_STR, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL)
     container_client = ContainerClient.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
     partition_manager = BlobPartitionManager(container_client=container_client)
-    event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager, polling_interval=10)
+    client = EventHubConsumerClient.from_connection_string(CONNECTION_STR, partition_manager=partition_manager, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL)
     try:
-        loop.run_until_complete(event_processor.start())
+        loop.run_until_complete(client.receive(process_events, "$default"))
     except KeyboardInterrupt:
-        loop.run_until_complete(event_processor.stop())
+        loop.run_until_complete(client.close())
     finally:
         loop.stop()
