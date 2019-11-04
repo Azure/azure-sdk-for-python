@@ -205,11 +205,11 @@ class PurchaseSupportResponseResult(Model):
     """
 
     _attribute_map = {
-        'purchase_record_id': {'key': 'PurchaseRecordId', 'type': 'str'},
-        'status': {'key': 'Status', 'type': 'str'},
-        'result': {'key': 'Result', 'type': 'str'},
-        'detailed_error_code': {'key': 'DetailedErrorCode', 'type': 'str'},
-        'billing_total': {'key': 'BillingTotal', 'type': 'str'},
+        'purchase_record_id': {'key': 'purchaseRecordId', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'result': {'key': 'result', 'type': 'str'},
+        'detailed_error_code': {'key': 'detailedErrorCode', 'type': 'str'},
+        'billing_total': {'key': 'billingTotal', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -233,9 +233,9 @@ class PurchaseSupportStatusResponseResult(Model):
     """
 
     _attribute_map = {
-        'created_timestamp': {'key': 'CreatedTimestamp', 'type': 'str'},
-        'quote_id': {'key': 'QuoteId', 'type': 'str'},
-        'self_url': {'key': 'SelfUrl', 'type': 'str'},
+        'created_timestamp': {'key': 'createdTimestamp', 'type': 'str'},
+        'quote_id': {'key': 'quoteId', 'type': 'str'},
+        'self_url': {'key': 'selfUrl', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -302,12 +302,12 @@ class SupportPlanResponseResult(Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'offer_id': {'key': 'OfferId', 'type': 'str'},
-        'start_date': {'key': 'StartDate', 'type': 'str'},
-        'end_date': {'key': 'EndDate', 'type': 'str'},
-        'product_id': {'key': 'ProductId', 'type': 'str'},
-        'sku_id': {'key': 'SkuId', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'offer_id': {'key': 'offerId', 'type': 'str'},
+        'start_date': {'key': 'startDate', 'type': 'str'},
+        'end_date': {'key': 'endDate', 'type': 'str'},
+        'product_id': {'key': 'productId', 'type': 'str'},
+        'sku_id': {'key': 'skuId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
