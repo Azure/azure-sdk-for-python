@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b5(2019-11-04)
+## 2019-11-04 1.0.0b5
 
 **New features**
 
