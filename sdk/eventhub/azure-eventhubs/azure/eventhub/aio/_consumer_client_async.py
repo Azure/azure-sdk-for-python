@@ -68,9 +68,8 @@ class EventHubConsumerClient(EventHubClient):
 
     def __init__(self, host, event_hub_path, credential, **kwargs) -> None:
         # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
-        self._partition_manager = kwargs.pop("partition_manager") if "partition_manager" in kwargs else None
-        self._load_balancing_interval = kwargs.pop("load_balancing_interval") \
-            if "load_balancing_interval" in kwargs else 10
+        self._partition_manager = kwargs.pop("partition_manager", None)
+        self._load_balancing_interval = kwargs.pop("load_balancing_interval", 10)
         super(EventHubConsumerClient, self).__init__(
             host=host, event_hub_path=event_hub_path, credential=credential,
             network_tracing=kwargs.get("logging_enable"), **kwargs)
