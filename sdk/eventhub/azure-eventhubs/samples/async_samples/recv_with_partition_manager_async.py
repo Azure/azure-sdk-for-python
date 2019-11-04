@@ -31,6 +31,7 @@ async def do_operation(event):
 
 
 async def on_events(partition_context, events):
+    # put your code here
     print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
     await asyncio.gather(*[do_operation(event) for event in events])
     await partition_context.update_checkpoint(events[-1])
