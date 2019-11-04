@@ -31,7 +31,7 @@ class MgmtHealthcareApisTest(AzureMgmtTestCase):
           "type": "Microsoft.HealthcareApis/services",
           "name": "serviceName"
         }
-        result = self.mgmt_client.services.check_name_availability(type="Microsoft.HealthcareApis/services", name=serviceName")
+        result = self.mgmt_client.services.check_name_availability(type="Microsoft.HealthcareApis/services", name="serviceName")
 
         # Create or Update a service with all parameters[put]
         BODY = {
