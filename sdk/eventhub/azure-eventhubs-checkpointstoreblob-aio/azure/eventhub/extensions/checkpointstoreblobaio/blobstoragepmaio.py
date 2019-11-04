@@ -18,8 +18,8 @@ UPLOAD_DATA = ""
 class BlobPartitionManager(PartitionManager):
     """An PartitionManager that uses Azure Blob Storage to store the partition ownership and checkpoint data.
 
-    This class implements methods list_ownership, claim_ownership, and update_checkpoint that are defined in class
-    azure.eventhub.eventprocessor.PartitionManager of package azure-eventhub.
+    This class implements methods list_ownership, claim_ownership, update_checkpoint and list_checkpoints that are
+    defined in class azure.eventhub.aio.PartitionManager of package azure-eventhub.
 
     """
     def __init__(self, container_client: ContainerClient):
