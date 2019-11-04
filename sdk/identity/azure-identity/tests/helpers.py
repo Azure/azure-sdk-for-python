@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import base64
 import json
+import six
 
 try:
     from unittest import mock
@@ -58,6 +60,14 @@ def validating_transport(requests, responses):
         return response
 
     return mock.Mock(send=validate_request)
+
+
+def urlsafeb64_decode(s):
+    if isinstance(s, six.text_type):
+        s = s.encode("ascii")
+
+    padding_needed = 4 - len(s) % 4
+    return base64.urlsafe_b64decode(s + b"=" * padding_needed)
 
 
 try:
