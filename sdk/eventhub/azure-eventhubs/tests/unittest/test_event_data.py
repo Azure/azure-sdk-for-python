@@ -18,11 +18,11 @@ def test_constructor(test_input, expected_result):
         event_data = EventData(test_input)
         assert event_data.body_as_str() == expected_result
         assert event_data.partition_key is None
-        assert event_data.application_properties is None
+        assert len(event_data.application_properties) == 0
         assert event_data.enqueued_time is None
         assert event_data.offset is None
         assert event_data.sequence_number is None
-        assert event_data.system_properties == {}
+        assert len(event_data.system_properties) == 0
         with pytest.raises(TypeError):
             event_data.body_as_json()
 
