@@ -26,12 +26,12 @@ total = 0
 
 
 def do_operation(event):
+    # do some operations on the event, avoid time-consuming ops
     pass
-    # do some operations on the event
-    # print(event)
 
 
 def on_events(partition_context, events):
+    # put your code here
     global total
     print("received events: {} from partition {}".format(len(events), partition_context.partition_id))
     total += len(events)
@@ -58,4 +58,3 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         print('Stop receiving.')
-        consumer_client.close()

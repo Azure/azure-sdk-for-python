@@ -25,18 +25,12 @@ async def do_operation(event):
 
 
 async def on_events(partition_context, events):
+    # put your code here
     print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
     await asyncio.gather(*[do_operation(event) for event in events])
 
 
-async def receive_for_a_while(client, duration):
-    task = asyncio.ensure_future(client.receive(on_events=on_events,
-                                                consumer_group="$default"))
-    await asyncio.sleep(duration)
-    task.cancel()
-
-
-async def receive_forever(client):
+async def receive(client):
     try:
         await client.receive(on_events=on_events,
                              consumer_group="$default")
@@ -52,8 +46,7 @@ if __name__ == '__main__':
         retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
     )
     try:
-        # loop.run_until_complete(receive_for_a_while(client, 5))
-        loop.run_until_complete(receive_forever(client))
+        loop.run_until_complete(receive(client))
     except KeyboardInterrupt:
         pass
     finally:

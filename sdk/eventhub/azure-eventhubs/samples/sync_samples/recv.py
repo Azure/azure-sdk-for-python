@@ -24,26 +24,29 @@ total = 0
 
 
 def do_operation(event):
+    # do some operations on the event, avoid time-consuming ops
     pass
-    # do some operations on the event
-    # print(event)
 
 
 def on_partition_initialize(partition_context):
+    # put your code here
     print("Partition: {} has been intialized".format(partition_context.partition_id))
 
 
 def on_partition_close(partition_context, reason):
+    # put your code here
     print("Partition: {} has been closed, reason for closing: {}".format(partition_context.partition_id,
                                                                          reason))
 
 
 def on_error(partition_context, error):
+    # put your code here
     print("Partition: {} met an exception during receiving: {}".format(partition_context.partition_id,
                                                                        error))
 
 
 def on_events(partition_context, events):
+    # put your code here
     global total
 
     print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
@@ -70,4 +73,3 @@ if __name__ == '__main__':
             # consumer_client.receive(on_events=on_events, consumer_group='$Default', owner_level=1)
     except KeyboardInterrupt:
         print('Stop receiving.')
-        consumer_client.close()
