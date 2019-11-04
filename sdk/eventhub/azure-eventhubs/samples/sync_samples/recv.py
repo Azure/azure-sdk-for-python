@@ -73,4 +73,3 @@ if __name__ == '__main__':
             # consumer_client.receive(on_events=on_events, consumer_group='$Default', owner_level=1)
     except KeyboardInterrupt:
         print('Stop receiving.')
-        consumer_client.close()

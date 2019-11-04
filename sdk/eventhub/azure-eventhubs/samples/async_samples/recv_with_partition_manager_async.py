@@ -36,20 +36,7 @@ async def on_events(partition_context, events):
     await partition_context.update_checkpoint(events[-1])
 
 
-async def receive_for_a_while(client, duration):
-    """
-    Without specified partition_id, the receive will try to receive events from all partitions and if provided with
-    partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
-    which also try to receive events from all partitions and use the same storage resource.
-    """
-    task = asyncio.ensure_future(client.receive(on_events=on_events, consumer_group="$default"))
-    # With specified partition_id, load-balance will be disabled
-    # task = asyncio.ensure_future(client.receive(on_events=on_events, consumer_group="$default", partition_id = '0'))
-    await asyncio.sleep(duration)
-    task.cancel()
-
-
-async def receive_forever(client):
+async def receive(client):
     try:
         """
         Without specifying partition_id, the receive will try to receive events from all partitions and if provided with
@@ -74,8 +61,7 @@ if __name__ == '__main__':
         retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
     )
     try:
-        loop.run_until_complete(receive_for_a_while(client, 60))
-        # loop.run_until_complete(receive_forever(client))
+        loop.run_until_complete(receive(client))
     except KeyboardInterrupt:
         pass
     finally:

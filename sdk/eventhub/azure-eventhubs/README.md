@@ -146,14 +146,13 @@ event_hub_path = '<< NAME OF THE EVENT HUB >>'
 client = EventHubProducerClient.from_connection_string(connection_str, event_hub_path)
 
 try:
- 	event_list = []
- 	for i in range(10):
- 		event_list.append(EventData(b"A single event"))
-
+    event_list = []
+    for i in range(10):
+        event_list.append(EventData(b"A single event"))
     with client:
         client.send(event_list)
 except:
-	raise
+    raise
 finally:
     pass
 ```

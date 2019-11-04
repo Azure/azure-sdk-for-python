@@ -117,6 +117,9 @@ async def example_eventhub_async_consumer_ops(live_eventhub_config, connection_s
             len(events), partition_context.partition_id))
         # Do ops on received events
 
+    # The receive method is a coroutine method which can be called by `await consumer.receive(...)` and it will block.
+    # so execute it in an async task to better demonstrate how to stop the receiving by calling he close method.
+
     recv_task = asyncio.ensure_future(consumer.receive(on_events=on_events, consumer_group='$Default'))
     await asyncio.sleep(3)  # keep receiving for 3 seconds
     recv_task.cancel()  # stop receiving

@@ -35,7 +35,7 @@ with open('HISTORY.md') as f:
 
 exclude_packages = [
         'tests',
-        'examples',
+        'samples',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'azure.eventhub',
