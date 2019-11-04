@@ -784,8 +784,9 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Get an issuer
                 :dedent: 8
         """
+        issuer_name = name.value if not isinstance(name, str) else name
         issuer_bundle = self._client.get_certificate_issuer(
-            vault_base_url=self.vault_url, issuer_name=name, error_map=_error_map, **kwargs
+            vault_base_url=self.vault_url, issuer_name=issuer_name, error_map=_error_map, **kwargs
         )
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
@@ -854,7 +855,7 @@ class CertificateClient(KeyVaultClientBase):
             issuer_attributes = None
         issuer_bundle = self._client.set_certificate_issuer(
             vault_base_url=self.vault_url,
-            issuer_name=name,
+            issuer_name=name.value if not isinstance(name, str) else name,
             provider=provider,
             credentials=issuer_credentials,
             organization_details=organization_details,
@@ -919,7 +920,7 @@ class CertificateClient(KeyVaultClientBase):
             issuer_attributes = None
         issuer_bundle = self._client.update_certificate_issuer(
             vault_base_url=self.vault_url,
-            issuer_name=name,
+            issuer_name=name.value if not isinstance(name, str) else name,
             provider=provider,
             credentials=issuer_credentials,
             organization_details=organization_details,
@@ -949,8 +950,9 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Delete an issuer
                 :dedent: 8
         """
+        issuer_name = name.value if not isinstance(name, str) else name
         issuer_bundle = self._client.delete_certificate_issuer(
-            vault_base_url=self.vault_url, issuer_name=name, **kwargs
+            vault_base_url=self.vault_url, issuer_name=issuer_name, **kwargs
         )
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
