@@ -25,12 +25,12 @@ STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 
 
 def do_operation(event):
+    # do some operations on the event, avoid time-consuming ops
     pass
-    # do some operations.
-    # print(event)
 
 
 def on_event(partition_context, events):
+    # put your code here
     print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
     for event in events:
         do_operation(event)
