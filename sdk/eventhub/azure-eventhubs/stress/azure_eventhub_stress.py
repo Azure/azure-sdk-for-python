@@ -6,10 +6,10 @@ import time
 import asyncio
 from logging.handlers import RotatingFileHandler
 from argparse import ArgumentParser
-from azure.eventhub._client import EventHubClient, EventHubConsumer, EventHubProducer
+from azure.eventhub.client import EventHubClient, EventHubConsumer, EventHubProducer
 from azure.eventhub import EventPosition, EventData, \
     EventHubSharedKeyCredential, EventDataBatch
-from azure.eventhub.aio._client_async import EventHubClient as EventHubClientAsync
+from azure.eventhub.aio.client_async import EventHubClient as EventHubClientAsync
 from azure.identity import ClientSecretCredential
 
 

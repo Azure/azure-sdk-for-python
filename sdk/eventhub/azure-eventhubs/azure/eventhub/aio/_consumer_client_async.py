@@ -4,8 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import logging
 from typing import Any, Union, TYPE_CHECKING, Callable, Dict, List, Tuple
-from azure.eventhub import EventPosition, EventData, \
-    EventHubSharedKeyCredential, EventHubSASTokenCredential
+from azure.eventhub import EventPosition, EventData, EventHubSharedKeyCredential, EventHubSASTokenCredential
 from .eventprocessor.event_processor import EventProcessor, CloseReason
 from .eventprocessor.partition_context import PartitionContext
 from .client_async import EventHubClient
@@ -38,10 +37,7 @@ class EventHubConsumerClient(EventHubClient):
      of getting tokens.
     :type credential: ~azure.eventhub.EventHubSharedKeyCredential,~azure.eventhub.EventHubSASTokenCredential,
      Credential objects in azure-identity and objects that implement `get_token(self, *scopes)` method
-    :keyword bool network_tracing: Whether to output network trace logs to the logger. Default is `False`.
-    :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
-     keys: 'proxy_hostname' (str value) and 'proxy_port' (int value).
-     Additionally the following keys may also be present: 'username', 'password'.
+    :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
     :keyword str user_agent: The user agent that needs to be appended to the built in user agent string.
@@ -50,6 +46,9 @@ class EventHubConsumerClient(EventHubClient):
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Event Hubs service. Default is ~azure.eventhub.TransportType.Amqp.
     :paramtype transport_type: ~azure.eventhub.TransportType
+    :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+     keys: 'proxy_hostname' (str value) and 'proxy_port' (int value).
+     Additionally the following keys may also be present: 'username', 'password'.
     :keyword partition_manager: stores the load balancing data and checkpoint data when receiving events
      if partition_manager is specified. If it's None, this EventHubConsumerClient instance will receive
      events without load balancing and checkpoint.
@@ -67,21 +66,23 @@ class EventHubConsumerClient(EventHubClient):
             :caption: Create a new instance of the EventHubConsumerClient.
     """
 
-    def __init__(self, host, event_hub_path, credential, **kwargs):
+    def __init__(self, host, event_hub_path, credential, **kwargs) -> None:
         # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
+        self._partition_manager = kwargs.pop("partition_manager") if "partition_manager" in kwargs else None
+        self._load_balancing_interval = kwargs.pop("load_balancing_interval") \
+            if "load_balancing_interval" in kwargs else 10
         super(EventHubConsumerClient, self).__init__(
-            host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
-        self._partition_manager = kwargs.get("partition_manager")
-        self._load_balancing_interval = kwargs.get("load_balancing_interval", 10)
+            host=host, event_hub_path=event_hub_path, credential=credential,
+            network_tracing=kwargs.get("logging_enable"), **kwargs)
         self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
         self._closed = False
 
     async def receive(
-            self, on_event: Callable[[PartitionContext, List[EventData]], None], consumer_group: str,
+            self, on_events: Callable[[PartitionContext, List[EventData]], None], consumer_group: str,
             *,
             partition_id: str = None,
             owner_level: int = None,
-            prefetch: int = None,
+            prefetch: int = 300,
             track_last_enqueued_event_properties: bool = False,
             initial_event_position: Union[EventPosition, Dict[str, EventPosition]] = None,
             on_error: Callable[[PartitionContext, Exception], None] = None,
@@ -90,11 +91,11 @@ class EventHubConsumerClient(EventHubClient):
     ) -> None:
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
-        :param on_event: The callback function for handling received events. The callback takes two
+        :param on_events: The callback function for handling received events. The callback takes two
          parameters: partition_context` which contains partition information and `events` which are the received events.
          Please define the callback like `on_event(partition_context, events)`.
          For detailed partition context information, please refer to ~azure.eventhub.PartitionContext.
-        :type on_event: Callable[PartitionContext, List[EventData]]
+        :type on_events: Callable[PartitionContext, List[EventData]]
         :param consumer_group: Receive events from the event hub for this consumer group
         :param partition_id: Receive from this partition only if it's not None. Receive from all partition otherwise.
         :param owner_level: The priority of the exclusive consumer. An exclusive
@@ -141,20 +142,19 @@ class EventHubConsumerClient(EventHubClient):
             error = None
             if (consumer_group, '-1') in self._event_processors:
                 error = ValueError("This consumer client is already receiving events from all partitions for"
-                                   " consumer group {}. "
-                                   "Cannot receive from any other partitions again".format(consumer_group))
+                                   " consumer group {}. ".format(consumer_group))
             elif partition_id is None and any(x[0] == consumer_group for x in self._event_processors):
                 error = ValueError("This consumer client is already receiving events for consumer group {}. "
-                                   "Cannot receive from all partitions again".format(consumer_group))
+                                   .format(consumer_group))
             elif (consumer_group, partition_id) in self._event_processors:
                 error = ValueError("This consumer is already receiving events from partition {} for consumer group {}. "
-                                   "Cannot receive from it again.".format(partition_id, consumer_group))
+                                   .format(partition_id, consumer_group))
             if error:
                 log.warning(error)
                 raise error
 
             event_processor = EventProcessor(
-                self, consumer_group, on_event,
+                self, consumer_group, on_events,
                 partition_id=partition_id,
                 partition_manager=self._partition_manager,
                 error_handler=on_error,

@@ -39,10 +39,7 @@ class EventHubConsumerClient(EventHubClient):
      of getting tokens.
     :type credential: ~azure.eventhub.EventHubSharedKeyCredential,~azure.eventhub.EventHubSASTokenCredential,
      Credential objects in azure-identity and objects that implement `get_token(self, *scopes)` method
-    :keyword bool network_tracing: Whether to output network trace logs to the logger. Default is `False`.
-    :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
-     keys: 'proxy_hostname' (str value) and 'proxy_port' (int value).
-     Additionally the following keys may also be present: 'username', 'password'.
+    :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
     :keyword str user_agent: The user agent that needs to be appended to the built in user agent string.
@@ -51,6 +48,9 @@ class EventHubConsumerClient(EventHubClient):
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Event Hubs service. Default is ~azure.eventhub.TransportType.Amqp.
     :paramtype transport_type: ~azure.eventhub.TransportType
+    :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+     keys: 'proxy_hostname' (str value) and 'proxy_port' (int value).
+     Additionally the following keys may also be present: 'username', 'password'.
     :keyword partition_manager: stores the load balancing data and checkpoint data when receiving events
      if partition_manager is specified. If it's None, this EventHubConsumerClient instance will receive
      events without load balancing and checkpoint.
@@ -75,9 +75,12 @@ class EventHubConsumerClient(EventHubClient):
             raise ValueError("receive_timeout must be greater than 0.")
 
         kwargs['receive_timeout'] = receive_timeout
-
+        self._partition_manager = kwargs.pop("partition_manager") if "partition_manager" in kwargs else None
+        self._load_balancing_interval = kwargs.pop("load_balancing_interval") \
+            if "load_balancing_interval" in kwargs else 10
         super(EventHubConsumerClient, self).__init__(
-            host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
+            host=host, event_hub_path=event_hub_path, credential=credential,
+            network_tracing=kwargs.get("logging_enable"), **kwargs)
         self._partition_manager = kwargs.get("partition_manager")
         self._load_balancing_interval = kwargs.get("load_balancing_interval", 10)
         self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
@@ -96,15 +99,15 @@ class EventHubConsumerClient(EventHubClient):
             elif (consumer_group, '-1') in eventhub_client._event_processors:
                 del eventhub_client._event_processors[(consumer_group, "-1")]
 
-    def receive(self, on_event, consumer_group, **kwargs):
+    def receive(self, on_events, consumer_group, **kwargs):
         #  type: (Callable[[PartitionContext, List[EventData]], None], str, Any) -> None
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
-        :param on_event: The callback function for handling received events. The callback takes two
+        :param on_events: The callback function for handling received events. The callback takes two
          parameters: partition_context` which contains partition information and `events` which are the received events.
          Please define the callback like `on_event(partition_context, events)`.
          For detailed partition context information, please refer to ~azure.eventhub.PartitionContext.
-        :type on_event: Callable[PartitionContext, List[EventData]]
+        :type on_events: Callable[PartitionContext, List[EventData]]
         :param str consumer_group: The name of the consumer group this consumer is associated with.
          Events are read in the context of this group. The default consumer_group for an event hub is "$Default".
         :keyword str partition_id: The identifier of the Event Hub partition from which events will be received.
@@ -154,20 +157,19 @@ class EventHubConsumerClient(EventHubClient):
             error = None
             if (consumer_group, '-1') in self._event_processors:
                 error = ValueError("This consumer client is already receiving events from all partitions for"
-                                   " consumer group {}. "
-                                   "Cannot receive from any other partitions again.".format(consumer_group))
+                                   " consumer group {}. ".format(consumer_group))
             elif partition_id is None and any(x[0] == consumer_group for x in self._event_processors):
                 error = ValueError("This consumer client is already receiving events for consumer group {}. "
-                                   "Cannot receive from all partitions again.".format(consumer_group))
+                                   .format(consumer_group))
             elif (consumer_group, partition_id) in self._event_processors:
                 error = ValueError("This consumer is already receiving events from partition {} for consumer group {}. "
-                                   "Cannot receive from it again.".format(partition_id, consumer_group))
+                                   .format(partition_id, consumer_group))
             if error:
                 log.warning(error)
                 raise error
 
             event_processor = EventProcessor(
-                self, consumer_group, on_event,
+                self, consumer_group, on_events,
                 partition_manager=self._partition_manager,
                 polling_interval=self._load_balancing_interval,
                 **kwargs

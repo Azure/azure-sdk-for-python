@@ -30,7 +30,7 @@ def do_operation(event):
     pass
 
 
-def on_event(partition_context, events):
+def on_events(partition_context, events):
     # put your code here
     global total
     print("received events: {} from partition {}".format(len(events), partition_context.partition_id))
@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     try:
         with consumer_client:
-            consumer_client.receive(on_event=on_event, consumer_group='$Default',
+            consumer_client.receive(on_events=on_events, consumer_group='$Default',
                                     partition_id='0', track_last_enqueued_event_properties=True)
 
     except KeyboardInterrupt:

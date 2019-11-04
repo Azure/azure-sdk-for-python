@@ -3,8 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
 
-
+import logging
 from .partition_manager import PartitionManager
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class PartitionContext(object):
@@ -36,3 +38,8 @@ class PartitionContext(object):
                 self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name,
                 self.partition_id, event.offset, event.sequence_number
             )
+        else:
+            _LOGGER.info(
+                "namespace %r, eventhub %r, consumer_group %r, partition_id %r "
+                "update_checkpoint is called without partition manager. No checkpoint is updated.",
+                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name, self.partition_id)

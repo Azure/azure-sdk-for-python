@@ -16,7 +16,7 @@ from azure.eventhub.client import EventHubClient
 @pytest.mark.liveTest
 def test_receive_end_of_stream(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     with receiver:
         received = receiver.receive(timeout=5)
@@ -33,7 +33,7 @@ def test_receive_end_of_stream(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_with_offset_sync(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     partitions = client.get_properties()
     assert partitions["partition_ids"] == ["0", "1"]
     receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
@@ -64,7 +64,7 @@ def test_receive_with_offset_sync(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_with_inclusive_offset(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
 
     with receiver:
@@ -89,7 +89,7 @@ def test_receive_with_inclusive_offset(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_with_datetime_sync(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     partitions = client.get_properties()
     assert partitions["partition_ids"] == ["0", "1"]
     receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
@@ -119,7 +119,7 @@ def test_receive_with_datetime_sync(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_with_custom_datetime_sync(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     for i in range(5):
         senders[0].send(EventData(b"Message before timestamp"))
     time.sleep(65)
@@ -147,7 +147,7 @@ def test_receive_with_custom_datetime_sync(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_with_sequence_no(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
 
     with receiver:
@@ -173,7 +173,7 @@ def test_receive_with_sequence_no(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_with_inclusive_sequence_no(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     with receiver:
         received = receiver.receive(timeout=5)
@@ -192,7 +192,7 @@ def test_receive_with_inclusive_sequence_no(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_batch(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
     with receiver:
         received = receiver.receive(timeout=5)
@@ -228,7 +228,7 @@ def test_receive_batch_with_app_prop_sync(connstr_senders):
             ed.application_properties = batch_app_prop
             yield ed
 
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
     with receiver:
         received = receiver.receive(timeout=5)
@@ -251,7 +251,7 @@ def test_receive_batch_with_app_prop_sync(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_over_websocket_sync(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket)
     receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
 
     event_list = []
@@ -278,8 +278,7 @@ def test_receive_run_time_metric(connstr_senders):
     if StrictVersion(uamqp_version) < StrictVersion('1.2.3'):
         pytest.skip("Disabled for uamqp 1.2.2. Will enable after uamqp 1.2.3 is released.")
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket,
-                                                   network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket)
     receiver = client._create_consumer(consumer_group="$default", partition_id="0",
                                       event_position=EventPosition('@latest'), prefetch=500,
                                       track_last_enqueued_event_properties=True)

@@ -29,7 +29,7 @@ def do_operation(event):
     pass
 
 
-def on_event(partition_context, events):
+def on_events(partition_context, events):
     # put your code here
     print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
     for event in events:
@@ -55,9 +55,9 @@ if __name__ == '__main__':
             partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
             which also try to receive events from all partitions and use the same storage resource.
             """
-            consumer_client.receive(on_event=on_event, consumer_group='$Default')
+            consumer_client.receive(on_events=on_events, consumer_group='$Default')
             # With specified partition_id, load-balance will be disabled
-            # client.receive(on_event=on_event, consumer_group='$Default', partition_id='0')
+            # client.receive(on_events=on_events, consumer_group='$Default', partition_id='0')
     except KeyboardInterrupt:
         print('Stop receiving.')
         consumer_client.close()

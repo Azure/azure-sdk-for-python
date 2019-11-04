@@ -76,13 +76,13 @@ def example_eventhub_sync_send_and_receive():
         # [START eventhub_consumer_client_receive_sync]
         logger = logging.getLogger("azure.eventhub")
 
-        def on_event(partition_context, events):
+        def on_events(partition_context, events):
             logger.info("Received {} messages from partition: {}".format(
                 len(events), partition_context.partition_id))
             # Do ops on received events
 
         with consumer:
-            consumer.receive(on_event=on_event, consumer_group='$Default')
+            consumer.receive(on_events=on_events, consumer_group='$Default')
         # [END eventhub_consumer_client_receive_sync]
     finally:
         pass
@@ -122,7 +122,7 @@ def example_eventhub_consumer_ops():
 
     logger = logging.getLogger("azure.eventhub")
 
-    def on_event(partition_context, events):
+    def on_events(partition_context, events):
         logger.info("Received {} messages from partition: {}".format(
             len(events), partition_context.partition_id))
         # Do ops on received events
@@ -131,7 +131,7 @@ def example_eventhub_consumer_ops():
     # better demonstrate how to stop the receiving by calling he close method.
 
     worker = threading.Thread(target=consumer.receive,
-                              kwargs={"on_event": on_event,
+                              kwargs={"on_events": on_events,
                                       "consumer_group": "$Default"})
     worker.start()
     time.sleep(10)  # Keep receiving for 10s then close.

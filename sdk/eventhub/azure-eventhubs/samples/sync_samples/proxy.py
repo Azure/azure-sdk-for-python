@@ -33,7 +33,7 @@ def do_operation(event):
     print(event)
 
 
-def on_event(partition_context, events):
+def on_events(partition_context, events):
     print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
     for event in events:
         do_operation(event)
@@ -51,7 +51,7 @@ with producer_client:
 
 with consumer_client:
     receiving_time = 5
-    consumer_client.receive(on_event=on_event, consumer_group='$Default')
+    consumer_client.receive(on_events=on_events, consumer_group='$Default')
     time.sleep(receiving_time)
     print('Finish receiving.')
 

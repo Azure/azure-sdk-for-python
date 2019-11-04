@@ -45,7 +45,7 @@ def on_error(partition_context, error):
                                                                        error))
 
 
-def on_event(partition_context, events):
+def on_events(partition_context, events):
     # put your code here
     global total
 
@@ -65,12 +65,12 @@ if __name__ == '__main__':
 
     try:
         with consumer_client:
-            consumer_client.receive(on_event=on_event, consumer_group='$Default',
+            consumer_client.receive(on_events=on_events, consumer_group='$Default',
                                     on_partition_initialize=on_partition_initialize,
                                     on_partition_close=on_partition_close,
                                     on_error=on_error)
             # Receive with owner level:
-            # consumer_client.receive(on_event=on_event, consumer_group='$Default', owner_level=1)
+            # consumer_client.receive(on_events=on_events, consumer_group='$Default', owner_level=1)
     except KeyboardInterrupt:
         print('Stop receiving.')
         consumer_client.close()

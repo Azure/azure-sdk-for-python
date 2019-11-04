@@ -24,13 +24,13 @@ async def do_operation(event):
     # print(event)
 
 
-async def on_event(partition_context, events):
+async def on_events(partition_context, events):
     print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
     await asyncio.gather(*[do_operation(event) for event in events])
 
 
 async def receive_for_a_while(client, duration):
-    task = asyncio.ensure_future(client.receive(on_event=on_event,
+    task = asyncio.ensure_future(client.receive(on_events=on_events,
                                                 consumer_group="$default"))
     await asyncio.sleep(duration)
     task.cancel()
@@ -38,7 +38,7 @@ async def receive_for_a_while(client, duration):
 
 async def receive_forever(client):
     try:
-        await client.receive(on_event=on_event,
+        await client.receive(on_events=on_events,
                              consumer_group="$default")
     except KeyboardInterrupt:
         client.close()

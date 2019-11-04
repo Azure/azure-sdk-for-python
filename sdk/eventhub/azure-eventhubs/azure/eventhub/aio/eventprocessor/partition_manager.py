@@ -19,12 +19,12 @@ class PartitionManager(ABC):
         """
         Retrieves a complete ownership list from the chosen storage service.
 
-        :param fully_qualified_namespace: The fully qualified namespace that the event hub belongs to.
+        :param str fully_qualified_namespace: The fully qualified namespace that the event hub belongs to.
          The format is like "<namespace>.servicebus.windows.net"
-        :param eventhub_name: The name of the specific Event Hub the ownership are associated with, relative to
+        :param str eventhub_name: The name of the specific Event Hub the ownership are associated with, relative to
          the Event Hubs namespace that contains it.
-        :param consumer_group_name: The name of the consumer group the ownership are associated with.
-        :return: Iterable of dictionaries containing the following partition ownership information:
+        :param str consumer_group_name: The name of the consumer group the ownership are associated with.
+        :rtype: Iterable[Dict[str, Any]], Iterable of dictionaries containing partition ownership information:
                 * fully_qualified_namespace
                 * eventhub_name
                 * consumer_group_name
@@ -39,9 +39,8 @@ class PartitionManager(ABC):
         """
         Tries to claim a list of specified ownership.
 
-        :param ownership_list: Iterable of dictionaries containing all the ownership to claim.
-        :type ownership_list: Iterable of dict
-        :return: Iterable of dictionaries containing the following partition ownership information:
+        :param Iterable[Dict[str,Any]] ownership_list: Iterable of dictionaries containing all the ownership to claim.
+        :rtype: Iterable[Dict[str,Any]], Iterable of dictionaries containing partition ownership information:
                 * fully_qualified_namespace
                 * eventhub_name
                 * consumer_group_name
@@ -58,31 +57,35 @@ class PartitionManager(ABC):
         Updates the checkpoint using the given information for the associated partition and
         consumer group in the chosen storage service.
 
-        :param fully_qualified_namespace: The fully qualified namespace that the event hub belongs to.
+        :param str fully_qualified_namespace: The fully qualified namespace that the event hub belongs to.
          The format is like "<namespace>.servicebus.windows.net"
-        :param eventhub_name: The name of the specific Event Hub the ownership are associated with, relative to
+        :param str eventhub_name: The name of the specific Event Hub the ownership are associated with, relative to
          the Event Hubs namespace that contains it.
-        :type eventhub_name: str
-        :param consumer_group_name: The name of the consumer group the ownership are associated with.
-        :type consumer_group_name: str
-        :param partition_id: The partition id which the checkpoint is created for.
-        :type partition_id: str
-        :param offset: The offset of the ~azure.eventhub.EventData the new checkpoint will be associated with.
-        :type offset: str
-        :param sequence_number: The sequence_number of the ~azure.eventhub.EventData the new checkpoint
+        :param str consumer_group_name: The name of the consumer group the ownership are associated with.
+        :param str partition_id: The partition id which the checkpoint is created for.
+        :param str offset: The offset of the ~azure.eventhub.EventData the new checkpoint will be associated with.
+        :param int sequence_number: The sequence_number of the ~azure.eventhub.EventData the new checkpoint
          will be associated with.
-        :type sequence_number: int
-        :return: None
+        :rtype: None
+        :raise: `OwnershipLostError`
         """
 
     @abstractmethod
     async def list_checkpoints(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group_name: str):
         """List the updated checkpoints from the store
 
-        :param fully_qualified_namespace: The fully qualified namespace that the event hub belongs to.
+        :param str fully_qualified_namespace: The fully qualified namespace that the event hub belongs to.
          The format is like "<namespace>.servicebus.windows.net"
-        :param eventhub_name: name of the eventhub that the consumer client is receiving from
-        :param consumer_group_name: the consumer group name that is used to receive from the eventhub
+        :param str eventhub_name: The name of the specific Event Hub the ownership are associated with, relative to
+         the Event Hubs namespace that contains it.
+        :param str consumer_group_name: The name of the consumer group the ownership are associated with.
+        :rtype: Iterable[Dict[str,Any]], Iterable of dictionaries containing partition ownership information:
+                * fully_qualified_namespace
+                * eventhub_name
+                * consumer_group_name
+                * partition_id
+                * sequence_number
+                * offset
         """
 
 
