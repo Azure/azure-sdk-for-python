@@ -81,8 +81,6 @@ class EventHubConsumerClient(EventHubClient):
         super(EventHubConsumerClient, self).__init__(
             host=host, event_hub_path=event_hub_path, credential=credential,
             network_tracing=kwargs.get("logging_enable"), **kwargs)
-        self._partition_manager = kwargs.get("partition_manager")
-        self._load_balancing_interval = kwargs.get("load_balancing_interval", 10)
         self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
         self._closed = False
 
