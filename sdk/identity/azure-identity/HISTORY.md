@@ -2,6 +2,10 @@
 
 ## 1.0.1
 
+- Adopted msal 1.0.0 and msal-extensions 0.1.3
+([8359](https://github.com/Azure/azure-sdk-for-python/pull/8359))
+
+
 ## 1.0.0 (2019-10-29)
 ### Breaking changes:
 - Async credentials now default to [`aiohttp`](https://pypi.org/project/aiohttp/)
