@@ -797,7 +797,8 @@ class CertificatePolicy(object):
             key_usage=key_usage,
             content_type=(
                 SecretContentType(certificate_policy_bundle.secret_properties.content_type)
-                if certificate_policy_bundle.secret_properties and certificate_policy_bundle.secret_properties.content_type
+                if certificate_policy_bundle.secret_properties and
+                certificate_policy_bundle.secret_properties.content_type
                 else None
             ),
             attributes=certificate_policy_bundle.attributes,
