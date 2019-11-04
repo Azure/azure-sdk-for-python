@@ -11,7 +11,8 @@ from ._deserialize import (
     deserialize_entities_result,
     deserialize_linked_entities_result,
     deserialize_key_phrases_result,
-    deserialize_sentiment_result
+    deserialize_sentiment_result,
+    deserialize_language_result
 )
 
 
@@ -99,6 +100,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                cls=deserialize_language_result,
                 **kwargs
             )
         except Exception as error:

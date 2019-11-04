@@ -143,8 +143,8 @@ class DocumentLanguage(Model):
 
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
-    :param detected_language: Required. A list of extracted languages.
-    :type detected_language: list[~textanalytics.models.DetectedLanguage]
+    :param detected_languages: Required. A list of extracted languages.
+    :type detected_languages: list[~textanalytics.models.DetectedLanguage]
     :param statistics: if showStats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics: ~textanalytics.models.DocumentStatistics
@@ -152,19 +152,19 @@ class DocumentLanguage(Model):
 
     _validation = {
         'id': {'required': True},
-        'detected_language': {'required': True},
+        'detected_languages': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'detected_language': {'key': 'detectedLanguage', 'type': '[DetectedLanguage]'},
+        'detected_languages': {'key': 'detectedLanguages', 'type': '[DetectedLanguage]'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
-    def __init__(self, *, id: str, detected_language, statistics=None, **kwargs) -> None:
+    def __init__(self, *, id: str, detected_languages, statistics=None, **kwargs) -> None:
         super(DocumentLanguage, self).__init__(**kwargs)
         self.id = id
-        self.detected_language = detected_language
+        self.detected_languages = detected_languages
         self.statistics = statistics
 
 

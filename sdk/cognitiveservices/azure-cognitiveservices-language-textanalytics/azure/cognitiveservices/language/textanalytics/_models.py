@@ -1,5 +1,34 @@
 
 
+class DetectedLanguage(object):
+    """DetectedLanguage.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Long name of a detected language (e.g. English,
+     French).
+    :type name: str
+    :param iso6391_name: Required. A two letter representation of the detected
+     language according to the ISO 639-1 standard (e.g. en, fr).
+    :type iso6391_name: str
+    :param score: Required. A confidence score between 0 and 1. Scores close
+     to 1 indicate 100% certainty that the identified language is true.
+    :type score: float
+    """
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('name', None)
+        self.iso6391_name = kwargs.get('iso6391_name', None)
+        self.score = kwargs.get('score', None)
+
+    @classmethod
+    def _from_generated(cls, language):
+        return cls(
+            name=language.name,
+            iso6391_name=language.iso6391_name,
+            score=language.score
+        )
+
+
 class DocumentEntities(object):
     """DocumentEntities.
 
@@ -21,6 +50,25 @@ class DocumentEntities(object):
         self.entities = kwargs.get('entities', None)
         self.statistics = kwargs.get('statistics', None)
         self.is_error = False
+
+
+class DocumentLanguage(object):
+    """DocumentLanguage.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Unique, non-empty document identifier.
+    :type id: str
+    :param detected_languages: Required. A list of extracted languages.
+    :type detected_languages: list[~textanalytics.models.DetectedLanguage]
+    :param statistics: if showStats=true was specified in the request this
+     field will contain information about the document payload.
+    :type statistics: ~textanalytics.models.DocumentStatistics
+    """
+    def __init__(self, **kwargs):
+        self.id = kwargs.get('id', None)
+        self.detected_languages = kwargs.get('detected_languages', None)
+        self.statistics = kwargs.get('statistics', None)
 
 
 class Entity(object):
