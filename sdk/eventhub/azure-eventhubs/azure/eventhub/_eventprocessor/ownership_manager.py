@@ -54,7 +54,7 @@ class OwnershipManager(object):
             self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name
         )
         to_claim = self._balance_ownership(ownership_list, self.cached_parition_ids)
-        claimed_list = self.partition_manager.claim_ownership(to_claim) if to_claim else None
+        claimed_list = self.partition_manager.claim_ownership(to_claim) if to_claim else []
         return [x["partition_id"] for x in claimed_list]
 
     def _retrieve_partition_ids(self):

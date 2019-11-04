@@ -6,7 +6,7 @@ from azure.eventhub import EventHubProducerClient
 @pytest.mark.liveTest
 def test_send_with_partition_key(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubProducerClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubProducerClient.from_connection_string(connection_str)
 
     with client:
         data_val = 0
@@ -31,7 +31,7 @@ def test_send_with_partition_key(connstr_receivers):
 @pytest.mark.liveTest
 def test_send_partition(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubProducerClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubProducerClient.from_connection_string(connection_str)
     with client:
         client.send(EventData(b"Data"), partition_id="1")
 
@@ -45,7 +45,7 @@ def test_send_partition(connstr_receivers):
 @pytest.mark.liveTest
 def test_send_no_partition_batch(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubProducerClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubProducerClient.from_connection_string(connection_str)
     with client:
         event_batch = client.create_batch()
         try:
