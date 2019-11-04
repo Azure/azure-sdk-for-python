@@ -12,6 +12,5 @@ Subpackages
 .. toctree::
 
    azure.eventhub.aio
-   azure.eventhub.extensions
 
 
