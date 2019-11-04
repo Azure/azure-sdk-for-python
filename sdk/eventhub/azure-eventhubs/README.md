@@ -85,7 +85,7 @@ TokenCredential interface. There are implementations of the TokenCredential inte
 
 ## Key concepts
 
-- An **EvnetHubProducerClient** is a source of telemetry data, diagnostics information, usage logs, or other log data,
+- An **EventHubProducerClient** is a source of telemetry data, diagnostics information, usage logs, or other log data,
 as part of an embedded device solution, a mobile device application, a game title running on a console or other device,
 some client or server based business solution, or a web site.
 

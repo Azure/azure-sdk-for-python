@@ -17,9 +17,9 @@ from uamqp import Message  # type: ignore
 from uamqp import authentication  # type: ignore
 from uamqp import constants  # type: ignore
 
-from azure.eventhub.producer import EventHubProducer
-from azure.eventhub.consumer import EventHubConsumer
-from azure.eventhub.common import parse_sas_token, EventPosition
+from .producer import EventHubProducer
+from .consumer import EventHubConsumer
+from .common import parse_sas_token, EventPosition
 from .client_abstract import EventHubClientAbstract
 from .common import EventHubSASTokenCredential, EventHubSharedKeyCredential
 from ._connection_manager import get_connection_manager
@@ -35,15 +35,6 @@ class EventHubClient(EventHubClientAbstract):
     """
     The EventHubClient class defines a high level interface for sending
     events to and receiving events from the Azure Event Hubs service.
-
-    Example:
-        .. literalinclude:: ../examples/test_examples_eventhub.py
-            :start-after: [START create_eventhub_client]
-            :end-before: [END create_eventhub_client]
-            :language: python
-            :dedent: 4
-            :caption: Create a new instance of the Event Hub client
-
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
@@ -62,11 +53,6 @@ class EventHubClient(EventHubClientAbstract):
         """
         Create an ~uamqp.authentication.SASTokenAuth instance to authenticate
         the session.
-
-        :param username: The name of the shared access policy.
-        :type username: str
-        :param password: The shared access key.
-        :type password: str
         """
         http_proxy = self._config.http_proxy
         transport_type = self._config.transport_type
@@ -143,7 +129,6 @@ class EventHubClient(EventHubClientAbstract):
         log.info("%r returns an exception %r", self._container_id, last_exception)  # pylint:disable=specify-parameter-names-in-call
         raise last_exception
 
-
     def get_properties(self):
         # type:() -> Dict[str, Any]
         """
@@ -191,8 +176,7 @@ class EventHubClient(EventHubClientAbstract):
             -'last_enqueued_time_utc'
             -'is_empty'
 
-        :param partition: The target partition id.
-        :type partition: str
+        :param str partition: The target partition id.
         :rtype: dict
         :raises: ~azure.eventhub.ConnectError
         """
@@ -238,15 +222,6 @@ class EventHubClient(EventHubClientAbstract):
          It is set to `False` by default.
         :type track_last_enqueued_event_properties: bool
         :rtype: ~azure.eventhub.consumer.EventHubConsumer
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START create_eventhub_client_receiver]
-                :end-before: [END create_eventhub_client_receiver]
-                :language: python
-                :dedent: 4
-                :caption: Add a consumer to the client for a particular consumer group and partition.
-
         """
         owner_level = kwargs.get("owner_level")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
@@ -276,15 +251,6 @@ class EventHubClient(EventHubClientAbstract):
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: float
         :rtype: ~azure.eventhub.producer.EventHubProducer
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START create_eventhub_client_sender]
-                :end-before: [END create_eventhub_client_sender]
-                :language: python
-                :dedent: 4
-                :caption: Add a producer to the client to send EventData.
-
         """
 
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
