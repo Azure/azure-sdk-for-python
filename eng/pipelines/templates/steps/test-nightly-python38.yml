@@ -38,7 +38,7 @@ steps:
       curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
       python3 get-pip.py
       python3 -m pip install setuptools wheel 
-      python3 -m pip install tox tox-monorepo packaging twine codecov beautifulsoup4
+      python3 -m pip install tox tox-monorepo packaging twine codecov beautifulsoup4 psutil
       python3 --version
       cd $(Build.SourcesDirectory)
     displayName: 'Prep Environment Using Python 3.8'
