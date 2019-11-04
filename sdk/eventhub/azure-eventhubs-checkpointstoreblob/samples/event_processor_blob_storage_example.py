@@ -13,18 +13,16 @@ logging.basicConfig(level=logging.INFO)
 
 
 def do_operation(event):
-    # do some sync or async operations. If the operation is i/o intensive, async will have better performance
+    # put your code here
     print(event)
 
 
 def process_events(partition_context, events):
-    if events:
-        print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
-        for event in events:
-            do_operation(event)
-        partition_context.update_checkpoint(events[-1])
-    else:
-        print("empty events received", "partition:", partition_context.partition_id)
+    # put your code here
+    print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
+    for event in events:
+        do_operation(event)
+    partition_context.update_checkpoint(events[-1])
 
 
 if __name__ == '__main__':

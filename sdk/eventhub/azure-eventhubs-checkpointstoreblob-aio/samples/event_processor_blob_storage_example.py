@@ -14,16 +14,15 @@ logging.basicConfig(level=logging.INFO)
 
 
 async def do_operation(event):
+    # put your code here
     # do some sync or async operations. If the operation is i/o intensive, async will have better performance
     print(event)
 
 
 async def process_events(partition_context, events):
-    if events:
-        await asyncio.gather(*[do_operation(event) for event in events])
-        await partition_context.update_checkpoint(events[-1])
-    else:
-        print("empty events received", "partition:", partition_context.partition_id)
+    # put your code here
+    await asyncio.gather(*[do_operation(event) for event in events])
+    await partition_context.update_checkpoint(events[-1])
 
 
 if __name__ == '__main__':
