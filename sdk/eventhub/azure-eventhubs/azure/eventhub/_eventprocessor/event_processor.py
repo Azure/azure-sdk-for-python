@@ -77,8 +77,8 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
     def _create_tasks_for_claimed_ownership(self, claimed_partitions, checkpoints=None):
         with self._lock:
             for partition_id in claimed_partitions:
-                checkpoint = checkpoints.get(partition_id) if checkpoints else None
                 if partition_id not in self._working_threads or not self._working_threads[partition_id].is_alive():
+                    checkpoint = checkpoints.get(partition_id) if checkpoints else None
                     self._working_threads[partition_id] = threading.Thread(target=self._receive,
                                                                            args=(partition_id, checkpoint))
                     self._working_threads[partition_id].daemon = True
