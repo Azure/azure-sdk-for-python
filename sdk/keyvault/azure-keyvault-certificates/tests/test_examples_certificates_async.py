@@ -318,15 +318,15 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_issuers(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import AdministratorDetails, CertificatePolicy
+        from azure.keyvault.certificates import AdministratorContact, CertificatePolicy
 
         certificate_client = vault_client.certificates
 
         # [START create_issuer]
 
-        # First we specify the AdministratorDetails for a issuer.
+        # First we specify the AdministratorContact for a issuer.
         admin_details = [
-            AdministratorDetails(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+            AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
 
         issuer = await certificate_client.create_issuer(

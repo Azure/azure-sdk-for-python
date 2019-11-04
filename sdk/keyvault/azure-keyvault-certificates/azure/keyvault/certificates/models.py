@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from typing import Any, Dict, Optional
 
 
-class AdministratorDetails(object):
+class AdministratorContact(object):
     """Details of the organization administrator of the certificate issuer.
 
     :param str first_name: First name of the issuer.
@@ -35,14 +35,14 @@ class AdministratorDetails(object):
 
     def __repr__(self):
         # type () -> str
-        return "AdministratorDetails(first_name={}, last_name={}, email={}, phone={})".format(
+        return "AdministratorContact(first_name={}, last_name={}, email={}, phone={})".format(
             self.first_name, self.last_name, self.email, self.phone
         )[:1024]
 
     @classmethod
     def _from_admin_details_bundle(cls, admin_details_bundle):
-        # type: (models.AdministratorDetails) -> AdministratorDetails
-        """Construct a AdministratorDetails from an autorest-generated AdministratorDetailsBundle"""
+        # type: (models.AdministratorDetails) -> AdministratorContact
+        """Construct a AdministratorContact from an autorest-generated AdministratorDetailsBundle"""
         return cls(
             email=admin_details_bundle.email_address,
             first_name=admin_details_bundle.first_name,
@@ -1146,7 +1146,7 @@ class CertificateIssuer(object):
     :param str password: The password / secret / account key.
     :param str organization_id: The ID of the organization.
     :param admin_details: Details of the organization administrator.
-    :type admin_details: list[~azure.keyvault.certificates.AdministratorDetails]
+    :type admin_details: list[~azure.keyvault.certificates.AdministratorContact]
     """
 
     def __init__(
@@ -1156,7 +1156,7 @@ class CertificateIssuer(object):
         account_id=None,  # type: Optional[str]
         password=None,  # type: Optional[str]
         organization_id=None,  # type: Optional[str]
-        admin_details=None,  # type: Optional[List[AdministratorDetails]]
+        admin_details=None,  # type: Optional[List[AdministratorContact]]
     ):
         # type: (...) -> None
         self._properties = properties
@@ -1181,7 +1181,7 @@ class CertificateIssuer(object):
         if admin_details_service:
             # pylint:disable=protected-access
             for admin_detail in admin_details_service:
-                admin_details.append(AdministratorDetails._from_admin_details_bundle(admin_detail))
+                admin_details.append(AdministratorContact._from_admin_details_bundle(admin_detail))
         return cls(
             properties=IssuerProperties._from_issuer_item(issuer_bundle),  # pylint: disable=protected-access
             attributes=issuer_bundle.attributes,
@@ -1266,10 +1266,10 @@ class CertificateIssuer(object):
 
     @property
     def admin_details(self):
-        # type: () -> List[AdministratorDetails]
+        # type: () -> List[AdministratorContact]
         """Details of the organization administrator of this issuer.
 
-        :rtype: list[~azure.keyvault.certificates.models.AdministratorDetails]
+        :rtype: list[~azure.keyvault.certificates.models.AdministratorContact]
         """
         return self._admin_details
 

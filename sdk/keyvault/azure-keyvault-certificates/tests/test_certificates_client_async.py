@@ -13,7 +13,7 @@ import json
 from azure_devtools.scenario_tests import RecordingProcessor
 from certificates_async_test_case import AsyncKeyVaultTestCase
 
-from azure.keyvault.certificates import AdministratorDetails, CertificateContact, CertificatePolicy
+from azure.keyvault.certificates import AdministratorContact, CertificateContact, CertificatePolicy
 from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer
 from certificates_test_case import KeyVaultTestCase
@@ -664,7 +664,7 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
         issuer_name = "issuer"
         admin_details = [
-            AdministratorDetails(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+            AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
 
         # create certificate issuer
@@ -718,7 +718,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # update certificate issuer
         admin_details = [
-            AdministratorDetails(first_name="Jane", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+            AdministratorContact(first_name="Jane", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
 
         expected = CertificateIssuer(

@@ -6,7 +6,7 @@ import os
 import asyncio
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
-from azure.keyvault.certificates import AdministratorDetails
+from azure.keyvault.certificates import AdministratorContact
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -42,9 +42,9 @@ async def run_sample():
     credential = DefaultAzureCredential()
     client = CertificateClient(vault_url=VAULT_URL, credential=credential)
     try:
-        # First we specify the AdministratorDetails for our issuers.
+        # First we specify the AdministratorContact for our issuers.
         admin_details = [
-            AdministratorDetails(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+            AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
 
         # Next we create an issuer with these administrator details

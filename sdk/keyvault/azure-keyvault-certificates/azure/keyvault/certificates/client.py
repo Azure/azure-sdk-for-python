@@ -806,7 +806,7 @@ class CertificateClient(KeyVaultClientBase):
         :keyword str organization_id: Id of the organization
         :keyword admin_details: Details of the organization administrators of the
          certificate issuer.
-        :paramtype admin_details: list[~azure.keyvault.certificates.models.AdministratorDetails]
+        :paramtype admin_details: list[~azure.keyvault.certificates.models.AdministratorContact]
         :returns: The created CertificateIssuer
         :rtype: ~azure.keyvault.certificates.models.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -878,7 +878,7 @@ class CertificateClient(KeyVaultClientBase):
         :keyword str password: The password/secret/account key.
         :keyword str organization_id: Id of the organization
         :keyword admin_details: Details of the organization administrators of the certificate issuer
-        :paramtype admin_details: list[~azure.keyvault.certificates.models.AdministratorDetails]
+        :paramtype admin_details: list[~azure.keyvault.certificates.models.AdministratorContact]
         :return: The updated issuer
         :rtype: ~azure.keyvault.certificates.models.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
