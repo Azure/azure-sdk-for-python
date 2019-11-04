@@ -13,7 +13,7 @@ from azure.core.tracing import SpanKind  # type: ignore
 from azure.core.settings import settings  # type: ignore
 
 from azure.eventhub import EventPosition, EventData
-from ..._eventprocessor.close_reason import CloseReason
+from ..._eventprocessor.common import CloseReason
 from .partition_context import PartitionContext
 from .partition_manager import PartitionManager
 from ._ownership_manager import OwnershipManager
