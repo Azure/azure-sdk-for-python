@@ -6,7 +6,7 @@ import asyncio
 import logging
 
 from uamqp import errors, compat  # type: ignore
-from .._error import EventHubError, EventDataSendError, \
+from ..error import EventHubError, EventDataSendError, \
     EventDataError, ConnectError, ConnectionLostError, AuthenticationError
 
 

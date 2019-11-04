@@ -100,8 +100,56 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             with child:
                 yield
 
+    async def _process_error(self, partition_context, err):
+        log.warning(
+            "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+            " has met an error. The exception is %r.",
+            partition_context.owner_id,
+            partition_context.eventhub_name,
+            partition_context.partition_id,
+            partition_context.consumer_group_name,
+            err
+        )
+        if self._error_handler:
+            try:
+                await self._error_handler(partition_context, err)
+            except Exception as err_again:  # pylint:disable=broad-except
+                log.warning(
+                    "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
+                    "An error occurred while running process_error(). The exception is %r.",
+                    partition_context.owner_id,
+                    partition_context.eventhub_name,
+                    partition_context.partition_id,
+                    partition_context.consumer_group_name,
+                    err_again
+                )
+
+    async def _close_partition(self, partition_context, reason):
+        if self._partition_close_handler:
+            log.info(
+                "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+                " is being closed. Reason is: %r",
+                partition_context.owner_id,
+                partition_context.eventhub_name,
+                partition_context.partition_id,
+                partition_context.consumer_group_name,
+                reason
+            )
+            try:
+                await self._partition_close_handler(partition_context, reason)
+            except Exception as err:  # pylint:disable=broad-except
+                log.warning(
+                    "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
+                    "An error occurred while running close(). The exception is %r.",
+                    partition_context.owner_id,
+                    partition_context.eventhub_name,
+                    partition_context.partition_id,
+                    partition_context.consumer_group_name,
+                    err
+                )
+
     async def _receive(self, partition_id, checkpoint=None):  # pylint: disable=too-many-statements
-        try:
+        try:  # pylint:disable=too-many-nested-blocks
             log.info("start ownership %r, checkpoint %r", partition_id, checkpoint)
             namespace = self._namespace
             eventhub_name = self._eventhub_name
@@ -138,55 +186,25 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                 prefetch=self._prefetch,
             )
 
-            async def process_error(err):
-                log.warning(
-                    "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
-                    " has met an error. The exception is %r.",
-                    owner_id, eventhub_name, partition_id, consumer_group_name, err
-                )
-                if self._error_handler:
-                    try:
-                        await self._error_handler(partition_context, err)
-                    except Exception as err_again:  # pylint:disable=broad-except
-                        log.warning(
-                            "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
-                            " has another error during running process_error(). The exception is %r.",
-                            owner_id, eventhub_name, partition_id, consumer_group_name, err_again
-                        )
-
-            async def close(reason):
-                if self._partition_close_handler:
-                    log.info(
-                        "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
-                        " is being closed. Reason is: %r",
-                        owner_id, eventhub_name, partition_id, consumer_group_name, reason
-                    )
-                    try:
-                        await self._partition_close_handler(partition_context, reason)
-                    except Exception as err:  # pylint:disable=broad-except
-                        log.warning(
-                            "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
-                            " has an error during running close(). The exception is %r.",
-                            owner_id, eventhub_name, partition_id, consumer_group_name, err
-                        )
-
             try:
                 if self._partition_initialize_handler:
                     try:
                         await self._partition_initialize_handler(partition_context)
                     except Exception as err:  # pylint:disable=broad-except
                         log.warning(
-                            "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
-                            " has an error during running initialize(). The exception is %r.",
+                            "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
+                            " An error occurred while running initialize(). The exception is %r.",
                             owner_id, eventhub_name, partition_id, consumer_group_name, err
                         )
                 while True:
                     try:
                         events = await partition_consumer.receive()
-                        self._last_enqueued_event_properties[partition_id] = \
-                            partition_consumer.last_enqueued_event_properties
-                        with self._context(events):
-                            await self._event_handler(partition_context, events)
+                        if events:
+                            if self._track_last_enqueued_event_properties:
+                                self._last_enqueued_event_properties[partition_id] = \
+                                    partition_consumer.last_enqueued_event_properties
+                            with self._context(events):
+                                await self._event_handler(partition_context, events)
                     except asyncio.CancelledError:
                         log.info(
                             "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
@@ -198,16 +216,16 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                         )
                         raise
                     except Exception as error:  # pylint:disable=broad-except
-                        await process_error(error)
+                        await self._process_error(partition_context, error)
                         break
                     # Go to finally to stop this partition processor.
                     # Later an EventProcessor(this one or another one) will pick up this partition again
             finally:
                 await partition_consumer.close()
                 if self._running is False:
-                    await close(CloseReason.SHUTDOWN)
+                    await self._close_partition(partition_context, CloseReason.SHUTDOWN)
                 else:
-                    await close(CloseReason.OWNERSHIP_LOST)
+                    await self._close_partition(partition_context, CloseReason.OWNERSHIP_LOST)
         finally:
             if partition_id in self._tasks:
                 del self._tasks[partition_id]
@@ -266,8 +284,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         """
         self._running = False
         pids = list(self._tasks.keys())
-        for pid in pids:
-            self._cancel_tasks_for_partitions([pid])
+        self._cancel_tasks_for_partitions(pids)
         log.info("EventProcessor %r tasks have been cancelled.", self._id)
         while self._tasks:
             await asyncio.sleep(1)
