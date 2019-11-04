@@ -11,173 +11,29 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 793a6b58-8eca-11e9-8ea2-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:33:07 GMT
+      - Fri, 25 Oct 2019 17:22:22 GMT
       x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/utcontainer50c01dd4?restype=container
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 17:33:08 GMT
-      ETag:
-      - '"0x8D6F0EE5E00F5DC"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:33:08 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - ee2edff4-c01e-007a-68d7-220e4d000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      If-Modified-Since:
-      - Fri, 14 Jun 2019 17:18:08 GMT
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 795b491e-8eca-11e9-9400-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 17:33:08 GMT
-      x-ms-lease-action:
-      - acquire
-      x-ms-lease-duration:
-      - '-1'
-      x-ms-proposed-lease-id:
-      - 714a1807-99c8-4aaa-948f-0d9d0e8ae13a
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/utcontainer50c01dd4?comp=lease&restype=container
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 17:33:08 GMT
-      ETag:
-      - '"0x8D6F0EE5E00F5DC"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:33:08 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-lease-id:
-      - 714a1807-99c8-4aaa-948f-0d9d0e8ae13a
-      x-ms-request-id:
-      - ee2ee002-c01e-007a-75d7-220e4d000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 7963ee06-8eca-11e9-855d-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 17:33:08 GMT
-      x-ms-lease-action:
-      - break
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/utcontainer50c01dd4?comp=lease&restype=container
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 17:33:08 GMT
-      ETag:
-      - '"0x8D6F0EE5E00F5DC"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:33:08 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-lease-time:
-      - '0'
-      x-ms-request-id:
-      - ee2ee00a-c01e-007a-7dd7-220e4d000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 3126e4c6-8ed3-11e9-9fdc-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:35:32 GMT
-      x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainer50c01dd4?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 14 Jun 2019 18:35:32 GMT
-      ETag:
-      - '"0x8D6F0F71576A3BC"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 18:35:32 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 17:22:22 GMT
+      etag:
+      - '"0x8D7596FE5A37856"'
+      last-modified:
+      - Fri, 25 Oct 2019 17:22:22 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 23709204-901e-000f-4adf-2289f6000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -193,43 +49,39 @@ interactions:
       Content-Length:
       - '0'
       If-Modified-Since:
-      - Fri, 14 Jun 2019 18:20:32 GMT
+      - Fri, 25 Oct 2019 17:07:22 GMT
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 3146bd34-8ed3-11e9-94f4-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 18:35:32 GMT
+      - Fri, 25 Oct 2019 17:22:22 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '-1'
       x-ms-proposed-lease-id:
-      - 407170dd-86d1-47b5-bcec-0d43f786e0c8
+      - 7f510ab2-2674-47cd-875c-43da54ebdc61
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainer50c01dd4?comp=lease&restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 14 Jun 2019 18:35:32 GMT
-      ETag:
-      - '"0x8D6F0F71576A3BC"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 18:35:32 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 17:22:22 GMT
+      etag:
+      - '"0x8D7596FE5A37856"'
+      last-modified:
+      - Fri, 25 Oct 2019 17:22:22 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-id:
-      - 407170dd-86d1-47b5-bcec-0d43f786e0c8
-      x-ms-request-id:
-      - 2370921c-901e-000f-5cdf-2289f6000000
+      - 7f510ab2-2674-47cd-875c-43da54ebdc61
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -245,37 +97,33 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 314f4894-8ed3-11e9-8b7f-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 18:35:32 GMT
+      - Fri, 25 Oct 2019 17:22:22 GMT
       x-ms-lease-action:
       - break
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainer50c01dd4?comp=lease&restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 14 Jun 2019 18:35:32 GMT
-      ETag:
-      - '"0x8D6F0F71576A3BC"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 18:35:32 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 17:22:22 GMT
+      etag:
+      - '"0x8D7596FE5A37856"'
+      last-modified:
+      - Fri, 25 Oct 2019 17:22:22 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-time:
       - '0'
-      x-ms-request-id:
-      - 2370922f-901e-000f-6cdf-2289f6000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted

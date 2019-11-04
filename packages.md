@@ -39,8 +39,10 @@
 | [`azure-eventhub`]( sdk/eventhub/azure-eventhubs/setup.py )| [Readme](sdk/eventhub/azure-eventhubs/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-eventhub ) |
 | [`azure-graphrbac`]( sdk/graphrbac/azure-graphrbac/setup.py )| [Readme](sdk/graphrbac/azure-graphrbac/README.rst) | [Changelog](sdk/graphrbac/azure-graphrbac/HISTORY.rst) | [PyPI]( https://pypi.org/project/azure-graphrbac ) |
 | [`azure-identity`]( sdk/identity/azure-identity/setup.py )| [Readme](sdk/identity/azure-identity/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-identity ) |
+| [`azure-keyvault`]( sdk/keyvault/azure-keyvault/setup.py )| [Readme](sdk/keyvault/azure-keyvault/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-keyvault ) |
 | [`azure-keyvault-keys`]( sdk/keyvault/azure-keyvault-keys/setup.py )| [Readme](sdk/keyvault/azure-keyvault-keys/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-keyvault-keys ) |
 | [`azure-keyvault-secrets`]( sdk/keyvault/azure-keyvault-secrets/setup.py )| [Readme](sdk/keyvault/azure-keyvault-secrets/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-keyvault-secrets ) |
+| [`azure-keyvault-certificates`]( sdk/keyvault/azure-keyvault-certificates/setup.py )| [Readme](sdk/keyvault/azure-keyvault-certificates/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-keyvault-certificates ) |
 | [`azure-loganalytics`]( sdk/loganalytics/azure-loganalytics/setup.py )| [Readme](sdk/loganalytics/azure-loganalytics/README.rst) | [Changelog](sdk/loganalytics/azure-loganalytics/HISTORY.rst) | [PyPI]( https://pypi.org/project/azure-loganalytics ) |
 | [`azure-mgmt`]( sdk/core/azure-mgmt/setup.py )| [Readme](sdk/core/azure-mgmt/README.rst) |  N/A  | [PyPI]( https://pypi.org/project/azure-mgmt ) |
 | [`azure-mgmt-advisor`]( sdk/advisor/azure-mgmt-advisor/setup.py )| [Readme](sdk/advisor/azure-mgmt-advisor/README.rst) | [Changelog](sdk/advisor/azure-mgmt-advisor/HISTORY.rst) | [PyPI]( https://pypi.org/project/azure-mgmt-advisor ) |
@@ -135,5 +137,5 @@
 | [`azure-servicefabric`]( sdk/servicefabric/azure-servicefabric/setup.py )| [Readme](sdk/servicefabric/azure-servicefabric/README.rst) | [Changelog](sdk/servicefabric/azure-servicefabric/HISTORY.rst) | [PyPI]( https://pypi.org/project/azure-servicefabric ) |
 | [`azure-servicemanagement-legacy`]( sdk/core/azure-servicemanagement-legacy/setup.py )| [Readme](sdk/core/azure-servicemanagement-legacy/README.rst) | [Changelog](sdk/core/azure-servicemanagement-legacy/HISTORY.rst) | [PyPI]( https://pypi.org/project/azure-servicemanagement-legacy ) |
 | [`azure-storage-blob`]( sdk/storage/azure-storage-blob/setup.py )| [Readme](sdk/storage/azure-storage-blob/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-storage-blob ) |
-| [`azure-storage-file`]( sdk/storage/azure-storage-file/setup.py )| [Readme](sdk/storage/azure-storage-file/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-storage-file ) |
+| [`azure-storage-file-share`]( sdk/storage/azure-storage-file-share/setup.py )| [Readme](sdk/storage/azure-storage-file-share/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-storage-file-share ) |
 | [`azure-storage-queue`]( sdk/storage/azure-storage-queue/setup.py )| [Readme](sdk/storage/azure-storage-queue/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-storage-queue ) |

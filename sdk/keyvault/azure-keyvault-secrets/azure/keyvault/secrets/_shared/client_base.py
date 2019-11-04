@@ -4,9 +4,8 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy
+from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy, HttpLoggingPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from ._generated import KeyVaultClient
 from .challenge_auth_policy import ChallengeAuthPolicy
@@ -17,6 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, Optional
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpTransport
+    from azure.core.configuration import Configuration
 
 KEY_VAULT_SCOPE = "https://vault.azure.net/.default"
 
@@ -55,17 +55,17 @@ class KeyVaultClientBase(object):
 
         return config
 
-    def __init__(self, vault_endpoint, credential, **kwargs):
+    def __init__(self, vault_url, credential, **kwargs):
         # type: (str, TokenCredential, **Any) -> None
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the TokenCredential protocol, "
                 "such as a credential from azure-identity"
             )
-        if not vault_endpoint:
-            raise ValueError("vault_endpoint must be the URL of an Azure Key Vault")
+        if not vault_url:
+            raise ValueError("vault_url must be the URL of an Azure Key Vault")
 
-        self._vault_endpoint = vault_endpoint.strip(" /")
+        self._vault_url = vault_url.strip(" /")
 
         client = kwargs.get("generated_client")
         if client:
@@ -76,11 +76,13 @@ class KeyVaultClientBase(object):
         config = self._create_config(credential, **kwargs)
         transport = kwargs.pop("transport", None)
         pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport=transport, **kwargs)
-        self._client = KeyVaultClient(credential, pipeline=pipeline, aio=False, **kwargs)
+        self._client = KeyVaultClient(credential, pipeline=pipeline, aio=False)
 
     # pylint:disable=no-self-use
     def _build_pipeline(self, config, transport, **kwargs):
         # type: (Configuration, HttpTransport, **Any) -> Pipeline
+        logging_policy = HttpLoggingPolicy(**kwargs)
+        logging_policy.allowed_header_names.add("x-ms-keyvault-network-info")
         policies = [
             config.headers_policy,
             config.user_agent_policy,
@@ -89,7 +91,8 @@ class KeyVaultClientBase(object):
             config.retry_policy,
             config.authentication_policy,
             config.logging_policy,
-            DistributedTracingPolicy(),
+            DistributedTracingPolicy(**kwargs),
+            logging_policy,
         ]
 
         if transport is None:
@@ -98,6 +101,6 @@ class KeyVaultClientBase(object):
         return Pipeline(transport, policies=policies)
 
     @property
-    def vault_endpoint(self):
+    def vault_url(self):
         # type: () -> str
-        return self._vault_endpoint
+        return self._vault_url

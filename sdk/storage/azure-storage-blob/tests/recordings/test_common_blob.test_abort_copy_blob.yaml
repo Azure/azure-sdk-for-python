@@ -11,294 +11,32 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - ad651fca-8eca-11e9-a345-f45c89a7d159
-      x-ms-copy-source:
-      - http://www.gutenberg.org/files/59466/59466-0.txt
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:34:35 GMT
+      - Fri, 25 Oct 2019 18:09:15 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
+    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24?timeout=5&restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 14 Jun 2019 17:34:38 GMT
-      ETag:
-      - '"0x8D6F0EE938119BD"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:34:38 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:09:15 GMT
+      etag:
+      - '"0x8D7597672739994"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:09:15 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-copy-id:
-      - 0ad10855-b0e5-4fe4-9ad7-9e0e4f8eaf11
-      x-ms-copy-status:
-      - pending
-      x-ms-request-id:
-      - 38a3c09d-a01e-002e-18d7-22e4c7000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - aedba892-8eca-11e9-9aff-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 17:34:37 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: HEAD
-    uri: https://remotestoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
-  response:
-    body:
-      string: ''
-    headers:
-      Accept-Ranges:
-      - bytes
-      Content-Length:
-      - '0'
-      Content-Type:
-      - text/plain; charset=UTF-8
-      Date:
-      - Fri, 14 Jun 2019 17:34:38 GMT
-      ETag:
-      - '"0x8D6F0EE938119BD"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:34:38 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-access-tier:
-      - Hot
-      x-ms-access-tier-inferred:
-      - 'true'
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-copy-id:
-      - 0ad10855-b0e5-4fe4-9ad7-9e0e4f8eaf11
-      x-ms-copy-progress:
-      - 0/439274
-      x-ms-copy-source:
-      - http://www.gutenberg.org/files/59466/59466-0.txt
-      x-ms-copy-status:
-      - pending
-      x-ms-creation-time:
-      - Fri, 14 Jun 2019 17:34:38 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-request-id:
-      - 38a3c214-a01e-002e-4bd7-22e4c7000000
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - b015e2d8-8eca-11e9-96d3-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 17:34:40 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: HEAD
-    uri: https://remotestoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
-  response:
-    body:
-      string: ''
-    headers:
-      Accept-Ranges:
-      - bytes
-      Content-Length:
-      - '0'
-      Content-Type:
-      - text/plain; charset=UTF-8
-      Date:
-      - Fri, 14 Jun 2019 17:34:40 GMT
-      ETag:
-      - '"0x8D6F0EE939CE421"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:34:38 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-access-tier:
-      - Hot
-      x-ms-access-tier-inferred:
-      - 'true'
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-copy-completion-time:
-      - Fri, 14 Jun 2019 17:34:38 GMT
-      x-ms-copy-id:
-      - 0ad10855-b0e5-4fe4-9ad7-9e0e4f8eaf11
-      x-ms-copy-progress:
-      - 0/439274
-      x-ms-copy-source:
-      - http://www.gutenberg.org/files/59466/59466-0.txt
-      x-ms-copy-status:
-      - aborted
-      x-ms-creation-time:
-      - Fri, 14 Jun 2019 17:34:38 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-request-id:
-      - 38a3c33d-a01e-002e-40d7-22e4c7000000
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - b14fed9a-8eca-11e9-8576-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 17:34:42 GMT
-      x-ms-range:
-      - bytes=0-33554431
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://remotestoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:38a3c49b-a01e-002e-7fd7-22e4c7000000\n\
-        Time:2019-06-14T17:34:42.8835983Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '249'
-      Content-Range:
-      - bytes */0
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 17:34:42 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - InvalidRange
-      x-ms-request-id:
-      - 38a3c49b-a01e-002e-7fd7-22e4c7000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 416
-      message: The range specified is invalid for the current size of the resource.
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - b157e61c-8eca-11e9-9ecc-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 17:34:42 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://remotestoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
-  response:
-    body:
-      string: ''
-    headers:
-      Accept-Ranges:
-      - bytes
-      Content-Length:
-      - '0'
-      Content-Type:
-      - text/plain; charset=UTF-8
-      Date:
-      - Fri, 14 Jun 2019 17:34:42 GMT
-      ETag:
-      - '"0x8D6F0EE939CE421"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:34:38 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-copy-completion-time:
-      - Fri, 14 Jun 2019 17:34:38 GMT
-      x-ms-copy-id:
-      - 0ad10855-b0e5-4fe4-9ad7-9e0e4f8eaf11
-      x-ms-copy-progress:
-      - 0/439274
-      x-ms-copy-source:
-      - http://www.gutenberg.org/files/59466/59466-0.txt
-      x-ms-copy-status:
-      - aborted
-      x-ms-creation-time:
-      - Fri, 14 Jun 2019 17:34:38 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-request-id:
-      - 38a3c4a4-a01e-002e-05d7-22e4c7000000
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
@@ -311,39 +49,35 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 6e913e7e-8ed3-11e9-b113-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-copy-source:
       - http://www.gutenberg.org/files/59466/59466-0.txt
       x-ms-date:
-      - Fri, 14 Jun 2019 18:37:15 GMT
+      - Fri, 25 Oct 2019 18:09:16 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 14 Jun 2019 18:37:15 GMT
-      ETag:
-      - '"0x8D6F0F7535375AC"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 18:37:16 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:09:15 GMT
+      etag:
+      - '"0x8D7597672BABFC7"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:09:16 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-copy-id:
-      - c95dc520-f4f9-4f04-9edd-47236dbe2223
+      - c1d192f4-9fc2-437b-a08f-3e3d0800a6e8
       x-ms-copy-status:
       - pending
-      x-ms-request-id:
-      - c003f7fd-701e-00c9-54e0-22f4ca000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted
@@ -359,31 +93,27 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 6f23ac78-8ed3-11e9-85fa-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-copy-action:
       - abort
       x-ms-date:
-      - Fri, 14 Jun 2019 18:37:16 GMT
+      - Fri, 25 Oct 2019 18:09:16 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt?copyid=c95dc520-f4f9-4f04-9edd-47236dbe2223&comp=copy
+    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt?copyid=c1d192f4-9fc2-437b-a08f-3e3d0800a6e8&comp=copy
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 14 Jun 2019 18:37:15 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:09:16 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - c003fa43-701e-00c9-68e0-22f4ca000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 204
       message: No Content
@@ -391,47 +121,104 @@ interactions:
     body: null
     headers:
       Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 25 Oct 2019 18:09:16 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
+  response:
+    body:
+      string: ''
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '0'
+      content-type:
+      - text/plain
+      date:
+      - Fri, 25 Oct 2019 18:09:16 GMT
+      etag:
+      - '"0x8D7597672C6CFE7"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:09:16 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-inferred:
+      - 'true'
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-copy-completion-time:
+      - Fri, 25 Oct 2019 18:09:16 GMT
+      x-ms-copy-id:
+      - c1d192f4-9fc2-437b-a08f-3e3d0800a6e8
+      x-ms-copy-progress:
+      - 0/439274
+      x-ms-copy-source:
+      - http://www.gutenberg.org/files/59466/59466-0.txt
+      x-ms-copy-status:
+      - aborted
+      x-ms-creation-time:
+      - Fri, 25 Oct 2019 18:09:16 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
       - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 70718606-8ed3-11e9-901b-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 18:37:18 GMT
+      - Fri, 25 Oct 2019 18:09:16 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:c003fef3-701e-00c9-7ee0-22f4ca000000\n\
-        Time:2019-06-14T18:37:18.7571278Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:cc210932-f01e-005f-6a5f-8b0351000000\nTime:2019-10-25T18:09:16.3940806Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '249'
-      Content-Range:
+      content-range:
       - bytes */0
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Fri, 14 Jun 2019 18:37:18 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:09:16 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
       x-ms-error-code:
       - InvalidRange
-      x-ms-request-id:
-      - c003fef3-701e-00c9-7ee0-22f4ca000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 416
       message: The range specified is invalid for the current size of the resource.
@@ -445,41 +232,37 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 7079dd68-8ed3-11e9-a9e5-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 18:37:18 GMT
+      - Fri, 25 Oct 2019 18:09:16 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
     body:
       string: ''
     headers:
-      Accept-Ranges:
+      accept-ranges:
       - bytes
-      Content-Length:
+      content-length:
       - '0'
-      Content-Type:
-      - text/plain; charset=UTF-8
-      Date:
-      - Fri, 14 Jun 2019 18:37:18 GMT
-      ETag:
-      - '"0x8D6F0F75360BE82"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 18:37:16 GMT
-      Server:
+      content-type:
+      - text/plain
+      date:
+      - Fri, 25 Oct 2019 18:09:16 GMT
+      etag:
+      - '"0x8D7597672C6CFE7"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:09:16 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-completion-time:
-      - Fri, 14 Jun 2019 18:37:16 GMT
+      - Fri, 25 Oct 2019 18:09:16 GMT
       x-ms-copy-id:
-      - c95dc520-f4f9-4f04-9edd-47236dbe2223
+      - c1d192f4-9fc2-437b-a08f-3e3d0800a6e8
       x-ms-copy-progress:
       - 0/439274
       x-ms-copy-source:
@@ -487,819 +270,15 @@ interactions:
       x-ms-copy-status:
       - aborted
       x-ms-creation-time:
-      - Fri, 14 Jun 2019 18:37:16 GMT
+      - Fri, 25 Oct 2019 18:09:16 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
       - unlocked
-      x-ms-request-id:
-      - c003ff08-701e-00c9-0fe0-22f4ca000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 948cc4c0-8eda-11e9-b06a-f45c89a7d159
-      x-ms-copy-source:
-      - http://www.gutenberg.org/files/59466/59466-0.txt
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:28:25 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 19:28:25 GMT
-      ETag:
-      - '"0x8D6F0FE78F1AFD9"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 19:28:26 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-copy-id:
-      - 5b076360-08f9-46eb-a50b-561518d7ffc0
-      x-ms-copy-status:
-      - pending
-      x-ms-request-id:
-      - 896f415d-301e-004d-39e7-22a2e2000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 94c26882-8eda-11e9-acdd-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:28:26 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: HEAD
-    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
-  response:
-    body:
-      string: ''
-    headers:
-      Accept-Ranges:
-      - bytes
-      Content-Length:
-      - '0'
-      Content-Type:
-      - text/plain; charset=UTF-8
-      Date:
-      - Fri, 14 Jun 2019 19:28:25 GMT
-      ETag:
-      - '"0x8D6F0FE78F1AFD9"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 19:28:26 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-access-tier:
-      - Hot
-      x-ms-access-tier-inferred:
-      - 'true'
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-copy-id:
-      - 5b076360-08f9-46eb-a50b-561518d7ffc0
-      x-ms-copy-progress:
-      - 0/439274
-      x-ms-copy-source:
-      - http://www.gutenberg.org/files/59466/59466-0.txt
-      x-ms-copy-status:
-      - pending
-      x-ms-creation-time:
-      - Fri, 14 Jun 2019 19:28:26 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-request-id:
-      - 896f41d3-301e-004d-26e7-22a2e2000000
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 95ff91b6-8eda-11e9-80ed-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:28:28 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: HEAD
-    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
-  response:
-    body:
-      string: ''
-    headers:
-      Accept-Ranges:
-      - bytes
-      Content-Length:
-      - '0'
-      Content-Type:
-      - text/plain; charset=UTF-8
-      Date:
-      - Fri, 14 Jun 2019 19:28:27 GMT
-      ETag:
-      - '"0x8D6F0FE79128429"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 19:28:26 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-access-tier:
-      - Hot
-      x-ms-access-tier-inferred:
-      - 'true'
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-copy-completion-time:
-      - Fri, 14 Jun 2019 19:28:26 GMT
-      x-ms-copy-id:
-      - 5b076360-08f9-46eb-a50b-561518d7ffc0
-      x-ms-copy-progress:
-      - 0/439274
-      x-ms-copy-source:
-      - http://www.gutenberg.org/files/59466/59466-0.txt
-      x-ms-copy-status:
-      - aborted
-      x-ms-creation-time:
-      - Fri, 14 Jun 2019 19:28:26 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-request-id:
-      - 896f4528-301e-004d-2ee7-22a2e2000000
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 973aa874-8eda-11e9-be5b-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:28:30 GMT
-      x-ms-range:
-      - bytes=0-33554431
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:896f4831-301e-004d-6fe7-22a2e2000000\n\
-        Time:2019-06-14T19:28:30.3052442Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '249'
-      Content-Range:
-      - bytes */0
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 19:28:29 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - InvalidRange
-      x-ms-request-id:
-      - 896f4831-301e-004d-6fe7-22a2e2000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 416
-      message: The range specified is invalid for the current size of the resource.
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 9743bee4-8eda-11e9-91e1-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:28:30 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
-  response:
-    body:
-      string: ''
-    headers:
-      Accept-Ranges:
-      - bytes
-      Content-Length:
-      - '0'
-      Content-Type:
-      - text/plain; charset=UTF-8
-      Date:
-      - Fri, 14 Jun 2019 19:28:29 GMT
-      ETag:
-      - '"0x8D6F0FE79128429"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 19:28:26 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-copy-completion-time:
-      - Fri, 14 Jun 2019 19:28:26 GMT
-      x-ms-copy-id:
-      - 5b076360-08f9-46eb-a50b-561518d7ffc0
-      x-ms-copy-progress:
-      - 0/439274
-      x-ms-copy-source:
-      - http://www.gutenberg.org/files/59466/59466-0.txt
-      x-ms-copy-status:
-      - aborted
-      x-ms-creation-time:
-      - Fri, 14 Jun 2019 19:28:26 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-request-id:
-      - 896f484c-301e-004d-09e7-22a2e2000000
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 0b0ca89e-8edc-11e9-8dbd-f45c89a7d159
-      x-ms-copy-source:
-      - http://www.gutenberg.org/files/59466/59466-0.txt
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:38:54 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 19:38:54 GMT
-      ETag:
-      - '"0x8D6F0FFEF746B9D"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 19:38:54 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-copy-id:
-      - 65ee5d47-d80f-4c47-b106-11865b31889a
-      x-ms-copy-status:
-      - pending
-      x-ms-request-id:
-      - f35f00d8-d01e-00a9-6de8-22b1e8000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 0b44b428-8edc-11e9-89bc-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:38:54 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: HEAD
-    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
-  response:
-    body:
-      string: ''
-    headers:
-      Accept-Ranges:
-      - bytes
-      Content-Length:
-      - '0'
-      Content-Type:
-      - text/plain; charset=UTF-8
-      Date:
-      - Fri, 14 Jun 2019 19:38:54 GMT
-      ETag:
-      - '"0x8D6F0FFEF746B9D"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 19:38:54 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-access-tier:
-      - Hot
-      x-ms-access-tier-inferred:
-      - 'true'
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-copy-id:
-      - 65ee5d47-d80f-4c47-b106-11865b31889a
-      x-ms-copy-progress:
-      - 0/439274
-      x-ms-copy-source:
-      - http://www.gutenberg.org/files/59466/59466-0.txt
-      x-ms-copy-status:
-      - pending
-      x-ms-creation-time:
-      - Fri, 14 Jun 2019 19:38:54 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-request-id:
-      - f35f0180-d01e-00a9-0fe8-22b1e8000000
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 0c7ec6a8-8edc-11e9-9c97-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:38:56 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: HEAD
-    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
-  response:
-    body:
-      string: ''
-    headers:
-      Accept-Ranges:
-      - bytes
-      Content-Length:
-      - '0'
-      Content-Type:
-      - text/plain; charset=UTF-8
-      Date:
-      - Fri, 14 Jun 2019 19:38:56 GMT
-      ETag:
-      - '"0x8D6F0FFEF900EEF"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 19:38:54 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-access-tier:
-      - Hot
-      x-ms-access-tier-inferred:
-      - 'true'
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-copy-completion-time:
-      - Fri, 14 Jun 2019 19:38:54 GMT
-      x-ms-copy-id:
-      - 65ee5d47-d80f-4c47-b106-11865b31889a
-      x-ms-copy-progress:
-      - 0/439274
-      x-ms-copy-source:
-      - http://www.gutenberg.org/files/59466/59466-0.txt
-      x-ms-copy-status:
-      - aborted
-      x-ms-creation-time:
-      - Fri, 14 Jun 2019 19:38:54 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-request-id:
-      - f35f0725-d01e-00a9-71e8-22b1e8000000
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 0db9cc70-8edc-11e9-9d20-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:38:58 GMT
-      x-ms-range:
-      - bytes=0-33554431
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:f35f0b80-d01e-00a9-69e8-22b1e8000000\n\
-        Time:2019-06-14T19:38:58.5989232Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '249'
-      Content-Range:
-      - bytes */0
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 19:38:58 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - InvalidRange
-      x-ms-request-id:
-      - f35f0b80-d01e-00a9-69e8-22b1e8000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 416
-      message: The range specified is invalid for the current size of the resource.
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 0dc2373e-8edc-11e9-9b5d-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:38:58 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
-  response:
-    body:
-      string: ''
-    headers:
-      Accept-Ranges:
-      - bytes
-      Content-Length:
-      - '0'
-      Content-Type:
-      - text/plain; charset=UTF-8
-      Date:
-      - Fri, 14 Jun 2019 19:38:58 GMT
-      ETag:
-      - '"0x8D6F0FFEF900EEF"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 19:38:54 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-copy-completion-time:
-      - Fri, 14 Jun 2019 19:38:54 GMT
-      x-ms-copy-id:
-      - 65ee5d47-d80f-4c47-b106-11865b31889a
-      x-ms-copy-progress:
-      - 0/439274
-      x-ms-copy-source:
-      - http://www.gutenberg.org/files/59466/59466-0.txt
-      x-ms-copy-status:
-      - aborted
-      x-ms-creation-time:
-      - Fri, 14 Jun 2019 19:38:54 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-request-id:
-      - f35f0b94-d01e-00a9-7de8-22b1e8000000
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 3354613e-8edc-11e9-8ae7-f45c89a7d159
-      x-ms-copy-source:
-      - http://www.gutenberg.org/files/59466/59466-0.txt
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:40:01 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 19:40:01 GMT
-      ETag:
-      - '"0x8D6F10017B7AE0D"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 19:40:01 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-copy-id:
-      - c653328d-f008-4a48-82fd-d6c3e6416c53
-      x-ms-copy-status:
-      - pending
-      x-ms-request-id:
-      - 96189514-b01e-00d4-09e8-222d20000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 33887ec6-8edc-11e9-a57a-f45c89a7d159
-      x-ms-copy-action:
-      - abort
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:40:02 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt?copyid=c653328d-f008-4a48-82fd-d6c3e6416c53&comp=copy
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 19:40:01 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 96189538-b01e-00d4-26e8-222d20000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 204
-      message: No Content
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 34d27154-8edc-11e9-addb-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:40:04 GMT
-      x-ms-range:
-      - bytes=0-33554431
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:9618973e-b01e-00d4-6fe8-222d20000000\n\
-        Time:2019-06-14T19:40:04.1938409Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '249'
-      Content-Range:
-      - bytes */0
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 19:40:03 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - InvalidRange
-      x-ms-request-id:
-      - 9618973e-b01e-00d4-6fe8-222d20000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 416
-      message: The range specified is invalid for the current size of the resource.
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 34dac62e-8edc-11e9-ad8c-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:40:04 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
-  response:
-    body:
-      string: ''
-    headers:
-      Accept-Ranges:
-      - bytes
-      Content-Length:
-      - '0'
-      Content-Type:
-      - text/plain; charset=UTF-8
-      Date:
-      - Fri, 14 Jun 2019 19:40:03 GMT
-      ETag:
-      - '"0x8D6F10017C4F6DF"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 19:40:02 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-copy-completion-time:
-      - Fri, 14 Jun 2019 19:40:02 GMT
-      x-ms-copy-id:
-      - c653328d-f008-4a48-82fd-d6c3e6416c53
-      x-ms-copy-progress:
-      - 0/439274
-      x-ms-copy-source:
-      - http://www.gutenberg.org/files/59466/59466-0.txt
-      x-ms-copy-status:
-      - aborted
-      x-ms-creation-time:
-      - Fri, 14 Jun 2019 19:40:01 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-request-id:
-      - 9618974c-b01e-00d4-7ce8-222d20000000
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 200
       message: OK

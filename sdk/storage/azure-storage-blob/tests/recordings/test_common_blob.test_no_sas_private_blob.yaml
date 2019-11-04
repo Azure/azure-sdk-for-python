@@ -1,24 +1,44 @@
 interactions:
 - request:
-    body: !!binary |
-      AwEs07sBOW22nIfjgUWDPysBMbX9SYxPMn90QBtwxeJ5KlEZdV9nuErSM79d+QtcJGkCy54njHXY
-      72zQEkJdDmbHLXW/Fd7UI7DB6UQoOFrgCuTtL9I0e8ACBfEoEY7rkI8tMm+yWeX4VTUOdbGezdlq
-      xfN2j4oV8N/6TM8fjMuXC1sPwGziLwwy9U2d1CVtqrwpgIHvlHA/FhUJcki3u9W+Y4I9jEeA64Rd
-      fRxyO/X1JT/WJKvRhtE6xuaZyxysle/2WwjjHC/KFV7O9ZsM+meSex1kSw27YjU2yJZsEBn1xJBI
-      vLxa+6ZmvcrK775cFXNU34KQiBlNrB5Fd2rG6S9jS3fMEJlpaxVrduK5e9fX+jLWx3cX6w+I5HLI
-      dhkhDddXx1UeqAEfDqpg1rCdSEV0DBGrCeEWCxu4G7z7RRSudO+6CVZ1zhbi9xZD6oaG4og1lZfE
-      IZ+WXX0xxmo9G63UPb3fD583CLqcqptud+a9Dw9pemzmGs+Ktfc6coxfOwQAzeN/QA+Abh4yjhgT
-      T3ME0Sfeh99BF6F1/PXYz7m7JaHhXHTs778O+tYcP5NS3StrLrckDxU1OQ4OGb25z8gAt0SuUQuL
-      lSyYBJoahsfA0JfjmtLxU5+gNw18gUfGMOylU/XIFoYM7OZGBK1IK1HDDGCiFjsF5TVqWNlEmY26
-      PrInjrDXpWQerQpeXJfehsWGb5Rd80U4Zv74CSoducJzrMlf7iBSrXWMMxB241Gyt3ONMRUYipvM
-      CiFeCyMCVn0MnaoXsg5y/dVACVm0SnazjaXPPAez+BgUNLKwfR+TkTUpLwGhotUElBR7h7u4A1YR
-      mkfu9fu2juadgJ3BIHM2Vo+XEqCe8cXWWMjwora9RmB59VuLqVM/jgwHIJCq+vaxd+dea9782mOT
-      mQLVWpHTGAIxqPklb3C5SW8jmCauNZyngotZxOVtTbNk0yOuOV4cUVIpCSVHH/o5a+HAbDTnvTBT
-      Zs7h0DGfkiLROZiyFmRJQALjaREtMvxibFC2jOTDGOlqweZJ88fc8zvFGox1e7e6HyQGkgTGsigZ
-      GWdqyk+6yRNEB+VL4N+1JMot9gtZN+XOM8XCsMCeUMTncRWiCOfhd66oyCc5bkrv4Evw1cTpk0wX
-      t2k5jDBAa6doxPT+4YpnzwvhMxGlNzcc9o0VO5AbynkTeJnD3uq/7fOGEklYZe3iNUEQ3LDZOcoC
-      Dj9Xr75nNJNuUarC53atkl7PmKtpp9ycNmQbExAPGU/NtK2akfe8pHyT2V32jCEG4RGSAUilxikB
-      NU3sdYbBwQ+zi+MNmiVlTEbwVrHtcFZUFn1lDviDXeQuc4o628Z+MrloBibqh5yJdNR0fGDYCA==
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 25 Oct 2019 18:13:41 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer61f810cf?timeout=5&restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 25 Oct 2019 18:13:40 GMT
+      etag:
+      - '"0x8D7597710A95931"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:13:41 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     headers:
       Accept:
       - '*/*'
@@ -30,40 +50,40 @@ interactions:
       - '1024'
       Content-Type:
       - application/octet-stream
+      If-None-Match:
+      - '*'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-blob-type:
       - BlockBlob
-      x-ms-client-request-id:
-      - 46d3218c-8ecb-11e9-9528-f45c89a7d159
       x-ms-date:
-      - Fri, 14 Jun 2019 17:38:52 GMT
+      - Fri, 25 Oct 2019 18:13:41 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/utcontainer61f810cf/blob61f810cf
+    uri: https://storagename.blob.core.windows.net/utcontainer61f810cf/blob61f810cf
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Content-MD5:
-      - oCH+lQmNcNij0X2pgU0v3A==
-      Date:
-      - Fri, 14 Jun 2019 17:38:53 GMT
-      ETag:
-      - '"0x8D6F0EF2B98F39F"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:38:53 GMT
-      Server:
+      content-md5:
+      - yaNM/IXZgmmMasifdgcavQ==
+      date:
+      - Fri, 25 Oct 2019 18:13:40 GMT
+      etag:
+      - '"0x8D7597710B21CC8"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:13:41 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 6d3760e2-f01e-001f-0ed8-22bf10000000
+      x-ms-content-crc64:
+      - ov8U1LLnyKc=
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -77,133 +97,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.21.0
-    method: GET
-    uri: https://remotestoragename.blob.core.windows.net/utcontainer61f810cf/blob61f810cf
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The\
-        \ specified resource does not exist.\nRequestId:33d54af8-001e-0028-55d8-2213bf000000\n\
-        Time:2019-06-14T17:38:54.0956424Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '223'
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 17:38:53 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-request-id:
-      - 33d54af8-001e-0028-55d8-2213bf000000
-      x-ms-version:
-      - '2014-02-14'
-    status:
-      code: 404
-      message: The specified resource does not exist.
-- request:
-    body: !!binary |
-      AwEs07sBOW22nIfjgUWDPysBMbX9SYxPMn90QBtwxeJ5KlEZdV9nuErSM79d+QtcJGkCy54njHXY
-      72zQEkJdDmbHLXW/Fd7UI7DB6UQoOFrgCuTtL9I0e8ACBfEoEY7rkI8tMm+yWeX4VTUOdbGezdlq
-      xfN2j4oV8N/6TM8fjMuXC1sPwGziLwwy9U2d1CVtqrwpgIHvlHA/FhUJcki3u9W+Y4I9jEeA64Rd
-      fRxyO/X1JT/WJKvRhtE6xuaZyxysle/2WwjjHC/KFV7O9ZsM+meSex1kSw27YjU2yJZsEBn1xJBI
-      vLxa+6ZmvcrK775cFXNU34KQiBlNrB5Fd2rG6S9jS3fMEJlpaxVrduK5e9fX+jLWx3cX6w+I5HLI
-      dhkhDddXx1UeqAEfDqpg1rCdSEV0DBGrCeEWCxu4G7z7RRSudO+6CVZ1zhbi9xZD6oaG4og1lZfE
-      IZ+WXX0xxmo9G63UPb3fD583CLqcqptud+a9Dw9pemzmGs+Ktfc6coxfOwQAzeN/QA+Abh4yjhgT
-      T3ME0Sfeh99BF6F1/PXYz7m7JaHhXHTs778O+tYcP5NS3StrLrckDxU1OQ4OGb25z8gAt0SuUQuL
-      lSyYBJoahsfA0JfjmtLxU5+gNw18gUfGMOylU/XIFoYM7OZGBK1IK1HDDGCiFjsF5TVqWNlEmY26
-      PrInjrDXpWQerQpeXJfehsWGb5Rd80U4Zv74CSoducJzrMlf7iBSrXWMMxB241Gyt3ONMRUYipvM
-      CiFeCyMCVn0MnaoXsg5y/dVACVm0SnazjaXPPAez+BgUNLKwfR+TkTUpLwGhotUElBR7h7u4A1YR
-      mkfu9fu2juadgJ3BIHM2Vo+XEqCe8cXWWMjwora9RmB59VuLqVM/jgwHIJCq+vaxd+dea9782mOT
-      mQLVWpHTGAIxqPklb3C5SW8jmCauNZyngotZxOVtTbNk0yOuOV4cUVIpCSVHH/o5a+HAbDTnvTBT
-      Zs7h0DGfkiLROZiyFmRJQALjaREtMvxibFC2jOTDGOlqweZJ88fc8zvFGox1e7e6HyQGkgTGsigZ
-      GWdqyk+6yRNEB+VL4N+1JMot9gtZN+XOM8XCsMCeUMTncRWiCOfhd66oyCc5bkrv4Evw1cTpk0wX
-      t2k5jDBAa6doxPT+4YpnzwvhMxGlNzcc9o0VO5AbynkTeJnD3uq/7fOGEklYZe3iNUEQ3LDZOcoC
-      Dj9Xr75nNJNuUarC53atkl7PmKtpp9ycNmQbExAPGU/NtK2akfe8pHyT2V32jCEG4RGSAUilxikB
-      NU3sdYbBwQ+zi+MNmiVlTEbwVrHtcFZUFn1lDviDXeQuc4o628Z+MrloBibqh5yJdNR0fGDYCA==
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1024'
-      Content-Type:
-      - application/octet-stream
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-client-request-id:
-      - 9a540680-8ed4-11e9-a16a-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:45:38 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer61f810cf/blob61f810cf
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Content-MD5:
-      - oCH+lQmNcNij0X2pgU0v3A==
-      Date:
-      - Fri, 14 Jun 2019 18:45:38 GMT
-      ETag:
-      - '"0x8D6F0F87EA4271C"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 18:45:38 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - c2e78c6a-301e-0064-69e1-22d4a0000000
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.21.0
+      - python-requests/2.22.0
     method: GET
     uri: https://storagename.blob.core.windows.net/utcontainer61f810cf/blob61f810cf
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The\
-        \ specified resource does not exist.\nRequestId:68474b2c-101e-00d9-37e1-22c22c000000\n\
-        Time:2019-06-14T18:45:38.8843515Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
+        specified resource does not exist.\nRequestId:13bcd117-901e-0029-785f-8b87ed000000\nTime:2019-10-25T18:13:41.4079773Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '223'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Fri, 14 Jun 2019 18:45:37 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-request-id:
-      - 68474b2c-101e-00d9-37e1-22c22c000000
-      x-ms-version:
-      - '2014-02-14'
+      date:
+      - Fri, 25 Oct 2019 18:13:40 GMT
+      server:
+      - Blob Service Version 1.0 Microsoft-HTTPAPI/2.0
     status:
       code: 404
       message: The specified resource does not exist.

@@ -9,26 +9,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 21:55:59 GMT
+      - Wed, 30 Oct 2019 19:51:41 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://pyacrstorage5391106b.queue.core.windows.net/cont5391106b?comp=metadata
+    uri: https://storagename.queue.core.windows.net/cont5391106b?comp=metadata
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
-        specified queue does not exist.\nRequestId:9a7d568c-8003-005d-3dfd-641d06000000\nTime:2019-09-06T21:55:58.3472383Z</Message></Error>"
+        specified queue does not exist.\nRequestId:ca02f24b-e003-0045-335b-8fd79b000000\nTime:2019-10-30T19:51:40.9556103Z</Message></Error>"
     headers:
       content-length:
       - '217'
       content-type:
       - application/xml
       date:
-      - Fri, 06 Sep 2019 21:55:57 GMT
+      - Wed, 30 Oct 2019 19:51:40 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

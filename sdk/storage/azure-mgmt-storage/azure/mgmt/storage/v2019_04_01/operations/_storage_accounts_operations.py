@@ -566,8 +566,9 @@ class StorageAccountsOperations(object):
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts'}
 
     def list_keys(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the access keys for the specified storage account.
+            self, resource_group_name, account_name, expand=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the access keys or Kerberos keys (if active directory enabled)
+        for the specified storage account.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -576,6 +577,10 @@ class StorageAccountsOperations(object):
          specified resource group. Storage account names must be between 3 and
          24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
+        :param expand: Specifies type of the key to be listed. Possible value
+         is kerb. Possible values include: 'kerb'
+        :type expand: str or
+         ~azure.mgmt.storage.v2019_04_01.models.ListKeyExpand
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -599,6 +604,8 @@ class StorageAccountsOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'ListKeyExpand')
 
         # Construct headers
         header_parameters = {}
@@ -632,7 +639,8 @@ class StorageAccountsOperations(object):
 
     def regenerate_key(
             self, resource_group_name, account_name, key_name, custom_headers=None, raw=False, **operation_config):
-        """Regenerates one of the access keys for the specified storage account.
+        """Regenerates one of the access keys or Kerberos keys for the specified
+        storage account.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -642,7 +650,7 @@ class StorageAccountsOperations(object):
          24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
         :param key_name: The name of storage keys that want to be regenerated,
-         possible values are key1, key2.
+         possible values are key1, key2, kerb1, kerb2.
         :type key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

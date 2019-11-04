@@ -11,15 +11,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 21:52:28 GMT
+      - Wed, 30 Oct 2019 19:51:20 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://pyacrstorage9d350b45.queue.core.windows.net/pythonqueue9d350b45
+    uri: https://storagename.queue.core.windows.net/pyqueuesync9d350b45
   response:
     body:
       string: ''
@@ -27,7 +25,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 06 Sep 2019 21:52:26 GMT
+      - Wed, 30 Oct 2019 19:51:19 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -45,19 +43,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 21:52:28 GMT
+      - Wed, 30 Oct 2019 19:51:20 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://pyacrstorage9d350b45.queue.core.windows.net/?comp=list
+    uri: https://storagename.queue.core.windows.net/?comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorage9d350b45.queue.core.windows.net/\"><Queues><Queue><Name>pythonqueue9d350b45</Name></Queue></Queues><NextMarker
+        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Queues><Queue><Name>pyqueuesync63ff1110</Name></Queue><Queue><Name>pyqueuesync6405110f</Name></Queue><Queue><Name>pyqueuesync736a114d</Name></Queue><Queue><Name>pyqueuesync9101903</Name></Queue><Queue><Name>pyqueuesync9d350b45</Name></Queue><Queue><Name>pyqueuesynca7af0b8a</Name></Queue><Queue><Name>pyqueuesynca7c20b89</Name></Queue><Queue><Name>pyqueuesyncb3cd0be5</Name></Queue><Queue><Name>pyqueuesyncbf740c50</Name></Queue><Queue><Name>pyqueuesyncbf910c49</Name></Queue><Queue><Name>pyqueuesynce42613c2</Name></Queue><Queue><Name>pyqueuesyncf55d0df8</Name></Queue></Queues><NextMarker
         /></EnumerationResults>"
     headers:
       cache-control:
@@ -65,7 +61,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Fri, 06 Sep 2019 21:52:26 GMT
+      - Wed, 30 Oct 2019 19:51:19 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

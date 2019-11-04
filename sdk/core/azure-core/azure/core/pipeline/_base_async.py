@@ -139,7 +139,7 @@ class AsyncPipeline(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../examples/test_example_async.py
+        .. literalinclude:: ../samples/test_example_async.py
             :start-after: [START build_async_pipeline]
             :end-before: [END build_async_pipeline]
             :language: python

@@ -3,16 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-
 import inspect
 import os.path
 import zlib
+import pytest
 
 from azure_devtools.scenario_tests import (
     ReplayableTest, AzureTestError,
     GeneralNameReplacer, RequestUrlNormalizer,
     OAuthRequestResponsesFilter
 )
+from azure_devtools.scenario_tests.config import TestConfig
 
 from .config import TEST_SETTING_FILENAME
 from . import mgmt_settings_fake as fake_settings
@@ -45,6 +46,17 @@ def get_qualified_method_name(obj, method_name):
     _, filename = os.path.split(inspect.getsourcefile(type(obj)))
     module_name, _ = os.path.splitext(filename)
     return '{0}.{1}'.format(module_name, method_name)
+
+
+def is_live():
+    """A module version of is_live, that could be used in pytest marker.
+    """
+    if not hasattr(is_live, '_cache'):
+        config_file = os.path.join(os.path.dirname(__file__), TEST_SETTING_FILENAME)
+        if not os.path.exists(config_file):
+            config_file = None
+        is_live._cache = TestConfig(config_file=config_file).record_mode
+    return is_live._cache
 
 
 class AzureTestCase(ReplayableTest):

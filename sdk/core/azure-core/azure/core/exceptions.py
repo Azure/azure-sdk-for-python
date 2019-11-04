@@ -36,6 +36,23 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport._base import _HttpResponseBase
 
 
+__all__ = [
+    'AzureError',
+    'ServiceRequestError',
+    'ServiceResponseError',
+    'HttpResponseError',
+    'DecodeError',
+    'ResourceExistsError',
+    'ResourceNotFoundError',
+    'ClientAuthenticationError',
+    'ResourceModifiedError',
+    'ResourceNotModifiedError',
+    'TooManyRedirectsError',
+    'ODataV4Format',
+    'ODataV4Error',
+]
+
+
 def raise_with_traceback(exception, *args, **kwargs):
     # type: (Callable, Any, Any) -> None
     """Raise exception with a specified traceback.
@@ -99,9 +116,13 @@ class ServiceResponseError(AzureError):
 class HttpResponseError(AzureError):
     """A request was made, and a non-success status code was received from the service.
 
-    :param status_code: HttpResponse's status code
-    :type status_code: int
+    :param message: HttpResponse's error message
+    :type message: string
     :param response: The response that triggered the exception.
+    :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
+    :ivar status_code: HttpResponse's status code
+    :type status_code: int
+    :ivar response: The response that triggered the exception.
     :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
     """
 

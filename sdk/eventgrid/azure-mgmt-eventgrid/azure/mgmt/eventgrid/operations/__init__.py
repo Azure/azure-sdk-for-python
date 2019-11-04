@@ -9,12 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .domains_operations import DomainsOperations
-from .domain_topics_operations import DomainTopicsOperations
-from .event_subscriptions_operations import EventSubscriptionsOperations
-from .operations import Operations
-from .topics_operations import TopicsOperations
-from .topic_types_operations import TopicTypesOperations
+from ._domains_operations import DomainsOperations
+from ._domain_topics_operations import DomainTopicsOperations
+from ._event_subscriptions_operations import EventSubscriptionsOperations
+from ._operations import Operations
+from ._topics_operations import TopicsOperations
+from ._topic_types_operations import TopicTypesOperations
 
 __all__ = [
     'DomainsOperations',

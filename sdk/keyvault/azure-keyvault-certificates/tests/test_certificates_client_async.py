@@ -7,6 +7,8 @@ import itertools
 import hashlib
 import os
 import pytest
+import logging
+import json
 
 from azure_devtools.scenario_tests import RecordingProcessor
 from certificates_async_test_case import AsyncKeyVaultTestCase
@@ -40,6 +42,13 @@ class RetryAfterReplacer(RecordingProcessor):
             response["headers"]["retry-after"] = "0"
         return response
 
+# used for logging tests
+class MockHandler(logging.Handler):
+    def __init__(self):
+        super(MockHandler, self).__init__()
+        self.messages = []
+    def emit(self, record):
+        self.messages.append(record)
 
 class CertificateClientTests(KeyVaultTestCase):
     FILTER_HEADERS = [
@@ -79,7 +88,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertIsNotNone(pending_cert_operation.csr)
         self.assertEqual(cert_policy.issuer_parameters.name, pending_cert_operation.issuer_name)
         pending_id = parse_vault_id(pending_cert_operation.id)
-        self.assertEqual(pending_id.vault_endpoint.strip("/"), vault.strip("/"))
+        self.assertEqual(pending_id.vault_url.strip("/"), vault.strip("/"))
         self.assertEqual(pending_id.name, cert_name)
 
     def _validate_certificate_bundle(self, cert, vault, cert_name, cert_policy):
@@ -198,7 +207,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(issuer.id, expected.id)
         self.assertEqual(issuer.name, expected.name)
         self.assertEqual(issuer.provider, expected.provider)
-        self.assertEqual(issuer.vault_endpoint, expected.vault_endpoint)
+        self.assertEqual(issuer.vault_url, expected.vault_url)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
@@ -224,7 +233,7 @@ class CertificateClientTests(KeyVaultTestCase):
         cert = await client.create_certificate(name=cert_name, policy=CertificatePolicy.get_default())
 
         self._validate_certificate_bundle(
-            cert=cert, vault=client.vault_endpoint, cert_name=cert_name, cert_policy=cert_policy
+            cert=cert, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
         )
 
         self.assertEqual((await client.get_certificate_operation(name=cert_name)).status.lower(), "completed")
@@ -232,14 +241,14 @@ class CertificateClientTests(KeyVaultTestCase):
         # get certificate
         cert = await client.get_certificate(name=cert_name)
         self._validate_certificate_bundle(
-            cert=cert, vault=client.vault_endpoint, cert_name=cert_name, cert_policy=cert_policy
+            cert=cert, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
         )
 
         # update certificate
         tags = {"tag1": "updated_value1"}
         cert_bundle = await client.update_certificate_properties(name=cert_name, tags=tags)
         self._validate_certificate_bundle(
-            cert=cert_bundle, vault=client.vault_endpoint, cert_name=cert_name, cert_policy=cert_policy
+            cert=cert_bundle, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
         )
         self.assertEqual(tags, cert_bundle.properties.tags)
         self.assertEqual(cert.id, cert_bundle.id)
@@ -248,7 +257,7 @@ class CertificateClientTests(KeyVaultTestCase):
         # delete certificate
         deleted_cert_bundle = await client.delete_certificate(name=cert_name)
         self._validate_certificate_bundle(
-            cert=deleted_cert_bundle, vault=client.vault_endpoint, cert_name=cert_name, cert_policy=cert_policy
+            cert=deleted_cert_bundle, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
         )
 
         # get certificate returns not found
@@ -276,7 +285,7 @@ class CertificateClientTests(KeyVaultTestCase):
             try:
                 cert_bundle = (await self._import_common_certificate(client=client, cert_name=cert_name))[0]
                 parsed_id = parse_vault_id(url=cert_bundle.id)
-                cid = parsed_id.vault_endpoint + "/" + parsed_id.collection + "/" + parsed_id.name
+                cid = parsed_id.vault_url + "/" + parsed_id.collection + "/" + parsed_id.name
                 expected[cid.strip("/")] = cert_bundle
             except Exception as ex:
                 if hasattr(ex, "message") and "Throttled" in ex.message:
@@ -287,7 +296,7 @@ class CertificateClientTests(KeyVaultTestCase):
                     raise ex
 
         # list certificates
-        result = client.list_certificates()
+        result = client.list_properties_of_certificates()
         await self._validate_certificate_list(certificates=result, expected=expected)
 
     @ResourceGroupPreparer()
@@ -308,7 +317,7 @@ class CertificateClientTests(KeyVaultTestCase):
                 cert_bundle = (await self._import_common_certificate(client=client, cert_name=cert_name))[0]
                 parsed_id = parse_vault_id(url=cert_bundle.id)
                 cid = (
-                    parsed_id.vault_endpoint
+                    parsed_id.vault_url
                     + "/"
                     + parsed_id.collection
                     + "/"
@@ -327,7 +336,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # list certificate versions
         await self._validate_certificate_list(
-            certificates=(client.list_certificate_versions(cert_name)), expected=expected
+            certificates=(client.list_properties_of_certificate_versions(cert_name)), expected=expected
         )
 
     @ResourceGroupPreparer()
@@ -450,7 +459,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertTrue(cancel_operation.cancellation_requested)
         self._validate_certificate_operation(
             pending_cert_operation=cancel_operation,
-            vault=client.vault_endpoint,
+            vault=client.vault_url,
             cert_name=cert_name,
             cert_policy=cert_policy,
         )
@@ -469,7 +478,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertTrue(retrieved_operation.cancellation_requested)
         self._validate_certificate_operation(
             pending_cert_operation=retrieved_operation,
-            vault=client.vault_endpoint,
+            vault=client.vault_url,
             cert_name=cert_name,
             cert_policy=cert_policy,
         )
@@ -479,7 +488,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertIsNotNone(deleted_operation)
         self._validate_certificate_operation(
             pending_cert_operation=deleted_operation,
-            vault=client.vault_endpoint,
+            vault=client.vault_url,
             cert_name=cert_name,
             cert_policy=cert_policy,
         )
@@ -592,7 +601,7 @@ class CertificateClientTests(KeyVaultTestCase):
         # restore certificate
         restored_certificate = await client.restore_certificate_backup(backup=certificate_backup)
         self._validate_certificate_bundle(
-            cert=restored_certificate, vault=client.vault_endpoint, cert_name=cert_name, cert_policy=cert_policy
+            cert=restored_certificate, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
         )
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
@@ -664,7 +673,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         properties = IssuerProperties(
-            issuer_id=client.vault_endpoint + "/certificates/issuers/" + issuer_name, provider="Test"
+            issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name, provider="Test"
         )
 
         expected = CertificateIssuer(
@@ -691,15 +700,15 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         expected_base_1 = IssuerProperties(
-            issuer_id=client.vault_endpoint + "/certificates/issuers/" + issuer_name, provider="Test"
+            issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name, provider="Test"
         )
 
         expected_base_2 = IssuerProperties(
-            issuer_id=client.vault_endpoint + "/certificates/issuers/" + issuer_name + "2", provider="Test"
+            issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name + "2", provider="Test"
         )
         expected_issuers = [expected_base_1, expected_base_2]
 
-        issuers = client.list_issuers()
+        issuers = client.list_properties_of_issuers()
         async for issuer in issuers:
             exp_issuer = next((i for i in expected_issuers if i.name == issuer.name), None)
             self.assertIsNotNone(exp_issuer)
@@ -731,3 +740,50 @@ class CertificateClientTests(KeyVaultTestCase):
         except Exception as ex:
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
                 raise ex
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @AsyncVaultClientPreparer(client_kwargs={'logging_enable': True})
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_logging_enabled(self, vault_client, **kwargs):
+        client = vault_client.certificates
+        mock_handler = MockHandler()
+
+        logger = logging.getLogger('azure')
+        logger.addHandler(mock_handler)
+        logger.setLevel(logging.DEBUG)
+
+        await client.create_issuer(name="cert-name", provider="Test")
+
+        for message in mock_handler.messages:
+            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+                try:
+                    body = json.loads(message.message)
+                    if body['provider'] == 'Test':
+                        return
+                except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
+                    pass
+
+        assert False, "Expected request body wasn't logged"
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @AsyncVaultClientPreparer()
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_logging_disabled(self, vault_client, **kwargs):
+        client = vault_client.certificates
+        mock_handler = MockHandler()
+
+        logger = logging.getLogger('azure')
+        logger.addHandler(mock_handler)
+        logger.setLevel(logging.DEBUG)
+
+        await client.create_issuer(name="cert-name", provider="Test")
+
+        for message in mock_handler.messages:
+            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+                try:
+                    body = json.loads(message.message)
+                    assert body["provider"] != "Test", "Client request body was logged"
+                except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
+                    pass

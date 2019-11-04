@@ -5,7 +5,7 @@
 
 # All interaction with Cosmos DB starts with an instance of the CosmosClient
 # [START create_client]
-from azure.cosmos import errors, CosmosClient, PartitionKey
+from azure.cosmos import exceptions, CosmosClient, PartitionKey
 
 import os
 
@@ -21,7 +21,7 @@ client = CosmosClient(url, key)
 database_name = "testDatabase"
 try:
     database = client.create_database(id=database_name)
-except errors.CosmosResourceExistsError:
+except exceptions.CosmosResourceExistsError:
     database = client.get_database_client(database=database_name)
 # [END create_database]
 
@@ -33,7 +33,7 @@ try:
     container = database.create_container(
         id=container_name, partition_key=PartitionKey(path="/productName")
     )
-except errors.CosmosResourceExistsError:
+except exceptions.CosmosResourceExistsError:
     container = database.get_container_client(container_name)
 # [END create_container]
 
@@ -47,7 +47,7 @@ try:
         partition_key=PartitionKey(path="/city"),
         default_ttl=200,
     )
-except errors.CosmosResourceExistsError:
+except exceptions.CosmosResourceExistsError:
     customer_container = database.get_container_client(customer_container_name)
 # [END create_container_with_settings]
 
@@ -138,8 +138,8 @@ print("New container TTL: {}".format(json.dumps(container_props['defaultTtl'])))
 # [START create_user]
 try:
     database.create_user(dict(id="Walter Harp"))
-except errors.CosmosResourceExistsError:
+except exceptions.CosmosResourceExistsError:
     print("A user with that ID already exists.")
-except errors.CosmosHttpResponseError as failure:
+except exceptions.CosmosHttpResponseError as failure:
     print("Failed to create user. Status code:{}".format(failure.status_code))
 # [END create_user]

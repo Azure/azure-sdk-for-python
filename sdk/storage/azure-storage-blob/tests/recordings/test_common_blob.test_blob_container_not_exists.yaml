@@ -8,37 +8,35 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - b32c1a12-8eca-11e9-ba62-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:34:45 GMT
+      - Fri, 25 Oct 2019 18:09:17 GMT
       x-ms-version:
-      - '2018-03-28'
-    method: HEAD
-    uri: https://remotestoragename.blob.core.windows.net/containerce1c1364/blobce1c1364
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainerce1c1364?timeout=5&restype=container
   response:
     body:
       string: ''
     headers:
-      Date:
-      - Fri, 14 Jun 2019 17:34:45 GMT
-      Server:
+      content-length:
+      - '0'
+      date:
+      - Fri, 25 Oct 2019 18:09:17 GMT
+      etag:
+      - '"0x8D7597673BBE7C1"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:09:17 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - ContainerNotFound
-      x-ms-request-id:
-      - 87130802-901e-008c-17d7-22295b000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
-      code: 404
-      message: The specified container does not exist.
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
@@ -49,113 +47,27 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 71b893ae-8ed3-11e9-bc80-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 18:37:20 GMT
+      - Fri, 25 Oct 2019 18:09:18 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: HEAD
     uri: https://storagename.blob.core.windows.net/containerce1c1364/blobce1c1364
   response:
     body:
       string: ''
     headers:
-      Date:
-      - Fri, 14 Jun 2019 18:37:20 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:09:17 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
-      Vary:
-      - Origin
       x-ms-error-code:
       - ContainerNotFound
-      x-ms-request-id:
-      - 9412e8d0-201e-00b7-04e0-226b05000000
       x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 404
-      message: The specified container does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 98611362-8eda-11e9-b6df-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:28:32 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: HEAD
-    uri: https://storagename.blob.core.windows.net/containerce1c1364/blobce1c1364
-  response:
-    body:
-      string: ''
-    headers:
-      Date:
-      - Fri, 14 Jun 2019 19:28:31 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - ContainerNotFound
-      x-ms-request-id:
-      - 6906074b-f01e-00d3-68e7-22dba5000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 404
-      message: The specified container does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 36240728-8edc-11e9-af06-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:40:06 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: HEAD
-    uri: https://storagename.blob.core.windows.net/containerce1c1364/blobce1c1364
-  response:
-    body:
-      string: ''
-    headers:
-      Date:
-      - Fri, 14 Jun 2019 19:40:05 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - ContainerNotFound
-      x-ms-request-id:
-      - e841cc54-a01e-00ad-11e8-22446a000000
-      x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 404
       message: The specified container does not exist.

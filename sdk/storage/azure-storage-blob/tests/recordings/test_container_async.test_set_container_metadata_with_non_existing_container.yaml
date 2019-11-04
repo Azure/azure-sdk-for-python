@@ -3,41 +3,28 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 66ff3300-b4d5-11e9-bf19-b831b58100e8
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 02 Aug 2019 03:27:06 GMT
+      - Fri, 25 Oct 2019 18:00:53 GMT
       x-ms-meta-hello:
       - world
       x-ms-meta-number:
       - '43'
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/containerb8131f6c?restype=container&comp=metadata
+    uri: https://storagename.blob.core.windows.net/acontainerb8131f6c?restype=container&comp=metadata
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:51fb34ae-a01e-0061-1ae2-4820df000000\nTime:2019-08-02T03:27:06.1516756Z</Message></Error>"
+        specified container does not exist.\nRequestId:0f84896a-d01e-00ed-545e-8ba14f000000\nTime:2019-10-25T18:00:53.4426340Z</Message></Error>"
     headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '225'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Fri, 02 Aug 2019 03:27:05 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      content-length: '225'
+      content-type: application/xml
+      date: Fri, 25 Oct 2019 18:00:52 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ContainerNotFound
-      x-ms-request-id: 51fb34ae-a01e-0061-1ae2-4820df000000
-      x-ms-version: '2018-03-28'
+      x-ms-version: '2019-02-02'
     status:
       code: 404
       message: The specified container does not exist.
@@ -45,8 +32,8 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - amqptest.blob.core.windows.net
-        - /containerb8131f6c
+        - pyacrstoragekzoj3d7n4a5m.blob.core.windows.net
+        - /acontainerb8131f6c
         - restype=container&comp=metadata
         - ''
 version: 1

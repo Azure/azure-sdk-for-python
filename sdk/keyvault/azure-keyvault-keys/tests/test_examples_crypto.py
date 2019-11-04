@@ -41,7 +41,7 @@ class TestCryptoExamples(KeyVaultTestCase):
         from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
         result = client.decrypt(EncryptionAlgorithm.rsa_oaep, ciphertext)
-        print(result.decrypted_bytes)
+        print(result.plaintext)
 
         # [END decrypt]
 
@@ -73,7 +73,7 @@ class TestCryptoExamples(KeyVaultTestCase):
         from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
         result = client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, encrypted_key)
-        unwrapped_bytes = result.unwrapped_bytes
+        key = result.key
 
         # [END unwrap]
 
@@ -107,6 +107,6 @@ class TestCryptoExamples(KeyVaultTestCase):
         from azure.keyvault.keys.crypto import SignatureAlgorithm
 
         verified = client.verify(SignatureAlgorithm.rs256, digest, signature)
-        assert verified.result is True
+        assert verified.is_valid
 
         # [END verify]
