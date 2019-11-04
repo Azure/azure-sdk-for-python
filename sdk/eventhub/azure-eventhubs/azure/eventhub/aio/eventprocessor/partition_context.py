@@ -3,9 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
 
-
+import logging
 from .partition_manager import PartitionManager
 
+
+_LOGGER = logging.getLogger(__name__)
 
 class PartitionContext(object):
     """Contains partition related context information for a PartitionProcessor instance to use.
@@ -26,12 +28,17 @@ class PartitionContext(object):
         Updates the checkpoint using the given information for the associated partition and consumer group in the
         chosen storage service.
 
-        :param event: The EventData instance. Its offset and sequence number are to be saved in the checkpoint store.
-        :type event: EventData
-        :return: None
+        :param ~azure.eventhub.EventData event: The EventData instance which contains the offset and
+         sequence number information used for checkpoint.
+        :rtype: None
         """
         if self._partition_manager:
             await self._partition_manager.update_checkpoint(
                 self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name,
                 self.partition_id, event.offset, event.sequence_number
             )
+        else:
+            _LOGGER.info(
+                "namespace %r, eventhub %r, consumer_group %r, partition_id %r "
+                "update_checkpoint is called without partition manager. No checkpoint is updated.",
+                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name, self.partition_id)

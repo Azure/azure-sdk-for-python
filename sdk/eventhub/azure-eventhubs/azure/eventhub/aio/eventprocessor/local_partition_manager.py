@@ -22,4 +22,3 @@ class FileBasedPartitionManager(Sqlite3PartitionManager):
     """
     def __init__(self, filename):
         super(FileBasedPartitionManager, self).__init__(db_filename=filename)
-
