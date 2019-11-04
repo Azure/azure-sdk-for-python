@@ -3,21 +3,19 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 21:53:45 GMT
+      - Wed, 30 Oct 2019 19:51:29 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://pyacrstoragec37b1807.queue.core.windows.net/pythonqueuec37b1807
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncc37b1807
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 06 Sep 2019 21:53:43 GMT
+      date: Wed, 30 Oct 2019 19:51:28 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -27,29 +25,27 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragec37b1807.queue.core.windows.net
-        - /pythonqueuec37b1807
+        - pyacrstoragekiq3q5uw4eso.queue.core.windows.net
+        - /pyqueueasyncc37b1807
         - ''
         - ''
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 21:53:46 GMT
+      - Wed, 30 Oct 2019 19:51:29 GMT
       x-ms-version:
       - '2018-03-28'
     method: DELETE
-    uri: https://pyacrstoragec37b1807.queue.core.windows.net/pythonqueuec37b1807
+    uri: https://storagename.queue.core.windows.net/pyqueueasyncc37b1807
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 06 Sep 2019 21:53:43 GMT
+      date: Wed, 30 Oct 2019 19:51:29 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -59,8 +55,8 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstoragec37b1807.queue.core.windows.net
-        - /pythonqueuec37b1807
+        - pyacrstoragekiq3q5uw4eso.queue.core.windows.net
+        - /pyqueueasyncc37b1807
         - ''
         - ''
 version: 1

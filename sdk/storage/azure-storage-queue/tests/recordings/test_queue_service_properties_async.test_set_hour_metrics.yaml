@@ -9,19 +9,19 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 22:01:17 GMT
+      - Wed, 30 Oct 2019 19:52:01 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://pyacrstorageb43e17ca.queue.core.windows.net/?restype=service&comp=properties
+    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 06 Sep 2019 22:01:16 GMT
+      date: Wed, 30 Oct 2019 19:52:00 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -31,7 +31,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorageb43e17ca.queue.core.windows.net
+        - pyacrstoragekiq3q5uw4eso.queue.core.windows.net
         - /
         - restype=service&comp=properties
         - ''
@@ -41,25 +41,24 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 22:01:17 GMT
+      - Wed, 30 Oct 2019 19:52:01 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://pyacrstorageb43e17ca.queue.core.windows.net/?restype=service&comp=properties
+    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors
-        /></StorageServiceProperties>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET</AllowedMethods><AllowedOrigins>www.xyz.com</AllowedOrigins><AllowedHeaders
+        /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>www.xyz.com,www.ab.com,www.bc.com</AllowedOrigins><AllowedHeaders>x-ms-meta-xyz,x-ms-meta-foo,x-ms-meta-data*,x-ms-meta-target*</AllowedHeaders><ExposedHeaders>x-ms-meta-abc,x-ms-meta-bcd,x-ms-meta-data*,x-ms-meta-source*</ExposedHeaders><MaxAgeInSeconds>500</MaxAgeInSeconds></CorsRule></Cors></StorageServiceProperties>"
     headers:
       cache-control: no-cache
       content-type: application/xml
-      date: Fri, 06 Sep 2019 22:01:16 GMT
+      date: Wed, 30 Oct 2019 19:52:00 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
+      vary: Origin
       x-ms-version: '2018-03-28'
     status:
       code: 200
@@ -68,7 +67,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorageb43e17ca.queue.core.windows.net
+        - pyacrstoragekiq3q5uw4eso.queue.core.windows.net
         - /
         - restype=service&comp=properties
         - ''

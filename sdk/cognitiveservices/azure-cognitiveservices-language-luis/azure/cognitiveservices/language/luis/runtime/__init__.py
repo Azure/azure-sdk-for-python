@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .luis_runtime_client import LUISRuntimeClient
-from .version import VERSION
+from ._configuration import LUISRuntimeClientConfiguration
+from ._luis_runtime_client import LUISRuntimeClient
+__all__ = ['LUISRuntimeClient', 'LUISRuntimeClientConfiguration']
 
-__all__ = ['LUISRuntimeClient']
+from .version import VERSION
 
 __version__ = VERSION
 

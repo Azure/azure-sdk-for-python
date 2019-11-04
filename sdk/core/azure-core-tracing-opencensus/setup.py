@@ -49,6 +49,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -59,7 +60,7 @@ setup(
         'opencensus>=0.6.0',
         'opencensus-ext-azure>=0.3.1',
         'opencensus-ext-threading',
-        'azure-core<2.0.0,>=1.0.0b4',
+        'azure-core<2.0.0,>=1.0.0',
     ],
     extras_require={
         ":python_version<'3.5'": ['typing'],

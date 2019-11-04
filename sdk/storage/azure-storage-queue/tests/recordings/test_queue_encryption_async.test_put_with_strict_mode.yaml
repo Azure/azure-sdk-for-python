@@ -3,21 +3,19 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 21:59:14 GMT
+      - Wed, 30 Oct 2019 19:51:57 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://pyacrstorage58b21629.queue.core.windows.net/encryptionqueue58b21629
+    uri: https://storagename.queue.core.windows.net/encryptionqueue58b21629
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 06 Sep 2019 21:59:12 GMT
+      date: Wed, 30 Oct 2019 19:51:56 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -27,18 +25,18 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage58b21629.queue.core.windows.net
+        - pyacrstoragekiq3q5uw4eso.queue.core.windows.net
         - /encryptionqueue58b21629
         - ''
         - ''
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <QueueMessage><MessageText>{"EncryptedMessageContents": "bmT+d+9pZ4+BxBz8LYTpzA==",
-      "EncryptionData": {"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "7UTmL/wYPY2E8OsnawHej6337AILd4u9TCuxErNGtSXcwr8Hc6WBIw==",
+      <QueueMessage><MessageText>{"EncryptedMessageContents": "GUeVx8wAcSPw16FU7znBrw==",
+      "EncryptionData": {"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "CGemz0znh6Uo9eLkU19cE1uebGclKHk3xsKU8L2ahclkLxlKocrJEg==",
       "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
-      "AES_CBC_256"}, "ContentEncryptionIV": "vFR/5U4QKrngh5fhGVlFTw==", "KeyWrappingMetadata":
-      {"EncryptionLibrary": "Python 12.0.0b2"}}}</MessageText></QueueMessage>'
+      "AES_CBC_256"}, "ContentEncryptionIV": "JWla7JZkGh17hwEv4cfdcw==", "KeyWrappingMetadata":
+      {"EncryptionLibrary": "Python 12.0.0b5"}}}</MessageText></QueueMessage>'
     headers:
       Accept:
       - application/xml
@@ -47,22 +45,22 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 06 Sep 2019 21:59:14 GMT
+      - Wed, 30 Oct 2019 19:51:57 GMT
       x-ms-version:
       - '2018-03-28'
     method: POST
-    uri: https://pyacrstorage58b21629.queue.core.windows.net/encryptionqueue58b21629/messages
+    uri: https://storagename.queue.core.windows.net/encryptionqueue58b21629/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>de2c29c5-6d54-4fa2-a4c4-bf467ec171e3</MessageId><InsertionTime>Fri,
-        06 Sep 2019 21:59:13 GMT</InsertionTime><ExpirationTime>Fri, 13 Sep 2019 21:59:13
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAYUmxUf5k1QE=</PopReceipt><TimeNextVisible>Fri,
-        06 Sep 2019 21:59:13 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>4dda6ae4-2dee-4f47-b152-1903d151630b</MessageId><InsertionTime>Wed,
+        30 Oct 2019 19:51:56 GMT</InsertionTime><ExpirationTime>Wed, 06 Nov 2019 19:51:56
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAkOc2fFuP1QE=</PopReceipt><TimeNextVisible>Wed,
+        30 Oct 2019 19:51:56 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       content-type: application/xml
-      date: Fri, 06 Sep 2019 21:59:12 GMT
+      date: Wed, 30 Oct 2019 19:51:56 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2018-03-28'
@@ -73,7 +71,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage58b21629.queue.core.windows.net
+        - pyacrstoragekiq3q5uw4eso.queue.core.windows.net
         - /encryptionqueue58b21629/messages
         - ''
         - ''

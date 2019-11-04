@@ -3,38 +3,23 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - e503d58c-b4d3-11e9-8e23-b831b58100e8
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 02 Aug 2019 03:16:18 GMT
+      - Fri, 25 Oct 2019 18:36:54 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainerd73a183c?timeout=5&restype=container
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Fri, 02 Aug 2019 03:16:17 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Etag
-      : '"0x8D716F7C9485A96"'
-      ? !!python/object/new:multidict._istr.istr
-      - Last-Modified
-      : Fri, 02 Aug 2019 03:16:18 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 24cdfe90-401e-00ca-25e0-48f7cd000000
-      x-ms-version: '2018-03-28'
+      content-length: '0'
+      date: Fri, 25 Oct 2019 18:36:53 GMT
+      etag: '"0x8D7597A4EC93B09"'
+      last-modified: Fri, 25 Oct 2019 18:36:53 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -42,7 +27,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - amqptest.blob.core.windows.net
+        - pyacrstorageiqnubxlez5qu.blob.core.windows.net
         - /utcontainerd73a183c
         - timeout=5&restype=container
         - ''
@@ -52,42 +37,26 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - e51f1330-b4d3-11e9-b56a-b831b58100e8
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 02 Aug 2019 03:16:18 GMT
+      - Fri, 25 Oct 2019 18:36:54 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.blob.core.windows.net/utcontainerd73a183c/blobd73a183c
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The
-        specified blob does not exist.\nRequestId:24cdfeca-401e-00ca-5ce0-48f7cd000000\nTime:2019-08-02T03:16:18.6600405Z</Message></Error>"
+        specified blob does not exist.\nRequestId:09511924-c01e-0095-1863-8b853b000000\nTime:2019-10-25T18:36:53.9427890Z</Message></Error>"
     headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '215'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Fri, 02 Aug 2019 03:16:17 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      ? !!python/object/new:multidict._istr.istr
-      - Vary
-      : Origin
+      content-length: '215'
+      content-type: application/xml
+      date: Fri, 25 Oct 2019 18:36:53 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: BlobNotFound
-      x-ms-request-id: 24cdfeca-401e-00ca-5ce0-48f7cd000000
-      x-ms-version: '2018-03-28'
+      x-ms-version: '2019-02-02'
     status:
       code: 404
       message: The specified blob does not exist.
@@ -95,7 +64,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - amqptest.blob.core.windows.net
+        - pyacrstorageiqnubxlez5qu.blob.core.windows.net
         - /utcontainerd73a183c/blobd73a183c
         - ''
         - ''

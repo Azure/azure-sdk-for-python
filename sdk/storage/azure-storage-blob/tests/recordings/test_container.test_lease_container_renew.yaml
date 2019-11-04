@@ -11,33 +11,29 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - b32f2ae4-8ecb-11e9-a613-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:41:54 GMT
+      - Fri, 25 Oct 2019 17:58:54 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/container61c510dc?restype=container
+    uri: https://storagename.blob.core.windows.net/container61c510dc?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 14 Jun 2019 17:41:55 GMT
-      ETag:
-      - '"0x8D6F0EF97F73ED1"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:41:55 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 17:58:53 GMT
+      etag:
+      - '"0x8D75974FFD80383"'
+      last-modified:
+      - Fri, 25 Oct 2019 17:58:53 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 3c6ef630-f01e-0014-25d8-22a764000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -53,41 +49,37 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - b351f7a4-8ecb-11e9-bf72-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:41:54 GMT
+      - Fri, 25 Oct 2019 17:58:54 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '15'
       x-ms-proposed-lease-id:
-      - 8bfa3cbb-139a-4a1f-a763-19741cb08b0c
+      - 2892fbe0-c7b4-4f0c-9e8c-218bf34aca15
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/container61c510dc?comp=lease&restype=container
+    uri: https://storagename.blob.core.windows.net/container61c510dc?comp=lease&restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 14 Jun 2019 17:41:55 GMT
-      ETag:
-      - '"0x8D6F0EF97F73ED1"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:41:55 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 17:58:53 GMT
+      etag:
+      - '"0x8D75974FFD80383"'
+      last-modified:
+      - Fri, 25 Oct 2019 17:58:53 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-id:
-      - 8bfa3cbb-139a-4a1f-a763-19741cb08b0c
-      x-ms-request-id:
-      - 3c6ef64e-f01e-0014-3fd8-22a764000000
+      - 2892fbe0-c7b4-4f0c-9e8c-218bf34aca15
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -103,39 +95,35 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - b950a0b0-8ecb-11e9-827a-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:42:05 GMT
+      - Fri, 25 Oct 2019 17:59:04 GMT
       x-ms-lease-action:
       - renew
       x-ms-lease-id:
-      - 8bfa3cbb-139a-4a1f-a763-19741cb08b0c
+      - 2892fbe0-c7b4-4f0c-9e8c-218bf34aca15
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/container61c510dc?comp=lease&restype=container
+    uri: https://storagename.blob.core.windows.net/container61c510dc?comp=lease&restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 14 Jun 2019 17:42:05 GMT
-      ETag:
-      - '"0x8D6F0EF97F73ED1"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:41:55 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 17:59:03 GMT
+      etag:
+      - '"0x8D75974FFD80383"'
+      last-modified:
+      - Fri, 25 Oct 2019 17:58:53 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-id:
-      - 8bfa3cbb-139a-4a1f-a763-19741cb08b0c
-      x-ms-request-id:
-      - 3c6f0454-f01e-0014-7bd8-22a764000000
+      - 2892fbe0-c7b4-4f0c-9e8c-218bf34aca15
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -151,35 +139,31 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - bc56b198-8ecb-11e9-8cd7-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:42:10 GMT
+      - Fri, 25 Oct 2019 17:59:09 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: DELETE
-    uri: https://remotestoragename.blob.core.windows.net/container61c510dc?restype=container
+    uri: https://storagename.blob.core.windows.net/container61c510dc?restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There\
-        \ is currently a lease on the container and no lease ID was specified in the\
-        \ request.\nRequestId:3c6f0ab9-f01e-0014-41d8-22a764000000\nTime:2019-06-14T17:42:10.8834507Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
+        is currently a lease on the container and no lease ID was specified in the
+        request.\nRequestId:c7851b45-b01e-00c1-2a5d-8bbbcf000000\nTime:2019-10-25T17:59:09.3026013Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '272'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Fri, 14 Jun 2019 17:42:10 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 17:59:08 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - LeaseIdMissing
-      x-ms-request-id:
-      - 3c6f0ab9-f01e-0014-41d8-22a764000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 412
       message: There is currently a lease on the container and no lease ID was specified
@@ -196,475 +180,25 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - c255f8a4-8ecb-11e9-85f4-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:42:20 GMT
+      - Fri, 25 Oct 2019 17:59:19 GMT
       x-ms-version:
-      - '2018-03-28'
-    method: DELETE
-    uri: https://remotestoragename.blob.core.windows.net/container61c510dc?restype=container
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 17:42:20 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 3c6f16da-f01e-0014-0bd8-22a764000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 09ba6280-8ed5-11e9-8628-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:48:45 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/container61c510dc?restype=container
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 18:48:44 GMT
-      ETag:
-      - '"0x8D6F0F8EE09FE64"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 18:48:45 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 896070f3-301e-004d-53e1-22a2e2000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 09d9f2a8-8ed5-11e9-baeb-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:48:45 GMT
-      x-ms-lease-action:
-      - acquire
-      x-ms-lease-duration:
-      - '15'
-      x-ms-proposed-lease-id:
-      - 1c0ee9a2-c7e8-45a6-a49d-e1b7001ec255
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/container61c510dc?comp=lease&restype=container
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 18:48:44 GMT
-      ETag:
-      - '"0x8D6F0F8EE09FE64"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 18:48:45 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-lease-id:
-      - 1c0ee9a2-c7e8-45a6-a49d-e1b7001ec255
-      x-ms-request-id:
-      - 8960710c-301e-004d-69e1-22a2e2000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 0fd8fcf8-8ed5-11e9-bd75-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:48:55 GMT
-      x-ms-lease-action:
-      - renew
-      x-ms-lease-id:
-      - 1c0ee9a2-c7e8-45a6-a49d-e1b7001ec255
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/container61c510dc?comp=lease&restype=container
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 18:48:54 GMT
-      ETag:
-      - '"0x8D6F0F8EE09FE64"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 18:48:45 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-lease-id:
-      - 1c0ee9a2-c7e8-45a6-a49d-e1b7001ec255
-      x-ms-request-id:
-      - 896084f7-301e-004d-18e1-22a2e2000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 12df9058-8ed5-11e9-91d5-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:49:00 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: DELETE
-    uri: https://storagename.blob.core.windows.net/container61c510dc?restype=container
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There\
-        \ is currently a lease on the container and no lease ID was specified in the\
-        \ request.\nRequestId:89608d6f-301e-004d-13e1-22a2e2000000\nTime:2019-06-14T18:49:00.7669519Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '272'
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 18:48:59 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - LeaseIdMissing
-      x-ms-request-id:
-      - 89608d6f-301e-004d-13e1-22a2e2000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 412
-      message: There is currently a lease on the container and no lease ID was specified
-        in the request.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 18dec274-8ed5-11e9-96d6-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:49:10 GMT
-      x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: DELETE
     uri: https://storagename.blob.core.windows.net/container61c510dc?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 14 Jun 2019 18:49:09 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 17:59:18 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 8960a123-301e-004d-15e1-22a2e2000000
       x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 02dc09b4-8eda-11e9-92db-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:24:21 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/container61c510dc?restype=container
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 19:24:20 GMT
-      ETag:
-      - '"0x8D6F0FDE72B492B"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 19:24:21 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - e3b42025-601e-0011-20e6-22531b000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 02fb9d9c-8eda-11e9-8671-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:24:21 GMT
-      x-ms-lease-action:
-      - acquire
-      x-ms-lease-duration:
-      - '15'
-      x-ms-proposed-lease-id:
-      - 07e0203e-42f5-4538-85ec-e50669f06f68
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/container61c510dc?comp=lease&restype=container
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 19:24:21 GMT
-      ETag:
-      - '"0x8D6F0FDE72B492B"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 19:24:21 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-lease-id:
-      - 07e0203e-42f5-4538-85ec-e50669f06f68
-      x-ms-request-id:
-      - e3b4203b-601e-0011-2fe6-22531b000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 08fac3f8-8eda-11e9-8d99-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:24:31 GMT
-      x-ms-lease-action:
-      - renew
-      x-ms-lease-id:
-      - 07e0203e-42f5-4538-85ec-e50669f06f68
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/container61c510dc?comp=lease&restype=container
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 19:24:31 GMT
-      ETag:
-      - '"0x8D6F0FDE72B492B"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 19:24:21 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-lease-id:
-      - 07e0203e-42f5-4538-85ec-e50669f06f68
-      x-ms-request-id:
-      - e3b433de-601e-0011-5de6-22531b000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 0c00f9f0-8eda-11e9-8445-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:24:36 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: DELETE
-    uri: https://storagename.blob.core.windows.net/container61c510dc?restype=container
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There\
-        \ is currently a lease on the container and no lease ID was specified in the\
-        \ request.\nRequestId:e3b43c92-601e-0011-25e6-22531b000000\nTime:2019-06-14T19:24:36.7228255Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '272'
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 19:24:36 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - LeaseIdMissing
-      x-ms-request-id:
-      - e3b43c92-601e-0011-25e6-22531b000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 412
-      message: There is currently a lease on the container and no lease ID was specified
-        in the request.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 11fff286-8eda-11e9-853c-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:24:46 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: DELETE
-    uri: https://storagename.blob.core.windows.net/container61c510dc?restype=container
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 19:24:46 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - e3b44d7d-601e-0011-5fe6-22531b000000
-      x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted

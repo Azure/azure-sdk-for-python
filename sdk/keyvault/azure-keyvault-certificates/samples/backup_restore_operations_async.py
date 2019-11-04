@@ -4,7 +4,8 @@
 # ------------------------------------
 import asyncio
 import os
-from azure.keyvault.certificates.aio import CertificateClient, CertificatePolicy
+from azure.keyvault.certificates.aio import CertificateClient
+from azure.keyvault.certificates import CertificatePolicy
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -14,7 +15,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, vault_endpoint
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, vault_url
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -37,9 +38,9 @@ async def run_sample():
     # Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-    vault_endpoint = os.environ["VAULT_ENDPOINT"]
+    vault_url = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
-    client = CertificateClient(vault_endpoint=vault_endpoint, credential=credential)
+    client = CertificateClient(vault_url=vault_url, credential=credential)
     try:
 
         print("\n.. Create Certificate")

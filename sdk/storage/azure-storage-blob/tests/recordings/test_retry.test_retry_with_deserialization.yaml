@@ -11,33 +11,29 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 4782f9c8-8ecc-11e9-a480-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:46:03 GMT
+      - Fri, 25 Oct 2019 18:03:48 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/retry7a5d119a?restype=container
+    uri: https://storagename.blob.core.windows.net/retry7a5d119a?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 14 Jun 2019 17:46:04 GMT
-      ETag:
-      - '"0x8D6F0F02C4840C9"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:46:04 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:03:47 GMT
+      etag:
+      - '"0x8D75975AF1B7807"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:03:48 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - feabe06e-901e-0087-72d9-22312f000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -51,202 +47,30 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 47a29918-8ecc-11e9-ab57-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:46:03 GMT
+      - Fri, 25 Oct 2019 18:03:48 GMT
       x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://remotestoragename.blob.core.windows.net/?prefix=retry&comp=list
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://remotestoragename.blob.core.windows.net/\"><Prefix>retry</Prefix><Containers><Container><Name>retry7a5d119a</Name><Properties><Last-Modified>Fri,\
-        \ 14 Jun 2019 17:46:04 GMT</Last-Modified><Etag>\"0x8D6F0F02C4840C9\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker\
-        \ /></EnumerationResults>"
-    headers:
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 17:46:04 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Origin
-      x-ms-request-id:
-      - feabe08a-901e-0087-0bd9-22312f000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 47a29918-8ecc-11e9-ab57-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 17:46:03 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://remotestoragename.blob.core.windows.net/?prefix=retry&comp=list
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://remotestoragename.blob.core.windows.net/\"><Prefix>retry</Prefix><Containers><Container><Name>retry7a5d119a</Name><Properties><Last-Modified>Fri,\
-        \ 14 Jun 2019 17:46:04 GMT</Last-Modified><Etag>\"0x8D6F0F02C4840C9\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker\
-        \ /></EnumerationResults>"
-    headers:
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 17:46:06 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Origin
-      x-ms-request-id:
-      - feabe371-901e-0087-20d9-22312f000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 48e0868c-8ecc-11e9-a3df-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 17:46:05 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: DELETE
-    uri: https://remotestoragename.blob.core.windows.net/retry7a5d119a?restype=container
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 17:46:06 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - feabe382-901e-0087-31d9-22312f000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 8d216c36-8ed5-11e9-8088-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:52:25 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/retry7a5d119a?restype=container
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 14 Jun 2019 18:52:25 GMT
-      ETag:
-      - '"0x8D6F0F97171615E"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 18:52:26 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - d849cba7-301e-006f-5de2-22ccd4000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 8d41901a-8ed5-11e9-96f7-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:52:26 GMT
-      x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.blob.core.windows.net/?prefix=retry&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Prefix>retry</Prefix><Containers><Container><Name>retry7a5d119a</Name><Properties><Last-Modified>Fri,\
-        \ 14 Jun 2019 18:52:26 GMT</Last-Modified><Etag>\"0x8D6F0F97171615E\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker\
-        \ /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Prefix>retry</Prefix><Containers><Container><Name>retry7a5d119a</Name><Properties><Last-Modified>Fri,
+        25 Oct 2019 18:03:48 GMT</Last-Modified><Etag>\"0x8D75975AF1B7807\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker
+        /></EnumerationResults>"
     headers:
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Fri, 14 Jun 2019 18:52:25 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:03:48 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
-      Vary:
-      - Origin
-      x-ms-request-id:
-      - d849cbe0-301e-006f-10e2-22ccd4000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -260,36 +84,30 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 8d41901a-8ed5-11e9-96f7-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 18:52:26 GMT
+      - Fri, 25 Oct 2019 18:03:48 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.blob.core.windows.net/?prefix=retry&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Prefix>retry</Prefix><Containers><Container><Name>retry7a5d119a</Name><Properties><Last-Modified>Fri,\
-        \ 14 Jun 2019 18:52:26 GMT</Last-Modified><Etag>\"0x8D6F0F97171615E\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker\
-        \ /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Prefix>retry</Prefix><Containers><Container><Name>retry7a5d119a</Name><Properties><Last-Modified>Fri,
+        25 Oct 2019 18:03:48 GMT</Last-Modified><Etag>\"0x8D75975AF1B7807\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker
+        /></EnumerationResults>"
     headers:
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Fri, 14 Jun 2019 18:52:27 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:03:50 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
-      Vary:
-      - Origin
-      x-ms-request-id:
-      - d849d0d2-301e-006f-33e2-22ccd4000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -305,29 +123,25 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 8ea850c6-8ed5-11e9-81c3-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 18:52:28 GMT
+      - Fri, 25 Oct 2019 18:03:50 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: DELETE
     uri: https://storagename.blob.core.windows.net/retry7a5d119a?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 14 Jun 2019 18:52:27 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:03:50 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - d849d0fa-301e-006f-58e2-22ccd4000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted

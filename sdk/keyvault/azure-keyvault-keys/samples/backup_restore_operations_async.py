@@ -14,7 +14,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-keys and azure-identity libraries (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -33,9 +33,9 @@ async def run_sample():
     # Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-    VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
+    VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
-    client = KeyClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
+    client = KeyClient(vault_url=VAULT_URL, credential=credential)
     try:
         # Let's create a Key of type RSA.
         # if the key already exists in the Key Vault, then a new version of the key is created.
@@ -50,12 +50,12 @@ async def run_sample():
         print("Backup created for key with name '{0}'.".format(key.name))
 
         # The rsa key is no longer in use, so you delete it.
-        await client.delete_key(key.name)
-        print("Deleted Key with name '{0}'".format(key.name))
+        deleted_key = await client.delete_key(key.name)
+        print("Deleted Key with name '{0}'".format(deleted_key.name))
 
         # In future, if the key is required again, we can use the backup value to restore it in the Key Vault.
         print("\n.. Restore the key using the backed up key bytes")
-        key = await client.restore_key(key_backup)
+        key = await client.restore_key_backup(key_backup)
         print("Restored Key with name '{0}'".format(key.name))
 
     except HttpResponseError as e:

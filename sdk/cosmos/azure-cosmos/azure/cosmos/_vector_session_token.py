@@ -22,7 +22,7 @@
 """Session Consistency Tracking in the Azure Cosmos database service.
 """
 
-from . import errors
+from . import exceptions
 from .http_constants import StatusCodes
 
 
@@ -120,7 +120,7 @@ class VectorSessionToken(object):
             raise ValueError("Invalid Session Token (should not be None)")
 
         if self.version == other.version and len(self.local_lsn_by_region) != len(other.local_lsn_by_region):
-            raise errors.CosmosHttpResponseError(
+            raise exceptions.CosmosHttpResponseError(
                 status_code=StatusCodes.INTERNAL_SERVER_ERROR,
                 message=("Compared session tokens '%s' and '%s' have unexpected regions."
                          % (self.session_token, other.session_token))
@@ -147,7 +147,7 @@ class VectorSessionToken(object):
             if local_lsn2 is not None:
                 highest_local_lsn_by_region[region_id] = max(local_lsn1, local_lsn2)
             elif self.version == other.version:
-                raise errors.CosmosHttpResponseError(
+                raise exceptions.CosmosHttpResponseError(
                     status_code=StatusCodes.INTERNAL_SERVER_ERROR,
                     message=("Compared session tokens '%s' and '%s' have unexpected regions."
                              % (self.session_token, other.session_token))

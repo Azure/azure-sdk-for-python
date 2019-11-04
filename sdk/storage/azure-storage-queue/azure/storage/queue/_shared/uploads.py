@@ -394,22 +394,25 @@ class SubStream(IOBase):
     def flush(self):
         pass
 
-    def read(self, n):
-        if self.closed:
+    def read(self, size=None):
+        if self.closed:  # pylint: disable=using-constant-test
             raise ValueError("Stream is closed.")
 
+        if size is None:
+            size = self._length - self._position
+
         # adjust if out of bounds
-        if n + self._position >= self._length:
-            n = self._length - self._position
+        if size + self._position >= self._length:
+            size = self._length - self._position
 
         # return fast
-        if n == 0 or self._buffer.closed:
+        if size == 0 or self._buffer.closed:
             return b""
 
         # attempt first read from the read buffer and update position
-        read_buffer = self._buffer.read(n)
+        read_buffer = self._buffer.read(size)
         bytes_read = len(read_buffer)
-        bytes_remaining = n - bytes_read
+        bytes_remaining = size - bytes_read
         self._position += bytes_read
 
         # repopulate the read buffer from the underlying stream to fulfill the request

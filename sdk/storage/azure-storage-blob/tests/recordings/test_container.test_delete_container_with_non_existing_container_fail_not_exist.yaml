@@ -11,123 +11,30 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - abc98cd8-8ecb-11e9-b254-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:41:42 GMT
+      - Fri, 25 Oct 2019 17:58:43 GMT
       x-ms-version:
-      - '2018-03-28'
-    method: DELETE
-    uri: https://remotestoragename.blob.core.windows.net/container166620ad?restype=container
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The\
-        \ specified container does not exist.\nRequestId:ab28da55-d01e-0065-5dd8-22d55d000000\n\
-        Time:2019-06-14T17:41:43.2769843Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '225'
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 17:41:42 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - ContainerNotFound
-      x-ms-request-id:
-      - ab28da55-d01e-0065-5dd8-22d55d000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 404
-      message: The specified container does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 01ae4a34-8ed5-11e9-bde1-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:48:31 GMT
-      x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: DELETE
     uri: https://storagename.blob.core.windows.net/container166620ad?restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The\
-        \ specified container does not exist.\nRequestId:3f85af87-401e-0024-70e1-22fd4e000000\n\
-        Time:2019-06-14T18:48:32.0726901Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
+        specified container does not exist.\nRequestId:e946ae00-701e-00d7-525d-8b7a51000000\nTime:2019-10-25T17:58:43.8837615Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '225'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Fri, 14 Jun 2019 18:48:31 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 17:58:42 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - ContainerNotFound
-      x-ms-request-id:
-      - 3f85af87-401e-0024-70e1-22fd4e000000
       x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 404
-      message: The specified container does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - fa570b22-8ed9-11e9-b66b-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:24:07 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: DELETE
-    uri: https://storagename.blob.core.windows.net/container166620ad?restype=container
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The\
-        \ specified container does not exist.\nRequestId:3c918cc4-f01e-0014-58e6-22a764000000\n\
-        Time:2019-06-14T19:24:07.2316275Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '225'
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 19:24:06 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - ContainerNotFound
-      x-ms-request-id:
-      - 3c918cc4-f01e-0014-58e6-22a764000000
-      x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 404
       message: The specified container does not exist.

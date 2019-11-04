@@ -3,48 +3,40 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/xml
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 352a1e74-8ecb-11e9-bf42-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:38:23 GMT
-      x-ms-range:
-      - bytes=0-33554431
+      - Fri, 25 Oct 2019 18:13:15 GMT
       x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://remotestoragename.blob.core.windows.net/utcontainer4aaa15bf/blob4aaa15bf
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer4aaa15bf?timeout=5&restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The\
-        \ specified blob does not exist.\nRequestId:5e0010d1-e01e-00ee-42d7-226e83000000\n\
-        Time:2019-06-14T17:38:24.2432555Z</Message></Error>"
+      string: ''
     headers:
-      Content-Length:
-      - '215'
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 17:38:23 GMT
-      Server:
+      content-length:
+      - '0'
+      date:
+      - Fri, 25 Oct 2019 18:13:15 GMT
+      etag:
+      - '"0x8D75977017C4B76"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:13:15 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - BlobNotFound
-      x-ms-request-id:
-      - 5e0010d1-e01e-00ee-42d7-226e83000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
-      code: 404
-      message: The specified blob does not exist.
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
@@ -55,39 +47,32 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 88185a18-8ed4-11e9-b845-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 18:45:07 GMT
+      - Fri, 25 Oct 2019 18:13:16 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.blob.core.windows.net/utcontainer4aaa15bf/blob4aaa15bf
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The\
-        \ specified blob does not exist.\nRequestId:1190a2ba-001e-00ef-14e1-226f7e000000\n\
-        Time:2019-06-14T18:45:08.0780998Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The
+        specified blob does not exist.\nRequestId:bb527efa-601e-005a-6f5f-8bf72e000000\nTime:2019-10-25T18:13:15.7638183Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '215'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Fri, 14 Jun 2019 18:45:07 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:13:15 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
       x-ms-error-code:
       - BlobNotFound
-      x-ms-request-id:
-      - 1190a2ba-001e-00ef-14e1-226f7e000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 404
       message: The specified blob does not exist.

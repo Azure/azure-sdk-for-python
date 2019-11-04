@@ -11,13 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 50393ee4-d9a2-11e9-a5aa-001a7dda7113
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 17 Sep 2019 23:24:36 GMT
+      - Fri, 25 Oct 2019 17:59:44 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -26,18 +22,16 @@ interactions:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Tue, 17 Sep 2019 23:24:36 GMT
-      ETag:
-      - '"0x8D73BC634ACDB33"'
-      Last-Modified:
-      - Tue, 17 Sep 2019 23:24:36 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 17:59:43 GMT
+      etag:
+      - '"0x8D759751DF2E963"'
+      last-modified:
+      - Fri, 25 Oct 2019 17:59:44 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - eeb3d5a1-e01e-000e-79af-6dbb8b000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -46,7 +40,7 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <SignedIdentifiers><SignedIdentifier><Id>0</Id><AccessPolicy><Start>2019-09-17T23:23:37Z</Start><Expiry>2019-09-18T00:24:37Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier><SignedIdentifier><Id>1</Id><AccessPolicy><Start>2019-09-17T23:23:37Z</Start><Expiry>2019-09-18T00:24:37Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier><SignedIdentifier><Id>2</Id><AccessPolicy><Start>2019-09-17T23:23:37Z</Start><Expiry>2019-09-18T00:24:37Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
+      <SignedIdentifiers><SignedIdentifier><Id>0</Id><AccessPolicy><Start>2019-10-25T17:58:44Z</Start><Expiry>2019-10-25T18:59:44Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier><SignedIdentifier><Id>1</Id><AccessPolicy><Start>2019-10-25T17:58:44Z</Start><Expiry>2019-10-25T18:59:44Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier><SignedIdentifier><Id>2</Id><AccessPolicy><Start>2019-10-25T17:58:44Z</Start><Expiry>2019-10-25T18:59:44Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
     headers:
       Accept:
       - '*/*'
@@ -59,11 +53,9 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 508ded66-d9a2-11e9-a041-001a7dda7113
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 17 Sep 2019 23:24:37 GMT
+      - Fri, 25 Oct 2019 17:59:44 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -72,18 +64,16 @@ interactions:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Tue, 17 Sep 2019 23:24:36 GMT
-      ETag:
-      - '"0x8D73BC634BFEFD7"'
-      Last-Modified:
-      - Tue, 17 Sep 2019 23:24:37 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 17:59:43 GMT
+      etag:
+      - '"0x8D759751DFBA31A"'
+      last-modified:
+      - Fri, 25 Oct 2019 17:59:44 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - eeb3d5a6-e01e-000e-7caf-6dbb8b000000
       x-ms-version:
       - '2019-02-02'
     status:
@@ -99,37 +89,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 509f8562-d9a2-11e9-acc9-001a7dda7113
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 17 Sep 2019 23:24:37 GMT
+      - Fri, 25 Oct 2019 17:59:44 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
     uri: https://storagename.blob.core.windows.net/containerf11f18b4?restype=container&comp=acl
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>0</Id><AccessPolicy><Start>2019-09-17T23:23:37.0000000Z</Start><Expiry>2019-09-18T00:24:37.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier><SignedIdentifier><Id>1</Id><AccessPolicy><Start>2019-09-17T23:23:37.0000000Z</Start><Expiry>2019-09-18T00:24:37.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier><SignedIdentifier><Id>2</Id><AccessPolicy><Start>2019-09-17T23:23:37.0000000Z</Start><Expiry>2019-09-18T00:24:37.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>0</Id><AccessPolicy><Start>2019-10-25T17:58:44.0000000Z</Start><Expiry>2019-10-25T18:59:44.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier><SignedIdentifier><Id>1</Id><AccessPolicy><Start>2019-10-25T17:58:44.0000000Z</Start><Expiry>2019-10-25T18:59:44.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier><SignedIdentifier><Id>2</Id><AccessPolicy><Start>2019-10-25T17:58:44.0000000Z</Start><Expiry>2019-10-25T18:59:44.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
     headers:
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Tue, 17 Sep 2019 23:24:36 GMT
-      ETag:
-      - '"0x8D73BC634BFEFD7"'
-      Last-Modified:
-      - Tue, 17 Sep 2019 23:24:37 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 17:59:43 GMT
+      etag:
+      - '"0x8D759751DFBA31A"'
+      last-modified:
+      - Fri, 25 Oct 2019 17:59:44 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
-      Vary:
-      - Origin
-      x-ms-request-id:
-      - eeb3d5a7-e01e-000e-7daf-6dbb8b000000
       x-ms-version:
       - '2019-02-02'
     status:
