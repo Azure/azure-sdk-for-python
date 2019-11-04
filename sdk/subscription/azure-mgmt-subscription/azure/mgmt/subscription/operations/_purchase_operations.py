@@ -17,8 +17,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class SubscriptionFactoryOperations(object):
-    """SubscriptionFactoryOperations operations.
+class PurchaseOperations(object):
+    """PurchaseOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -26,7 +26,7 @@ class SubscriptionFactoryOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Current version is 2015-06-01. Constant value: "2018-03-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. Current version is 2019-10-01-preview. Constant value: "2019-10-01-preview".
     """
 
     models = models
@@ -36,17 +36,35 @@ class SubscriptionFactoryOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01-preview"
+        self.api_version = "2019-10-01-preview"
 
         self.config = config
 
+    def support_status(
+            self, id, custom_headers=None, raw=False, **operation_config):
+        """The operation to find out the purchase support status.
 
-    def _create_subscription_in_enrollment_account_initial(
-            self, enrollment_account_name, body, custom_headers=None, raw=False, **operation_config):
+        :param id: Id.
+        :type id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PurchaseSupportStatusResponseResult or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.subscription.models.PurchaseSupportStatusResponseResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
+        """
+        body = None
+
         # Construct URL
-        url = self.create_subscription_in_enrollment_account.metadata['url']
+        url = self.support_status.metadata['url']
         path_format_arguments = {
-            'enrollmentAccountName': self._serialize.url("enrollment_account_name", enrollment_account_name, 'str')
+            'Id': self._serialize.url("id", id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -66,10 +84,52 @@ class SubscriptionFactoryOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'SubscriptionCreationParameters')
+        body_content = self._serialize.body(body, 'OperationName')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PurchaseSupportStatusResponseResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    support_status.metadata = {'url': '/providers/Microsoft.Subscription/PurchaseSupportStatus/{Id}'}
+
+
+    def _support_plan_initial(
+            self, subscription_id, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.support_plan.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
@@ -79,7 +139,7 @@ class SubscriptionFactoryOperations(object):
         header_dict = {}
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SubscriptionCreationResult', response)
+            deserialized = self._deserialize('PurchaseSupportResponseResult', response)
             header_dict = {
                 'Location': 'str',
                 'Retry-After': 'str',
@@ -92,34 +152,29 @@ class SubscriptionFactoryOperations(object):
 
         return deserialized
 
-    def create_subscription_in_enrollment_account(
-            self, enrollment_account_name, body, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates an Azure subscription.
+    def support_plan(
+            self, subscription_id, custom_headers=None, raw=False, polling=True, **operation_config):
+        """The operation to find out the purchase support status.
 
-        :param enrollment_account_name: The name of the enrollment account to
-         which the subscription will be billed.
-        :type enrollment_account_name: str
-        :param body: The subscription creation parameters.
-        :type body:
-         ~azure.mgmt.subscription.models.SubscriptionCreationParameters
+        :param subscription_id: Subscription Id.
+        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :return: An instance of LROPoller that returns
-         SubscriptionCreationResult or
-         ClientRawResponse<SubscriptionCreationResult> if raw==True
+         PurchaseSupportResponseResult or
+         ClientRawResponse<PurchaseSupportResponseResult> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.subscription.models.SubscriptionCreationResult]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.subscription.models.PurchaseSupportResponseResult]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.subscription.models.SubscriptionCreationResult]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.subscription.models.PurchaseSupportResponseResult]]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
         """
-        raw_result = self._create_subscription_in_enrollment_account_initial(
-            enrollment_account_name=enrollment_account_name,
-            body=body,
+        raw_result = self._support_plan_initial(
+            subscription_id=subscription_id,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -130,7 +185,7 @@ class SubscriptionFactoryOperations(object):
                 'Location': 'str',
                 'Retry-After': 'str',
             }
-            deserialized = self._deserialize('SubscriptionCreationResult', response)
+            deserialized = self._deserialize('PurchaseSupportResponseResult', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -146,4 +201,4 @@ class SubscriptionFactoryOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_subscription_in_enrollment_account.metadata = {'url': '/providers/Microsoft.Billing/enrollmentAccounts/{enrollmentAccountName}/providers/Microsoft.Subscription/createSubscription'}
+    support_plan.metadata = {'url': '/providers/Microsoft.Subscription/Subscriptions/{subscriptionId}/PurchaseSupport'}

@@ -9,52 +9,38 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-import uuid
 from msrest.pipeline import ClientRawResponse
-
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
+import uuid
 
 
-class Operations(object):
-    """Operations operations.
+class SubscriptionClientOperationsMixin(object):
 
-    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+    def get_support_plan(
+            self, subscription_id, custom_headers=None, raw=False, **operation_config):
+        """The operation to find out the purchase support status.
 
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Current version is 2015-06-01. Constant value: "2018-03-01-preview".
-    """
-
-    models = models
-
-    def __init__(self, client, config, serializer, deserializer):
-
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self.api_version = "2018-03-01-preview"
-
-        self.config = config
-
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available Microsoft.Subscription API operations.
-
+        :param subscription_id: Subscription Id.
+        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: OperationListResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.subscription.models.OperationListResult or
+        :return: SupportPlanResponseResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.subscription.models.SupportPlanResponseResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.get_support_plan.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -79,11 +65,11 @@ class Operations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('OperationListResult', response)
+            deserialized = self._deserialize('SupportPlanResponseResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Subscription/operations'}
+    get_support_plan.metadata = {'url': '/providers/Microsoft.Subscription/Subscriptions/{subscriptionId}/SupportPlan'}
