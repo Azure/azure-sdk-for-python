@@ -1,5 +1,8 @@
 # Release History
 
+## 1.1.0b1 Unreleased
+
+
 ## 1.0.0 (2019-10-29)
 ### Breaking changes:
 - Async credentials now default to [`aiohttp`](https://pypi.org/project/aiohttp/)
