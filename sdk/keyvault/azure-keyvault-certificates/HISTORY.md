@@ -1,6 +1,7 @@
 # Release History
 
 ### 4.0.0b6
+- Renamed `AdministratorDetails` to `AdministratorContact`
 - Added `WellKnownIssuerNames` enum class that holds popular issuer names
 
 ### 4.0.0b5
