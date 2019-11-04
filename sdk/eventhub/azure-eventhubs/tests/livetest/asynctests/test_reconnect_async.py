@@ -16,7 +16,7 @@ from azure.eventhub.aio.client_async import EventHubClient
 @pytest.mark.asyncio
 async def test_send_with_long_interval_async(connstr_receivers, sleep):
     connection_str, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     sender = client._create_producer()
     try:
         await sender.send(EventData(b"A single event"))

@@ -20,7 +20,7 @@ from azure.eventhub.client import EventHubClient
 
 @pytest.mark.liveTest
 def test_send_with_invalid_hostname(invalid_hostname):
-    client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=False)
+    client = EventHubClient.from_connection_string(invalid_hostname)
     sender = client._create_producer()
     with pytest.raises(AuthenticationError):
         sender.send(EventData("test data"))
@@ -30,7 +30,7 @@ def test_send_with_invalid_hostname(invalid_hostname):
 
 @pytest.mark.liveTest
 def test_receive_with_invalid_hostname_sync(invalid_hostname):
-    client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=False)
+    client = EventHubClient.from_connection_string(invalid_hostname)
     receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         receiver.receive(timeout=5)
@@ -40,7 +40,7 @@ def test_receive_with_invalid_hostname_sync(invalid_hostname):
 
 @pytest.mark.liveTest
 def test_send_with_invalid_key(invalid_key):
-    client = EventHubClient.from_connection_string(invalid_key, network_tracing=False)
+    client = EventHubClient.from_connection_string(invalid_key)
     sender = client._create_producer()
     with pytest.raises(AuthenticationError):
         sender.send(EventData("test data"))
@@ -50,7 +50,7 @@ def test_send_with_invalid_key(invalid_key):
 
 @pytest.mark.liveTest
 def test_receive_with_invalid_key_sync(invalid_key):
-    client = EventHubClient.from_connection_string(invalid_key, network_tracing=False)
+    client = EventHubClient.from_connection_string(invalid_key)
     receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
 
     with pytest.raises(AuthenticationError):
@@ -61,7 +61,7 @@ def test_receive_with_invalid_key_sync(invalid_key):
 
 @pytest.mark.liveTest
 def test_send_with_invalid_policy(invalid_policy):
-    client = EventHubClient.from_connection_string(invalid_policy, network_tracing=False)
+    client = EventHubClient.from_connection_string(invalid_policy)
     sender = client._create_producer()
     with pytest.raises(AuthenticationError):
         sender.send(EventData("test data"))
@@ -71,7 +71,7 @@ def test_send_with_invalid_policy(invalid_policy):
 
 @pytest.mark.liveTest
 def test_receive_with_invalid_policy_sync(invalid_policy):
-    client = EventHubClient.from_connection_string(invalid_policy, network_tracing=False)
+    client = EventHubClient.from_connection_string(invalid_policy)
     receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         receiver.receive(timeout=5)
@@ -82,7 +82,7 @@ def test_receive_with_invalid_policy_sync(invalid_policy):
 @pytest.mark.liveTest
 def test_send_partition_key_with_partition_sync(connection_str):
     pytest.skip("Skipped tentatively. Confirm whether to throw ValueError or just warn users")
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     sender = client._create_producer(partition_id="1")
     try:
         data = EventData(b"Data")
@@ -96,7 +96,7 @@ def test_send_partition_key_with_partition_sync(connection_str):
 
 @pytest.mark.liveTest
 def test_non_existing_entity_sender(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, event_hub_path="nemo", network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str, event_hub_path="nemo")
     sender = client._create_producer(partition_id="1")
     with pytest.raises(AuthenticationError):
         sender.send(EventData("test data"))
@@ -106,7 +106,7 @@ def test_non_existing_entity_sender(connection_str):
 
 @pytest.mark.liveTest
 def test_non_existing_entity_receiver(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, event_hub_path="nemo", network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str, event_hub_path="nemo")
     receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         receiver.receive(timeout=5)
@@ -118,7 +118,7 @@ def test_non_existing_entity_receiver(connection_str):
 def test_receive_from_invalid_partitions_sync(connection_str):
     partitions = ["XYZ", "-1", "1000", "-"]
     for p in partitions:
-        client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+        client = EventHubClient.from_connection_string(connection_str)
         receiver = client._create_consumer(consumer_group="$default", partition_id=p, event_position=EventPosition("-1"))
         try:
             with pytest.raises(ConnectError):
@@ -132,7 +132,7 @@ def test_receive_from_invalid_partitions_sync(connection_str):
 def test_send_to_invalid_partitions(connection_str):
     partitions = ["XYZ", "-1", "1000", "-"]
     for p in partitions:
-        client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+        client = EventHubClient.from_connection_string(connection_str)
         sender = client._create_producer(partition_id=p)
         try:
             with pytest.raises(ConnectError):
@@ -146,7 +146,7 @@ def test_send_to_invalid_partitions(connection_str):
 def test_send_too_large_message(connection_str):
     if sys.platform.startswith('darwin'):
         pytest.skip("Skipping on OSX - open issue regarding message size")
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     sender = client._create_producer()
     try:
         data = EventData(b"A" * 1100000)
@@ -159,7 +159,7 @@ def test_send_too_large_message(connection_str):
 
 @pytest.mark.liveTest
 def test_send_null_body(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     sender = client._create_producer()
     try:
         with pytest.raises(ValueError):
@@ -173,7 +173,7 @@ def test_send_null_body(connection_str):
 @pytest.mark.liveTest
 def test_message_body_types(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     try:
         received = receiver.receive(timeout=5)
@@ -227,7 +227,7 @@ def test_message_body_types(connstr_senders):
 
 @pytest.mark.liveTest
 def test_create_batch_with_invalid_hostname_sync(invalid_hostname):
-    client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=False)
+    client = EventHubClient.from_connection_string(invalid_hostname)
     sender = client._create_producer()
     with pytest.raises(AuthenticationError):
         sender.create_batch(max_size=300, partition_key="key")
@@ -237,7 +237,7 @@ def test_create_batch_with_invalid_hostname_sync(invalid_hostname):
 
 @pytest.mark.liveTest
 def test_create_batch_with_too_large_size_sync(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     sender = client._create_producer()
     with pytest.raises(ValueError):
         sender.create_batch(max_size=5 * 1024 * 1024, partition_key="key")

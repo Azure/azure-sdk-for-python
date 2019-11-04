@@ -11,16 +11,16 @@ def test_receive_no_partition(connstr_senders):
     connection_str, senders = connstr_senders
     senders[0].send(EventData("Test EventData"))
     senders[1].send(EventData("Test EventData"))
-    client = EventHubConsumerClient.from_connection_string(connection_str, receive_timeout=1, network_tracing=False)
+    client = EventHubConsumerClient.from_connection_string(connection_str, receive_timeout=1)
 
     recv_cnt = {"received": 0}  # substitution for nonlocal variable, 2.7 compatible
 
-    def process_events(partition_context, events):
+    def on_events(partition_context, events):
         recv_cnt["received"] += len(events)
 
     with client:
         worker = threading.Thread(target=client.receive,
-                                  args=(process_events,),
+                                  args=(on_events,),
                                   kwargs={"consumer_group": "$default", "initial_event_position": "-1"})
         worker.start()
         time.sleep(10)
@@ -31,11 +31,11 @@ def test_receive_no_partition(connstr_senders):
 def test_receive_partition(connstr_senders):
     connection_str, senders = connstr_senders
     senders[0].send(EventData("Test EventData"))
-    client = EventHubConsumerClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubConsumerClient.from_connection_string(connection_str)
 
     recv_cnt = {"received": 0}  # substitution for nonlocal variable, 2.7 compatible
 
-    def process_events(partition_context, events):
+    def on_events(partition_context, events):
         recv_cnt["received"] += len(events)
         assert partition_context.partition_id == "0"
         assert partition_context.consumer_group_name == "$default"
@@ -44,7 +44,7 @@ def test_receive_partition(connstr_senders):
 
     with client:
         worker = threading.Thread(target=client.receive,
-                                  args=(process_events,),
+                                  args=(on_events,),
                                   kwargs={"consumer_group": "$default", "initial_event_position": "-1",
                                           "partition_id": "0"})
         worker.start()
@@ -57,20 +57,20 @@ def test_receive_load_balancing(connstr_senders):
     connection_str, senders = connstr_senders
     pm = InMemoryPartitionManager()
     client1 = EventHubConsumerClient.from_connection_string(
-        connection_str, partition_manager=pm, network_tracing=False, load_balancing_interval=1)
+        connection_str, partition_manager=pm, load_balancing_interval=1)
     client2 = EventHubConsumerClient.from_connection_string(
-        connection_str, partition_manager=pm, network_tracing=False, load_balancing_interval=1)
+        connection_str, partition_manager=pm, load_balancing_interval=1)
 
-    def process_events(partition_context, events):
+    def on_events(partition_context, events):
         pass
 
     with client1, client2:
         worker1 = threading.Thread(target=client1.receive,
-                                   args=(process_events,),
+                                   args=(on_events,),
                                    kwargs={"consumer_group": "$default", "initial_event_position": "-1"})
 
         worker2 = threading.Thread(target=client2.receive,
-                                   args=(process_events,),
+                                   args=(on_events,),
                                    kwargs={"consumer_group": "$default", "initial_event_position": "-1"})
 
         worker1.start()

@@ -8,7 +8,7 @@ from azure.eventhub.aio import EventHubProducerClient
 @pytest.mark.asyncio
 async def test_send_with_partition_key_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubProducerClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubProducerClient.from_connection_string(connection_str)
 
     async with client:
         data_val = 0
@@ -34,7 +34,7 @@ async def test_send_with_partition_key_async(connstr_receivers):
 @pytest.mark.asyncio
 async def test_send_partition_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubProducerClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubProducerClient.from_connection_string(connection_str)
     async with client:
         await client.send(EventData(b"Data"), partition_id="1")
 
@@ -48,7 +48,7 @@ async def test_send_partition_async(connstr_receivers):
 @pytest.mark.asyncio
 async def test_send_partitio_concurrent_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubProducerClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubProducerClient.from_connection_string(connection_str)
     async with client:
         await asyncio.gather(client.send(EventData(b"Data"), partition_id="1"),
                              client.send(EventData(b"Data"), partition_id="1"))
@@ -63,7 +63,7 @@ async def test_send_partitio_concurrent_async(connstr_receivers):
 @pytest.mark.asyncio
 async def test_send_no_partition_batch_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubProducerClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubProducerClient.from_connection_string(connection_str)
     async with client:
         event_batch = await client.create_batch()
         try:

@@ -14,7 +14,7 @@ from azure.eventhub.aio.client_async import EventHubClient
 @pytest.mark.asyncio
 async def test_receive_iterator_async(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     async with receiver:
         received = await receiver.receive(timeout=5)
