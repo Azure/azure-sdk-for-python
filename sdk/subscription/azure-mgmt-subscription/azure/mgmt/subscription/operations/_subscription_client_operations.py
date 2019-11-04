@@ -72,4 +72,4 @@ class SubscriptionClientOperationsMixin(object):
             return client_raw_response
 
         return deserialized
-    get_support_plan.metadata = {'url': '/providers/Microsoft.Subscription/Subscriptions/{subscriptionId}/SupportPlan'}
+    get_support_plan.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Subscription/SupportPlan'}

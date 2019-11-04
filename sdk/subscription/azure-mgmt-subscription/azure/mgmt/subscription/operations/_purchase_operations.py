@@ -201,4 +201,4 @@ class PurchaseOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    support_plan.metadata = {'url': '/providers/Microsoft.Subscription/Subscriptions/{subscriptionId}/PurchaseSupport'}
+    support_plan.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Subscription/PurchaseSupport'}
