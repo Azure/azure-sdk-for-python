@@ -7,7 +7,13 @@
 from ._generated._text_analytics_api import TextAnalyticsAPI
 from ._generated.models._models import LanguageInput
 from ._base_client import TextAnalyticsClientBase
-from ._deserialize import deserialize_entities_result
+from ._deserialize import (
+    deserialize_entities_result,
+    deserialize_linked_entities_result,
+    deserialize_key_phrases_result,
+    deserialize_sentiment_result
+)
+
 
 class TextAnalyticsClient(TextAnalyticsClientBase):
     """The Text Analytics API is a suite of text analytics web services built with best-in-class Microsoft machine learning algorithms.
@@ -168,6 +174,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                cls=deserialize_entities_result,
                 **kwargs
             )
         except Exception as error:
@@ -204,6 +211,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                cls=deserialize_linked_entities_result,
                 **kwargs
             )
         except Exception as error:
@@ -239,6 +247,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                cls=deserialize_key_phrases_result,
                 **kwargs
             )
         except Exception as error:
@@ -275,6 +284,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                cls=deserialize_sentiment_result,
                 **kwargs
             )
         except Exception as error:
