@@ -36,7 +36,7 @@ def test_loadbalancer_balance():
 
     class MockEventhubConsumer(object):
         def receive(self):
-            time.sleep(0.5)
+            time.sleep(0.1)
             return []
         def close(self):
             pass
@@ -54,7 +54,7 @@ def test_loadbalancer_balance():
     thread1.start()
     threads.append(thread1)
 
-    time.sleep(5)
+    time.sleep(2)
     ep1_after_start = len(event_processor1._working_threads)
     event_processor2 = EventProcessor(eventhub_client=eventhub_client,
                                       consumer_group_name='$default',
@@ -65,28 +65,17 @@ def test_loadbalancer_balance():
     thread2 = threading.Thread(target=event_processor2.start)
     thread2.start()
     threads.append(thread2)
-    time.sleep(5)
+    time.sleep(3)
     ep2_after_start = len(event_processor2._working_threads)
-    event_processor3 = EventProcessor(eventhub_client=eventhub_client,
-                                      consumer_group_name='$default',
-                                      partition_manager=partition_manager,
-                                      on_event=event_handler,
-                                      polling_interval=1)
-    thread3 = threading.Thread(target=event_processor3.start)
-    thread3.start()
-    threads.append(thread3)
-    time.sleep(5)
-    ep3_after_start = len(event_processor3._working_threads)
-    event_processor3.stop()
 
     event_processor1.stop()
+    thread1.join()
     time.sleep(5)
     ep2_after_ep1_stopped = len(event_processor2._working_threads)
     event_processor2.stop()
 
     assert ep1_after_start == 2
     assert ep2_after_start == 1
-    assert ep3_after_start == 0
     assert ep2_after_ep1_stopped == 2
 
 
