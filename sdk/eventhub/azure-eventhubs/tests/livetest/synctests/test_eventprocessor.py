@@ -48,7 +48,8 @@ def test_loadbalancer_balance():
                                       consumer_group_name='$default',
                                       partition_manager=partition_manager,
                                       on_event=event_handler,
-                                      polling_interval=1)
+                                      polling_interval=3,
+                                      receive_timeout=1)
 
     thread1 = threading.Thread(target=event_processor1.start)
     thread1.start()
@@ -60,17 +61,18 @@ def test_loadbalancer_balance():
                                       consumer_group_name='$default',
                                       partition_manager=partition_manager,
                                       on_event=event_handler,
-                                      polling_interval=1)
+                                      polling_interval=3,
+                                      receive_timeout=1)
 
     thread2 = threading.Thread(target=event_processor2.start)
     thread2.start()
     threads.append(thread2)
-    time.sleep(3)
+    time.sleep(10)
     ep2_after_start = len(event_processor2._working_threads)
 
     event_processor1.stop()
     thread1.join()
-    time.sleep(5)
+    time.sleep(10)
     ep2_after_ep1_stopped = len(event_processor2._working_threads)
     event_processor2.stop()
 
