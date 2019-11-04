@@ -15,6 +15,8 @@ try:
     from ._models_py3 import ConfigurationStore
     from ._models_py3 import ConfigurationStoreUpdateParameters
     from ._models_py3 import Error, ErrorException
+    from ._models_py3 import KeyValue
+    from ._models_py3 import ListKeyValueParameters
     from ._models_py3 import NameAvailabilityStatus
     from ._models_py3 import OperationDefinition
     from ._models_py3 import OperationDefinitionDisplay
@@ -26,6 +28,8 @@ except (SyntaxError, ImportError):
     from ._models import ConfigurationStore
     from ._models import ConfigurationStoreUpdateParameters
     from ._models import Error, ErrorException
+    from ._models import KeyValue
+    from ._models import ListKeyValueParameters
     from ._models import NameAvailabilityStatus
     from ._models import OperationDefinition
     from ._models import OperationDefinitionDisplay
@@ -44,6 +48,8 @@ __all__ = [
     'ConfigurationStore',
     'ConfigurationStoreUpdateParameters',
     'Error', 'ErrorException',
+    'KeyValue',
+    'ListKeyValueParameters',
     'NameAvailabilityStatus',
     'OperationDefinition',
     'OperationDefinitionDisplay',
