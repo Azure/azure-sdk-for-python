@@ -1,5 +1,28 @@
 # Release History
 
+## 2019-11-04 5.0.0b5
+
+**Breaking changes**
+
+- `EventHubClient` has been split into two separate clients: `EventHubProducerClient` and `EventHubConsumerClient`.
+    - Construction of both objects is the same as it was for the previous client.
+- Introduced `EventHubProducerClient` as substitution for`EventHubProducer`.
+    - `EventHubProducerClient` supports sending events to different partitions.
+- Introduced `EventHubConsumerClient` as substitution for `EventHubConsumer`.
+    - `EventHubConsumerClient` supports receiving events from single/all partitions.
+    - There are no longer methods which directly return `EventData`, all receiving is done via callback method: `on_events`.
+- `EventHubConsumerClient` has taken on the responsibility of `EventProcessor`.
+    - `EventHubConsumerClient` now accepts `PartitionManager` to do load-balancing and checkpoint.
+- Replaced `PartitionProcessor`by four independent callback methods accepted by the `receive` method on `EventHubConsumerClient`.
+    - `on_events(partition_context, events)` called when events are received.
+    - `on_error(partition_context, exception` called when errors occur.
+    - `on_partition_initialize(partition_context)` called when a partition consumer is opened.
+    - `on_partition_close(partition_context, reason)` called when a partition consumer is closed.
+
+**Bug fixes**
+
+- Fixed bug in user-agent string not being parsed.
+
 ## 5.0.0b4 (2019-10-08)
 
 **New features**

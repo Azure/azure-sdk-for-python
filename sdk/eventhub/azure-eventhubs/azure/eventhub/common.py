@@ -15,7 +15,7 @@ from uamqp.message import MessageHeader  # type: ignore
 
 from azure.core.settings import settings # type: ignore
 
-from azure.eventhub.error import EventDataError
+from .error import EventDataError
 
 log = logging.getLogger(__name__)
 
@@ -43,8 +43,12 @@ class EventData(object):
     """
     The EventData class is a holder of event content.
 
-    Example:
-        .. literalinclude:: ../examples/test_examples_eventhub.py
+    :param body: The data to send in a single message. body can be type of str or bytes.
+    :type body: str or bytes
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
             :start-after: [START create_event_data]
             :end-before: [END create_event_data]
             :language: python
@@ -64,13 +68,6 @@ class EventData(object):
     PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC = b"runtime_info_retrieval_time_utc"
 
     def __init__(self, body=None):
-        """
-        Initialize EventData.
-
-        :param body: The data to send in a single message.
-        :type body: str, bytes or list
-        """
-
         self._last_enqueued_event_properties = {}
         if body and isinstance(body, list):
             self.message = Message(body[0])
@@ -81,6 +78,7 @@ class EventData(object):
         else:
             self.message = Message(body)
         self.message.annotations = {}
+        self.message.application_properties = {}
 
     def __str__(self):
         dic = {
@@ -233,8 +231,7 @@ class EventData(object):
         """
         Application defined properties on the message.
 
-        :param value: The application properties for the EventData.
-        :type value: dict
+        :param dict value: The application properties for the EventData.
         """
         properties = None if value is None else dict(value)
         self.message.application_properties = properties
@@ -259,6 +256,22 @@ class EventData(object):
             return self.message.get_data()
         except TypeError:
             raise ValueError("Message data empty.")
+
+    @property
+    def last_enqueued_event_properties(self):
+        """
+        The latest enqueued event information. This property will be updated each time an event is received when
+        the receiver is created with `track_last_enqueued_event_properties` being `True`.
+        The dict includes following information of the partition:
+
+            - `sequence_number`
+            - `offset`
+            - `enqueued_time`
+            - `retrieval_time`
+
+        :rtype: dict or None
+        """
+        return self._get_last_enqueued_event_properties()
 
     def body_as_str(self, encoding='UTF-8'):
         """
@@ -306,10 +319,15 @@ class EventDataBatch(object):
 
     Use `try_add` method to add events until the maximum batch size limit in bytes has been reached -
     a `ValueError` will be raised.
-    Use `send` method of ~azure.eventhub.EventHubProducer or ~azure.eventhub.aio.EventHubProducer for sending.
+    Use `send` method of ~azure.eventhub.EventHubProducerClient or ~azure.eventhub.aio.EventHubProducerClient
+    for sending. The `send` method accepts partition_key as a parameter for sending a particular partition.
 
-    Please use the `create_batch` method of `EventHubProducer`
-    to create an `EventDataBatch` object instead of instantiating an `EventDataBatch` object directly.
+    **Please use the create_batch method of EventHubProducerClient
+    to create an EventDataBatch object instead of instantiating an EventDataBatch object directly.**
+
+    :param int max_size: The maximum size of bytes data that an EventDataBatch object can hold.
+    :param str partition_key: With the given partition_key, event data will land to a particular partition of the
+     Event Hub decided by the service.
     """
 
     def __init__(self, max_size=None, partition_key=None):
@@ -323,14 +341,6 @@ class EventDataBatch(object):
 
     def __len__(self):
         return self._count
-
-    @property
-    def size(self):
-        """The size in bytes
-
-        :return: int
-        """
-        return self._size
 
     @staticmethod
     def _from_batch(batch_data, partition_key=None):
@@ -349,11 +359,20 @@ class EventDataBatch(object):
             self.message.annotations = annotations
             self.message.header = header
 
+    @property
+    def size(self):
+        """The size of EventDataBatch object in bytes
+
+        :rtype: int
+        """
+        return self._size
+
     def try_add(self, event_data):
         """
-        The message size is a sum up of body, properties, header, etc.
-        :param event_data: ~azure.eventhub.EventData
-        :return: None
+        Try to add an EventData object, the size of EventData is a sum up of body, application_properties, etc.
+        :param event_data: The EventData object which is attempted to be added.
+        :type event_data: ~azure.eventhub.EventData
+        :rtype: None
         :raise: ValueError, when exceeding the size limit.
         """
         if event_data is None:
@@ -387,7 +406,13 @@ class EventDataBatch(object):
 
 class EventPosition(object):
     """
-    The position(offset, sequence or timestamp) where a consumer starts. Examples:
+    The position(offset, sequence or timestamp) where a consumer starts.
+
+    :param value: The event position value. The value can be type of datetime.datetime or int or str.
+    :type value: int, str or datetime.datetime
+    :param bool inclusive: Whether to include the supplied value as the start point.
+
+    Examples:
 
     Beginning of the event stream:
       >>> event_pos = EventPosition("-1")
@@ -404,14 +429,6 @@ class EventPosition(object):
     """
 
     def __init__(self, value, inclusive=False):
-        """
-        Initialize EventPosition.
-
-        :param value: The event position value.
-        :type value: ~datetime.datetime or int or str
-        :param inclusive: Whether to include the supplied value as the start point.
-        :type inclusive: bool
-        """
         self.value = value if value is not None else "-1"
         self.inclusive = inclusive
 
@@ -437,14 +454,12 @@ class EventPosition(object):
 class EventHubSASTokenCredential(object):
     """
     SAS token used for authentication.
+
+    :param token: A SAS token or function that returns a SAS token. If a function is supplied,
+     it will be used to retrieve subsequent tokens in the case of token expiry. The function should
+     take no arguments. The token can be type of str or Callable object.
     """
     def __init__(self, token):
-        """
-        :param token: A SAS token or function that returns a SAS token. If a function is supplied,
-         it will be used to retrieve subsequent tokens in the case of token expiry. The function should
-         take no arguments.
-        :type token: str or callable
-        """
         self.token = token
 
     def get_sas_token(self):
@@ -457,15 +472,11 @@ class EventHubSASTokenCredential(object):
 class EventHubSharedKeyCredential(object):
     """
     The shared access key credential used for authentication.
+
+    :param str policy: The name of the shared access policy.
+    :param str key: The shared access key.
     """
     def __init__(self, policy, key):
-        """
-        :param policy: The name of the shared access policy.
-        :type policy: str
-        :param key: The shared access key.
-        :type key: str
-        """
-
         self.policy = policy
         self.key = key
 
