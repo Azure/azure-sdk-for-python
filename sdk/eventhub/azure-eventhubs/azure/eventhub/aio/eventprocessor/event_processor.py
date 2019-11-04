@@ -80,8 +80,8 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
 
     def _create_tasks_for_claimed_ownership(self, claimed_partitions, checkpoints=None):
         for partition_id in claimed_partitions:
-            checkpoint = checkpoints.get(partition_id) if checkpoints else None
             if partition_id not in self._tasks or self._tasks[partition_id].done():
+                checkpoint = checkpoints.get(partition_id) if checkpoints else None
                 self._tasks[partition_id] = get_running_loop().create_task(self._receive(partition_id, checkpoint))
 
     @contextmanager

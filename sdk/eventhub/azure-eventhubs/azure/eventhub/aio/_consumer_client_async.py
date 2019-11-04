@@ -96,19 +96,19 @@ class EventHubConsumerClient(EventHubClient):
          For detailed partition context information, please refer to ~azure.eventhub.PartitionContext.
         :type on_events: Callable[PartitionContext, List[EventData]]
         :param consumer_group: Receive events from the event hub for this consumer group
-        :param partition_id: Receive from this partition only if it's not None. Receive from all partition otherwise.
-        :param owner_level: The priority of the exclusive consumer. An exclusive
+        :keyword partition_id: Receive from this partition only if it's not None. Receive from all partition otherwise.
+        :keyword owner_level: The priority of the exclusive consumer. An exclusive
          consumer will be created if owner_level is set. Higher owner_level has higher exclusive priority.
-        :param prefetch: The number of events to prefetch from the service
+        :keyword prefetch: The number of events to prefetch from the service
          for processing. Default is 300.
-        :param track_last_enqueued_event_properties: Indicates whether or not the consumer should request information
+        :keyword track_last_enqueued_event_properties: Indicates whether or not the consumer should request information
          on the last enqueued event on its associated partition, and track that information as events are received.
          When information about the partition's last enqueued event is being tracked, each event received from the
          Event Hubs service will carry metadata about the partition. This results in a small amount of additional
          network bandwidth consumption that is generally a favorable trade-off when considered against periodically
          making requests for partition properties using the Event Hub client.
          It is set to `False` by default.
-        :param initial_event_position: Start receiving from this initial_event_position
+        :keyword initial_event_position: Start receiving from this initial_event_position
          if there isn't checkpoint data for a partition. Use the checkpoint data if there it's available. This can be a
          a dict with partition id as the key and position as the value for individual partitions, or a single
          EventPosition instance for all partitions.
