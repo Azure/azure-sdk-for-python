@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     try:
         with consumer_client:
-            consumer_client.receive(on_event=on_events, consumer_group='$Default',
+            consumer_client.receive(on_events=on_events, consumer_group='$Default',
                                     partition_id='0', track_last_enqueued_event_properties=True)
 
     except KeyboardInterrupt:

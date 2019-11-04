@@ -51,7 +51,7 @@ with producer_client:
 
 with consumer_client:
     receiving_time = 5
-    consumer_client.receive(on_event=on_events, consumer_group='$Default')
+    consumer_client.receive(on_events=on_events, consumer_group='$Default')
     time.sleep(receiving_time)
     print('Finish receiving.')
 
