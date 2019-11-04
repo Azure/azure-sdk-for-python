@@ -24,14 +24,10 @@ class MgmtHealthcareApisTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_healthcareapis(self, resource_group):
 
-        SERVICE_NAME = "myapimrndxyz"
+        SERVICE_NAME = "myhcasrvanxy"
 
         # Check name availability[post]
-        BODY = {
-          "type": "Microsoft.HealthcareApis/services",
-          "name": "serviceName"
-        }
-        result = self.mgmt_client.services.check_name_availability(type="Microsoft.HealthcareApis/services", name="serviceName")
+        result = self.mgmt_client.services.check_name_availability(type="Microsoft.HealthcareApis/services", name=SERVICE_NAME)
 
         # Create or Update a service with all parameters[put]
         BODY = {
