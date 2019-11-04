@@ -47,10 +47,10 @@ class Sqlite3PartitionManager(PartitionManager):
                  ownership_table="ownership", checkpoint_table="checkpoint"):
         # type: (str, str, str) -> None
         """
-
-        :param db_filename: name of file that saves the sql data.
-         Sqlite3 will run in memory without a file when db_filename is ":memory:".
+        :param db_filename: name of file that saves the sql data. Sqlite3 will run in memory without
+         a file when db_filename is ":memory:".
         :param ownership_table: The table name of the sqlite3 database.
+
         """
         super(Sqlite3PartitionManager, self).__init__()
         self.ownership_table = _check_table_name(ownership_table)

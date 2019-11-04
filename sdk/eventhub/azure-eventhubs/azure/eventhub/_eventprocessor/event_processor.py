@@ -9,7 +9,6 @@ import uuid
 import logging
 import time
 import threading
-from enum import Enum
 
 from uamqp.compat import queue  # type: ignore
 
@@ -19,19 +18,9 @@ from azure.core.settings import settings  # type: ignore
 from azure.eventhub import EventPosition
 from .partition_context import PartitionContext
 from .ownership_manager import OwnershipManager
+from .close_reason import CloseReason
 
 log = logging.getLogger(__name__)
-
-
-class CloseReason(Enum):
-    """
-    A partition consumer is closed due to two reasons:
-    SHUTDOWN: It is explicitly required to stop, this would happen when the EventHubConsumerClient is closed.
-    OWNERSHIP_LOST: It loses the ownership of a partition, this would happend when other EventHubConsumerClient
-    instance claims ownership of the partition.
-    """
-    SHUTDOWN = 0
-    OWNERSHIP_LOST = 1
 
 
 class EventProcessor(object):  # pylint:disable=too-many-instance-attributes

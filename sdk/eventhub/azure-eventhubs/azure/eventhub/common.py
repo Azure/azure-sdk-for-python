@@ -44,10 +44,11 @@ class EventData(object):
     The EventData class is a holder of event content.
 
     :param body: The data to send in a single message. body can be type of str or bytes.
+    :type body: str or bytes
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sync_samples/test_examples_eventhub.py
+        .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
             :start-after: [START create_event_data]
             :end-before: [END create_event_data]
             :language: python
@@ -262,10 +263,12 @@ class EventData(object):
         The latest enqueued event information. This property will be updated each time an event is received when
         the receiver is created with `track_last_enqueued_event_properties` being `True`.
         The dict includes following information of the partition:
+
             - `sequence_number`
             - `offset`
             - `enqueued_time`
             - `retrieval_time`
+
         :rtype: dict or None
         """
         return self._get_last_enqueued_event_properties()
@@ -319,8 +322,8 @@ class EventDataBatch(object):
     Use `send` method of ~azure.eventhub.EventHubProducerClient or ~azure.eventhub.aio.EventHubProducerClient
     for sending. The `send` method accepts partition_key as a parameter for sending a particular partition.
 
-    **Please use the `create_batch` method of `EventHubProducerClient`
-    to create an `EventDataBatch` object instead of instantiating an `EventDataBatch` object directly.**
+    **Please use the create_batch method of EventHubProducerClient
+    to create an EventDataBatch object instead of instantiating an EventDataBatch object directly.**
 
     :param int max_size: The maximum size of bytes data that an EventDataBatch object can hold.
     :param str partition_key: With the given partition_key, event data will land to a particular partition of the
@@ -367,7 +370,8 @@ class EventDataBatch(object):
     def try_add(self, event_data):
         """
         Try to add an EventData object, the size of EventData is a sum up of body, application_properties, etc.
-        :param ~azure.eventhub.EventData event_data: The EventData object which is attempted to be added.
+        :param event_data: The EventData object which is attempted to be added.
+        :type event_data: ~azure.eventhub.EventData
         :rtype: None
         :raise: ValueError, when exceeding the size limit.
         """
@@ -404,7 +408,8 @@ class EventPosition(object):
     """
     The position(offset, sequence or timestamp) where a consumer starts.
 
-    :param value: The event position value. The value can be type of ~datetime.datetime or int or str.
+    :param value: The event position value. The value can be type of datetime.datetime or int or str.
+    :type value: int, str or datetime.datetime
     :param bool inclusive: Whether to include the supplied value as the start point.
 
     Examples:
@@ -469,7 +474,6 @@ class EventHubSharedKeyCredential(object):
     The shared access key credential used for authentication.
 
     :param str policy: The name of the shared access policy.
-    :type policy:
     :param str key: The shared access key.
     """
     def __init__(self, policy, key):

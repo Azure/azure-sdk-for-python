@@ -10,7 +10,8 @@ import time
 
 from azure.eventhub import EventData, EventHubError
 from azure.eventhub.client import EventHubClient
-from azure.eventhub._eventprocessor.event_processor import EventProcessor, CloseReason
+from azure.eventhub._eventprocessor.event_processor import EventProcessor
+from azure.eventhub import CloseReason
 from azure.eventhub._eventprocessor.local_partition_manager import InMemoryPartitionManager
 from azure.eventhub._eventprocessor.partition_manager import OwnershipLostError
 from azure.eventhub.common import _Address

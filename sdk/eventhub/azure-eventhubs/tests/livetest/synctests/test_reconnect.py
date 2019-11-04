@@ -4,21 +4,17 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import os
 import time
 import pytest
 
-from azure.eventhub import (
-    EventData,
-    EventPosition,
-    EventHubError,
-    EventHubClient)
+from azure.eventhub import EventData
+from azure.eventhub.client import EventHubClient
 
 @pytest.mark.liveTest
 def test_send_with_long_interval_sync(connstr_receivers, sleep):
     connection_str, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    sender = client.create_producer()
+    client = EventHubClient.from_connection_string(connection_str)
+    sender = client._create_producer()
     with sender:
         sender.send(EventData(b"A single event"))
         for _ in range(1):
@@ -36,3 +32,4 @@ def test_send_with_long_interval_sync(connstr_receivers, sleep):
 
     assert len(received) == 2
     assert list(received[0].body)[0] == b"A single event"
+    client.close()
