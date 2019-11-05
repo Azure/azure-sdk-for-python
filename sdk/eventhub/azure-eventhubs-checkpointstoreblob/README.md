@@ -114,7 +114,7 @@ Refer to [Logging](#logging) to enable loggers for related libraries.
 
 ### Documentation
 
-Reference documentation is available at https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b5/azure.eventhub.extensions.html
+Reference documentation is available at [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b5/azure.eventhub.html#azure.eventhub.PartitionManager)
 
 ### Logging
 
