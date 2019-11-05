@@ -104,7 +104,7 @@ def validating_transport(requests, responses):
         expected_request.assert_matches(request)
         return response
 
-    return mock.Mock(send=validate_request)
+    return mock.Mock(send=mock.Mock(wraps=validate_request))
 
 
 def urlsafeb64_decode(s):

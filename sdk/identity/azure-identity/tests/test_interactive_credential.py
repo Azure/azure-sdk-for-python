@@ -13,7 +13,7 @@ from azure.identity._internal import AuthCodeRedirectServer
 import pytest
 from six.moves import urllib
 
-from helpers import build_aad_response, build_id_token, mock_response, Request, validating_transport
+from helpers import build_aad_response, mock_response, Request, validating_transport
 
 try:
     from unittest.mock import Mock, patch
@@ -32,18 +32,23 @@ def test_interactive_credential(mock_open):
     tenant_id = "tenant_id"
     endpoint = "https://{}/{}".format(authority, tenant_id)
 
-    id_token = build_id_token(aud=client_id, preferred_username="user")
+    discovery_response = mock_response(
+        json_payload={
+            "authorization_endpoint": endpoint,
+            "token_endpoint": endpoint,
+            "tenant_discovery_endpoint": endpoint,
+        }
+    )
     transport = validating_transport(
-        requests=[Request(url_substring=endpoint)] * 4,  # not validating requests in detail because they're formed by MSAL
+        requests=[Request(url_substring=endpoint)] * 3
+        + [Request(url_substring=endpoint, required_data={"refresh_token": expected_refresh_token})],
         responses=[
-            # expecting instance discovery, tenant discovery, then token requests
-            mock_response(json_payload={"authorization_endpoint": endpoint, "token_endpoint": endpoint, "tenant_discovery_endpoint": endpoint}),
-            mock_response(json_payload={"authorization_endpoint": endpoint, "token_endpoint": endpoint, "tenant_discovery_endpoint": endpoint}),
+            discovery_response,  # instance discovery
+            discovery_response,  # tenant discovery
             mock_response(
                 json_payload=build_aad_response(
                     access_token=expected_token,
                     expires_in=expires_in,
-                    id_token=id_token,
                     refresh_token=expected_refresh_token,
                     uid="uid",
                     utid="utid",
@@ -51,14 +56,7 @@ def test_interactive_credential(mock_open):
                 )
             ),
             mock_response(
-                json_payload=build_aad_response(
-                    access_token=expected_token,
-                    expires_in=expires_in,
-                    # id_token=id_token,
-                    # uid="uid",
-                    # utid="utid",
-                    token_type="Bearer",
-                )
+                json_payload=build_aad_response(access_token=expected_token, expires_in=expires_in, token_type="Bearer")
             ),
         ],
     )
@@ -74,32 +72,38 @@ def test_interactive_credential(mock_open):
         client_secret="secret",
         server_class=server_class,
         transport=transport,
-        instance_discovery=False,  # kwargs are passed to MSAL; this one prevents an AAD verification request
+        instance_discovery=False,
         validate_authority=False,
     )
 
-    # ensure the request beginning the flow has a known state value
+    # The credential's auth code request includes a uuid which must be included in the redirect. Patching to
+    # set the uuid requires less code here than a proper mock server.
     with patch("azure.identity._credentials.browser.uuid.uuid4", lambda: oauth_state):
         token = credential.get_token("scope")
-        assert token.token == expected_token
-        assert mock_open.call_count == 1
+    assert token.token == expected_token
+    assert mock_open.call_count == 1
 
-        # token should be cached, get_token shouldn't prompt again
+    # token should be cached, get_token shouldn't prompt again
+    token = credential.get_token("scope")
+    assert token.token == expected_token
+    assert mock_open.call_count == 1
+
+
+    # As of MSAL 1.0.0, applications build a new client every time they redeem a refresh token.
+    # Here we patch the private method they use for the sake of test coverage.
+    # TODO: this will probably break when this MSAL behavior changes
+    app = credential._get_app()
+    app._build_client = lambda *_: app.client  # pylint:disable=protected-access
+    now = time.time()
+
+    # expired access token -> credential should use refresh token instead of prompting again
+    with patch("time.time", lambda: now + expires_in):
         token = credential.get_token("scope")
-        assert token.token == expected_token
-        assert mock_open.call_count == 1
+    assert token.token == expected_token
+    assert mock_open.call_count == 1
 
-        # expired access token -> credential should use refresh token instead of prompting again
-        now = time.time()
-        with patch("time.time", lambda: now + expires_in):
-
-            # MSAL applications build a new client each time they redeem a refresh token
-            app = credential._get_app()
-            app._build_client = lambda *_: app.client  # pylint:disable=protected-access
-
-            token = credential.get_token("scope")
-            assert token.token == expected_token
-            assert mock_open.call_count == 1
+    # ensure all expected requests were sent
+    assert transport.send.call_count == 4
 
 
 @patch(
@@ -155,6 +159,3 @@ def test_redirect_server():
 
     assert response.code == 200
     assert server.query_params[expected_param] == [expected_value]
-
-if __name__ == "__main__":
-    test_interactive_credential()
