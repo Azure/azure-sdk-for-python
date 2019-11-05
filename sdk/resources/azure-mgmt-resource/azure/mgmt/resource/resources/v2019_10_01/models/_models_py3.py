@@ -1584,16 +1584,40 @@ class TagRequest(Model):
 class TagResponse(Model):
     """Tag Response for Patch, Put, Get, Delete operations.
 
-    :param tags: array of tag objects returned in the response body
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The ID of the tag response.
+    :vartype id: str
+    :ivar name: The name of the tag response.
+    :vartype name: str
+    :ivar type: The type of the tag response.
+    :vartype type: object
+    :param tags: Required. array of tag objects returned in the response body
     :type tags: list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag]
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'required': True},
+    }
+
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'object'},
         'tags': {'key': 'tags', 'type': '[Tag]'},
     }
 
-    def __init__(self, *, tags=None, **kwargs) -> None:
+    def __init__(self, *, tags, **kwargs) -> None:
         super(TagResponse, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
         self.tags = tags
 
 
