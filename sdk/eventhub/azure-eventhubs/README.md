@@ -329,6 +329,7 @@ async def do_operation(event):
     # do some sync or async operations. If the operation is i/o intensive, async will have better performance
     print(event)
 
+
 async def process_events(partition_context, events):
     await asyncio.gather(*[do_operation(event) for event in events])
     await partition_context.update_checkpoint(events[-1])
