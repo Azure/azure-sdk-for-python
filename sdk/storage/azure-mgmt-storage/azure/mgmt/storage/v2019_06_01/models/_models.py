@@ -823,26 +823,12 @@ class Endpoints(Model):
     :vartype web: str
     :ivar dfs: Gets the dfs endpoint.
     :vartype dfs: str
-    :ivar blob1: Gets the blob endpoint.
-    :vartype blob1: str
-    :ivar queue1: Gets the queue endpoint.
-    :vartype queue1: str
-    :ivar table1: Gets the table endpoint.
-    :vartype table1: str
-    :ivar file1: Gets the file endpoint.
-    :vartype file1: str
-    :ivar web1: Gets the web endpoint.
-    :vartype web1: str
-    :ivar dfs1: Gets the dfs endpoint.
-    :vartype dfs1: str
-    :ivar blob2: Gets the blob endpoint.
-    :vartype blob2: str
-    :ivar file2: Gets the file endpoint.
-    :vartype file2: str
-    :ivar web2: Gets the web endpoint.
-    :vartype web2: str
-    :ivar dfs2: Gets the dfs endpoint.
-    :vartype dfs2: str
+    :param microsoft_endpoints: Gets the microsoft routing storage endpoints.
+    :type microsoft_endpoints:
+     ~azure.mgmt.storage.v2019_06_01.models.StorageAccountMicrosoftEndpoints
+    :param internet_endpoints: Gets the internet routing storage endpoints
+    :type internet_endpoints:
+     ~azure.mgmt.storage.v2019_06_01.models.StorageAccountInternetEndpoints
     """
 
     _validation = {
@@ -852,16 +838,6 @@ class Endpoints(Model):
         'file': {'readonly': True},
         'web': {'readonly': True},
         'dfs': {'readonly': True},
-        'blob1': {'readonly': True},
-        'queue1': {'readonly': True},
-        'table1': {'readonly': True},
-        'file1': {'readonly': True},
-        'web1': {'readonly': True},
-        'dfs1': {'readonly': True},
-        'blob2': {'readonly': True},
-        'file2': {'readonly': True},
-        'web2': {'readonly': True},
-        'dfs2': {'readonly': True},
     }
 
     _attribute_map = {
@@ -871,16 +847,8 @@ class Endpoints(Model):
         'file': {'key': 'file', 'type': 'str'},
         'web': {'key': 'web', 'type': 'str'},
         'dfs': {'key': 'dfs', 'type': 'str'},
-        'blob1': {'key': 'microsoftEndpoints.blob', 'type': 'str'},
-        'queue1': {'key': 'microsoftEndpoints.queue', 'type': 'str'},
-        'table1': {'key': 'microsoftEndpoints.table', 'type': 'str'},
-        'file1': {'key': 'microsoftEndpoints.file', 'type': 'str'},
-        'web1': {'key': 'microsoftEndpoints.web', 'type': 'str'},
-        'dfs1': {'key': 'microsoftEndpoints.dfs', 'type': 'str'},
-        'blob2': {'key': 'internetEndpoints.blob', 'type': 'str'},
-        'file2': {'key': 'internetEndpoints.file', 'type': 'str'},
-        'web2': {'key': 'internetEndpoints.web', 'type': 'str'},
-        'dfs2': {'key': 'internetEndpoints.dfs', 'type': 'str'},
+        'microsoft_endpoints': {'key': 'microsoftEndpoints', 'type': 'StorageAccountMicrosoftEndpoints'},
+        'internet_endpoints': {'key': 'internetEndpoints', 'type': 'StorageAccountInternetEndpoints'},
     }
 
     def __init__(self, **kwargs):
@@ -891,16 +859,8 @@ class Endpoints(Model):
         self.file = None
         self.web = None
         self.dfs = None
-        self.blob1 = None
-        self.queue1 = None
-        self.table1 = None
-        self.file1 = None
-        self.web1 = None
-        self.dfs1 = None
-        self.blob2 = None
-        self.file2 = None
-        self.web2 = None
-        self.dfs2 = None
+        self.microsoft_endpoints = kwargs.get('microsoft_endpoints', None)
+        self.internet_endpoints = kwargs.get('internet_endpoints', None)
 
 
 class ErrorResponse(Model):
@@ -2278,8 +2238,8 @@ class RoutingPreference(Model):
     microsoft routing.
 
     :param routing_choice: Routing Choice defines the kind of network routing
-     opted by the user. The default option is microsoft routing. Possible
-     values include: 'MicrosoftRouting', 'InternetRouting'
+     opted by the user. Possible values include: 'MicrosoftRouting',
+     'InternetRouting'
     :type routing_choice: str or
      ~azure.mgmt.storage.v2019_06_01.models.RoutingChoice
     :param publish_microsoft_endpoints: A boolean flag which indicates whether
@@ -2908,6 +2868,45 @@ class StorageAccountCreateParameters(Model):
         self.routing_preference = kwargs.get('routing_preference', None)
 
 
+class StorageAccountInternetEndpoints(Model):
+    """The URIs that are used to perform a retrieval of a public blob, file, web
+    or dfs object via a internet routing endpoint.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar blob: Gets the blob endpoint.
+    :vartype blob: str
+    :ivar file: Gets the file endpoint.
+    :vartype file: str
+    :ivar web: Gets the web endpoint.
+    :vartype web: str
+    :ivar dfs: Gets the dfs endpoint.
+    :vartype dfs: str
+    """
+
+    _validation = {
+        'blob': {'readonly': True},
+        'file': {'readonly': True},
+        'web': {'readonly': True},
+        'dfs': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'blob': {'key': 'blob', 'type': 'str'},
+        'file': {'key': 'file', 'type': 'str'},
+        'web': {'key': 'web', 'type': 'str'},
+        'dfs': {'key': 'dfs', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StorageAccountInternetEndpoints, self).__init__(**kwargs)
+        self.blob = None
+        self.file = None
+        self.web = None
+        self.dfs = None
+
+
 class StorageAccountKey(Model):
     """An access key for the storage account.
 
@@ -2966,6 +2965,55 @@ class StorageAccountListKeysResult(Model):
     def __init__(self, **kwargs):
         super(StorageAccountListKeysResult, self).__init__(**kwargs)
         self.keys = None
+
+
+class StorageAccountMicrosoftEndpoints(Model):
+    """The URIs that are used to perform a retrieval of a public blob, queue,
+    table, web or dfs object via a microsoft routing endpoint.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar blob: Gets the blob endpoint.
+    :vartype blob: str
+    :ivar queue: Gets the queue endpoint.
+    :vartype queue: str
+    :ivar table: Gets the table endpoint.
+    :vartype table: str
+    :ivar file: Gets the file endpoint.
+    :vartype file: str
+    :ivar web: Gets the web endpoint.
+    :vartype web: str
+    :ivar dfs: Gets the dfs endpoint.
+    :vartype dfs: str
+    """
+
+    _validation = {
+        'blob': {'readonly': True},
+        'queue': {'readonly': True},
+        'table': {'readonly': True},
+        'file': {'readonly': True},
+        'web': {'readonly': True},
+        'dfs': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'blob': {'key': 'blob', 'type': 'str'},
+        'queue': {'key': 'queue', 'type': 'str'},
+        'table': {'key': 'table', 'type': 'str'},
+        'file': {'key': 'file', 'type': 'str'},
+        'web': {'key': 'web', 'type': 'str'},
+        'dfs': {'key': 'dfs', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StorageAccountMicrosoftEndpoints, self).__init__(**kwargs)
+        self.blob = None
+        self.queue = None
+        self.table = None
+        self.file = None
+        self.web = None
+        self.dfs = None
 
 
 class StorageAccountRegenerateKeyParameters(Model):

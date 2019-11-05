@@ -75,8 +75,10 @@ try:
     from ._models_py3 import StorageAccount
     from ._models_py3 import StorageAccountCheckNameAvailabilityParameters
     from ._models_py3 import StorageAccountCreateParameters
+    from ._models_py3 import StorageAccountInternetEndpoints
     from ._models_py3 import StorageAccountKey
     from ._models_py3 import StorageAccountListKeysResult
+    from ._models_py3 import StorageAccountMicrosoftEndpoints
     from ._models_py3 import StorageAccountRegenerateKeyParameters
     from ._models_py3 import StorageAccountUpdateParameters
     from ._models_py3 import TagProperty
@@ -151,8 +153,10 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccount
     from ._models import StorageAccountCheckNameAvailabilityParameters
     from ._models import StorageAccountCreateParameters
+    from ._models import StorageAccountInternetEndpoints
     from ._models import StorageAccountKey
     from ._models import StorageAccountListKeysResult
+    from ._models import StorageAccountMicrosoftEndpoints
     from ._models import StorageAccountRegenerateKeyParameters
     from ._models import StorageAccountUpdateParameters
     from ._models import TagProperty
@@ -271,8 +275,10 @@ __all__ = [
     'StorageAccount',
     'StorageAccountCheckNameAvailabilityParameters',
     'StorageAccountCreateParameters',
+    'StorageAccountInternetEndpoints',
     'StorageAccountKey',
     'StorageAccountListKeysResult',
+    'StorageAccountMicrosoftEndpoints',
     'StorageAccountRegenerateKeyParameters',
     'StorageAccountUpdateParameters',
     'TagProperty',
