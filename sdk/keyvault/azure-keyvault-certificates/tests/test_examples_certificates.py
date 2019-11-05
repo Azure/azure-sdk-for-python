@@ -46,15 +46,15 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
+            issuer_name="Self",
+            subject_name="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
-            subject_name="CN=*.microsoft.com",
             validity_in_months=24,
-            san_dns_names=["sdk.azure-int.net"],
         )
 
         cert_name = "cert-name"
@@ -118,15 +118,15 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
+            issuer_name="Self",
+            subject_name="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
-            subject_name="CN=*.microsoft.com",
             validity_in_months=24,
-            san_dns_names=["sdk.azure-int.net"],
         )
 
         for i in range(4):
@@ -179,15 +179,15 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
+            issuer_name="Self",
+            subject_name="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
-            subject_name="CN=*.microsoft.com",
             validity_in_months=24,
-            san_dns_names=["sdk.azure-int.net"],
         )
 
         cert_name = "cert-name"
@@ -226,15 +226,15 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
+            issuer_name="Self",
+            subject_name="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
-            subject_name="CN=*.microsoft.com",
             validity_in_months=24,
-            san_dns_names=["sdk.azure-int.net"],
         )
 
         cert_name = "cert-name"

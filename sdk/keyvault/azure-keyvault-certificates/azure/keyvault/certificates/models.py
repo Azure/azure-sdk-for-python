@@ -592,11 +592,12 @@ class CertificatePolicy(object):
     # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
-        issuer_name  # type: str
+        issuer_name,  # type: str
         **kwargs  # type: **Any
     ):
         # type: (...) -> None
-        self._subject_name = subject_name
+        self._issuer_name = issuer_name
+        self._subject_name = kwargs.pop("subject_name", None)
         self._attributes = kwargs.pop("attributes", None)
         self._id = kwargs.pop("cert_policy_id", None)
         self._exportable = kwargs.pop("exportable", None)
@@ -609,7 +610,6 @@ class CertificatePolicy(object):
         self._content_type = kwargs.pop("content_type", None)
         self._validity_in_months = kwargs.pop("validity_in_months", None)
         self._lifetime_actions = kwargs.pop("lifetime_actions", None)
-        self._issuer_name = issuer_name
         self._certificate_type = kwargs.pop("certificate_type", None)
         self._certificate_transparency = kwargs.pop("certificate_transparency", None)
         self._san_emails = kwargs.pop("san_emails", None)
@@ -621,7 +621,7 @@ class CertificatePolicy(object):
         if len(sans) > 1:
             raise ValueError("You can only set at most one of san_emails, san_dns_names, and san_upns")
         if not sans and not self._subject_name:
-            raise ValueError("You need to set either subject_name or one of the subject alternative names" +
+            raise ValueError("You need to set either subject_name or one of the subject alternative names " +
                             "parameters")
 
     @classmethod

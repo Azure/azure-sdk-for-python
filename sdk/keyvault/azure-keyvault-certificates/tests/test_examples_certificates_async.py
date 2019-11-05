@@ -44,15 +44,15 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
+            issuer_name="Self",
+            subject_name="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
-            subject_name="CN=*.microsoft.com",
             validity_in_months=24,
-            san_dns_names=["sdk.azure-int.net"],
         )
         cert_name = "cert-name"
         # create a certificate with optional arguments, returns an async poller
@@ -113,15 +113,15 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
+            issuer_name="Self",
+            subject_name="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
-            subject_name="CN=*.microsoft.com",
             validity_in_months=24,
-            san_dns_names=["sdk.azure-int.net"],
         )
 
         create_certificate_pollers = []
@@ -182,15 +182,15 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
+            issuer_name="Self",
+            subject_name="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
-            subject_name="CN=*.microsoft.com",
             validity_in_months=24,
-            san_dns_names=["sdk.azure-int.net"],
         )
 
         cert_name = "cert-name"
@@ -231,15 +231,15 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
+            issuer_name="Self",
+            subject_name="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
-            subject_name="CN=*.microsoft.com",
             validity_in_months=24,
-            san_dns_names=["sdk.azure-int.net"],
         )
 
         cert_name = "cert-name"
