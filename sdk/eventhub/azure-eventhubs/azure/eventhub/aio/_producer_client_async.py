@@ -97,7 +97,7 @@ class EventHubProducerClient(EventHubClient):
         """
         return super(EventHubProducerClient, cls).from_connection_string(conn_str, **kwargs)
 
-    async def send(self, event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+    async def send(self, event_data,
             *, partition_key: Union[str, bytes] = None, partition_id: str = None, timeout: float = None) -> None:
         """Sends event data and blocks until acknowledgement is received or operation times out.
 
