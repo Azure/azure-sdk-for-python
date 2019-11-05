@@ -96,6 +96,10 @@ class EPHOptions:
     :ivar auto_reconnect_on_error: Whether to automatically attempt to reconnect a receiver
      connection if it is detach from the service with a retryable error. Default is True.
     :vartype auto_reconnect_on_error: bool
+    :ivar _release_partition_on_checkpoint_failure: Whether to automatically disconnect
+     from the active partition when a checkpoint is not able to be persisted. This can
+     allow parallel scenarios to collide less, but can introduce latency.  Default is False.
+    :vartype _release_partition_on_checkpoint_failure: bool
     """
 
     def __init__(self):
@@ -108,3 +112,4 @@ class EPHOptions:
         self.http_proxy = None
         self.keep_alive_interval = None
         self.auto_reconnect_on_error = True
+        self._release_partition_on_checkpoint_failure = False

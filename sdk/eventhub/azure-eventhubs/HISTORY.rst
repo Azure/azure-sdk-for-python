@@ -3,6 +3,17 @@
 Release History
 ===============
 
+1.3.3 (2019-11-06)
+------------------
+
+**BugFixes**
+
+- Added an option _release_partition_on_checkpoint_failure to `EPHOptions` for `EventProcessorHost` to
+  instruct the EventProcessorHost to fail fast on a checkpoint failure and proactively release the partition.
+  This should reduce spurious reprocessing of non-checkpointed events, at the cost of a small amount of 
+  additional latency if the checkpoint interruption was actually transient.
+
+
 1.3.2 (2019-09-18)
 ------------------
 
