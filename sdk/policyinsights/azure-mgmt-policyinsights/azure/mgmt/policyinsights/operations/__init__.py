@@ -14,6 +14,7 @@ from ._remediations_operations import RemediationsOperations
 from ._policy_events_operations import PolicyEventsOperations
 from ._policy_states_operations import PolicyStatesOperations
 from ._operations import Operations
+from ._policy_metadata_operations import PolicyMetadataOperations
 
 __all__ = [
     'PolicyTrackedResourcesOperations',
@@ -21,4 +22,5 @@ __all__ = [
     'PolicyEventsOperations',
     'PolicyStatesOperations',
     'Operations',
+    'PolicyMetadataOperations',
 ]
