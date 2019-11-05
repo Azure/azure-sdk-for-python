@@ -71,10 +71,7 @@ def example_eventhub_sync_send_and_receive():
 
         event_data = EventData("String data")
         event_data = EventData(b"Bytes data")
-        event_data = EventData([b"A", b"B", b"C"])
 
-        list_data = ['Message {}'.format(i) for i in range(10)]
-        event_data = EventData(body=list_data)
         # [END create_event_data]
 
         # [START eventhub_producer_client_create_batch_sync]

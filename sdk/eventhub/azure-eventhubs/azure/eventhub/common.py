@@ -280,7 +280,7 @@ class EventData(object):
 
         :param encoding: The encoding to use for decoding message data.
          Default is 'UTF-8'
-        :rtype: str or unicode
+        :rtype: str
         """
         data = self.body
         try:

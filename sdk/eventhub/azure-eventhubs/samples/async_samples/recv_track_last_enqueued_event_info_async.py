@@ -37,20 +37,20 @@ async def receive(client):
     try:
         await client.receive(on_events=on_events,
                              consumer_group="$default",
-                             partition_id='0')
+                             partition_id='0',
+                             track_last_enqueued_event_properties=True)
     except KeyboardInterrupt:
-        client.close()
+        await client.close()
+
+
+async def main():
+    client = EventHubConsumerClient.from_connection_string(
+        CONNECTION_STR,
+    )
+    async with client:
+        await receive(client)
 
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    client = EventHubConsumerClient.from_connection_string(
-        CONNECTION_STR,
-    )
-    try:
-        loop.run_until_complete(receive(client))
-    except KeyboardInterrupt:
-        pass
-    finally:
-        loop.run_until_complete(client.close())
-        loop.stop()
+    loop.run_until_complete(main())
