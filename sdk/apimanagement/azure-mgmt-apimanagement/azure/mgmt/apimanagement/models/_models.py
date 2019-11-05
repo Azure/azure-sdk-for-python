@@ -6608,7 +6608,7 @@ class SubscriptionKeyParameterNamesContract(Model):
 
 
 class SubscriptionKeysContract(Model):
-    """Subscrition keys.
+    """Subscription keys.
 
     :param primary_key: Subscription primary key.
     :type primary_key: str
