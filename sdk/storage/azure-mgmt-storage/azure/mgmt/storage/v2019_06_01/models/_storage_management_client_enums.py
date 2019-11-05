@@ -104,6 +104,12 @@ class LargeFileSharesState(str, Enum):
     enabled = "Enabled"
 
 
+class RoutingChoice(str, Enum):
+
+    microsoft_routing = "MicrosoftRouting"
+    internet_routing = "InternetRouting"
+
+
 class GeoReplicationStatus(str, Enum):
 
     live = "Live"

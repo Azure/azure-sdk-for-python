@@ -67,6 +67,7 @@ try:
     from ._models_py3 import ProxyResource
     from ._models_py3 import Resource
     from ._models_py3 import Restriction
+    from ._models_py3 import RoutingPreference
     from ._models_py3 import ServiceSasParameters
     from ._models_py3 import ServiceSpecification
     from ._models_py3 import Sku
@@ -142,6 +143,7 @@ except (SyntaxError, ImportError):
     from ._models import ProxyResource
     from ._models import Resource
     from ._models import Restriction
+    from ._models import RoutingPreference
     from ._models import ServiceSasParameters
     from ._models import ServiceSpecification
     from ._models import Sku
@@ -180,6 +182,7 @@ from ._storage_management_client_enums import (
     DirectoryServiceOptions,
     AccessTier,
     LargeFileSharesState,
+    RoutingChoice,
     GeoReplicationStatus,
     ProvisioningState,
     AccountStatus,
@@ -260,6 +263,7 @@ __all__ = [
     'ProxyResource',
     'Resource',
     'Restriction',
+    'RoutingPreference',
     'ServiceSasParameters',
     'ServiceSpecification',
     'Sku',
@@ -297,6 +301,7 @@ __all__ = [
     'DirectoryServiceOptions',
     'AccessTier',
     'LargeFileSharesState',
+    'RoutingChoice',
     'GeoReplicationStatus',
     'ProvisioningState',
     'AccountStatus',

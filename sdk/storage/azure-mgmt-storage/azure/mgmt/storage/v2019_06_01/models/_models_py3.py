@@ -829,6 +829,26 @@ class Endpoints(Model):
     :vartype web: str
     :ivar dfs: Gets the dfs endpoint.
     :vartype dfs: str
+    :ivar blob1: Gets the blob endpoint.
+    :vartype blob1: str
+    :ivar queue1: Gets the queue endpoint.
+    :vartype queue1: str
+    :ivar table1: Gets the table endpoint.
+    :vartype table1: str
+    :ivar file1: Gets the file endpoint.
+    :vartype file1: str
+    :ivar web1: Gets the web endpoint.
+    :vartype web1: str
+    :ivar dfs1: Gets the dfs endpoint.
+    :vartype dfs1: str
+    :ivar blob2: Gets the blob endpoint.
+    :vartype blob2: str
+    :ivar file2: Gets the file endpoint.
+    :vartype file2: str
+    :ivar web2: Gets the web endpoint.
+    :vartype web2: str
+    :ivar dfs2: Gets the dfs endpoint.
+    :vartype dfs2: str
     """
 
     _validation = {
@@ -838,6 +858,16 @@ class Endpoints(Model):
         'file': {'readonly': True},
         'web': {'readonly': True},
         'dfs': {'readonly': True},
+        'blob1': {'readonly': True},
+        'queue1': {'readonly': True},
+        'table1': {'readonly': True},
+        'file1': {'readonly': True},
+        'web1': {'readonly': True},
+        'dfs1': {'readonly': True},
+        'blob2': {'readonly': True},
+        'file2': {'readonly': True},
+        'web2': {'readonly': True},
+        'dfs2': {'readonly': True},
     }
 
     _attribute_map = {
@@ -847,6 +877,16 @@ class Endpoints(Model):
         'file': {'key': 'file', 'type': 'str'},
         'web': {'key': 'web', 'type': 'str'},
         'dfs': {'key': 'dfs', 'type': 'str'},
+        'blob1': {'key': 'microsoftEndpoints.blob', 'type': 'str'},
+        'queue1': {'key': 'microsoftEndpoints.queue', 'type': 'str'},
+        'table1': {'key': 'microsoftEndpoints.table', 'type': 'str'},
+        'file1': {'key': 'microsoftEndpoints.file', 'type': 'str'},
+        'web1': {'key': 'microsoftEndpoints.web', 'type': 'str'},
+        'dfs1': {'key': 'microsoftEndpoints.dfs', 'type': 'str'},
+        'blob2': {'key': 'internetEndpoints.blob', 'type': 'str'},
+        'file2': {'key': 'internetEndpoints.file', 'type': 'str'},
+        'web2': {'key': 'internetEndpoints.web', 'type': 'str'},
+        'dfs2': {'key': 'internetEndpoints.dfs', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -857,6 +897,16 @@ class Endpoints(Model):
         self.file = None
         self.web = None
         self.dfs = None
+        self.blob1 = None
+        self.queue1 = None
+        self.table1 = None
+        self.file1 = None
+        self.web1 = None
+        self.dfs1 = None
+        self.blob2 = None
+        self.file2 = None
+        self.web2 = None
+        self.dfs2 = None
 
 
 class ErrorResponse(Model):
@@ -2228,6 +2278,37 @@ class Restriction(Model):
         self.reason_code = reason_code
 
 
+class RoutingPreference(Model):
+    """Routing preference defines the type of network, either microsoft or
+    internet routing to be used to deliver the user data, the default option is
+    microsoft routing.
+
+    :param routing_choice: Routing Choice defines the kind of network routing
+     opted by the user. The default option is microsoft routing. Possible
+     values include: 'MicrosoftRouting', 'InternetRouting'
+    :type routing_choice: str or
+     ~azure.mgmt.storage.v2019_06_01.models.RoutingChoice
+    :param publish_microsoft_endpoints: A boolean flag which indicates whether
+     microsoft routing storage endpoints are to be published
+    :type publish_microsoft_endpoints: bool
+    :param publish_internet_endpoints: A boolean flag which indicates whether
+     internet routing storage endpoints are to be published
+    :type publish_internet_endpoints: bool
+    """
+
+    _attribute_map = {
+        'routing_choice': {'key': 'routingChoice', 'type': 'str'},
+        'publish_microsoft_endpoints': {'key': 'publishMicrosoftEndpoints', 'type': 'bool'},
+        'publish_internet_endpoints': {'key': 'publishInternetEndpoints', 'type': 'bool'},
+    }
+
+    def __init__(self, *, routing_choice=None, publish_microsoft_endpoints: bool=None, publish_internet_endpoints: bool=None, **kwargs) -> None:
+        super(RoutingPreference, self).__init__(**kwargs)
+        self.routing_choice = routing_choice
+        self.publish_microsoft_endpoints = publish_microsoft_endpoints
+        self.publish_internet_endpoints = publish_internet_endpoints
+
+
 class ServiceSasParameters(Model):
     """The parameters to list service SAS credentials of a specific resource.
 
@@ -2605,6 +2686,10 @@ class StorageAccount(TrackedResource):
      associated with the specified storage account
     :vartype private_endpoint_connections:
      list[~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnection]
+    :param routing_preference: Maintains information about the network routing
+     choice opted by the user for data transfer
+    :type routing_preference:
+     ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
     """
 
     _validation = {
@@ -2661,9 +2746,10 @@ class StorageAccount(TrackedResource):
         'failover_in_progress': {'key': 'properties.failoverInProgress', 'type': 'bool'},
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'routing_preference': {'key': 'properties.routingPreference', 'type': 'RoutingPreference'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, is_hns_enabled: bool=None, large_file_shares_state=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, is_hns_enabled: bool=None, large_file_shares_state=None, routing_preference=None, **kwargs) -> None:
         super(StorageAccount, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = None
         self.kind = None
@@ -2688,6 +2774,7 @@ class StorageAccount(TrackedResource):
         self.failover_in_progress = None
         self.large_file_shares_state = large_file_shares_state
         self.private_endpoint_connections = None
+        self.routing_preference = routing_preference
 
 
 class StorageAccountCheckNameAvailabilityParameters(Model):
@@ -2780,6 +2867,10 @@ class StorageAccountCreateParameters(Model):
      include: 'Disabled', 'Enabled'
     :type large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_06_01.models.LargeFileSharesState
+    :param routing_preference: Maintains information about the network routing
+     choice opted by the user for data transfer
+    :type routing_preference:
+     ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
     """
 
     _validation = {
@@ -2802,9 +2893,10 @@ class StorageAccountCreateParameters(Model):
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
+        'routing_preference': {'key': 'properties.routingPreference', 'type': 'RoutingPreference'},
     }
 
-    def __init__(self, *, sku, kind, location: str, tags=None, identity=None, custom_domain=None, encryption=None, network_rule_set=None, access_tier=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, is_hns_enabled: bool=None, large_file_shares_state=None, **kwargs) -> None:
+    def __init__(self, *, sku, kind, location: str, tags=None, identity=None, custom_domain=None, encryption=None, network_rule_set=None, access_tier=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, is_hns_enabled: bool=None, large_file_shares_state=None, routing_preference=None, **kwargs) -> None:
         super(StorageAccountCreateParameters, self).__init__(**kwargs)
         self.sku = sku
         self.kind = kind
@@ -2819,6 +2911,7 @@ class StorageAccountCreateParameters(Model):
         self.enable_https_traffic_only = enable_https_traffic_only
         self.is_hns_enabled = is_hns_enabled
         self.large_file_shares_state = large_file_shares_state
+        self.routing_preference = routing_preference
 
 
 class StorageAccountKey(Model):
@@ -2948,6 +3041,10 @@ class StorageAccountUpdateParameters(Model):
      include: 'Disabled', 'Enabled'
     :type large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_06_01.models.LargeFileSharesState
+    :param routing_preference: Maintains information about the network routing
+     choice opted by the user for data transfer
+    :type routing_preference:
+     ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
     :param kind: Optional. Indicates the type of storage account. Currently
      only StorageV2 value supported by server. Possible values include:
      'Storage', 'StorageV2', 'BlobStorage', 'FileStorage', 'BlockBlobStorage'
@@ -2965,10 +3062,11 @@ class StorageAccountUpdateParameters(Model):
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
+        'routing_preference': {'key': 'properties.routingPreference', 'type': 'RoutingPreference'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, *, sku=None, tags=None, identity=None, custom_domain=None, encryption=None, access_tier=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, network_rule_set=None, large_file_shares_state=None, kind=None, **kwargs) -> None:
+    def __init__(self, *, sku=None, tags=None, identity=None, custom_domain=None, encryption=None, access_tier=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, network_rule_set=None, large_file_shares_state=None, routing_preference=None, kind=None, **kwargs) -> None:
         super(StorageAccountUpdateParameters, self).__init__(**kwargs)
         self.sku = sku
         self.tags = tags
@@ -2980,6 +3078,7 @@ class StorageAccountUpdateParameters(Model):
         self.enable_https_traffic_only = enable_https_traffic_only
         self.network_rule_set = network_rule_set
         self.large_file_shares_state = large_file_shares_state
+        self.routing_preference = routing_preference
         self.kind = kind
 
 
