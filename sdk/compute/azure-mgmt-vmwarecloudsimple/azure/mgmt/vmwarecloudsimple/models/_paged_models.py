@@ -90,6 +90,19 @@ class CustomizationPolicyPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(CustomizationPolicyPaged, self).__init__(*args, **kwargs)
+class FolderPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Folder <azure.mgmt.vmwarecloudsimple.models.Folder>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Folder]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(FolderPaged, self).__init__(*args, **kwargs)
 class ResourcePoolPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ResourcePool <azure.mgmt.vmwarecloudsimple.models.ResourcePool>` object

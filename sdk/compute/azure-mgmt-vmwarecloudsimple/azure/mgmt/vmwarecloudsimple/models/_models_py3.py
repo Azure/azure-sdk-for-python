@@ -376,7 +376,7 @@ class CustomizationPolicy(Model):
      ~azure.mgmt.vmwarecloudsimple.models.enum
     :param version: Policy version
     :type version: str
-    :ivar type:
+    :ivar type: Resource type
     :vartype type: str
     """
 
@@ -468,8 +468,13 @@ class DedicatedCloudNode(Model):
     :vartype private_cloud_name: str
     :ivar provisioning_state: The provisioning status of the resource
     :vartype provisioning_state: str
-    :param purchase_id: Required. purchase id
+    :param purchase_id: Required. Id uniquely identifying a purchase. Must be
+     the same for the case when multiple nodes are being purchased at once.
     :type purchase_id: str
+    :param purchase_type: Indicates whether purchase made for a node(s) only
+     or for a node(s), service, and private cloud. Possible values include:
+     'node', 'node-and-service'. Default value: "node" .
+    :type purchase_type: str or ~azure.mgmt.vmwarecloudsimple.models.enum
     :param id1: Required. SKU's id
     :type id1: str
     :param name1: Required. SKU's name
@@ -524,6 +529,7 @@ class DedicatedCloudNode(Model):
         'private_cloud_name': {'key': 'properties.privateCloudName', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'purchase_id': {'key': 'properties.purchaseId', 'type': 'str'},
+        'purchase_type': {'key': 'properties.purchaseType', 'type': 'str'},
         'id1': {'key': 'properties.skuDescription.id', 'type': 'str'},
         'name1': {'key': 'properties.skuDescription.name', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'NodeStatus'},
@@ -533,7 +539,7 @@ class DedicatedCloudNode(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, availability_zone_id: str, nodes_count: int, placement_group_id: str, purchase_id: str, id1: str, name1: str, sku=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str, availability_zone_id: str, nodes_count: int, placement_group_id: str, purchase_id: str, id1: str, name1: str, purchase_type="node", sku=None, tags=None, **kwargs) -> None:
         super(DedicatedCloudNode, self).__init__(**kwargs)
         self.id = None
         self.location = location
@@ -549,6 +555,7 @@ class DedicatedCloudNode(Model):
         self.private_cloud_name = None
         self.provisioning_state = None
         self.purchase_id = purchase_id
+        self.purchase_type = purchase_type
         self.id1 = id1
         self.name1 = name1
         self.status = None
@@ -573,8 +580,8 @@ class DedicatedCloudService(Model):
     :type location: str
     :ivar name: {dedicatedCloudServiceName}
     :vartype name: str
-    :param gateway_subnet: Required. gateway Subnet for the account. It will
-     collect the subnet address and always treat it as /28
+    :param gateway_subnet: gateway Subnet for the account. It will collect the
+     subnet address and always treat it as /28
     :type gateway_subnet: str
     :ivar is_account_onboarded: indicates whether account onboarded or not in
      a given region. Possible values include: 'notOnBoarded', 'onBoarded',
@@ -583,6 +590,13 @@ class DedicatedCloudService(Model):
      ~azure.mgmt.vmwarecloudsimple.models.OnboardingStatus
     :ivar nodes: total nodes purchased
     :vartype nodes: int
+    :param private_cloud: The private cloud
+    :type private_cloud: ~azure.mgmt.vmwarecloudsimple.models.PrivateCloud
+    :ivar provisioning_state: The provisioning status of the resource
+    :vartype provisioning_state: str
+    :param purchase_id: Id uniquely identifying a purchase. Must be the same
+     for the case when multiple nodes are being purchased at once.
+    :type purchase_id: str
     :ivar service_url: link to a service management web portal
     :vartype service_url: str
     :param tags: The list of tags
@@ -595,9 +609,9 @@ class DedicatedCloudService(Model):
         'id': {'readonly': True},
         'location': {'required': True},
         'name': {'readonly': True, 'pattern': r'^[a-zA-Z0-9]([-_.a-zA-Z0-9]*[a-zA-Z0-9])?$'},
-        'gateway_subnet': {'required': True},
         'is_account_onboarded': {'readonly': True},
         'nodes': {'readonly': True},
+        'provisioning_state': {'readonly': True},
         'service_url': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -609,12 +623,15 @@ class DedicatedCloudService(Model):
         'gateway_subnet': {'key': 'properties.gatewaySubnet', 'type': 'str'},
         'is_account_onboarded': {'key': 'properties.isAccountOnboarded', 'type': 'OnboardingStatus'},
         'nodes': {'key': 'properties.nodes', 'type': 'int'},
+        'private_cloud': {'key': 'properties.privateCloud', 'type': 'PrivateCloud'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'purchase_id': {'key': 'properties.purchaseId', 'type': 'str'},
         'service_url': {'key': 'properties.serviceURL', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, gateway_subnet: str, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str, gateway_subnet: str=None, private_cloud=None, purchase_id: str=None, tags=None, **kwargs) -> None:
         super(DedicatedCloudService, self).__init__(**kwargs)
         self.id = None
         self.location = location
@@ -622,8 +639,61 @@ class DedicatedCloudService(Model):
         self.gateway_subnet = gateway_subnet
         self.is_account_onboarded = None
         self.nodes = None
+        self.private_cloud = private_cloud
+        self.provisioning_state = None
+        self.purchase_id = purchase_id
         self.service_url = None
         self.tags = tags
+        self.type = None
+
+
+class Folder(Model):
+    """Folder model.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. folder id
+    :type id: str
+    :ivar location: Azure region
+    :vartype location: str
+    :ivar name: folder name
+    :vartype name: str
+    :ivar full_name: Full name of a folder
+    :vartype full_name: str
+    :ivar private_cloud_id: The Private Cloud Id
+    :vartype private_cloud_id: str
+    :ivar type: folder type
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+        'location': {'readonly': True},
+        'name': {'readonly': True},
+        'full_name': {'readonly': True},
+        'private_cloud_id': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'full_name': {'key': 'properties.fullName', 'type': 'str'},
+        'private_cloud_id': {'key': 'properties.privateCloudId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str, **kwargs) -> None:
+        super(Folder, self).__init__(**kwargs)
+        self.id = id
+        self.location = None
+        self.name = None
+        self.full_name = None
+        self.private_cloud_id = None
         self.type = None
 
 
@@ -808,6 +878,9 @@ class PrivateCloud(Model):
     :type dns_servers: list[str]
     :param expires: Expiration date of PC
     :type expires: str
+    :param management_subnet: VMware Management Network (CIDR Range for
+     vSphere/vSAN subnets etc.)
+    :type management_subnet: str
     :param nsx_type: Nsx Type, e.g. "Advanced"
     :type nsx_type: str
     :param placement_group_id: Placement Group id, e.g. "n1"
@@ -862,6 +935,7 @@ class PrivateCloud(Model):
         'created_on': {'key': 'properties.createdOn', 'type': 'iso-8601'},
         'dns_servers': {'key': 'properties.dnsServers', 'type': '[str]'},
         'expires': {'key': 'properties.expires', 'type': 'str'},
+        'management_subnet': {'key': 'properties.managementSubnet', 'type': 'str'},
         'nsx_type': {'key': 'properties.nsxType', 'type': 'str'},
         'placement_group_id': {'key': 'properties.placementGroupId', 'type': 'str'},
         'placement_group_name': {'key': 'properties.placementGroupName', 'type': 'str'},
@@ -882,7 +956,7 @@ class PrivateCloud(Model):
         'type': {'key': 'type', 'type': 'PrivateCloudResourceType'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, name: str=None, availability_zone_id: str=None, availability_zone_name: str=None, clusters_number: int=None, created_by: str=None, created_on=None, dns_servers=None, expires: str=None, nsx_type: str=None, placement_group_id: str=None, placement_group_name: str=None, private_cloud_id: str=None, resource_pools=None, state: str=None, total_cpu_cores: int=None, total_nodes: int=None, total_ram: int=None, total_storage: float=None, private_cloud_properties_type: str=None, v_sphere_version: str=None, vcenter_fqdn: str=None, vcenter_refid: str=None, virtual_machine_templates=None, virtual_networks=None, vr_ops_enabled: bool=None, type=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, name: str=None, availability_zone_id: str=None, availability_zone_name: str=None, clusters_number: int=None, created_by: str=None, created_on=None, dns_servers=None, expires: str=None, management_subnet: str=None, nsx_type: str=None, placement_group_id: str=None, placement_group_name: str=None, private_cloud_id: str=None, resource_pools=None, state: str=None, total_cpu_cores: int=None, total_nodes: int=None, total_ram: int=None, total_storage: float=None, private_cloud_properties_type: str=None, v_sphere_version: str=None, vcenter_fqdn: str=None, vcenter_refid: str=None, virtual_machine_templates=None, virtual_networks=None, vr_ops_enabled: bool=None, type=None, **kwargs) -> None:
         super(PrivateCloud, self).__init__(**kwargs)
         self.id = id
         self.location = location
@@ -894,6 +968,7 @@ class PrivateCloud(Model):
         self.created_on = created_on
         self.dns_servers = dns_servers
         self.expires = expires
+        self.management_subnet = management_subnet
         self.nsx_type = nsx_type
         self.placement_group_id = placement_group_id
         self.placement_group_name = placement_group_name
@@ -1232,7 +1307,8 @@ class VirtualMachine(Model):
     :vartype dnsname: str
     :param expose_to_guest_vm: Expose Guest OS or not
     :type expose_to_guest_vm: bool
-    :ivar folder: The path to virtual machine folder in VCenter
+    :ivar folder: The path to virtual machine folder in VCenter, deprecated -
+     use virtualFolder
     :vartype folder: str
     :ivar guest_os: The name of Guest OS
     :vartype guest_os: str
@@ -1267,6 +1343,8 @@ class VirtualMachine(Model):
     :type username: str
     :param v_sphere_networks: The list of Virtual VSphere Networks
     :type v_sphere_networks: list[str]
+    :param virtual_folder: Virtual Machines Folder
+    :type virtual_folder: ~azure.mgmt.vmwarecloudsimple.models.Folder
     :ivar vm_id: The internal id of Virtual Machine in VCenter
     :vartype vm_id: str
     :ivar vmwaretools: VMware tools version
@@ -1321,13 +1399,14 @@ class VirtualMachine(Model):
         'template_id': {'key': 'properties.templateId', 'type': 'str'},
         'username': {'key': 'properties.username', 'type': 'str'},
         'v_sphere_networks': {'key': 'properties.vSphereNetworks', 'type': '[str]'},
+        'virtual_folder': {'key': 'properties.virtualFolder', 'type': 'Folder'},
         'vm_id': {'key': 'properties.vmId', 'type': 'str'},
         'vmwaretools': {'key': 'properties.vmwaretools', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, amount_of_ram: int, number_of_cores: int, private_cloud_id: str, customization=None, disks=None, expose_to_guest_vm: bool=None, nics=None, password: str=None, resource_pool=None, template_id: str=None, username: str=None, v_sphere_networks=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str, amount_of_ram: int, number_of_cores: int, private_cloud_id: str, customization=None, disks=None, expose_to_guest_vm: bool=None, nics=None, password: str=None, resource_pool=None, template_id: str=None, username: str=None, v_sphere_networks=None, virtual_folder=None, tags=None, **kwargs) -> None:
         super(VirtualMachine, self).__init__(**kwargs)
         self.id = None
         self.location = location
@@ -1352,6 +1431,7 @@ class VirtualMachine(Model):
         self.template_id = template_id
         self.username = username
         self.v_sphere_networks = v_sphere_networks
+        self.virtual_folder = virtual_folder
         self.vm_id = None
         self.vmwaretools = None
         self.tags = tags
@@ -1548,6 +1628,8 @@ class VirtualNic(Model):
     :type nic_type: str or ~azure.mgmt.vmwarecloudsimple.models.NICType
     :param power_on_boot: Is NIC powered on/off on boot
     :type power_on_boot: bool
+    :param public_ip_addresses: List of IP addresses associated with VM
+    :type public_ip_addresses: list[str]
     :param virtual_nic_id: NIC id
     :type virtual_nic_id: str
     :ivar virtual_nic_name: NIC name
@@ -1567,11 +1649,12 @@ class VirtualNic(Model):
         'network': {'key': 'network', 'type': 'VirtualNetwork'},
         'nic_type': {'key': 'nicType', 'type': 'NICType'},
         'power_on_boot': {'key': 'powerOnBoot', 'type': 'bool'},
+        'public_ip_addresses': {'key': 'publicIpAddresses', 'type': '[str]'},
         'virtual_nic_id': {'key': 'virtualNicId', 'type': 'str'},
         'virtual_nic_name': {'key': 'virtualNicName', 'type': 'str'},
     }
 
-    def __init__(self, *, network, nic_type, customization=None, ip_addresses=None, mac_address: str=None, power_on_boot: bool=None, virtual_nic_id: str=None, **kwargs) -> None:
+    def __init__(self, *, network, nic_type, customization=None, ip_addresses=None, mac_address: str=None, power_on_boot: bool=None, public_ip_addresses=None, virtual_nic_id: str=None, **kwargs) -> None:
         super(VirtualNic, self).__init__(**kwargs)
         self.customization = customization
         self.ip_addresses = ip_addresses
@@ -1579,5 +1662,6 @@ class VirtualNic(Model):
         self.network = network
         self.nic_type = nic_type
         self.power_on_boot = power_on_boot
+        self.public_ip_addresses = public_ip_addresses
         self.virtual_nic_id = virtual_nic_id
         self.virtual_nic_name = None

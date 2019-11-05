@@ -26,6 +26,7 @@ try:
     from ._models_py3 import CustomizationSpecification
     from ._models_py3 import DedicatedCloudNode
     from ._models_py3 import DedicatedCloudService
+    from ._models_py3 import Folder
     from ._models_py3 import GuestOSCustomization
     from ._models_py3 import GuestOSNICCustomization
     from ._models_py3 import OperationError
@@ -61,6 +62,7 @@ except (SyntaxError, ImportError):
     from ._models import CustomizationSpecification
     from ._models import DedicatedCloudNode
     from ._models import DedicatedCloudService
+    from ._models import Folder
     from ._models import GuestOSCustomization
     from ._models import GuestOSNICCustomization
     from ._models import OperationError
@@ -83,6 +85,7 @@ from ._paged_models import AvailableOperationPaged
 from ._paged_models import CustomizationPolicyPaged
 from ._paged_models import DedicatedCloudNodePaged
 from ._paged_models import DedicatedCloudServicePaged
+from ._paged_models import FolderPaged
 from ._paged_models import PrivateCloudPaged
 from ._paged_models import ResourcePoolPaged
 from ._paged_models import SkuAvailabilityPaged
@@ -121,6 +124,7 @@ __all__ = [
     'CustomizationSpecification',
     'DedicatedCloudNode',
     'DedicatedCloudService',
+    'Folder',
     'GuestOSCustomization',
     'GuestOSNICCustomization',
     'OperationError',
@@ -145,6 +149,7 @@ __all__ = [
     'SkuAvailabilityPaged',
     'PrivateCloudPaged',
     'CustomizationPolicyPaged',
+    'FolderPaged',
     'ResourcePoolPaged',
     'VirtualMachineTemplatePaged',
     'VirtualNetworkPaged',

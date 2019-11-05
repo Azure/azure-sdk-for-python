@@ -310,6 +310,7 @@ class DedicatedCloudServicesOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['Referer'] = self._serialize.header("self.config.referer", self.config.referer, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -323,12 +324,19 @@ class DedicatedCloudServicesOperations(object):
         if response.status_code not in [200]:
             raise models.CSRPErrorException(self._deserialize, response)
 
+        header_dict = {}
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DedicatedCloudService', response)
+            header_dict = {
+                'Azure-AsyncOperation': 'str',
+                'Location': 'str',
+                'Retry-After': 'int',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized

@@ -19,6 +19,7 @@ from .operations import DedicatedCloudServicesOperations
 from .operations import SkusAvailabilityOperations
 from .operations import PrivateCloudsOperations
 from .operations import CustomizationPoliciesOperations
+from .operations import FoldersOperations
 from .operations import ResourcePoolsOperations
 from .operations import VirtualMachineTemplatesOperations
 from .operations import VirtualNetworksOperations
@@ -45,6 +46,8 @@ class VMwareCloudSimpleClient(SDKClient):
     :vartype private_clouds: azure.mgmt.vmwarecloudsimple.operations.PrivateCloudsOperations
     :ivar customization_policies: CustomizationPolicies operations
     :vartype customization_policies: azure.mgmt.vmwarecloudsimple.operations.CustomizationPoliciesOperations
+    :ivar folders: Folders operations
+    :vartype folders: azure.mgmt.vmwarecloudsimple.operations.FoldersOperations
     :ivar resource_pools: ResourcePools operations
     :vartype resource_pools: azure.mgmt.vmwarecloudsimple.operations.ResourcePoolsOperations
     :ivar virtual_machine_templates: VirtualMachineTemplates operations
@@ -88,6 +91,8 @@ class VMwareCloudSimpleClient(SDKClient):
         self.private_clouds = PrivateCloudsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.customization_policies = CustomizationPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.folders = FoldersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.resource_pools = ResourcePoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -15,6 +15,7 @@ from ._dedicated_cloud_services_operations import DedicatedCloudServicesOperatio
 from ._skus_availability_operations import SkusAvailabilityOperations
 from ._private_clouds_operations import PrivateCloudsOperations
 from ._customization_policies_operations import CustomizationPoliciesOperations
+from ._folders_operations import FoldersOperations
 from ._resource_pools_operations import ResourcePoolsOperations
 from ._virtual_machine_templates_operations import VirtualMachineTemplatesOperations
 from ._virtual_networks_operations import VirtualNetworksOperations
@@ -28,6 +29,7 @@ __all__ = [
     'SkusAvailabilityOperations',
     'PrivateCloudsOperations',
     'CustomizationPoliciesOperations',
+    'FoldersOperations',
     'ResourcePoolsOperations',
     'VirtualMachineTemplatesOperations',
     'VirtualNetworksOperations',
