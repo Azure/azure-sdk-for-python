@@ -23,7 +23,7 @@ from common_tasks import (
     run_check_call,
     cleanup_folder,
     clean_coverage,
-    MANAGEMENT_PACKAGE_IDENTIFIERS,
+    is_error_code_5_allowed,
     create_code_coverage_params,
 )
 from tox_harness import prep_and_run_tox
@@ -128,14 +128,7 @@ def run_tests(targeted_packages, test_output_location, test_res, parsed_args):
         # if we are targeting only packages that are management plane, it is a possibility
         # that no tests running is an acceptable situation
         # we explicitly handle this here.
-        if all(
-            map(
-                lambda x: any(
-                    [pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]
-                ),
-                [target_package],
-            )
-        ):
+        if is_error_code_5_allowed(target_package, package_name):
             allowed_return_codes.append(5)
 
         # format test result output location
