@@ -131,16 +131,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         polling_interval = 0 if self.is_playback() else None
 
-        pollers = [
+        for i in range(4):
             certificate_client.begin_create_certificate(
                 name="certificate{}".format(i),
                 policy=cert_policy,
                 _polling_interval=polling_interval
-            ) for i in range(4)
-        ]
-
-        for poller in pollers:
-            poller.wait()
+            ).wait()
 
         # [START list_properties_of_certificates]
 
