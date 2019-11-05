@@ -42,7 +42,7 @@ async def receive(client):
         partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
         which also try to receive events from all partitions and use the same storage resource.
         """
-        await client.receive(on_events=on_events, consumer_group="$default")
+        await client.receive(on_events=on_events, consumer_group="$Default")
         # With specified partition_id, load-balance will be disabled
         # await client.receive(event_handler=event_handler, consumer_group="$default", partition_id = '0'))
     except KeyboardInterrupt:

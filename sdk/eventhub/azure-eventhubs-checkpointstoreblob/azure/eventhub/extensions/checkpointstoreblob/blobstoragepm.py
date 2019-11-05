@@ -126,7 +126,7 @@ class BlobPartitionManager(PartitionManager):
         for x in ownership_list:
             try:
                 gathered_results.append(self._claim_one_partition(x))
-            except (ResourceModifiedError, ResourceExistsError):
+            except OwnershipLostError:
                 pass
         return gathered_results
 
