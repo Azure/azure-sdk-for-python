@@ -99,6 +99,13 @@ class EventHubConsumerClient(EventHubClient):
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
+        :keyword partition_manager:
+         stores the load balancing data and checkpoint data when receiving events
+         if partition_manager is specified. If it's None, this EventHubConsumerClient instance will receive
+         events without load balancing and checkpoint.
+        :paramtype partition_manager: Implementation classes of ~azure.eventhub.aio.PartitionManager
+        :keyword float load_balancing_interval:
+         When load balancing kicks in, this is the interval in seconds between two load balancing. Default is 10.
         """
         return super(EventHubConsumerClient, cls).from_connection_string(conn_str, **kwargs)
 
