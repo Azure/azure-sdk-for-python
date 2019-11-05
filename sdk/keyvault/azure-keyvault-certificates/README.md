@@ -212,8 +212,11 @@ print(updated_certificate.properties.enabled)
 ```
 
 ### Delete a Certificate
-[delete_certificate](https://aka.ms/azsdk-python-keyvault-certs-deletecert-ref) deletes a certificate previously stored in the Key Vault. When [soft-delete][soft_delete]
-is not enabled for the Key Vault, this operation permanently deletes the certificate.
+[begin_delete_certificate](https://aka.ms/azsdk-python-keyvault-certs-deletecert-ref) requests Key Vault delete a certificate, returning a poller which allows you to
+wait for the deletion to finish. Waiting is helpful when the vault has [soft-delete][soft_delete]
+enabled, and you want to purge (permanently delete) the certificate as soon as possible.
+When [soft-delete][soft_delete] is disabled, [begin_delete_certificate](https://aka.ms/azsdk-python-keyvault-certs-deletecert-ref) itself is permanent.
+
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.certificates import CertificateClient
