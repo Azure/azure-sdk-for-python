@@ -106,6 +106,15 @@ class EventHubConsumerClient(EventHubClient):
         :paramtype partition_manager: Implementation classes of ~azure.eventhub.aio.PartitionManager
         :keyword float load_balancing_interval:
          When load balancing kicks in, this is the interval in seconds between two load balancing. Default is 10.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
+                :start-after: [START create_eventhub_consumer_client_from_conn_str_async]
+                :end-before: [END create_eventhub_consumer_client_from_conn_str_async]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the EventHubConsumerClient from connection string.
         """
         return super(EventHubConsumerClient, cls).from_connection_string(conn_str, **kwargs)
 

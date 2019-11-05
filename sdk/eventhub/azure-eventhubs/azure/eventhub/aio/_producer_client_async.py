@@ -94,6 +94,15 @@ class EventHubProducerClient(EventHubClient):
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
+                :start-after: [START create_eventhub_producer_client_from_conn_str_async]
+                :end-before: [END create_eventhub_producer_client_from_conn_str_async]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the EventHubProducerClient from connection string.
         """
         return super(EventHubProducerClient, cls).from_connection_string(conn_str, **kwargs)
 

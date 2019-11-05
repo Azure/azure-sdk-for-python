@@ -4,7 +4,7 @@
 
 **Breaking changes**
 
-- `EventHubClient` has been split into two separate clients: `EventHubProducerClient` and `EventHubConsumerClient`.
+- `EventHubClient`, `EventHubConsumer` and `EventHubProducer` has been removed. Use `EventHubProducerClient` and `EventHubConsumerClient` instead.
     - Construction of both objects is the same as it was for the previous client.
 - Introduced `EventHubProducerClient` as substitution for`EventHubProducer`.
     - `EventHubProducerClient` supports sending events to different partitions.
