@@ -27,8 +27,8 @@
 
 import functools
 
-import azure.core.tracing.common as common
-from azure.core.settings import settings
+from .common import change_context, get_function_and_class_name
+from ..settings import settings
 
 try:
     from typing import TYPE_CHECKING
@@ -41,6 +41,13 @@ if TYPE_CHECKING:
 
 def distributed_trace(func=None, name_of_span=None):
     # type: (Callable, str) -> Callable[[Any], Any]
+    """Decorator to apply to function to get traced automatically.
+
+    Span will use the func name or "name_of_span".
+
+    :param callable func: A function to decorate
+    :param str name_of_span: The span name to replace func name if necessary
+    """
     if func is None:
         return functools.partial(distributed_trace, name_of_span=name_of_span)
 
@@ -58,8 +65,8 @@ def distributed_trace(func=None, name_of_span=None):
         if merge_span and not passed_in_parent:
             return func(*args, **kwargs) # type: ignore
 
-        with common.change_context(passed_in_parent):
-            name = name_of_span or common.get_function_and_class_name(func, *args)  # type: ignore
+        with change_context(passed_in_parent):
+            name = name_of_span or get_function_and_class_name(func, *args)  # type: ignore
             with span_impl_type(name=name):
                 return func(*args, **kwargs) # type: ignore
 

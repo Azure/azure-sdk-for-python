@@ -19,6 +19,8 @@ from common_tasks import (
     log_file,
     read_file,
     MANAGEMENT_PACKAGE_IDENTIFIERS,
+    NON_MANAGEMENT_CODE_5_ALLOWED,
+    create_code_coverage_params,
 )
 
 import logging
@@ -30,6 +32,7 @@ coverage_dir = os.path.join(root_dir, "_coverage/")
 pool_size = multiprocessing.cpu_count() * 2
 DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, "eng/tox/tox.ini")
 IGNORED_TOX_INIS = ["azure-cosmos"]
+
 
 class ToxWorkItem:
     def __init__(self, target_package_path, tox_env, options_array):
@@ -55,8 +58,10 @@ class Worker(Thread):
             finally:
                 self.tasks.task_done()
 
+
 def in_ci():
-    return os.getenv('TF_BUILD', False)
+    return os.getenv("TF_BUILD", False)
+
 
 class ThreadPool:
     def __init__(self, num_threads):
@@ -75,10 +80,35 @@ class ThreadPool:
         self.tasks.join()
 
 
+def combine_coverage_files(targeted_packages):
+    # find tox.ini file. tox.ini is used to combine coverage paths to generate formatted report
+    tox_ini_file = os.path.join(root_dir, "eng", "tox", "tox.ini")
+    config_file_flag = "--rcfile={}".format(tox_ini_file)
+
+    if os.path.isfile(tox_ini_file):
+        # for every individual coverage file, run coverage combine to combine path
+        for package_dir in [package for package in targeted_packages]:
+            coverage_file = os.path.join(package_dir, ".coverage")
+            if os.path.isfile(coverage_file):
+                cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
+                # tox.ini file has coverage paths to combine
+                # Pas tox.ini as coverage config file
+                cov_cmd_array.extend([config_file_flag, coverage_file])
+                run_check_call(cov_cmd_array, package_dir)
+    else:
+        # not a hard error at this point
+        # this combine step is required only for modules if report has package name starts with .tox
+        logging.error("tox.ini is not found in path {}".format(root_dir))
+
+
 def collect_tox_coverage_files(targeted_packages):
     root_coverage_dir = os.path.join(root_dir, "_coverage/")
 
     clean_coverage(coverage_dir)
+
+    # coverage report has paths starting .tox and azure
+    # coverage combine fixes this with the help of tox.ini[coverage:paths]
+    combine_coverage_files(targeted_packages)
 
     coverage_files = []
     # generate coverage files
@@ -110,7 +140,7 @@ def individual_workload(tox_command_tuple, workload_results):
     pkg = os.path.basename(tox_command_tuple[1])
     stdout = os.path.join(tox_command_tuple[1], "stdout.txt")
     stderr = os.path.join(tox_command_tuple[1], "stderr.txt")
-    tox_dir = os.path.join(tox_command_tuple[1], './.tox/')
+    tox_dir = os.path.join(tox_command_tuple[1], "./.tox/")
 
     with open(stdout, "w") as f_stdout, open(stderr, "w") as f_stderr:
         proc = Popen(
@@ -125,20 +155,25 @@ def individual_workload(tox_command_tuple, workload_results):
         proc.wait()
 
         return_code = proc.returncode
-        
+
         if proc.returncode != 0:
             logging.error("{} returned with code {}".format(pkg, proc.returncode))
         else:
-            logging.info("{} returned with code 0, output will be printed after the test run completes.".format(pkg))
+            logging.info(
+                "{} returned with code 0, output will be printed after the test run completes.".format(
+                    pkg
+                )
+            )
 
         if read_file(stderr):
             logging.error("Package {} had stderror output. Logging.".format(pkg))
             return_code = "StdErr output detected"
-            
+
         workload_results[tox_command_tuple[1]] = (return_code, stdout, stderr)
 
         if in_ci():
             shutil.rmtree(tox_dir)
+
 
 def execute_tox_parallel(tox_command_tuples):
     pool = ThreadPool(pool_size)
@@ -164,10 +199,11 @@ def execute_tox_parallel(tox_command_tuples):
     if failed_run:
         exit(1)
 
+
 def execute_tox_serial(tox_command_tuples):
     for index, cmd_tuple in enumerate(tox_command_tuples):
-        tox_dir = os.path.join(cmd_tuple[1], './.tox/')
-        
+        tox_dir = os.path.join(cmd_tuple[1], "./.tox/")
+
         logging.info(
             "Running tox for {}. {} of {}.".format(
                 os.path.basename(cmd_tuple[1]), index + 1, len(tox_command_tuples)
@@ -192,20 +228,28 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
         destination_tox_ini = os.path.join(package_dir, "tox.ini")
         destination_dev_req = os.path.join(package_dir, "dev_requirements.txt")
 
-        tox_execution_array = ["tox"]
+        tox_execution_array = [sys.executable, "-m", "tox"]
 
         local_options_array = options_array[:]
+
+        # Get code coverage params for current package
+        package_name = os.path.basename(package_dir)
+        coverage_commands = create_code_coverage_params(parsed_args, package_name)
+        local_options_array.extend(coverage_commands)
 
         # if we are targeting only packages that are management plane, it is a possibility
         # that no tests running is an acceptable situation
         # we explicitly handle this here.
-        if all(
-            map(
-                lambda x: any(
-                    [pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]
-                ),
-                [package_dir],
+        if (
+            all(
+                map(
+                    lambda x: any(
+                        [pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]
+                    ),
+                    [package_dir],
+                )
             )
+            or package_name in NON_MANAGEMENT_CODE_5_ALLOWED
         ):
             local_options_array.append("--suppress-no-test-exit-code")
 
@@ -214,7 +258,11 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
             os.path.exists(destination_tox_ini)
             and os.path.basename(package_dir) in IGNORED_TOX_INIS
         ):
-            logging.info("No customized tox.ini present, using common eng/tox/tox.ini for {}".format(os.path.basename(package_dir)))
+            logging.info(
+                "No customized tox.ini present, using common eng/tox/tox.ini for {}".format(
+                    os.path.basename(package_dir)
+                )
+            )
             tox_execution_array.extend(["-c", DEFAULT_TOX_INI_LOCATION])
 
         # handle empty file

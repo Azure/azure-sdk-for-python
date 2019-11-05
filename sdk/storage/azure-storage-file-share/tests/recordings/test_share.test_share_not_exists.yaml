@@ -1,0 +1,87 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - a667acc0-d9a9-11e9-a5e6-001a7dda7113
+      x-ms-date:
+      - Wed, 18 Sep 2019 00:17:07 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/shared8d10d42?restype=share
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
+        specified share does not exist.\nRequestId:eb3d534c-201a-0042-01b6-6dea74000000\nTime:2019-09-18T00:17:07.6329353Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '217'
+      Content-Type:
+      - application/xml
+      Date:
+      - Wed, 18 Sep 2019 00:17:07 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ShareNotFound
+      x-ms-request-id:
+      - eb3d534c-201a-0042-01b6-6dea74000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 404
+      message: The specified share does not exist.
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - a67bb568-d9a9-11e9-92a6-001a7dda7113
+      x-ms-date:
+      - Wed, 18 Sep 2019 00:17:07 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/?include=snapshots&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares /><NextMarker
+        /></EnumerationResults>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Wed, 18 Sep 2019 00:17:07 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-request-id:
+      - eb3d534e-201a-0042-02b6-6dea74000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+version: 1

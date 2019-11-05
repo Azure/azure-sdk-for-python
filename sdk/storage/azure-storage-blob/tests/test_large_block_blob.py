@@ -8,10 +8,10 @@
 
 import pytest
 
-import os
+from os import path, remove, sys, urandom
 import platform
 import unittest
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
@@ -19,20 +19,15 @@ from azure.storage.blob import (
     ContentSettings
 )
 
-if os.sys.version_info >= (3,):
+if sys.version_info >= (3,):
     from io import BytesIO
 else:
     from cStringIO import StringIO as BytesIO
 
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record,
-)
+from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'largeblob'
-FILE_PATH = 'blob_large_input.temp.dat'
 LARGE_BLOB_SIZE = 12 * 1024 * 1024
 LARGE_BLOCK_SIZE = 6 * 1024 * 1024
 
@@ -41,42 +36,28 @@ if platform.python_implementation() == 'PyPy':
     pytest.skip("Skip tests for Pypy", allow_module_level=True)
 
 class StorageLargeBlockBlobTest(StorageTestCase):
-    def setUp(self):
-        super(StorageLargeBlockBlobTest, self).setUp()
-
-        url = self._get_account_url()
-        credential = self._get_shared_key_credential()
-
+    def _setup(self, name, key):
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
         self.bsc = BlobServiceClient(
-            url,
-            credential=credential,
+            self.account_url(name, "blob"),
+            credential=key,
             max_single_put_size=32 * 1024,
             max_block_size=2 * 1024 * 1024,
             min_large_block_upload_threshold=1 * 1024 * 1024)
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
 
-        if not self.is_playback():
+        if self.is_live:
             self.bsc.create_container(self.container_name)
 
-
-    def tearDown(self):
-        if not self.is_playback():
+    def _teardown(self, file_name):
+        if path.isfile(file_name):
             try:
-                self.bsc.delete_container(self.container_name)
+                remove(file_name)
             except:
                 pass
-
-        if os.path.isfile(FILE_PATH):
-            try:
-                os.remove(FILE_PATH)
-            except:
-                pass
-
-        return super(StorageLargeBlockBlobTest, self).tearDown()
 
     # --Helpers-----------------------------------------------------------------
     def _get_blob_reference(self):
@@ -91,45 +72,44 @@ class StorageLargeBlockBlobTest(StorageTestCase):
     def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         actual_data = blob.download_blob()
-        self.assertEqual(b"".join(list(actual_data)), expected_data)
+        self.assertEqual(b"".join(list(actual_data.chunks())), expected_data)
 
     # --Test cases for block blobs --------------------------------------------
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_put_block_bytes_large(self, resource_group, location, storage_account, storage_account_key):
 
-    def test_put_block_bytes_large(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob = self._create_blob()
 
         # Act
         for i in range(5):
             resp = blob.stage_block(
-                'block {0}'.format(i).encode('utf-8'), os.urandom(LARGE_BLOCK_SIZE))
+                'block {0}'.format(i).encode('utf-8'), urandom(LARGE_BLOCK_SIZE))
             self.assertIsNone(resp)
 
             # Assert
 
-    def test_put_block_bytes_large_with_md5(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_put_block_bytes_large_with_md5(self, resource_group, location, storage_account, storage_account_key):
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob = self._create_blob()
 
         # Act
         for i in range(5):
             resp = blob.stage_block(
                 'block {0}'.format(i).encode('utf-8'),
-                os.urandom(LARGE_BLOCK_SIZE),
+                urandom(LARGE_BLOCK_SIZE),
                 validate_content=True)
             self.assertIsNone(resp)
 
-    def test_put_block_stream_large(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_put_block_stream_large(self, resource_group, location, storage_account, storage_account_key):
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob = self._create_blob()
 
         # Act
@@ -143,11 +123,11 @@ class StorageLargeBlockBlobTest(StorageTestCase):
 
             # Assert
 
-    def test_put_block_stream_large_with_md5(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_put_block_stream_large_with_md5(self, resource_group, location, storage_account, storage_account_key):
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob = self._create_blob()
 
         # Act
@@ -162,71 +142,78 @@ class StorageLargeBlockBlobTest(StorageTestCase):
 
         # Assert
 
-    def test_create_large_blob_from_path(self):
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_create_large_blob_from_path(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
-            return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        data = bytearray(os.urandom(LARGE_BLOB_SIZE))
+        data = bytearray(urandom(LARGE_BLOB_SIZE))
+        FILE_PATH = 'large_blob_from_path.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_connections=2)
+            blob.upload_blob(stream, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
+        self._teardown(FILE_PATH)
 
-    def test_create_large_blob_from_path_with_md5(self):
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_create_large_blob_from_path_with_md5(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
-            return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        data = bytearray(os.urandom(LARGE_BLOB_SIZE))
+        data = bytearray(urandom(LARGE_BLOB_SIZE))
+        FILE_PATH = "blob_from_path_with_md5.temp.dat"
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, validate_content=True, max_connections=2)
+            blob.upload_blob(stream, validate_content=True, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
+        self._teardown(FILE_PATH)
 
-    def test_create_large_blob_from_path_non_parallel(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_create_large_blob_from_path_non_parallel(self, resource_group, location, storage_account, storage_account_key):
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(self.get_random_bytes(100))
+        FILE_PATH = "blob_from_path_non_parallel.temp.dat"
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_connections=1)
+            blob.upload_blob(stream, max_concurrency=1)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
+        self._teardown(FILE_PATH)
 
-    def test_create_large_blob_from_path_with_progress(self):
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_create_large_blob_from_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
-            return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        data = bytearray(os.urandom(LARGE_BLOB_SIZE))
+        data = bytearray(urandom(LARGE_BLOB_SIZE))
+        FILE_PATH = "blob_from_path_with_progress.temp.dat"
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -239,21 +226,23 @@ class StorageLargeBlockBlobTest(StorageTestCase):
                 progress.append((current, total))
 
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_connections=2, raw_response_hook=callback)
+            blob.upload_blob(stream, max_concurrency=2, raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
+        self._teardown(FILE_PATH)
 
-    def test_create_large_blob_from_path_with_properties(self):
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_create_large_blob_from_path_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
-            return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        data = bytearray(os.urandom(LARGE_BLOB_SIZE))
+        data = bytearray(urandom(LARGE_BLOB_SIZE))
+        FILE_PATH = 'blob_from_path_with_properties.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -262,42 +251,46 @@ class StorageLargeBlockBlobTest(StorageTestCase):
             content_type='image/png',
             content_language='spanish')
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, content_settings=content_settings, max_connections=2)
+            blob.upload_blob(stream, content_settings=content_settings, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
         properties = blob.get_blob_properties()
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
+        self._teardown(FILE_PATH)
 
-    def test_create_large_blob_from_stream_chunked_upload(self):
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_create_large_blob_from_stream_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
-            return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        data = bytearray(os.urandom(LARGE_BLOB_SIZE))
+        data = bytearray(urandom(LARGE_BLOB_SIZE))
+        FILE_PATH = 'blob_from_stream_chunked_upload.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_connections=2)
+            blob.upload_blob(stream, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
+        self._teardown(FILE_PATH)
 
-    def test_create_large_blob_from_stream_with_progress_chunked_upload(self):
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_creat_lrgblob_frm_stream_w_progress_chnkd_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
-            return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        data = bytearray(os.urandom(LARGE_BLOB_SIZE))
+        data = bytearray(urandom(LARGE_BLOB_SIZE))
+        FILE_PATH = 'stream_w_progress_chnkd_upload.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -310,41 +303,44 @@ class StorageLargeBlockBlobTest(StorageTestCase):
                 progress.append((current, total))
 
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_connections=2, raw_response_hook=callback)
+            blob.upload_blob(stream, max_concurrency=2, raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
+        self._teardown(FILE_PATH)
 
-    def test_create_large_blob_from_stream_chunked_upload_with_count(self):
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_create_large_blob_from_stream_chunked_upload_with_count(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
-            return
-
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        data = bytearray(os.urandom(LARGE_BLOB_SIZE))
+        data = bytearray(urandom(LARGE_BLOB_SIZE))
+        FILE_PATH = 'chunked_upload_with_count.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
         # Act
         blob_size = len(data) - 301
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, length=blob_size, max_connections=2)
+            blob.upload_blob(stream, length=blob_size, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
+        self._teardown(FILE_PATH)
 
-    def test_create_large_blob_from_stream_chunked_upload_with_count_and_properties(self):
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_creat_lrgblob_frm_strm_chnkd_uplod_w_count_n_props(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
-            return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        data = bytearray(os.urandom(LARGE_BLOB_SIZE))
+        data = bytearray(urandom(LARGE_BLOB_SIZE))
+        FILE_PATH = 'plod_w_count_n_props.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -355,23 +351,25 @@ class StorageLargeBlockBlobTest(StorageTestCase):
         blob_size = len(data) - 301
         with open(FILE_PATH, 'rb') as stream:
             blob.upload_blob(
-                stream, length=blob_size, content_settings=content_settings, max_connections=2)
+                stream, length=blob_size, content_settings=content_settings, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
         properties = blob.get_blob_properties()
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
+        self._teardown(FILE_PATH)
 
-    def test_create_large_blob_from_stream_chunked_upload_with_properties(self):
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_creat_lrg_blob_frm_stream_chnked_upload_w_props(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
-            return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        data = bytearray(os.urandom(LARGE_BLOB_SIZE))
+        data = bytearray(urandom(LARGE_BLOB_SIZE))
+        FILE_PATH = 'creat_lrg_blob.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
 
@@ -380,16 +378,13 @@ class StorageLargeBlockBlobTest(StorageTestCase):
             content_type='image/png',
             content_language='spanish')
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, content_settings=content_settings, max_connections=2)
+            blob.upload_blob(stream, content_settings=content_settings, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
         properties = blob.get_blob_properties()
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
+        self._teardown(FILE_PATH)
 
 # ------------------------------------------------------------------------------
-
-
-if __name__ == '__main__':
-    unittest.main()

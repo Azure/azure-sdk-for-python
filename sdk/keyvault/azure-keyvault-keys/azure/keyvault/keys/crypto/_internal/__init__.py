@@ -12,6 +12,7 @@ from .algorithm import (
 from .ec_key import EllipticCurveKey
 from .key import Key
 from .rsa_key import RsaKey
+from .symmetric_key import SymmetricKey
 from .transform import CryptoTransform, BlockCryptoTransform, AuthenticatedCryptoTransform, SignatureTransform
 
 __all__ = {
@@ -27,4 +28,5 @@ __all__ = {
     "BlockCryptoTransform",
     "AuthenticatedSymmetricEncryptionAlgorithm",
     "SignatureTransform",
+    "SymmetricKey",
 }

@@ -52,7 +52,7 @@ class TopLevelDomainsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of TopLevelDomain
         :rtype:
-         ~azure.mgmt.web.models.TopLevelDomainPaged[~azure.mgmt.web.models.TopLevelDomain]
+         ~azure.mgmt.web.v2015_04_01.models.TopLevelDomainPaged[~azure.mgmt.web.v2015_04_01.models.TopLevelDomain]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -121,7 +121,7 @@ class TopLevelDomainsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: TopLevelDomain or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.TopLevelDomain or
+        :rtype: ~azure.mgmt.web.v2015_04_01.models.TopLevelDomain or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -192,7 +192,7 @@ class TopLevelDomainsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of TldLegalAgreement
         :rtype:
-         ~azure.mgmt.web.models.TldLegalAgreementPaged[~azure.mgmt.web.models.TldLegalAgreement]
+         ~azure.mgmt.web.v2015_04_01.models.TldLegalAgreementPaged[~azure.mgmt.web.v2015_04_01.models.TldLegalAgreement]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         agreement_option = models.TopLevelDomainAgreementOption(include_privacy=include_privacy, for_transfer=for_transfer)

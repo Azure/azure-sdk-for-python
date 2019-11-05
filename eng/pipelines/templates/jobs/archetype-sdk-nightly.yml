@@ -31,6 +31,9 @@ jobs:
 
     steps:
     - template: ../steps/analyze.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'Test'
     variables:
@@ -39,7 +42,7 @@ jobs:
     dependsOn:
        - 'Build'
 
-    timeoutInMinutes: 270
+    timeoutInMinutes: 300
 
     strategy:
       matrix:
@@ -91,6 +94,35 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         CoverageArg: $(CoverageArg)
+        BeforeTestSteps: 
+          - task: DownloadPipelineArtifact@0
+            inputs:
+              artifactName: 'artifacts' 
+              targetPath: $(Build.ArtifactStagingDirectory)
+        ToxTestEnv: "whl,sdist"
+
+  - job: 'Test_Linux_Python38'
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+       - 'Build'
+
+    timeoutInMinutes: 300
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+    - template: ../steps/test-nightly-python38.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        OSName: 'Linux'
+        PythonVersion: '3.8'
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        CoverageArg: '--disablecov'
         BeforeTestSteps: 
           - task: DownloadPipelineArtifact@0
             inputs:

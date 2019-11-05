@@ -21,6 +21,50 @@ class CommandState(str, Enum):
     failed = "Failed"
 
 
+class SsisMigrationStage(str, Enum):
+
+    none = "None"
+    initialize = "Initialize"
+    in_progress = "InProgress"
+    completed = "Completed"
+
+
+class MigrationState(str, Enum):
+
+    none = "None"
+    in_progress = "InProgress"
+    failed = "Failed"
+    warning = "Warning"
+    completed = "Completed"
+    skipped = "Skipped"
+    stopped = "Stopped"
+
+
+class MigrationStatus(str, Enum):
+
+    default = "Default"
+    connecting = "Connecting"
+    source_and_target_selected = "SourceAndTargetSelected"
+    select_logins = "SelectLogins"
+    configured = "Configured"
+    running = "Running"
+    error = "Error"
+    stopped = "Stopped"
+    completed = "Completed"
+    completed_with_warnings = "CompletedWithWarnings"
+
+
+class SsisMigrationOverwriteOption(str, Enum):
+
+    ignore = "Ignore"
+    overwrite = "Overwrite"
+
+
+class SsisStoreType(str, Enum):
+
+    ssis_catalog = "SsisCatalog"
+
+
 class SqlSourcePlatform(str, Enum):
 
     sql_on_prem = "SqlOnPrem"
@@ -148,17 +192,6 @@ class ObjectType(str, Enum):
     function = "Function"
 
 
-class MigrationState(str, Enum):
-
-    none = "None"
-    in_progress = "InProgress"
-    failed = "Failed"
-    warning = "Warning"
-    completed = "Completed"
-    skipped = "Skipped"
-    stopped = "Stopped"
-
-
 class DatabaseMigrationStage(str, Enum):
 
     none = "None"
@@ -167,20 +200,6 @@ class DatabaseMigrationStage(str, Enum):
     file_copy = "FileCopy"
     restore = "Restore"
     completed = "Completed"
-
-
-class MigrationStatus(str, Enum):
-
-    default = "Default"
-    connecting = "Connecting"
-    source_and_target_selected = "SourceAndTargetSelected"
-    select_logins = "SelectLogins"
-    configured = "Configured"
-    running = "Running"
-    error = "Error"
-    stopped = "Stopped"
-    completed = "Completed"
-    completed_with_warnings = "CompletedWithWarnings"
 
 
 class BackupFileStatus(str, Enum):

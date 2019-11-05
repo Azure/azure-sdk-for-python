@@ -31,7 +31,7 @@ class MyPartitionProcessor(PartitionProcessor):
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     client = EventHubClient.from_connection_string(CONNECTION_STR, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL)
-    container_client = ContainerClient.from_connection_string(STORAGE_CONNECTION_STR, container="eventprocessor")
+    container_client = ContainerClient.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
     partition_manager = BlobPartitionManager(container_client=container_client)
     event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager, polling_interval=10)
     try:

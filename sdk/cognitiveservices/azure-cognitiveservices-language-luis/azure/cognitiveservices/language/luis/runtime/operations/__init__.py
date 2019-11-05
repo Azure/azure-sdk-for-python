@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .prediction_operations import PredictionOperations
+from ._prediction_operations import PredictionOperations
 
 __all__ = [
     'PredictionOperations',

@@ -9,28 +9,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/5.1.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-network/6.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages?api-version=2019-09-01
   response:
     body:
-      string: "{\r\n  \"value\": [\r\n    {\r\n      \"currentValue\": 7,\r\n    \
-        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/VirtualNetworks\"\
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"currentValue\": 20,\r\n   \
+        \   \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/VirtualNetworks\"\
         ,\r\n      \"limit\": 1000,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Virtual Networks\",\r\n        \"value\": \"VirtualNetworks\"\r\n    \
         \  },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
-        : 0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/StaticPublicIPAddresses\"\
+        : 3,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/StaticPublicIPAddresses\"\
         ,\r\n      \"limit\": 1000,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Static Public IP Addresses\",\r\n        \"value\": \"StaticPublicIPAddresses\"\
         \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
-        : 8,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/NetworkSecurityGroups\"\
+        : 10,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/NetworkSecurityGroups\"\
         ,\r\n      \"limit\": 5000,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Network Security Groups\",\r\n        \"value\": \"NetworkSecurityGroups\"\
         \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
-        : 11,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/PublicIPAddresses\"\
+        : 21,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/PublicIPAddresses\"\
         ,\r\n      \"limit\": 1000,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Public IP Addresses\",\r\n        \"value\": \"PublicIPAddresses\"\r\n\
         \      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
@@ -38,7 +38,7 @@ interactions:
         ,\r\n      \"limit\": 2147483647,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Public Ip Prefixes\",\r\n        \"value\": \"PublicIpPrefixes\"\r\n \
         \     },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
-        : 7,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/NetworkInterfaces\"\
+        : 12,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/NetworkInterfaces\"\
         ,\r\n      \"limit\": 65536,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Network Interfaces\",\r\n        \"value\": \"NetworkInterfaces\"\r\n\
         \      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
@@ -50,7 +50,7 @@ interactions:
         ,\r\n      \"limit\": 2147483647,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Private Endpoint Redirect Maps\",\r\n        \"value\": \"PrivateEndpointRedirectMaps\"\
         \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
-        : 2,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/LoadBalancers\"\
+        : 4,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/LoadBalancers\"\
         ,\r\n      \"limit\": 1000,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Load Balancers\",\r\n        \"value\": \"LoadBalancers\"\r\n      },\r\
         \n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\":\
@@ -98,11 +98,11 @@ interactions:
         ,\r\n      \"limit\": 200,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Network Intent Policies\",\r\n        \"value\": \"NetworkIntentPolicies\"\
         \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
-        : -1,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/StandardSkuLoadBalancers\"\
+        : 1,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/StandardSkuLoadBalancers\"\
         ,\r\n      \"limit\": 1000,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Standard Sku Load Balancers\",\r\n        \"value\": \"StandardSkuLoadBalancers\"\
         \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
-        : 0,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/StandardSkuPublicIpAddresses\"\
+        : 3,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/StandardSkuPublicIpAddresses\"\
         ,\r\n      \"limit\": 1000,\r\n      \"name\": {\r\n        \"localizedValue\"\
         : \"Standard Sku Public IP Addresses\",\r\n        \"value\": \"StandardSkuPublicIpAddresses\"\
         \r\n      },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\"\
@@ -182,11 +182,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '14170'
+      - '14172'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Oct 2019 16:22:13 GMT
+      - Tue, 22 Oct 2019 06:12:35 GMT
       expires:
       - '-1'
       pragma:
@@ -203,7 +203,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 32f26b55-4f2a-4529-a781-d5da6b458c5a
+      - be262c58-d8b0-4113-87e2-738c2b065310
     status:
       code: 200
       message: OK

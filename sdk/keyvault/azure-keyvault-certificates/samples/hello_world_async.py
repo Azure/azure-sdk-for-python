@@ -6,7 +6,7 @@ import asyncio
 import os
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
-from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
+from azure.keyvault.certificates import CertificatePolicy, SecretContentType
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -31,6 +31,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # ----------------------------------------------------------------------------------------------------------
 
+
 async def run_sample():
     # Instantiate a certificate client that will be used to call the service.
     # Notice that the client is using default Azure credentials.
@@ -51,40 +52,42 @@ async def run_sample():
 
         # Alternatively, if you would like to use our default policy, don't pass a policy parameter to
         # our certificate creation method
-        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
-                                                                     key_type='RSA',
-                                                                     key_size=2048,
-                                                                     reuse_key=False),
-                                        content_type=SecretContentType.PKCS12,
-                                        issuer_name='Self',
-                                        subject_name='CN=*.microsoft.com',
-                                        validity_in_months=24,
-                                        san_dns_names=['sdk.azure-int.net']
-                                        )
+        cert_policy = CertificatePolicy(
+            exportable=True,
+            key_type="RSA",
+            key_size=2048,
+            reuse_key=False,
+            content_type=SecretContentType.PKCS12,
+            issuer_name="Self",
+            subject_name="CN=*.microsoft.com",
+            validity_in_months=24,
+            san_dns_names=["sdk.azure-int.net"],
+        )
         cert_name = "HelloWorldCertificate"
 
-        # create_certificate returns a poller. Awaiting the poller will return the certificate
+        # Awaiting create_certificate will return the certificate as a KeyVaultCertificate
         # if creation is successful, and the CertificateOperation if not.
-        create_certificate_poller = await client.create_certificate(name=cert_name, policy=cert_policy)
-        certificate = await create_certificate_poller
+        certificate = await client.create_certificate(name=cert_name, policy=cert_policy)
         print("Certificate with name '{0}' created".format(certificate.name))
 
         # Let's get the bank certificate using its name
         print("\n.. Get a Certificate by name")
-        bank_certificate = await client.get_certificate_with_policy(name=cert_name)
+        bank_certificate = await client.get_certificate(name=cert_name)
         print("Certificate with name '{0}' was found.".format(bank_certificate.name))
 
         # After one year, the bank account is still active, and we have decided to update the tags.
         print("\n.. Update a Certificate by name")
         tags = {"a": "b"}
         updated_certificate = await client.update_certificate_properties(name=bank_certificate.name, tags=tags)
-        print("Certificate with name '{0}' was updated on date '{1}'".format(
-            bank_certificate.name,
-            updated_certificate.properties.updated)
+        print(
+            "Certificate with name '{0}' was updated on date '{1}'".format(
+                bank_certificate.name, updated_certificate.properties.updated_on
+            )
         )
-        print("Certificate with name '{0}' was updated with tags '{1}'".format(
-            bank_certificate.name,
-            updated_certificate.properties.tags)
+        print(
+            "Certificate with name '{0}' was updated with tags '{1}'".format(
+                bank_certificate.name, updated_certificate.properties.tags
+            )
         )
 
         # The bank account was closed, need to delete its credentials from the Key Vault.

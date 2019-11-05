@@ -10,34 +10,40 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .intent_model_py3 import IntentModel
-    from .entity_model_py3 import EntityModel
-    from .composite_child_model_py3 import CompositeChildModel
-    from .composite_entity_model_py3 import CompositeEntityModel
-    from .sentiment_py3 import Sentiment
-    from .luis_result_py3 import LuisResult
-    from .entity_with_score_py3 import EntityWithScore
-    from .entity_with_resolution_py3 import EntityWithResolution
-    from .api_error_py3 import APIError, APIErrorException
+    from ._models_py3 import DynamicList
+    from ._models_py3 import Error, ErrorException
+    from ._models_py3 import ErrorBody
+    from ._models_py3 import ExternalEntity
+    from ._models_py3 import Intent
+    from ._models_py3 import Prediction
+    from ._models_py3 import PredictionRequest
+    from ._models_py3 import PredictionRequestOptions
+    from ._models_py3 import PredictionResponse
+    from ._models_py3 import RequestList
+    from ._models_py3 import Sentiment
 except (SyntaxError, ImportError):
-    from .intent_model import IntentModel
-    from .entity_model import EntityModel
-    from .composite_child_model import CompositeChildModel
-    from .composite_entity_model import CompositeEntityModel
-    from .sentiment import Sentiment
-    from .luis_result import LuisResult
-    from .entity_with_score import EntityWithScore
-    from .entity_with_resolution import EntityWithResolution
-    from .api_error import APIError, APIErrorException
+    from ._models import DynamicList
+    from ._models import Error, ErrorException
+    from ._models import ErrorBody
+    from ._models import ExternalEntity
+    from ._models import Intent
+    from ._models import Prediction
+    from ._models import PredictionRequest
+    from ._models import PredictionRequestOptions
+    from ._models import PredictionResponse
+    from ._models import RequestList
+    from ._models import Sentiment
 
 __all__ = [
-    'IntentModel',
-    'EntityModel',
-    'CompositeChildModel',
-    'CompositeEntityModel',
+    'DynamicList',
+    'Error', 'ErrorException',
+    'ErrorBody',
+    'ExternalEntity',
+    'Intent',
+    'Prediction',
+    'PredictionRequest',
+    'PredictionRequestOptions',
+    'PredictionResponse',
+    'RequestList',
     'Sentiment',
-    'LuisResult',
-    'EntityWithScore',
-    'EntityWithResolution',
-    'APIError', 'APIErrorException',
 ]

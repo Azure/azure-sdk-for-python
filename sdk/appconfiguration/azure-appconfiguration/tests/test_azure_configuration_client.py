@@ -32,7 +32,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         assert (
             created_kv.etag is not None
             and created_kv.last_modified is not None
-            and created_kv.locked is False
+            and created_kv.read_only is False
         )
 
     def test_add_existing_configuration_setting(self):
@@ -346,9 +346,9 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
     def test_read_only(self):
         kv = self.test_config_setting_no_label
         read_only_kv = self.get_config_client().set_read_only(kv)
-        assert read_only_kv.locked
+        assert read_only_kv.read_only
         readable_kv = self.get_config_client().clear_read_only(read_only_kv)
-        assert not readable_kv.locked
+        assert not readable_kv.read_only
 
     def test_delete_read_only(self):
         to_delete_kv = self.test_config_setting_no_label

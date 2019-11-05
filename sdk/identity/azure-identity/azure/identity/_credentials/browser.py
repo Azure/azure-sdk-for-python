@@ -10,6 +10,7 @@ import webbrowser
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
+from .._constants import AZURE_CLI_CLIENT_ID
 from .._internal import AuthCodeRedirectServer, PublicClientCredential, wrap_exceptions
 
 try:
@@ -23,38 +24,43 @@ if TYPE_CHECKING:
 
 
 class InteractiveBrowserCredential(PublicClientCredential):
-    """
-    Authenticates a user through the authorization code flow. This is an interactive flow: ``get_token`` opens a
-    browser to a login URL provided by Azure Active Directory, and waits for the user to authenticate there.
+    """Opens a browser to interactively authenticate a user.
 
-    Azure Active Directory documentation describes the authorization code flow in more detail:
+    :func:`~get_token` opens a browser to a login URL provided by Azure Active Directory and authenticates a user
+    there with the authorization code flow. Azure Active Directory documentation describes this flow in more detail:
     https://docs.microsoft.com/en-us/azure/active-directory/develop/v1-protocols-oauth-code
 
-    :param str client_id: the application's client ID
-
-    Keyword arguments
-        - *tenant (str)*: a tenant ID or a domain associated with a tenant. Defaults to the 'organizations' tenant,
-          which can authenticate work or school accounts.
-        - *timeout (int)*: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          defines authorities for other clouds.
+    :keyword str tenant_id: an Azure Active Directory tenant ID. Defaults to the 'organizations' tenant, which can
+          authenticate work or school accounts.
+    :keyword str client_id: Client ID of the Azure Active Directory application users will sign in to. If
+          unspecified, the Azure CLI's ID will be used.
+    :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
 
     """
 
-    def __init__(self, client_id, **kwargs):
-        # type: (str, Any) -> None
+    def __init__(self, **kwargs):
+        # type: (**Any) -> None
         self._timeout = kwargs.pop("timeout", 300)
         self._server_class = kwargs.pop("server_class", AuthCodeRedirectServer)  # facilitate mocking
+        client_id = kwargs.pop("client_id", AZURE_CLI_CLIENT_ID)
         super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
-        """
-        Request an access token for `scopes`. This will open a browser to a login page and listen on localhost for a
-        request indicating authentication has completed.
+        """Request an access token for `scopes`.
+
+        This will open a browser to a login page and listen on localhost for a request indicating authentication has
+        completed.
+
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
 
         # start an HTTP server on localhost to receive the redirect
@@ -98,9 +104,10 @@ class InteractiveBrowserCredential(PublicClientCredential):
     @staticmethod
     def _parse_response(request_state, response):
         # type: (str, Mapping[str, Any]) -> List[str]
-        """
-        Validates ``response`` and returns the authorization code it contains, if authentication succeeded. Raises
-        :class:`azure.core.exceptions.ClientAuthenticationError`, if authentication failed or ``response`` is malformed.
+        """Validates ``response`` and returns the authorization code it contains, if authentication succeeded.
+
+        Raises :class:`azure.core.exceptions.ClientAuthenticationError`, if authentication failed or ``response`` is
+        malformed.
         """
 
         if "error" in response:

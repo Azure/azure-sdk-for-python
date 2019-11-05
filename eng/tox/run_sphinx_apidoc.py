@@ -12,8 +12,10 @@ from subprocess import check_call, CalledProcessError
 import argparse
 import os
 import logging
-from prep_sphinx_env import get_package_details, should_build_docs
+from prep_sphinx_env import should_build_docs
+from tox_helper_tasks import get_package_details
 import sys
+import shutil
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -23,10 +25,17 @@ generate_mgmt_script = os.path.join(root_dir, "doc/sphinx/generate_doc.py")
 def is_mgmt_package(package_dir):
     return "mgmt"  in pkg_name or "cognitiveservices" in pkg_name
 
+def copy_existing_docs(source, target):
+    for file in os.listdir(source):
+        logging.info("Copying {}".format(file))
+        shutil.copy(os.path.join(source, file), target)
+
 def sphinx_apidoc(working_directory):
+    working_doc_folder = os.path.join(args.working_directory, "unzipped", "doc")
     command_array = [
             "sphinx-apidoc",
             "--no-toc",
+            "--module-first",
             "-o",
             os.path.join(args.working_directory, "unzipped/docgen"),
             os.path.join(args.working_directory, "unzipped/"),
@@ -37,11 +46,17 @@ def sphinx_apidoc(working_directory):
         ]
 
     try:
-        logging.info("Sphinx api-doc command: {}".format(command_array))
+        # if a `doc` folder exists, just leverage the sphinx sources found therein.
+        if os.path.exists(working_doc_folder): 
+            logging.info("Copying files into sphinx source folder.")
+            copy_existing_docs(working_doc_folder, os.path.join(args.working_directory, "unzipped/docgen"))
 
-        check_call(
-            command_array
-        )
+        # otherwise, we will run sphinx-apidoc to generate the sources
+        else: 
+            logging.info("Sphinx api-doc command: {}".format(command_array))
+            check_call(
+                command_array
+            )
     except CalledProcessError as e:
         logging.error(
             "sphinx-apidoc failed for path {} exited with error {}".format(

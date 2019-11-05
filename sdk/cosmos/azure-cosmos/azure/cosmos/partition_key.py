@@ -54,6 +54,10 @@ class PartitionKey(dict):
         self.kind = kind
         self.version = version
 
+    def __repr__(self):
+        # type () -> str
+        return "<PartitionKey [{}]>".format(self.path)[:1024]
+
     @property
     def kind(self):
         return self["kind"]

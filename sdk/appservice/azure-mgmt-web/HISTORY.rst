@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.43.1 (2019-10-17)
++++++++++++++++++++
+
+**General**
+
+- Fixed incorrectly generated multi-api package structure
+
 0.43.0 (2019-10-01)
 +++++++++++++++++++
 

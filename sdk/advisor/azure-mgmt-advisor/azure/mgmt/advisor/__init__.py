@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .advisor_management_client import AdvisorManagementClient
-from .version import VERSION
+from ._configuration import AdvisorManagementClientConfiguration
+from ._advisor_management_client import AdvisorManagementClient
+__all__ = ['AdvisorManagementClient', 'AdvisorManagementClientConfiguration']
 
-__all__ = ['AdvisorManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

@@ -11,6 +11,19 @@ jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: eventhub
+      Matrix:
+        Linux_Python35:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.5'
+        MacOs_Python37:
+          OSName: 'MacOS'
+          OSVmImage: 'macOS-10.14'
+          PythonVersion: '3.7'
+        Windows_Python27:
+          OSName: 'Windows'
+          OSVmImage: 'windows-2019'
+          PythonVersion: '2.7'
       EnvVars:
         AZURE_STORAGE_ACCOUNT: $(python-eh-livetest-event-hub-storage-account)
         AZURE_STORAGE_ACCESS_KEY: $(python-eh-livetest-event-hub-storage-access-key)

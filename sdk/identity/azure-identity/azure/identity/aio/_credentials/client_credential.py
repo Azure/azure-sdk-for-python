@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 
 from .._authn_client import AsyncAuthnClient
 from ..._base import ClientSecretCredentialBase, CertificateCredentialBase
-from ..._constants import Endpoints
 
 if TYPE_CHECKING:
     from typing import Any, Mapping
@@ -14,25 +13,29 @@ if TYPE_CHECKING:
 
 
 class ClientSecretCredential(ClientSecretCredentialBase):
-    """
-    Authenticates as a service principal using a client ID and client secret.
+    """Authenticates as a service principal using a client ID and client secret.
 
-    :param str client_id: the service principal's client ID
-    :param str secret: one of the service principal's client secrets
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
+    :param str client_id: the service principal's client ID
+    :param str client_secret: one of the service principal's client secrets
+
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          defines authorities for other clouds.
     """
 
-    def __init__(self, client_id: str, secret: str, tenant_id: str, **kwargs: "Mapping[str, Any]") -> None:
-        super(ClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
-        self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
+    def __init__(self, tenant_id: str, client_id: str, client_secret: str, **kwargs: "Any") -> None:
+        super(ClientSecretCredential, self).__init__(tenant_id, client_id, client_secret, **kwargs)
+        self._client = AsyncAuthnClient(tenant=tenant_id, **kwargs)
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
-        """
-        Asynchronously request an access token for `scopes`.
+        """Asynchronously request an access token for `scopes`.
+
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
         token = self._client.get_cached_token(scopes)
         if not token:
@@ -42,25 +45,30 @@ class ClientSecretCredential(ClientSecretCredentialBase):
 
 
 class CertificateCredential(CertificateCredentialBase):
-    """
-    Authenticates as a service principal using a certificate.
+    """Authenticates as a service principal using a certificate.
 
-    :param str client_id: the service principal's client ID
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
+    :param str client_id: the service principal's client ID
     :param str certificate_path: path to a PEM-encoded certificate file including the private key
+      This file must not be password-protected.
+
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          defines authorities for other clouds.
     """
 
-    def __init__(self, client_id: str, tenant_id: str, certificate_path: str, **kwargs: "Mapping[str, Any]") -> None:
-        super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
-        self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
+    def __init__(self, tenant_id: str, client_id: str, certificate_path: str, **kwargs: "Mapping[str, Any]") -> None:
+        super(CertificateCredential, self).__init__(tenant_id, client_id, certificate_path, **kwargs)
+        self._client = AsyncAuthnClient(tenant=tenant_id, **kwargs)
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
-        """
-        Asynchronously request an access token for `scopes`.
+        """Asynchronously request an access token for `scopes`.
+
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
         token = self._client.get_cached_token(scopes)
         if not token:

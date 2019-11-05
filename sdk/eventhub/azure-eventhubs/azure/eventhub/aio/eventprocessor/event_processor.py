@@ -9,8 +9,8 @@ import uuid
 import asyncio
 import logging
 
-from azure.core.tracing import SpanKind
-from azure.core.settings import settings
+from azure.core.tracing import SpanKind  # type: ignore
+from azure.core.settings import settings  # type: ignore
 
 from azure.eventhub import EventPosition, EventHubError
 from azure.eventhub.aio import EventHubClient

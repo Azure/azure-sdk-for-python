@@ -26,11 +26,11 @@ class WebSiteManagementClient(SDKClient):
     :vartype config: WebSiteManagementClientConfiguration
 
     :ivar domains: Domains operations
-    :vartype domains: azure.mgmt.web.operations.DomainsOperations
+    :vartype domains: azure.mgmt.web.v2015_04_01.operations.DomainsOperations
     :ivar top_level_domains: TopLevelDomains operations
-    :vartype top_level_domains: azure.mgmt.web.operations.TopLevelDomainsOperations
+    :vartype top_level_domains: azure.mgmt.web.v2015_04_01.operations.TopLevelDomainsOperations
     :ivar domain_registration_provider: DomainRegistrationProvider operations
-    :vartype domain_registration_provider: azure.mgmt.web.operations.DomainRegistrationProviderOperations
+    :vartype domain_registration_provider: azure.mgmt.web.v2015_04_01.operations.DomainRegistrationProviderOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

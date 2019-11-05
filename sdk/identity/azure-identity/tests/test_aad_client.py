@@ -31,7 +31,7 @@ def test_uses_msal_correctly():
     transport = Mock()
     session.get = session.post = transport
 
-    client = MockClient("client id", "tenant id", session=session)
+    client = MockClient("tenant id", "client id", session=session)
 
     # MSAL will raise on each call because the mock transport returns nothing useful.
     # That's okay because we only want to verify the transport was called, i.e. that
@@ -55,7 +55,7 @@ def test_error_reporting():
     response = Mock(status_code=403, json=lambda: error_response)
     transport = Mock(return_value=response)
     session = Mock(get=transport, post=transport)
-    client = MockClient("client id", "tenant id", session=session)
+    client = MockClient("tenant id", "client id", session=session)
 
     fns = [
         functools.partial(client.obtain_token_by_authorization_code, "code", "uri", "scope"),
@@ -76,7 +76,7 @@ def test_exceptions_do_not_expose_secrets():
     response = Mock(status_code=403, json=lambda: body)
     transport = Mock(return_value=response)
     session = Mock(get=transport, post=transport)
-    client = MockClient("client id", "tenant id", session=session)
+    client = MockClient("tenant id", "client id", session=session)
 
     fns = [
         functools.partial(client.obtain_token_by_authorization_code, "code", "uri", "scope"),
@@ -100,16 +100,16 @@ def test_exceptions_do_not_expose_secrets():
 
 def test_request_url():
     authority = "authority.com"
-    tenant = "expected_tenant"
+    tenant_id = "expected_tenant"
 
     def send(request, **_):
         scheme, netloc, path, _, _, _ = urlparse(request.url)
         assert scheme == "https"
         assert netloc == authority
-        assert path.startswith("/" + tenant)
+        assert path.startswith("/" + tenant_id)
         return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": "***"})
 
-    client = AadClient("client id", tenant, transport=Mock(send=send), authority=authority)
+    client = AadClient(tenant_id, "client id", transport=Mock(send=send), authority=authority)
 
     client.obtain_token_by_authorization_code("code", "uri", "scope")
     client.obtain_token_by_refresh_token("refresh token", "scope")

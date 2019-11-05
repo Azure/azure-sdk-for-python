@@ -39,7 +39,19 @@ def wait_for_no_pool(client, rg, acc_name, pool_name, live=False):
             break
 
 def delete_pool(client, rg, acc_name, pool_name, live=False):
-    client.pools.delete(rg, acc_name, pool_name).wait()
+    # nest resources seem to hang around for a little while even
+    # when apparently deleted, therefore give it a chance
+    co=0
+    while co<5:
+        co += 1
+        if live:
+            time.sleep(10)
+        try:
+            client.pools.delete(rg, acc_name, pool_name).wait()
+        except:
+            # Want to catch specifically "Can not delete resource before nested resources are deleted."
+            # but should be safe to generalise
+            break
     wait_for_no_pool(client, rg, acc_name, pool_name, live)
 
 

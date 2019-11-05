@@ -4,7 +4,7 @@
 # ------------------------------------
 import os
 import time
-from azure.keyvault.certificates import CertificateClient
+from azure.keyvault.certificates import CertificateClient, CertificatePolicy
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -20,7 +20,7 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic recover and purge operations on a vault(certificate) resource for Azure Key Vault
 #
-# 1. Create a certificate (create_certificate)
+# 1. Create a certificate (begin_create_certificate)
 #
 # 2. Delete a certificate (delete_certificate)
 #
@@ -45,8 +45,12 @@ try:
     bank_cert_name = "BankRecoverCertificate"
     storage_cert_name = "ServerRecoverCertificate"
 
-    bank_certificate_poller = client.create_certificate(name=bank_cert_name)
-    storage_certificate_poller = client.create_certificate(name=storage_cert_name)
+    bank_certificate_poller = client.begin_create_certificate(
+        name=bank_cert_name, policy=CertificatePolicy.get_default()
+    )
+    storage_certificate_poller = client.begin_create_certificate(
+        name=storage_cert_name, policy=CertificatePolicy.get_default()
+    )
 
     bank_certificate = bank_certificate_poller.result()
     storage_certificate = storage_certificate_poller.result()
@@ -59,9 +63,10 @@ try:
     # To ensure certificate is deleted on the server side.
     time.sleep(30)
 
-    print("Certificate with name '{0}' was deleted on date {1}.".format(
-        deleted_bank_certificate.name,
-        deleted_bank_certificate.deleted_date)
+    print(
+        "Certificate with name '{0}' was deleted on date {1}.".format(
+            deleted_bank_certificate.name, deleted_bank_certificate.deleted_date
+        )
     )
 
     # We accidentally deleted the bank account certificate. Let's recover it.

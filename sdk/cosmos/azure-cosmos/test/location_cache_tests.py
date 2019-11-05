@@ -8,7 +8,7 @@ import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
 from azure.cosmos._request_object import RequestObject
 from azure.cosmos._location_cache import LocationCache
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 from azure.cosmos import _retry_utility
 import test_config
@@ -89,7 +89,7 @@ class LocationCacheTest(unittest.TestCase):
             else:
                 client.CreateItem("dbs/mydb/colls/mycoll/", {'id':'1'})
             self.fail()
-        except errors.CosmosHttpResponseError as e:
+        except exceptions.CosmosHttpResponseError as e:
             # not retried
             self.assertEqual(self.counter, 1)
             self.counter = 0
@@ -102,7 +102,7 @@ class LocationCacheTest(unittest.TestCase):
     def _MockExecuteFunctionSessionReadFailureOnce(self, function, *args, **kwargs):
         self.counter += 1
         response = test_config.FakeResponse({HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
-        raise errors.CosmosHttpResponseError(
+        raise exceptions.CosmosHttpResponseError(
             status_code=StatusCodes.NOT_FOUND,
             message="Read Session not available",
             response=response)
@@ -134,7 +134,7 @@ class LocationCacheTest(unittest.TestCase):
 
         try:
             client.ReadItem("dbs/mydb/colls/mycoll/docs/1")
-        except errors.CosmosHttpResponseError as e:
+        except exceptions.CosmosHttpResponseError as e:
             # not retried
             self.assertEqual(self.counter, 4 if use_multiple_write_locations else 2)
             self.counter = 0
@@ -167,7 +167,7 @@ class LocationCacheTest(unittest.TestCase):
         self.assertEqual(expected_endpoint, request.location_endpoint_to_route)
         self.counter += 1
         response = test_config.FakeResponse({HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
-        raise errors.CosmosHttpResponseError(
+        raise exceptions.CosmosHttpResponseError(
             status_code=StatusCodes.NOT_FOUND,
             message="Read Session not available",
             response=response)

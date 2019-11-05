@@ -24,7 +24,7 @@ class WebSiteManagementClient(SDKClient):
     :vartype config: WebSiteManagementClientConfiguration
 
     :ivar web_apps: WebApps operations
-    :vartype web_apps: azure.mgmt.web.operations.WebAppsOperations
+    :vartype web_apps: azure.mgmt.web.v2016_08_01.operations.WebAppsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

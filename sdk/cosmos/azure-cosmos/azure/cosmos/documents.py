@@ -302,7 +302,7 @@ class TriggerOperation(object):
 class SSLConfiguration(object):
     """Configurations for SSL connections.
 
-    Please refer to http://docs.python-requests.org/en/master/user/advanced/#ssl-cert-verification for more detail.
+    Please refer to https://requests.readthedocs.io/en/master/user/advanced/#ssl-cert-verification for more detail.
 
     :ivar str SSLKeyFIle:
         The path of the key file for ssl connection.
@@ -372,8 +372,10 @@ class ConnectionPolicy(object):  # pylint: disable=too-many-instance-attributes
     :ivar boolean UseMultipleWriteLocations:
         Flag to enable writes on any locations (regions) for geo-replicated database accounts
         in the azure Cosmos service.
-    :ivar (int or requests.packages.urllib3.util.retry) ConnectionRetryConfiguration:
-        Retry Configuration to be used for urllib3 connection retries.
+    :ivar ConnectionRetryConfiguration:
+        Retry Configuration to be used for connection retries.
+    :vartype ConnectionRetryConfiguration:
+        int or azure.cosmos.ConnectionRetryPolicy or urllib3.util.retry
     """
 
     __defaultRequestTimeout = 60000  # milliseconds
@@ -399,7 +401,6 @@ class ConnectionPolicy(object):  # pylint: disable=too-many-instance-attributes
 class _OperationType(object):
     """Represents the type of the operation
     """
-
     Create = "Create"
     Delete = "Delete"
     ExecuteJavaScript = "ExecuteJavaScript"
@@ -411,6 +412,7 @@ class _OperationType(object):
     Recreate = "Recreate"
     Replace = "Replace"
     SqlQuery = "SqlQuery"
+    QueryPlan = "QueryPlan"
     Update = "Update"
     Upsert = "Upsert"
 
@@ -436,3 +438,32 @@ class _OperationType(object):
             _OperationType.Query,
             _OperationType.SqlQuery,
         )
+
+    @staticmethod
+    def IsFeedOperation(operationType):
+        return operationType in (
+            _OperationType.Create,
+            _OperationType.Upsert,
+            _OperationType.ReadFeed,
+            _OperationType.Query,
+            _OperationType.SqlQuery,
+            _OperationType.QueryPlan,
+            _OperationType.HeadFeed,
+        )
+
+class _QueryFeature(object):
+    NoneQuery = "NoneQuery"
+    Aggregate = "Aggregate"
+    CompositeAggregate = "CompositeAggregate"
+    Distinct = "Distinct"
+    GroupBy = "GroupBy"
+    MultipleAggregates = "MultipleAggregates"
+    MultipleOrderBy = "MultipleOrderBy"
+    OffsetAndLimit = "OffsetAndLimit"
+    OrderBy = "OrderBy"
+    Top = "Top"
+
+class _DistinctType(object):
+    NoneType = "None"
+    Ordered = "Ordered"
+    Unordered = "Unordered"

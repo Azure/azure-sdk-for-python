@@ -20,6 +20,7 @@ import ast
 import os
 import textwrap
 import io
+from tox_helper_tasks import get_package_details
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -43,8 +44,15 @@ Indices and tables
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 sphinx_conf = os.path.join(root_dir, "doc", "sphinx", "individual_build_conf.py")
 
+# reference issue 8523 for eliminating this ridiculousness.
+UNFRIENDLY_PACKAGE_TO_NAMESPACE = {
+    'azure-storage-file-share': 'azure.storage.fileshare',
+    'azure-core-tracing-opencensus': 'azure.core.tracing.ext.opencensus_span',
+    'azure-eventhub-checkpointstoreblob-aio': 'azure.eventhub.extensions.checkpointstoreblobaio'
+}
+
 def should_build_docs(package_name):
-    return not ("nspkg" in package_name or "azure-mgmt" == package_name or "azure" == package_name)
+    return not ("nspkg" in package_name or package_name in ["azure", "azure-mgmt", "azure-keyvault", "azure-documentdb", "azure-mgmt-documentdb", "azure-servicemanagement-legacy"])
 
 def create_index_file(readme_location, package_rst):
     readme_ext = os.path.splitext(readme_location)[1]
@@ -117,41 +125,6 @@ def create_index(doc_folder, source_location, package_name):
         f.write(index_content)
 
 
-def get_package_details(setup_filename):
-    mock_setup = textwrap.dedent(
-        """\
-    def setup(*args, **kwargs):
-        __setup_calls__.append((args, kwargs))
-    """
-    )
-    parsed_mock_setup = ast.parse(mock_setup, filename=setup_filename)
-    with io.open(setup_filename, "r", encoding="utf-8-sig") as setup_file:
-        parsed = ast.parse(setup_file.read())
-        for index, node in enumerate(parsed.body[:]):
-            if (
-                not isinstance(node, ast.Expr)
-                or not isinstance(node.value, ast.Call)
-                or not hasattr(node.value.func, "id")
-                or node.value.func.id != "setup"
-            ):
-                continue
-            parsed.body[index:index] = parsed_mock_setup.body
-            break
-
-    fixed = ast.fix_missing_locations(parsed)
-    codeobj = compile(fixed, setup_filename, "exec")
-    local_vars = {}
-    global_vars = {"__setup_calls__": []}
-    current_dir = os.getcwd()
-    working_dir = os.path.dirname(setup_filename)
-    os.chdir(working_dir)
-    exec(codeobj, global_vars, local_vars)
-    os.chdir(current_dir)
-    _, kwargs = global_vars["__setup_calls__"][0]
-
-    return kwargs["name"], kwargs["version"]
-
-
 def write_version(site_folder, version):
 
     if not os.path.isdir(site_folder):
@@ -189,11 +162,13 @@ if __name__ == "__main__":
         os.path.join(package_path, "setup.py")
     )
 
+    if package_name in UNFRIENDLY_PACKAGE_TO_NAMESPACE.keys():
+        package_name = UNFRIENDLY_PACKAGE_TO_NAMESPACE[package_name]
+
     if should_build_docs(package_name):
         source_location = move_and_rename(unzip_sdist_to_directory(args.dist_dir))
         doc_folder = os.path.join(source_location, "docgen")
 
-        copy_conf(doc_folder)
         create_index(doc_folder, source_location, package_name)
 
         site_folder = os.path.join(args.dist_dir, "site")

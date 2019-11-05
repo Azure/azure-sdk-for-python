@@ -8,7 +8,7 @@ from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 
 
-class KeyVault:
+class KeyVaultSecrets:
     def __init__(self):
         # DefaultAzureCredential() expects the following environment variables:
         # * AZURE_CLIENT_ID
@@ -34,7 +34,7 @@ class KeyVault:
 
     def delete_secret(self):
         print("Deleting a secret...")
-        deleted_secret = self.secret_client.delete_secret(self.secret_name)
+        deleted_secret = self.secret_client.begin_delete_secret(self.secret_name).result()
         print("\tdone: " + deleted_secret.name)
 
     def run(self):

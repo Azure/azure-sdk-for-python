@@ -54,9 +54,9 @@ class AppServiceCertificateOrdersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of AppServiceCertificateOrder
         :rtype:
-         ~azure.mgmt.web.models.AppServiceCertificateOrderPaged[~azure.mgmt.web.models.AppServiceCertificateOrder]
+         ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrderPaged[~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrder]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -117,7 +117,7 @@ class AppServiceCertificateOrdersOperations(object):
         :param app_service_certificate_order: Information for a certificate
          order.
         :type app_service_certificate_order:
-         ~azure.mgmt.web.models.AppServiceCertificateOrder
+         ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrder
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -181,9 +181,9 @@ class AppServiceCertificateOrdersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of AppServiceCertificateOrder
         :rtype:
-         ~azure.mgmt.web.models.AppServiceCertificateOrderPaged[~azure.mgmt.web.models.AppServiceCertificateOrder]
+         ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrderPaged[~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrder]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -253,10 +253,10 @@ class AppServiceCertificateOrdersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: AppServiceCertificateOrder or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.AppServiceCertificateOrder or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrder
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -363,7 +363,7 @@ class AppServiceCertificateOrdersOperations(object):
         :param certificate_distinguished_name: Distinguished name to use for
          the certificate order.
         :type certificate_distinguished_name:
-         ~azure.mgmt.web.models.AppServiceCertificateOrder
+         ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrder
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -373,11 +373,11 @@ class AppServiceCertificateOrdersOperations(object):
          AppServiceCertificateOrder or
          ClientRawResponse<AppServiceCertificateOrder> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.AppServiceCertificateOrder]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrder]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.models.AppServiceCertificateOrder]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrder]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
@@ -476,17 +476,17 @@ class AppServiceCertificateOrdersOperations(object):
         :param certificate_distinguished_name: Distinguished name to use for
          the certificate order.
         :type certificate_distinguished_name:
-         ~azure.mgmt.web.models.AppServiceCertificateOrderPatchResource
+         ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrderPatchResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: AppServiceCertificateOrder or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.AppServiceCertificateOrder or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateOrder
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update.metadata['url']
@@ -553,9 +553,9 @@ class AppServiceCertificateOrdersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of AppServiceCertificateResource
         :rtype:
-         ~azure.mgmt.web.models.AppServiceCertificateResourcePaged[~azure.mgmt.web.models.AppServiceCertificateResource]
+         ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateResourcePaged[~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateResource]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -629,10 +629,11 @@ class AppServiceCertificateOrdersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: AppServiceCertificateResource or ClientRawResponse if
          raw=true
-        :rtype: ~azure.mgmt.web.models.AppServiceCertificateResource or
+        :rtype:
+         ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_certificate.metadata['url']
@@ -742,7 +743,7 @@ class AppServiceCertificateOrdersOperations(object):
         :type name: str
         :param key_vault_certificate: Key vault certificate resource Id.
         :type key_vault_certificate:
-         ~azure.mgmt.web.models.AppServiceCertificateResource
+         ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -752,11 +753,11 @@ class AppServiceCertificateOrdersOperations(object):
          AppServiceCertificateResource or
          ClientRawResponse<AppServiceCertificateResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.models.AppServiceCertificateResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.models.AppServiceCertificateResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateResource]]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         raw_result = self._create_or_update_certificate_initial(
             resource_group_name=resource_group_name,
@@ -860,7 +861,7 @@ class AppServiceCertificateOrdersOperations(object):
         :type name: str
         :param key_vault_certificate: Key vault certificate resource Id.
         :type key_vault_certificate:
-         ~azure.mgmt.web.models.AppServiceCertificatePatchResource
+         ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificatePatchResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -868,10 +869,11 @@ class AppServiceCertificateOrdersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: AppServiceCertificateResource or ClientRawResponse if
          raw=true
-        :rtype: ~azure.mgmt.web.models.AppServiceCertificateResource or
+        :rtype:
+         ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificateResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.update_certificate.metadata['url']
@@ -934,7 +936,7 @@ class AppServiceCertificateOrdersOperations(object):
         :type certificate_order_name: str
         :param reissue_certificate_order_request: Parameters for the reissue.
         :type reissue_certificate_order_request:
-         ~azure.mgmt.web.models.ReissueCertificateOrderRequest
+         ~azure.mgmt.web.v2018_02_01.models.ReissueCertificateOrderRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -997,7 +999,7 @@ class AppServiceCertificateOrdersOperations(object):
         :type certificate_order_name: str
         :param renew_certificate_order_request: Renew parameters
         :type renew_certificate_order_request:
-         ~azure.mgmt.web.models.RenewCertificateOrderRequest
+         ~azure.mgmt.web.v2018_02_01.models.RenewCertificateOrderRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1189,10 +1191,10 @@ class AppServiceCertificateOrdersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SiteSeal or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.web.models.SiteSeal or
+        :rtype: ~azure.mgmt.web.v2018_02_01.models.SiteSeal or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         site_seal_request = models.SiteSealRequest(light_theme=light_theme, locale=locale)
 
@@ -1314,10 +1316,11 @@ class AppServiceCertificateOrdersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.models.CertificateOrderAction] or
+        :rtype:
+         list[~azure.mgmt.web.v2018_02_01.models.CertificateOrderAction] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.retrieve_certificate_actions.metadata['url']
@@ -1377,10 +1380,10 @@ class AppServiceCertificateOrdersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.web.models.CertificateEmail] or
+        :rtype: list[~azure.mgmt.web.v2018_02_01.models.CertificateEmail] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.retrieve_certificate_email_history.metadata['url']

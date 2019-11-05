@@ -4,10 +4,17 @@
 # ------------------------------------
 import os
 
-from azure.core import Configuration
+from azure.core.configuration import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
+from azure.core.pipeline.policies import (
+    ContentDecodePolicy,
+    DistributedTracingPolicy,
+    HeadersPolicy,
+    HttpLoggingPolicy,
+    NetworkTraceLoggingPolicy,
+    RetryPolicy,
+)
 
 from .._authn_client import AuthnClient
 from .._constants import Endpoints, EnvironmentVariables
@@ -19,36 +26,38 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Mapping, Optional, Type
+    from typing import Any, Optional, Type
 
 
 class ManagedIdentityCredential(object):
-    """
-    Authenticates with a managed identity in an App Service, Azure VM or Cloud Shell environment.
+    """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
-    :param str client_id:
-        (optional) client ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
+    See the Azure Active Directory documentation for more information about managed identities:
+    https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview
+
+    :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, **kwargs):
         if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
-            return MsiCredential(*args, **kwargs)
-        return ImdsCredential(*args, **kwargs)
+            return MsiCredential(**kwargs)
+        return ImdsCredential(**kwargs)
 
     # the below methods are never called, because ManagedIdentityCredential can't be instantiated;
     # they exist so tooling gets accurate signatures for Imds- and MsiCredential
-    def __init__(self, client_id=None, **kwargs):
-        # type: (Optional[str], Any) -> None
+    def __init__(self, **kwargs):
+        # type: (**Any) -> None
         pass
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument,no-self-use
         # type: (*str, **Any) -> AccessToken
-        """
-        Request an access token for `scopes`.
+        """Request an access token for `scopes`.
+
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
         return AccessToken()
 
@@ -60,17 +69,21 @@ class _ManagedIdentityBase(object):
         # type: (str, Type, Optional[Configuration], Optional[str], Any) -> None
         self._client_id = client_id
         config = config or self._create_config(**kwargs)
-        policies = [ContentDecodePolicy(), config.headers_policy, config.retry_policy, config.logging_policy]
-        self._client = client_cls(endpoint, config, policies, **kwargs)
+        policies = [
+            ContentDecodePolicy(),
+            config.headers_policy,
+            config.retry_policy,
+            config.logging_policy,
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
+        ]
+        self._client = client_cls(endpoint=endpoint, config=config, policies=policies, **kwargs)
 
     @staticmethod
     def _create_config(**kwargs):
-        # type: (Mapping[str, Any]) -> Configuration
-        """
-        Build a default configuration for the credential's HTTP pipeline.
+        # type: (**Any) -> Configuration
+        """Build a default configuration for the credential's HTTP pipeline."""
 
-        :rtype: :class:`azure.core.configuration`
-        """
         timeout = kwargs.pop("connection_timeout", 2)
         config = Configuration(connection_timeout=timeout, **kwargs)
 
@@ -98,26 +111,24 @@ class _ManagedIdentityBase(object):
 
 
 class ImdsCredential(_ManagedIdentityBase):
-    """
-    Authenticates with a managed identity via the IMDS endpoint.
+    """Authenticates with a managed identity via the IMDS endpoint.
 
-    :param config: optional configuration for the underlying HTTP pipeline
-    :type config: :class:`azure.core.configuration`
+
+    :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
-    def __init__(self, config=None, **kwargs):
-        # type: (Optional[Configuration], Any) -> None
-        super(ImdsCredential, self).__init__(endpoint=Endpoints.IMDS, client_cls=AuthnClient, config=config, **kwargs)
+    def __init__(self, **kwargs):
+        # type: (**Any) -> None
+        super(ImdsCredential, self).__init__(endpoint=Endpoints.IMDS, client_cls=AuthnClient, **kwargs)
         self._endpoint_available = None  # type: Optional[bool]
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
-        """
-        Request an access token for `scopes`.
+        """Request an access token for `scopes`.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
         if self._endpoint_available is None:
             # Lacking another way to determine whether the IMDS endpoint is listening,
@@ -152,33 +163,28 @@ class ImdsCredential(_ManagedIdentityBase):
 
 
 class MsiCredential(_ManagedIdentityBase):
-    """
-    Authenticates via the MSI endpoint in an App Service or Cloud Shell environment.
+    """Authenticates via the MSI endpoint in an App Service or Cloud Shell environment.
 
-    :param config: optional configuration for the underlying HTTP pipeline
-    :type config: :class:`azure.core.configuration`
+
+  :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
-    def __init__(self, config=None, **kwargs):
-        # type: (Optional[Configuration], Mapping[str, Any]) -> None
-        endpoint = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
-        self._endpoint_available = endpoint is not None
-        if self._endpoint_available:
-            super(MsiCredential, self).__init__(  # type: ignore
-                endpoint=endpoint, client_cls=AuthnClient, config=config, **kwargs
-            )
+    def __init__(self, **kwargs):
+        # type: (**Any) -> None
+        self._endpoint = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
+        if self._endpoint:
+            super(MsiCredential, self).__init__(endpoint=self._endpoint, client_cls=AuthnClient, **kwargs)
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
-        """
-        Request an access token for `scopes`.
+        """Request an access token for `scopes`.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
 
-        if not self._endpoint_available:
+        if not self._endpoint:
             raise ClientAuthenticationError(message="MSI endpoint unavailable")
 
         if len(scopes) != 1:

@@ -1,0 +1,110 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.0.0 Python/3.7.4 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://vault458ad70cc7116c0ea5.vault.azure.net/keys/rsa-key-name/create?api-version=7.0
+  response:
+    body:
+      string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
+        or PoP token."}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '87'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 30 Oct 2019 23:20:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      www-authenticate:
+      - Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://vault.azure.net"
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.879
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: '{"kty": "RSA", "key_size": 2048}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.0.0 Python/3.7.4 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://vault458ad70cc7116c0ea5.vault.azure.net/keys/rsa-key-name/create?api-version=7.0
+  response:
+    body:
+      string: '{"key":{"kid":"https://vault458ad70cc7116c0ea5.vault.azure.net/keys/rsa-key-name/3e7071ca62f9477281b6e754c05b1004","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"vVgWUdvo1vY0BoB0UiK3ByGGTEZfSH2mlD3X7OJt6v3z9q6SJm8NEpAt71385CR1pWHkaYAENLy2iDiWTi-UDxSNlOryS_dFQFgMBIJGS3W1-C5AsjJikrvcU2OONiWiu3ucqrvDLI9ssxkKN_qBTvYqMr6E212tMAKjArvnOmnqJL_MiOL9_eLr_fwxevTFIdy_oN7EtyY7TQbAUwVQoMqJHkmu0i-WCvy23rbJwqBQb0AYuMuxFfNiXLnQUfS-yjZiV9Q5UB6kybqLf8rW4QTLfhCTBXpK5bP5Vb6EHLQaPh7MnD0vSLo8uotLK6urHE4A6B3zYLT-Fnv-bLcoRQ","e":"AQAB"},"attributes":{"enabled":true,"created":1572477659,"updated":1572477659,"recoveryLevel":"Purgeable"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '658'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 30 Oct 2019 23:20:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.160.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.879
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+version: 1

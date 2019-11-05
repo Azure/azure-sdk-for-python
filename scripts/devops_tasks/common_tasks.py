@@ -31,12 +31,19 @@ from packaging.version import Version
 
 logging.getLogger().setLevel(logging.INFO)
 
-OMITTED_CI_PACKAGES = ["azure-mgmt-documentdb", "azure-servicemanagement-legacy", "azure-mgmt-scheduler"]
+OMITTED_CI_PACKAGES = [
+    "azure-mgmt-documentdb",
+    "azure-servicemanagement-legacy",
+    "azure-mgmt-scheduler"
+]
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
     "azure-cognitiveservices",
     "azure-servicefabric",
     "nspkg"
+]
+NON_MANAGEMENT_CODE_5_ALLOWED = [
+    "azure-keyvault"
 ]
 
 def log_file(file_location, is_error=False):
@@ -76,7 +83,8 @@ def clean_coverage(coverage_dir):
         else:
             raise
 
-def parse_setup_requires(setup_path):
+
+def parse_setup(setup_path):
     setup_filename = os.path.join(setup_path, 'setup.py')
     mock_setup = textwrap.dedent('''\
     def setup(*args, **kwargs):
@@ -113,7 +121,17 @@ def parse_setup_requires(setup_path):
     except KeyError as e:
         python_requires = ">=2.7"
 
+    version = kwargs['version']
+    name = kwargs['name']
+
+    return name, version, python_requires
+
+
+def parse_setup_requires(setup_path):    
+    _, _, python_requires = parse_setup(setup_path)
+
     return python_requires
+
 
 def filter_for_compatibility(package_set):
     collected_packages = []
@@ -146,7 +164,7 @@ def process_glob_string(glob_string, target_root_dir, additional_contains_filter
 
     # dedup, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     collected_directories = list(set([p for p in collected_top_level_directories if additional_contains_filter in p]))
-    
+
     # if we have individually queued this specific package, it's obvious that we want to build it specifically
     # in this case, do not honor the omission list
     if len(collected_directories) == 1:
@@ -159,7 +177,7 @@ def process_glob_string(glob_string, target_root_dir, additional_contains_filter
 
         pkg_set_ci_filtered = filter_for_compatibility(allowed_package_set)
         logging.info("Package(s) omitted by CI filter: {}".format(list(set(allowed_package_set) - set(pkg_set_ci_filtered))))
-        
+
         return sorted(pkg_set_ci_filtered)
 
 def remove_omitted_packages(collected_directories):
@@ -198,3 +216,15 @@ def run_check_call(
                 exit(1)
             else:
                 return err
+
+# This function generates code coverage parameters
+def create_code_coverage_params(parsed_args, package_name):
+    coverage_args = []
+    if parsed_args.disablecov:
+        logging.info("Code coverage disabled as per the flag(--disablecov)")
+        coverage_args.append("--no-cov")
+    else:
+        current_package_name = package_name.replace('-','.')
+        coverage_args.append("--cov={}".format(current_package_name))
+        logging.info("Code coverage is enabled for package {0}, pytest arguements: {1}".format(current_package_name, coverage_args))
+    return coverage_args

@@ -532,6 +532,7 @@ class AppendBlobOperations(object):
                 'x-ms-blob-append-offset': self._deserialize('str', response.headers.get('x-ms-blob-append-offset')),
                 'x-ms-blob-committed-block-count': self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count')),
                 'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
+                'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)

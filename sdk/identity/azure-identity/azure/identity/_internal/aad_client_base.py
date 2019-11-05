@@ -31,12 +31,12 @@ if TYPE_CHECKING:
 class AadClientBase(ABC):
     """Sans I/O methods for AAD clients wrapping MSAL's OAuth client"""
 
-    def __init__(self, client_id, tenant, **kwargs):
+    def __init__(self, tenant_id, client_id, **kwargs):
         # type: (str, str, **Any) -> None
         authority = kwargs.pop("authority", KnownAuthorities.AZURE_PUBLIC_CLOUD)
         if authority[-1] == "/":
             authority = authority[:-1]
-        token_endpoint = "https://" + "/".join((authority, tenant, "oauth2/v2.0/token"))
+        token_endpoint = "https://" + "/".join((authority, tenant_id, "oauth2/v2.0/token"))
         config = {"token_endpoint": token_endpoint}
 
         self._client = Client(server_configuration=config, client_id=client_id)

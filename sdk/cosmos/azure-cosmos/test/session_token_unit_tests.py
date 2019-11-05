@@ -1,7 +1,7 @@
 import unittest
 import pytest
 from azure.cosmos._vector_session_token import VectorSessionToken
-from azure.cosmos.errors import CosmosHttpResponseError
+from azure.cosmos.exceptions import CosmosHttpResponseError
 
 pytestmark = pytest.mark.cosmosEmulator
 

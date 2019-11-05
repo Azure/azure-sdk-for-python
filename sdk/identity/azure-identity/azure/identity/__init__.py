@@ -2,10 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from ._constants import EnvironmentVariables, KnownAuthorities
+"""Credentials for Azure SDK clients."""
+
+from ._constants import KnownAuthorities
 from ._credentials import (
     AuthorizationCodeCredential,
-
     CertificateCredential,
     ChainedTokenCredential,
     ClientSecretCredential,
@@ -27,7 +28,6 @@ __all__ = [
     "DefaultAzureCredential",
     "DeviceCodeCredential",
     "EnvironmentCredential",
-    "EnvironmentVariables",
     "InteractiveBrowserCredential",
     "KnownAuthorities",
     "ManagedIdentityCredential",

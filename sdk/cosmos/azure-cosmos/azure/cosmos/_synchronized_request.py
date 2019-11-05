@@ -23,13 +23,14 @@
 """
 
 import json
+import time
 
 from six.moves.urllib.parse import urlparse
 import six
 from azure.core.exceptions import DecodeError  # type: ignore
 
 from . import documents
-from . import errors
+from . import exceptions
 from . import http_constants
 from . import _retry_utility
 
@@ -96,7 +97,13 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout / 1000.0)
 
     # Every request tries to perform a refresh
-    global_endpoint_manager.refresh_endpoint_list(None)
+    client_timeout = kwargs.get('timeout')
+    start_time = time.time()
+    global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
+    if client_timeout is not None:
+        kwargs['timeout'] = client_timeout - (time.time() - start_time)
+        if kwargs['timeout'] <= 0:
+            raise exceptions.CosmosClientTimeoutError()
 
     if request_params.endpoint_override:
         base_url = request_params.endpoint_override
@@ -149,18 +156,18 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         return (response.stream_download(pipeline_client._pipeline), headers)
 
     data = response.body()
-    if not six.PY2:
+    if data and not six.PY2:
         # python 3 compatible: convert data from byte to unicode string
         data = data.decode("utf-8")
 
     if response.status_code == 404:
-        raise errors.CosmosResourceNotFoundError(message=data, response=response)
+        raise exceptions.CosmosResourceNotFoundError(message=data, response=response)
     if response.status_code == 409:
-        raise errors.CosmosResourceExistsError(message=data, response=response)
+        raise exceptions.CosmosResourceExistsError(message=data, response=response)
     if response.status_code == 412:
-        raise errors.CosmosAccessConditionFailedError(message=data, response=response)
+        raise exceptions.CosmosAccessConditionFailedError(message=data, response=response)
     if response.status_code >= 400:
-        raise errors.CosmosHttpResponseError(message=data, response=response)
+        raise exceptions.CosmosHttpResponseError(message=data, response=response)
 
     result = None
     if is_media:

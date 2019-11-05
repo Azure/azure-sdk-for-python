@@ -76,7 +76,8 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
     def _get_canonicalized_resource(self, request):
         uri_path = urlparse(request.http_request.url).path
         try:
-            if isinstance(request.context.transport, AioHttpTransport):
+            if isinstance(request.context.transport, AioHttpTransport) or \
+                isinstance(getattr(request.context.transport, "_transport", None), AioHttpTransport):
                 uri_path = URL(uri_path)
                 return '/' + self.account_name + str(uri_path)
         except TypeError:
@@ -117,9 +118,6 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             raise _wrap_exception(ex, AzureSigningError)
 
     def on_request(self, request):
-        if not 'content-type' in request.http_request.headers:
-            request.http_request.headers['content-type'] = 'application/xml; charset=utf-8'
-
         string_to_sign = \
             self._get_verb(request) + \
             self._get_headers(

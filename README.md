@@ -33,7 +33,7 @@ The libraries released in July preview:
 - [azure-keyvault-secrets](./sdk/keyvault/azure-keyvault-secrets)
 - [azure-identity](./sdk/identity/azure-identity)
 - [azure-storage-blob](./sdk/storage/azure-storage-blob)
-- [azure-storage-file](./sdk/storage/azure-storage-file)
+- [azure-storage-file](./sdk/storage/azure-storage-file-share)
 - [azure-storage-queue](./sdk/storage/azure-storage-queue)
 
 >NOTE: If you need to ensure your code is ready for production use one of the stable libraries.

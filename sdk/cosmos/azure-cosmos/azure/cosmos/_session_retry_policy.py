@@ -62,7 +62,7 @@ class _SessionRetryPolicy(object):
     def ShouldRetry(self, _exception):
         """Returns true if should retry based on the passed-in exception.
 
-        :param (errors.CosmosHttpResponseError instance) exception:
+        :param (exceptions.CosmosHttpResponseError instance) exception:
 
         :rtype:
             boolean

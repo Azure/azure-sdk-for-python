@@ -54,7 +54,7 @@ sequence number and the timestamp of when it was enqueued.
 The easiest way to create a `ContainerClient` is to use a connection string.
 ```python
 from azure.storage.blob.aio import ContainerClient
-container_client = ContainerClient.from_connection_string("my_storageacount_connection_string", container="mycontainer")
+container_client = ContainerClient.from_connection_string("my_storageacount_connection_string", "mycontainer")
 ```
 For other ways of creating a `ContainerClient`, go to [Blob Storage library](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob) for more details.
 
@@ -88,7 +88,7 @@ class MyPartitionProcessor(PartitionProcessor):
 
 async def main():
     eventhub_client = EventHubClient.from_connection_string(eventhub_connection_str, receive_timeout=5, retry_total=3)
-    storage_container_client = ContainerClient.from_connection_string(storage_container_connection_str, container=storage_container_name)
+    storage_container_client = ContainerClient.from_connection_string(storage_container_connection_str, storage_container_name)
     partition_manager = BlobPartitionManager(storage_container_client)  # use the BlobPartitonManager to save
     event_processor = EventProcessor(eventhub_client, "$default", MyPartitionProcessor, partition_manager)    
     async with storage_container_client:

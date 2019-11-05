@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: PUT
-    uri: https://vaulte5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
+    uri: https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 18 Sep 2019 20:49:49 GMT
+      - Wed, 16 Oct 2019 20:52:17 GMT
       expires:
       - '-1'
       pragma:
@@ -45,11 +45,11 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - addr=131.107.174.72;act_addr_fam=InterNetwork;
+      - addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.1.0.878
+      - 1.1.0.879
       x-powered-by:
       - ASP.NET
     status:
@@ -71,22 +71,22 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: PUT
-    uri: https://vaulte5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
+    uri: https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vaulte5f213cb.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
+      string: '{"id":"https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
         Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '221'
+      - '231'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 18 Sep 2019 20:49:49 GMT
+      - Wed, 16 Oct 2019 20:52:17 GMT
       expires:
       - '-1'
       pragma:
@@ -100,11 +100,11 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - addr=131.107.174.72;act_addr_fam=InterNetwork;
+      - addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.1.0.878
+      - 1.1.0.879
       x-powered-by:
       - ASP.NET
     status:
@@ -120,22 +120,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://vaulte5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
+    uri: https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vaulte5f213cb.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
+      string: '{"id":"https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
         Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '221'
+      - '231'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 18 Sep 2019 20:49:49 GMT
+      - Wed, 16 Oct 2019 20:52:18 GMT
       expires:
       - '-1'
       pragma:
@@ -149,11 +149,11 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - addr=131.107.174.72;act_addr_fam=InterNetwork;
+      - addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.1.0.878
+      - 1.1.0.879
       x-powered-by:
       - ASP.NET
     status:
@@ -171,22 +171,22 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: DELETE
-    uri: https://vaulte5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
+    uri: https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vaulte5f213cb.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
+      string: '{"id":"https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
         Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '221'
+      - '231'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 18 Sep 2019 20:49:49 GMT
+      - Wed, 16 Oct 2019 20:52:18 GMT
       expires:
       - '-1'
       pragma:
@@ -200,11 +200,11 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - addr=131.107.174.72;act_addr_fam=InterNetwork;
+      - addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.1.0.878
+      - 1.1.0.879
       x-powered-by:
       - ASP.NET
     status:
