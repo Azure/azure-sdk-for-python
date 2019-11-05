@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.storage.blob._shared import encode_base64
-from azure.storage.file.datalake._generated.models import ModifiedAccessConditions, PathHTTPHeaders, \
-    SourceModifiedAccessConditions
+from ._shared import encode_base64
+from ._generated.models import ModifiedAccessConditions, PathHTTPHeaders, \
+    SourceModifiedAccessConditions, LeaseAccessConditions
 
 
 def convert_dfs_url_to_blob_url(dfs_account_url):
@@ -55,6 +55,15 @@ def get_path_http_headers(content_settings):
         content_disposition=content_settings.content_disposition
     )
     return path_headers
+
+
+def get_access_conditions(lease):
+    # type: (Optional[Union[BlobLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
+    try:
+        lease_id = lease.id # type: ignore
+    except AttributeError:
+        lease_id = lease  # type: ignore
+    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
 
 
 def get_lease_id(lease):

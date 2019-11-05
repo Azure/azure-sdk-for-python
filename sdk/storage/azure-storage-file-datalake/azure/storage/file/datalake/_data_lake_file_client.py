@@ -8,14 +8,52 @@ import six
 from ._shared.base_client import parse_connection_str
 from ._shared.request_handlers import get_length, read_length
 from ._shared.response_handlers import return_response_headers
-from azure.storage.blob._lease import get_access_conditions
 from ._generated.models import StorageErrorException
 from ._path_client import PathClient
-from ._serialize import get_mod_conditions, get_path_http_headers
+from ._serialize import get_mod_conditions, get_path_http_headers, get_access_conditions
 from ._models import FileProperties
 
 
 class DataLakeFileClient(PathClient):
+    """A client to interact with the DataLake file, even if the file may not yet exist.
+
+    :ivar str url:
+        The full endpoint URL to the file system, including SAS token if used.
+    :ivar str primary_endpoint:
+        The full primary endpoint URL.
+    :ivar str primary_hostname:
+        The hostname of the primary endpoint.
+    :param str account_url:
+        The URI to the storage account.
+    :param file_system_name:
+        The file system for the directory or files.
+    :type file_system_name: str
+    :param file_path:
+        The whole file path, so that to interact with a specific file.
+        eg. "{directory}/{subdirectory}/{file}"
+    :type file_path: str
+    :param credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string, and account
+        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the URL already has a SAS token, specifying an explicit credential will take priority.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/test_datalake_authentication_samples.py
+            :start-after: [START create_datalake_service_client]
+            :end-before: [END create_datalake_service_client]
+            :language: python
+            :dedent: 8
+            :caption: Creating the DataLakeServiceClient with account url and credential.
+
+        .. literalinclude:: ../samples/test_datalake_authentication_samples.py
+            :start-after: [START create_datalake_service_client_oauth]
+            :end-before: [END create_datalake_service_client_oauth]
+            :language: python
+            :dedent: 8
+            :caption: Creating the DataLakeServiceClient with Azure Identity credentials.
+    """
     def __init__(
         self, account_url,  # type: str
         file_system_name,  # type: str
@@ -67,7 +105,7 @@ class DataLakeFileClient(PathClient):
                     **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
-        Create file
+        Create a new file.
 
         :param ~azure.storage.file.datalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
@@ -208,7 +246,7 @@ class DataLakeFileClient(PathClient):
         if isinstance(data, bytes):
             data = data[:length]
 
-        access_conditions = get_access_conditions(kwargs.pop('lease', None)) # TODO: move the method to a right place
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
 
         options = {
             'body': data,
@@ -258,7 +296,7 @@ class DataLakeFileClient(PathClient):
     def _flush_data_options(offset, content_settings=None, retain_uncommitted_data=False, **kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
 
-        access_conditions = get_access_conditions(kwargs.pop('lease', None)) # TODO: move the method to a right place
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
 
         path_http_headers = None

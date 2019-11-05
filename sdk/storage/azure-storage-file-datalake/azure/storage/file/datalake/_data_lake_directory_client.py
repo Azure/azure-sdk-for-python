@@ -10,6 +10,47 @@ from ._path_client import PathClient
 
 
 class DataLakeDirectoryClient(PathClient):
+    """A client to interact with the DataLake directory, even if the directory may not yet exist.
+
+    For operations relating to a specific subdirectory or file under the directory, a directory client or file client
+    can be retrieved using the :func:`~get_sub_directory_client` or :func:`~get_file_client` functions.
+
+    :ivar str url:
+        The full endpoint URL to the file system, including SAS token if used.
+    :ivar str primary_endpoint:
+        The full primary endpoint URL.
+    :ivar str primary_hostname:
+        The hostname of the primary endpoint.
+    :param str account_url:
+        The URI to the storage account.
+    :param file_system_name:
+        The file system for the directory or files.
+    :type file_system_name: str
+    :param directory_name:
+        The whole path of the directory. eg. {directory under file system}/{directory to interact with}
+    :type directory_name: str
+    :param credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string, and account
+        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the URL already has a SAS token, specifying an explicit credential will take priority.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/test_datalake_authentication_samples.py
+            :start-after: [START create_datalake_service_client]
+            :end-before: [END create_datalake_service_client]
+            :language: python
+            :dedent: 8
+            :caption: Creating the DataLakeServiceClient with account url and credential.
+
+        .. literalinclude:: ../samples/test_datalake_authentication_samples.py
+            :start-after: [START create_datalake_service_client_oauth]
+            :end-before: [END create_datalake_service_client_oauth]
+            :language: python
+            :dedent: 8
+            :caption: Creating the DataLakeServiceClient with Azure Identity credentials.
+    """
     def __init__(
         self, account_url,  # type: str
         file_system_name,  # type: str
@@ -19,10 +60,6 @@ class DataLakeDirectoryClient(PathClient):
     ):
         super(DataLakeDirectoryClient, self).__init__(account_url, file_system_name, directory_name,
                                                       credential=credential, **kwargs)
-
-    def generate_shared_access_signature(self):
-        # ???
-        pass
 
     @classmethod
     def from_connection_string(
@@ -62,16 +99,17 @@ class DataLakeDirectoryClient(PathClient):
                          **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
-        Create directory
+        Create a new directory.
 
         :param ~azure.storage.file.datalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :keyword ~azure.storage.file.datalake.DataLakeLeaseClient or str lease:
+        :keyword lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
+        :paramtype lease: ~azure.storage.file.datalake.DataLakeLeaseClient or str
         :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
             When creating a file or directory and the parent folder does not have a default ACL,
             the umask restricts the permissions of the file or directory to be created.
@@ -286,7 +324,7 @@ class DataLakeDirectoryClient(PathClient):
                              **kwargs):
         # type: (...) -> DataLakeDirectoryClient
         """
-        Create subdirectory
+        Create a subdirectory and return the subdirectory client to be interacted with.
 
         :param sub_directory:
             The directory with which to interact. This can either be the name of the directory,
@@ -389,7 +427,7 @@ class DataLakeDirectoryClient(PathClient):
                     **kwargs):
         # type: (...) -> DataLakeFileClient
         """
-        Create file
+        Create a new file and return the file client to be interacted with.
 
         :param file:
             The file with which to interact. This can either be the name of the file,
@@ -503,9 +541,13 @@ class DataLakeDirectoryClient(PathClient):
                 :dedent: 12
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        directory = self.path_name.rstrip('/') + "/" + sub_directory
+        try:
+            subdir_path = sub_directory.name
+        except AttributeError:
+            subdir_path = self.path_name + '/' + sub_directory
+
         return DataLakeDirectoryClient(
-            self.url, self.file_system_name, directory, credential=self._raw_credential,
+            self.url, self.file_system_name, subdir_path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,

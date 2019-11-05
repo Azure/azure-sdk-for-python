@@ -24,11 +24,11 @@ from ._generated import DataLakeStorageClient
 
 
 class FileSystemClient(StorageAccountHostsMixin):
-    """A client to interact with a specific file system, although that file system
+    """A client to interact with a specific file system, even if that file system
     may not yet exist.
 
     For operations relating to a specific directory or file within this file system, a directory client or file client
-    can be retrieved using the :func:`~get_directory_client` function.
+    can be retrieved using the :func:`~get_directory_client` or :func:`~get_file_client` functions.
 
     :ivar str url:
         The full endpoint URL to the file system, including SAS token if used.

@@ -16,12 +16,10 @@ from azure.storage.blob import BlobClient
 from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._shared.response_handlers import return_response_headers
 from ._serialize import convert_dfs_url_to_blob_url, get_mod_conditions, \
-    get_path_http_headers, add_metadata_headers, get_lease_id, get_source_mod_conditions
+    get_path_http_headers, add_metadata_headers, get_lease_id, get_source_mod_conditions, get_access_conditions
 from ._models import LocationMode, DirectoryProperties
 from ._generated import DataLakeStorageClient
 from ._data_lake_lease import DataLakeLeaseClient
-
-from azure.storage.blob._lease import get_access_conditions
 from ._generated.models import StorageErrorException
 
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
@@ -92,7 +90,7 @@ class PathClient(StorageAccountHostsMixin):
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
-        access_conditions = get_access_conditions(kwargs.pop('lease', None)) # TODO: move the method to a right place
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
 
         path_http_headers = None
@@ -182,7 +180,7 @@ class PathClient(StorageAccountHostsMixin):
     def _delete_path_options(self, **kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
 
-        access_conditions = get_access_conditions(kwargs.pop('lease', None)) # TODO: move the method to a right place
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
 
         options = {
@@ -236,7 +234,7 @@ class PathClient(StorageAccountHostsMixin):
     def _set_access_control_options(self, owner=None, group=None, permissions=None, acl=None, **kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
 
-        access_conditions = get_access_conditions(kwargs.pop('lease', None)) # TODO: move the method to a right place
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
 
         options = {
@@ -316,7 +314,7 @@ class PathClient(StorageAccountHostsMixin):
                                     **kwargs):
         # type: (...) -> Dict[str, Any]
 
-        access_conditions = get_access_conditions(kwargs.pop('lease', None)) # TODO: move the method to a right place
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
 
         options = {
@@ -382,7 +380,7 @@ class PathClient(StorageAccountHostsMixin):
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
-        access_conditions = get_access_conditions(kwargs.pop('lease', None)) # TODO: move the method to a right place
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         source_lease_id = get_lease_id(kwargs.pop('source_lease', None))
         mod_conditions = get_mod_conditions(kwargs)
         source_mod_conditions = get_source_mod_conditions(kwargs)

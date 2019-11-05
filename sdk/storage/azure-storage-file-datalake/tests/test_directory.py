@@ -173,18 +173,6 @@ class DirectoryTest(StorageTestCase):
         self.assertIsNotNone(response)
 
     @record
-    def test_get_properties(self):
-        # Arrange
-        directory_name = self._get_directory_reference()
-        metadata = {'hello': 'world', 'number': '42'}
-        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
-        directory_client.create_directory(metadata=metadata)
-
-        properties = directory_client.get_directory_properties()
-        # Assert
-        self.assertTrue(properties)
-
-    @record
     def test_rename_from(self):
         metadata = {'hello': 'world', 'number': '42'}
         directory_name = self._get_directory_reference()

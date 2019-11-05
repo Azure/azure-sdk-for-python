@@ -4,4 +4,4 @@ include azure/storage/__init__.py
 include azure/storage/file/__init__.py
 include LICENSE.txt
 recursive-include tests *.py *.yaml
-recursive-include samples *.py
+recursive-include samples *.py *.md
