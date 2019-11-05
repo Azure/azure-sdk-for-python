@@ -340,7 +340,7 @@ class TagsOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/tagNames'}
 
     def resource_create(
-            self, resource_group_name, resource_provider_namespace, resource_type, resource_name, api_version, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, resource_type, resource_name, api_version, properties=None, custom_headers=None, raw=False, **operation_config):
         """Creates multiple tags.
 
         :param resource_group_name: The name of the resource group for the
@@ -355,9 +355,9 @@ class TagsOperations(object):
         :type resource_name: str
         :param api_version: The API version to use for the operation.
         :type api_version: str
-        :param tags: array of tag objects passing in the request
-        :type tags:
-         list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag]
+        :param properties: array of tag objects passing in the request.
+        :type properties:
+         ~azure.mgmt.resource.resources.v2019_10_01.models.TagArray
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -368,7 +368,7 @@ class TagsOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.TagRequest(tags=tags)
+        parameters = models.TagRequest(properties=properties)
 
         # Construct URL
         url = self.resource_create.metadata['url']
@@ -420,7 +420,7 @@ class TagsOperations(object):
     resource_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}/providers/Microsoft.Resources/tags/default'}
 
     def resource_update(
-            self, resource_group_name, resource_provider_namespace, resource_type, resource_name, api_version, operation=None, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, resource_type, resource_name, api_version, operation=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """Update multiple tags: if the tagKey exists, update tagValue with the
         new value; if not, insert the new record.
 
@@ -440,9 +440,9 @@ class TagsOperations(object):
          values include: 'Replace', 'Merge', 'Delete'
         :type operation: str or
          ~azure.mgmt.resource.resources.v2019_10_01.models.enum
-        :param tags: array of tag objects passing in the request
-        :type tags:
-         list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag]
+        :param properties: array of tag objects passing in the request.
+        :type properties:
+         ~azure.mgmt.resource.resources.v2019_10_01.models.TagArray
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -453,7 +453,7 @@ class TagsOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.TagPatchRequest(operation=operation, tags=tags)
+        parameters = models.TagPatchRequest(operation=operation, properties=properties)
 
         # Construct URL
         url = self.resource_update.metadata['url']
@@ -639,14 +639,14 @@ class TagsOperations(object):
     resource_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}/providers/Microsoft.Resources/tags/default'}
 
     def subscription_create(
-            self, api_version, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, api_version, properties=None, custom_headers=None, raw=False, **operation_config):
         """Creates multiple tags for subscription.
 
         :param api_version: The API version to use for the operation.
         :type api_version: str
-        :param tags: array of tag objects passing in the request
-        :type tags:
-         list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag]
+        :param properties: array of tag objects passing in the request.
+        :type properties:
+         ~azure.mgmt.resource.resources.v2019_10_01.models.TagArray
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -657,7 +657,7 @@ class TagsOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.TagRequest(tags=tags)
+        parameters = models.TagRequest(properties=properties)
 
         # Construct URL
         url = self.subscription_create.metadata['url']
@@ -705,7 +705,7 @@ class TagsOperations(object):
     subscription_create.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/tags/default'}
 
     def subscription_update(
-            self, api_version, operation=None, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, api_version, operation=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """Update multiple tags: if the tagKey exists, update tagValue with the
         new value; if not, insert the new record.
 
@@ -715,9 +715,9 @@ class TagsOperations(object):
          values include: 'Replace', 'Merge', 'Delete'
         :type operation: str or
          ~azure.mgmt.resource.resources.v2019_10_01.models.enum
-        :param tags: array of tag objects passing in the request
-        :type tags:
-         list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag]
+        :param properties: array of tag objects passing in the request.
+        :type properties:
+         ~azure.mgmt.resource.resources.v2019_10_01.models.TagArray
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -728,7 +728,7 @@ class TagsOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.TagPatchRequest(operation=operation, tags=tags)
+        parameters = models.TagPatchRequest(operation=operation, properties=properties)
 
         # Construct URL
         url = self.subscription_update.metadata['url']

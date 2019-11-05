@@ -1485,6 +1485,26 @@ class Tag(Model):
         self.tag_value = tag_value
 
 
+class TagArray(Model):
+    """object contains array of tag items.
+
+    :param tags:
+    :type tags: list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag]
+    """
+
+    _validation = {
+        'tags': {'max_items': 50},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '[Tag]'},
+    }
+
+    def __init__(self, *, tags=None, **kwargs) -> None:
+        super(TagArray, self).__init__(**kwargs)
+        self.tags = tags
+
+
 class TagCount(Model):
     """Tag count.
 
@@ -1550,35 +1570,37 @@ class TagPatchRequest(Model):
      include: 'Replace', 'Merge', 'Delete'
     :type operation: str or
      ~azure.mgmt.resource.resources.v2019_10_01.models.enum
-    :param tags: array of tag objects passing in the request
-    :type tags: list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag]
+    :param properties: array of tag objects passing in the request.
+    :type properties:
+     ~azure.mgmt.resource.resources.v2019_10_01.models.TagArray
     """
 
     _attribute_map = {
         'operation': {'key': 'operation', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '[Tag]'},
+        'properties': {'key': 'properties', 'type': 'TagArray'},
     }
 
-    def __init__(self, *, operation=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, operation=None, properties=None, **kwargs) -> None:
         super(TagPatchRequest, self).__init__(**kwargs)
         self.operation = operation
-        self.tags = tags
+        self.properties = properties
 
 
 class TagRequest(Model):
     """Tag Request for Put, Get, Delete operations.
 
-    :param tags: array of tag objects passing in the request
-    :type tags: list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag]
+    :param properties: array of tag objects passing in the request.
+    :type properties:
+     ~azure.mgmt.resource.resources.v2019_10_01.models.TagArray
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '[Tag]'},
+        'properties': {'key': 'properties', 'type': 'TagArray'},
     }
 
-    def __init__(self, *, tags=None, **kwargs) -> None:
+    def __init__(self, *, properties=None, **kwargs) -> None:
         super(TagRequest, self).__init__(**kwargs)
-        self.tags = tags
+        self.properties = properties
 
 
 class TagResponse(Model):
@@ -1587,38 +1609,36 @@ class TagResponse(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: The ID of the tag response.
     :vartype id: str
     :ivar name: The name of the tag response.
     :vartype name: str
     :ivar type: The type of the tag response.
     :vartype type: object
-    :param tags: Required. array of tag objects returned in the response body
-    :type tags: list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag]
+    :param properties: array of tag objects returned in the response body.
+    :type properties:
+     ~azure.mgmt.resource.resources.v2019_10_01.models.TagArray
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'tags': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'object'},
-        'tags': {'key': 'tags', 'type': '[Tag]'},
+        'properties': {'key': 'properties', 'type': 'TagArray'},
     }
 
-    def __init__(self, *, tags, **kwargs) -> None:
+    def __init__(self, *, properties=None, **kwargs) -> None:
         super(TagResponse, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.tags = tags
+        self.properties = properties
 
 
 class TagValue(Model):

@@ -54,6 +54,7 @@ try:
     from ._models_py3 import Sku
     from ._models_py3 import SubResource
     from ._models_py3 import Tag
+    from ._models_py3 import TagArray
     from ._models_py3 import TagCount
     from ._models_py3 import TagDetails
     from ._models_py3 import TagPatchRequest
@@ -111,6 +112,7 @@ except (SyntaxError, ImportError):
     from ._models import Sku
     from ._models import SubResource
     from ._models import Tag
+    from ._models import TagArray
     from ._models import TagCount
     from ._models import TagDetails
     from ._models import TagPatchRequest
@@ -184,6 +186,7 @@ __all__ = [
     'Sku',
     'SubResource',
     'Tag',
+    'TagArray',
     'TagCount',
     'TagDetails',
     'TagPatchRequest',
