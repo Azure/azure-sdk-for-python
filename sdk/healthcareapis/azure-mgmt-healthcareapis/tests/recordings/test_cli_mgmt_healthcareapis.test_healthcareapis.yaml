@@ -1,0 +1,3557 @@
+interactions:
+- request:
+    body: '{"name": "myhcasrvanxy", "type": "Microsoft.HealthcareApis/services"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '69'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/checkNameAvailability?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"nameAvailable":true}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '22'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:46:25 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - fa4dd19f4a2d854bbf7d2893ef7de314
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"kind": "fhir-R4", "location": "westus2", "properties": {"accessPolicies":
+      [{"objectId": "c487e7d1-3210-41a3-8ccc-e9372b78da47"}, {"objectId": "5b307da8-43d4-492b-8b66-b0294ade872f"}],
+      "cosmosDbConfiguration": {"offerThroughput": 1000}, "authenticationConfiguration":
+      {"authority": "https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc",
+      "audience": "https://azurehealthcareapis.com", "smartProxyEnabled": true}, "corsConfiguration":
+      {"origins": ["*"], "headers": ["*"], "methods": ["DELETE", "GET", "OPTIONS",
+      "PATCH", "POST", "PUT"], "maxAge": 1440, "allowCredentials": false}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '599'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myhcasrvanxy?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myhcasrvanxy","name":"myhcasrvanxy","type":"Microsoft.HealthcareApis/services","etag":"\"21006231-0000-0400-0000-5dc0b8560000\"","location":"westus2","kind":"fhir-R4","properties":{"secondaryLocations":null,"accessPolicies":[{"objectId":"c487e7d1-3210-41a3-8ccc-e9372b78da47"},{"objectId":"5b307da8-43d4-492b-8b66-b0294ade872f"}],"cosmosDbConfiguration":{"offerThroughput":1000},"authenticationConfiguration":{"authority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","audience":"https://azurehealthcareapis.com","smartProxyEnabled":true},"corsConfiguration":{"origins":["*"],"headers":["*"],"methods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"maxAge":1440,"allowCredentials":false},"provisioningState":"Creating"}}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624?api-version=2018-08-20-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '924'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:46:31 GMT
+      etag:
+      - '"21006231-0000-0400-0000-5dc0b8560000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+      x-request-id:
+      - 076a2dd59c25894895792f54c20e96ad
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624","name":"b670872b-726d-4f02-b22d-aab02b318624","status":"Running","startTime":"2019-11-04T23:46:30.4878447Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"51d18212-ff5d-11e9-818a-0242ac11000a","loggingRootId":"7155c5ba-2029-4318-9ec4-332124499c83","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:47:15 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 5c9feda379ded14e9b2f1d5b45ff7ace
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624","name":"b670872b-726d-4f02-b22d-aab02b318624","status":"Running","startTime":"2019-11-04T23:46:30.4878447Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"51d18212-ff5d-11e9-818a-0242ac11000a","loggingRootId":"7155c5ba-2029-4318-9ec4-332124499c83","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:47:44 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 2e4171aa1fbd174c89574754ad03adf0
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624","name":"b670872b-726d-4f02-b22d-aab02b318624","status":"Running","startTime":"2019-11-04T23:46:30.4878447Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"51d18212-ff5d-11e9-818a-0242ac11000a","loggingRootId":"7155c5ba-2029-4318-9ec4-332124499c83","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:48:15 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 9888c4f73ed3a347a5163ee28ecb1ecb
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624","name":"b670872b-726d-4f02-b22d-aab02b318624","status":"Running","startTime":"2019-11-04T23:46:30.4878447Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"51d18212-ff5d-11e9-818a-0242ac11000a","loggingRootId":"7155c5ba-2029-4318-9ec4-332124499c83","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:48:46 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - e2db32a6b9cb034cbbc0e0dbc35a04a2
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624","name":"b670872b-726d-4f02-b22d-aab02b318624","status":"Running","startTime":"2019-11-04T23:46:30.4878447Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"51d18212-ff5d-11e9-818a-0242ac11000a","loggingRootId":"7155c5ba-2029-4318-9ec4-332124499c83","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:49:17 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - b5a61fee5c15cb4c8755c46850993bb5
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624","name":"b670872b-726d-4f02-b22d-aab02b318624","status":"Running","startTime":"2019-11-04T23:46:30.4878447Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"51d18212-ff5d-11e9-818a-0242ac11000a","loggingRootId":"7155c5ba-2029-4318-9ec4-332124499c83","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:49:47 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 15a0d968f73e8743958b4e4e284e26a6
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624","name":"b670872b-726d-4f02-b22d-aab02b318624","status":"Running","startTime":"2019-11-04T23:46:30.4878447Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"51d18212-ff5d-11e9-818a-0242ac11000a","loggingRootId":"7155c5ba-2029-4318-9ec4-332124499c83","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:50:18 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 4c5c64143c59fa4980e54e3b5ef1ba29
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624","name":"b670872b-726d-4f02-b22d-aab02b318624","status":"Running","startTime":"2019-11-04T23:46:30.4878447Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"51d18212-ff5d-11e9-818a-0242ac11000a","loggingRootId":"7155c5ba-2029-4318-9ec4-332124499c83","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:50:48 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - c75fb2f9f8084342ab61685148033d8f
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624","name":"b670872b-726d-4f02-b22d-aab02b318624","status":"Running","startTime":"2019-11-04T23:46:30.4878447Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"51d18212-ff5d-11e9-818a-0242ac11000a","loggingRootId":"7155c5ba-2029-4318-9ec4-332124499c83","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:51:19 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 984ae9410ef0184b981bd36780cdfd10
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624","name":"b670872b-726d-4f02-b22d-aab02b318624","status":"Running","startTime":"2019-11-04T23:46:30.4878447Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"51d18212-ff5d-11e9-818a-0242ac11000a","loggingRootId":"7155c5ba-2029-4318-9ec4-332124499c83","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:51:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 01f2d36d7816a145a16e32443029cd2e
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624","name":"b670872b-726d-4f02-b22d-aab02b318624","status":"Running","startTime":"2019-11-04T23:46:30.4878447Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"51d18212-ff5d-11e9-818a-0242ac11000a","loggingRootId":"7155c5ba-2029-4318-9ec4-332124499c83","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:52:20 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 9a89b65ace18594dbc829f85de172fea
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624","name":"b670872b-726d-4f02-b22d-aab02b318624","status":"Running","startTime":"2019-11-04T23:46:30.4878447Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"51d18212-ff5d-11e9-818a-0242ac11000a","loggingRootId":"7155c5ba-2029-4318-9ec4-332124499c83","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:52:50 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 165948d6eec30a44a731afee30714818
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/b670872b-726d-4f02-b22d-aab02b318624","name":"b670872b-726d-4f02-b22d-aab02b318624","status":"Succeeded","startTime":"2019-11-04T23:46:30.4878447Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"51d18212-ff5d-11e9-818a-0242ac11000a","loggingRootId":"7155c5ba-2029-4318-9ec4-332124499c83","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1295'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:53:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - fd60f96bc25bda4a9c728c4b89eca855
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myhcasrvanxy?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myhcasrvanxy","name":"myhcasrvanxy","type":"Microsoft.HealthcareApis/services","etag":"\"2100a939-0000-0400-0000-5dc0b9f10000\"","location":"westus2","kind":"fhir-R4","tags":{},"properties":{"secondaryLocations":null,"accessPolicies":[{"objectId":"c487e7d1-3210-41a3-8ccc-e9372b78da47"},{"objectId":"5b307da8-43d4-492b-8b66-b0294ade872f"}],"cosmosDbConfiguration":{"offerThroughput":1000},"authenticationConfiguration":{"authority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","audience":"https://azurehealthcareapis.com","smartProxyEnabled":true},"corsConfiguration":{"origins":["*"],"headers":["*"],"methods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"maxAge":1440,"allowCredentials":false},"provisioningState":"Succeeded"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '935'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:53:24 GMT
+      etag:
+      - '"2100a939-0000-0400-0000-5dc0b9f10000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 5baaccf9b2b8674aa59e52727e8a4cfc
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myhcasrvanxy?api-version=2018-08-20-preview
+  response:
+    body:
+      string: ''
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Mon, 04 Nov 2019 23:53:35 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview&operationResultResponseType=Location
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+      x-request-id:
+      - 3429811c06704043a862dd4734c9bd1f
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:54:06 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - bc745256ff1c7745947e859fb1164d4a
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:54:36 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 4c643a71202d654497ee26ed307b18ec
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:55:07 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - fbd439a86ec6014abce2fee4995154c5
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:55:37 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - e4344fa94137af48bedc5019fb9deaa4
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:56:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - fa0bae26debfd347ad9b3b11c6d423f6
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:56:39 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 3738550cab9eb84a8239df8c07bd0ea0
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:57:09 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 763c9626b384744ead660d29e044029f
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:57:39 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 77053ea7bfa4c448b08ed1fd57eb8058
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:58:10 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - a3f73e3baad5fc4e91b7418f8eb1515f
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:58:42 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - a6768f7ed97c5b4486401450a54be151
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:59:13 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 8bb851b008cc484f80a55717c16b0934
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 04 Nov 2019 23:59:43 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 6e0bea82b10c5543b2d0850bb481e392
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:00:14 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 8cd1b82f43c0a3469ee80d1b3e8317c1
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:00:46 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - e937570cb681be43a06229529113cc40
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:01:17 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - e63d3d2284aa9e4a9fcdb0504996380a
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:01:47 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 6f58e93f887fba4d9135c76116a9343f
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:02:17 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 002fd8f594bff349bd77420ecc556fb1
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:02:48 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 3bc704d8971d0b41a333f4aff6c1ce90
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Running","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1293'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:03:19 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - e96d8868a038c845b553f5f6d6dd10f5
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/81749910-9a94-4d9d-8c86-8299f432c029","name":"81749910-9a94-4d9d-8c86-8299f432c029","status":"Succeeded","startTime":"2019-11-04T23:53:35.1037582Z","properties":{"accountId":"lcoq3samb0xn6uca1mpfq2185","accountName":"myhcasrvanxy","loggingParentId":"4b47acb8-ff5e-11e9-818a-0242ac11000a","loggingRootId":"7ff41b2d-3942-4daf-99c5-166487b451f0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47","5b307da8-43d4-492b-8b66-b0294ade872f"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":["*"],"corsHeaders":["*"],"corsMethods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"corsMaxAge":1440,"corsAllowCredentials":false,"smartProxyEnabled":true,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1295'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:03:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - c08e1668244f9746a051a15577cf3d64
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"kind": "fhir-R4", "location": "westus2", "properties": {"accessPolicies":
+      [{"objectId": "c487e7d1-3210-41a3-8ccc-e9372b78da47"}]}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '132'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myhcasrvanxy?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myhcasrvanxy","name":"myhcasrvanxy","type":"Microsoft.HealthcareApis/services","etag":"\"2100d545-0000-0400-0000-5dc0bc6b0000\"","location":"westus2","kind":"fhir-R4","properties":{"secondaryLocations":null,"accessPolicies":[{"objectId":"c487e7d1-3210-41a3-8ccc-e9372b78da47"}],"cosmosDbConfiguration":{"offerThroughput":1000},"authenticationConfiguration":{"authority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","audience":"https://azurehealthcareapis.com","smartProxyEnabled":false},"corsConfiguration":{"origins":[],"headers":[],"methods":[],"maxAge":null,"allowCredentials":false},"provisioningState":"Creating"}}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2?api-version=2018-08-20-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '822'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:03:56 GMT
+      etag:
+      - '"2100d545-0000-0400-0000-5dc0bc6b0000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+      x-request-id:
+      - e3d4cf442a601c46833e1f34bc33353a
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2","name":"d894fff4-fd37-475e-ba00-cc6ea3aeefa2","status":"Running","startTime":"2019-11-05T00:03:55.9453057Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"bfc88e12-ff5f-11e9-818a-0242ac11000a","loggingRootId":"c4229a72-2e54-4283-9b96-71fc168d0ac0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:04:27 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 2f9d8f64455b5c4686fc0899ec0dcc7f
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2","name":"d894fff4-fd37-475e-ba00-cc6ea3aeefa2","status":"Running","startTime":"2019-11-05T00:03:55.9453057Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"bfc88e12-ff5f-11e9-818a-0242ac11000a","loggingRootId":"c4229a72-2e54-4283-9b96-71fc168d0ac0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:04:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 9ebaf7692858244cb767aeafea12a7f1
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2","name":"d894fff4-fd37-475e-ba00-cc6ea3aeefa2","status":"Running","startTime":"2019-11-05T00:03:55.9453057Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"bfc88e12-ff5f-11e9-818a-0242ac11000a","loggingRootId":"c4229a72-2e54-4283-9b96-71fc168d0ac0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:05:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - f69fcdfe92e8ab41a63c03d5b764ed5a
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2","name":"d894fff4-fd37-475e-ba00-cc6ea3aeefa2","status":"Running","startTime":"2019-11-05T00:03:55.9453057Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"bfc88e12-ff5f-11e9-818a-0242ac11000a","loggingRootId":"c4229a72-2e54-4283-9b96-71fc168d0ac0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:05:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - f3b0800af0e64547b3d3b61a9e0ece6a
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2","name":"d894fff4-fd37-475e-ba00-cc6ea3aeefa2","status":"Running","startTime":"2019-11-05T00:03:55.9453057Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"bfc88e12-ff5f-11e9-818a-0242ac11000a","loggingRootId":"c4229a72-2e54-4283-9b96-71fc168d0ac0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:06:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 0ece6a0f544ed14181a38698bffb5acd
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2","name":"d894fff4-fd37-475e-ba00-cc6ea3aeefa2","status":"Running","startTime":"2019-11-05T00:03:55.9453057Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"bfc88e12-ff5f-11e9-818a-0242ac11000a","loggingRootId":"c4229a72-2e54-4283-9b96-71fc168d0ac0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:06:59 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 8576b3ae005c8b42a05d291059619679
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2","name":"d894fff4-fd37-475e-ba00-cc6ea3aeefa2","status":"Running","startTime":"2019-11-05T00:03:55.9453057Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"bfc88e12-ff5f-11e9-818a-0242ac11000a","loggingRootId":"c4229a72-2e54-4283-9b96-71fc168d0ac0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:07:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - aaa9bebd4229e84498d2262896015b96
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2","name":"d894fff4-fd37-475e-ba00-cc6ea3aeefa2","status":"Running","startTime":"2019-11-05T00:03:55.9453057Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"bfc88e12-ff5f-11e9-818a-0242ac11000a","loggingRootId":"c4229a72-2e54-4283-9b96-71fc168d0ac0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:08:00 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 4c1d9a5b8ee2324f9669ae919de76bc2
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2","name":"d894fff4-fd37-475e-ba00-cc6ea3aeefa2","status":"Running","startTime":"2019-11-05T00:03:55.9453057Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"bfc88e12-ff5f-11e9-818a-0242ac11000a","loggingRootId":"c4229a72-2e54-4283-9b96-71fc168d0ac0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:08:31 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - d40f5091d4308247b1b87a3ee544f0a5
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2","name":"d894fff4-fd37-475e-ba00-cc6ea3aeefa2","status":"Running","startTime":"2019-11-05T00:03:55.9453057Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"bfc88e12-ff5f-11e9-818a-0242ac11000a","loggingRootId":"c4229a72-2e54-4283-9b96-71fc168d0ac0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:09:01 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 31c4b0db774e914c8bbef21b850bf5fe
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2","name":"d894fff4-fd37-475e-ba00-cc6ea3aeefa2","status":"Running","startTime":"2019-11-05T00:03:55.9453057Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"bfc88e12-ff5f-11e9-818a-0242ac11000a","loggingRootId":"c4229a72-2e54-4283-9b96-71fc168d0ac0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:09:31 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 9b87426a039a6947b91fddc113d7fa3b
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2","name":"d894fff4-fd37-475e-ba00-cc6ea3aeefa2","status":"Running","startTime":"2019-11-05T00:03:55.9453057Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"bfc88e12-ff5f-11e9-818a-0242ac11000a","loggingRootId":"c4229a72-2e54-4283-9b96-71fc168d0ac0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:10:02 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 62ecfe1024d0274fb921114ab815bcfa
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/d894fff4-fd37-475e-ba00-cc6ea3aeefa2","name":"d894fff4-fd37-475e-ba00-cc6ea3aeefa2","status":"Succeeded","startTime":"2019-11-05T00:03:55.9453057Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"bfc88e12-ff5f-11e9-818a-0242ac11000a","loggingRootId":"c4229a72-2e54-4283-9b96-71fc168d0ac0","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":0,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1206'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:10:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - f7c6de88f4043f4ab777b0f0cd57229e
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myhcasrvanxy?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myhcasrvanxy","name":"myhcasrvanxy","type":"Microsoft.HealthcareApis/services","etag":"\"2100504d-0000-0400-0000-5dc0bdeb0000\"","location":"westus2","kind":"fhir-R4","tags":{},"properties":{"secondaryLocations":null,"accessPolicies":[{"objectId":"c487e7d1-3210-41a3-8ccc-e9372b78da47"}],"cosmosDbConfiguration":{"offerThroughput":1000},"authenticationConfiguration":{"authority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","audience":"https://azurehealthcareapis.com","smartProxyEnabled":false},"corsConfiguration":{"origins":[],"headers":[],"methods":[],"maxAge":null,"allowCredentials":false},"provisioningState":"Succeeded"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '833'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:10:35 GMT
+      etag:
+      - '"2100504d-0000-0400-0000-5dc0bdeb0000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 5e2efcb19baa294e9f77d4e33d2f4991
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myhcasrvanxy?api-version=2018-08-20-preview
+  response:
+    body:
+      string: ''
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Tue, 05 Nov 2019 00:10:40 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview&operationResultResponseType=Location
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+      x-request-id:
+      - 0a1ecd307185f742a241ca107d71da19
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:11:12 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - e9efd03760730744ad34b168d3a7d811
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:11:42 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 8e1d233695bdf1409c2ca4c93a8dc73c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:12:13 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - c3227dab8596bf4497241bba7c714e72
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:12:48 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - bfde85d9abd29d49916a5e8fe41756d0
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:13:19 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 8ba11ca0cabd5444aa0c0d1be19ca67d
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:13:54 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - aac0a8ebb6521e44b7a34c36eda3e0b8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:14:24 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - bbf2e946039cfc469115e5cad24bf4a8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:14:55 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - ab4a295c7d00234f8e0cf43b8488ff7e
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:15:25 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 731e79a3e645b04389e9b0b46d5b946d
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:15:55 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 464be3c5dc609f4da5299111f5e27a98
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:16:26 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - c55a15ba8dcf6749aa412117fdefd711
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:16:56 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 27c5caac2c2ec34189d6a1e9a44fe38f
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:17:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 35199b9cee65b64bb99da1f45e3b0850
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:17:59 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 820e4b3e2ee2754489bec6b1814a64e4
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:18:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 0e27331fda4af84fa3ca5f705fe33ca1
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:19:01 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 7a0400522a841746aff7d4e0228439d9
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:19:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 44469dca5c3d55409330a7df6d15e8b8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Running","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1204'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:20:05 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 2da53ea5a75c5a43a61e7dbde1dbe4e0
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-healthcareapis/0.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6?api-version=2018-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/westus2/operationresults/a8871d0a-7f56-42b7-916f-8f1b5f15dba6","name":"a8871d0a-7f56-42b7-916f-8f1b5f15dba6","status":"Succeeded","startTime":"2019-11-05T00:10:41.3205698Z","properties":{"accountId":"44eh25jmpso3saqln58q39g7h","accountName":"myhcasrvanxy","loggingParentId":"b1e78298-ff60-11e9-818a-0242ac11000a","loggingRootId":"8a289678-541b-4a2a-abae-8dd940455032","externalSecurityAuthenticationAllowedOids":["c487e7d1-3210-41a3-8ccc-e9372b78da47"],"externalSecurityAuthenticationAuthority":"https://login.microsoftonline.com/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a","externalSecurityAuthenticationAudience":"https://azurehealthcareapis.com","offerThroughput":1000,"provisioningOperation":1,"subscriptionId
+        ":"00000000-0000-0000-0000-000000000000","resourceGroupName ":"test_cli_mgmt_healthcareapis_test_healthcareapise0d71394","providerNamespace
+        ":"Microsoft.HealthcareApis","resourceTypeName ":"services","skuName":null,"tags":{},"secondaryRegionNames":null,"corsOrigins":[],"corsHeaders":[],"corsMethods":[],"corsMaxAge":null,"corsAllowCredentials":false,"smartProxyEnabled":false,"fhirVersion":0}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1206'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 00:20:35 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 45e9cb19a5b27e4497cc79284d229518
+    status:
+      code: 200
+      message: OK
+version: 1
