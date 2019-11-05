@@ -658,12 +658,11 @@ class DateAfterModification(Model):
 
 
 class DeleteRetentionPolicy(Model):
-    """The blob service properties for soft delete.
+    """The service properties for soft delete.
 
-    :param enabled: Indicates whether DeleteRetentionPolicy is enabled for the
-     Blob service.
+    :param enabled: Indicates whether DeleteRetentionPolicy is enabled.
     :type enabled: bool
-    :param days: Indicates the number of days that the deleted blob should be
+    :param days: Indicates the number of days that the deleted item should be
      retained. The minimum specified value can be 1 and the maximum value can
      be 365.
     :type days: int
