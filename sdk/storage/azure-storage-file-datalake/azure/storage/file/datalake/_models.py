@@ -12,7 +12,8 @@ from azure.storage.blob import LeaseProperties as BlobLeaseProperties
 from azure.storage.blob import AccountSasPermissions as BlobAccountSasPermissions
 from azure.storage.blob import ResourceTypes as BlobResourceTypes
 from azure.storage.blob import UserDelegationKey as BlobUserDelegationKey
-from azure.storage.blob import ContentSettings, ContainerSasPermissions, BlobSasPermissions
+from azure.storage.blob import ContentSettings as BlobContentSettings
+from azure.storage.blob import ContainerSasPermissions, BlobSasPermissions
 from azure.storage.blob._generated.models import StorageErrorException
 from azure.storage.blob._models import ContainerPropertiesPaged
 from ._deserialize import return_headers_and_deserialized_path_list
@@ -61,8 +62,8 @@ class FileSystemProperties(object):
         props.last_modified = generated.properties.last_modified
         props.etag = generated.properties.etag
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
-        props.public_access = PublicAccess._from_generated(
-            generated.properties.public_access)  # pylint: disable=protected-access
+        props.public_access = PublicAccess._from_generated(  # pylint: disable=protected-access
+            generated.properties.public_access)
         props.has_immutability_policy = generated.properties.has_immutability_policy
         props.has_legal_hold = generated.properties.has_legal_hold
         props.metadata = generated.metadata
@@ -71,8 +72,8 @@ class FileSystemProperties(object):
     @classmethod
     def _convert_from_container_props(cls, container_properties):
         container_properties.__class__ = cls
-        container_properties.public_access = PublicAccess._from_generated(
-            container_properties.public_access)  # pylint: disable=protected-access
+        container_properties.public_access = PublicAccess._from_generated(  # pylint: disable=protected-access
+            container_properties.public_access)
         container_properties.lease.__class__ = LeaseProperties
         return container_properties
 
@@ -330,7 +331,7 @@ class LeaseProperties(BlobLeaseProperties):
         self.duration = None
 
 
-class ContentSettings(ContentSettings):
+class ContentSettings(BlobContentSettings):
     """The content settings of a file or directory.
 
     :ivar str content_type:

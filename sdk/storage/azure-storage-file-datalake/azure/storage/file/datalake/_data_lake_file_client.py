@@ -524,6 +524,6 @@ class DataLakeFileClient(PathClient):
             _location_mode=self._location_mode, require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
-        new_directory_client._rename_path('/'+self.file_system_name+'/'+self.path_name,
-                                          **kwargs)  # pylint: disable=protected-access
+        new_directory_client._rename_path('/'+self.file_system_name+'/'+self.path_name,  # pylint: disable=protected-access
+                                          **kwargs)
         return new_directory_client

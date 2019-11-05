@@ -141,7 +141,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         delegation_key = self._blob_service_client.get_user_delegation_key(key_start_time=key_start_time,
                                                                            key_expiry_time=key_expiry_time,
                                                                            **kwargs)  # pylint: disable=protected-access
-        delegation_key._class_ = UserDelegationKey
+        delegation_key._class_ = UserDelegationKey  # pylint: disable=protected-access
         return delegation_key
 
     def list_file_systems(self, name_starts_with=None,  # type: Optional[str]
@@ -179,7 +179,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         item_paged = self._blob_service_client.list_containers(name_starts_with=name_starts_with,
                                                                include_metadata=include_metadata,
                                                                **kwargs)  # pylint: disable=protected-access
-        item_paged._page_iterator_class = FileSystemPropertiesPaged
+        item_paged._page_iterator_class = FileSystemPropertiesPaged  # pylint: disable=protected-access
         return item_paged
 
     def create_file_system(self, file_system,  # type: Union[FileSystemProperties, str]

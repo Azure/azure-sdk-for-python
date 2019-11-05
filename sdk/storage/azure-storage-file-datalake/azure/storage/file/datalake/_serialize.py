@@ -21,7 +21,7 @@ def add_metadata_headers(metadata=None):
             headers.append(encode_base64(value))
             headers.append(',')
 
-    if len(headers) != 0:
+    if headers:
         del headers[-1]
 
     return ''.join(headers)

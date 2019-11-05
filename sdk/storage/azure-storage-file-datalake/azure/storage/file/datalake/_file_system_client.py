@@ -9,7 +9,7 @@ try:
     from urllib.parse import urlparse, quote
 except ImportError:
     from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote # type: ignore
+    from urllib2 import quote  # type: ignore
 
 import six
 from azure.core.paging import ItemPaged
