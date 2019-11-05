@@ -25,7 +25,7 @@ interactions:
     body:
       string: '{"error":{"code":"InvalidTemplateDeployment","message":"The template
         deployment ''pytestlinkedafa117b7'' is not valid according to the validation
-        procedure. The tracking id is ''c915838c-9aa9-4408-a674-df861c60ae32''. See
+        procedure. The tracking id is ''c1b89e3b-49eb-4cb3-b1b0-db7d106b3ad6''. See
         inner errors for details.","details":[{"code":"InvalidDomainNameLabel","message":"The
         domain name label GEN-UNIQUE is invalid. It must conform to the following
         regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.","details":[]}]}}'
@@ -37,7 +37,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 01 Nov 2019 05:59:59 GMT
+      - Tue, 05 Nov 2019 09:35:28 GMT
       expires:
       - '-1'
       pragma:
@@ -49,7 +49,7 @@ interactions:
       x-ms-failure-cause:
       - gateway
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1197'
     status:
       code: 400
       message: Bad Request
