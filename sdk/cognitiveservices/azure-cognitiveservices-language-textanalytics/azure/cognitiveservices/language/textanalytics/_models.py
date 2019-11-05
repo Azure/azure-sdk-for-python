@@ -117,6 +117,53 @@ class Entity(object):
         )
 
 
+class Error(object):
+    """Error.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. Error code.
+    :type code: str
+    :param message: Required. Error message.
+    :type message: str
+    :param target: Error target.
+    :type target: str
+    :param innererror: Inner error contains more specific information.
+    :type innererror: ~textanalytics.models.InnerError
+    :param details: Details about specific errors that led to this reported
+     error.
+    :type details: list[~textanalytics.models.Error]
+    """
+    def __init__(self, **kwargs):
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
+        self.innererror = kwargs.get('innererror', None)
+        self.details = kwargs.get('details', None)
+
+
+class InnerError(object):
+    """InnerError.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. Error code.
+    :type code: str
+    :param message: Required. Error message.
+    :type message: str
+    :param target: Error target.
+    :type target: str
+    :param innererror: Inner error contains more specific information.
+    :type innererror: ~textanalytics.models.InnerError
+    """
+
+    def __init__(self, **kwargs):
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
+        self.innererror = kwargs.get('innererror', None)
+
+
 class DocumentKeyPhrases(object):
     """DocumentKeyPhrases.
 
@@ -238,7 +285,24 @@ class DocumentError(object):
         self.id = kwargs.get('id', None)
         self.error = kwargs.get('error', None)
         self.is_error = True
-        # super(DocumentError, self).__init__(message=self.error['innerError']['message'])
+
+
+class LanguageInput(object):
+    """LanguageInput.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Unique, non-empty document identifier.
+    :type id: str
+    :param text: Required.
+    :type text: str
+    :param country_hint:
+    :type country_hint: str
+    """
+    def __init__(self, **kwargs):
+        self.id = kwargs.get('id', None)
+        self.text = kwargs.get('text', None)
+        self.country_hint = kwargs.get('country_hint', None)
 
 
 class LinkedEntity(object):
@@ -317,6 +381,26 @@ class Match(object):
             offset=match.offset,
             length=match.length
         )
+
+
+class MultiLanguageInput(object):
+    """Contains an input document to be analyzed by the service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. A unique, non-empty document identifier.
+    :type id: str
+    :param text: Required. The input text to process.
+    :type text: str
+    :param language: (Optional) This is the 2 letter ISO 639-1 representation
+     of a language. For example, use "en" for English; "es" for Spanish etc. If
+     not set, use "en" for English as default.
+    :type language: str
+    """
+    def __init__(self, **kwargs):
+        self.id = kwargs.get('id', None)
+        self.text = kwargs.get('text', None)
+        self.language = kwargs.get('language', None)
 
 
 class RequestStatistics(object):

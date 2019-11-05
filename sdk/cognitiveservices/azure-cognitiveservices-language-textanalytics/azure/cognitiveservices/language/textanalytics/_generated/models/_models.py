@@ -653,9 +653,8 @@ class Match(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param score: Required. (Optional) If a well-known item is recognized, a
-     decimal number denoting the confidence level between 0 and 1 will be
-     returned.
+    :param score: Required. If a well-known item is recognized, a decimal
+     number denoting the confidence level between 0 and 1 will be returned.
     :type score: float
     :param text: Required. Entity text as appears in the request.
     :type text: str

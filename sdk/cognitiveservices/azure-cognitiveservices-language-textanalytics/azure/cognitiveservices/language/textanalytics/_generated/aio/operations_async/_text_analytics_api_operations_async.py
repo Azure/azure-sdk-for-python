@@ -12,7 +12,7 @@ import uuid
 
 class TextAnalyticsAPIOperationsMixin:
 
-    async def entitiesrecognitiongeneral(self, documents, model_version=None, show_stats=None, *, cls=None, **kwargs):
+    async def entities_recognition_general(self, documents, model_version=None, show_stats=None, *, cls=None, **kwargs):
         """Named Entity Recognition.
 
         The API returns a list of general named entities in a given document.
@@ -43,7 +43,7 @@ class TextAnalyticsAPIOperationsMixin:
         multi_language_batch_input = models.MultiLanguageBatchInput(documents=documents)
 
         # Construct URL
-        url = self.entitiesrecognitiongeneral.metadata['url']
+        url = self.entities_recognition_general.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
         }
@@ -85,12 +85,12 @@ class TextAnalyticsAPIOperationsMixin:
             return cls(response, deserialized, None)
 
         return deserialized
-    entitiesrecognitiongeneral.metadata = {'url': '/entities/recognition/general'}
+    entities_recognition_general.metadata = {'url': '/entities/recognition/general'}
 
-    async def entitiesrecognitionpii(self, documents, model_version=None, show_stats=None, *, cls=None, **kwargs):
+    async def entities_recognition_pii(self, documents, model_version=None, show_stats=None, *, cls=None, **kwargs):
         """Entities containing personal information.
 
-        The API returns a list of personal information entities (\"SSN\",
+        The API returns a list of entities with personal information (\"SSN\",
         \"Bank Account\" etc) in the document. See the &lt;a
         href="https://aka.ms/talangs"&gt;Supported languages in Text Analytics
         API&lt;/a&gt; for the list of enabled languages.
@@ -116,7 +116,7 @@ class TextAnalyticsAPIOperationsMixin:
         multi_language_batch_input = models.MultiLanguageBatchInput(documents=documents)
 
         # Construct URL
-        url = self.entitiesrecognitionpii.metadata['url']
+        url = self.entities_recognition_pii.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
         }
@@ -158,9 +158,9 @@ class TextAnalyticsAPIOperationsMixin:
             return cls(response, deserialized, None)
 
         return deserialized
-    entitiesrecognitionpii.metadata = {'url': '/entities/recognition/pii'}
+    entities_recognition_pii.metadata = {'url': '/entities/recognition/pii'}
 
-    async def entitieslinking(self, documents, model_version=None, show_stats=None, *, cls=None, **kwargs):
+    async def entities_linking(self, documents, model_version=None, show_stats=None, *, cls=None, **kwargs):
         """Linked entities from a well-known knowledge base.
 
         The API returns a list of recognized entities with links to a
@@ -189,7 +189,7 @@ class TextAnalyticsAPIOperationsMixin:
         multi_language_batch_input = models.MultiLanguageBatchInput(documents=documents)
 
         # Construct URL
-        url = self.entitieslinking.metadata['url']
+        url = self.entities_linking.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True)
         }
@@ -231,7 +231,7 @@ class TextAnalyticsAPIOperationsMixin:
             return cls(response, deserialized, None)
 
         return deserialized
-    entitieslinking.metadata = {'url': '/entities/linking'}
+    entities_linking.metadata = {'url': '/entities/linking'}
 
     async def key_phrases(self, documents, model_version=None, show_stats=None, *, cls=None, **kwargs):
         """Key Phrases.

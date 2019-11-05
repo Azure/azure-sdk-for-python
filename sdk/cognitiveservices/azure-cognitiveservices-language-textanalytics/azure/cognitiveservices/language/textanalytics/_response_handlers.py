@@ -1,6 +1,16 @@
+
+
 import json
-from ._generated.models._models import LanguageInput, MultiLanguageBatchInput
+import six
+from azure.core.pipeline.policies import ContentDecodePolicy
+from azure.core.exceptions import (
+    HttpResponseError,
+    DecodeError
+)
+
 from ._models import (
+    LanguageInput,
+    MultiLanguageInput,
     DocumentEntities,
     Entity,
     DocumentStatistics,
@@ -11,8 +21,35 @@ from ._models import (
     SentenceSentiment,
     DocumentLanguage,
     DetectedLanguage,
-    DocumentError
+    DocumentError,
 )
+
+
+def process_text_analytics_error(error):
+    raise_error = HttpResponseError
+    error_message = error.message
+
+    try:
+        error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
+    except DecodeError:
+        pass
+
+    try:
+        error_message = error_body['error']['message']
+        error_message += "\nErrorCode:{}".format(error.status_code)
+    except AttributeError:
+        error_message += "\nErrorCode:{}".format(error.status_code)
+
+    error = raise_error(message=error_message, response=error.response)
+    error.error_code = error.status_code
+    raise error
+
+
+def _validate_single_input(text, hint, hint_value):
+    if isinstance(text, six.text_type):
+        return [{"id": 0, "text": text, hint: hint_value}]
+    else:
+        raise TypeError("Text parameter should be string.")
 
 
 def _validate_batch_input(documents):
@@ -21,7 +58,7 @@ def _validate_batch_input(documents):
         if type(item) == str:
             documents[idx] = {"id": idx, "text": item}
             strings = True
-        if type(item) == dict or isinstance(item, MultiLanguageBatchInput) or isinstance(item, LanguageInput):
+        if type(item) == dict or isinstance(item, MultiLanguageInput) or isinstance(item, LanguageInput):
             if strings:
                 raise TypeError("Mixing string and dictionary input unsupported.")
     return documents
@@ -115,7 +152,7 @@ def deserialize_key_phrases_result(response, obj, response_headers):
 def deserialize_sentiment_result(response, obj, response_headers):
     sentiments = []
     if hasattr(obj, "innererror"):
-        return
+        return obj
     if obj.documents:
         for sentiment in obj.documents:
             sentiments.append(

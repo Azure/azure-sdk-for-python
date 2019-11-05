@@ -4,16 +4,32 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from typing import (  # pylint: disable=unused-import
+    Union, Optional, Any, List, TYPE_CHECKING
+)
+from azure.core.exceptions import HttpResponseError
 from ._generated._text_analytics_api import TextAnalyticsAPI
 from ._base_client import TextAnalyticsClientBase
-from ._deserialize import (
+from ._response_handlers import (
     _validate_batch_input,
+    process_text_analytics_error,
     deserialize_entities_result,
     deserialize_linked_entities_result,
     deserialize_key_phrases_result,
     deserialize_sentiment_result,
     deserialize_language_result
 )
+if TYPE_CHECKING:
+    from ._models import (
+        LanguageInput,
+        MultiLanguageInput,
+        DocumentLanguage,
+        DocumentEntities,
+        DocumentLinkedEntities,
+        DocumentKeyPhrases,
+        DocumentSentiment,
+        DocumentError
+    )
 
 
 class TextAnalyticsClient(TextAnalyticsClientBase):
@@ -56,10 +72,17 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     """
 
     def __init__(self, endpoint, credential, **kwargs):
+        # type: (str, str, Any) -> None
         super(TextAnalyticsClient, self).__init__(credentials=credential, **kwargs)
         self._client = TextAnalyticsAPI(endpoint=endpoint, credentials=credential, pipeline=self._pipeline)
 
-    def detect_language(self, documents, model_version=None, show_stats=False, **kwargs):
+    def detect_language(self,
+                        documents,  # type: List[str] or List[LanguageInput]
+                        model_version=None,  # type: Optional[str]
+                        show_stats=False,  # type:  Optional[bool]
+                        **kwargs  # type: Any
+                        ):
+        # type: (...) -> List[Union[DocumentLanguage, DocumentError]]
         """Detect Language.
 
         The API returns the detected language and a numeric score between 0 and
@@ -92,10 +115,16 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=deserialize_language_result,
                 **kwargs
             )
-        except Exception as error:
-            raise error
+        except HttpResponseError as error:
+            process_text_analytics_error(error)
 
-    def detect_entities(self, documents, model_version=None, show_stats=False, **kwargs):
+    def detect_entities(self,
+                        documents,  # type: List[str] or List[MultiLanguageInput]
+                        model_version=None,  # type: Optional[str]
+                        show_stats=False,  # type:  Optional[bool]
+                        **kwargs  # type: Any
+                        ):
+        # type: (...) -> List[Union[DocumentEntities, DocumentError]]
         """Named Entity Recognition.
 
         The API returns a list of general named entities in a given document.
@@ -124,17 +153,23 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """
         docs = _validate_batch_input(documents)
         try:
-            return self._client.entitiesrecognitiongeneral(
+            return self._client.entities_recognition_general(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
                 cls=deserialize_entities_result,
                 **kwargs
             )
-        except Exception as error:
-            raise error
+        except HttpResponseError as error:
+            process_text_analytics_error(error)
 
-    def detect_pii_entities(self, documents, model_version=None, show_stats=None, **kwargs):
+    def detect_pii_entities(self,
+                            documents,  # type: List[str] or List[MultiLanguageInput]
+                            model_version=None,  # type: Optional[str]
+                            show_stats=False,  # type:  Optional[bool]
+                            **kwargs  # type: Any
+                            ):
+        # type: (...) -> List[Union[DocumentEntities, DocumentError]]
         """Entities containing personal information.
 
         The API returns a list of personal information entities (\"SSN\",
@@ -161,17 +196,23 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """
         docs = _validate_batch_input(documents)
         try:
-            return self._client.entitiesrecognitionpii(
+            return self._client.entities_recognition_pii(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
                 cls=deserialize_entities_result,
                 **kwargs
             )
-        except Exception as error:
-            raise error
+        except HttpResponseError as error:
+            process_text_analytics_error(error)
 
-    def detect_linked_entities(self, documents, model_version=None, show_stats=None, **kwargs):
+    def detect_linked_entities(self,
+                               documents,  # type: List[str] or List[MultiLanguageInput]
+                               model_version=None,  # type: Optional[str]
+                               show_stats=False,  # type:  Optional[bool]
+                               **kwargs  # type: Any
+                               ):
+        # type: (...) -> List[Union[DocumentLinkedEntities, DocumentError]]
         """Linked entities from a well-known knowledge base.
 
         The API returns a list of recognized entities with links to a
@@ -198,17 +239,23 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """
         docs = _validate_batch_input(documents)
         try:
-            return self._client.entitieslinking(
+            return self._client.entities_linking(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
                 cls=deserialize_linked_entities_result,
                 **kwargs
             )
-        except Exception as error:
-            raise error
+        except HttpResponseError as error:
+            process_text_analytics_error(error)
 
-    def detect_key_phrases(self, documents, model_version=None, show_stats=None, **kwargs):
+    def detect_key_phrases(self,
+                           documents,  # type: List[str] or List[MultiLanguageInput]
+                           model_version=None,  # type: Optional[str]
+                           show_stats=False,  # type:  Optional[bool]
+                           **kwargs  # type: Any
+                           ):
+        # type: (...) -> List[Union[DocumentKeyPhrases, DocumentError]]
         """Key Phrases.
 
         The API returns a list of strings denoting the key phrases in the input
@@ -241,10 +288,16 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=deserialize_key_phrases_result,
                 **kwargs
             )
-        except Exception as error:
-            raise error
+        except HttpResponseError as error:
+            process_text_analytics_error(error)
 
-    def detect_sentiment(self, documents, model_version=None, show_stats=None, **kwargs):
+    def detect_sentiment(self,
+                         documents,  # type: List[str] or List[MultiLanguageInput]
+                         model_version=None,  # type: Optional[str]
+                         show_stats=False,  # type:  Optional[bool]
+                         **kwargs  # type: Any
+                         ):
+        # type: (...) -> List[Union[DocumentSentiment, DocumentError]]
         """Sentiment.
 
         The API returns a sentiment prediction, as well as sentiment scores for
@@ -278,5 +331,5 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=deserialize_sentiment_result,
                 **kwargs
             )
-        except Exception as error:
-            raise error
+        except HttpResponseError as error:
+            process_text_analytics_error(error)

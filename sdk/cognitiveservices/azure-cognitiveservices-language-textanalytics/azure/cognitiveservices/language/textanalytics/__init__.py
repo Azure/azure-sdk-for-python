@@ -9,10 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-import six
+from typing import Any, Optional, List  # pylint: disable=unused-import
 from ._text_analytics_client import TextAnalyticsClient
-from ._models import DetectedLanguage, DocumentError
+from ._response_handlers import _validate_single_input
 from ._version import VERSION
+from ._models import (
+    DetectedLanguage,
+    DocumentError,
+    Entity,
+    LinkedEntity,
+    DocumentSentiment
+)
 
 __all__ = [
     'TextAnalyticsClient',
@@ -27,104 +34,133 @@ __all__ = [
 __version__ = VERSION
 
 
-def single_detect_language(endpoint, credential, text, country_hint="US", model_version=None, show_stats=False, **kwargs):
-    if isinstance(text, six.text_type):
-        text = [{"id": 0, "text": text, "country_hint": country_hint}]
-    else:
-        raise TypeError("Text parameter should be string.")
+def single_detect_language(
+            endpoint,  # type: str
+            credential,  # type: str
+            text,  # type: str
+            country_hint="US",  # type: str
+            model_version=None,  # type: Optional[str]
+            show_stats=False,  # type: Optional[bool]
+            **kwargs  # type: Any
+):
+    # type: (...) -> DetectedLanguage or DocumentError
+    doc = _validate_single_input(text, "country_hint", country_hint)
     with TextAnalyticsClient(endpoint, credential=credential) as client:
         response = client.detect_language(
-            documents=text,
+            documents=doc,
             model_version=model_version,
             show_stats=show_stats,
             **kwargs
         )
-        if not response[0].is_error:
-            return response[0].detected_languages[0]  # DetectedLanguage
-        else:
-            raise response[0]  # DocumentError
+        if response[0].is_error:
+            return response[0]  # DocumentError
+        return response[0].detected_languages[0]  # DetectedLanguage
 
-
-def single_detect_entities(endpoint, credential, text, language="en", model_version=None, show_stats=False, **kwargs):
-    if isinstance(text, six.text_type):
-        text = [{"id": 0, "text": text, "language": language}]
-    else:
-        raise TypeError("Text parameter should be string.")
+def single_detect_entities(
+        endpoint,  # type: str
+        credential,  # type: str
+        text,  # type: str
+        language="en",  # type: str
+        model_version=None,  # type: Optional[str]
+        show_stats=False,  # type: Optional[bool]
+        **kwargs  # type: Any
+):
+    # type: (...) -> List[Entity] or DocumentError
+    doc = _validate_single_input(text, "language", language)
     with TextAnalyticsClient(endpoint, credential=credential) as client:
         response = client.detect_entities(
-            documents=text,
+            documents=doc,
             model_version=model_version,
             show_stats=show_stats,
             **kwargs
         )
-        if not response[0].is_error:
-            return response[0].entities  # list[Entity]
-        else:
+        if response[0].is_error:
             return response[0]  # DocumentError
+        return response[0].entities  # list[Entity]
 
-
-def single_detect_pii_entities(endpoint, credential, text, language="en", model_version=None, show_stats=False, **kwargs):
-    if isinstance(text, six.text_type):
-        text = [{"id": 0, "text": text, "language": language}]
-    else:
-        raise TypeError("Text parameter should be string.")
+def single_detect_pii_entities(
+        endpoint,  # type: str
+        credential,  # type: str
+        text,  # type: str
+        language="en",  # type: str
+        model_version=None,  # type: Optional[str]
+        show_stats=False,  # type: Optional[bool]
+        **kwargs  # type: Any
+):
+    # type: (...) -> List[Entity] or DocumentError
+    doc = _validate_single_input(text, "language", language)
     with TextAnalyticsClient(endpoint, credential=credential) as client:
         response = client.detect_pii_entities(
-            documents=text,
+            documents=doc,
             model_version=model_version,
             show_stats=show_stats,
             **kwargs
         )
-        if not response[0].is_error:
-            return response[0].entities  # list[Entity]
-        else:
+        if response[0].is_error:
             return response[0]  # DocumentError
+        return response[0].entities  # list[Entity]
 
 
-def single_detect_linked_entities(endpoint, credential, text, language="en", model_version=None, show_stats=False, **kwargs):
-    if isinstance(text, six.text_type):
-        text = [{"id": 0, "text": text, "language": language}]
-    else:
-        raise TypeError("Text parameter should be string.")
+def single_detect_linked_entities(
+        endpoint,  # type: str
+        credential,  # type: str
+        text,  # type: str
+        language="en",  # type: str
+        model_version=None,  # type: Optional[str]
+        show_stats=False,  # type: Optional[bool]
+        **kwargs  # type: Any
+):
+    # type: (...) -> List[LinkedEntity] or DocumentError
+    doc = _validate_single_input(text, "language", language)
     with TextAnalyticsClient(endpoint, credential=credential) as client:
         response = client.detect_linked_entities(
-            documents=text,
+            documents=doc,
             model_version=model_version,
             show_stats=show_stats,
             **kwargs
         )
         if not response[0].is_error:
-            return response[0].entities  # list[LinkedEntity]
-        else:
             return response[0]  # DocumentError
+        return response[0].entities  # list[LinkedEntity]
 
 
-def single_detect_key_phrases(endpoint, credential, text, language="en", model_version=None, show_stats=False, **kwargs):
-    if isinstance(text, six.text_type):
-        text = [{"id": 0, "text": text, "language": language}]
-    else:
-        raise TypeError("Text parameter should be string.")
+def single_detect_key_phrases(
+        endpoint,  # type: str
+        credential,  # type: str
+        text,  # type: str
+        language="en",  # type: str
+        model_version=None,  # type: Optional[str]
+        show_stats=False,  # type: Optional[bool]
+        **kwargs  # type: Any
+):
+    # type: (...) -> List[str] or DocumentError
+    doc = _validate_single_input(text, "language", language)
     with TextAnalyticsClient(endpoint, credential=credential) as client:
         response = client.detect_key_phrases(
-            documents=text,
+            documents=doc,
             model_version=model_version,
             show_stats=show_stats,
             **kwargs
         )
         if not response[0].is_error:
-            return response[0].key_phrases  # list[str]
-        else:
             return response[0]  # DocumentError
+        return response[0].key_phrases  # list[str]
 
 
-def single_detect_sentiment(endpoint, credential, text, language="en", model_version=None, show_stats=False, **kwargs):
-    if isinstance(text, six.text_type):
-        text = [{"id": 0, "text": text, "language": language}]
-    else:
-        raise TypeError("Text parameter should be string.")
+def single_detect_sentiment(
+        endpoint,  # type: str
+        credential,  # type: str
+        text,  # type: str
+        language="en",  # type: str
+        model_version=None,  # type: Optional[str]
+        show_stats=False,  # type: Optional[bool]
+        **kwargs  # type: Any
+):
+    # type: (...) -> DocumentSentiment or DocumentError
+    doc = _validate_single_input(text, "language", language)
     with TextAnalyticsClient(endpoint, credential=credential) as client:
         response = client.detect_sentiment(
-            documents=text,
+            documents=doc,
             model_version=model_version,
             show_stats=show_stats,
             **kwargs
