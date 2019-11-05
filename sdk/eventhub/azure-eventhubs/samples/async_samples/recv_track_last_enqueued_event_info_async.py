@@ -40,7 +40,7 @@ async def receive(client):
                              partition_id='0',
                              track_last_enqueued_event_properties=True)
     except KeyboardInterrupt:
-        client.close()
+        await client.close()
 
 
 async def main():

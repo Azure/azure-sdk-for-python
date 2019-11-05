@@ -46,7 +46,7 @@ async def receive(client):
         # With specified partition_id, load-balance will be disabled
         # await client.receive(event_handler=event_handler, consumer_group="$default", partition_id = '0'))
     except KeyboardInterrupt:
-        client.close()
+        await client.close()
 
 
 async def main():
