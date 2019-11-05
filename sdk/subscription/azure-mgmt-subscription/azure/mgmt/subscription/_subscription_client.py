@@ -13,19 +13,33 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import SubscriptionClientConfiguration
-from .operations import SubscriptionClientOperationsMixin
-from .operations import PurchaseOperations
+from .operations import SubscriptionsOperations
+from .operations import SubscriptionOperationOperations
+from .operations import SubscriptionFactoryOperations
+from .operations import SubscriptionOperations
+from .operations import Operations
+from .operations import TenantsOperations
 from . import models
 
 
-class SubscriptionClient(SubscriptionClientOperationsMixin, SDKClient):
-    """Subscription client provides an interface to create and manage Azure subscriptions programmatically.
+class SubscriptionClient(SDKClient):
+    """The subscription client
 
     :ivar config: Configuration for client.
     :vartype config: SubscriptionClientConfiguration
 
-    :ivar purchase: Purchase operations
-    :vartype purchase: azure.mgmt.subscription.operations.PurchaseOperations
+    :ivar subscriptions: Subscriptions operations
+    :vartype subscriptions: azure.mgmt.subscription.operations.SubscriptionsOperations
+    :ivar subscription_operation: SubscriptionOperation operations
+    :vartype subscription_operation: azure.mgmt.subscription.operations.SubscriptionOperationOperations
+    :ivar subscription_factory: SubscriptionFactory operations
+    :vartype subscription_factory: azure.mgmt.subscription.operations.SubscriptionFactoryOperations
+    :ivar subscription_operations: SubscriptionOperations operations
+    :vartype subscription_operations: azure.mgmt.subscription.operations.SubscriptionOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.subscription.operations.Operations
+    :ivar tenants: Tenants operations
+    :vartype tenants: azure.mgmt.subscription.operations.TenantsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -40,9 +54,18 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, SDKClient):
         super(SubscriptionClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-10-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.purchase = PurchaseOperations(
+        self.subscriptions = SubscriptionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.subscription_operation = SubscriptionOperationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.subscription_factory = SubscriptionFactoryOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.subscription_operations = SubscriptionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.tenants = TenantsOperations(
             self._client, self.config, self._serialize, self._deserialize)
