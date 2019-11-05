@@ -30,29 +30,29 @@ def copy_existing_docs(source, target):
         logging.info("Copying {}".format(file))
         shutil.copy(os.path.join(source, file), target)
 
-def sphinx_apidoc(package_root, working_directory):
-    working_doc_folder = os.path.join(package_root, "doc")
+def sphinx_apidoc(working_directory):
+    working_doc_folder = os.path.join(args.working_directory, "unzipped", "doc")
     command_array = [
             "sphinx-apidoc",
             "--no-toc",
             "--module-first",
             "-o",
-            os.path.join(working_directory, "unzipped/docgen"),
-            os.path.join(working_directory, "unzipped/"),
-            os.path.join(working_directory, "unzipped/test*"),
-            os.path.join(working_directory, "unzipped/example*"),
-            os.path.join(working_directory, "unzipped/sample*"),
-            os.path.join(working_directory, "unzipped/setup.py"),
+            os.path.join(args.working_directory, "unzipped/docgen"),
+            os.path.join(args.working_directory, "unzipped/"),
+            os.path.join(args.working_directory, "unzipped/test*"),
+            os.path.join(args.working_directory, "unzipped/example*"),
+            os.path.join(args.working_directory, "unzipped/sample*"),
+            os.path.join(args.working_directory, "unzipped/setup.py"),
         ]
 
     try:
         # if a `doc` folder exists, just leverage the sphinx sources found therein.
-        if os.path.exists(working_doc_folder):
+        if os.path.exists(working_doc_folder): 
             logging.info("Copying files into sphinx source folder.")
-            copy_existing_docs(working_doc_folder, os.path.join(working_directory, "unzipped/docgen"))
+            copy_existing_docs(working_doc_folder, os.path.join(args.working_directory, "unzipped/docgen"))
 
         # otherwise, we will run sphinx-apidoc to generate the sources
-        else:
+        else: 
             logging.info("Sphinx api-doc command: {}".format(command_array))
             check_call(
                 command_array
@@ -60,7 +60,7 @@ def sphinx_apidoc(package_root, working_directory):
     except CalledProcessError as e:
         logging.error(
             "sphinx-apidoc failed for path {} exited with error {}".format(
-                working_directory, e.returncode
+                args.working_directory, e.returncode
             )
         )
         exit(1)
@@ -123,6 +123,6 @@ if __name__ == "__main__":
         if is_mgmt_package(pkg_name):
             mgmt_apidoc(output_directory, pkg_name)
         else:
-            sphinx_apidoc(args.package_root, args.working_directory)
+            sphinx_apidoc(args.working_directory)
     else:
         logging.info("Skipping sphinx source generation for {}".format(pkg_name))
