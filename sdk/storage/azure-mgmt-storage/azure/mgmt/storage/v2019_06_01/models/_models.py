@@ -373,10 +373,6 @@ class BlobServiceProperties(Resource):
     :type automatic_snapshot_policy_enabled: bool
     :param change_feed: The blob service properties for change feed events.
     :type change_feed: ~azure.mgmt.storage.v2019_06_01.models.ChangeFeed
-    :param container_delete_retention_policy: The blob service properties for
-     container soft delete.
-    :type container_delete_retention_policy:
-     ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
     """
 
     _validation = {
@@ -394,7 +390,6 @@ class BlobServiceProperties(Resource):
         'delete_retention_policy': {'key': 'properties.deleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
         'automatic_snapshot_policy_enabled': {'key': 'properties.automaticSnapshotPolicyEnabled', 'type': 'bool'},
         'change_feed': {'key': 'properties.changeFeed', 'type': 'ChangeFeed'},
-        'container_delete_retention_policy': {'key': 'properties.containerDeleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
     }
 
     def __init__(self, **kwargs):
@@ -404,7 +399,6 @@ class BlobServiceProperties(Resource):
         self.delete_retention_policy = kwargs.get('delete_retention_policy', None)
         self.automatic_snapshot_policy_enabled = kwargs.get('automatic_snapshot_policy_enabled', None)
         self.change_feed = kwargs.get('change_feed', None)
-        self.container_delete_retention_policy = kwargs.get('container_delete_retention_policy', None)
 
 
 class ChangeFeed(Model):
