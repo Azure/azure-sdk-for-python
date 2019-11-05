@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import logging
-from typing import Any, Union, TYPE_CHECKING, Callable, Dict, List, Tuple
-from azure.eventhub import EventPosition, EventData, EventHubSharedKeyCredential, EventHubSASTokenCredential
-from .eventprocessor.event_processor import EventProcessor, CloseReason
-from .eventprocessor.partition_context import PartitionContext
+from typing import Any, Union, TYPE_CHECKING, Dict, Tuple
+from azure.eventhub import EventPosition, EventHubSharedKeyCredential, EventHubSASTokenCredential
+from .eventprocessor.event_processor import EventProcessor
 from .client_async import EventHubClient
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
@@ -35,8 +34,8 @@ class EventHubConsumerClient(EventHubClient):
     :param str event_hub_path: The path of the specific Event Hub to connect the client to.
     :param credential: The credential object used for authentication which implements particular interface
      of getting tokens.
-    :type credential: ~azure.eventhub.EventHubSharedKeyCredential,~azure.eventhub.EventHubSASTokenCredential,
      Credential objects in azure-identity and objects that implement `get_token(self, *scopes)` method
+    :type credential: ~azure.eventhub.EventHubSharedKeyCredential or ~azure.eventhub.EventHubSASTokenCredential
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
@@ -44,15 +43,15 @@ class EventHubConsumerClient(EventHubClient):
     :keyword int retry_total: The total number of attempts to redo the failed operation when an error happened. Default
      value is 3.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
-     the Event Hubs service. Default is ~azure.eventhub.TransportType.Amqp.
+     the Event Hubs service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.eventhub.TransportType
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: 'proxy_hostname' (str value) and 'proxy_port' (int value).
      Additionally the following keys may also be present: 'username', 'password'.
     :keyword partition_manager: stores the load balancing data and checkpoint data when receiving events
-     if partition_manager is specified. If it's None, this EventHubConsumerClient instance will receive
+     if partition_manager is specified. If it's None, this `EventHubConsumerClient` instance will receive
      events without load balancing and checkpoint.
-    :paramtype partition_manager: Implementation classes of ~azure.eventhub.aio.PartitionManager
+    :paramtype partition_manager: Implementation classes of :class:`PartitionManager`
     :keyword float load_balancing_interval: When load balancing kicks in, this is the interval in seconds
      between two load balancing. Default is 10.
 
@@ -68,6 +67,7 @@ class EventHubConsumerClient(EventHubClient):
 
     def __init__(self, host, event_hub_path, credential, **kwargs) -> None:
         # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
+        """"""
         self._partition_manager = kwargs.pop("partition_manager", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", 10)
         super(EventHubConsumerClient, self).__init__(
@@ -77,31 +77,33 @@ class EventHubConsumerClient(EventHubClient):
         self._closed = False
 
     async def receive(
-            self, on_events: Callable[[PartitionContext, List[EventData]], None], consumer_group: str,
+            self, on_events, consumer_group: str,
             *,
             partition_id: str = None,
             owner_level: int = None,
             prefetch: int = 300,
             track_last_enqueued_event_properties: bool = False,
-            initial_event_position: Union[EventPosition, Dict[str, EventPosition]] = None,
-            on_error: Callable[[PartitionContext, Exception], None] = None,
-            on_partition_initialize: Callable[[PartitionContext], None] = None,
-            on_partition_close: Callable[[PartitionContext, CloseReason], None] = None
+            initial_event_position=None,
+            on_error=None,
+            on_partition_initialize=None,
+            on_partition_close=None
     ) -> None:
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
         :param on_events: The callback function for handling received events. The callback takes two
-         parameters: partition_context` which contains partition information and `events` which are the received events.
+         parameters: `partition_context` which contains partition information and `events` which are the received events.
          Please define the callback like `on_event(partition_context, events)`.
-         For detailed partition context information, please refer to ~azure.eventhub.PartitionContext.
+         For detailed partition context information, please refer to :class:`PartitionContext`.
         :type on_events: Callable[PartitionContext, List[EventData]]
         :param consumer_group: Receive events from the event hub for this consumer group
-        :keyword partition_id: Receive from this partition only if it's not None. Receive from all partition otherwise.
-        :keyword owner_level: The priority of the exclusive consumer. An exclusive
+        :type consumer_group: str
+        :keyword str partition_id: Receive from this partition only if it's not None.
+         Receive from all partition otherwise.
+        :keyword int owner_level: The priority of the exclusive consumer. An exclusive
          consumer will be created if owner_level is set. Higher owner_level has higher exclusive priority.
-        :keyword prefetch: The number of events to prefetch from the service
+        :keyword int prefetch: The number of events to prefetch from the service
          for processing. Default is 300.
-        :keyword track_last_enqueued_event_properties: Indicates whether or not the consumer should request information
+        :keyword bool track_last_enqueued_event_properties: Indicates whether or not the consumer should request information
          on the last enqueued event on its associated partition, and track that information as events are received.
          When information about the partition's last enqueued event is being tracked, each event received from the
          Event Hubs service will carry metadata about the partition. This results in a small amount of additional
@@ -112,19 +114,20 @@ class EventHubConsumerClient(EventHubClient):
          if there isn't checkpoint data for a partition. Use the checkpoint data if there it's available. This can be a
          a dict with partition id as the key and position as the value for individual partitions, or a single
          EventPosition instance for all partitions.
-        :type initial_event_position: ~azure.eventhub.EventPosition, dict[str,~azure.eventhub.EventPosition]
+        :paramtype initial_event_position: ~azure.eventhub.EventPosition or dict[str,~azure.eventhub.EventPosition]
         :keyword on_error: The callback function which would be called when there is an error met during the receiving
          time. The callback takes two parameters: `partition_context` which contains partition information
          and `error` being the exception. Please define the callback like `on_error(partition_context, error)`.
         :paramtype on_error: Callable[[PartitionContext, Exception]]
         :keyword on_partition_initialize: The callback function which will be called after a consumer for certain
          partition finishes initialization. The callback takes two parameter: `partition_context` which contains
-         the partition information. Please define the callback like`on_partition_initialize(partition_context)`.
+         the partition information. Please define the callback like `on_partition_initialize(partition_context)`.
         :paramtype on_partition_initialize: Callable[[PartitionContext]]
         :keyword on_partition_close: The callback function which will be called after a consumer for certain
          partition is closed. The callback takes two parameters: `partition_context` which contains partition
-         information and `reason` for the close. Please define the callback like `on_error(partition_context, reason)`.
-         Please refer to `azure.eventhub.CloseReason` for different closing reason.
+         information and `reason` for the close. Please define the callback like
+         `on_partition_close(partition_context, reason)`.
+         Please refer to :class:`CloseReason` for different closing reason.
         :paramtype on_partition_close: Callable[[PartitionContext, CloseReason]]
         :rtype: None
 

@@ -71,7 +71,7 @@ class EventHubProducerClient(EventHubClient):
                         self._producers_locks.append(asyncio.Lock())
                         # self._producers_locks = [asyncio.Lock()] * num_of_producers
 
-    async def send(self, event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+    async def send(self, event_data,
             *, partition_key: Union[str, bytes] = None, partition_id: str = None, timeout: float = None) -> None:
         """Sends event data and blocks until acknowledgement is received or operation times out.
 
