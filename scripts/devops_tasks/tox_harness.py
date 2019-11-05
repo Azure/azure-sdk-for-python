@@ -18,8 +18,7 @@ from common_tasks import (
     clean_coverage,
     log_file,
     read_file,
-    MANAGEMENT_PACKAGE_IDENTIFIERS,
-    NON_MANAGEMENT_CODE_5_ALLOWED,
+    is_error_code_5_allowed,
     create_code_coverage_params,
 )
 
@@ -240,17 +239,7 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
         # if we are targeting only packages that are management plane, it is a possibility
         # that no tests running is an acceptable situation
         # we explicitly handle this here.
-        if (
-            all(
-                map(
-                    lambda x: any(
-                        [pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]
-                    ),
-                    [package_dir],
-                )
-            )
-            or package_name in NON_MANAGEMENT_CODE_5_ALLOWED
-        ):
+        if is_error_code_5_allowed(package_dir, package_name):
             local_options_array.append("--suppress-no-test-exit-code")
 
         # if not present, re-use base
