@@ -124,7 +124,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             san_dns_names=["sdk.azure-int.net"],
         )
 
-        polling_interval = 0 if self.is_playback() else 5
+        polling_interval = 0 if self.is_playback() else None
 
         create_certificate_pollers = []
         for i in range(4):
@@ -196,7 +196,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        polling_interval = 0 if self.is_playback() else 5
+        polling_interval = 0 if self.is_playback() else None
         create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy, _polling_interval=polling_interval)
 
         await create_certificate_poller
@@ -211,7 +211,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END backup_certificate]
 
-        polling_interval = 0 if self.is_playback() else 2
+        polling_interval = 0 if self.is_playback() else None
         await certificate_client.delete_certificate(name=cert_name, _polling_interval=polling_interval)
 
         # [START restore_certificate]
@@ -247,11 +247,11 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        polling_interval = 0 if self.is_playback() else 5
+        polling_interval = 0 if self.is_playback() else None
         create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy, _polling_interval=polling_interval)
         await create_certificate_poller
 
-        polling_interval = 0 if self.is_playback() else 2
+        polling_interval = 0 if self.is_playback() else None
         await certificate_client.delete_certificate(name=cert_name, _polling_interval=polling_interval)
 
         # [START get_deleted_certificate]
