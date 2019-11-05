@@ -54,7 +54,7 @@ from ._product_api_operations import ProductApiOperations
 from ._product_group_operations import ProductGroupOperations
 from ._product_subscriptions_operations import ProductSubscriptionsOperations
 from ._product_policy_operations import ProductPolicyOperations
-from ._property_operations import PropertyOperations
+from ._named_value_operations import NamedValueOperations
 from ._quota_by_counter_keys_operations import QuotaByCounterKeysOperations
 from ._quota_by_period_keys_operations import QuotaByPeriodKeysOperations
 from ._region_operations import RegionOperations
@@ -117,7 +117,7 @@ __all__ = [
     'ProductGroupOperations',
     'ProductSubscriptionsOperations',
     'ProductPolicyOperations',
-    'PropertyOperations',
+    'NamedValueOperations',
     'QuotaByCounterKeysOperations',
     'QuotaByPeriodKeysOperations',
     'RegionOperations',

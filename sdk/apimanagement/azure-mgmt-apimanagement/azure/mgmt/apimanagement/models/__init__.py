@@ -61,6 +61,7 @@ try:
     from ._models_py3 import CertificateContract
     from ._models_py3 import CertificateCreateOrUpdateParameters
     from ._models_py3 import CertificateInformation
+    from ._models_py3 import ClientSecretContract
     from ._models_py3 import ConnectivityStatusContract
     from ._models_py3 import DeployConfigurationParameters
     from ._models_py3 import DiagnosticContract
@@ -87,6 +88,9 @@ try:
     from ._models_py3 import IssueUpdateContract
     from ._models_py3 import LoggerContract
     from ._models_py3 import LoggerUpdateContract
+    from ._models_py3 import NamedValueContract
+    from ._models_py3 import NamedValueEntityBaseParameters
+    from ._models_py3 import NamedValueUpdateParameters
     from ._models_py3 import NetworkStatusContract
     from ._models_py3 import NetworkStatusContractByLocation
     from ._models_py3 import NotificationContract
@@ -115,9 +119,6 @@ try:
     from ._models_py3 import ProductEntityBaseParameters
     from ._models_py3 import ProductTagResourceContractProperties
     from ._models_py3 import ProductUpdateParameters
-    from ._models_py3 import PropertyContract
-    from ._models_py3 import PropertyEntityBaseParameters
-    from ._models_py3 import PropertyUpdateParameters
     from ._models_py3 import QuotaCounterCollection
     from ._models_py3 import QuotaCounterContract
     from ._models_py3 import QuotaCounterValueContract
@@ -145,6 +146,7 @@ try:
     from ._models_py3 import SubscriptionContract
     from ._models_py3 import SubscriptionCreateParameters
     from ._models_py3 import SubscriptionKeyParameterNamesContract
+    from ._models_py3 import SubscriptionKeysContract
     from ._models_py3 import SubscriptionsDelegationSettingsProperties
     from ._models_py3 import SubscriptionUpdateParameters
     from ._models_py3 import TagContract
@@ -217,6 +219,7 @@ except (SyntaxError, ImportError):
     from ._models import CertificateContract
     from ._models import CertificateCreateOrUpdateParameters
     from ._models import CertificateInformation
+    from ._models import ClientSecretContract
     from ._models import ConnectivityStatusContract
     from ._models import DeployConfigurationParameters
     from ._models import DiagnosticContract
@@ -243,6 +246,9 @@ except (SyntaxError, ImportError):
     from ._models import IssueUpdateContract
     from ._models import LoggerContract
     from ._models import LoggerUpdateContract
+    from ._models import NamedValueContract
+    from ._models import NamedValueEntityBaseParameters
+    from ._models import NamedValueUpdateParameters
     from ._models import NetworkStatusContract
     from ._models import NetworkStatusContractByLocation
     from ._models import NotificationContract
@@ -271,9 +277,6 @@ except (SyntaxError, ImportError):
     from ._models import ProductEntityBaseParameters
     from ._models import ProductTagResourceContractProperties
     from ._models import ProductUpdateParameters
-    from ._models import PropertyContract
-    from ._models import PropertyEntityBaseParameters
-    from ._models import PropertyUpdateParameters
     from ._models import QuotaCounterCollection
     from ._models import QuotaCounterContract
     from ._models import QuotaCounterValueContract
@@ -301,6 +304,7 @@ except (SyntaxError, ImportError):
     from ._models import SubscriptionContract
     from ._models import SubscriptionCreateParameters
     from ._models import SubscriptionKeyParameterNamesContract
+    from ._models import SubscriptionKeysContract
     from ._models import SubscriptionsDelegationSettingsProperties
     from ._models import SubscriptionUpdateParameters
     from ._models import TagContract
@@ -338,12 +342,12 @@ from ._paged_models import IssueAttachmentContractPaged
 from ._paged_models import IssueCommentContractPaged
 from ._paged_models import IssueContractPaged
 from ._paged_models import LoggerContractPaged
+from ._paged_models import NamedValueContractPaged
 from ._paged_models import NotificationContractPaged
 from ._paged_models import OpenidConnectProviderContractPaged
 from ._paged_models import OperationContractPaged
 from ._paged_models import OperationPaged
 from ._paged_models import ProductContractPaged
-from ._paged_models import PropertyContractPaged
 from ._paged_models import RegionContractPaged
 from ._paged_models import ReportRecordContractPaged
 from ._paged_models import RequestReportRecordContractPaged
@@ -446,6 +450,7 @@ __all__ = [
     'CertificateContract',
     'CertificateCreateOrUpdateParameters',
     'CertificateInformation',
+    'ClientSecretContract',
     'ConnectivityStatusContract',
     'DeployConfigurationParameters',
     'DiagnosticContract',
@@ -472,6 +477,9 @@ __all__ = [
     'IssueUpdateContract',
     'LoggerContract',
     'LoggerUpdateContract',
+    'NamedValueContract',
+    'NamedValueEntityBaseParameters',
+    'NamedValueUpdateParameters',
     'NetworkStatusContract',
     'NetworkStatusContractByLocation',
     'NotificationContract',
@@ -500,9 +508,6 @@ __all__ = [
     'ProductEntityBaseParameters',
     'ProductTagResourceContractProperties',
     'ProductUpdateParameters',
-    'PropertyContract',
-    'PropertyEntityBaseParameters',
-    'PropertyUpdateParameters',
     'QuotaCounterCollection',
     'QuotaCounterContract',
     'QuotaCounterValueContract',
@@ -530,6 +535,7 @@ __all__ = [
     'SubscriptionContract',
     'SubscriptionCreateParameters',
     'SubscriptionKeyParameterNamesContract',
+    'SubscriptionKeysContract',
     'SubscriptionsDelegationSettingsProperties',
     'SubscriptionUpdateParameters',
     'TagContract',
@@ -579,7 +585,7 @@ __all__ = [
     'NotificationContractPaged',
     'OpenidConnectProviderContractPaged',
     'SubscriptionContractPaged',
-    'PropertyContractPaged',
+    'NamedValueContractPaged',
     'RegionContractPaged',
     'ReportRecordContractPaged',
     'RequestReportRecordContractPaged',

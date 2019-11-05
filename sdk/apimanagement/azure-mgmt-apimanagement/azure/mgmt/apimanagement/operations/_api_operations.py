@@ -320,11 +320,13 @@ class ApiOperations(object):
             deserialized = self._deserialize('ApiContract', response)
             header_dict = {
                 'ETag': 'str',
+                'Location': 'str',
             }
         if response.status_code == 201:
             deserialized = self._deserialize('ApiContract', response)
             header_dict = {
                 'ETag': 'str',
+                'Location': 'str',
             }
 
         if raw:
@@ -381,6 +383,7 @@ class ApiOperations(object):
         def get_long_running_output(response):
             header_dict = {
                 'ETag': 'str',
+                'Location': 'str',
             }
             deserialized = self._deserialize('ApiContract', response)
 
