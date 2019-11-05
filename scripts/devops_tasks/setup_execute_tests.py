@@ -118,9 +118,12 @@ def run_tests(targeted_packages, test_output_location, test_res, parsed_args):
         target_package_options = []
         allowed_return_codes = []
 
+        local_command_array = command_array[:]
+
         # Get code coverage params for current package
-        coverage_commands = create_code_coverage_params(parsed_args, package_name)  
-        command_array.extend(coverage_commands)      
+        coverage_commands = create_code_coverage_params(parsed_args, package_name)
+        # Create local copy of params to pass to execute
+        local_command_array.extend(coverage_commands)
 
         # if we are targeting only packages that are management plane, it is a possibility
         # that no tests running is an acceptable situation
@@ -148,7 +151,7 @@ def run_tests(targeted_packages, test_output_location, test_res, parsed_args):
 
         target_package_options.append(target_package)
         err_result = run_check_call(
-            command_array + target_package_options,
+            local_command_array + target_package_options,
             root_dir,
             allowed_return_codes,
             True,
