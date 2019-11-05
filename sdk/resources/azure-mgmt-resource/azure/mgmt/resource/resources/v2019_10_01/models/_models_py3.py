@@ -1565,6 +1565,38 @@ class TagPatchRequest(Model):
         self.tags = tags
 
 
+class TagRequest(Model):
+    """Tag Request for Put, Get, Delete operations.
+
+    :param tags: array of tag objects passing in the request
+    :type tags: list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag]
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '[Tag]'},
+    }
+
+    def __init__(self, *, tags=None, **kwargs) -> None:
+        super(TagRequest, self).__init__(**kwargs)
+        self.tags = tags
+
+
+class TagResponse(Model):
+    """Tag Response for Patch, Put, Get, Delete operations.
+
+    :param tags: array of tag objects returned in the response body
+    :type tags: list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag]
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '[Tag]'},
+    }
+
+    def __init__(self, *, tags=None, **kwargs) -> None:
+        super(TagResponse, self).__init__(**kwargs)
+        self.tags = tags
+
+
 class TagValue(Model):
     """Tag information.
 

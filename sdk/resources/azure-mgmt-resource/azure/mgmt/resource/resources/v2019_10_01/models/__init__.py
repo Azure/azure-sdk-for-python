@@ -57,6 +57,8 @@ try:
     from ._models_py3 import TagCount
     from ._models_py3 import TagDetails
     from ._models_py3 import TagPatchRequest
+    from ._models_py3 import TagRequest
+    from ._models_py3 import TagResponse
     from ._models_py3 import TagValue
     from ._models_py3 import TargetResource
     from ._models_py3 import TemplateHashResult
@@ -112,6 +114,8 @@ except (SyntaxError, ImportError):
     from ._models import TagCount
     from ._models import TagDetails
     from ._models import TagPatchRequest
+    from ._models import TagRequest
+    from ._models import TagResponse
     from ._models import TagValue
     from ._models import TargetResource
     from ._models import TemplateHashResult
@@ -183,6 +187,8 @@ __all__ = [
     'TagCount',
     'TagDetails',
     'TagPatchRequest',
+    'TagRequest',
+    'TagResponse',
     'TagValue',
     'TargetResource',
     'TemplateHashResult',

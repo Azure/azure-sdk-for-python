@@ -340,7 +340,7 @@ class TagsOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/tagNames'}
 
     def resource_create(
-            self, resource_group_name, resource_provider_namespace, resource_type, resource_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, resource_type, resource_name, api_version, tags=None, custom_headers=None, raw=False, **operation_config):
         """Creates multiple tags.
 
         :param resource_group_name: The name of the resource group for the
@@ -355,19 +355,21 @@ class TagsOperations(object):
         :type resource_name: str
         :param api_version: The API version to use for the operation.
         :type api_version: str
-        :param parameters: Parameters for creating multiple tags.
-        :type parameters:
+        :param tags: array of tag objects passing in the request
+        :type tags:
          list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag] or
-         ~msrest.pipeline.ClientRawResponse
+        :return: TagResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.TagRequest(tags=tags)
+
         # Construct URL
         url = self.resource_create.metadata['url']
         path_format_arguments = {
@@ -395,7 +397,7 @@ class TagsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, '[Tag]')
+        body_content = self._serialize.body(parameters, 'TagRequest')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -408,7 +410,7 @@ class TagsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[Tag]', response)
+            deserialized = self._deserialize('TagResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -446,9 +448,9 @@ class TagsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag] or
-         ~msrest.pipeline.ClientRawResponse
+        :return: TagResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.TagPatchRequest(operation=operation, tags=tags)
@@ -493,7 +495,7 @@ class TagsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[Tag]', response)
+            deserialized = self._deserialize('TagResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -523,9 +525,9 @@ class TagsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag] or
-         ~msrest.pipeline.ClientRawResponse
+        :return: TagResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -564,7 +566,7 @@ class TagsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[Tag]', response)
+            deserialized = self._deserialize('TagResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -637,24 +639,26 @@ class TagsOperations(object):
     resource_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}/providers/Microsoft.Resources/tags/default'}
 
     def subscription_create(
-            self, api_version, parameters, custom_headers=None, raw=False, **operation_config):
+            self, api_version, tags=None, custom_headers=None, raw=False, **operation_config):
         """Creates multiple tags for subscription.
 
         :param api_version: The API version to use for the operation.
         :type api_version: str
-        :param parameters: Parameters for creating multiple tags.
-        :type parameters:
+        :param tags: array of tag objects passing in the request
+        :type tags:
          list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag] or
-         ~msrest.pipeline.ClientRawResponse
+        :return: TagResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.TagRequest(tags=tags)
+
         # Construct URL
         url = self.subscription_create.metadata['url']
         path_format_arguments = {
@@ -678,7 +682,7 @@ class TagsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, '[Tag]')
+        body_content = self._serialize.body(parameters, 'TagRequest')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -691,7 +695,7 @@ class TagsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[Tag]', response)
+            deserialized = self._deserialize('TagResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -719,9 +723,9 @@ class TagsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag] or
-         ~msrest.pipeline.ClientRawResponse
+        :return: TagResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.TagPatchRequest(operation=operation, tags=tags)
@@ -762,7 +766,7 @@ class TagsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[Tag]', response)
+            deserialized = self._deserialize('TagResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -782,9 +786,9 @@ class TagsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag] or
-         ~msrest.pipeline.ClientRawResponse
+        :return: TagResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -819,7 +823,7 @@ class TagsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[Tag]', response)
+            deserialized = self._deserialize('TagResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
