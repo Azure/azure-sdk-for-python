@@ -2,7 +2,7 @@
 Azure Identity simplifies authentication across the Azure SDK.
 It supports token authentication using an Azure Active Directory
 
-This library is in preview and currently supports:
+This library currently supports:
   - [Service principal authentication](https://docs.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals)
   - [Managed identity authentication](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview)
   - User authentication
