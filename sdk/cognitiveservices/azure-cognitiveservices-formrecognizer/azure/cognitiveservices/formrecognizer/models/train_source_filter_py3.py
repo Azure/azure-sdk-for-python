@@ -16,7 +16,7 @@ class TrainSourceFilter(Model):
     """Filter to apply to the documents in the source path for training.
 
     :param prefix: A case-sensitive prefix string to filter documents in the
-     source path for training. For example, when using a Azure storage blob
+     source path for training. For example, when using an Azure Storage blob
      Uri, use the prefix to restrict sub folders for training.
     :type prefix: str
     :param include_sub_folders: A flag to indicate if sub folders within the
