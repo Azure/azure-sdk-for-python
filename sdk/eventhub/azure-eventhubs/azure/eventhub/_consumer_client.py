@@ -99,6 +99,7 @@ class EventHubConsumerClient(EventHubClient):
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
+        # type: (str, Any) -> EventHubConsumerClient
         """
         Create an EventHubConsumerClient from a connection string.
 

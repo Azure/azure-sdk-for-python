@@ -83,7 +83,6 @@ async def example_eventhub_async_send_and_receive():
         async with producer:
             event_data = EventData(b"A single event")
             await producer.send(event_data)
-            print('send done')
         # [END eventhub_producer_client_send_async]
         await asyncio.sleep(1)
 
@@ -92,8 +91,6 @@ async def example_eventhub_async_send_and_receive():
 
         async def on_events(partition_context, events):
             logger.info("Received {} messages from partition: {}".format(
-                len(events), partition_context.partition_id))
-            print("Received {} messages from partition: {}".format(
                 len(events), partition_context.partition_id))
             # Do ops on received events
         async with consumer:
