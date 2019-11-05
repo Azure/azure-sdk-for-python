@@ -355,9 +355,9 @@ class TagsOperations(object):
         :type resource_name: str
         :param api_version: The API version to use for the operation.
         :type api_version: str
-        :param properties: array of tag objects passing in the request.
+        :param properties: tags object passing in the request.
         :type properties:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.TagArray
+         ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -440,9 +440,9 @@ class TagsOperations(object):
          values include: 'Replace', 'Merge', 'Delete'
         :type operation: str or
          ~azure.mgmt.resource.resources.v2019_10_01.models.enum
-        :param properties: array of tag objects passing in the request.
+        :param properties: tags object passing in the request.
         :type properties:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.TagArray
+         ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -644,9 +644,9 @@ class TagsOperations(object):
 
         :param api_version: The API version to use for the operation.
         :type api_version: str
-        :param properties: array of tag objects passing in the request.
+        :param properties: tags object passing in the request.
         :type properties:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.TagArray
+         ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -715,9 +715,9 @@ class TagsOperations(object):
          values include: 'Replace', 'Merge', 'Delete'
         :type operation: str or
          ~azure.mgmt.resource.resources.v2019_10_01.models.enum
-        :param properties: array of tag objects passing in the request.
+        :param properties: tags object passing in the request.
         :type properties:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.TagArray
+         ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

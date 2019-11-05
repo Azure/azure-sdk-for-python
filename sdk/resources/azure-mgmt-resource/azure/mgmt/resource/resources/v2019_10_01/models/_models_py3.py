@@ -1465,46 +1465,6 @@ class SubResource(Model):
         self.id = id
 
 
-class Tag(Model):
-    """key and value pair for a specific tag.
-
-    :param tag_key: the key of the tag.
-    :type tag_key: str
-    :param tag_value: the value of the tag.
-    :type tag_value: str
-    """
-
-    _attribute_map = {
-        'tag_key': {'key': 'tagKey', 'type': 'str'},
-        'tag_value': {'key': 'tagValue', 'type': 'str'},
-    }
-
-    def __init__(self, *, tag_key: str=None, tag_value: str=None, **kwargs) -> None:
-        super(Tag, self).__init__(**kwargs)
-        self.tag_key = tag_key
-        self.tag_value = tag_value
-
-
-class TagArray(Model):
-    """object contains array of tag items.
-
-    :param tags:
-    :type tags: list[~azure.mgmt.resource.resources.v2019_10_01.models.Tag]
-    """
-
-    _validation = {
-        'tags': {'max_items': 50},
-    }
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '[Tag]'},
-    }
-
-    def __init__(self, *, tags=None, **kwargs) -> None:
-        super(TagArray, self).__init__(**kwargs)
-        self.tags = tags
-
-
 class TagCount(Model):
     """Tag count.
 
@@ -1570,14 +1530,13 @@ class TagPatchRequest(Model):
      include: 'Replace', 'Merge', 'Delete'
     :type operation: str or
      ~azure.mgmt.resource.resources.v2019_10_01.models.enum
-    :param properties: array of tag objects passing in the request.
-    :type properties:
-     ~azure.mgmt.resource.resources.v2019_10_01.models.TagArray
+    :param properties: tags object passing in the request.
+    :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
     """
 
     _attribute_map = {
         'operation': {'key': 'operation', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'TagArray'},
+        'properties': {'key': 'properties', 'type': 'Tags'},
     }
 
     def __init__(self, *, operation=None, properties=None, **kwargs) -> None:
@@ -1589,13 +1548,12 @@ class TagPatchRequest(Model):
 class TagRequest(Model):
     """Tag Request for Put, Get, Delete operations.
 
-    :param properties: array of tag objects passing in the request.
-    :type properties:
-     ~azure.mgmt.resource.resources.v2019_10_01.models.TagArray
+    :param properties: tags object passing in the request.
+    :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'TagArray'},
+        'properties': {'key': 'properties', 'type': 'Tags'},
     }
 
     def __init__(self, *, properties=None, **kwargs) -> None:
@@ -1615,9 +1573,8 @@ class TagResponse(Model):
     :vartype name: str
     :ivar type: The type of the tag response.
     :vartype type: object
-    :param properties: array of tag objects returned in the response body.
-    :type properties:
-     ~azure.mgmt.resource.resources.v2019_10_01.models.TagArray
+    :param properties: tags object returned in the response body.
+    :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
     """
 
     _validation = {
@@ -1630,7 +1587,7 @@ class TagResponse(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'object'},
-        'properties': {'key': 'properties', 'type': 'TagArray'},
+        'properties': {'key': 'properties', 'type': 'Tags'},
     }
 
     def __init__(self, *, properties=None, **kwargs) -> None:
@@ -1639,6 +1596,22 @@ class TagResponse(Model):
         self.name = None
         self.type = None
         self.properties = properties
+
+
+class Tags(Model):
+    """key and value pairs for tags.
+
+    :param tags:
+    :type tags: object
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': 'object'},
+    }
+
+    def __init__(self, *, tags=None, **kwargs) -> None:
+        super(Tags, self).__init__(**kwargs)
+        self.tags = tags
 
 
 class TagValue(Model):

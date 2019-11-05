@@ -53,13 +53,12 @@ try:
     from ._models_py3 import ResourcesMoveInfo
     from ._models_py3 import Sku
     from ._models_py3 import SubResource
-    from ._models_py3 import Tag
-    from ._models_py3 import TagArray
     from ._models_py3 import TagCount
     from ._models_py3 import TagDetails
     from ._models_py3 import TagPatchRequest
     from ._models_py3 import TagRequest
     from ._models_py3 import TagResponse
+    from ._models_py3 import Tags
     from ._models_py3 import TagValue
     from ._models_py3 import TargetResource
     from ._models_py3 import TemplateHashResult
@@ -111,13 +110,12 @@ except (SyntaxError, ImportError):
     from ._models import ResourcesMoveInfo
     from ._models import Sku
     from ._models import SubResource
-    from ._models import Tag
-    from ._models import TagArray
     from ._models import TagCount
     from ._models import TagDetails
     from ._models import TagPatchRequest
     from ._models import TagRequest
     from ._models import TagResponse
+    from ._models import Tags
     from ._models import TagValue
     from ._models import TargetResource
     from ._models import TemplateHashResult
@@ -185,13 +183,12 @@ __all__ = [
     'ResourcesMoveInfo',
     'Sku',
     'SubResource',
-    'Tag',
-    'TagArray',
     'TagCount',
     'TagDetails',
     'TagPatchRequest',
     'TagRequest',
     'TagResponse',
+    'Tags',
     'TagValue',
     'TargetResource',
     'TemplateHashResult',
