@@ -338,21 +338,34 @@ async def do_operation(event):
     # do some sync or async operations. If the operation is i/o intensive, async will have better performance
     print(event)
 
+
 async def process_events(partition_context, events):
     await asyncio.gather(*[do_operation(event) for event in events])
     await partition_context.update_checkpoint(events[-1])
 
+
+async def receive(client):
+    try:
+        await client.receive(on_events=process_events, consumer_group="$Default")
+    except KeyboardInterrupt:
+        await client.close()
+
+
+async def main():
+    container_client = ContainerClient.from_connection_string(storage_connection_str, blob_name_str)
+    partition_manager = BlobPartitionManager(container_client)
+    client = EventHubConsumerClient.from_connection_string(
+        connection_str,
+        event_hub_path=event_hub_path,
+        partition_manager=partition_manager,  # For load balancing and checkpoint. Leave None for no load balancing
+    )
+    async with client:
+        await receive(client)
+
+
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    container_client = ContainerClient.from_connection_string(storage_connection_str, blob_name_str)
-    partition_manager = BlobPartitionManager(container_client=container_client)
-    client = EventHubConsumerClient.from_connection_string(connection_str, event_hub_path=event_hub_path, partition_manager=partition_manager, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL)
-    try:
-        loop.run_until_complete(client.receive(process_events, "$default"))
-    except KeyboardInterrupt:
-        loop.run_until_complete(client.close())
-    finally:
-        loop.stop()
+    loop.run_until_complete(main())
 ```
 
 ### Use EventHubConsumerClient to work with IoT Hub
