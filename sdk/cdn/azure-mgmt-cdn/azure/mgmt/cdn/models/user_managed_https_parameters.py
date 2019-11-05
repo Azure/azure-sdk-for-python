@@ -22,6 +22,9 @@ class UserManagedHttpsParameters(CustomDomainHttpsParameters):
      used for secure delivery. Possible values include: 'ServerNameIndication',
      'IPBased'
     :type protocol_type: str or ~azure.mgmt.cdn.models.ProtocolType
+    :param minimum_tls_version: TLS protocol version that will be used for
+     Https. Possible values include: 'None', 'TLS10', 'TLS12'
+    :type minimum_tls_version: str or ~azure.mgmt.cdn.models.MinimumTlsVersion
     :param certificate_source: Required. Constant filled by server.
     :type certificate_source: str
     :param certificate_source_parameters: Required. Defines the certificate
@@ -38,6 +41,7 @@ class UserManagedHttpsParameters(CustomDomainHttpsParameters):
 
     _attribute_map = {
         'protocol_type': {'key': 'protocolType', 'type': 'str'},
+        'minimum_tls_version': {'key': 'minimumTlsVersion', 'type': 'MinimumTlsVersion'},
         'certificate_source': {'key': 'certificateSource', 'type': 'str'},
         'certificate_source_parameters': {'key': 'certificateSourceParameters', 'type': 'KeyVaultCertificateSourceParameters'},
     }

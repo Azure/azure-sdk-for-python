@@ -40,6 +40,27 @@ class OptimizationType(str, Enum):
     dynamic_site_acceleration = "DynamicSiteAcceleration"
 
 
+class HealthProbeRequestType(str, Enum):
+
+    not_set = "NotSet"
+    get = "GET"
+    head = "HEAD"
+
+
+class ProbeProtocol(str, Enum):
+
+    not_set = "NotSet"
+    http = "Http"
+    https = "Https"
+
+
+class ResponseBasedDetectedErrorTypes(str, Enum):
+
+    none = "None"
+    tcp_errors_only = "TcpErrorsOnly"
+    tcp_and_http_errors = "TcpAndHttpErrors"
+
+
 class EndpointResourceState(str, Enum):
 
     creating = "Creating"
@@ -239,6 +260,13 @@ class OriginResourceState(str, Enum):
     deleting = "Deleting"
 
 
+class OriginGroupResourceState(str, Enum):
+
+    creating = "Creating"
+    active = "Active"
+    deleting = "Deleting"
+
+
 class CustomDomainResourceState(str, Enum):
 
     creating = "Creating"
@@ -273,6 +301,13 @@ class ProtocolType(str, Enum):
 
     server_name_indication = "ServerNameIndication"
     ip_based = "IPBased"
+
+
+class MinimumTlsVersion(str, Enum):
+
+    none = "None"
+    tls10 = "TLS10"
+    tls12 = "TLS12"
 
 
 class CertificateType(str, Enum):
