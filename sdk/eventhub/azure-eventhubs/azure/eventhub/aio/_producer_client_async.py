@@ -76,7 +76,8 @@ class EventHubProducerClient(EventHubClient):
         """Sends event data and blocks until acknowledgement is received or operation times out.
 
         :param event_data: The event to be sent. It can be an EventData object, or iterable of EventData objects.
-        :type event_data: ~azure.eventhub.EventData or ~azure.eventhub.EventDataBatch or Iterator[~azure.eventhub.EventData]
+        :type event_data: ~azure.eventhub.EventData or ~azure.eventhub.EventDataBatch or
+         Iterator[~azure.eventhub.EventData]
         :keyword str partition_key: With the given partition_key, event data will land to
          a particular partition of the Event Hub decided by the service.
         :keyword str partition_id: The specific partition ID to send to. Default is None, in which case the service
