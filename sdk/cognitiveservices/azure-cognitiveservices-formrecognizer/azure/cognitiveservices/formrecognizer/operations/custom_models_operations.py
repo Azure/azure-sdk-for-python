@@ -253,7 +253,7 @@ class CustomModelsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
