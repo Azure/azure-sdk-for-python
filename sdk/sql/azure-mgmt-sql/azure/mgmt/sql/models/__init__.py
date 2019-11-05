@@ -489,6 +489,7 @@ from ._sql_management_client_enums import (
     VulnerabilityAssessmentPolicyBaselineName,
     SensitivityLabelSource,
     CapabilityGroup,
+    ReplicaType,
 )
 
 __all__ = [
@@ -667,7 +668,6 @@ __all__ = [
     'RecommendedElasticPoolPaged',
     'RecommendedElasticPoolMetricPaged',
     'ReplicationLinkPaged',
-    'ServerAzureADAdministratorPaged',
     'ServerCommunicationLinkPaged',
     'ServiceObjectivePaged',
     'ElasticPoolActivityPaged',
@@ -726,6 +726,7 @@ __all__ = [
     'ManagedDatabasePaged',
     'PrivateEndpointConnectionPaged',
     'PrivateLinkResourcePaged',
+    'ServerAzureADAdministratorPaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
@@ -807,4 +808,5 @@ __all__ = [
     'VulnerabilityAssessmentPolicyBaselineName',
     'SensitivityLabelSource',
     'CapabilityGroup',
+    'ReplicaType',
 ]
