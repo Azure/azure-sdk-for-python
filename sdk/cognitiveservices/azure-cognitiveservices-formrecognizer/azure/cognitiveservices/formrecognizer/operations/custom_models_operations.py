@@ -265,7 +265,7 @@ class CustomModelsOperations(object):
             self, model_id, include_text_details=False, file_stream=None, custom_headers=None, raw=False, **operation_config):
         """Analyze Form.
 
-        Extract key-value pairs, tables, and semandstic values from a given
+        Extract key-value pairs, tables, and semantic values from a given
         document. The input document must be of one of the supported content
         types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'.
         Alternatively, use 'application/json' type to specify the location (Uri
