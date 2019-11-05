@@ -29,7 +29,6 @@ from six.moves.urllib.parse import urlparse
 import six
 from azure.core.exceptions import DecodeError  # type: ignore
 
-from . import documents
 from . import exceptions
 from . import http_constants
 from . import _retry_utility
