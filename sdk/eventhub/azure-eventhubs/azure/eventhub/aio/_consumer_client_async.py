@@ -85,7 +85,7 @@ class EventHubConsumerClient(EventHubClient):
         :param str conn_str: The connection string of an eventhub.
         :keyword str event_hub_path: The path of the specific Event Hub to connect the client to.
         :keyword bool network_tracing: Whether to output network trace logs to the logger. Default is `False`.
-        :keyword dict[str, Any] http_proxy: HTTP proxy settings. This must be a dictionary with the following
+        :keyword dict[str,Any] http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys - 'proxy_hostname' (str value) and 'proxy_port' (int value).
          Additionally the following keys may also be present - 'username', 'password'.
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
@@ -103,6 +103,16 @@ class EventHubConsumerClient(EventHubClient):
         :paramtype partition_manager: ~azure.eventhub.aio.PartitionManager
         :keyword float load_balancing_interval:
          When load balancing kicks in, this is the interval in seconds between two load balancing. Default is 10.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_eventhub_async.py
+                :start-after: [START create_eventhub_consumer_client_from_conn_str_async]
+                :end-before: [END create_eventhub_consumer_client_from_conn_str_async]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the EventHubConsumerClient from connection string.
+
         """
         return super(EventHubConsumerClient, cls).from_connection_string(conn_str, **kwargs)
 

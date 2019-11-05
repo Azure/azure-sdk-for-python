@@ -319,7 +319,8 @@ class EventDataBatch(object):
 
     Use `try_add` method to add events until the maximum batch size limit in bytes has been reached -
     a `ValueError` will be raised.
-    Use `send` method of ~azure.eventhub.EventHubProducerClient or ~azure.eventhub.aio.EventHubProducerClient
+    Use `send` method of :class:`EventHubProducerClient<azure.eventhub.EventHubProducerClient>`
+    or the async :class:`EventHubProducerClient<azure.eventhub.aio.EventHubProducerClient>`
     for sending. The `send` method accepts partition_key as a parameter for sending a particular partition.
 
     **Please use the create_batch method of EventHubProducerClient
