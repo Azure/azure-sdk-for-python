@@ -25,13 +25,14 @@ class PartitionManager(ABC):
          the Event Hubs namespace that contains it.
         :param str consumer_group_name: The name of the consumer group the ownership are associated with.
         :rtype: Iterable[Dict[str, Any]], Iterable of dictionaries containing partition ownership information:
-                * fully_qualified_namespace
-                * eventhub_name
-                * consumer_group_name
-                * owner_id
-                * partition_id
-                * last_modified_time
-                * etag
+
+                - fully_qualified_namespace
+                - eventhub_name
+                - consumer_group_name
+                - owner_id
+                - partition_id
+                - last_modified_time
+                - etag
         """
 
     @abstractmethod
@@ -41,13 +42,14 @@ class PartitionManager(ABC):
 
         :param Iterable[Dict[str,Any]] ownership_list: Iterable of dictionaries containing all the ownership to claim.
         :rtype: Iterable[Dict[str,Any]], Iterable of dictionaries containing partition ownership information:
-                * fully_qualified_namespace
-                * eventhub_name
-                * consumer_group_name
-                * owner_id
-                * partition_id
-                * last_modified_time
-                * etag
+
+                - fully_qualified_namespace
+                - eventhub_name
+                - consumer_group_name
+                - owner_id
+                - partition_id
+                - last_modified_time
+                - etag
         """
 
     @abstractmethod
@@ -67,7 +69,6 @@ class PartitionManager(ABC):
         :param int sequence_number: The sequence_number of the ~azure.eventhub.EventData the new checkpoint
          will be associated with.
         :rtype: None
-        :raise: `OwnershipLostError`
         """
 
     @abstractmethod
@@ -80,16 +81,11 @@ class PartitionManager(ABC):
          the Event Hubs namespace that contains it.
         :param str consumer_group_name: The name of the consumer group the ownership are associated with.
         :rtype: Iterable[Dict[str,Any]], Iterable of dictionaries containing partition ownership information:
-                * fully_qualified_namespace
-                * eventhub_name
-                * consumer_group_name
-                * partition_id
-                * sequence_number
-                * offset
+
+                - fully_qualified_namespace
+                - eventhub_name
+                - consumer_group_name
+                - partition_id
+                - sequence_number
+                - offset
         """
-
-
-class OwnershipLostError(Exception):
-    """Raises when an EventHubConsumerClient fails to renew the ownership of a partition
-
-    """
