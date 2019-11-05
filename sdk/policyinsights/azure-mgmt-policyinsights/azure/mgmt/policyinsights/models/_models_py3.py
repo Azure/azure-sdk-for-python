@@ -1010,6 +1010,11 @@ class Remediation(Model):
      of the individual definition that should be remediated. Required when the
      policy assignment being remediated assigns a policy set definition.
     :type policy_definition_reference_id: str
+    :param resource_discovery_mode: The way resources to remediate are
+     discovered. Defaults to ExistingNonCompliant if not specified. Possible
+     values include: 'ExistingNonCompliant', 'ReEvaluateCompliance'
+    :type resource_discovery_mode: str or
+     ~azure.mgmt.policyinsights.models.ResourceDiscoveryMode
     :ivar provisioning_state: The status of the remediation.
     :vartype provisioning_state: str
     :ivar created_on: The time at which the remediation was created.
@@ -1019,9 +1024,9 @@ class Remediation(Model):
     :param filters: The filters that will be applied to determine which
      resources to remediate.
     :type filters: ~azure.mgmt.policyinsights.models.RemediationFilters
-    :param deployment_status: The deployment status summary for all
-     deployments created by the remediation.
-    :type deployment_status:
+    :ivar deployment_status: The deployment status summary for all deployments
+     created by the remediation.
+    :vartype deployment_status:
      ~azure.mgmt.policyinsights.models.RemediationDeploymentSummary
     :ivar id: The ID of the remediation.
     :vartype id: str
@@ -1035,6 +1040,7 @@ class Remediation(Model):
         'provisioning_state': {'readonly': True},
         'created_on': {'readonly': True},
         'last_updated_on': {'readonly': True},
+        'deployment_status': {'readonly': True},
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
@@ -1043,6 +1049,7 @@ class Remediation(Model):
     _attribute_map = {
         'policy_assignment_id': {'key': 'properties.policyAssignmentId', 'type': 'str'},
         'policy_definition_reference_id': {'key': 'properties.policyDefinitionReferenceId', 'type': 'str'},
+        'resource_discovery_mode': {'key': 'properties.resourceDiscoveryMode', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'created_on': {'key': 'properties.createdOn', 'type': 'iso-8601'},
         'last_updated_on': {'key': 'properties.lastUpdatedOn', 'type': 'iso-8601'},
@@ -1053,15 +1060,16 @@ class Remediation(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, policy_assignment_id: str=None, policy_definition_reference_id: str=None, filters=None, deployment_status=None, **kwargs) -> None:
+    def __init__(self, *, policy_assignment_id: str=None, policy_definition_reference_id: str=None, resource_discovery_mode=None, filters=None, **kwargs) -> None:
         super(Remediation, self).__init__(**kwargs)
         self.policy_assignment_id = policy_assignment_id
         self.policy_definition_reference_id = policy_definition_reference_id
+        self.resource_discovery_mode = resource_discovery_mode
         self.provisioning_state = None
         self.created_on = None
         self.last_updated_on = None
         self.filters = filters
-        self.deployment_status = deployment_status
+        self.deployment_status = None
         self.id = None
         self.type = None
         self.name = None
@@ -1128,16 +1136,25 @@ class RemediationDeploymentSummary(Model):
     """The deployment status summary for all deployments created by the
     remediation.
 
-    :param total_deployments: The number of deployments required by the
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar total_deployments: The number of deployments required by the
      remediation.
-    :type total_deployments: int
-    :param successful_deployments: The number of deployments required by the
+    :vartype total_deployments: int
+    :ivar successful_deployments: The number of deployments required by the
      remediation that have succeeded.
-    :type successful_deployments: int
-    :param failed_deployments: The number of deployments required by the
+    :vartype successful_deployments: int
+    :ivar failed_deployments: The number of deployments required by the
      remediation that have failed.
-    :type failed_deployments: int
+    :vartype failed_deployments: int
     """
+
+    _validation = {
+        'total_deployments': {'readonly': True},
+        'successful_deployments': {'readonly': True},
+        'failed_deployments': {'readonly': True},
+    }
 
     _attribute_map = {
         'total_deployments': {'key': 'totalDeployments', 'type': 'int'},
@@ -1145,11 +1162,11 @@ class RemediationDeploymentSummary(Model):
         'failed_deployments': {'key': 'failedDeployments', 'type': 'int'},
     }
 
-    def __init__(self, *, total_deployments: int=None, successful_deployments: int=None, failed_deployments: int=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(RemediationDeploymentSummary, self).__init__(**kwargs)
-        self.total_deployments = total_deployments
-        self.successful_deployments = successful_deployments
-        self.failed_deployments = failed_deployments
+        self.total_deployments = None
+        self.successful_deployments = None
+        self.failed_deployments = None
 
 
 class RemediationFilters(Model):

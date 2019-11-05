@@ -25,7 +25,7 @@ class RemediationsOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar management_groups_namespace: The namespace for Microsoft Management RP; only "Microsoft.Management" is allowed. Constant value: "Microsoft.Management".
-    :ivar api_version: Client Api Version. Constant value: "2018-07-01-preview".
+    :ivar api_version: Client Api Version. Constant value: "2019-07-01".
     """
 
     models = models
@@ -36,7 +36,7 @@ class RemediationsOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.management_groups_namespace = "Microsoft.Management"
-        self.api_version = "2018-07-01-preview"
+        self.api_version = "2019-07-01"
 
         self.config = config
 

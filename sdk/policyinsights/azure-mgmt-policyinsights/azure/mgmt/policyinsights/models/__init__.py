@@ -80,6 +80,7 @@ from ._paged_models import RemediationDeploymentPaged
 from ._paged_models import RemediationPaged
 from ._paged_models import SlimPolicyMetadataPaged
 from ._policy_insights_client_enums import (
+    ResourceDiscoveryMode,
     PolicyStatesResource,
 )
 
@@ -120,5 +121,6 @@ __all__ = [
     'RemediationDeploymentPaged',
     'RemediationPaged',
     'SlimPolicyMetadataPaged',
+    'ResourceDiscoveryMode',
     'PolicyStatesResource',
 ]
