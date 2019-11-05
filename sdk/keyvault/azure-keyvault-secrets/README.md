@@ -107,7 +107,7 @@ export AZURE_TENANT_ID="tenant id"
 
 Authorize the service principal to perform key operations in your Key Vault:
 ```Bash
-az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --secret-permissions backup delete get list create update
+az keyvault set-policy --name my-key-vault --spn $AZURE_CLIENT_ID --secret-permissions get set list delete backup recover restore purge
 ```
 > Possible permissions:
 > - Secret management: set, backup, delete, get, list, purge, recover, restore
@@ -124,12 +124,12 @@ get from the Azure CLI or the Azure Portal. In the Azure Portal, this URL is
 the vault's "DNS Name".
 
 ```python
-    from azure.identity import DefaultAzureCredential
-    from azure.keyvault.secrets import SecretClient
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 
-    credential = DefaultAzureCredential()
+credential = DefaultAzureCredential()
 
-    secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 ```
 
 ## Key concepts
@@ -162,33 +162,33 @@ given value. If the given name is in use, `set_secret` creates a new version
 of that secret, with the given value.
 
 ```python
-    from azure.identity import DefaultAzureCredential
-    from azure.keyvault.secrets import SecretClient
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 
-    credential = DefaultAzureCredential()
+credential = DefaultAzureCredential()
 
-    secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
-    secret = secret_client.set_secret("secret-name", "secret-value")
+secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+secret = secret_client.set_secret("secret-name", "secret-value")
 
-    print(secret.name)
-    print(secret.value)
-    print(secret.properties.version)
+print(secret.name)
+print(secret.value)
+print(secret.properties.version)
 ```
 
 ### Retrieve a Secret
 [get_secret](https://aka.ms/azsdk-python-keyvault-secrets-get-secret) retrieves a secret previously stored in the Key Vault.
 
 ```python
-    from azure.identity import DefaultAzureCredential
-    from azure.keyvault.secrets import SecretClient
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 
-    credential = DefaultAzureCredential()
+credential = DefaultAzureCredential()
 
-    secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
-    secret = secret_client.get_secret("secret-name")
+secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+secret = secret_client.get_secret("secret-name")
 
-    print(secret.name)
-    print(secret.value)
+print(secret.name)
+print(secret.value)
 ```
 
 ### Update Secret metadata
@@ -196,23 +196,23 @@ of that secret, with the given value.
 value; use [set_secret](#create-a-secret) to set a secret's value.
 
 ```python
-    from azure.identity import DefaultAzureCredential
-    from azure.keyvault.secrets import SecretClient
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 
-    credential = DefaultAzureCredential()
+credential = DefaultAzureCredential()
 
-    secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
-    # Clients may specify the content type of a secret to assist in interpreting the secret data when it's retrieved
-    content_type = "text/plain"
+# Clients may specify the content type of a secret to assist in interpreting the secret data when it's retrieved
+content_type = "text/plain"
 
-    # We will also disable the secret for further use
+# We will also disable the secret for further use
 
-    updated_secret_properties = secret_client.update_secret_properties("secret-name", content_type=content_type, enabled=False)
+updated_secret_properties = secret_client.update_secret_properties("secret-name", content_type=content_type, enabled=False)
 
-    print(updated_secret_properties.updated_on)
-    print(updated_secret_properties.content_type)
-    print(updated_secret_properties.enabled)
+print(updated_secret_properties.updated_on)
+print(updated_secret_properties.content_type)
+print(updated_secret_properties.enabled)
 ```
 
 ### Delete a Secret
@@ -222,16 +222,16 @@ a secret, returning a poller which allows you to wait for the deletion to finish
 When [soft-delete][soft_delete] is disabled, `begin_delete_secret` itself is permanent.
 
 ```python
-    from azure.identity import DefaultAzureCredential
-    from azure.keyvault.secrets import SecretClient
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 
-    credential = DefaultAzureCredential()
+credential = DefaultAzureCredential()
 
-    secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
-    deleted_secret = secret_client.begin_delete_secret("secret-name").result()
+secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+deleted_secret = secret_client.begin_delete_secret("secret-name").result()
 
-    print(deleted_secret.name)
-    print(deleted_secret.deleted_date)
+print(deleted_secret.name)
+print(deleted_secret.deleted_date)
 ```
 
 ### List secrets
@@ -239,17 +239,17 @@ When [soft-delete][soft_delete] is disabled, `begin_delete_secret` itself is per
 properties of all of the secrets in the client's vault. This list doesn't include the secret's values.
 
 ```python
-    from azure.identity import DefaultAzureCredential
-    from azure.keyvault.secrets import SecretClient
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 
-    credential = DefaultAzureCredential()
+credential = DefaultAzureCredential()
 
-    secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
-    secret_properties = secret_client.list_properties_of_secrets()
+secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+secret_properties = secret_client.list_properties_of_secrets()
 
-    for secret_property in secret_properties:
-        # the list doesn't include values or versions of the secrets
-        print(secret_property.name)
+for secret_property in secret_properties:
+    # the list doesn't include values or versions of the secrets
+    print(secret_property.name)
 ```
 
 ### Async API
@@ -263,17 +263,17 @@ for more information.
 [set_secret](https://aka.ms/azsdk-python-keyvault-secrets-async-set-secret-ref) creates a secret in the Key Vault with the
 specified optional arguments.
 ```python
-    from azure.identity.aio import DefaultAzureCredential
-    from azure.keyvault.secrets.aio import SecretClient
+from azure.identity.aio import DefaultAzureCredential
+from azure.keyvault.secrets.aio import SecretClient
 
-    credential = DefaultAzureCredential()
-    secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+credential = DefaultAzureCredential()
+secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
-    secret = await secret_client.set_secret("secret-name", "secret-value")
+secret = await secret_client.set_secret("secret-name", "secret-value")
 
-    print(secret.name)
-    print(secret.value)
-    print(secret.properties.version)
+print(secret.name)
+print(secret.value)
+print(secret.properties.version)
 ```
 
 ### Asynchronously list secrets
@@ -281,16 +281,16 @@ specified optional arguments.
 properties of all of the secrets in the client's vault.
 
 ```python
-    from azure.identity.aio import DefaultAzureCredential
-    from azure.keyvault.secrets.aio import SecretClient
+from azure.identity.aio import DefaultAzureCredential
+from azure.keyvault.secrets.aio import SecretClient
 
-    credential = DefaultAzureCredential()
-    secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
-    secret_properties = secret_client.list_properties_of_secrets()
+credential = DefaultAzureCredential()
+secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+secret_properties = secret_client.list_properties_of_secrets()
 
-    async for secret_property in secret_properties:
-        # the list doesn't include values or versions of the secrets
-        print(secret_property.name)
+async for secret_property in secret_properties:
+    # the list doesn't include values or versions of the secrets
+    print(secret_property.name)
 ```
 
 ## Troubleshooting
