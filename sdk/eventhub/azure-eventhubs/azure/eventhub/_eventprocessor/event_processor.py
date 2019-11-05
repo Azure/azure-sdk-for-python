@@ -271,7 +271,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     self._callback_queue.task_done()
                 except queue.Empty:
                     # ignore queue empty exception
-                    pass
+                    time.sleep(0.01)  # sleep a short while to avoid this thread dominating CPU.
 
         else:
             log.info("EventProcessor %r has already started.", self._id)
@@ -301,6 +301,6 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         for thread in to_join_threads:
             thread.join()
 
-        self._threads_stop_flags.clear()
+        # self._threads_stop_flags.clear()
 
         log.info("EventProcessor %r has been stopped.", self._id)

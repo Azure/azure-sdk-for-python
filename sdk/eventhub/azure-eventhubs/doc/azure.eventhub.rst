@@ -1,12 +1,12 @@
 azure.eventhub package
 ======================
 
-    .. autoclass:: azure.eventhub.EventHubProducerClient
+    .. autoclass:: azure.eventhub.EventHubConsumerClient
         :members:
         :undoc-members:
         :inherited-members:
 
-    .. autoclass:: azure.eventhub.EventHubConsumerClient
+    .. autoclass:: azure.eventhub.EventHubProducerClient
         :members:
         :undoc-members:
         :inherited-members:
@@ -41,6 +41,11 @@ azure.eventhub package
         :undoc-members:
         :inherited-members:
 
+    .. autoclass:: azure.eventhub.PartitionContext
+        :members:
+        :undoc-members:
+        :inherited-members:
+
     .. autoclass:: azure.eventhub.CloseReason
         :members:
         :undoc-members:
@@ -54,37 +59,30 @@ azure.eventhub package
     .. autoclass:: azure.eventhub.EventHubError
         :members:
         :undoc-members:
-        :inherited-members:
 
     .. autoclass:: azure.eventhub.ConnectError
         :members:
         :undoc-members:
-        :inherited-members:
 
     .. autoclass:: azure.eventhub.ConnectionLostError
         :members:
         :undoc-members:
-        :inherited-members:
 
     .. autoclass:: azure.eventhub.EventDataError
         :members:
         :undoc-members:
-        :inherited-members:
 
     .. autoclass:: azure.eventhub.EventDataSendError
         :members:
         :undoc-members:
-        :inherited-members:
 
     .. autoclass:: azure.eventhub.AuthenticationError
         :members:
         :undoc-members:
-        :inherited-members:
 
     .. autoclass:: azure.eventhub.OwnershipLostError
         :members:
         :undoc-members:
-        :inherited-members:
 
 
 Subpackages

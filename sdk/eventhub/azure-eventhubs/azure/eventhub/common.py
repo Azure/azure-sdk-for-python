@@ -353,7 +353,7 @@ class EventDataBatch(object):
             annotations = self.message.annotations
             if annotations is None:
                 annotations = dict()
-            annotations[types.AMQPSymbol(EventData._PROP_PARTITION_KEY)] = value
+            annotations[types.AMQPSymbol(EventData._PROP_PARTITION_KEY)] = value  # pylint:disable=protected-access
             header = MessageHeader()
             header.durable = True
             self.message.annotations = annotations
@@ -370,10 +370,11 @@ class EventDataBatch(object):
     def try_add(self, event_data):
         """
         Try to add an EventData object, the size of EventData is a sum up of body, application_properties, etc.
+
         :param event_data: The EventData object which is attempted to be added.
         :type event_data: ~azure.eventhub.EventData
         :rtype: None
-        :raise: ValueError, when exceeding the size limit.
+        :raise: :class:`ValueError`, when exceeding the size limit.
         """
         if event_data is None:
             log.warning("event_data is None when calling EventDataBatch.try_add. Ignored")

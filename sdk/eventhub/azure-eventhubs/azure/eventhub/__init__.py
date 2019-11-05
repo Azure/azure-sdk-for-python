@@ -14,6 +14,7 @@ from ._consumer_client import EventHubConsumerClient
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential
 from ._eventprocessor.partition_manager import PartitionManager
 from ._eventprocessor.common import CloseReason, OwnershipLostError
+from ._eventprocessor.partition_context import PartitionContext
 
 TransportType = constants.TransportType
 
@@ -35,4 +36,5 @@ __all__ = [
     "PartitionManager",
     "CloseReason",
     "OwnershipLostError",
+    "PartitionContext",
 ]

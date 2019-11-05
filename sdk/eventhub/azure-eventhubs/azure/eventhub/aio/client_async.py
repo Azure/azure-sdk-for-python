@@ -132,12 +132,12 @@ class EventHubClient(EventHubClientAbstract):
         Get properties of the specified EventHub async.
         Keys in the details dictionary include:
 
-            -'path'
-            -'created_at'
-            -'partition_ids'
+            - path
+            - created_at
+            - partition_ids
 
         :rtype: dict
-        :raises: ~azure.eventhub.EventHubError
+        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
         mgmt_msg = Message(application_properties={'name': self.eh_name})
         response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:eventhub')
@@ -155,7 +155,7 @@ class EventHubClient(EventHubClientAbstract):
         Get partition ids of the specified EventHub async.
 
         :rtype: list[str]
-        :raises: ~azure.eventhub.ConnectError
+        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
         return (await self.get_properties())['partition_ids']
 
@@ -165,18 +165,18 @@ class EventHubClient(EventHubClientAbstract):
         Get properties of the specified partition async.
         Keys in the details dictionary include:
 
-            -'event_hub_path'
-            -'id'
-            -'beginning_sequence_number'
-            -'last_enqueued_sequence_number'
-            -'last_enqueued_offset'
-            -'last_enqueued_time_utc'
-            -'is_empty'
+            - event_hub_path
+            - id
+            - beginning_sequence_number
+            - last_enqueued_sequence_number
+            - last_enqueued_offset
+            - last_enqueued_time_utc
+            - is_empty
 
         :param partition: The target partition id.
         :type partition: str
         :rtype: dict
-        :raises: ~azure.eventhub.EventHubError
+        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
         mgmt_msg = Message(application_properties={'name': self.eh_name,
                                                    'partition': partition})
