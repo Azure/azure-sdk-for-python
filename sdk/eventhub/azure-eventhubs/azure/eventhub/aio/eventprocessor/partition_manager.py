@@ -65,9 +65,10 @@ class PartitionManager(ABC):
          the Event Hubs namespace that contains it.
         :param str consumer_group_name: The name of the consumer group the ownership are associated with.
         :param str partition_id: The partition id which the checkpoint is created for.
-        :param str offset: The offset of the ~azure.eventhub.EventData the new checkpoint will be associated with.
-        :param int sequence_number: The sequence_number of the ~azure.eventhub.EventData the new checkpoint
-         will be associated with.
+        :param str offset: The offset of the :class:`EventData<azure.eventhub.EventData>`
+         the new checkpoint will be associated with.
+        :param int sequence_number: The sequence_number of the :class:`EventData<azure.eventhub.EventData>`
+         the new checkpoint will be associated with.
         :rtype: None
         """
 

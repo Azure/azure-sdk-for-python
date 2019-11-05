@@ -81,7 +81,7 @@ class EventHubProducerClient(EventHubClient):
         :param str conn_str: The connection string of an eventhub.
         :keyword str event_hub_path: The path of the specific Event Hub to connect the client to.
         :keyword bool network_tracing: Whether to output network trace logs to the logger. Default is `False`.
-        :keyword dict[str, Any] http_proxy: HTTP proxy settings. This must be a dictionary with the following
+        :keyword dict[str,Any] http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys - 'proxy_hostname' (str value) and 'proxy_port' (int value).
          Additionally the following keys may also be present - 'username', 'password'.
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
