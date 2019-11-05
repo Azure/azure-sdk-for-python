@@ -389,19 +389,19 @@ class SubscriptionContractPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SubscriptionContractPaged, self).__init__(*args, **kwargs)
-class PropertyContractPaged(Paged):
+class NamedValueContractPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`PropertyContract <azure.mgmt.apimanagement.models.PropertyContract>` object
+    A paging container for iterating over a list of :class:`NamedValueContract <azure.mgmt.apimanagement.models.NamedValueContract>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[PropertyContract]'}
+        'current_page': {'key': 'value', 'type': '[NamedValueContract]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(PropertyContractPaged, self).__init__(*args, **kwargs)
+        super(NamedValueContractPaged, self).__init__(*args, **kwargs)
 class RegionContractPaged(Paged):
     """
     A paging container for iterating over a list of :class:`RegionContract <azure.mgmt.apimanagement.models.RegionContract>` object

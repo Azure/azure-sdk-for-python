@@ -58,7 +58,7 @@ from .operations import ProductApiOperations
 from .operations import ProductGroupOperations
 from .operations import ProductSubscriptionsOperations
 from .operations import ProductPolicyOperations
-from .operations import PropertyOperations
+from .operations import NamedValueOperations
 from .operations import QuotaByCounterKeysOperations
 from .operations import QuotaByPeriodKeysOperations
 from .operations import RegionOperations
@@ -173,8 +173,8 @@ class ApiManagementClient(SDKClient):
     :vartype product_subscriptions: azure.mgmt.apimanagement.operations.ProductSubscriptionsOperations
     :ivar product_policy: ProductPolicy operations
     :vartype product_policy: azure.mgmt.apimanagement.operations.ProductPolicyOperations
-    :ivar property: Property operations
-    :vartype property: azure.mgmt.apimanagement.operations.PropertyOperations
+    :ivar named_value: NamedValue operations
+    :vartype named_value: azure.mgmt.apimanagement.operations.NamedValueOperations
     :ivar quota_by_counter_keys: QuotaByCounterKeys operations
     :vartype quota_by_counter_keys: azure.mgmt.apimanagement.operations.QuotaByCounterKeysOperations
     :ivar quota_by_period_keys: QuotaByPeriodKeys operations
@@ -317,7 +317,7 @@ class ApiManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.product_policy = ProductPolicyOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.property = PropertyOperations(
+        self.named_value = NamedValueOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.quota_by_counter_keys = QuotaByCounterKeysOperations(
             self._client, self.config, self._serialize, self._deserialize)

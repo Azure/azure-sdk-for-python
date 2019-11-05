@@ -348,7 +348,7 @@ class ApiSchemaOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 201, 202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         header_dict = {}
@@ -357,11 +357,13 @@ class ApiSchemaOperations(object):
             deserialized = self._deserialize('SchemaContract', response)
             header_dict = {
                 'ETag': 'str',
+                'Location': 'str',
             }
         if response.status_code == 201:
             deserialized = self._deserialize('SchemaContract', response)
             header_dict = {
                 'ETag': 'str',
+                'Location': 'str',
             }
 
         if raw:

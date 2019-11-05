@@ -18,9 +18,12 @@ class AccessInformationContract(Model):
 
     :param id: Identifier.
     :type id: str
-    :param primary_key: Primary access key.
+    :param primary_key: Primary access key. This property will not be filled
+     on 'GET' operations! Use '/listSecrets' POST request to get the value.
     :type primary_key: str
-    :param secondary_key: Secondary access key.
+    :param secondary_key: Secondary access key. This property will not be
+     filled on 'GET' operations! Use '/listSecrets' POST request to get the
+     value.
     :type secondary_key: str
     :param enabled: Determines whether direct access is enabled.
     :type enabled: bool
@@ -2090,7 +2093,8 @@ class AuthorizationServerContract(Resource):
     :type bearer_token_sending_methods: list[str or
      ~azure.mgmt.apimanagement.models.BearerTokenSendingMethod]
     :param client_secret: Client or app secret registered with this
-     authorization server.
+     authorization server. This property will not be filled on 'GET'
+     operations! Use '/listSecrets' POST request to get the value.
     :type client_secret: str
     :param resource_owner_username: Can be optionally specified when resource
      owner password grant type is supported by this authorization server.
@@ -2209,7 +2213,8 @@ class AuthorizationServerContractBaseProperties(Model):
     :type bearer_token_sending_methods: list[str or
      ~azure.mgmt.apimanagement.models.BearerTokenSendingMethod]
     :param client_secret: Client or app secret registered with this
-     authorization server.
+     authorization server. This property will not be filled on 'GET'
+     operations! Use '/listSecrets' POST request to get the value.
     :type client_secret: str
     :param resource_owner_username: Can be optionally specified when resource
      owner password grant type is supported by this authorization server.
@@ -2298,7 +2303,8 @@ class AuthorizationServerUpdateContract(Resource):
     :type bearer_token_sending_methods: list[str or
      ~azure.mgmt.apimanagement.models.BearerTokenSendingMethod]
     :param client_secret: Client or app secret registered with this
-     authorization server.
+     authorization server. This property will not be filled on 'GET'
+     operations! Use '/listSecrets' POST request to get the value.
     :type client_secret: str
     :param resource_owner_username: Can be optionally specified when resource
      owner password grant type is supported by this authorization server.
@@ -3016,6 +3022,23 @@ class CertificateInformation(Model):
         self.expiry = expiry
         self.thumbprint = thumbprint
         self.subject = subject
+
+
+class ClientSecretContract(Model):
+    """Client or app secret used in IdentityProviders, Aad, OpenID or OAuth.
+
+    :param client_secret: Client or app secret used in IdentityProviders, Aad,
+     OpenID or OAuth.
+    :type client_secret: str
+    """
+
+    _attribute_map = {
+        'client_secret': {'key': 'clientSecret', 'type': 'str'},
+    }
+
+    def __init__(self, *, client_secret: str=None, **kwargs) -> None:
+        super(ClientSecretContract, self).__init__(**kwargs)
+        self.client_secret = client_secret
 
 
 class CloudError(Model):
@@ -3775,10 +3798,11 @@ class IdentityProviderContract(Resource):
      Identity Provider. It is App ID for Facebook login, Client ID for Google
      login, App ID for Microsoft.
     :type client_id: str
-    :param client_secret: Required. Client secret of the Application in
-     external Identity Provider, used to authenticate login request. For
-     example, it is App Secret for Facebook login, API Key for Google login,
-     Public Key for Microsoft.
+    :param client_secret: Client secret of the Application in external
+     Identity Provider, used to authenticate login request. For example, it is
+     App Secret for Facebook login, API Key for Google login, Public Key for
+     Microsoft. This property will not be filled on 'GET' operations! Use
+     '/listSecrets' POST request to get the value.
     :type client_secret: str
     """
 
@@ -3792,7 +3816,7 @@ class IdentityProviderContract(Resource):
         'profile_editing_policy_name': {'min_length': 1},
         'password_reset_policy_name': {'min_length': 1},
         'client_id': {'required': True, 'min_length': 1},
-        'client_secret': {'required': True, 'min_length': 1},
+        'client_secret': {'min_length': 1},
     }
 
     _attribute_map = {
@@ -3811,7 +3835,7 @@ class IdentityProviderContract(Resource):
         'client_secret': {'key': 'properties.clientSecret', 'type': 'str'},
     }
 
-    def __init__(self, *, client_id: str, client_secret: str, identity_provider_contract_type=None, signin_tenant: str=None, allowed_tenants=None, authority: str=None, signup_policy_name: str=None, signin_policy_name: str=None, profile_editing_policy_name: str=None, password_reset_policy_name: str=None, **kwargs) -> None:
+    def __init__(self, *, client_id: str, identity_provider_contract_type=None, signin_tenant: str=None, allowed_tenants=None, authority: str=None, signup_policy_name: str=None, signin_policy_name: str=None, profile_editing_policy_name: str=None, password_reset_policy_name: str=None, client_secret: str=None, **kwargs) -> None:
         super(IdentityProviderContract, self).__init__(**kwargs)
         self.identity_provider_contract_type = identity_provider_contract_type
         self.signin_tenant = signin_tenant
@@ -4210,6 +4234,125 @@ class LoggerUpdateContract(Model):
         self.description = description
         self.credentials = credentials
         self.is_buffered = is_buffered
+
+
+class NamedValueContract(Resource):
+    """NamedValue details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type for API Management resource.
+    :vartype type: str
+    :param tags: Optional tags that when provided can be used to filter the
+     NamedValue list.
+    :type tags: list[str]
+    :param secret: Determines whether the value is a secret and should be
+     encrypted or not. Default value is false.
+    :type secret: bool
+    :param display_name: Required. Unique name of NamedValue. It may contain
+     only letters, digits, period, dash, and underscore characters.
+    :type display_name: str
+    :param value: Required. Value of the NamedValue. Can contain policy
+     expressions. It may not be empty or consist only of whitespace.
+    :type value: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'max_items': 32},
+        'display_name': {'required': True, 'max_length': 256, 'min_length': 1, 'pattern': r'^[A-Za-z0-9-._]+$'},
+        'value': {'required': True, 'max_length': 4096, 'min_length': 1},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'properties.tags', 'type': '[str]'},
+        'secret': {'key': 'properties.secret', 'type': 'bool'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'value': {'key': 'properties.value', 'type': 'str'},
+    }
+
+    def __init__(self, *, display_name: str, value: str, tags=None, secret: bool=None, **kwargs) -> None:
+        super(NamedValueContract, self).__init__(**kwargs)
+        self.tags = tags
+        self.secret = secret
+        self.display_name = display_name
+        self.value = value
+
+
+class NamedValueEntityBaseParameters(Model):
+    """NamedValue Entity Base Parameters set.
+
+    :param tags: Optional tags that when provided can be used to filter the
+     NamedValue list.
+    :type tags: list[str]
+    :param secret: Determines whether the value is a secret and should be
+     encrypted or not. Default value is false.
+    :type secret: bool
+    """
+
+    _validation = {
+        'tags': {'max_items': 32},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '[str]'},
+        'secret': {'key': 'secret', 'type': 'bool'},
+    }
+
+    def __init__(self, *, tags=None, secret: bool=None, **kwargs) -> None:
+        super(NamedValueEntityBaseParameters, self).__init__(**kwargs)
+        self.tags = tags
+        self.secret = secret
+
+
+class NamedValueUpdateParameters(Model):
+    """NamedValue update Parameters.
+
+    :param tags: Optional tags that when provided can be used to filter the
+     NamedValue list.
+    :type tags: list[str]
+    :param secret: Determines whether the value is a secret and should be
+     encrypted or not. Default value is false.
+    :type secret: bool
+    :param display_name: Unique name of NamedValue. It may contain only
+     letters, digits, period, dash, and underscore characters.
+    :type display_name: str
+    :param value: Value of the NamedValue. Can contain policy expressions. It
+     may not be empty or consist only of whitespace.
+    :type value: str
+    """
+
+    _validation = {
+        'tags': {'max_items': 32},
+        'display_name': {'max_length': 256, 'min_length': 1, 'pattern': r'^[A-Za-z0-9-._]+$'},
+        'value': {'max_length': 4096, 'min_length': 1},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'properties.tags', 'type': '[str]'},
+        'secret': {'key': 'properties.secret', 'type': 'bool'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'value': {'key': 'properties.value', 'type': 'str'},
+    }
+
+    def __init__(self, *, tags=None, secret: bool=None, display_name: str=None, value: str=None, **kwargs) -> None:
+        super(NamedValueUpdateParameters, self).__init__(**kwargs)
+        self.tags = tags
+        self.secret = secret
+        self.display_name = display_name
+        self.value = value
 
 
 class NetworkStatusContract(Model):
@@ -5380,125 +5523,6 @@ class ProductUpdateParameters(Model):
         self.display_name = display_name
 
 
-class PropertyContract(Resource):
-    """Property details.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type for API Management resource.
-    :vartype type: str
-    :param tags: Optional tags that when provided can be used to filter the
-     property list.
-    :type tags: list[str]
-    :param secret: Determines whether the value is a secret and should be
-     encrypted or not. Default value is false.
-    :type secret: bool
-    :param display_name: Required. Unique name of Property. It may contain
-     only letters, digits, period, dash, and underscore characters.
-    :type display_name: str
-    :param value: Required. Value of the property. Can contain policy
-     expressions. It may not be empty or consist only of whitespace.
-    :type value: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'tags': {'max_items': 32},
-        'display_name': {'required': True, 'max_length': 256, 'min_length': 1, 'pattern': r'^[A-Za-z0-9-._]+$'},
-        'value': {'required': True, 'max_length': 4096, 'min_length': 1},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'properties.tags', 'type': '[str]'},
-        'secret': {'key': 'properties.secret', 'type': 'bool'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'value': {'key': 'properties.value', 'type': 'str'},
-    }
-
-    def __init__(self, *, display_name: str, value: str, tags=None, secret: bool=None, **kwargs) -> None:
-        super(PropertyContract, self).__init__(**kwargs)
-        self.tags = tags
-        self.secret = secret
-        self.display_name = display_name
-        self.value = value
-
-
-class PropertyEntityBaseParameters(Model):
-    """Property Entity Base Parameters set.
-
-    :param tags: Optional tags that when provided can be used to filter the
-     property list.
-    :type tags: list[str]
-    :param secret: Determines whether the value is a secret and should be
-     encrypted or not. Default value is false.
-    :type secret: bool
-    """
-
-    _validation = {
-        'tags': {'max_items': 32},
-    }
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '[str]'},
-        'secret': {'key': 'secret', 'type': 'bool'},
-    }
-
-    def __init__(self, *, tags=None, secret: bool=None, **kwargs) -> None:
-        super(PropertyEntityBaseParameters, self).__init__(**kwargs)
-        self.tags = tags
-        self.secret = secret
-
-
-class PropertyUpdateParameters(Model):
-    """Property update Parameters.
-
-    :param tags: Optional tags that when provided can be used to filter the
-     property list.
-    :type tags: list[str]
-    :param secret: Determines whether the value is a secret and should be
-     encrypted or not. Default value is false.
-    :type secret: bool
-    :param display_name: Unique name of Property. It may contain only letters,
-     digits, period, dash, and underscore characters.
-    :type display_name: str
-    :param value: Value of the property. Can contain policy expressions. It
-     may not be empty or consist only of whitespace.
-    :type value: str
-    """
-
-    _validation = {
-        'tags': {'max_items': 32},
-        'display_name': {'max_length': 256, 'min_length': 1, 'pattern': r'^[A-Za-z0-9-._]+$'},
-        'value': {'max_length': 4096, 'min_length': 1},
-    }
-
-    _attribute_map = {
-        'tags': {'key': 'properties.tags', 'type': '[str]'},
-        'secret': {'key': 'properties.secret', 'type': 'bool'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'value': {'key': 'properties.value', 'type': 'str'},
-    }
-
-    def __init__(self, *, tags=None, secret: bool=None, display_name: str=None, value: str=None, **kwargs) -> None:
-        super(PropertyUpdateParameters, self).__init__(**kwargs)
-        self.tags = tags
-        self.secret = secret
-        self.display_name = display_name
-        self.value = value
-
-
 class QuotaCounterCollection(Model):
     """Paged Quota Counter list representation.
 
@@ -6438,9 +6462,13 @@ class SubscriptionContract(Resource):
      date. The date conforms to the following format: `yyyy-MM-ddTHH:mm:ssZ` as
      specified by the ISO 8601 standard.
     :type notification_date: datetime
-    :param primary_key: Required. Subscription primary key.
+    :param primary_key: Subscription primary key. This property will not be
+     filled on 'GET' operations! Use '/listSecrets' POST request to get the
+     value.
     :type primary_key: str
-    :param secondary_key: Required. Subscription secondary key.
+    :param secondary_key: Subscription secondary key. This property will not
+     be filled on 'GET' operations! Use '/listSecrets' POST request to get the
+     value.
     :type secondary_key: str
     :param state_comment: Optional subscription comment added by an
      administrator.
@@ -6457,8 +6485,8 @@ class SubscriptionContract(Resource):
         'display_name': {'max_length': 100, 'min_length': 0},
         'state': {'required': True},
         'created_date': {'readonly': True},
-        'primary_key': {'required': True, 'max_length': 256, 'min_length': 1},
-        'secondary_key': {'required': True, 'max_length': 256, 'min_length': 1},
+        'primary_key': {'max_length': 256, 'min_length': 1},
+        'secondary_key': {'max_length': 256, 'min_length': 1},
     }
 
     _attribute_map = {
@@ -6480,7 +6508,7 @@ class SubscriptionContract(Resource):
         'allow_tracing': {'key': 'properties.allowTracing', 'type': 'bool'},
     }
 
-    def __init__(self, *, scope: str, state, primary_key: str, secondary_key: str, owner_id: str=None, display_name: str=None, start_date=None, expiration_date=None, end_date=None, notification_date=None, state_comment: str=None, allow_tracing: bool=None, **kwargs) -> None:
+    def __init__(self, *, scope: str, state, owner_id: str=None, display_name: str=None, start_date=None, expiration_date=None, end_date=None, notification_date=None, primary_key: str=None, secondary_key: str=None, state_comment: str=None, allow_tracing: bool=None, **kwargs) -> None:
         super(SubscriptionContract, self).__init__(**kwargs)
         self.owner_id = owner_id
         self.scope = scope
@@ -6577,6 +6605,31 @@ class SubscriptionKeyParameterNamesContract(Model):
         super(SubscriptionKeyParameterNamesContract, self).__init__(**kwargs)
         self.header = header
         self.query = query
+
+
+class SubscriptionKeysContract(Model):
+    """Subscrition keys.
+
+    :param primary_key: Subscription primary key.
+    :type primary_key: str
+    :param secondary_key: Subscription secondary key.
+    :type secondary_key: str
+    """
+
+    _validation = {
+        'primary_key': {'max_length': 256, 'min_length': 1},
+        'secondary_key': {'max_length': 256, 'min_length': 1},
+    }
+
+    _attribute_map = {
+        'primary_key': {'key': 'primaryKey', 'type': 'str'},
+        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
+    }
+
+    def __init__(self, *, primary_key: str=None, secondary_key: str=None, **kwargs) -> None:
+        super(SubscriptionKeysContract, self).__init__(**kwargs)
+        self.primary_key = primary_key
+        self.secondary_key = secondary_key
 
 
 class SubscriptionsDelegationSettingsProperties(Model):
