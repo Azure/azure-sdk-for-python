@@ -24,7 +24,12 @@ class MgmtHealthcareApisTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_healthcareapis(self, resource_group):
 
-        SERVICE_NAME = "myapimrndxyz"
+        SERVICE_NAME = "myhcasrvanxy"
+
+        # Check name availability[post]
+        result = self.mgmt_client.services.check_name_availability(type="Microsoft.HealthcareApis/services", name=SERVICE_NAME)
+
+        # Create or Update a service with all parameters[put]
         BODY = {
           "location": "westus2",
           "kind": "fhir-R4",
@@ -65,8 +70,37 @@ class MgmtHealthcareApisTest(AzureMgmtTestCase):
             }
           }
         }
-        azure_operation_poller = self.mgmt_client.services.create_or_update(resource_group.name, SERVICE_NAME, BODY)
-        result_create = azure_operation_poller.result()
+        result = self.mgmt_client.services.create_or_update(resource_group.name, SERVICE_NAME, BODY)
+        result = result.result()
+
+        # Delete service[delete]
+        result = self.mgmt_client.services.delete(resource_group.name, SERVICE_NAME)
+        result = result.result()
+
+        # Create or Update a service with minimum parameters[put]
+        BODY = {
+          "location": "westus2",
+          "kind": "fhir-R4",
+          "properties": {
+            "access_policies": [
+              {
+                "object_id": "c487e7d1-3210-41a3-8ccc-e9372b78da47"
+              }
+            ]
+          }
+        }
+        result = self.mgmt_client.services.create_or_update(resource_group.name, SERVICE_NAME, BODY)
+        result = result.result()
+
+        # List all services in subscription[get]
+        result = self.mgmt_client.services.list()
+
+        # List all services in resource group[get]
+        result = self.mgmt_client.services.list_by_resource_group(resource_group.name, )
+
+        # Delete service[delete]
+        result = self.mgmt_client.services.delete(resource_group.name, SERVICE_NAME)
+        result = result.result()
 
 
 #------------------------------------------------------------------------------
