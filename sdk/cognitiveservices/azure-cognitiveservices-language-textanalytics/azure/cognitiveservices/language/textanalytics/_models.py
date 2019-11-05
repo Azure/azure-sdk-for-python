@@ -1,3 +1,4 @@
+from azure.core.exceptions import HttpResponseError
 
 
 class DetectedLanguage(object):
@@ -64,11 +65,14 @@ class DocumentLanguage(object):
     :param statistics: if showStats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics: ~textanalytics.models.DocumentStatistics
+    :param bool is_error: Boolean check for error item when iterating over list of
+     results. Always False for an instance of a DocumentLanguage.
     """
     def __init__(self, **kwargs):
         self.id = kwargs.get('id', None)
         self.detected_languages = kwargs.get('detected_languages', None)
         self.statistics = kwargs.get('statistics', None)
+        self.is_error = False
 
 
 class Entity(object):
@@ -234,6 +238,7 @@ class DocumentError(object):
         self.id = kwargs.get('id', None)
         self.error = kwargs.get('error', None)
         self.is_error = True
+        # super(DocumentError, self).__init__(message=self.error['innerError']['message'])
 
 
 class LinkedEntity(object):
@@ -311,6 +316,41 @@ class Match(object):
             text=match.text,
             offset=match.offset,
             length=match.length
+        )
+
+
+class RequestStatistics(object):
+    """if showStats=true was specified in the request this field will contain
+    information about the request payload.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param documents_count: Required. Number of documents submitted in the
+     request.
+    :type documents_count: int
+    :param valid_documents_count: Required. Number of valid documents. This
+     excludes empty, over-size limit or non-supported languages documents.
+    :type valid_documents_count: int
+    :param erroneous_documents_count: Required. Number of invalid documents.
+     This includes empty, over-size limit or non-supported languages documents.
+    :type erroneous_documents_count: int
+    :param transactions_count: Required. Number of transactions for the
+     request.
+    :type transactions_count: long
+    """
+    def __init__(self, **kwargs):
+        self.documents_count = kwargs.get('documents_count', None)
+        self.valid_documents_count = kwargs.get('valid_documents_count', None)
+        self.erroneous_documents_count = kwargs.get('erroneous_documents_count', None)
+        self.transactions_count = kwargs.get('transactions_count', None)
+
+    @classmethod
+    def _from_generated(cls, statistics):
+        return cls(
+            documents_count=statistics['documentsCount'],
+            valid_documents_count=statistics['validDocumentsCount'],
+            erroneous_documents_count=statistics['erroneousDocumentsCount'],
+            transactions_count=statistics['transactionsCount'],
         )
 
 

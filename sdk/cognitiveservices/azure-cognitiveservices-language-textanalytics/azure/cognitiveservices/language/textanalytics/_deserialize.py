@@ -1,4 +1,5 @@
 import json
+from ._generated.models._models import LanguageInput, MultiLanguageBatchInput
 from ._models import (
     DocumentEntities,
     Entity,
@@ -12,6 +13,18 @@ from ._models import (
     DetectedLanguage,
     DocumentError
 )
+
+
+def _validate_batch_input(documents):
+    strings = False
+    for idx, item in enumerate(documents):
+        if type(item) == str:
+            documents[idx] = {"id": idx, "text": item}
+            strings = True
+        if type(item) == dict or isinstance(item, MultiLanguageBatchInput) or isinstance(item, LanguageInput):
+            if strings:
+                raise TypeError("Mixing string and dictionary input unsupported.")
+    return documents
 
 
 def get_index(err, resp):
@@ -48,6 +61,7 @@ def deserialize_language_result(response, obj, response_headers):
                 )
             )
     return add_response_errors(obj, response, doc_entities)
+
 
 def deserialize_entities_result(response, obj, response_headers):
     doc_entities = []

@@ -1,5 +1,5 @@
 import six
-from ._policies import CognitiveServicesCredentialPolicy
+from ._policies import CognitiveServicesCredentialPolicy, TextAnalyticsResponseHook
 from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline import policies
@@ -37,6 +37,7 @@ class TextAnalyticsClientBase(object):
             config.retry_policy,
             config.custom_hook_policy,
             config.redirect_policy,
+            TextAnalyticsResponseHook(**kwargs)
         ]
         return Pipeline(config.transport, policies=policies)
 
@@ -51,3 +52,10 @@ class TextAnalyticsClientBase(object):
         config.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
 
         return config
+
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._client.__exit__(*args)

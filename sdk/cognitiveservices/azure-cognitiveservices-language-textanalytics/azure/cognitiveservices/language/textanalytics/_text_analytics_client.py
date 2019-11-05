@@ -5,9 +5,9 @@
 # ------------------------------------
 
 from ._generated._text_analytics_api import TextAnalyticsAPI
-from ._generated.models._models import LanguageInput
 from ._base_client import TextAnalyticsClientBase
 from ._deserialize import (
+    _validate_batch_input,
     deserialize_entities_result,
     deserialize_linked_entities_result,
     deserialize_key_phrases_result,
@@ -59,17 +59,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         super(TextAnalyticsClient, self).__init__(credentials=credential, **kwargs)
         self._client = TextAnalyticsAPI(endpoint=endpoint, credentials=credential, pipeline=self._pipeline)
 
-    def _validate_input(self, documents):
-        strings = False
-        for idx, item in enumerate(documents):
-            if type(item) == str:
-                documents[idx] = {"id": idx, "text": item}
-                strings = True
-            if type(item) == dict or isinstance(item, LanguageInput):
-                if strings:
-                    raise TypeError("Mixing string and dictionary input unsupported.")
-        return documents
-
     def detect_language(self, documents, model_version=None, show_stats=False, **kwargs):
         """Detect Language.
 
@@ -94,7 +83,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype: object
         :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
         """
-        docs = self._validate_input(documents)
+        docs = _validate_batch_input(documents)
         try:
             return self._client.languages(
                 documents=docs,
@@ -133,7 +122,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype: object
         :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
         """
-        docs = self._validate_input(documents)
+        docs = _validate_batch_input(documents)
         try:
             return self._client.entitiesrecognitiongeneral(
                 documents=docs,
@@ -170,7 +159,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype: object
         :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
         """
-        docs = self._validate_input(documents)
+        docs = _validate_batch_input(documents)
         try:
             return self._client.entitiesrecognitionpii(
                 documents=docs,
@@ -207,7 +196,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype: object
         :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
         """
-        docs = self._validate_input(documents)
+        docs = _validate_batch_input(documents)
         try:
             return self._client.entitieslinking(
                 documents=docs,
@@ -219,7 +208,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except Exception as error:
             raise error
 
-    def key_phrases(self, documents, model_version=None, show_stats=None, **kwargs):
+    def detect_key_phrases(self, documents, model_version=None, show_stats=None, **kwargs):
         """Key Phrases.
 
         The API returns a list of strings denoting the key phrases in the input
@@ -243,7 +232,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype: object
         :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
         """
-        docs = self._validate_input(documents)
+        docs = _validate_batch_input(documents)
         try:
             return self._client.key_phrases(
                 documents=docs,
@@ -280,7 +269,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype: object
         :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
         """
-        docs = self._validate_input(documents)
+        docs = _validate_batch_input(documents)
         try:
             return self._client.sentiment(
                 documents=docs,
