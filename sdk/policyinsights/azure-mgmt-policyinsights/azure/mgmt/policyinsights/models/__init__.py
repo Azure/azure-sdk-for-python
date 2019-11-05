@@ -25,6 +25,7 @@ try:
     from ._models_py3 import PolicyEvent
     from ._models_py3 import PolicyEventsQueryResults
     from ._models_py3 import PolicyGroupSummary
+    from ._models_py3 import PolicyMetadata
     from ._models_py3 import PolicyState
     from ._models_py3 import PolicyStatesQueryResults
     from ._models_py3 import PolicyTrackedResource
@@ -35,6 +36,7 @@ try:
     from ._models_py3 import RemediationDeployment
     from ._models_py3 import RemediationDeploymentSummary
     from ._models_py3 import RemediationFilters
+    from ._models_py3 import SlimPolicyMetadata
     from ._models_py3 import SummarizeResults
     from ._models_py3 import Summary
     from ._models_py3 import SummaryResults
@@ -56,6 +58,7 @@ except (SyntaxError, ImportError):
     from ._models import PolicyEvent
     from ._models import PolicyEventsQueryResults
     from ._models import PolicyGroupSummary
+    from ._models import PolicyMetadata
     from ._models import PolicyState
     from ._models import PolicyStatesQueryResults
     from ._models import PolicyTrackedResource
@@ -66,6 +69,7 @@ except (SyntaxError, ImportError):
     from ._models import RemediationDeployment
     from ._models import RemediationDeploymentSummary
     from ._models import RemediationFilters
+    from ._models import SlimPolicyMetadata
     from ._models import SummarizeResults
     from ._models import Summary
     from ._models import SummaryResults
@@ -74,6 +78,7 @@ except (SyntaxError, ImportError):
 from ._paged_models import PolicyTrackedResourcePaged
 from ._paged_models import RemediationDeploymentPaged
 from ._paged_models import RemediationPaged
+from ._paged_models import SlimPolicyMetadataPaged
 from ._policy_insights_client_enums import (
     PolicyStatesResource,
 )
@@ -94,6 +99,7 @@ __all__ = [
     'PolicyEvent',
     'PolicyEventsQueryResults',
     'PolicyGroupSummary',
+    'PolicyMetadata',
     'PolicyState',
     'PolicyStatesQueryResults',
     'PolicyTrackedResource',
@@ -104,6 +110,7 @@ __all__ = [
     'RemediationDeployment',
     'RemediationDeploymentSummary',
     'RemediationFilters',
+    'SlimPolicyMetadata',
     'SummarizeResults',
     'Summary',
     'SummaryResults',
@@ -112,5 +119,6 @@ __all__ = [
     'PolicyTrackedResourcePaged',
     'RemediationDeploymentPaged',
     'RemediationPaged',
+    'SlimPolicyMetadataPaged',
     'PolicyStatesResource',
 ]

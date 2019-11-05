@@ -51,3 +51,16 @@ class RemediationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(RemediationPaged, self).__init__(*args, **kwargs)
+class SlimPolicyMetadataPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SlimPolicyMetadata <azure.mgmt.policyinsights.models.SlimPolicyMetadata>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SlimPolicyMetadata]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SlimPolicyMetadataPaged, self).__init__(*args, **kwargs)

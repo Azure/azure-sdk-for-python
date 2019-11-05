@@ -18,6 +18,7 @@ from .operations import RemediationsOperations
 from .operations import PolicyEventsOperations
 from .operations import PolicyStatesOperations
 from .operations import Operations
+from .operations import PolicyMetadataOperations
 from . import models
 
 
@@ -37,6 +38,8 @@ class PolicyInsightsClient(SDKClient):
     :vartype policy_states: azure.mgmt.policyinsights.operations.PolicyStatesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.policyinsights.operations.Operations
+    :ivar policy_metadata: PolicyMetadata operations
+    :vartype policy_metadata: azure.mgmt.policyinsights.operations.PolicyMetadataOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -63,4 +66,6 @@ class PolicyInsightsClient(SDKClient):
         self.policy_states = PolicyStatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.policy_metadata = PolicyMetadataOperations(
             self._client, self.config, self._serialize, self._deserialize)

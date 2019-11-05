@@ -583,6 +583,80 @@ class PolicyGroupSummary(Model):
         self.results = kwargs.get('results', None)
 
 
+class PolicyMetadata(Model):
+    """Policy metadata resource definition.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar metadata_id: The policy metadata identifier.
+    :vartype metadata_id: str
+    :ivar category: The category of the policy metadata.
+    :vartype category: str
+    :ivar title: The title of the policy metadata.
+    :vartype title: str
+    :ivar owner: The owner of the policy metadata.
+    :vartype owner: str
+    :ivar description: The description of the policy metadata.
+    :vartype description: str
+    :ivar requirements: The requirements of the policy metadata.
+    :vartype requirements: str
+    :ivar additional_content_url: Url for getting additional content about the
+     resource metadata.
+    :vartype additional_content_url: str
+    :ivar metadata: Additional metadata.
+    :vartype metadata: object
+    :ivar id: The ID of the policy metadata.
+    :vartype id: str
+    :ivar type: The type of the policy metadata.
+    :vartype type: str
+    :ivar name: The name of the policy metadata.
+    :vartype name: str
+    """
+
+    _validation = {
+        'metadata_id': {'readonly': True},
+        'category': {'readonly': True},
+        'title': {'readonly': True},
+        'owner': {'readonly': True},
+        'description': {'readonly': True},
+        'requirements': {'readonly': True},
+        'additional_content_url': {'readonly': True},
+        'metadata': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'metadata_id': {'key': 'properties.metadataId', 'type': 'str'},
+        'category': {'key': 'properties.category', 'type': 'str'},
+        'title': {'key': 'properties.title', 'type': 'str'},
+        'owner': {'key': 'properties.owner', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'requirements': {'key': 'properties.requirements', 'type': 'str'},
+        'additional_content_url': {'key': 'properties.additionalContentUrl', 'type': 'str'},
+        'metadata': {'key': 'properties.metadata', 'type': 'object'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PolicyMetadata, self).__init__(**kwargs)
+        self.metadata_id = None
+        self.category = None
+        self.title = None
+        self.owner = None
+        self.description = None
+        self.requirements = None
+        self.additional_content_url = None
+        self.metadata = None
+        self.id = None
+        self.type = None
+        self.name = None
+
+
 class PolicyState(Model):
     """Policy state record.
 
@@ -1092,6 +1166,81 @@ class RemediationFilters(Model):
     def __init__(self, **kwargs):
         super(RemediationFilters, self).__init__(**kwargs)
         self.locations = kwargs.get('locations', None)
+
+
+class SlimPolicyMetadata(Model):
+    """Slim version of policy metadata resource definition, excluding properties
+    with large strings.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar metadata_id: The policy metadata identifier.
+    :vartype metadata_id: str
+    :ivar category: The category of the policy metadata.
+    :vartype category: str
+    :ivar title: The title of the policy metadata.
+    :vartype title: str
+    :ivar owner: The owner of the policy metadata.
+    :vartype owner: str
+    :ivar description: The description of the policy metadata.
+    :vartype description: str
+    :ivar requirements: The requirements of the policy metadata.
+    :vartype requirements: str
+    :ivar additional_content_url: Url for getting additional content about the
+     resource metadata.
+    :vartype additional_content_url: str
+    :ivar metadata: Additional metadata.
+    :vartype metadata: object
+    :ivar id: The ID of the policy metadata.
+    :vartype id: str
+    :ivar type: The type of the policy metadata.
+    :vartype type: str
+    :ivar name: The name of the policy metadata.
+    :vartype name: str
+    """
+
+    _validation = {
+        'metadata_id': {'readonly': True},
+        'category': {'readonly': True},
+        'title': {'readonly': True},
+        'owner': {'readonly': True},
+        'description': {'readonly': True},
+        'requirements': {'readonly': True},
+        'additional_content_url': {'readonly': True},
+        'metadata': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'metadata_id': {'key': 'properties.metadataId', 'type': 'str'},
+        'category': {'key': 'properties.category', 'type': 'str'},
+        'title': {'key': 'properties.title', 'type': 'str'},
+        'owner': {'key': 'properties.owner', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'requirements': {'key': 'properties.requirements', 'type': 'str'},
+        'additional_content_url': {'key': 'properties.additionalContentUrl', 'type': 'str'},
+        'metadata': {'key': 'properties.metadata', 'type': 'object'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SlimPolicyMetadata, self).__init__(**kwargs)
+        self.metadata_id = None
+        self.category = None
+        self.title = None
+        self.owner = None
+        self.description = None
+        self.requirements = None
+        self.additional_content_url = None
+        self.metadata = None
+        self.id = None
+        self.type = None
+        self.name = None
 
 
 class SummarizeResults(Model):
