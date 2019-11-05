@@ -373,12 +373,15 @@ class BlobServiceProperties(Resource):
     :type automatic_snapshot_policy_enabled: bool
     :param change_feed: The blob service properties for change feed events.
     :type change_feed: ~azure.mgmt.storage.v2019_06_01.models.ChangeFeed
+    :ivar sku: Sku name and tier.
+    :vartype sku: ~azure.mgmt.storage.v2019_06_01.models.Sku
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'sku': {'readonly': True},
     }
 
     _attribute_map = {
@@ -390,6 +393,7 @@ class BlobServiceProperties(Resource):
         'delete_retention_policy': {'key': 'properties.deleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
         'automatic_snapshot_policy_enabled': {'key': 'properties.automaticSnapshotPolicyEnabled', 'type': 'bool'},
         'change_feed': {'key': 'properties.changeFeed', 'type': 'ChangeFeed'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
     def __init__(self, *, cors=None, default_service_version: str=None, delete_retention_policy=None, automatic_snapshot_policy_enabled: bool=None, change_feed=None, **kwargs) -> None:
@@ -399,6 +403,7 @@ class BlobServiceProperties(Resource):
         self.delete_retention_policy = delete_retention_policy
         self.automatic_snapshot_policy_enabled = automatic_snapshot_policy_enabled
         self.change_feed = change_feed
+        self.sku = None
 
 
 class ChangeFeed(Model):
@@ -984,12 +989,15 @@ class FileServiceProperties(Resource):
      share soft delete.
     :type share_delete_retention_policy:
      ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
+    :ivar sku: Sku name and tier.
+    :vartype sku: ~azure.mgmt.storage.v2019_06_01.models.Sku
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'sku': {'readonly': True},
     }
 
     _attribute_map = {
@@ -998,12 +1006,14 @@ class FileServiceProperties(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'cors': {'key': 'properties.cors', 'type': 'CorsRules'},
         'share_delete_retention_policy': {'key': 'properties.shareDeleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
     def __init__(self, *, cors=None, share_delete_retention_policy=None, **kwargs) -> None:
         super(FileServiceProperties, self).__init__(**kwargs)
         self.cors = cors
         self.share_delete_retention_policy = share_delete_retention_policy
+        self.sku = None
 
 
 class FileShare(AzureEntityResource):
@@ -2431,69 +2441,29 @@ class ServiceSpecification(Model):
 class Sku(Model):
     """The SKU of the storage account.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Gets or sets the SKU name. Required for account
-     creation; optional for update. Note that in older versions, SKU name was
-     called accountType. Possible values include: 'Standard_LRS',
+    :param name: Required. Possible values include: 'Standard_LRS',
      'Standard_GRS', 'Standard_RAGRS', 'Standard_ZRS', 'Premium_LRS',
      'Premium_ZRS', 'Standard_GZRS', 'Standard_RAGZRS'
     :type name: str or ~azure.mgmt.storage.v2019_06_01.models.SkuName
-    :ivar tier: Gets the SKU tier. This is based on the SKU name. Possible
-     values include: 'Standard', 'Premium'
-    :vartype tier: str or ~azure.mgmt.storage.v2019_06_01.models.SkuTier
-    :ivar resource_type: The type of the resource, usually it is
-     'storageAccounts'.
-    :vartype resource_type: str
-    :ivar kind: Indicates the type of storage account. Possible values
-     include: 'Storage', 'StorageV2', 'BlobStorage', 'FileStorage',
-     'BlockBlobStorage'
-    :vartype kind: str or ~azure.mgmt.storage.v2019_06_01.models.Kind
-    :ivar locations: The set of locations that the SKU is available. This will
-     be supported and registered Azure Geo Regions (e.g. West US, East US,
-     Southeast Asia, etc.).
-    :vartype locations: list[str]
-    :ivar capabilities: The capability information in the specified SKU,
-     including file encryption, network ACLs, change notification, etc.
-    :vartype capabilities:
-     list[~azure.mgmt.storage.v2019_06_01.models.SKUCapability]
-    :param restrictions: The restrictions because of which SKU cannot be used.
-     This is empty if there are no restrictions.
-    :type restrictions:
-     list[~azure.mgmt.storage.v2019_06_01.models.Restriction]
+    :param tier: Possible values include: 'Standard', 'Premium'
+    :type tier: str or ~azure.mgmt.storage.v2019_06_01.models.SkuTier
     """
 
     _validation = {
         'name': {'required': True},
-        'tier': {'readonly': True},
-        'resource_type': {'readonly': True},
-        'kind': {'readonly': True},
-        'locations': {'readonly': True},
-        'capabilities': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'tier': {'key': 'tier', 'type': 'SkuTier'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'locations': {'key': 'locations', 'type': '[str]'},
-        'capabilities': {'key': 'capabilities', 'type': '[SKUCapability]'},
-        'restrictions': {'key': 'restrictions', 'type': '[Restriction]'},
     }
 
-    def __init__(self, *, name, restrictions=None, **kwargs) -> None:
+    def __init__(self, *, name, tier=None, **kwargs) -> None:
         super(Sku, self).__init__(**kwargs)
         self.name = name
-        self.tier = None
-        self.resource_type = None
-        self.kind = None
-        self.locations = None
-        self.capabilities = None
-        self.restrictions = restrictions
+        self.tier = tier
 
 
 class SKUCapability(Model):
@@ -2526,6 +2496,70 @@ class SKUCapability(Model):
         super(SKUCapability, self).__init__(**kwargs)
         self.name = None
         self.value = None
+
+
+class SkuInformation(Model):
+    """Storage SKU and its properties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Possible values include: 'Standard_LRS',
+     'Standard_GRS', 'Standard_RAGRS', 'Standard_ZRS', 'Premium_LRS',
+     'Premium_ZRS', 'Standard_GZRS', 'Standard_RAGZRS'
+    :type name: str or ~azure.mgmt.storage.v2019_06_01.models.SkuName
+    :param tier: Possible values include: 'Standard', 'Premium'
+    :type tier: str or ~azure.mgmt.storage.v2019_06_01.models.SkuTier
+    :ivar resource_type: The type of the resource, usually it is
+     'storageAccounts'.
+    :vartype resource_type: str
+    :ivar kind: Indicates the type of storage account. Possible values
+     include: 'Storage', 'StorageV2', 'BlobStorage', 'FileStorage',
+     'BlockBlobStorage'
+    :vartype kind: str or ~azure.mgmt.storage.v2019_06_01.models.Kind
+    :ivar locations: The set of locations that the SKU is available. This will
+     be supported and registered Azure Geo Regions (e.g. West US, East US,
+     Southeast Asia, etc.).
+    :vartype locations: list[str]
+    :ivar capabilities: The capability information in the specified SKU,
+     including file encryption, network ACLs, change notification, etc.
+    :vartype capabilities:
+     list[~azure.mgmt.storage.v2019_06_01.models.SKUCapability]
+    :param restrictions: The restrictions because of which SKU cannot be used.
+     This is empty if there are no restrictions.
+    :type restrictions:
+     list[~azure.mgmt.storage.v2019_06_01.models.Restriction]
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'resource_type': {'readonly': True},
+        'kind': {'readonly': True},
+        'locations': {'readonly': True},
+        'capabilities': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'SkuTier'},
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'locations': {'key': 'locations', 'type': '[str]'},
+        'capabilities': {'key': 'capabilities', 'type': '[SKUCapability]'},
+        'restrictions': {'key': 'restrictions', 'type': '[Restriction]'},
+    }
+
+    def __init__(self, *, name, tier=None, restrictions=None, **kwargs) -> None:
+        super(SkuInformation, self).__init__(**kwargs)
+        self.name = name
+        self.tier = tier
+        self.resource_type = None
+        self.kind = None
+        self.locations = None
+        self.capabilities = None
+        self.restrictions = restrictions
 
 
 class TrackedResource(Resource):
