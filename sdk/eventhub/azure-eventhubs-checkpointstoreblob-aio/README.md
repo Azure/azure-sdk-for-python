@@ -86,7 +86,7 @@ async def do_operation(events):
 
 async def process_events(partition_context, events):
     await do_operation(events)
-    partition_context.update_checkpoint(events[-1])
+    await partition_context.update_checkpoint(events[-1])
 
 async def main():
     storage_container_client = ContainerClient.from_connection_string(storage_container_connection_str, storage_container_name)
