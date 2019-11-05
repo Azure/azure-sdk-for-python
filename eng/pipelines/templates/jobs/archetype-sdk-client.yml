@@ -97,7 +97,7 @@ jobs:
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        ToxTestEnv: 'whl,sdist'
+        ToxTestEnv: 'whl,sdist,depends'
         BeforeTestSteps: 
           - task: DownloadPipelineArtifact@0
             inputs:
@@ -126,7 +126,7 @@ jobs:
         CoverageArg: ''
         PythonVersion: '3.8'
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        ToxTestEnv: 'whl,sdist'
+        ToxTestEnv: 'whl,sdist,depends'
         BeforeTestSteps: 
           - task: DownloadPipelineArtifact@0
             inputs:
