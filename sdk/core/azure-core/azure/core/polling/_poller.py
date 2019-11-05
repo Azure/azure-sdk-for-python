@@ -141,7 +141,7 @@ class LROPoller(object):
             self._done = threading.Event()
             self._thread = threading.Thread(
                 target=with_current_context(self._start),
-                name="LROPoller({})".format(uuid.uuid4()))
+                name="LROPoller({} {})".format(uuid.uuid4(), str(polling_method)))
             self._thread.daemon = True
             self._thread.start()
 
