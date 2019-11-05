@@ -1,5 +1,9 @@
 # Release History
 
+## 4.0.0b6
+
+- Fixed bug in synchronized_request for media APIs. 
+
 ## 4.0.0b5
 
 - azure.cosmos.errors module deprecated and replaced by azure.cosmos.exceptions
