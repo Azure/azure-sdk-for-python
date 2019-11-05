@@ -6,7 +6,7 @@
 
 import pytest
 from azure.eventhub import EventHubSharedKeyCredential
-from azure.eventhub.aio import EventHubClient
+from azure.eventhub.aio.client_async import EventHubClient
 
 
 @pytest.mark.liveTest
@@ -17,7 +17,7 @@ async def test_get_properties(live_eventhub):
     )
     properties = await client.get_properties()
     assert properties['path'] == live_eventhub['event_hub'] and properties['partition_ids'] == ['0', '1']
-
+    await client.close()
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
@@ -27,6 +27,7 @@ async def test_get_partition_ids(live_eventhub):
     )
     partition_ids = await client.get_partition_ids()
     assert partition_ids == ['0', '1']
+    await client.close()
 
 
 @pytest.mark.liveTest
@@ -43,3 +44,4 @@ async def test_get_partition_properties(live_eventhub):
         and 'last_enqueued_offset' in properties \
         and 'last_enqueued_time_utc' in properties \
         and 'is_empty' in properties
+    await client.close()

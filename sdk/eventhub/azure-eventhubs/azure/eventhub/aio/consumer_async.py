@@ -13,8 +13,8 @@ import uamqp  # type: ignore
 from uamqp import errors, types, utils  # type: ignore
 from uamqp import ReceiveClientAsync, Source  # type: ignore
 
-from azure.eventhub import EventData, EventPosition
-from azure.eventhub.error import _error_handler
+from ..common import EventData, EventPosition
+from ..error import _error_handler
 from ._consumer_producer_mixin_async import ConsumerProducerMixin
 
 log = logging.getLogger(__name__)
@@ -240,15 +240,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         :rtype: list[~azure.eventhub.common.EventData]
         :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
                 ~azure.eventhub.EventHubError
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START eventhub_client_async_receive]
-                :end-before: [END eventhub_client_async_receive]
-                :language: python
-                :dedent: 4
-                :caption: Receives events asynchronously
-
         """
         self._check_closed()
 
@@ -262,14 +253,5 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         """
         Close down the handler. If the handler has already closed,
         this will be a no op.
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START eventhub_client_async_receiver_close]
-                :end-before: [END eventhub_client_async_receiver_close]
-                :language: python
-                :dedent: 4
-                :caption: Close down the handler.
-
         """
         await super(EventHubConsumer, self).close()
