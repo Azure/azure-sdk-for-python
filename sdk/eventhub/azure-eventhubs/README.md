@@ -57,7 +57,7 @@ from azure.eventhub import EventHubConsumerClient
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 event_hub_path = '<< NAME OF THE EVENT HUB >>'
-consumer_client = EventHubConsumerClient.from_connection_string(connection_str, event_hub_path)
+consumer_client = EventHubConsumerClient.from_connection_string(connection_str, event_hub_path=event_hub_path)
 
 ```
 
@@ -128,7 +128,7 @@ from azure.eventhub import EventHubConsumerClient
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 event_hub_path = '<< NAME OF THE EVENT HUB >>'
-client = EventHubConsumerClient.from_connection_string(connection_str, event_hub_path)
+client = EventHubConsumerClient.from_connection_string(connection_str, event_hub_path=event_hub_path)
 partition_ids = client.get_partition_ids()
 ```
 
@@ -143,7 +143,7 @@ from azure.eventhub import EventHubProducerClient, EventData
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 event_hub_path = '<< NAME OF THE EVENT HUB >>'
-client = EventHubProducerClient.from_connection_string(connection_str, event_hub_path)
+client = EventHubProducerClient.from_connection_string(connection_str, event_hub_path=event_hub_path)
 
 try:
     event_list = []
@@ -167,7 +167,7 @@ from azure.eventhub import EventHubProducerClient, EventData
 try:
     connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
     event_hub_path = '<< NAME OF THE EVENT HUB >>'
-    client = EventHubProducerClient.from_connection_string(connection_str, event_hub_path)
+    client = EventHubProducerClient.from_connection_string(connection_str, event_hub_path=event_hub_path)
 
     event_data_batch = client.create_batch(max_size=10000)
     can_add = True
@@ -195,7 +195,7 @@ from azure.eventhub import EventHubConsumerClient
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 event_hub_path = '<< NAME OF THE EVENT HUB >>'
-client = EventHubConsumerClient.from_connection_string(connection_str, event_hub_path)
+client = EventHubConsumerClient.from_connection_string(connection_str, event_hub_path=event_hub_path)
 
 logger = logging.getLogger("azure.eventhub")
 
@@ -224,7 +224,7 @@ from azure.eventhub import EventData
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 event_hub_path = '<< NAME OF THE EVENT HUB >>'
-client = EventHubProducerClient.from_connection_string(connection_str, event_hub_path)
+client = EventHubProducerClient.from_connection_string(connection_str, event_hub_path=event_hub_path)
 
 try:
  	event_list = []
@@ -251,7 +251,7 @@ from azure.eventhub import EventData
 try:
     connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
     event_hub_path = '<< NAME OF THE EVENT HUB >>'
-    client = EventHubProducerClient.from_connection_string(connection_str, event_hub_path)
+    client = EventHubProducerClient.from_connection_string(connection_str, event_hub_path=event_hub_path)
 
     event_data_batch = await client.create_batch(max_size=10000)
     can_add = True
@@ -279,7 +279,7 @@ from azure.eventhub.aio import EventHubConsumerClient
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 event_hub_path = '<< NAME OF THE EVENT HUB >>'
-client = EventHubConsumerClient.from_connection_string(connection_str, event_hub_path)
+client = EventHubConsumerClient.from_connection_string(connection_str, event_hub_path=event_hub_path)
 
 logger = logging.getLogger("azure.eventhub")
 
@@ -330,6 +330,7 @@ from azure.eventhub.extensions.checkpointstoreblobaio import BlobPartitionManage
 RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
 RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+event_hub_path = '<< NAME OF THE EVENT HUB >>'
 storage_connection_str = '<< CONNECTION STRING FOR THE STORAGE >>'
 blob_name_str = '<<STRING FOR THE BLOB NAME>>'
 
@@ -345,7 +346,7 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     container_client = ContainerClient.from_connection_string(storage_connection_str, blob_name_str)
     partition_manager = BlobPartitionManager(container_client=container_client)
-    client = EventHubConsumerClient.from_connection_string(connection_str, partition_manager=partition_manager, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL)
+    client = EventHubConsumerClient.from_connection_string(connection_str, event_hub_path=event_hub_path, partition_manager=partition_manager, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL)
     try:
         loop.run_until_complete(client.receive(process_events, "$default"))
     except KeyboardInterrupt:
