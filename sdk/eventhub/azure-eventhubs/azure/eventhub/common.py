@@ -57,15 +57,15 @@ class EventData(object):
 
     """
 
-    PROP_SEQ_NUMBER = b"x-opt-sequence-number"
-    PROP_OFFSET = b"x-opt-offset"
-    PROP_PARTITION_KEY = b"x-opt-partition-key"
-    PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
-    PROP_TIMESTAMP = b"x-opt-enqueued-time"
-    PROP_LAST_ENQUEUED_SEQUENCE_NUMBER = b"last_enqueued_sequence_number"
-    PROP_LAST_ENQUEUED_OFFSET = b"last_enqueued_offset"
-    PROP_LAST_ENQUEUED_TIME_UTC = b"last_enqueued_time_utc"
-    PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC = b"runtime_info_retrieval_time_utc"
+    _PROP_SEQ_NUMBER = b"x-opt-sequence-number"
+    _PROP_OFFSET = b"x-opt-offset"
+    _PROP_PARTITION_KEY = b"x-opt-partition-key"
+    _PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(_PROP_PARTITION_KEY)
+    _PROP_TIMESTAMP = b"x-opt-enqueued-time"
+    _PROP_LAST_ENQUEUED_SEQUENCE_NUMBER = b"last_enqueued_sequence_number"
+    _PROP_LAST_ENQUEUED_OFFSET = b"last_enqueued_offset"
+    _PROP_LAST_ENQUEUED_TIME_UTC = b"last_enqueued_time_utc"
+    _PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC = b"runtime_info_retrieval_time_utc"
 
     def __init__(self, body=None):
         self._last_enqueued_event_properties = {}
@@ -104,7 +104,7 @@ class EventData(object):
         :type value: str or bytes
         """
         annotations = dict(self.message.annotations)
-        annotations[EventData.PROP_PARTITION_KEY_AMQP_SYMBOL] = value
+        annotations[EventData._PROP_PARTITION_KEY_AMQP_SYMBOL] = value
         header = MessageHeader()
         header.durable = True
         self.message.annotations = annotations
@@ -145,15 +145,15 @@ class EventData(object):
 
         if self.message.delivery_annotations:
             enqueued_time_stamp = \
-                self.message.delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_TIME_UTC, None)
+                self.message.delivery_annotations.get(EventData._PROP_LAST_ENQUEUED_TIME_UTC, None)
             retrieval_time_stamp = \
-                self.message.delivery_annotations.get(EventData.PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
+                self.message.delivery_annotations.get(EventData._PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
 
             self._last_enqueued_event_properties = {
                 "sequence_number":
-                    self.message.delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None),
+                    self.message.delivery_annotations.get(EventData._PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None),
                 "offset":
-                    self.message.delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_OFFSET, None),
+                    self.message.delivery_annotations.get(EventData._PROP_LAST_ENQUEUED_OFFSET, None),
                 "enqueued_time":
                     datetime.datetime.utcfromtimestamp(
                         float(enqueued_time_stamp)/1000) if enqueued_time_stamp else None,
@@ -179,7 +179,7 @@ class EventData(object):
 
         :rtype: int or long
         """
-        return self.message.annotations.get(EventData.PROP_SEQ_NUMBER, None)
+        return self.message.annotations.get(EventData._PROP_SEQ_NUMBER, None)
 
     @property
     def offset(self):
@@ -189,7 +189,7 @@ class EventData(object):
         :rtype: str
         """
         try:
-            return self.message.annotations[EventData.PROP_OFFSET].decode('UTF-8')
+            return self.message.annotations[EventData._PROP_OFFSET].decode('UTF-8')
         except (KeyError, AttributeError):
             return None
 
@@ -200,7 +200,7 @@ class EventData(object):
 
         :rtype: datetime.datetime
         """
-        timestamp = self.message.annotations.get(EventData.PROP_TIMESTAMP, None)
+        timestamp = self.message.annotations.get(EventData._PROP_TIMESTAMP, None)
         if timestamp:
             return datetime.datetime.utcfromtimestamp(float(timestamp)/1000)
         return None
@@ -213,9 +213,9 @@ class EventData(object):
         :rtype: bytes
         """
         try:
-            return self.message.annotations[EventData.PROP_PARTITION_KEY_AMQP_SYMBOL]
+            return self.message.annotations[EventData._PROP_PARTITION_KEY_AMQP_SYMBOL]
         except KeyError:
-            return self.message.annotations.get(EventData.PROP_PARTITION_KEY, None)
+            return self.message.annotations.get(EventData._PROP_PARTITION_KEY, None)
 
     @property
     def application_properties(self):
@@ -353,7 +353,7 @@ class EventDataBatch(object):
             annotations = self.message.annotations
             if annotations is None:
                 annotations = dict()
-            annotations[types.AMQPSymbol(EventData.PROP_PARTITION_KEY)] = value
+            annotations[types.AMQPSymbol(EventData._PROP_PARTITION_KEY)] = value
             header = MessageHeader()
             header.durable = True
             self.message.annotations = annotations
