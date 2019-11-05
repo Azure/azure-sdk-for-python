@@ -12,14 +12,11 @@ If no partition id is specified, the partition_manager are used for load-balance
 If partition id is specified, the partition_manager can only be used for checkpoint.
 """
 import os
-import time
 from azure.storage.blob import ContainerClient
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblob import BlobPartitionManager
 
 
-RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
-RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 
@@ -44,8 +41,6 @@ if __name__ == '__main__':
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         partition_manager=partition_manager,  # For load balancing and checkpoint. Leave None for no load balancing
-        receive_timeout=RECEIVE_TIMEOUT,  # the wait time for single receiving iteration
-        retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
     )
 
     try:

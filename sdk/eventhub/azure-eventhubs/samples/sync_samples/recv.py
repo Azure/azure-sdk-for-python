@@ -14,9 +14,6 @@ from azure.eventhub import EventPosition, EventHubConsumerClient
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENT_HUB = os.environ['EVENT_HUB_NAME']
 
-RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
-RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
-
 EVENT_POSITION = EventPosition("-1")
 PARTITION = "0"
 
@@ -59,8 +56,6 @@ if __name__ == '__main__':
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         event_hub_path=EVENT_HUB,
-        receive_timeout=RECEIVE_TIMEOUT,  # the wait time for single receiving iteration
-        retry_total=RETRY_TOTAL  # num of retry times if receiving from EventHub has an error.
     )
 
     try:
