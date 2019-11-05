@@ -4,26 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import logging
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
     TYPE_CHECKING
 )
-import logging
-
-from azure.core.pipeline.policies import ContentDecodePolicy
-from azure.core.exceptions import (
-    HttpResponseError,
-    ResourceNotFoundError,
-    ResourceModifiedError,
-    ResourceExistsError,
-    ClientAuthenticationError,
-    DecodeError)
-
 
 if TYPE_CHECKING:
-    from datetime import datetime
-    from azure.core.exceptions import AzureError
-
+    pass
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -48,7 +35,6 @@ def return_response_headers(response, deserialized, response_headers):  # pylint
 
 def return_headers_and_deserialized_path_list(response, deserialized, response_headers):  # pylint: disable=unused-argument
     return deserialized.paths if deserialized.paths else {}, normalize_headers(response_headers)
-
 
 
 #

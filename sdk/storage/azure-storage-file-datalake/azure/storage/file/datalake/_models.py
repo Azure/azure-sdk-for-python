@@ -8,8 +8,11 @@
 from enum import Enum
 
 from azure.core.paging import PageIterator
-from azure.storage.blob import ContainerProperties, LeaseProperties, ContentSettings, ContainerSasPermissions, \
-    BlobSasPermissions, ResourceTypes, AccountSasPermissions, UserDelegationKey
+from azure.storage.blob import LeaseProperties as BlobLeaseProperties
+from azure.storage.blob import AccountSasPermissions as BlobAccountSasPermissions
+from azure.storage.blob import ResourceTypes as BlobResourceTypes
+from azure.storage.blob import UserDelegationKey as BlobUserDelegationKey
+from azure.storage.blob import ContentSettings, ContainerSasPermissions, BlobSasPermissions
 from azure.storage.blob._generated.models import StorageErrorException
 from azure.storage.blob._models import ContainerPropertiesPaged
 from ._deserialize import return_headers_and_deserialized_path_list
@@ -18,33 +21,38 @@ from ._shared.models import DictMixin
 from ._shared.response_handlers import process_storage_error
 
 
-class FileSystemProperties(ContainerProperties):
+class FileSystemProperties(object):
     """File System properties class.
 
-    :param ~datetime.datetime last_modified:
+    :ivar ~datetime.datetime last_modified:
         A datetime object representing the last time the file system was modified.
-    :param str etag:
+    :ivar str etag:
         The ETag contains a value that you can use to perform operations
         conditionally.
-    :param ~azure.storage.file.datalake.LeaseProperties lease:
+    :ivar ~azure.storage.file.datalake.LeaseProperties lease:
         Stores all the lease information for the file system.
-    :param str public_access: Specifies whether data in the file system may be accessed
+    :ivar str public_access: Specifies whether data in the file system may be accessed
         publicly and the level of access.
-    :param bool has_immutability_policy:
+    :ivar bool has_immutability_policy:
         Represents whether the file system has an immutability policy.
-    :param bool has_legal_hold:
+    :ivar bool has_legal_hold:
         Represents whether the file system has a legal hold.
-    :param dict metadata: A dict with name-value pairs to associate with the
+    :ivar dict metadata: A dict with name-value pairs to associate with the
         file system as metadata.
 
     Returned ``FileSystemProperties`` instances expose these values through a
     dictionary interface, for example: ``file_system_props["last_modified"]``.
     Additionally, the file system name is available as ``file_system_props["name"]``.
     """
-    def __init__(self, **kwargs):
-        super(FileSystemProperties, self).__init__(
-            **kwargs
-        )
+    def __init__(self):
+        self.name = None
+        self.last_modified = None
+        self.etag = None
+        self.lease = None
+        self.public_access = None
+        self.has_immutability_policy = None
+        self.has_legal_hold = None
+        self.metadata = None
 
     @classmethod
     def _from_generated(cls, generated):
@@ -53,7 +61,8 @@ class FileSystemProperties(ContainerProperties):
         props.last_modified = generated.properties.last_modified
         props.etag = generated.properties.etag
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
-        props.public_access = PublicAccess._from_generated(generated.properties.public_access)
+        props.public_access = PublicAccess._from_generated(
+            generated.properties.public_access)  # pylint: disable=protected-access
         props.has_immutability_policy = generated.properties.has_immutability_policy
         props.has_legal_hold = generated.properties.has_legal_hold
         props.metadata = generated.metadata
@@ -62,7 +71,8 @@ class FileSystemProperties(ContainerProperties):
     @classmethod
     def _convert_from_container_props(cls, container_properties):
         container_properties.__class__ = cls
-        container_properties.public_access = PublicAccess._from_generated(container_properties.public_access)
+        container_properties.public_access = PublicAccess._from_generated(
+            container_properties.public_access)  # pylint: disable=protected-access
         container_properties.lease.__class__ = LeaseProperties
         return container_properties
 
@@ -112,8 +122,8 @@ class DirectoryProperties(DictMixin):
         A datetime object representing the last time the directory was modified.
     :ivar ~datetime.datetime creation_time:
         Indicates when the directory was created, in UTC.
-    :ivar int remaining_retention_days: The number of days that the directory will be retained before being permanently
-        deleted by the service.
+    :ivar int remaining_retention_days: The number of days that the directory will be retained
+        before being permanently deleted by the service.
     :var ~azure.storage.file.datalake.ContentSettings content_settings:
     """
     def __init__(self, **kwargs):
@@ -160,12 +170,12 @@ class FileProperties(DictMixin):
     :ivar ~datetime.datetime creation_time:
         Indicates when the file was created, in UTC.
     :ivar int size: size of the file
-    :ivar int remaining_retention_days: The number of days that the file will be retained before being permanently
-        deleted by the service.
+    :ivar int remaining_retention_days: The number of days that the file will be retained
+        before being permanently deleted by the service.
     :var ~azure.storage.file.datalake.ContentSettings content_settings:
     """
     def __init__(self, **kwargs):
-        super(DirectoryProperties, self).__init__(
+        super(FileProperties, self).__init__(
             **kwargs
         )
         self.name = None
@@ -182,7 +192,7 @@ class FileProperties(DictMixin):
 
     @classmethod
     def _from_blob_properties(cls, blob_properties):
-        file_props = DirectoryProperties()
+        file_props = FileProperties()
         file_props.name = blob_properties.name
         file_props.etag = blob_properties.etag
         file_props.deleted = blob_properties.deleted
@@ -237,7 +247,7 @@ class PathProperties(object):
         path_prop.permissions = generated.permissions
         path_prop.last_modified = generated.last_modified
         path_prop.is_directory = generated.is_directory
-        path_prop.etag =generated.additional_properties.get('etag')
+        path_prop.etag = generated.additional_properties.get('etag')
         path_prop.content_length = generated.content_length
         return path_prop
 
@@ -274,6 +284,7 @@ class PathPropertiesPaged(PageIterator):
         self.path = path
         self.upn = upn
         self.current_page = None
+        self.path_list = None
 
     def _get_next_cb(self, continuation_token):
         try:
@@ -293,7 +304,8 @@ class PathPropertiesPaged(PageIterator):
 
         return self._response['continuation'] or None, self.current_page
 
-    def _build_item(self, item):
+    @staticmethod
+    def _build_item(item):
         if isinstance(item, PathProperties):
             return item
         if isinstance(item, Path):
@@ -302,20 +314,20 @@ class PathPropertiesPaged(PageIterator):
         return item
 
 
-class LeaseProperties(LeaseProperties):
+class LeaseProperties(BlobLeaseProperties):
     """DataLake Lease Properties.
 
-    :param str status:
+    :ivar str status:
         The lease status of the file. Possible values: locked|unlocked
-    :param str state:
+    :ivar str state:
         Lease state of the file. Possible values: available|leased|expired|breaking|broken
-    :param str duration:
+    :ivar str duration:
         When a file is leased, specifies whether the lease is of infinite or fixed duration.
     """
-    def __init__(self, **kwargs):
-        super(LeaseProperties, self).__init__(
-            **kwargs
-        )
+    def __init__(self):
+        self.status = None
+        self.state = None
+        self.duration = None
 
 
 class ContentSettings(ContentSettings):
@@ -358,8 +370,9 @@ class ContentSettings(ContentSettings):
         )
 
 
-class AccountSasPermissions(AccountSasPermissions):
-    def __init__(self, read=False, write=False, delete=False, list=False, create=False):
+class AccountSasPermissions(BlobAccountSasPermissions):
+    def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
+                 create=False):
         super(AccountSasPermissions, self).__init__(
             read=read, create=create, write=write, list=list,
             delete=delete
@@ -379,7 +392,8 @@ class FileSystemSasPermissions(ContainerSasPermissions):
     :param bool list:
         List paths in the file system.
     """
-    def __init__(self, read=False, write=False, delete=False, list=False):
+    def __init__(self, read=False, write=False, delete=False, list=False  # pylint: disable=redefined-builtin
+                 ):
         super(FileSystemSasPermissions, self).__init__(
             read=read, write=write, delete=delete, list=list
         )
@@ -428,7 +442,7 @@ class FileSasPermissions(BlobSasPermissions):
         )
 
 
-class ResourceTypes(ResourceTypes):
+class ResourceTypes(BlobResourceTypes):
     """
     Specifies the resource types that are accessible with the account SAS.
 
@@ -441,11 +455,12 @@ class ResourceTypes(ResourceTypes):
         Access to object-level APIs for
         files(e.g. Create File, etc.)
     """
-    def __init__(self, service=False, file_system=False, object=False):
+    def __init__(self, service=False, file_system=False, object=False  # pylint: disable=redefined-builtin
+                 ):
         super(ResourceTypes, self).__init__(service=service, container=file_system, object=object)
 
 
-class UserDelegationKey(UserDelegationKey):
+class UserDelegationKey(BlobUserDelegationKey):
     """
     Represents a user delegation key, provided to the user by Azure Storage
     based on their Azure Active Directory access token.
@@ -499,7 +514,7 @@ class PublicAccess(str, Enum):
 
     @classmethod
     def _from_generated(cls, public_access):
-        if public_access == "blob":
+        if public_access == "blob":  # pylint:disable=no-else-return
             return cls.File
         elif public_access == "container":
             return cls.FileSystem

@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 try:
-    from urllib.parse import urlparse, quote, unquote
+    from urllib.parse import urlparse, quote
 except ImportError:
     from urlparse import urlparse # type: ignore
     from urllib2 import quote, unquote # type: ignore
@@ -177,7 +177,8 @@ class PathClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             raise error
 
-    def _delete_path_options(self, **kwargs):
+    @staticmethod
+    def _delete_path_options(**kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
 
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -231,7 +232,8 @@ class PathClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             raise error
 
-    def _set_access_control_options(self, owner=None, group=None, permissions=None, acl=None, **kwargs):
+    @staticmethod
+    def _set_access_control_options(owner=None, group=None, permissions=None, acl=None, **kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
 
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -310,7 +312,8 @@ class PathClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             raise error
 
-    def _get_access_control_options(self, upn=None,  # type: Optional[bool]
+    @staticmethod
+    def _get_access_control_options(upn=None,  # type: Optional[bool]
                                     **kwargs):
         # type: (...) -> Dict[str, Any]
 

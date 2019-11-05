@@ -1,4 +1,4 @@
-# Azure Blob Storage for Python
+# Azure DataLake for Python
 
 > see https://aka.ms/autorest
 

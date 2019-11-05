@@ -6,7 +6,7 @@
 import functools
 
 try:
-    from urllib.parse import urlparse, quote, unquote
+    from urllib.parse import urlparse, quote
 except ImportError:
     from urlparse import urlparse # type: ignore
     from urllib2 import quote, unquote # type: ignore
@@ -69,6 +69,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         credential=None,  # type: Optional[Any]
         **kwargs  # type: Any
     ):
+        # type: (...) -> None
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -89,7 +90,8 @@ class FileSystemClient(StorageAccountHostsMixin):
             blob_secondary_account_url = convert_dfs_url_to_blob_url(datalake_hosts[LocationMode.SECONDARY])
             blob_hosts = {LocationMode.PRIMARY: blob_primary_account_url,
                           LocationMode.SECONDARY: blob_secondary_account_url}
-        self._container_client = ContainerClient(blob_account_url, file_system_name, credential, _hosts=blob_hosts, **kwargs)
+        self._container_client = ContainerClient(blob_account_url, file_system_name,
+                                                 credential=credential, _hosts=blob_hosts, **kwargs)
 
         _, sas_token = parse_query(parsed_url.query)
         self.file_system_name = file_system_name
@@ -292,7 +294,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :caption: Getting properties on the file system.
         """
         container_properties = self._container_client.get_container_properties(**kwargs)
-        return FileSystemProperties._convert_from_container_props(container_properties)
+        return FileSystemProperties._convert_from_container_props(container_properties)  # pylint: disable=protected-access
 
     def set_file_system_metadata(  # type: ignore
         self, metadata=None,  # type: Optional[Dict[str, str]]
@@ -622,10 +624,12 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        return DataLakeDirectoryClient(self.url, self.file_system_name, directory, credential=self._raw_credential,
+        return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory,
+                                       credential=self._raw_credential,
                                        _configuration=self._config, _pipeline=self._pipeline,
                                        _location_mode=self._location_mode, _hosts=self._hosts,
-                                       require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+                                       require_encryption=self.require_encryption,
+                                       key_encryption_key=self.key_encryption_key,
                                        key_resolver_function=self.key_resolver_function
                                        )
 
@@ -658,7 +662,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             pass
 
         return DataLakeFileClient(
-            self.url, self.file_system_name, file_path, credential=self._raw_credential,
+            self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,

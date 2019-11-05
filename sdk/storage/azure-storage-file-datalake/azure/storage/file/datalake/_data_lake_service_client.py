@@ -69,6 +69,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
     ):
+        # type: (...) -> None
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -84,7 +85,8 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
 
-        super(DataLakeServiceClient, self).__init__(parsed_url, service='dfs', credential=self._raw_credential, **kwargs)
+        super(DataLakeServiceClient, self).__init__(parsed_url, service='dfs',
+                                                    credential=self._raw_credential, **kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -138,7 +140,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         """
         delegation_key = self._blob_service_client.get_user_delegation_key(key_start_time=key_start_time,
                                                                            key_expiry_time=key_expiry_time,
-                                                                           **kwargs)
+                                                                           **kwargs)  # pylint: disable=protected-access
         delegation_key._class_ = UserDelegationKey
         return delegation_key
 
@@ -176,7 +178,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         """
         item_paged = self._blob_service_client.list_containers(name_starts_with=name_starts_with,
                                                                include_metadata=include_metadata,
-                                                               **kwargs)
+                                                               **kwargs)  # pylint: disable=protected-access
         item_paged._page_iterator_class = FileSystemPropertiesPaged
         return item_paged
 
@@ -322,10 +324,12 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Getting the directory client to interact with a specific directory.
         """
-        return DataLakeDirectoryClient(self.url, file_system, directory, credential=self._raw_credential,
+        return DataLakeDirectoryClient(self.url, file_system, directory_name=directory,
+                                       credential=self._raw_credential,
                                        _configuration=self._config, _pipeline=self._pipeline,
                                        _location_mode=self._location_mode, _hosts=self._hosts,
-                                       require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+                                       require_encryption=self.require_encryption,
+                                       key_encryption_key=self.key_encryption_key,
                                        key_resolver_function=self.key_resolver_function
                                        )
 
@@ -363,7 +367,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             pass
 
         return DataLakeFileClient(
-            self.url, file_system, file_path, credential=self._raw_credential,
+            self.url, file_system, file_path=file_path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,

@@ -61,7 +61,8 @@ class DataLakeFileClient(PathClient):
         credential=None,  # type: Optional[Any]
         **kwargs  # type: Any
     ):
-        super(DataLakeFileClient, self).__init__(account_url, file_system_name, file_path,
+        # type: (...) -> None
+        super(DataLakeFileClient, self).__init__(account_url, file_system_name, path_name=file_path,
                                                  credential=credential, **kwargs)
 
     @classmethod
@@ -231,7 +232,7 @@ class DataLakeFileClient(PathClient):
                 :caption: Getting the properties for a file/directory.
         """
         blob_properties = self._get_path_properties(**kwargs)
-        return FileProperties._from_blob_properties(blob_properties)
+        return FileProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
 
     @staticmethod
     def _append_data_options(data, offset, length=None, **kwargs):
@@ -518,10 +519,11 @@ class DataLakeFileClient(PathClient):
         path = rename_destination[len(new_file_system):]
 
         new_directory_client = DataLakeFileClient(
-            self.url, new_file_system, path, credential=self._raw_credential,
+            self.url, new_file_system, file_path=path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
-        new_directory_client._rename_path('/'+self.file_system_name+'/'+self.path_name, **kwargs)
+        new_directory_client._rename_path('/'+self.file_system_name+'/'+self.path_name,
+                                          **kwargs)  # pylint: disable=protected-access
         return new_directory_client
