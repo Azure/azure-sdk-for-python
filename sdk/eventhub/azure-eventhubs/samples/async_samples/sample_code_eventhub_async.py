@@ -4,7 +4,6 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import pytest
 import logging
 import asyncio
 
