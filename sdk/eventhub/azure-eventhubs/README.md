@@ -387,13 +387,13 @@ The Event Hubs APIs generate the following exceptions.
 For instance, this error is raised if you try to send an EventData that is already sent.
 - **EventDataSendError:** The Eventhubs service responds with an error when an EventData is sent.
 - **OperationTimeoutError:** EventHubConsumer.send() times out.
-- **EventHubError:** All other Eventhubs related errors. It is also the root error class of all the above mentioned errors.
+- **EventHubError:** All other Eventhubs related errors. It is also the root error class of all the errors described above.
 
 ## Next steps
 
 ### Examples
 
-These are [more samples](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/samples) in our repo demonstrating the usage of the library.
+There are [more samples](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/samples) in our repo demonstrating the usage of the library.
 
 - [./samples/sync_samples/send.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/samples/sync_samples/send.py) - use EventHubProducerClient to publish events
 - [./samples/sync_samples/recv.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/samples/sync_samples/recv.py) - use EventHubConsumerClient to consume events
@@ -402,7 +402,7 @@ These are [more samples](https://github.com/Azure/azure-sdk-for-python/blob/mast
 
 ### Documentation
 
-Reference documentation is available at [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b5/azure.eventhub.html).
+Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b5/azure.eventhub.html).
 
 ### Logging
 
