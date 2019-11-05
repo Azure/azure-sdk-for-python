@@ -1,6 +1,7 @@
 import time
 import pytest
 import threading
+import sys
 from azure.eventhub import EventData
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub._eventprocessor.local_partition_manager import InMemoryPartitionManager
@@ -54,6 +55,9 @@ def test_receive_partition(connstr_senders):
 
 @pytest.mark.liveTest
 def test_receive_load_balancing(connstr_senders):
+    if sys.platform.startswith('darwin'):
+        pytest.skip("Skipping on OSX - test code using multiple threads. Sometimes OSX aborts python process")
+
     connection_str, senders = connstr_senders
     pm = InMemoryPartitionManager()
     client1 = EventHubConsumerClient.from_connection_string(

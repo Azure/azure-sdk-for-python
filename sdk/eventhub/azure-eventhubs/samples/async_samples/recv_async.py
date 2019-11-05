@@ -33,18 +33,16 @@ async def receive(client):
         await client.receive(on_events=on_events,
                              consumer_group="$default")
     except KeyboardInterrupt:
-        client.close()
+        await client.close()
 
 
-if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
+async def main():
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
     )
-    try:
-        loop.run_until_complete(receive(client))
-    except KeyboardInterrupt:
-        pass
-    finally:
-        loop.run_until_complete(client.close())
-        loop.stop()
+    async with client:
+        await receive(client)
+
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

@@ -49,18 +49,17 @@ async def receive(client):
         client.close()
 
 
-if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
+async def main():
     container_client = ContainerClient.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
     partition_manager = BlobPartitionManager(container_client)
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
         partition_manager=partition_manager,  # For load balancing and checkpoint. Leave None for no load balancing
     )
-    try:
-        loop.run_until_complete(receive(client))
-    except KeyboardInterrupt:
-        pass
-    finally:
-        loop.run_until_complete(client.close())
-        loop.stop()
+    async with client:
+        await receive(client)
+
+
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
