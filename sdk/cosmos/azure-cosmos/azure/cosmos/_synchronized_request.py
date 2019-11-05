@@ -147,9 +147,6 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     response = response.http_response
     headers = dict(response.headers)
 
-    # In case of media stream response, return the response to the user and the user
-    # will need to handle reading the response.
-
     data = response.body()
     if data and not six.PY2:
         # python 3 compatible: convert data from byte to unicode string
