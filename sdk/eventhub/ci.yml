@@ -46,3 +46,5 @@ stages:
       safeName: azureeventhub
     - name: azure_eventhub_checkpointstoreblob_aio
       safeName: azureeventhubcheckpointstoreblobaio
+    - name: azure_eventhub_checkpointstoreblob
+      safeName: azureeventhubcheckpointstoreblob
