@@ -35,7 +35,7 @@ class TextAnalyticsResponseHook(HTTPPolicy):
             if statistics is None and model_version is None:
                 data = json.loads(response.http_response.internal_response.text)
                 statistics = data.get('statistics', None)
-                model_version = data.get('model_version', None)
+                model_version = data.get('modelVersion', None)
             for pipeline_obj in [request, response]:
                 if statistics is not None and not isinstance(statistics, RequestStatistics):
                     statistics = RequestStatistics._from_generated(statistics)

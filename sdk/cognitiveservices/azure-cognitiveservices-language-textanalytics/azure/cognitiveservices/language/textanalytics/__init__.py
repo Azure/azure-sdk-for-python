@@ -11,9 +11,11 @@
 
 from typing import Any, Optional, List  # pylint: disable=unused-import
 from ._text_analytics_client import TextAnalyticsClient
-from ._response_handlers import _validate_single_input
+from ._response_handlers import _validate_single_input, process_single_error
 from ._version import VERSION
 from ._models import (
+    LanguageInput,
+    MultiLanguageInput,
     DetectedLanguage,
     DocumentError,
     Entity,
@@ -23,6 +25,8 @@ from ._models import (
 
 __all__ = [
     'TextAnalyticsClient',
+    'LanguageInput',
+    'MultiLanguageInput',
     'single_detect_language',
     'single_detect_entities',
     'single_detect_pii_entities',
@@ -40,11 +44,11 @@ def single_detect_language(
             text,  # type: str
             country_hint="US",  # type: str
             model_version=None,  # type: Optional[str]
-            show_stats=False,  # type: Optional[bool]
             **kwargs  # type: Any
 ):
-    # type: (...) -> DetectedLanguage or DocumentError
+    # type: (...) -> DetectedLanguage
     doc = _validate_single_input(text, "country_hint", country_hint)
+    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential) as client:
         response = client.detect_language(
             documents=doc,
@@ -53,8 +57,9 @@ def single_detect_language(
             **kwargs
         )
         if response[0].is_error:
-            return response[0]  # DocumentError
+            return process_single_error(response[0])  # DocumentError
         return response[0].detected_languages[0]  # DetectedLanguage
+
 
 def single_detect_entities(
         endpoint,  # type: str
@@ -62,11 +67,11 @@ def single_detect_entities(
         text,  # type: str
         language="en",  # type: str
         model_version=None,  # type: Optional[str]
-        show_stats=False,  # type: Optional[bool]
         **kwargs  # type: Any
 ):
-    # type: (...) -> List[Entity] or DocumentError
+    # type: (...) -> List[Entity]
     doc = _validate_single_input(text, "language", language)
+    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential) as client:
         response = client.detect_entities(
             documents=doc,
@@ -75,8 +80,9 @@ def single_detect_entities(
             **kwargs
         )
         if response[0].is_error:
-            return response[0]  # DocumentError
+            return process_single_error(response[0])  # DocumentError
         return response[0].entities  # list[Entity]
+
 
 def single_detect_pii_entities(
         endpoint,  # type: str
@@ -84,11 +90,11 @@ def single_detect_pii_entities(
         text,  # type: str
         language="en",  # type: str
         model_version=None,  # type: Optional[str]
-        show_stats=False,  # type: Optional[bool]
         **kwargs  # type: Any
 ):
-    # type: (...) -> List[Entity] or DocumentError
+    # type: (...) -> List[Entity]
     doc = _validate_single_input(text, "language", language)
+    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential) as client:
         response = client.detect_pii_entities(
             documents=doc,
@@ -97,7 +103,7 @@ def single_detect_pii_entities(
             **kwargs
         )
         if response[0].is_error:
-            return response[0]  # DocumentError
+            return process_single_error(response[0])  # DocumentError
         return response[0].entities  # list[Entity]
 
 
@@ -107,11 +113,11 @@ def single_detect_linked_entities(
         text,  # type: str
         language="en",  # type: str
         model_version=None,  # type: Optional[str]
-        show_stats=False,  # type: Optional[bool]
         **kwargs  # type: Any
 ):
-    # type: (...) -> List[LinkedEntity] or DocumentError
+    # type: (...) -> List[LinkedEntity]
     doc = _validate_single_input(text, "language", language)
+    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential) as client:
         response = client.detect_linked_entities(
             documents=doc,
@@ -119,8 +125,8 @@ def single_detect_linked_entities(
             show_stats=show_stats,
             **kwargs
         )
-        if not response[0].is_error:
-            return response[0]  # DocumentError
+        if response[0].is_error:
+            return process_single_error(response[0])  # DocumentError
         return response[0].entities  # list[LinkedEntity]
 
 
@@ -130,11 +136,11 @@ def single_detect_key_phrases(
         text,  # type: str
         language="en",  # type: str
         model_version=None,  # type: Optional[str]
-        show_stats=False,  # type: Optional[bool]
         **kwargs  # type: Any
 ):
-    # type: (...) -> List[str] or DocumentError
+    # type: (...) -> List[str]
     doc = _validate_single_input(text, "language", language)
+    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential) as client:
         response = client.detect_key_phrases(
             documents=doc,
@@ -142,8 +148,8 @@ def single_detect_key_phrases(
             show_stats=show_stats,
             **kwargs
         )
-        if not response[0].is_error:
-            return response[0]  # DocumentError
+        if response[0].is_error:
+            return process_single_error(response[0])  # DocumentError
         return response[0].key_phrases  # list[str]
 
 
@@ -153,11 +159,11 @@ def single_detect_sentiment(
         text,  # type: str
         language="en",  # type: str
         model_version=None,  # type: Optional[str]
-        show_stats=False,  # type: Optional[bool]
         **kwargs  # type: Any
 ):
-    # type: (...) -> DocumentSentiment or DocumentError
+    # type: (...) -> DocumentSentiment
     doc = _validate_single_input(text, "language", language)
+    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential) as client:
         response = client.detect_sentiment(
             documents=doc,
@@ -165,4 +171,6 @@ def single_detect_sentiment(
             show_stats=show_stats,
             **kwargs
         )
-        return response[0]  # DocumentSentiment or DocumentError
+        if response[0].is_error:
+            return process_single_error(response[0])  # DocumentError
+        return response[0]  # DocumentSentiment

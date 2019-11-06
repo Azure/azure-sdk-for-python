@@ -12,7 +12,7 @@ from ._generated._text_analytics_api import TextAnalyticsAPI
 from ._base_client import TextAnalyticsClientBase
 from ._response_handlers import (
     _validate_batch_input,
-    process_text_analytics_error,
+    process_batch_error,
     deserialize_entities_result,
     deserialize_linked_entities_result,
     deserialize_key_phrases_result,
@@ -116,7 +116,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_text_analytics_error(error)
+            process_batch_error(error)
 
     def detect_entities(self,
                         documents,  # type: List[str] or List[MultiLanguageInput]
@@ -161,7 +161,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_text_analytics_error(error)
+            process_batch_error(error)
 
     def detect_pii_entities(self,
                             documents,  # type: List[str] or List[MultiLanguageInput]
@@ -204,7 +204,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_text_analytics_error(error)
+            process_batch_error(error)
 
     def detect_linked_entities(self,
                                documents,  # type: List[str] or List[MultiLanguageInput]
@@ -247,7 +247,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_text_analytics_error(error)
+            process_batch_error(error)
 
     def detect_key_phrases(self,
                            documents,  # type: List[str] or List[MultiLanguageInput]
@@ -289,7 +289,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_text_analytics_error(error)
+            process_batch_error(error)
 
     def detect_sentiment(self,
                          documents,  # type: List[str] or List[MultiLanguageInput]
@@ -332,4 +332,4 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_text_analytics_error(error)
+            process_batch_error(error)

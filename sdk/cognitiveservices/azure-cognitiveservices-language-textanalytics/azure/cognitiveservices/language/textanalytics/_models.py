@@ -1,4 +1,6 @@
 from azure.core.exceptions import HttpResponseError
+from ._generated.models._models import LanguageInput as GeneratedLanguageInput
+from ._generated.models._models import MultiLanguageInput as GeneratedMultiLanguageInput
 
 
 class DetectedLanguage(object):
@@ -287,7 +289,7 @@ class DocumentError(object):
         self.is_error = True
 
 
-class LanguageInput(object):
+class LanguageInput(GeneratedLanguageInput):
     """LanguageInput.
 
     All required parameters must be populated in order to send to Azure.
@@ -300,6 +302,7 @@ class LanguageInput(object):
     :type country_hint: str
     """
     def __init__(self, **kwargs):
+        super(LanguageInput, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.text = kwargs.get('text', None)
         self.country_hint = kwargs.get('country_hint', None)
@@ -383,7 +386,7 @@ class Match(object):
         )
 
 
-class MultiLanguageInput(object):
+class MultiLanguageInput(GeneratedMultiLanguageInput):
     """Contains an input document to be analyzed by the service.
 
     All required parameters must be populated in order to send to Azure.
@@ -398,6 +401,7 @@ class MultiLanguageInput(object):
     :type language: str
     """
     def __init__(self, **kwargs):
+        super(MultiLanguageInput, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.text = kwargs.get('text', None)
         self.language = kwargs.get('language', None)

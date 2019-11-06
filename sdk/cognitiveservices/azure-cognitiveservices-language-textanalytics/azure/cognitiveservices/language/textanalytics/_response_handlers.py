@@ -25,7 +25,17 @@ from ._models import (
 )
 
 
-def process_text_analytics_error(error):
+def process_single_error(error):
+    raise_error = HttpResponseError
+    error_message = error.error['innerError']['message']
+    error_code = error.error['code']
+    error_message += "\nErrorCode:{}".format(error_code)
+    error = raise_error(message=error_message)
+    error.error_code = error_code
+    raise error
+
+
+def process_batch_error(error):
     raise_error = HttpResponseError
     error_message = error.message
 
@@ -35,7 +45,10 @@ def process_text_analytics_error(error):
         pass
 
     try:
-        error_message = error_body['error']['message']
+        try:
+            error_message = error_body['error']['message']
+        except KeyError:
+            error_message = error_body['innerError']['message']
         error_message += "\nErrorCode:{}".format(error.status_code)
     except AttributeError:
         error_message += "\nErrorCode:{}".format(error.status_code)
@@ -53,26 +66,26 @@ def _validate_single_input(text, hint, hint_value):
 
 
 def _validate_batch_input(documents):
-    strings = False
+    string_input = False
     for idx, item in enumerate(documents):
         if type(item) == str:
             documents[idx] = {"id": idx, "text": item}
-            strings = True
+            string_input = True
         if type(item) == dict or isinstance(item, MultiLanguageInput) or isinstance(item, LanguageInput):
-            if strings:
+            if string_input:
                 raise TypeError("Mixing string and dictionary input unsupported.")
     return documents
 
 
 def get_index(err, resp):
-    response = json.loads(resp.request.body)
-    docs = response['documents']
+    request = json.loads(resp.request.body)
+    docs = request['documents']
     for idx, item in enumerate(docs):
         if item["id"] == err.id:
             return idx
 
 
-def add_response_errors(obj, resp, result):
+def add_document_errors(obj, resp, result):
     error_map = {}
     if obj.errors:
         for idx, err in enumerate(obj.errors):
@@ -97,7 +110,7 @@ def deserialize_language_result(response, obj, response_headers):
                     statistics=DocumentStatistics._from_generated(language.statistics)
                 )
             )
-    return add_response_errors(obj, response, doc_entities)
+    return add_document_errors(obj, response, doc_entities)
 
 
 def deserialize_entities_result(response, obj, response_headers):
@@ -113,7 +126,7 @@ def deserialize_entities_result(response, obj, response_headers):
                     statistics=DocumentStatistics._from_generated(entity.statistics)
                 )
             )
-    return add_response_errors(obj, response, doc_entities)
+    return add_document_errors(obj, response, doc_entities)
 
 
 def deserialize_linked_entities_result(response, obj, response_headers):
@@ -130,7 +143,7 @@ def deserialize_linked_entities_result(response, obj, response_headers):
                 )
             )
 
-    return add_response_errors(obj, response, linked_entities)
+    return add_document_errors(obj, response, linked_entities)
 
 
 def deserialize_key_phrases_result(response, obj, response_headers):
@@ -146,7 +159,7 @@ def deserialize_key_phrases_result(response, obj, response_headers):
                     statistics=DocumentStatistics._from_generated(phrases.statistics)
                 )
             )
-    return add_response_errors(obj, response, key_phrases)
+    return add_document_errors(obj, response, key_phrases)
 
 
 def deserialize_sentiment_result(response, obj, response_headers):
@@ -165,4 +178,4 @@ def deserialize_sentiment_result(response, obj, response_headers):
                 )
             )
 
-    return add_response_errors(obj, response, sentiments)
+    return add_document_errors(obj, response, sentiments)
