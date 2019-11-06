@@ -3,6 +3,91 @@
 Release History
 ===============
 
+0.9.0 (2019-11-06)
+++++++++++++++++++
+
+**Features**
+
+- Model ContainerPartitionKey has a new parameter version
+- Model DatabaseAccountCreateUpdateParameters has a new parameter disable_key_based_metadata_write_access
+- Added operation DatabaseAccountsOperations.update
+- Added operation group PrivateEndpointConnectionsOperations
+- Added operation group CassandraResourcesOperations
+- Added operation group TableResourcesOperations
+- Added operation group PrivateLinkResourcesOperations
+- Added operation group MongoDBResourcesOperations
+- Added operation group GremlinResourcesOperations
+- Added operation group SqlResourcesOperations
+
+**Breaking changes**
+
+- Model Resource no longer has parameter location
+- Model Resource no longer has parameter tags
+- Model TableCreateUpdateParameters has a new signature
+- Model SqlDatabaseCreateUpdateParameters has a new signature
+- Model CassandraKeyspaceCreateUpdateParameters has a new signature
+- Model GremlinGraphCreateUpdateParameters has a new signature
+- Model CassandraTableCreateUpdateParameters has a new signature
+- Model MongoDBDatabaseCreateUpdateParameters has a new signature
+- Model MongoDBCollectionCreateUpdateParameters has a new signature
+- Model GremlinDatabaseCreateUpdateParameters has a new signature
+- Model SqlContainerCreateUpdateParameters has a new signature
+- Removed operation DatabaseAccountsOperations.update_sql_container_throughput
+- Removed operation DatabaseAccountsOperations.update_mongo_db_database_throughput
+- Removed operation DatabaseAccountsOperations.get_gremlin_database
+- Removed operation DatabaseAccountsOperations.delete_table
+- Removed operation DatabaseAccountsOperations.get_table_throughput
+- Removed operation DatabaseAccountsOperations.update_cassandra_keyspace_throughput
+- Removed operation DatabaseAccountsOperations.delete_sql_container
+- Removed operation DatabaseAccountsOperations.list_gremlin_databases
+- Removed operation DatabaseAccountsOperations.list_sql_containers
+- Removed operation DatabaseAccountsOperations.get_cassandra_table_throughput
+- Removed operation DatabaseAccountsOperations.delete_gremlin_graph
+- Removed operation DatabaseAccountsOperations.get_gremlin_database_throughput
+- Removed operation DatabaseAccountsOperations.update_gremlin_graph_throughput
+- Removed operation DatabaseAccountsOperations.create_update_sql_database
+- Removed operation DatabaseAccountsOperations.create_update_sql_container
+- Removed operation DatabaseAccountsOperations.create_update_gremlin_database
+- Removed operation DatabaseAccountsOperations.create_update_mongo_db_collection
+- Removed operation DatabaseAccountsOperations.update_sql_database_throughput
+- Removed operation DatabaseAccountsOperations.patch
+- Removed operation DatabaseAccountsOperations.get_table
+- Removed operation DatabaseAccountsOperations.get_sql_container
+- Removed operation DatabaseAccountsOperations.get_cassandra_keyspace
+- Removed operation DatabaseAccountsOperations.delete_gremlin_database
+- Removed operation DatabaseAccountsOperations.get_cassandra_keyspace_throughput
+- Removed operation DatabaseAccountsOperations.get_mongo_db_database_throughput
+- Removed operation DatabaseAccountsOperations.list_tables
+- Removed operation DatabaseAccountsOperations.get_mongo_db_collection
+- Removed operation DatabaseAccountsOperations.update_gremlin_database_throughput
+- Removed operation DatabaseAccountsOperations.list_gremlin_graphs
+- Removed operation DatabaseAccountsOperations.delete_mongo_db_collection
+- Removed operation DatabaseAccountsOperations.create_update_table
+- Removed operation DatabaseAccountsOperations.get_mongo_db_database
+- Removed operation DatabaseAccountsOperations.create_update_mongo_db_database
+- Removed operation DatabaseAccountsOperations.get_sql_database
+- Removed operation DatabaseAccountsOperations.update_cassandra_table_throughput
+- Removed operation DatabaseAccountsOperations.create_update_cassandra_table
+- Removed operation DatabaseAccountsOperations.delete_mongo_db_database
+- Removed operation DatabaseAccountsOperations.delete_cassandra_table
+- Removed operation DatabaseAccountsOperations.get_gremlin_graph_throughput
+- Removed operation DatabaseAccountsOperations.get_sql_database_throughput
+- Removed operation DatabaseAccountsOperations.list_sql_databases
+- Removed operation DatabaseAccountsOperations.list_mongo_db_collections
+- Removed operation DatabaseAccountsOperations.list_cassandra_keyspaces
+- Removed operation DatabaseAccountsOperations.get_sql_container_throughput
+- Removed operation DatabaseAccountsOperations.list_mongo_db_databases
+- Removed operation DatabaseAccountsOperations.delete_cassandra_keyspace
+- Removed operation DatabaseAccountsOperations.get_cassandra_table
+- Removed operation DatabaseAccountsOperations.delete_sql_database
+- Removed operation DatabaseAccountsOperations.get_gremlin_graph
+- Removed operation DatabaseAccountsOperations.update_table_throughput
+- Removed operation DatabaseAccountsOperations.create_update_gremlin_graph
+- Removed operation DatabaseAccountsOperations.update_mongo_db_collection_throughput
+- Removed operation DatabaseAccountsOperations.create_update_cassandra_keyspace
+- Removed operation DatabaseAccountsOperations.list_cassandra_tables
+- Removed operation DatabaseAccountsOperations.get_mongo_db_collection_throughput
+
 0.8.0 (2019-08-15)
 ++++++++++++++++++
 
