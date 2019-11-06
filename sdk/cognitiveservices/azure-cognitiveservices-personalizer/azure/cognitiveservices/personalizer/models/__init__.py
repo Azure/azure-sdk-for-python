@@ -10,35 +10,73 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .internal_error_py3 import InternalError
-    from .personalizer_error_py3 import PersonalizerError
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .reward_request_py3 import RewardRequest
-    from .rankable_action_py3 import RankableAction
-    from .rank_request_py3 import RankRequest
-    from .ranked_action_py3 import RankedAction
-    from .rank_response_py3 import RankResponse
+    from ._models_py3 import ContainerStatus
+    from ._models_py3 import DateRange
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import Evaluation
+    from ._models_py3 import EvaluationContract
+    from ._models_py3 import InternalError
+    from ._models_py3 import LogsProperties
+    from ._models_py3 import LogsPropertiesDateRange
+    from ._models_py3 import ModelProperties
+    from ._models_py3 import PersonalizerError
+    from ._models_py3 import PolicyContract
+    from ._models_py3 import PolicyResult
+    from ._models_py3 import PolicyResultSummary
+    from ._models_py3 import PolicyResultTotalSummary
+    from ._models_py3 import RankableAction
+    from ._models_py3 import RankedAction
+    from ._models_py3 import RankRequest
+    from ._models_py3 import RankResponse
+    from ._models_py3 import RewardRequest
+    from ._models_py3 import ServiceConfiguration
 except (SyntaxError, ImportError):
-    from .internal_error import InternalError
-    from .personalizer_error import PersonalizerError
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .reward_request import RewardRequest
-    from .rankable_action import RankableAction
-    from .rank_request import RankRequest
-    from .ranked_action import RankedAction
-    from .rank_response import RankResponse
-from .personalizer_client_enums import (
+    from ._models import ContainerStatus
+    from ._models import DateRange
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import Evaluation
+    from ._models import EvaluationContract
+    from ._models import InternalError
+    from ._models import LogsProperties
+    from ._models import LogsPropertiesDateRange
+    from ._models import ModelProperties
+    from ._models import PersonalizerError
+    from ._models import PolicyContract
+    from ._models import PolicyResult
+    from ._models import PolicyResultSummary
+    from ._models import PolicyResultTotalSummary
+    from ._models import RankableAction
+    from ._models import RankedAction
+    from ._models import RankRequest
+    from ._models import RankResponse
+    from ._models import RewardRequest
+    from ._models import ServiceConfiguration
+from ._personalizer_client_enums import (
     ErrorCode,
+    EvaluationJobStatus,
 )
 
 __all__ = [
-    'InternalError',
-    'PersonalizerError',
+    'ContainerStatus',
+    'DateRange',
     'ErrorResponse', 'ErrorResponseException',
-    'RewardRequest',
+    'Evaluation',
+    'EvaluationContract',
+    'InternalError',
+    'LogsProperties',
+    'LogsPropertiesDateRange',
+    'ModelProperties',
+    'PersonalizerError',
+    'PolicyContract',
+    'PolicyResult',
+    'PolicyResultSummary',
+    'PolicyResultTotalSummary',
     'RankableAction',
-    'RankRequest',
     'RankedAction',
+    'RankRequest',
     'RankResponse',
+    'RewardRequest',
+    'ServiceConfiguration',
     'ErrorCode',
+    'EvaluationJobStatus',
 ]
