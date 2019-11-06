@@ -6433,9 +6433,9 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
     :type force_update_tag: str
     :param publisher: The name of the extension handler publisher.
     :type publisher: str
-    :param type: Specifies the type of the extension; an example is
+    :ivar type: Specifies the type of the extension; an example is
      "CustomScriptExtension".
-    :type type: str
+    :vartype type: str
     :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
     :param auto_upgrade_minor_version: Indicates whether the extension should
@@ -6457,6 +6457,7 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -6477,7 +6478,7 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
         self.name = None
         self.force_update_tag = kwargs.get('force_update_tag', None)
         self.publisher = kwargs.get('publisher', None)
-        self.type = kwargs.get('type', None)
+        self.type = None
         self.type_handler_version = kwargs.get('type_handler_version', None)
         self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
         self.settings = kwargs.get('settings', None)
