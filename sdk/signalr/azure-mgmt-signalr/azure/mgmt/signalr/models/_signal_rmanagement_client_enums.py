@@ -33,6 +33,12 @@ class ProvisioningState(str, Enum):
     moving = "Moving"
 
 
+class FeatureFlags(str, Enum):
+
+    service_mode = "ServiceMode"
+    enable_connectivity_logs = "EnableConnectivityLogs"
+
+
 class KeyType(str, Enum):
 
     primary = "Primary"
