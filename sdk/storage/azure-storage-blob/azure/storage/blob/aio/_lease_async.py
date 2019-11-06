@@ -106,9 +106,9 @@ class BlobLeaseClient(LeaseClientBase):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
-        self.etag = kwargs.get('etag')  # type: str
+        self.id = response.get('lease_id')  # type: ignore
+        self.last_modified = response.get('last_modified')   # type: ignore
+        self.etag = kwargs.get('etag')  # type: ignore
 
     @distributed_trace_async
     async def renew(self, **kwargs):
@@ -152,9 +152,9 @@ class BlobLeaseClient(LeaseClientBase):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')  # type: ignore
+        self.id = response.get('lease_id')  # type: ignore
+        self.last_modified = response.get('last_modified')   # type: ignore
 
     @distributed_trace_async
     async def release(self, **kwargs):
@@ -196,9 +196,9 @@ class BlobLeaseClient(LeaseClientBase):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')  # type: ignore
+        self.id = response.get('lease_id')  # type: ignore
+        self.last_modified = response.get('last_modified')   # type: ignore
 
     @distributed_trace_async
     async def change(self, proposed_lease_id, **kwargs):
@@ -240,9 +240,9 @@ class BlobLeaseClient(LeaseClientBase):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')  # type: ignore
+        self.id = response.get('lease_id')  # type: ignore
+        self.last_modified = response.get('last_modified')   # type: ignore
 
     @distributed_trace_async
     async def break_lease(self, lease_break_period=None, **kwargs):

@@ -192,7 +192,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         return parse_to_internal_user_delegation_key(user_delegation_key)  # type: ignore
 
     @distributed_trace
-    def get_account_information(self, **kwargs):
+    def get_account_information(self, **kwargs): # type: ignore
         # type: (Any) -> Dict[str, str]
         """Gets information related to the storage account.
 
@@ -217,7 +217,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_service_stats(self, **kwargs):
+    def get_service_stats(self, **kwargs): # type: ignore
         # type: (**Any) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Blob service.
 
@@ -260,7 +260,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_service_properties(self, **kwargs):
+    def get_service_properties(self, **kwargs): # type: ignore
         # type: (Any) -> Dict[str, Any]
         """Gets the properties of a storage account's Blob service, including
         Azure Storage Analytics.
@@ -535,7 +535,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :caption: Getting the container client to interact with a specific container.
         """
         try:
-            container_name = container.name
+            container_name = container.name # type: ignore
         except AttributeError:
             container_name = container
         _pipeline = Pipeline(
@@ -584,11 +584,11 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :caption: Getting the blob client to interact with a specific blob.
         """
         try:
-            container_name = container.name
+            container_name = container.name # type: ignore
         except AttributeError:
             container_name = container
         try:
-            blob_name = blob.name
+            blob_name = blob.name # type: ignore
         except AttributeError:
             blob_name = blob
         _pipeline = Pipeline(

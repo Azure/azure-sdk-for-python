@@ -4,14 +4,15 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
+from typing import (  # pylint: disable=unused-import
+    Any, AnyStr, Dict, TYPE_CHECKING
+)
 
 from azure.core import MatchConditions
 
 from ._generated.models import ModifiedAccessConditions, SourceModifiedAccessConditions
 
-
 def _get_match_headers(kwargs, match_param, etag_param):
-    # type: (str) -> Tuple(Dict[str, Any], Optional[str], Optional[str])
     if_match = None
     if_none_match = None
     match_condition = kwargs.pop(match_param, None)

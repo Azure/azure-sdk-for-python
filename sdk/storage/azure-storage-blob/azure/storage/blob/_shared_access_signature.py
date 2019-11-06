@@ -341,7 +341,7 @@ def generate_account_sas(
             :caption: Generating a shared access signature.
     """
     sas = SharedAccessSignature(account_name, account_key)
-    return sas.generate_account(
+    return sas.generate_account( # type: ignore
         services=Services(blob=True),
         resource_types=resource_types,
         permission=permission,

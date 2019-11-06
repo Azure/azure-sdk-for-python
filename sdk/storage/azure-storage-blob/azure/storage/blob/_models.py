@@ -7,7 +7,7 @@
 # pylint: disable=super-init-not-called, too-many-lines
 
 from enum import Enum
-from typing import List, Any, TYPE_CHECKING # pylint: disable=unused-import
+from typing import List, Any, Dict, TYPE_CHECKING # pylint: disable=unused-import
 
 from azure.core.paging import PageIterator, ItemPaged
 
@@ -1043,6 +1043,7 @@ class CustomerProvidedEncryptionKey(object):
 
 
 def service_stats_deserialize(generated):
+    # type: (Any) -> Dict[str, Any]
     """Deserialize a ServiceStats objects into a dict.
     """
     return {
@@ -1053,6 +1054,7 @@ def service_stats_deserialize(generated):
     }
 
 def service_properties_deserialize(generated):
+    # type: (Any) -> Dict[str, Any]
     """Deserialize a ServiceProperties objects into a dict.
     """
     return {

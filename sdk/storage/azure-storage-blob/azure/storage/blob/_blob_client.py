@@ -271,7 +271,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         )
 
     @distributed_trace
-    def get_account_information(self, **kwargs):
+    def get_account_information(self, **kwargs): # type: ignore
         # type: (**Any) -> Dict[str, str]
         """Gets information related to the storage account in which the blob resides.
 
@@ -379,7 +379,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             metadata=None,  # type: Optional[Dict[str, str]]
             **kwargs
         ):
-        # type: (...) -> Any
+        # type: (...) -> Dict[str, Any]
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.
@@ -477,10 +477,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             metadata=metadata,
             **kwargs)
         if blob_type == BlobType.BlockBlob:
-            return upload_block_blob(**options)
+            return upload_block_blob(**options) # type: ignore
         if blob_type == BlobType.PageBlob:
-            return upload_page_blob(**options)
-        return upload_append_blob(**options)
+            return upload_page_blob(**options) # type: ignore
+        return upload_append_blob(**options) # type: ignore
 
     def _download_blob_options(self, offset=None, length=None, **kwargs):
         # type: (Optional[int], Optional[int], **Any) -> Dict[str, Any]
@@ -489,7 +489,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
         if length is not None:
-            length = offset + length - 1  # Service actually uses an end-range inclusive index
+            length = offset + length - 1  # type: ignore # Service actually uses an end-range inclusive index
 
         validate_content = kwargs.pop('validate_content', False)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -527,7 +527,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def download_blob(self, offset=None, length=None, **kwargs):
-        # type: (Optional[int], Optional[int], **Any) -> Iterable[bytes]
+        # type: (Optional[int], Optional[int], **Any) -> StorageStreamDownloader
         """Downloads a blob to a stream with automatic chunking.
 
         :param int offset:
@@ -604,7 +604,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
         if delete_snapshots:
-            delete_snapshots = DeleteSnapshotsOptionType(delete_snapshots)
+            delete_snapshots = DeleteSnapshotsOptionType(delete_snapshots) #type: ignore
         options = {
             'timeout': kwargs.pop('timeout', None),
             'delete_snapshots': delete_snapshots or None,
@@ -869,7 +869,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return options
 
     @distributed_trace
-    def set_blob_metadata(self, metadata=None, **kwargs):
+    def set_blob_metadata(self, metadata=None, **kwargs): # type: ignore
         # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Union[str, datetime]]
         """Sets user-defined metadata for the blob as one or more name-value pairs.
 
@@ -1077,7 +1077,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return options
 
     @distributed_trace
-    def create_append_blob(self, content_settings=None, metadata=None, **kwargs):
+    def create_append_blob(self, content_settings=None, metadata=None, **kwargs): # type: ignore
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Union[str, datetime]]
         """Creates a new Append Blob.
 
@@ -1153,7 +1153,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return options
 
     @distributed_trace
-    def create_snapshot(self, metadata=None, **kwargs):
+    def create_snapshot(self, metadata=None, **kwargs): # type: ignore
         # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Union[str, datetime]]
         """Creates a snapshot of the blob.
 
@@ -1221,7 +1221,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if 'source_lease' in kwargs:
             source_lease = kwargs.pop('source_lease')
             try:
-                headers['x-ms-source-lease-id'] = source_lease.id # type: str
+                headers['x-ms-source-lease-id'] = source_lease.id
             except AttributeError:
                 headers['x-ms-source-lease-id'] = source_lease
 
@@ -1249,7 +1249,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return options
 
     @distributed_trace
-    def start_copy_from_url(self, source_url, metadata=None, incremental_copy=False, **kwargs):
+    def start_copy_from_url(self, source_url, metadata=None, incremental_copy=False, **kwargs): # type: ignore
         # type: (str, Optional[Dict[str, str]], bool, **Any) -> Dict[str, Union[str, datetime]]
         """Copies a blob asynchronously.
 
@@ -1386,8 +1386,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
         try:
             if incremental_copy:
-                return self._client.page_blob.copy_incremental(**options)
-            return self._client.blob.start_copy_from_url(**options)
+                return self._client.page_blob.copy_incremental(**options) # type: ignore
+            return self._client.blob.start_copy_from_url(**options) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -1395,10 +1395,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (Union[str, Dict[str, Any], BlobProperties], **Any) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         try:
-            copy_id = copy_id.copy.id
+            copy_id = copy_id.copy.id # type: ignore
         except AttributeError:
             try:
-                copy_id = copy_id['copy_id']
+                copy_id = copy_id['copy_id'] # type: ignore
             except TypeError:
                 pass
         options = {
@@ -1631,7 +1631,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if source_length is not None and source_offset is None:
             raise ValueError("Source offset value must not be None if length is set.")
         if source_length is not None:
-            source_length = source_offset + source_length - 1
+            source_length = source_offset + source_length - 1 # type: ignore
         block_id = encode_base64(str(block_id))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         range_header = None
@@ -1646,9 +1646,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
         options = {
-            'block_id': block_id,
-            'content_length': 0,
-            'source_url': source_url,
+            'block_id': block_id, # type: ignore
+            'content_length': 0, # type: ignore
+            'source_url': source_url, # type: ignore
             'source_range': range_header,
             'source_content_md5': bytearray(source_content_md5) if source_content_md5 else None,
             'timeout': kwargs.pop('timeout', None),
@@ -1924,7 +1924,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
         if length is not None:
-            length = offset + length - 1  # Reformat to an inclusive range index
+            length = offset + length - 1  # type: ignore # Reformat to an inclusive range index
         page_range, _ = validate_and_format_range_headers(
             offset, length, start_range_required=False, end_range_required=False, align_to_page=True
         )
@@ -2033,7 +2033,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return options
 
     @distributed_trace
-    def set_sequence_number(self, sequence_number_action, sequence_number=None, **kwargs):
+    def set_sequence_number(self, sequence_number_action, sequence_number=None, **kwargs): # type: ignore
         # type: (Union[str, SequenceNumberAction], Optional[str], **Any) -> Dict[str, Union[str, datetime]]
         """Sets the blob sequence number.
 
@@ -2102,7 +2102,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return options
 
     @distributed_trace
-    def resize_blob(self, size, **kwargs):
+    def resize_blob(self, size, **kwargs): # type: ignore
         # type: (int, **Any) -> Dict[str, Union[str, datetime]]
         """Resizes a page blob to the specified size.
 
@@ -2337,12 +2337,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return options
 
     @distributed_trace
-    def upload_pages_from_url(self, source_url,  # type: str
-                              offset,  # type: int
-                              length,  # type: int
-                              source_offset,  # type: int
-                              **kwargs
-                              ):
+    def upload_pages_from_url( # type: ignore
+            self, source_url,  # type: str
+            offset,  # type: int
+            length,  # type: int
+            source_offset,  # type: int
+            **kwargs
+        ):
         # type: (...) -> Dict[str, Any]
         """
         The Upload Pages operation writes a range of pages to a page blob where
@@ -2473,7 +2474,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return options
 
     @distributed_trace
-    def clear_page(self, offset, length, **kwargs):
+    def clear_page(self, offset, length, **kwargs): # type: ignore
         # type: (int, int, **Any) -> Dict[str, Union[str, datetime]]
         """Clears a range of pages.
 
@@ -2653,7 +2654,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :rtype: dict(str, Any)
         """
         options = self._append_block_options(
-            data,
+            data, # type: ignore
             length=length,
             **kwargs
         )
@@ -2678,7 +2679,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # Format based on whether length is present
         source_range = None
         if source_length is not None:
-            end_range = source_offset + source_length - 1
+            end_range = source_offset + source_length - 1 # type: ignore
             source_range = 'bytes={0}-{1}'.format(source_offset, end_range)
         elif source_offset is not None:
             source_range = "bytes={0}-".format(source_offset)
@@ -2721,10 +2722,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return options
 
     @distributed_trace
-    def append_block_from_url(self, copy_source_url,  # type: str
-                              source_offset=None,  # type: Optional[int]
-                              source_length=None,  # type: Optional[int]
-                              **kwargs):
+    def append_block_from_url( # type: ignore
+            self, copy_source_url,  # type: str
+            source_offset=None,  # type: Optional[int]
+            source_length=None,  # type: Optional[int]
+            **kwargs
+        ):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
         """
         Creates a new block to be committed as part of a blob, where the contents are read from a source url.

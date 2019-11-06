@@ -9,6 +9,7 @@ from typing import (  # pylint: disable=unused-import
     Optional,
     Any,
     Iterable,
+    Iterator,
     Dict,
     List,
     Type,
@@ -56,6 +57,8 @@ from .policies import (
 from .._generated.models import StorageErrorException
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
+if TYPE_CHECKING:
+    from azure.core.pipeline.transport import HttpRequest
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
@@ -232,18 +235,18 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         ]
         return config, Pipeline(config.transport, policies=policies)
 
-    def _batch_send(
+    def _batch_send( # type: ignore
         self, *reqs,  # type: HttpRequest
-        **kwargs
+        **kwargs, # type: Any
     ):
         """Given a series of request, do a Storage batch call.
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
-        request = self._client._client.post(  # pylint: disable=protected-access
+        request = self._client._client.post(  # type: ignore # pylint: disable=protected-access
             url='https://{}/?comp=batch'.format(self.primary_hostname),
             headers={
-                'x-ms-version': self._client._config.version  # pylint: disable=protected-access
+                'x-ms-version': self._client._config.version  # type: ignore # pylint: disable=protected-access
             }
         )
 
@@ -273,7 +276,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                     )
                     raise error
                 return iter(parts)
-            return parts
+            return parts # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 

@@ -112,7 +112,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             container_name=container_name,
             credential=credential,
             **kwargs)
-        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
+        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline) # type: ignore
         self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async
@@ -267,7 +267,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         return lease
 
     @distributed_trace_async
-    async def get_account_information(self, **kwargs):
+    async def get_account_information(self, **kwargs): # type: ignore
         # type: (**Any) -> Dict[str, str]
         """Gets information related to the storage account.
 
@@ -416,7 +416,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         }
 
     @distributed_trace_async
-    async def set_container_access_policy(
+    async def set_container_access_policy( # type: ignore
             self, signed_identifiers,  # type: Dict[str, AccessPolicy]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
             **kwargs  # type: Any
@@ -479,7 +479,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         mod_conditions = get_modify_conditions(kwargs)
         access_conditions = get_access_conditions(lease)
         try:
-            return await self._client.container.set_access_policy(
+            return await self._client.container.set_access_policy( # type: ignore
                 container_acl=signed_identifiers or None,
                 timeout=timeout,
                 access=public_access,
@@ -825,7 +825,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
         timeout = kwargs.pop('timeout', None)
         options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
-            delete_snapshots=delete_snapshots,
+            delete_snapshots=delete_snapshots, # type: ignore
             lease=lease,
             timeout=timeout,
             **kwargs
@@ -848,7 +848,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             req.format_parameters(query_parameters)
             reqs.append(req)
 
-        return await self._batch_send(*reqs, **options)
+        return await self._batch_send(*reqs, **options) # type: ignore
 
     @distributed_trace
     async def set_standard_blob_tier_blobs(
@@ -911,7 +911,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             req.format_parameters(query_parameters)
             reqs.append(req)
 
-        return await self._batch_send(*reqs, **kwargs)
+        return await self._batch_send(*reqs, **kwargs) # type: ignore
 
     @distributed_trace
     async def set_premium_page_blob_tier_blobs(
@@ -970,7 +970,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             req.format_parameters(query_parameters)
             reqs.append(req)
 
-        return await self._batch_send(*reqs, **kwargs)
+        return await self._batch_send(*reqs, **kwargs) # type: ignore
 
     def get_blob_client(
             self, blob,  # type: Union[BlobProperties, str]

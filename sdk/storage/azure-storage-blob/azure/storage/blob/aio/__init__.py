@@ -6,6 +6,9 @@
 
 import os
 
+from typing import ( # pylint: disable=unused-import
+    Dict, Any, Union, Iterable, AnyStr, IO
+)
 from .._models import BlobType
 from .._shared.policies_async import ExponentialRetry, LinearRetry
 from ._blob_client_async import BlobClient
@@ -19,7 +22,7 @@ async def upload_blob_to_url(
         data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
         credential=None,  # type: Any
         **kwargs):
-    # type: (...) -> dict[str, Any]
+    # type: (...) -> Dict[str, Any]
     """Upload data to a given URL
 
     The data will be uploaded as a block blob.
@@ -60,7 +63,7 @@ async def upload_blob_to_url(
     :rtype: dict(str, Any)
     """
     async with BlobClient.from_blob_url(blob_url, credential=credential) as client:
-        return await client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs)
+        return await client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs) # type: ignore
 
 
 async def _download_to_stream(client, handle, **kwargs):
@@ -113,7 +116,7 @@ async def download_blob_from_url(
     :rtype: None
     """
     overwrite = kwargs.pop('overwrite', False)
-    async with BlobClient.from_blob_url(blob_url, credential=credential) as client:
+    async with BlobClient.from_blob_url(blob_url, credential=credential) as client: # type: ignore
         if hasattr(output, 'write'):
             await _download_to_stream(client, output, **kwargs)
         else:

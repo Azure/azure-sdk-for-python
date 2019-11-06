@@ -100,7 +100,7 @@ def upload_blob_to_url(
     :rtype: dict(str, Any)
     """
     with BlobClient.from_blob_url(blob_url, credential=credential) as client:
-        return client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs)
+        return client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs) # type: ignore
 
 
 def _download_to_stream(client, handle, **kwargs):

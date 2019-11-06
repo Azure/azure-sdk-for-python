@@ -112,7 +112,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             snapshot=snapshot,
             credential=credential,
             **kwargs)
-        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
+        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline) # type: ignore
         self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async
@@ -139,7 +139,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             metadata=None,  # type: Optional[Dict[str, str]]
             **kwargs
         ):
-        # type: (...) -> Any
+        # type: (...) -> Dict[str, Any]
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.
@@ -237,14 +237,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             metadata=metadata,
             **kwargs)
         if blob_type == BlobType.BlockBlob:
-            return await upload_block_blob(**options)
+            return await upload_block_blob(**options) # type: ignore
         if blob_type == BlobType.PageBlob:
-            return await upload_page_blob(**options)
-        return await upload_append_blob(**options)
+            return await upload_page_blob(**options) # type: ignore
+        return await upload_append_blob(**options) # type: ignore
 
     @distributed_trace_async
     async def download_blob(self, offset=None, length=None, **kwargs):
-        # type: (Optional[int], Optional[int], Any) -> Iterable[bytes]
+        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
         """Downloads a blob to a stream with automatic chunking.
 
         :param int offset:
@@ -517,7 +517,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_blob_metadata(self, metadata=None, **kwargs):
+    async def set_blob_metadata(self, metadata=None, **kwargs): # type: ignore
         # type: (Optional[Dict[str, str]], Any) -> Dict[str, Union[str, datetime]]
         """Sets user-defined metadata for the blob as one or more name-value pairs.
 
@@ -633,7 +633,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
 
     @distributed_trace_async
-    async def create_append_blob(self, content_settings=None, metadata=None, **kwargs):
+    async def create_append_blob(self, content_settings=None, metadata=None, **kwargs): # type: ignore
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], Any) -> Dict[str, Union[str, datetime]]
         """Creates a new Append Blob.
 
@@ -684,7 +684,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
 
     @distributed_trace_async
-    async def create_snapshot(self, metadata=None, **kwargs):
+    async def create_snapshot(self, metadata=None, **kwargs): # type: ignore
         # type: (Optional[Dict[str, str]], Any) -> Dict[str, Union[str, datetime]]
         """Creates a snapshot of the blob.
 
@@ -1361,7 +1361,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
 
     @distributed_trace_async
-    async def resize_blob(self, size, **kwargs):
+    async def resize_blob(self, size, **kwargs): # type: ignore
         # type: (int, Any) -> Dict[str, Union[str, datetime]]
         """Resizes a page blob to the specified size.
 
@@ -1489,12 +1489,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
 
     @distributed_trace_async
-    async def upload_pages_from_url(self, source_url,  # type: str
-                                    offset,  # type: int
-                                    length,  # type: int
-                                    source_offset,  # type: int
-                                    **kwargs
-                                    ):
+    async def upload_pages_from_url( # type: ignore
+            self, source_url,  # type: str
+            offset,  # type: int
+            length,  # type: int
+            source_offset,  # type: int
+            **kwargs
+        ):
         # type: (...) -> Dict[str, Any]
         """
         The Upload Pages operation writes a range of pages to a page blob where
@@ -1587,7 +1588,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
 
     @distributed_trace_async
-    async def clear_page(self, offset, length, **kwargs):
+    async def clear_page(self, offset, length, **kwargs): # type: ignore
         # type: (int, int, Any) -> Dict[str, Union[str, datetime]]
         """Clears a range of pages.
 
@@ -1713,7 +1714,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :rtype: dict(str, Any)
         """
         options = self._append_block_options(
-            data,
+            data, # type: ignore
             length=length,
             **kwargs
         )
@@ -1723,10 +1724,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
 
     @distributed_trace_async()
-    async def append_block_from_url(self, copy_source_url,  # type: str
-                                    source_offset=None,  # type: Optional[int]
-                                    source_length=None,  # type: Optional[int]
-                                    **kwargs):
+    async def append_block_from_url( # type: ignore
+        self, copy_source_url,  # type: str
+        source_offset=None,  # type: Optional[int]
+        source_length=None,  # type: Optional[int]
+        **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
         """
         Creates a new block to be committed as part of a blob, where the contents are read from a source url.

@@ -384,7 +384,7 @@ class ContainerClient(StorageAccountHostsMixin):
         return lease
 
     @distributed_trace
-    def get_account_information(self, **kwargs):
+    def get_account_information(self, **kwargs): # type: ignore
         # type: (**Any) -> Dict[str, str]
         """Gets information related to the storage account.
 
@@ -534,7 +534,7 @@ class ContainerClient(StorageAccountHostsMixin):
         }
 
     @distributed_trace
-    def set_container_access_policy(
+    def set_container_access_policy( # type: ignore
             self, signed_identifiers,  # type: Dict[str, AccessPolicy]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
             **kwargs
@@ -596,7 +596,7 @@ class ContainerClient(StorageAccountHostsMixin):
         access_conditions = get_access_conditions(lease)
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.container.set_access_policy(
+            return self._client.container.set_access_policy( # type: ignore
                 container_acl=signed_identifiers or None,
                 timeout=timeout,
                 access=public_access,
@@ -1015,7 +1015,7 @@ class ContainerClient(StorageAccountHostsMixin):
             req.format_parameters(query_parameters)
             reqs.append(req)
 
-        return self._batch_send(*reqs, **options)
+        return self._batch_send(*reqs, **options) # type: ignore
 
     def _generate_set_tier_options(
         self, tier, rehydrate_priority=None, request_id=None, lease_access_conditions=None, **kwargs
@@ -1111,7 +1111,7 @@ class ContainerClient(StorageAccountHostsMixin):
             req.format_parameters(query_parameters)
             reqs.append(req)
 
-        return self._batch_send(*reqs, **kwargs)
+        return self._batch_send(*reqs, **kwargs) # type: ignore
 
     @distributed_trace
     def set_premium_page_blob_tier_blobs(
@@ -1170,7 +1170,7 @@ class ContainerClient(StorageAccountHostsMixin):
             req.format_parameters(query_parameters)
             reqs.append(req)
 
-        return self._batch_send(*reqs, **kwargs)
+        return self._batch_send(*reqs, **kwargs) # type: ignore
 
     def get_blob_client(
             self, blob,  # type: Union[str, BlobProperties]

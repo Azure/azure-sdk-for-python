@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
+    Union, Optional, Any, Iterable, Dict, List, Type, Tuple, AsyncIterator,
     TYPE_CHECKING
 )
 import logging
@@ -98,18 +98,18 @@ class AsyncStorageAccountHostsMixin(object):
         ]
         return config, AsyncPipeline(config.transport, policies=policies)
 
-    async def _batch_send(
+    async def _batch_send( # type: ignore
         self, *reqs: 'HttpRequest',
-        **kwargs
+        **kwargs: Any
     ):
         """Given a series of request, do a Storage batch call.
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
-        request = self._client._client.post(  # pylint: disable=protected-access
-            url='https://{}/?comp=batch'.format(self.primary_hostname),
+        request = self._client._client.post( # type: ignore # pylint: disable=protected-access
+            url='https://{}/?comp=batch'.format(self.primary_hostname), # type: ignore
             headers={
-                'x-ms-version': self._client._config.version  # pylint: disable=protected-access
+                'x-ms-version': self._client._config.version  # type: ignore # pylint: disable=protected-access
             }
         )
 
@@ -121,7 +121,7 @@ class AsyncStorageAccountHostsMixin(object):
             ]
         )
 
-        pipeline_response = await self._pipeline.run(
+        pipeline_response = await self._pipeline.run( # type: ignore
             request, **kwargs
         )
         response = pipeline_response.http_response
@@ -140,8 +140,8 @@ class AsyncStorageAccountHostsMixin(object):
                         response=response, parts=parts_list
                     )
                     raise error
-                return AsyncList(parts_list)
-            return parts
+                return AsyncList(parts_list) # type: ignore
+            return parts # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
