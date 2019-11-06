@@ -33,7 +33,7 @@ class AsyncReceiver(Receiver):
 
     def __init__(  # pylint: disable=super-init-not-called
             self, client, source, offset=None, prefetch=300, epoch=None,
-            keep_alive=None, auto_reconnect=True, loop=None):
+            keep_alive=None, auto_reconnect=True, idle_timeout=None, loop=None):
         """
         Instantiate an async receiver.
 
@@ -62,6 +62,7 @@ class AsyncReceiver(Receiver):
         self.redirected = None
         self.error = None
         self.properties = None
+        self.idle_timeout = (idle_timeout * 1000) if idle_timeout else (60 * 1000)
         partition = self.source.split('/')[-1]
         self.name = "EHReceiver-{}-partition{}".format(uuid.uuid4(), partition)
         source = Source(self.source)
@@ -76,6 +77,7 @@ class AsyncReceiver(Receiver):
             prefetch=self.prefetch,
             link_properties=self.properties,
             timeout=self.timeout,
+            idle_timeout=self.idle_timeout,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
             client_name=self.name,

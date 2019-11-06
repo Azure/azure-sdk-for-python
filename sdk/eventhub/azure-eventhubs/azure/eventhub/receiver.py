@@ -33,7 +33,8 @@ class Receiver(object):
     timeout = 0
     _epoch = b'com.microsoft:epoch'
 
-    def __init__(self, client, source, offset=None, prefetch=300, epoch=None, keep_alive=None, auto_reconnect=True):
+    def __init__(self, client, source, offset=None, prefetch=300, epoch=None, keep_alive=None, auto_reconnect=True,
+                 idle_timeout=None):
         """
         Instantiate a receiver.
 
@@ -60,6 +61,7 @@ class Receiver(object):
         self.properties = None
         self.redirected = None
         self.error = None
+        self.idle_timeout = (idle_timeout * 1000) if idle_timeout else (60 * 1000)
         partition = self.source.split('/')[-1]
         self.name = "EHReceiver-{}-partition{}".format(uuid.uuid4(), partition)
         source = Source(self.source)
@@ -74,6 +76,7 @@ class Receiver(object):
             prefetch=self.prefetch,
             link_properties=self.properties,
             timeout=self.timeout,
+            idle_timeout=self.idle_timeout,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
