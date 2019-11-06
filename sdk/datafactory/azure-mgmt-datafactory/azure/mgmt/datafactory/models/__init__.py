@@ -194,6 +194,8 @@ try:
     from ._models_py3 import DrillLinkedService
     from ._models_py3 import DrillSource
     from ._models_py3 import DrillTableDataset
+    from ._models_py3 import DWCopyCommandDefaultValue
+    from ._models_py3 import DWCopyCommandSettings
     from ._models_py3 import DynamicsAXLinkedService
     from ._models_py3 import DynamicsAXResourceDataset
     from ._models_py3 import DynamicsAXSource
@@ -505,6 +507,7 @@ try:
     from ._models_py3 import SquareObjectDataset
     from ._models_py3 import SquareSource
     from ._models_py3 import SSISAccessCredential
+    from ._models_py3 import SSISChildPackage
     from ._models_py3 import SsisEnvironment
     from ._models_py3 import SsisEnvironmentReference
     from ._models_py3 import SSISExecutionCredential
@@ -760,6 +763,8 @@ except (SyntaxError, ImportError):
     from ._models import DrillLinkedService
     from ._models import DrillSource
     from ._models import DrillTableDataset
+    from ._models import DWCopyCommandDefaultValue
+    from ._models import DWCopyCommandSettings
     from ._models import DynamicsAXLinkedService
     from ._models import DynamicsAXResourceDataset
     from ._models import DynamicsAXSource
@@ -1071,6 +1076,7 @@ except (SyntaxError, ImportError):
     from ._models import SquareObjectDataset
     from ._models import SquareSource
     from ._models import SSISAccessCredential
+    from ._models import SSISChildPackage
     from ._models import SsisEnvironment
     from ._models import SsisEnvironmentReference
     from ._models import SSISExecutionCredential
@@ -1414,6 +1420,8 @@ __all__ = [
     'DrillLinkedService',
     'DrillSource',
     'DrillTableDataset',
+    'DWCopyCommandDefaultValue',
+    'DWCopyCommandSettings',
     'DynamicsAXLinkedService',
     'DynamicsAXResourceDataset',
     'DynamicsAXSource',
@@ -1725,6 +1733,7 @@ __all__ = [
     'SquareObjectDataset',
     'SquareSource',
     'SSISAccessCredential',
+    'SSISChildPackage',
     'SsisEnvironment',
     'SsisEnvironmentReference',
     'SSISExecutionCredential',

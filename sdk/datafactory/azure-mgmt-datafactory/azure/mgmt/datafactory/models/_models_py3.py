@@ -7480,14 +7480,13 @@ class ComponentSetup(CustomSetupBase):
     :type type: str
     :param component_name: Required. The name of the 3rd party component.
     :type component_name: str
-    :param license_key: Required. The license key to activate the component.
+    :param license_key: The license key to activate the component.
     :type license_key: ~azure.mgmt.datafactory.models.SecretBase
     """
 
     _validation = {
         'type': {'required': True},
         'component_name': {'required': True},
-        'license_key': {'required': True},
     }
 
     _attribute_map = {
@@ -7496,7 +7495,7 @@ class ComponentSetup(CustomSetupBase):
         'license_key': {'key': 'typeProperties.licenseKey', 'type': 'SecretBase'},
     }
 
-    def __init__(self, *, component_name: str, license_key, **kwargs) -> None:
+    def __init__(self, *, component_name: str, license_key=None, **kwargs) -> None:
         super(ComponentSetup, self).__init__(**kwargs)
         self.component_name = component_name
         self.license_key = license_key
@@ -9896,6 +9895,12 @@ class Db2LinkedService(LinkedService):
     :type username: object
     :param password: Password for authentication.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param package_collection: Under where packages are created when querying
+     database. Type: string (or Expression with resultType string).
+    :type package_collection: object
+    :param certificate_common_name: Certificate Common Name when TLS is
+     enabled. Type: string (or Expression with resultType string).
+    :type certificate_common_name: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -9920,16 +9925,20 @@ class Db2LinkedService(LinkedService):
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'package_collection': {'key': 'typeProperties.packageCollection', 'type': 'object'},
+        'certificate_common_name': {'key': 'typeProperties.certificateCommonName', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, server, database, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, authentication_type=None, username=None, password=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, server, database, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, authentication_type=None, username=None, password=None, package_collection=None, certificate_common_name=None, encrypted_credential=None, **kwargs) -> None:
         super(Db2LinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.server = server
         self.database = database
         self.authentication_type = authentication_type
         self.username = username
         self.password = password
+        self.package_collection = package_collection
+        self.certificate_common_name = certificate_common_name
         self.encrypted_credential = encrypted_credential
         self.type = 'Db2'
 
@@ -10876,6 +10885,55 @@ class DrillTableDataset(Dataset):
         self.table = table
         self.drill_table_dataset_schema = drill_table_dataset_schema
         self.type = 'DrillTable'
+
+
+class DWCopyCommandDefaultValue(Model):
+    """Default value.
+
+    :param column_name: Column name. Type: object (or Expression with
+     resultType string).
+    :type column_name: object
+    :param default_value: The default value of the column. Type: object (or
+     Expression with resultType string).
+    :type default_value: object
+    """
+
+    _attribute_map = {
+        'column_name': {'key': 'columnName', 'type': 'object'},
+        'default_value': {'key': 'defaultValue', 'type': 'object'},
+    }
+
+    def __init__(self, *, column_name=None, default_value=None, **kwargs) -> None:
+        super(DWCopyCommandDefaultValue, self).__init__(**kwargs)
+        self.column_name = column_name
+        self.default_value = default_value
+
+
+class DWCopyCommandSettings(Model):
+    """DW Copy Command settings.
+
+    :param default_values: Specifies the default values for each target column
+     in SQL DW. The default values in the property overwrite the DEFAULT
+     constraint set in the DB, and identity column cannot have a default value.
+     Type: array of objects (or Expression with resultType array of objects).
+    :type default_values:
+     list[~azure.mgmt.datafactory.models.DWCopyCommandDefaultValue]
+    :param additional_options: Additional options directly passed to SQL DW in
+     Copy Command. Type: key value pairs (value should be string type) (or
+     Expression with resultType object). Example: "additionalOptions": {
+     "MAXERRORS": "1000", "DATEFORMAT": "'ymd'" }
+    :type additional_options: dict[str, str]
+    """
+
+    _attribute_map = {
+        'default_values': {'key': 'defaultValues', 'type': '[DWCopyCommandDefaultValue]'},
+        'additional_options': {'key': 'additionalOptions', 'type': '{str}'},
+    }
+
+    def __init__(self, *, default_values=None, additional_options=None, **kwargs) -> None:
+        super(DWCopyCommandSettings, self).__init__(**kwargs)
+        self.default_values = default_values
+        self.additional_options = additional_options
 
 
 class DynamicsAXLinkedService(LinkedService):
@@ -27573,6 +27631,13 @@ class SqlDWSink(CopySink):
     :param poly_base_settings: Specifies PolyBase-related settings when
      allowPolyBase is true.
     :type poly_base_settings: ~azure.mgmt.datafactory.models.PolybaseSettings
+    :param allow_copy_command: Indicates to use Copy Command to copy data into
+     SQL Data Warehouse. Type: boolean (or Expression with resultType boolean).
+    :type allow_copy_command: object
+    :param copy_command_settings: Specifies Copy Command related settings when
+     allowCopyCommand is true.
+    :type copy_command_settings:
+     ~azure.mgmt.datafactory.models.DWCopyCommandSettings
     :param table_option: The option to handle sink table, such as autoCreate.
      For now only 'autoCreate' value is supported. Type: string (or Expression
      with resultType string).
@@ -27594,14 +27659,18 @@ class SqlDWSink(CopySink):
         'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
         'allow_poly_base': {'key': 'allowPolyBase', 'type': 'object'},
         'poly_base_settings': {'key': 'polyBaseSettings', 'type': 'PolybaseSettings'},
+        'allow_copy_command': {'key': 'allowCopyCommand', 'type': 'object'},
+        'copy_command_settings': {'key': 'copyCommandSettings', 'type': 'DWCopyCommandSettings'},
         'table_option': {'key': 'tableOption', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, pre_copy_script=None, allow_poly_base=None, poly_base_settings=None, table_option=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, pre_copy_script=None, allow_poly_base=None, poly_base_settings=None, allow_copy_command=None, copy_command_settings=None, table_option=None, **kwargs) -> None:
         super(SqlDWSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.pre_copy_script = pre_copy_script
         self.allow_poly_base = allow_poly_base
         self.poly_base_settings = poly_base_settings
+        self.allow_copy_command = allow_copy_command
+        self.copy_command_settings = copy_command_settings
         self.table_option = table_option
         self.type = 'SqlDWSink'
 
@@ -28524,6 +28593,44 @@ class SSISAccessCredential(Model):
         self.password = password
 
 
+class SSISChildPackage(Model):
+    """SSIS embedded child package.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param package_path: Required. Path for embedded child package. Type:
+     string (or Expression with resultType string).
+    :type package_path: object
+    :param package_name: Name for embedded child package.
+    :type package_name: str
+    :param package_content: Required. Content for embedded child package.
+     Type: string (or Expression with resultType string).
+    :type package_content: object
+    :param package_last_modified_date: Last modified date for embedded child
+     package.
+    :type package_last_modified_date: str
+    """
+
+    _validation = {
+        'package_path': {'required': True},
+        'package_content': {'required': True},
+    }
+
+    _attribute_map = {
+        'package_path': {'key': 'packagePath', 'type': 'object'},
+        'package_name': {'key': 'packageName', 'type': 'str'},
+        'package_content': {'key': 'packageContent', 'type': 'object'},
+        'package_last_modified_date': {'key': 'packageLastModifiedDate', 'type': 'str'},
+    }
+
+    def __init__(self, *, package_path, package_content, package_name: str=None, package_last_modified_date: str=None, **kwargs) -> None:
+        super(SSISChildPackage, self).__init__(**kwargs)
+        self.package_path = package_path
+        self.package_name = package_name
+        self.package_content = package_content
+        self.package_last_modified_date = package_last_modified_date
+
+
 class SsisObjectMetadata(Model):
     """SSIS object metadata.
 
@@ -28862,13 +28969,11 @@ class SsisPackage(SsisObjectMetadata):
 class SSISPackageLocation(Model):
     """SSIS package location.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param package_path: Required. The SSIS package path. Type: string (or
-     Expression with resultType string).
+    :param package_path: The SSIS package path. Type: string (or Expression
+     with resultType string).
     :type package_path: object
     :param type: The type of SSIS package location. Possible values include:
-     'SSISDB', 'File'
+     'SSISDB', 'File', 'InlinePackage'
     :type type: str or ~azure.mgmt.datafactory.models.SsisPackageLocationType
     :param package_password: Password of the package.
     :type package_password: ~azure.mgmt.datafactory.models.SecretBase
@@ -28878,11 +28983,18 @@ class SSISPackageLocation(Model):
     :param configuration_path: The configuration file of the package
      execution. Type: string (or Expression with resultType string).
     :type configuration_path: object
+    :param package_name: The package name.
+    :type package_name: str
+    :param package_content: The embedded package content. Type: string (or
+     Expression with resultType string).
+    :type package_content: object
+    :param package_last_modified_date: The embedded package last modified
+     date.
+    :type package_last_modified_date: str
+    :param child_packages: The embedded child package list.
+    :type child_packages:
+     list[~azure.mgmt.datafactory.models.SSISChildPackage]
     """
-
-    _validation = {
-        'package_path': {'required': True},
-    }
 
     _attribute_map = {
         'package_path': {'key': 'packagePath', 'type': 'object'},
@@ -28890,15 +29002,23 @@ class SSISPackageLocation(Model):
         'package_password': {'key': 'typeProperties.packagePassword', 'type': 'SecretBase'},
         'access_credential': {'key': 'typeProperties.accessCredential', 'type': 'SSISAccessCredential'},
         'configuration_path': {'key': 'typeProperties.configurationPath', 'type': 'object'},
+        'package_name': {'key': 'typeProperties.packageName', 'type': 'str'},
+        'package_content': {'key': 'typeProperties.packageContent', 'type': 'object'},
+        'package_last_modified_date': {'key': 'typeProperties.packageLastModifiedDate', 'type': 'str'},
+        'child_packages': {'key': 'typeProperties.childPackages', 'type': '[SSISChildPackage]'},
     }
 
-    def __init__(self, *, package_path, type=None, package_password=None, access_credential=None, configuration_path=None, **kwargs) -> None:
+    def __init__(self, *, package_path=None, type=None, package_password=None, access_credential=None, configuration_path=None, package_name: str=None, package_content=None, package_last_modified_date: str=None, child_packages=None, **kwargs) -> None:
         super(SSISPackageLocation, self).__init__(**kwargs)
         self.package_path = package_path
         self.type = type
         self.package_password = package_password
         self.access_credential = access_credential
         self.configuration_path = configuration_path
+        self.package_name = package_name
+        self.package_content = package_content
+        self.package_last_modified_date = package_last_modified_date
+        self.child_packages = child_packages
 
 
 class SsisParameter(Model):
@@ -30664,6 +30784,9 @@ class WebActivity(ExecutionActivity):
     :param linked_services: List of linked services passed to web endpoint.
     :type linked_services:
      list[~azure.mgmt.datafactory.models.LinkedServiceReference]
+    :param connect_via: The integration runtime reference.
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     """
 
     _validation = {
@@ -30689,9 +30812,10 @@ class WebActivity(ExecutionActivity):
         'authentication': {'key': 'typeProperties.authentication', 'type': 'WebActivityAuthentication'},
         'datasets': {'key': 'typeProperties.datasets', 'type': '[DatasetReference]'},
         'linked_services': {'key': 'typeProperties.linkedServices', 'type': '[LinkedServiceReference]'},
+        'connect_via': {'key': 'typeProperties.connectVia', 'type': 'IntegrationRuntimeReference'},
     }
 
-    def __init__(self, *, name: str, method, url, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, headers=None, body=None, authentication=None, datasets=None, linked_services=None, **kwargs) -> None:
+    def __init__(self, *, name: str, method, url, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, headers=None, body=None, authentication=None, datasets=None, linked_services=None, connect_via=None, **kwargs) -> None:
         super(WebActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.method = method
         self.url = url
@@ -30700,6 +30824,7 @@ class WebActivity(ExecutionActivity):
         self.authentication = authentication
         self.datasets = datasets
         self.linked_services = linked_services
+        self.connect_via = connect_via
         self.type = 'WebActivity'
 
 
@@ -30712,12 +30837,12 @@ class WebActivityAuthentication(Model):
      (Basic/ClientCertificate/MSI)
     :type type: str
     :param pfx: Base64-encoded contents of a PFX file.
-    :type pfx: ~azure.mgmt.datafactory.models.SecureString
+    :type pfx: ~azure.mgmt.datafactory.models.SecretBase
     :param username: Web activity authentication user name for basic
      authentication.
     :type username: str
     :param password: Password for the PFX file or basic authentication.
-    :type password: ~azure.mgmt.datafactory.models.SecureString
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param resource: Resource for which Azure Auth token will be requested
      when using MSI Authentication.
     :type resource: str
@@ -30729,9 +30854,9 @@ class WebActivityAuthentication(Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'pfx': {'key': 'pfx', 'type': 'SecureString'},
+        'pfx': {'key': 'pfx', 'type': 'SecretBase'},
         'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'SecureString'},
+        'password': {'key': 'password', 'type': 'SecretBase'},
         'resource': {'key': 'resource', 'type': 'str'},
     }
 
@@ -30936,6 +31061,12 @@ class WebHookActivity(ControlActivity):
      endpoint.
     :type authentication:
      ~azure.mgmt.datafactory.models.WebActivityAuthentication
+    :param report_status_on_call_back: When set to true, statusCode, output
+     and error in callback request body will be consumed by activity. The
+     activity can be marked as failed by setting statusCode >= 400 in callback
+     request. Default is false. Type: boolean (or Expression with resultType
+     boolean).
+    :type report_status_on_call_back: object
     """
 
     _validation = {
@@ -30958,17 +31089,19 @@ class WebHookActivity(ControlActivity):
         'headers': {'key': 'typeProperties.headers', 'type': 'object'},
         'body': {'key': 'typeProperties.body', 'type': 'object'},
         'authentication': {'key': 'typeProperties.authentication', 'type': 'WebActivityAuthentication'},
+        'report_status_on_call_back': {'key': 'typeProperties.reportStatusOnCallBack', 'type': 'object'},
     }
 
     method = "POST"
 
-    def __init__(self, *, name: str, url, additional_properties=None, description: str=None, depends_on=None, user_properties=None, timeout: str=None, headers=None, body=None, authentication=None, **kwargs) -> None:
+    def __init__(self, *, name: str, url, additional_properties=None, description: str=None, depends_on=None, user_properties=None, timeout: str=None, headers=None, body=None, authentication=None, report_status_on_call_back=None, **kwargs) -> None:
         super(WebHookActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
         self.url = url
         self.timeout = timeout
         self.headers = headers
         self.body = body
         self.authentication = authentication
+        self.report_status_on_call_back = report_status_on_call_back
         self.type = 'WebHook'
 
 
