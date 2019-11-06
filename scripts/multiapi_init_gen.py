@@ -456,7 +456,7 @@ def main(input_str, default_api=None):
     mixin_operations = build_operation_mixin_meta(versioned_modules)
 
     # If we get a StopIteration here, means the API version folder is broken
-    client_file_name = next(chain(module_path.glob("*_client.py"), module_path.glob("*cosmos_db.py"))).name
+    client_file_name = next(chain(last_api_path.glob("*_client.py"), last_api_path.glob("*cosmos_db.py"))).name
 
     # versioned_operations_dict => {
     #     'application_gateways': [
