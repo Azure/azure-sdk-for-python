@@ -1567,13 +1567,15 @@ class TagResponse(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The ID of the tag response.
     :vartype id: str
     :ivar name: The name of the tag response.
     :vartype name: str
     :ivar type: The type of the tag response.
     :vartype type: object
-    :param properties: tags object returned in the response body.
+    :param properties: Required. tags object returned in the response body.
     :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
     """
 
@@ -1581,6 +1583,7 @@ class TagResponse(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'properties': {'required': True},
     }
 
     _attribute_map = {
@@ -1590,7 +1593,7 @@ class TagResponse(Model):
         'properties': {'key': 'properties', 'type': 'Tags'},
     }
 
-    def __init__(self, *, properties=None, **kwargs) -> None:
+    def __init__(self, *, properties, **kwargs) -> None:
         super(TagResponse, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1602,11 +1605,11 @@ class Tags(Model):
     """key and value pairs for tags.
 
     :param tags:
-    :type tags: object
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': 'object'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     def __init__(self, *, tags=None, **kwargs) -> None:
