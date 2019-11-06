@@ -11,7 +11,7 @@
 
 from typing import Any, Optional, List  # pylint: disable=unused-import
 from ._text_analytics_client import TextAnalyticsClient
-from ._response_handlers import _validate_single_input, process_single_error
+from ._response_handlers import _validate_single_input, process_single_error, process_entities_error
 from ._version import VERSION
 from ._models import (
     LanguageInput,
@@ -42,7 +42,7 @@ def single_detect_language(
             endpoint,  # type: str
             credential,  # type: str
             text,  # type: str
-            country_hint="US",  # type: str
+            country_hint=None,  # type: str
             model_version=None,  # type: Optional[str]
             **kwargs  # type: Any
 ):
@@ -65,7 +65,7 @@ def single_detect_entities(
         endpoint,  # type: str
         credential,  # type: str
         text,  # type: str
-        language="en",  # type: str
+        language=None,  # type: str
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
@@ -79,16 +79,17 @@ def single_detect_entities(
             show_stats=show_stats,
             **kwargs
         )
-        if response[0].is_error:
-            return process_single_error(response[0])  # DocumentError
-        return response[0].entities  # list[Entity]
+        try:
+            return response[0].entities  # list[Entity]
+        except TypeError:
+            return process_entities_error(response)
 
 
 def single_detect_pii_entities(
         endpoint,  # type: str
         credential,  # type: str
         text,  # type: str
-        language="en",  # type: str
+        language=None,  # type: str
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
@@ -102,16 +103,17 @@ def single_detect_pii_entities(
             show_stats=show_stats,
             **kwargs
         )
-        if response[0].is_error:
-            return process_single_error(response[0])  # DocumentError
-        return response[0].entities  # list[Entity]
+        try:
+            return response[0].entities  # list[Entity]
+        except TypeError:
+            return process_entities_error(response)
 
 
 def single_detect_linked_entities(
         endpoint,  # type: str
         credential,  # type: str
         text,  # type: str
-        language="en",  # type: str
+        language=None,  # type: str
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
@@ -125,16 +127,17 @@ def single_detect_linked_entities(
             show_stats=show_stats,
             **kwargs
         )
-        if response[0].is_error:
-            return process_single_error(response[0])  # DocumentError
-        return response[0].entities  # list[LinkedEntity]
+        try:
+            return response[0].entities  # list[Entity]
+        except TypeError:
+            return process_entities_error(response)
 
 
 def single_detect_key_phrases(
         endpoint,  # type: str
         credential,  # type: str
         text,  # type: str
-        language="en",  # type: str
+        language=None,  # type: str
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
@@ -157,7 +160,7 @@ def single_detect_sentiment(
         endpoint,  # type: str
         credential,  # type: str
         text,  # type: str
-        language="en",  # type: str
+        language=None,  # type: str
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):

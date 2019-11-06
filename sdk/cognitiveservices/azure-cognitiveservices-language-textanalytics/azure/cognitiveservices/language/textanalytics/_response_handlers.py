@@ -22,7 +22,18 @@ from ._models import (
     DocumentLanguage,
     DetectedLanguage,
     DocumentError,
+    Error
 )
+
+
+def process_entities_error(error):
+    raise_error = HttpResponseError
+    error_message = error.message
+    error_code = error.code
+    error_message += "\nErrorCode:{}".format(error_code)
+    error = raise_error(message=error_message)
+    error.error_code = error_code
+    raise error
 
 
 def process_single_error(error):
@@ -60,7 +71,7 @@ def process_batch_error(error):
 
 def _validate_single_input(text, hint, hint_value):
     if isinstance(text, six.text_type):
-        return [{"id": 0, "text": text, hint: hint_value}]
+        return [{"id": "0", "text": text, hint: hint_value}]
     else:
         raise TypeError("Text parameter should be string.")
 
@@ -69,7 +80,7 @@ def _validate_batch_input(documents):
     string_input = False
     for idx, item in enumerate(documents):
         if type(item) == str:
-            documents[idx] = {"id": idx, "text": item}
+            documents[idx] = {"id": str(idx), "text": item}
             string_input = True
         if type(item) == dict or isinstance(item, MultiLanguageInput) or isinstance(item, LanguageInput):
             if string_input:
@@ -99,83 +110,87 @@ def add_document_errors(obj, resp, result):
 
 def deserialize_language_result(response, obj, response_headers):
     doc_entities = []
-    if hasattr(obj, "innererror"):
-        return obj
-    if obj.documents:
-        for language in obj.documents:
-            doc_entities.append(
-                DocumentLanguage(
-                    id=language.id,
-                    detected_languages=[DetectedLanguage._from_generated(l) for l in language.detected_languages],
-                    statistics=DocumentStatistics._from_generated(language.statistics)
+    try:
+        if obj.documents:
+            for language in obj.documents:
+                doc_entities.append(
+                    DocumentLanguage(
+                        id=language.id,
+                        detected_languages=[DetectedLanguage._from_generated(l) for l in language.detected_languages],
+                        statistics=DocumentStatistics._from_generated(language.statistics)
+                    )
                 )
-            )
-    return add_document_errors(obj, response, doc_entities)
-
+        return add_document_errors(obj, response, doc_entities)
+    except AttributeError:
+        return obj
 
 def deserialize_entities_result(response, obj, response_headers):
     doc_entities = []
-    if hasattr(obj, "innererror"):
-        return obj
-    if obj.documents:
-        for entity in obj.documents:
-            doc_entities.append(
-                DocumentEntities(
-                    id=entity.id,
-                    entities=[Entity._from_generated(e) for e in entity.entities],
-                    statistics=DocumentStatistics._from_generated(entity.statistics)
+    try:
+        if obj.documents:
+            for entity in obj.documents:
+                doc_entities.append(
+                    DocumentEntities(
+                        id=entity.id,
+                        entities=[Entity._from_generated(e) for e in entity.entities],
+                        statistics=DocumentStatistics._from_generated(entity.statistics)
+                    )
                 )
-            )
-    return add_document_errors(obj, response, doc_entities)
+        return add_document_errors(obj, response, doc_entities)
+    except AttributeError:
+        return obj
 
 
 def deserialize_linked_entities_result(response, obj, response_headers):
     linked_entities = []
-    if hasattr(obj, "innererror"):
-        return obj
-    if obj.documents:
-        for entity in obj.documents:
-            linked_entities.append(
-                DocumentLinkedEntities(
-                    id=entity.id,
-                    entities=[LinkedEntity._from_generated(e) for e in entity.entities],
-                    statistics=DocumentStatistics._from_generated(entity.statistics)
+    try:
+        if obj.documents:
+            for entity in obj.documents:
+                linked_entities.append(
+                    DocumentLinkedEntities(
+                        id=entity.id,
+                        entities=[LinkedEntity._from_generated(e) for e in entity.entities],
+                        statistics=DocumentStatistics._from_generated(entity.statistics)
+                    )
                 )
-            )
 
-    return add_document_errors(obj, response, linked_entities)
+        return add_document_errors(obj, response, linked_entities)
+    except AttributeError:
+        return obj
 
 
 def deserialize_key_phrases_result(response, obj, response_headers):
     key_phrases = []
-    if hasattr(obj, "innererror"):
-        return obj
-    if obj.documents:
-        for phrases in obj.documents:
-            key_phrases.append(
-                DocumentKeyPhrases(
-                    id=phrases.id,
-                    key_phrases=phrases.key_phrases,
-                    statistics=DocumentStatistics._from_generated(phrases.statistics)
+    try:
+        if obj.documents:
+            for phrases in obj.documents:
+                key_phrases.append(
+                    DocumentKeyPhrases(
+                        id=phrases.id,
+                        key_phrases=phrases.key_phrases,
+                        statistics=DocumentStatistics._from_generated(phrases.statistics)
+                    )
                 )
-            )
-    return add_document_errors(obj, response, key_phrases)
+        return add_document_errors(obj, response, key_phrases)
+    except AttributeError:
+        return obj
 
 
 def deserialize_sentiment_result(response, obj, response_headers):
     sentiments = []
-    if hasattr(obj, "innererror"):
-        return obj
-    if obj.documents:
-        for sentiment in obj.documents:
-            sentiments.append(
-                DocumentSentiment(
-                    id=sentiment.id,
-                    sentiment=sentiment.sentiment,
-                    statistics=DocumentStatistics._from_generated(sentiment.statistics),
-                    document_scores=sentiment.document_scores,
-                    sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences]
+    try:
+        if obj.documents:
+            for sentiment in obj.documents:
+                sentiments.append(
+                    DocumentSentiment(
+                        id=sentiment.id,
+                        sentiment=sentiment.sentiment,
+                        statistics=DocumentStatistics._from_generated(sentiment.statistics),
+                        document_scores=sentiment.document_scores,
+                        sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences]
+                    )
                 )
-            )
 
-    return add_document_errors(obj, response, sentiments)
+        return add_document_errors(obj, response, sentiments)
+    except AttributeError:
+        return obj
