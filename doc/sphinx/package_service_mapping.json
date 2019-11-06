@@ -993,7 +993,7 @@
   },
   "azure-mgmt-storagesync": {
     "category": "Management",
-    "service_name": "Storage",
+    "service_name": "Storage Sync",
     "namespaces": [
       "azure.mgmt.storagesync"
     ]
