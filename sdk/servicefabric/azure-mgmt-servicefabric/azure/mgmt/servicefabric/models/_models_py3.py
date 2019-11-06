@@ -1096,7 +1096,7 @@ class Cluster(Resource):
      ~azure.mgmt.servicefabric.models.ProvisioningState
     :param reliability_level: The reliability level sets the replica set size
      of system services. Learn about
-     [ReliabilityLevel](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-capacity).
+     [ReliabilityLevel](https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity).
      - None - Run the System services with a target replica set count of 1.
      This should only be used for test clusters.
      - Bronze - Run the System services with a target replica set count of 3.
@@ -1388,7 +1388,7 @@ class ClusterUpdateParameters(Model):
      list[~azure.mgmt.servicefabric.models.NodeTypeDescription]
     :param reliability_level: The reliability level sets the replica set size
      of system services. Learn about
-     [ReliabilityLevel](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-capacity).
+     [ReliabilityLevel](https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity).
      - None - Run the System services with a target replica set count of 1.
      This should only be used for test clusters.
      - Bronze - Run the System services with a target replica set count of 3.
@@ -1878,7 +1878,7 @@ class NodeTypeDescription(Model):
     :type http_gateway_endpoint_port: int
     :param durability_level: The durability level of the node type. Learn
      about
-     [DurabilityLevel](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-capacity).
+     [DurabilityLevel](https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity).
      - Bronze - No privileges. This is the default.
      - Silver - The infrastructure jobs can be paused for a duration of 10
      minutes per UD.
