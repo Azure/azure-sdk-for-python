@@ -13,7 +13,7 @@ On Python 3.5 and above, it also includes:
 - An async sender and receiver that supports async/await methods.
 - An Event Processor Host module that manages the distribution of partition readers.
 
-`Source code <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-eventhubs>`__ | `Package (PyPi) <https://pypi.org/project/azure-eventhub/>`__ | `API reference documentation <https://docs.microsoft.com/python/api/azure-eventhub>`__ | `Product documentation <https://docs.microsoft.com/en-ca/azure/event-hubs/>`__
+`Source code <https://github.com/Azure/azure-sdk-for-python/tree/eventhub_track1/sdk/eventhub/azure-eventhubs>`__ | `Package (PyPi) <https://pypi.org/project/azure-eventhub/>`__ | `API reference documentation <https://docs.microsoft.com/python/api/azure-eventhub>`__ | `Product documentation <https://docs.microsoft.com/en-ca/azure/event-hubs/>`__
 
 Getting started
 ===============
