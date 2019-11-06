@@ -152,7 +152,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 expected[secret_name] = secret
 
         # list secrets
-        result = client.list_properties_of_secrets(max_page_size=max_secrets)
+        result = client.list_properties_of_secrets(max_page_size=max_secrets - 1)
         await self._validate_secret_list(result, expected)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
@@ -202,7 +202,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 expected[secret.id] = secret
 
         # list secret versions
-        result = client.list_properties_of_secret_versions(secret_name)
+        result = client.list_properties_of_secret_versions(secret_name, max_page_size=max_secrets - 1)
 
         # validate list secret versions with attributes
         async for secret in result:

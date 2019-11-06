@@ -299,7 +299,7 @@ class CertificateClientTests(KeyVaultTestCase):
                     raise ex
 
         # list certificates
-        result = client.list_properties_of_certificates()
+        result = client.list_properties_of_certificates(max_page_size=max_certificates - 1)
         await self._validate_certificate_list(certificates=result, expected=expected)
 
     @ResourceGroupPreparer()
@@ -339,7 +339,8 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # list certificate versions
         await self._validate_certificate_list(
-            certificates=(client.list_properties_of_certificate_versions(cert_name)), expected=expected
+            certificates=(client.list_properties_of_certificate_versions(cert_name, max_page_size=max_certificates - 1)),
+            expected=expected
         )
 
     @ResourceGroupPreparer()
