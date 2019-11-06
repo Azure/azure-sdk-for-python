@@ -15,6 +15,8 @@ jobs:
       EnvVars:
         STORAGE_ACCOUNT_NAME: $(python-storage-storage-account-name)
         STORAGE_ACCOUNT_KEY: $(python-storage-storage-account-key)
+        STORAGE_DATA_LAKE_ACCOUNT_NAME: $(python-storage-data-lake-account-name)
+        STORAGE_DATA_LAKE_ACCOUNT_KEY: $(python-storage-data-lake-account-key)
         BLOB_STORAGE_ACCOUNT_NAME: $(python-storage-blob-storage-account-name)
         BLOB_STORAGE_ACCOUNT_KEY: $(python-storage-blob-storage-account-key)
         REMOTE_STORAGE_ACCOUNT_NAME: $(python-storage-remote-storage-account-name)

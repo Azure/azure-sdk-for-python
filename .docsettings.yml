@@ -52,7 +52,7 @@ known_content_issues:
   - ['sdk/storage/azure-storage-queue/swagger/README.md', '#4554']
   - ['sdk/storage/azure-storage-blob/swagger/README.md', '#4554']
   - ['sdk/storage/azure-storage-file-datalake/swagger/README.md', '#4554']
-  -
+
   # nspckg and common.
   - ['sdk/cognitiveservices/azure-cognitiveservices-nspkg/README.rst', 'nspkg and common']
   - ['sdk/core/azure/README.rst', 'nspkg and common']
