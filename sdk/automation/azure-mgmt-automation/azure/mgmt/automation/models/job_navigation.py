@@ -18,8 +18,8 @@ class JobNavigation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Id of the job associated with the software update configuration
-     run
+    :ivar id: ID of the job associated with the software update configuration
+     run.
     :vartype id: str
     """
 

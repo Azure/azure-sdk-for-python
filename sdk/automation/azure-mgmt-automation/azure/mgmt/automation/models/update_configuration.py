@@ -17,7 +17,7 @@ class UpdateConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param operating_system: Required. operating system of target machines.
+    :param operating_system: Required. Operating system of target machines.
      Possible values include: 'Windows', 'Linux'
     :type operating_system: str or
      ~azure.mgmt.automation.models.OperatingSystemType
@@ -27,9 +27,9 @@ class UpdateConfiguration(Model):
     :type linux: ~azure.mgmt.automation.models.LinuxProperties
     :param duration: Maximum time allowed for the software update
      configuration run. Duration needs to be specified using the format
-     PT[n]H[n]M[n]S as per ISO8601
+     PT[n]H[n]M[n]S as per ISO8601.
     :type duration: timedelta
-    :param azure_virtual_machines: List of azure resource Ids for azure
+    :param azure_virtual_machines: List of azure resource IDs for azure
      virtual machines targeted by the software update configuration.
     :type azure_virtual_machines: list[str]
     :param non_azure_computer_names: List of names of non-azure machines

@@ -30,9 +30,6 @@ from .schedule_operations import ScheduleOperations
 from .variable_operations import VariableOperations
 from .webhook_operations import WebhookOperations
 from .watcher_operations import WatcherOperations
-from .software_update_configurations_operations import SoftwareUpdateConfigurationsOperations
-from .software_update_configuration_runs_operations import SoftwareUpdateConfigurationRunsOperations
-from .software_update_configuration_machine_runs_operations import SoftwareUpdateConfigurationMachineRunsOperations
 from .source_control_operations import SourceControlOperations
 from .source_control_sync_job_operations import SourceControlSyncJobOperations
 from .source_control_sync_job_streams_operations import SourceControlSyncJobStreamsOperations
@@ -50,6 +47,9 @@ from .runbook_operations import RunbookOperations
 from .test_job_streams_operations import TestJobStreamsOperations
 from .test_job_operations import TestJobOperations
 from .python2_package_operations import Python2PackageOperations
+from .software_update_configurations_operations import SoftwareUpdateConfigurationsOperations
+from .software_update_configuration_runs_operations import SoftwareUpdateConfigurationRunsOperations
+from .software_update_configuration_machine_runs_operations import SoftwareUpdateConfigurationMachineRunsOperations
 
 __all__ = [
     'AutomationAccountOperations',
@@ -73,9 +73,6 @@ __all__ = [
     'VariableOperations',
     'WebhookOperations',
     'WatcherOperations',
-    'SoftwareUpdateConfigurationsOperations',
-    'SoftwareUpdateConfigurationRunsOperations',
-    'SoftwareUpdateConfigurationMachineRunsOperations',
     'SourceControlOperations',
     'SourceControlSyncJobOperations',
     'SourceControlSyncJobStreamsOperations',
@@ -93,4 +90,7 @@ __all__ = [
     'TestJobStreamsOperations',
     'TestJobOperations',
     'Python2PackageOperations',
+    'SoftwareUpdateConfigurationsOperations',
+    'SoftwareUpdateConfigurationRunsOperations',
+    'SoftwareUpdateConfigurationMachineRunsOperations',
 ]

@@ -19,7 +19,7 @@ class TargetProperties(Model):
      configuration.
     :type azure_queries:
      list[~azure.mgmt.automation.models.AzureQueryProperties]
-    :param non_azure_queries: List of non Azure queries in the software update
+    :param non_azure_queries: List of non-Azure queries in the software update
      configuration.
     :type non_azure_queries:
      list[~azure.mgmt.automation.models.NonAzureQueryProperties]

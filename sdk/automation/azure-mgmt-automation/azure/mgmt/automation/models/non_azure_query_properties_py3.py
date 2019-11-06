@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class NonAzureQueryProperties(Model):
-    """Non Azure query for the update configuration.
+    """Non-Azure query for the update configuration.
 
     :param function_alias: Log Analytics Saved Search name.
     :type function_alias: str
-    :param workspace_id: Workspace Id for Log Analytics in which the saved
+    :param workspace_id: Workspace ID for Log Analytics in which the saved
      Search is resided.
     :type workspace_id: str
     """

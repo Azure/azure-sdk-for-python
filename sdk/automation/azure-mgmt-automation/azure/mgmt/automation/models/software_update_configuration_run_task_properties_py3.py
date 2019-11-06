@@ -12,14 +12,14 @@
 from msrest.serialization import Model
 
 
-class SoftareUpdateConfigurationRunTaskProperties(Model):
+class SoftwareUpdateConfigurationRunTaskProperties(Model):
     """Task properties of the software update configuration.
 
     :param status: The status of the task.
     :type status: str
     :param source: The name of the source of the task.
     :type source: str
-    :param job_id: The job id of the task.
+    :param job_id: The job ID of the task.
     :type job_id: str
     """
 
@@ -30,7 +30,7 @@ class SoftareUpdateConfigurationRunTaskProperties(Model):
     }
 
     def __init__(self, *, status: str=None, source: str=None, job_id: str=None, **kwargs) -> None:
-        super(SoftareUpdateConfigurationRunTaskProperties, self).__init__(**kwargs)
+        super(SoftwareUpdateConfigurationRunTaskProperties, self).__init__(**kwargs)
         self.status = status
         self.source = source
         self.job_id = job_id

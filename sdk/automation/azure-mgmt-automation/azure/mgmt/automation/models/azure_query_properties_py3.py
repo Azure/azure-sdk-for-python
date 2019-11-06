@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class AzureQueryProperties(Model):
     """Azure query for the update configuration.
 
-    :param scope: List of Subscription or Resource Group ARM Ids.
+    :param scope: List of Subscription or Resource Group ARM IDs.
     :type scope: list[str]
     :param locations: List of locations to scope the query to.
     :type locations: list[str]

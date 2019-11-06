@@ -19,7 +19,7 @@ class UpdateConfigurationNavigation(Model):
     sending a request.
 
     :ivar name: Name of the software update configuration triggered the
-     software update configuration run
+     software update configuration run.
     :vartype name: str
     """
 

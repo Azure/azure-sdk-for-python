@@ -12,23 +12,23 @@
 from msrest.serialization import Model
 
 
-class SoftareUpdateConfigurationRunTasks(Model):
+class SoftwareUpdateConfigurationRunTasks(Model):
     """Software update configuration run tasks model.
 
     :param pre_task: Pre task properties.
     :type pre_task:
-     ~azure.mgmt.automation.models.SoftareUpdateConfigurationRunTaskProperties
+     ~azure.mgmt.automation.models.SoftwareUpdateConfigurationRunTaskProperties
     :param post_task: Post task properties.
     :type post_task:
-     ~azure.mgmt.automation.models.SoftareUpdateConfigurationRunTaskProperties
+     ~azure.mgmt.automation.models.SoftwareUpdateConfigurationRunTaskProperties
     """
 
     _attribute_map = {
-        'pre_task': {'key': 'preTask', 'type': 'SoftareUpdateConfigurationRunTaskProperties'},
-        'post_task': {'key': 'postTask', 'type': 'SoftareUpdateConfigurationRunTaskProperties'},
+        'pre_task': {'key': 'preTask', 'type': 'SoftwareUpdateConfigurationRunTaskProperties'},
+        'post_task': {'key': 'postTask', 'type': 'SoftwareUpdateConfigurationRunTaskProperties'},
     }
 
-    def __init__(self, **kwargs):
-        super(SoftareUpdateConfigurationRunTasks, self).__init__(**kwargs)
-        self.pre_task = kwargs.get('pre_task', None)
-        self.post_task = kwargs.get('post_task', None)
+    def __init__(self, *, pre_task=None, post_task=None, **kwargs) -> None:
+        super(SoftwareUpdateConfigurationRunTasks, self).__init__(**kwargs)
+        self.pre_task = pre_task
+        self.post_task = post_task

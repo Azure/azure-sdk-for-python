@@ -13,17 +13,17 @@ from msrest.serialization import Model
 
 
 class SoftwareUpdateConfigurationRun(Model):
-    """Software update configuration Run properties.
+    """Software update configuration run properties.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar name: Name of the software update configuration run.
     :vartype name: str
-    :ivar id: Resource Id of the software update configuration run
+    :ivar id: Resource ID of the software update configuration run.
     :vartype id: str
-    :param software_update_configuration: software update configuration
-     triggered this run
+    :param software_update_configuration: Software update configuration
+     triggered this run.
     :type software_update_configuration:
      ~azure.mgmt.automation.models.UpdateConfigurationNavigation
     :ivar status: Status of the software update configuration run.
@@ -56,7 +56,7 @@ class SoftwareUpdateConfigurationRun(Model):
     :vartype last_modified_by: str
     :param tasks: Software update configuration tasks triggered in this run
     :type tasks:
-     ~azure.mgmt.automation.models.SoftareUpdateConfigurationRunTasks
+     ~azure.mgmt.automation.models.SoftwareUpdateConfigurationRunTasks
     """
 
     _validation = {
@@ -90,7 +90,7 @@ class SoftwareUpdateConfigurationRun(Model):
         'created_by': {'key': 'properties.createdBy', 'type': 'str'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
-        'tasks': {'key': 'properties.tasks', 'type': 'SoftareUpdateConfigurationRunTasks'},
+        'tasks': {'key': 'properties.tasks', 'type': 'SoftwareUpdateConfigurationRunTasks'},
     }
 
     def __init__(self, **kwargs):

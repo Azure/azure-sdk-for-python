@@ -16,7 +16,7 @@ class WindowsProperties(Model):
     """Windows specific update configuration.
 
     :param included_update_classifications: Update classification included in
-     the software update configuration. A comma separated string with required
+     the software update configuration. A comma-separated string with required
      values. Possible values include: 'Unclassified', 'Critical', 'Security',
      'UpdateRollup', 'FeaturePack', 'ServicePack', 'Definition', 'Tools',
      'Updates'

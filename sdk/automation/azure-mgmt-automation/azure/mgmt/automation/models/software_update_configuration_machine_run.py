@@ -18,35 +18,35 @@ class SoftwareUpdateConfigurationMachineRun(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Name of the software update configuration machine run
+    :ivar name: Name of the software update configuration machine run.
     :vartype name: str
-    :ivar id: Resource Id of the software update configuration machine run
+    :ivar id: Resource ID of the software update configuration machine run.
     :vartype id: str
-    :ivar target_computer: name of the updated computer
+    :ivar target_computer: Name of the updated computer.
     :vartype target_computer: str
-    :ivar target_computer_type: type of the updated computer.
+    :ivar target_computer_type: Type of the updated computer.
     :vartype target_computer_type: str
-    :param software_update_configuration: software update configuration
-     triggered this run
+    :param software_update_configuration: Software update configuration
+     triggered this run.
     :type software_update_configuration:
      ~azure.mgmt.automation.models.UpdateConfigurationNavigation
     :ivar status: Status of the software update configuration machine run.
     :vartype status: str
     :ivar os_type: Operating system target of the software update
-     configuration triggered this run
+     configuration triggered this run.
     :vartype os_type: str
-    :ivar correlation_id: correlation id of the software update configuration
+    :ivar correlation_id: Correlation ID of the software update configuration
      machine run
     :vartype correlation_id: str
-    :ivar source_computer_id: source computer id of the software update
-     configuration machine run
+    :ivar source_computer_id: Source computer ID of the software update
+     configuration machine run.
     :vartype source_computer_id: str
     :ivar start_time: Start time of the software update configuration machine
      run.
     :vartype start_time: datetime
     :ivar end_time: End time of the software update configuration machine run.
     :vartype end_time: datetime
-    :ivar configured_duration: configured duration for the software update
+    :ivar configured_duration: Configured duration for the software update
      configuration run.
     :vartype configured_duration: str
     :param job: Job associated with the software update configuration machine
@@ -63,7 +63,7 @@ class SoftwareUpdateConfigurationMachineRun(Model):
     :ivar last_modified_by: lastModifiedBy property, which only appears in the
      response.
     :vartype last_modified_by: str
-    :param error: Details of provisioning error
+    :param error: Details of provisioning error.
     :type error: ~azure.mgmt.automation.models.ErrorResponse
     """
 

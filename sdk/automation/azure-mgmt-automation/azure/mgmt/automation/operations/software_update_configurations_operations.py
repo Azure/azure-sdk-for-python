@@ -22,7 +22,7 @@ class SoftwareUpdateConfigurationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-05-15-preview".
+    :ivar api_version: Client Api Version. Constant value: "2019-06-01".
     """
 
     models = models
@@ -32,7 +32,7 @@ class SoftwareUpdateConfigurationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-05-15-preview"
+        self.api_version = "2019-06-01"
 
         self.config = config
 
@@ -186,7 +186,7 @@ class SoftwareUpdateConfigurationsOperations(object):
 
     def delete(
             self, resource_group_name, automation_account_name, software_update_configuration_name, client_request_id=None, custom_headers=None, raw=False, **operation_config):
-        """delete a specific software update configuration.
+        """Delete a specific software update configuration.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
@@ -261,55 +261,62 @@ class SoftwareUpdateConfigurationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SoftwareUpdateConfigurationListResult or ClientRawResponse if
-         raw=true
+        :return: An iterator like instance of
+         SoftwareUpdateConfigurationCollectionItem
         :rtype:
-         ~azure.mgmt.automation.models.SoftwareUpdateConfigurationListResult or
-         ~msrest.pipeline.ClientRawResponse
+         ~azure.mgmt.automation.models.SoftwareUpdateConfigurationCollectionItemPaged[~azure.mgmt.automation.models.SoftwareUpdateConfigurationCollectionItem]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
-        # Construct URL
-        url = self.list.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+                    'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if client_request_id is not None:
-            header_parameters['clientRequestId'] = self._serialize.header("client_request_id", client_request_id, 'str')
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if client_request_id is not None:
+                header_parameters['clientRequestId'] = self._serialize.header("client_request_id", client_request_id, 'str')
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('SoftwareUpdateConfigurationListResult', response)
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.SoftwareUpdateConfigurationCollectionItemPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.SoftwareUpdateConfigurationCollectionItemPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

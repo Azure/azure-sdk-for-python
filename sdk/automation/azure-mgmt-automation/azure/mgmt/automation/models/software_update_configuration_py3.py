@@ -26,30 +26,30 @@ class SoftwareUpdateConfiguration(Model):
     :vartype id: str
     :ivar type: Resource type
     :vartype type: str
-    :param update_configuration: Required. update specific properties for the
-     Software update configuration
+    :param update_configuration: Required. Update specific properties for the
+     Software update configuration.
     :type update_configuration:
      ~azure.mgmt.automation.models.UpdateConfiguration
     :param schedule_info: Required. Schedule information for the Software
-     update configuration
+     update configuration.
     :type schedule_info: ~azure.mgmt.automation.models.ScheduleProperties
     :ivar provisioning_state: Provisioning state for the software update
      configuration, which only appears in the response.
     :vartype provisioning_state: str
-    :param error: Details of provisioning error
+    :param error: Details of provisioning error.
     :type error: ~azure.mgmt.automation.models.ErrorResponse
     :ivar creation_time: Creation time of the resource, which only appears in
      the response.
     :vartype creation_time: datetime
     :ivar created_by: CreatedBy property, which only appears in the response.
     :vartype created_by: str
-    :ivar last_modified_time: Last time resource was modified, which only
+    :ivar last_modified_time: Last time the resource was modified, which only
      appears in the response.
     :vartype last_modified_time: datetime
     :ivar last_modified_by: LastModifiedBy property, which only appears in the
      response.
     :vartype last_modified_by: str
-    :param tasks: Tasks information for the Software update configuration.
+    :param tasks: Tasks information for the software update configuration.
     :type tasks:
      ~azure.mgmt.automation.models.SoftwareUpdateConfigurationTasks
     """

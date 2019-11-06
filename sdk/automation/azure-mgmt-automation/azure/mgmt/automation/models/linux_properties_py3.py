@@ -20,10 +20,10 @@ class LinuxProperties(Model):
      'Unclassified', 'Critical', 'Security', 'Other'
     :type included_package_classifications: str or
      ~azure.mgmt.automation.models.LinuxUpdateClasses
-    :param excluded_package_name_masks: packages excluded from the software
+    :param excluded_package_name_masks: Packages excluded from the software
      update configuration.
     :type excluded_package_name_masks: list[str]
-    :param included_package_name_masks: packages included from the software
+    :param included_package_name_masks: Packages included from the software
      update configuration.
     :type included_package_name_masks: list[str]
     :param reboot_setting: Reboot setting for the software update

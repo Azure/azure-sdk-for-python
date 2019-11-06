@@ -102,39 +102,6 @@ class ScheduleFrequency(str, Enum):
     minute = "Minute"  #: The minimum allowed interval for Minute schedules is 15 minutes.
 
 
-class OperatingSystemType(str, Enum):
-
-    windows = "Windows"
-    linux = "Linux"
-
-
-class WindowsUpdateClasses(str, Enum):
-
-    unclassified = "Unclassified"
-    critical = "Critical"
-    security = "Security"
-    update_rollup = "UpdateRollup"
-    feature_pack = "FeaturePack"
-    service_pack = "ServicePack"
-    definition = "Definition"
-    tools = "Tools"
-    updates = "Updates"
-
-
-class LinuxUpdateClasses(str, Enum):
-
-    unclassified = "Unclassified"
-    critical = "Critical"
-    security = "Security"
-    other = "Other"
-
-
-class TagOperators(str, Enum):
-
-    all = "All"
-    any = "Any"
-
-
 class SourceType(str, Enum):
 
     vso_git = "VsoGit"
@@ -280,6 +247,39 @@ class HttpStatusCode(str, Enum):
     service_unavailable = "ServiceUnavailable"
     gateway_timeout = "GatewayTimeout"
     http_version_not_supported = "HttpVersionNotSupported"
+
+
+class OperatingSystemType(str, Enum):
+
+    windows = "Windows"
+    linux = "Linux"
+
+
+class WindowsUpdateClasses(str, Enum):
+
+    unclassified = "Unclassified"
+    critical = "Critical"
+    security = "Security"
+    update_rollup = "UpdateRollup"
+    feature_pack = "FeaturePack"
+    service_pack = "ServicePack"
+    definition = "Definition"
+    tools = "Tools"
+    updates = "Updates"
+
+
+class LinuxUpdateClasses(str, Enum):
+
+    unclassified = "Unclassified"
+    critical = "Critical"
+    security = "Security"
+    other = "Other"
+
+
+class TagOperators(str, Enum):
+
+    all = "All"
+    any = "Any"
 
 
 class CountType(str, Enum):

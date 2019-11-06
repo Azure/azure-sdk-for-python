@@ -34,9 +34,6 @@ from .operations.schedule_operations import ScheduleOperations
 from .operations.variable_operations import VariableOperations
 from .operations.webhook_operations import WebhookOperations
 from .operations.watcher_operations import WatcherOperations
-from .operations.software_update_configurations_operations import SoftwareUpdateConfigurationsOperations
-from .operations.software_update_configuration_runs_operations import SoftwareUpdateConfigurationRunsOperations
-from .operations.software_update_configuration_machine_runs_operations import SoftwareUpdateConfigurationMachineRunsOperations
 from .operations.source_control_operations import SourceControlOperations
 from .operations.source_control_sync_job_operations import SourceControlSyncJobOperations
 from .operations.source_control_sync_job_streams_operations import SourceControlSyncJobStreamsOperations
@@ -54,6 +51,9 @@ from .operations.runbook_operations import RunbookOperations
 from .operations.test_job_streams_operations import TestJobStreamsOperations
 from .operations.test_job_operations import TestJobOperations
 from .operations.python2_package_operations import Python2PackageOperations
+from .operations.software_update_configurations_operations import SoftwareUpdateConfigurationsOperations
+from .operations.software_update_configuration_runs_operations import SoftwareUpdateConfigurationRunsOperations
+from .operations.software_update_configuration_machine_runs_operations import SoftwareUpdateConfigurationMachineRunsOperations
 from . import models
 
 
@@ -139,12 +139,6 @@ class AutomationClient(SDKClient):
     :vartype webhook: azure.mgmt.automation.operations.WebhookOperations
     :ivar watcher: Watcher operations
     :vartype watcher: azure.mgmt.automation.operations.WatcherOperations
-    :ivar software_update_configurations: SoftwareUpdateConfigurations operations
-    :vartype software_update_configurations: azure.mgmt.automation.operations.SoftwareUpdateConfigurationsOperations
-    :ivar software_update_configuration_runs: SoftwareUpdateConfigurationRuns operations
-    :vartype software_update_configuration_runs: azure.mgmt.automation.operations.SoftwareUpdateConfigurationRunsOperations
-    :ivar software_update_configuration_machine_runs: SoftwareUpdateConfigurationMachineRuns operations
-    :vartype software_update_configuration_machine_runs: azure.mgmt.automation.operations.SoftwareUpdateConfigurationMachineRunsOperations
     :ivar source_control: SourceControl operations
     :vartype source_control: azure.mgmt.automation.operations.SourceControlOperations
     :ivar source_control_sync_job: SourceControlSyncJob operations
@@ -179,6 +173,12 @@ class AutomationClient(SDKClient):
     :vartype test_job: azure.mgmt.automation.operations.TestJobOperations
     :ivar python2_package: Python2Package operations
     :vartype python2_package: azure.mgmt.automation.operations.Python2PackageOperations
+    :ivar software_update_configurations: SoftwareUpdateConfigurations operations
+    :vartype software_update_configurations: azure.mgmt.automation.operations.SoftwareUpdateConfigurationsOperations
+    :ivar software_update_configuration_runs: SoftwareUpdateConfigurationRuns operations
+    :vartype software_update_configuration_runs: azure.mgmt.automation.operations.SoftwareUpdateConfigurationRunsOperations
+    :ivar software_update_configuration_machine_runs: SoftwareUpdateConfigurationMachineRuns operations
+    :vartype software_update_configuration_machine_runs: azure.mgmt.automation.operations.SoftwareUpdateConfigurationMachineRunsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -242,12 +242,6 @@ class AutomationClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.watcher = WatcherOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.software_update_configurations = SoftwareUpdateConfigurationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.software_update_configuration_runs = SoftwareUpdateConfigurationRunsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.software_update_configuration_machine_runs = SoftwareUpdateConfigurationMachineRunsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.source_control = SourceControlOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.source_control_sync_job = SourceControlSyncJobOperations(
@@ -281,4 +275,10 @@ class AutomationClient(SDKClient):
         self.test_job = TestJobOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.python2_package = Python2PackageOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.software_update_configurations = SoftwareUpdateConfigurationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.software_update_configuration_runs = SoftwareUpdateConfigurationRunsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.software_update_configuration_machine_runs = SoftwareUpdateConfigurationMachineRunsOperations(
             self._client, self.config, self._serialize, self._deserialize)
