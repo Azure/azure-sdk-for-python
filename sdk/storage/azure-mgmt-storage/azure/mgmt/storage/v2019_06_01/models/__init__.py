@@ -72,6 +72,7 @@ try:
     from ._models_py3 import ServiceSpecification
     from ._models_py3 import Sku
     from ._models_py3 import SKUCapability
+    from ._models_py3 import SkuInformation
     from ._models_py3 import StorageAccount
     from ._models_py3 import StorageAccountCheckNameAvailabilityParameters
     from ._models_py3 import StorageAccountCreateParameters
@@ -150,6 +151,7 @@ except (SyntaxError, ImportError):
     from ._models import ServiceSpecification
     from ._models import Sku
     from ._models import SKUCapability
+    from ._models import SkuInformation
     from ._models import StorageAccount
     from ._models import StorageAccountCheckNameAvailabilityParameters
     from ._models import StorageAccountCreateParameters
@@ -169,7 +171,7 @@ from ._paged_models import BlobServicePropertiesPaged
 from ._paged_models import FileShareItemPaged
 from ._paged_models import ListContainerItemPaged
 from ._paged_models import OperationPaged
-from ._paged_models import SkuPaged
+from ._paged_models import SkuInformationPaged
 from ._paged_models import StorageAccountPaged
 from ._paged_models import UsagePaged
 from ._storage_management_client_enums import (
@@ -272,6 +274,7 @@ __all__ = [
     'ServiceSpecification',
     'Sku',
     'SKUCapability',
+    'SkuInformation',
     'StorageAccount',
     'StorageAccountCheckNameAvailabilityParameters',
     'StorageAccountCreateParameters',
@@ -288,7 +291,7 @@ __all__ = [
     'UsageName',
     'VirtualNetworkRule',
     'OperationPaged',
-    'SkuPaged',
+    'SkuInformationPaged',
     'StorageAccountPaged',
     'UsagePaged',
     'BlobServicePropertiesPaged',
