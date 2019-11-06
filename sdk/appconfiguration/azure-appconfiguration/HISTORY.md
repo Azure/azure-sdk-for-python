@@ -3,6 +3,12 @@
 
 -------------------
 
+## 2019-12-xx Version 1.0.0b6
+
+### Breaking changes
+
+- Combine set_read_only & clear_read_only to be set_read_only(Ture/False)
+
 ## 2019-10-30 Version 1.0.0b5
 
 ### Breaking changes
