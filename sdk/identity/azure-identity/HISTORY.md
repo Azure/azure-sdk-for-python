@@ -1,6 +1,16 @@
 # Release History
 
-## 1.1.0b1 Unreleased
+### 1.1.0b1 Unreleased
+
+
+### 2019-11-05 1.0.1
+
+- `ClientCertificateCredential` uses application and tenant IDs correctly
+([8315](https://github.com/Azure/azure-sdk-for-python/pull/8315))
+- `InteractiveBrowserCredential` properly caches tokens
+([8352](https://github.com/Azure/azure-sdk-for-python/pull/8352))
+- Adopted msal 1.0.0 and msal-extensions 0.1.3
+([8359](https://github.com/Azure/azure-sdk-for-python/pull/8359))
 
 
 ## 1.0.0 (2019-10-29)
