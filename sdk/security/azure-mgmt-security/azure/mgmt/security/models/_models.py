@@ -1972,6 +1972,10 @@ class IoTSecurityAggregatedAlert(Model):
     :ivar log_analytics_query: Log analytics query for getting the list of
      affected devices/alerts.
     :vartype log_analytics_query: str
+    :ivar top_devices_list: 10 devices with the highest number of occurrences
+     of this alert type, on this day.
+    :vartype top_devices_list:
+     list[~azure.mgmt.security.models.IoTSecurityAggregatedAlertPropertiesTopDevicesListItem]
     """
 
     _validation = {
@@ -1990,6 +1994,7 @@ class IoTSecurityAggregatedAlert(Model):
         'system_source': {'readonly': True},
         'action_taken': {'readonly': True},
         'log_analytics_query': {'readonly': True},
+        'top_devices_list': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2009,6 +2014,7 @@ class IoTSecurityAggregatedAlert(Model):
         'system_source': {'key': 'properties.systemSource', 'type': 'str'},
         'action_taken': {'key': 'properties.actionTaken', 'type': 'str'},
         'log_analytics_query': {'key': 'properties.logAnalyticsQuery', 'type': 'str'},
+        'top_devices_list': {'key': 'properties.topDevicesList', 'type': '[IoTSecurityAggregatedAlertPropertiesTopDevicesListItem]'},
     }
 
     def __init__(self, **kwargs):
@@ -2029,6 +2035,41 @@ class IoTSecurityAggregatedAlert(Model):
         self.system_source = None
         self.action_taken = None
         self.log_analytics_query = None
+        self.top_devices_list = None
+
+
+class IoTSecurityAggregatedAlertPropertiesTopDevicesListItem(Model):
+    """IoTSecurityAggregatedAlertPropertiesTopDevicesListItem.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar device_id: Name of the device.
+    :vartype device_id: str
+    :ivar alerts_count: Number of alerts raised for this device.
+    :vartype alerts_count: int
+    :ivar last_occurrence: Most recent time this alert was raised for this
+     device, on this day.
+    :vartype last_occurrence: str
+    """
+
+    _validation = {
+        'device_id': {'readonly': True},
+        'alerts_count': {'readonly': True},
+        'last_occurrence': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'device_id': {'key': 'deviceId', 'type': 'str'},
+        'alerts_count': {'key': 'alertsCount', 'type': 'int'},
+        'last_occurrence': {'key': 'lastOccurrence', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IoTSecurityAggregatedAlertPropertiesTopDevicesListItem, self).__init__(**kwargs)
+        self.device_id = None
+        self.alerts_count = None
+        self.last_occurrence = None
 
 
 class IoTSecurityAggregatedRecommendation(Model):

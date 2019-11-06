@@ -53,6 +53,7 @@ try:
     from ._models_py3 import InformationProtectionPolicy
     from ._models_py3 import InformationType
     from ._models_py3 import IoTSecurityAggregatedAlert
+    from ._models_py3 import IoTSecurityAggregatedAlertPropertiesTopDevicesListItem
     from ._models_py3 import IoTSecurityAggregatedRecommendation
     from ._models_py3 import IoTSecurityAlertedDevice
     from ._models_py3 import IoTSecurityDeviceAlert
@@ -156,6 +157,7 @@ except (SyntaxError, ImportError):
     from ._models import InformationProtectionPolicy
     from ._models import InformationType
     from ._models import IoTSecurityAggregatedAlert
+    from ._models import IoTSecurityAggregatedAlertPropertiesTopDevicesListItem
     from ._models import IoTSecurityAggregatedRecommendation
     from ._models import IoTSecurityAlertedDevice
     from ._models import IoTSecurityDeviceAlert
@@ -310,6 +312,7 @@ __all__ = [
     'InformationProtectionPolicy',
     'InformationType',
     'IoTSecurityAggregatedAlert',
+    'IoTSecurityAggregatedAlertPropertiesTopDevicesListItem',
     'IoTSecurityAggregatedRecommendation',
     'IoTSecurityAlertedDevice',
     'IoTSecurityDeviceAlert',
