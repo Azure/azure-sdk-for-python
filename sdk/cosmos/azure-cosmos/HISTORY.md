@@ -2,7 +2,9 @@
 
 ## 4.0.0b6
 
-- Fixed bug in synchronized_request for media APIs. 
+- Fixed bug in synchronized_request for media APIs.
+- Removed CreateAttachment, UpsertAttachment, CreateAttachmentAndUploadMedia, UpsertAttachmentAndUploadMedia, ReadAttachment, ReadAttachments, QueryAttachments, ReadMedia, UpdateMedia, ReplaceAttachment and DeleteAttachment APIs.  
+- Removed MediaReadMode and MediaRequestTimeout from connectionPolicy.
 
 ## 4.0.0b5
 
