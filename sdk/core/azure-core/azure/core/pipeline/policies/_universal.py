@@ -122,14 +122,9 @@ class RequestIdPolicy(SansIOHTTPPolicy):
             :dedent: 4
             :caption: Configuring a request id policy.
     """
-    def __init__(self, request_id=None, **kwargs):  # pylint: disable=super-init-not-called
-        # type: (str, dict) -> None
-        self._request_id = request_id
-
-    @property
-    def request_id(self):
-        """The current headers collection."""
-        return self._request_id
+    def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
+        # type: (dict) -> None
+        self._request_id = kwargs.pop('request_id', None)
 
     def set_request_id(self, value):
         """Add the request id to the configuration to be applied to all requests.
@@ -145,15 +140,10 @@ class RequestIdPolicy(SansIOHTTPPolicy):
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        request_id = request.context.options.pop('request_id', None)
+        request_id = request.context.options.pop('request_id', self._request_id)
         if request_id:
-            header = {"'x-ms-client-request-id'":request_id}
+            header = {"x-ms-client-request-id":request_id}
             request.http_request.headers.update(header)
-            return
-        if self._request_id:
-            header = {"'x-ms-client-request-id'": self._request_id}
-            request.http_request.headers.update(header)
-            return
 
 class UserAgentPolicy(SansIOHTTPPolicy):
     """User-Agent Policy. Allows custom values to be added to the User-Agent header.
