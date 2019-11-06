@@ -69,8 +69,7 @@ class DataLakeFileClient(PathClient):
     def from_connection_string(
             cls, conn_str,  # type: str
             file_system_name,  # type: str
-            directory_name,  # type: str
-            file_name,  # type: str
+            file_path,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
         ):  # type: (...) -> DataLakeFileClient
@@ -98,7 +97,7 @@ class DataLakeFileClient(PathClient):
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(
-            account_url, file_system_name=file_system_name, directory_name=directory_name, file_name=file_name,
+            account_url, file_system_name=file_system_name, file_path=file_path,
             credential=credential, **kwargs)
 
     def create_file(self, content_settings=None,  # type: Optional[ContentSettings]

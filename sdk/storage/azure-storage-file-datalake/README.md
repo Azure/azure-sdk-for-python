@@ -1,47 +1,47 @@
-# Azure Storage Blobs client library for Python
+# Azure DataLake service client library for Python
 Overview
 
-This preview package for Python includes ADLS Gen2 specific API support made available in Blob SDK. This includes:
+This preview package for Python includes ADLS Gen2 specific API support made available in Storage SDK. This includes:
 1. New directory level operations (Create, Rename/Move, Delete) for both hierarchical namespace enabled (HNS) storage accounts and HNS disabled storage accounts. For HNS enabled accounts, the rename/move operations are atomic.
     (the current SDK only supports HNS operations)
 2. Permission related operations (Get/Set ACLs) for hierarchical namespace enabled (HNS) accounts.
 
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/azure/storage/file/datalake) | [Package (PyPi)](https://pypi.org/project/azure-storage-file-datalake/) | [API reference documentation](https://azure.github.io/azure-sdk-for-python/ref/azure.storage.blob.html) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/tests)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/azure/storage/file/datalake) | [Package (PyPi)](https://pypi.org/project/azure-storage-file-datalake/) | [API reference documentation](https://aka.ms/azsdk-python-storage-file-datalake-ref) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples)
 
 
 ## Getting started
 
+### Prerequisites
+* Python 2.7, or 3.5 or later is required to use this package.
+* You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
+[Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
+
 ### Install the package
-Install the Azure Storage Blobs client library for Python with [pip](https://pypi.org/project/pip/):
+Install the Azure DataLake Storage client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-storage-blob --pre
+pip install azure-storage-file-datalake --pre
 ```
-*Requires Python 2.7, 3.5 or later to use this package.
 
-**Prerequisites**: You must have an [Azure subscription](https://azure.microsoft.com/free/), and a
-[Storage Account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
-
-To create a Storage Account, you can use the [Azure Portal](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal),
-[Azure PowerShell](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-powershell) or [Azure CLI](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-cli):
-
-If you need to create a new resource group:
+### Create a storage account
+If you wish to create a new storage account, you can use the
+[Azure Portal](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal),
+[Azure PowerShell](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-powershell),
+or [Azure CLI](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-cli):
 
 ```bash
+# Create a new resource group to hold the storage account -
+# if using an existing resource group, skip this step
 az group create --name my-resource-group --location westus2
+
+# Create the storage account
+az storage account create -n my-storage-account-name -g my-resource-group
 ```
-
-Create your storage account:
-
-```bash
-az storage account create -n mystorageaccountname -g my-resource-group
-```
-
 
 ### Authenticate the client
 
-Interaction with Storage Blobs starts with an instance of the BlobServiceClient class. You need an existing storage account, its URL, and a credential to instantiate the client object.
+Interaction with DataLake Storage starts with an instance of the DataLakeServiceClient class. You need an existing storage account, its URL, and a credential to instantiate the client object.
 
 #### Get credentials
 
@@ -56,157 +56,120 @@ You can omit the credential if your account URL already has a SAS token.
 
 #### Create client
 
-Once you have your account URL and credentials ready, you can create the BlobServiceClient:
+Once you have your account URL and credentials ready, you can create the DataLakeServiceClient:
 
 ```python
-from azure.storage.blob import BlobServiceClient
+from azure.storage.file.datalake import DataLakeServiceClient
 
-service = BlobServiceClient(account_url="https://<my-storage-account-name>.blob.core.windows.net/", credential=credential)
+service = DataLakeServiceClient(account_url="https://<my-storage-account-name>.dfs.core.windows.net/", credential=credential)
 ```
 
 ## Key concepts
 
-Blob storage offers three types of resources:
+DataLake storage offers four types of resources:
 * The storage account
-* A container in the storage account
-* A blob in a container
+* A file system in the storage account
+* A directory under the file system
+* A file in a the file system or under directory
 
 #### Clients
 
-The Storage Blobs SDK provides four different clients to interact with the Blob Service:
-1. **BlobServiceClient** - this client interacts with the Blob Service at the account level. 
+The DataLake Storage SDK provides four different clients to interact with the DataLake Service:
+1. **DataLakeServiceClient** - this client interacts with the DataLake Service at the account level. 
     It provides operations to retrieve and configure the account properties
-    as well as list, create, and delete containers within the account.
-    For operations relating to a specific container or blob, clients for those entities
-    can also be retrieved using the `get_blob_client` or `get_container_client` functions.
-2. **ContainerClient** - this client represents interaction with a specific
-    container, although that container need not exist yet. It provides operations to create, delete, or
-    configure containers and includes operations to list, upload, and delete blobs in the container.
-    For operations relating to a specific blob, the client can also be retrieved using
-    the `get_blob_client` function.
-3. **BlobClient** - this client represents interaction with a specific
-    blob, although that blob need not exist yet. It provides blob operations to upload, download, delete, 
-    create snapshots, and list blobs, as well as specific operations per blob type.
-4. **LeaseClient** - this client represents lease interactions with a ContainerClient or BlobClient.
-    It provides operations to acquire, renew, release, change, and break leases on the resources.
-
-#### Blob Types
-
-Once you've initialized a Client, you can choose from the different types of blobs:
-* **Block blobs** store text and binary data, up to about 4.7 TB. Block blobs are made up of blocks of data that can be managed individually
-* **Append blobs** are made up of blocks like block blobs, but are optimized for append operations. Append blobs are ideal for scenarios such as logging data from virtual machines
-* **Page blobs** store random access files up to 8 TB in size. Page blobs store virtual hard drive (VHD) files and serve as disks for Azure virtual machines
-
-For more information about the different types of blobs, see [Understanding Block Blobs, Append Blobs, and Page Blobs](https://docs.microsoft.com/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs)
-
+    as well as list, create, and delete file systems within the account.
+    For operations relating to a specific file system, directory or file, clients for those entities
+    can also be retrieved using the `get_file_client`, `get_directory_client` or `get_file_system_client` functions.
+2. **FileSystemClient** - this client represents interaction with a specific
+    file system, even if that file system need not exist yet. It provides operations to create, delete, or
+    configure file systems and includes operations to list paths under file system, upload, and delete file or
+    directory in the file system.  
+    For operations relating to a specific file, the client can also be retrieved using
+    the `get_file_client` function.  
+    For operations relating to a specific directory, the client can be retrieved using 
+    the `get_directory_client` function.  
+3. **DataLakeDirectoryClient** - this client represents interaction with a specific
+    directory, even if that directory need not exist yet. It provides directory operations create, delete, rename,
+    get properties and set properties operations.
+3. **DataLakeFileClient** - this client represents interaction with a specific
+    file, even if that file need not exist yet. It provides file operations to append data, flush data, delete, 
+    create, and read file.
+4. **DataLakeLeaseClient** - this client represents lease interactions with a FileSystemClient, DataLakeDirectoryClient
+    or DataLakeFileClient. It provides operations to acquire, renew, release, change, and break leases on the resources.
 
 ## Examples
 
-The following sections provide several code snippets covering some of the most common Storage Blob tasks, including:
+The following sections provide several code snippets covering some of the most common Storage DataLake tasks, including:
 
 * [Client creation with a connection string](#client-creation-with-a-connection-string)
-* [Uploading a blob](#uploading-a-blob)
-* [Downloading a blob](#downloading-a-blob)
-* [Enumerating blobs](#enumerating-blobs)
+* [Uploading a file](#uploading-a-file)
+* [Downloading a file](#downloading-a-file)
+* [Enumerating paths](#enumerating-paths)
 
 
 ### Client creation with a connection string
-Create the BlobServiceClient using the connection string to your Azure Storage account.
+Create the DataLakeServiceClient using the connection string to your Azure Storage account.
 
 ```python
-from azure.storage.blob import BlobServiceClient
+from azure.storage.file.datalake import DataLakeServiceClient
 
-service = BlobServiceClient.from_connection_string(conn_str="my_connection_string")
+service = DataLakeServiceClient.from_connection_string(conn_str="my_connection_string")
 ```
 
-### Uploading a blob
-Upload a blob to your container.
+### Uploading a file
+Upload a file to your file system.
 
 ```python
-from azure.storage.blob import BlobClient
+from azure.storage.file.datalake import DataLakeFileClient
 
-blob = BlobClient.from_connection_string("my_connection_string", container="mycontainer", blob="my_blob")
+data = b"abc"
+file = DataLakeFileClient.from_connection_string("my_connection_string", 
+                                                 file_system_name="myfilesystem", file_path="myfile")
 
-with open("./SampleSource.txt", "rb") as data:
-    blob.upload_blob(data)
-```
-Use the async client to upload a blob to your container.
-
-```python
-from azure.storage.blob.aio import BlobClient
-
-blob = BlobClient.from_connection_string("my_connection_string", container="mycontainer", blob="my_blob")
-
-with open("./SampleSource.txt", "rb") as data:
-    await blob.upload_blob(data)
+file.append_data(data, offset=0, length=len(data))
+file.flush_data(len(data))
 ```
 
-### Downloading a blob
-Download a blob from your container.
+### Downloading a file
+Download a file from your file system.
 
 ```python
-from azure.storage.blob import BlobClient
+from azure.storage.file.datalake import DataLakeFileClient
 
-blob = BlobClient.from_connection_string("my_connection_string", container="mycontainer", blob="my_blob")
+file = DataLakeFileClient.from_connection_string("my_connection_string", 
+                                                 file_system_name="myfilesystem", file_path="myfile")
 
-with open("./BlockDestination.txt", "wb") as my_blob:
-    blob_data = blob.download_blob()
-    my_blob.writelines(blob_data.readall())
+with open("./BlockDestination.txt", "wb") as my_file:
+    file_data = file.read_file(stream=my_file)
 ```
 
-Download a blob asynchronously.
+### Enumerating paths
+List the paths in your file system.
 
 ```python
-from azure.storage.blob.aio import BlobClient
+from azure.storage.file.datalake import FileSystemClient
 
-blob = BlobClient.from_connection_string("my_connection_string", container="mycontainer", blob="my_blob")
+file_system = FileSystemClient.from_connection_string("my_connection_string", file_system_name="myfilesystem")
 
-with open("./BlockDestination.txt", "wb") as my_blob:
-    stream = await blob.download_blob()
-    data = await stream.readall()
-    my_blob.write(data)
-```
-
-### Enumerating blobs
-List the blobs in your container.
-
-```python
-from azure.storage.blob import ContainerClient
-
-container = ContainerClient.from_connection_string("my_connection_string", container="mycontainer")
-
-blob_list = container.list_blobs()
-for blob in blob_list:
-    print(blob.name + '\n')
-```
-
-List the blobs asynchronously.
-
-```python
-from azure.storage.blob.aio import ContainerClient
-
-container = ContainerClient.from_connection_string("my_connection_string", container="mycontainer")
-
-blob_list = [] 
-async for blob in container.list_blobs():
-    blob_list.append(blob)
-print(blob_list)
+paths = file_system.get_paths()
+for path in paths:
+    print(path.name + '\n')
 ```
 
 ## Troubleshooting
-Storage Blob clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/exceptions.md).
+DataLake Storage clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
 
-All Blob service operations will throw a StorageErrorException on failure with helpful [error codes](https://docs.microsoft.com/rest/api/storageservices/blob-service-error-codes).
+All DataLake service operations will throw a StorageErrorException on failure with helpful [error codes](https://docs.microsoft.com/rest/api/storageservices/blob-service-error-codes).
 
 ## Next steps
 
 ### More sample code
 
-Get started with our [Azure DataLake samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/tests).
+Get started with our [Azure DataLake samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples).
 
-Several Storage Blobs Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Storage Blobs:
+Several DataLake Storage Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with DataLake Storage:
 
-* [`datalake_samples_access_control.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples/datalake_samples_access_control.py) - Examples for common Storage Blob tasks:
+* [`datalake_samples_access_control.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples/datalake_samples_access_control.py) - Examples for common DataLake Storage tasks:
     * Set up a file system
     * Create a directory
     * Set/Get access control for the directory
@@ -216,7 +179,7 @@ Several Storage Blobs Python SDK samples are available to you in the SDK's GitHu
 
 * [`datalake_samples_upload_download.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples/datalake_samples_upload_download.py) - Examples for authenticating and creating the client:
     * Set up a file system
-    * Create dile
+    * Create file
     * Append data to the file
     * Flush data to the file
     * Download the uploaded data
