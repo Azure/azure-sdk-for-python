@@ -9,6 +9,7 @@ import re
 import sys
 import shutil
 from pathlib import Path
+from itertools import chain
 
 from typing import List, Tuple, Any, Union
 
