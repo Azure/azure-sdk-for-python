@@ -2425,6 +2425,11 @@ class IoTSecuritySolutionModel(Model):
     :param recommendations_configuration:
     :type recommendations_configuration:
      list[~azure.mgmt.security.models.RecommendationConfigurationProperties]
+    :param unmasked_ip_logging_status: Unmasked IP address logging status.
+     Possible values include: 'Disabled', 'Enabled'. Default value: "Disabled"
+     .
+    :type unmasked_ip_logging_status: str or
+     ~azure.mgmt.security.models.UnmaskedIpLoggingStatus
     """
 
     _validation = {
@@ -2452,9 +2457,10 @@ class IoTSecuritySolutionModel(Model):
         'user_defined_resources': {'key': 'properties.userDefinedResources', 'type': 'UserDefinedResourcesProperties'},
         'auto_discovered_resources': {'key': 'properties.autoDiscoveredResources', 'type': '[str]'},
         'recommendations_configuration': {'key': 'properties.recommendationsConfiguration', 'type': '[RecommendationConfigurationProperties]'},
+        'unmasked_ip_logging_status': {'key': 'properties.unmaskedIpLoggingStatus', 'type': 'str'},
     }
 
-    def __init__(self, *, workspace: str, display_name: str, iot_hubs, tags=None, location: str=None, status="Enabled", export=None, disabled_data_sources=None, user_defined_resources=None, recommendations_configuration=None, **kwargs) -> None:
+    def __init__(self, *, workspace: str, display_name: str, iot_hubs, tags=None, location: str=None, status="Enabled", export=None, disabled_data_sources=None, user_defined_resources=None, recommendations_configuration=None, unmasked_ip_logging_status="Disabled", **kwargs) -> None:
         super(IoTSecuritySolutionModel, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -2470,6 +2476,7 @@ class IoTSecuritySolutionModel(Model):
         self.user_defined_resources = user_defined_resources
         self.auto_discovered_resources = None
         self.recommendations_configuration = recommendations_configuration
+        self.unmasked_ip_logging_status = unmasked_ip_logging_status
 
 
 class IoTSeverityMetrics(Model):

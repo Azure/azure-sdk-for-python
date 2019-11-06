@@ -88,6 +88,12 @@ class RecommendationConfigStatus(str, Enum):
     enabled = "Enabled"
 
 
+class UnmaskedIpLoggingStatus(str, Enum):
+
+    disabled = "Disabled"  #: Unmasked IP logging is disabled
+    enabled = "Enabled"  #: Unmasked IP logging is enabled
+
+
 class SecurityFamily(str, Enum):
 
     waf = "Waf"

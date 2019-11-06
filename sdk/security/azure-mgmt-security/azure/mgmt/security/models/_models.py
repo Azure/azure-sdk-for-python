@@ -2425,6 +2425,11 @@ class IoTSecuritySolutionModel(Model):
     :param recommendations_configuration:
     :type recommendations_configuration:
      list[~azure.mgmt.security.models.RecommendationConfigurationProperties]
+    :param unmasked_ip_logging_status: Unmasked IP address logging status.
+     Possible values include: 'Disabled', 'Enabled'. Default value: "Disabled"
+     .
+    :type unmasked_ip_logging_status: str or
+     ~azure.mgmt.security.models.UnmaskedIpLoggingStatus
     """
 
     _validation = {
@@ -2452,6 +2457,7 @@ class IoTSecuritySolutionModel(Model):
         'user_defined_resources': {'key': 'properties.userDefinedResources', 'type': 'UserDefinedResourcesProperties'},
         'auto_discovered_resources': {'key': 'properties.autoDiscoveredResources', 'type': '[str]'},
         'recommendations_configuration': {'key': 'properties.recommendationsConfiguration', 'type': '[RecommendationConfigurationProperties]'},
+        'unmasked_ip_logging_status': {'key': 'properties.unmaskedIpLoggingStatus', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -2470,6 +2476,7 @@ class IoTSecuritySolutionModel(Model):
         self.user_defined_resources = kwargs.get('user_defined_resources', None)
         self.auto_discovered_resources = None
         self.recommendations_configuration = kwargs.get('recommendations_configuration', None)
+        self.unmasked_ip_logging_status = kwargs.get('unmasked_ip_logging_status', "Disabled")
 
 
 class IoTSeverityMetrics(Model):
