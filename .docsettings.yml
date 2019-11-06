@@ -70,6 +70,7 @@ known_content_issues:
   - ['sdk/storage/azure-storage-blob/samples/README.md', 'nspkg and common']
   - ['sdk/storage/azure-storage-queue/samples/README.md', 'nspkg and common']
   - ['sdk/storage/azure-storage-file-share/samples/README.md', 'nspkg and common']
+  - ['sdk/storage/azure-storage-file-datalake/samples/README.md', 'nspkg and common']
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'nspkg and common']
   - ['sdk/appconfiguration/azure-appconfiguration/samples/README.md', 'nspkg and common']
   - ['sdk/keyvault/azure-keyvault-nspkg/README.md', 'nspkg and common']
