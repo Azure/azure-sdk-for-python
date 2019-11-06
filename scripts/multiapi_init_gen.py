@@ -373,7 +373,7 @@ def find_module_folder(package_name, module_name):
 
 def find_client_file(package_name, module_name):
     module_path = find_module_folder(package_name, module_name)
-    return next(module_path.glob("*_client.py"))
+    return next(module_path.glob("*_client.py") or module_path.glob("*cosmos_db.py"))
 
 
 def patch_import(file_path: Union[str, Path]) -> None:
