@@ -6425,8 +6425,6 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
 
     :ivar id: Resource Id
     :vartype id: str
-    :param name: The name of the extension.
-    :type name: str
     :param force_update_tag: If a value is provided and is different from the
      previous value, the extension handler will be forced to update even if the
      extension configuration has not changed.
@@ -6460,7 +6458,6 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
         'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
         'publisher': {'key': 'properties.publisher', 'type': 'str'},
         'type': {'key': 'properties.type', 'type': 'str'},
@@ -6473,7 +6470,6 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
 
     def __init__(self, **kwargs):
         super(VirtualMachineScaleSetExtensionUpdate, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
         self.force_update_tag = kwargs.get('force_update_tag', None)
         self.publisher = kwargs.get('publisher', None)
         self.type = kwargs.get('type', None)
