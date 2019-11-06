@@ -7,7 +7,7 @@
 
 ### Breaking changes
 
-- Combine set_read_only & clear_read_only to be set_read_only(Ture/False)   #8453
+- Combine set_read_only & clear_read_only to be set_read_only(True/False)   #8453
 
 ## 2019-10-30 Version 1.0.0b5
 
