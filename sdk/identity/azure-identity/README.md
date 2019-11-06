@@ -1,6 +1,7 @@
 # Azure Identity client library for Python
-Azure Identity simplifies authentication across the Azure SDK.
-It supports token authentication using an Azure Active Directory
+Azure Identity authenticating with Azure Active Directory for Azure SDK
+libraries. It provides credentials Azure SDK clients can use to authenticate
+their requests.
 
 This library currently supports:
   - [Service principal authentication](https://docs.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals)
