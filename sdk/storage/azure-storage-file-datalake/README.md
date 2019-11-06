@@ -15,7 +15,7 @@ This preview package for Python includes ADLS Gen2 specific API support made ava
 ### Prerequisites
 * Python 2.7, or 3.5 or later is required to use this package.
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
-[Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
+[Azure storage account](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-quickstart-create-account) to use this package.
 
 ### Install the package
 Install the Azure DataLake Storage client library for Python with [pip](https://pypi.org/project/pip/):
