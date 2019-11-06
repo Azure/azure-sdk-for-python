@@ -357,13 +357,6 @@ class OrcCompressionCodec(str, Enum):
     snappy = "snappy"
 
 
-class OrcCompressionCodec(str, Enum):
-
-    none = "none"
-    zlib = "zlib"
-    snappy = "snappy"
-
-
 class AvroCompressionCodec(str, Enum):
 
     none = "none"
@@ -458,6 +451,7 @@ class SsisPackageLocationType(str, Enum):
 
     ssisdb = "SSISDB"
     file = "File"
+    inline_package = "InlinePackage"
 
 
 class HDInsightActivityDebugInfoOption(str, Enum):
