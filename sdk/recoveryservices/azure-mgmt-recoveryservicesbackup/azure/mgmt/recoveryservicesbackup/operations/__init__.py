@@ -9,14 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from ._backup_policies_operations import BackupPoliciesOperations
+from ._protection_policies_operations import ProtectionPoliciesOperations
+from ._protection_policy_operation_results_operations import ProtectionPolicyOperationResultsOperations
 from ._backup_resource_vault_configs_operations import BackupResourceVaultConfigsOperations
 from ._protected_items_operations import ProtectedItemsOperations
 from ._protected_item_operation_results_operations import ProtectedItemOperationResultsOperations
 from ._recovery_points_operations import RecoveryPointsOperations
 from ._restores_operations import RestoresOperations
-from ._backup_policies_operations import BackupPoliciesOperations
-from ._protection_policies_operations import ProtectionPoliciesOperations
-from ._protection_policy_operation_results_operations import ProtectionPolicyOperationResultsOperations
 from ._backup_jobs_operations import BackupJobsOperations
 from ._job_details_operations import JobDetailsOperations
 from ._job_cancellations_operations import JobCancellationsOperations
@@ -49,14 +49,14 @@ from ._backup_resource_storage_configs_operations import BackupResourceStorageCo
 from ._operations import Operations
 
 __all__ = [
+    'BackupPoliciesOperations',
+    'ProtectionPoliciesOperations',
+    'ProtectionPolicyOperationResultsOperations',
     'BackupResourceVaultConfigsOperations',
     'ProtectedItemsOperations',
     'ProtectedItemOperationResultsOperations',
     'RecoveryPointsOperations',
     'RestoresOperations',
-    'BackupPoliciesOperations',
-    'ProtectionPoliciesOperations',
-    'ProtectionPolicyOperationResultsOperations',
     'BackupJobsOperations',
     'JobDetailsOperations',
     'JobCancellationsOperations',
