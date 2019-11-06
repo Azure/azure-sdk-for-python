@@ -487,7 +487,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     async def set_read_only(
-            self, configuration_setting, read_only = True, **kwargs
+            self, configuration_setting, read_only=True, **kwargs
     ):  # type: (ConfigurationSetting, Optional[bool], dict) -> ConfigurationSetting
 
         """Set a configuration setting read only
