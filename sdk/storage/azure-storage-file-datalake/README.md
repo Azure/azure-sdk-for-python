@@ -2,8 +2,7 @@
 Overview
 
 This preview package for Python includes ADLS Gen2 specific API support made available in Storage SDK. This includes:
-1. New directory level operations (Create, Rename/Move, Delete) for both hierarchical namespace enabled (HNS) storage accounts and HNS disabled storage accounts. For HNS enabled accounts, the rename/move operations are atomic.
-    (the current SDK only supports HNS operations)
+1. New directory level operations (Create, Rename, Delete) for hierarchical namespace enabled (HNS) storage account. For HNS enabled accounts, the rename/move operations are atomic.
 2. Permission related operations (Get/Set ACLs) for hierarchical namespace enabled (HNS) accounts.
 
 
@@ -81,7 +80,7 @@ The DataLake Storage SDK provides four different clients to interact with the Da
     For operations relating to a specific file system, directory or file, clients for those entities
     can also be retrieved using the `get_file_client`, `get_directory_client` or `get_file_system_client` functions.
 2. **FileSystemClient** - this client represents interaction with a specific
-    file system, even if that file system need not exist yet. It provides operations to create, delete, or
+    file system, even if that file system does not exist yet. It provides operations to create, delete, or
     configure file systems and includes operations to list paths under file system, upload, and delete file or
     directory in the file system.  
     For operations relating to a specific file, the client can also be retrieved using
@@ -89,10 +88,10 @@ The DataLake Storage SDK provides four different clients to interact with the Da
     For operations relating to a specific directory, the client can be retrieved using 
     the `get_directory_client` function.  
 3. **DataLakeDirectoryClient** - this client represents interaction with a specific
-    directory, even if that directory need not exist yet. It provides directory operations create, delete, rename,
+    directory, even if that directory does not exist yet. It provides directory operations create, delete, rename,
     get properties and set properties operations.
 3. **DataLakeFileClient** - this client represents interaction with a specific
-    file, even if that file need not exist yet. It provides file operations to append data, flush data, delete, 
+    file, even if that file does not exist yet. It provides file operations to append data, flush data, delete, 
     create, and read file.
 4. **DataLakeLeaseClient** - this client represents lease interactions with a FileSystemClient, DataLakeDirectoryClient
     or DataLakeFileClient. It provides operations to acquire, renew, release, change, and break leases on the resources.
@@ -177,7 +176,7 @@ Several DataLake Storage Python SDK samples are available to you in the SDK's Gi
     * Set/Get access control for each file
     * Delete file system
 
-* [`datalake_samples_upload_download.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples/datalake_samples_upload_download.py) - Examples for authenticating and creating the client:
+* [`datalake_samples_upload_download.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples/datalake_samples_upload_download.py) - Examples for common DataLake Storage tasks:
     * Set up a file system
     * Create file
     * Append data to the file
