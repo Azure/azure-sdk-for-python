@@ -20,6 +20,7 @@ import uuid
 from .operations.profiles_operations import ProfilesOperations
 from .operations.endpoints_operations import EndpointsOperations
 from .operations.origins_operations import OriginsOperations
+from .operations.origin_groups_operations import OriginGroupsOperations
 from .operations.custom_domains_operations import CustomDomainsOperations
 from .operations.resource_usage_operations import ResourceUsageOperations
 from .operations.operations import Operations
@@ -71,6 +72,8 @@ class CdnManagementClient(SDKClient):
     :vartype endpoints: azure.mgmt.cdn.operations.EndpointsOperations
     :ivar origins: Origins operations
     :vartype origins: azure.mgmt.cdn.operations.OriginsOperations
+    :ivar origin_groups: OriginGroups operations
+    :vartype origin_groups: azure.mgmt.cdn.operations.OriginGroupsOperations
     :ivar custom_domains: CustomDomains operations
     :vartype custom_domains: azure.mgmt.cdn.operations.CustomDomainsOperations
     :ivar resource_usage: ResourceUsage operations
@@ -95,7 +98,7 @@ class CdnManagementClient(SDKClient):
         super(CdnManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-04-15'
+        self.api_version = '2019-12-31'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -104,6 +107,8 @@ class CdnManagementClient(SDKClient):
         self.endpoints = EndpointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.origins = OriginsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.origin_groups = OriginGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.custom_domains = CustomDomainsOperations(
             self._client, self.config, self._serialize, self._deserialize)
