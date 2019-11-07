@@ -7,7 +7,6 @@ import unittest
 import asyncio
 import logging
 import pytest
-from collections import namedtuple
 
 async def wait_and_close(host):
     """
