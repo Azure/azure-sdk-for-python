@@ -30,7 +30,7 @@ class FileSystemProperties(object):
     :ivar str etag:
         The ETag contains a value that you can use to perform operations
         conditionally.
-    :ivar ~azure.storage.file.datalake.LeaseProperties lease:
+    :ivar ~azure.storage.filedatalake.LeaseProperties lease:
         Stores all the lease information for the file system.
     :ivar str public_access: Specifies whether data in the file system may be accessed
         publicly and the level of access.
@@ -89,7 +89,7 @@ class FileSystemPropertiesPaged(ContainerPropertiesPaged):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.file.datalake.FileSystemProperties)
+    :vartype current_page: list(~azure.storage.filedatalake.FileSystemProperties)
 
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only file systems whose names
@@ -117,7 +117,7 @@ class DirectoryProperties(DictMixin):
         conditionally.
     :ivar bool deleted: if the current directory marked as deleted
     :ivar dict metadata: Name-value pairs associated with the blob as metadata.
-    :ivar ~azure.storage.file.datalake.LeaseProperties lease:
+    :ivar ~azure.storage.filedatalake.LeaseProperties lease:
         Stores all the lease information for the directory.
     :ivar ~datetime.datetime last_modified:
         A datetime object representing the last time the directory was modified.
@@ -125,7 +125,7 @@ class DirectoryProperties(DictMixin):
         Indicates when the directory was created, in UTC.
     :ivar int remaining_retention_days: The number of days that the directory will be retained
         before being permanently deleted by the service.
-    :var ~azure.storage.file.datalake.ContentSettings content_settings:
+    :var ~azure.storage.filedatalake.ContentSettings content_settings:
     """
     def __init__(self, **kwargs):
         super(DirectoryProperties, self).__init__(
@@ -164,7 +164,7 @@ class FileProperties(DictMixin):
         conditionally.
     :ivar bool deleted: if the current file marked as deleted
     :ivar dict metadata: Name-value pairs associated with the blob as metadata.
-    :ivar ~azure.storage.file.datalake.LeaseProperties lease:
+    :ivar ~azure.storage.filedatalake.LeaseProperties lease:
         Stores all the lease information for the file.
     :ivar ~datetime.datetime last_modified:
         A datetime object representing the last time the file was modified.
@@ -173,7 +173,7 @@ class FileProperties(DictMixin):
     :ivar int size: size of the file
     :ivar int remaining_retention_days: The number of days that the file will be retained
         before being permanently deleted by the service.
-    :var ~azure.storage.file.datalake.ContentSettings content_settings:
+    :var ~azure.storage.filedatalake.ContentSettings content_settings:
     """
     def __init__(self, **kwargs):
         super(FileProperties, self).__init__(
@@ -259,7 +259,7 @@ class PathPropertiesPaged(PageIterator):
     :ivar str path: Filters the results to return only paths under the specified path.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
     :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar list(~azure.storage.file.datalake.PathProperties) current_page: The current page of listed results.
+    :ivar list(~azure.storage.filedatalake.PathProperties) current_page: The current page of listed results.
 
     :param callable command: Function to retrieve the next page of items.
     :param str path: Filters the results to return only paths under the specified path.
@@ -382,7 +382,7 @@ class AccountSasPermissions(BlobAccountSasPermissions):
 
 class FileSystemSasPermissions(ContainerSasPermissions):
     """FileSystemSasPermissions class to be used with the
-    :func:`~azure.storage.file.datalake.generate_file_system_sas` function.
+    :func:`~azure.storage.filedatalake.generate_file_system_sas` function.
 
     :param bool read:
         Read the content, properties, metadata etc.
@@ -402,7 +402,7 @@ class FileSystemSasPermissions(ContainerSasPermissions):
 
 class DirectorySasPermissions(BlobSasPermissions):
     """DirectorySasPermissions class to be used with the
-    :func:`~azure.storage.file.datalake.generate_directory_sas` function.
+    :func:`~azure.storage.filedatalake.generate_directory_sas` function.
 
     :param bool read:
         Read the content, properties, metadata etc.
@@ -423,7 +423,7 @@ class DirectorySasPermissions(BlobSasPermissions):
 
 class FileSasPermissions(BlobSasPermissions):
     """FileSasPermissions class to be used with the
-    :func:`~azure.storage.file.datalake.generate_file_sas` function.
+    :func:`~azure.storage.filedatalake.generate_file_sas` function.
 
     :param bool read:
         Read the content, properties, metadata etc. Use the file as

@@ -1,7 +1,7 @@
 import os
 import random
 
-from azure.storage.file.datalake import (
+from azure.storage.filedatalake import (
     DataLakeServiceClient,
 )
 

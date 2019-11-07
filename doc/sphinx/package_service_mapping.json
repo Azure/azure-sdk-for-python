@@ -855,6 +855,11 @@
     "service_name": "Storage",
     "manually_generated": true
   },
+  "azure-storage-file-datalake": {
+    "category": "Client",
+    "service_name": "Storage",
+    "manually_generated": true
+  },
   "azure-storage-queue": {
     "category": "Client",
     "service_name": "Storage",

@@ -4,9 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from azure.storage.file.datalake import DataLakeDirectoryClient, DataLakeFileClient
-from azure.storage.file.datalake._models import UserDelegationKey
-
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -17,9 +14,10 @@ from azure.core.paging import ItemPaged
 from azure.storage.blob import BlobServiceClient
 from ._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._file_system_client import FileSystemClient
-
+from ._data_lake_directory_client import DataLakeDirectoryClient
+from ._data_lake_file_client import DataLakeFileClient
+from ._models import UserDelegationKey, FileSystemPropertiesPaged
 from ._serialize import convert_dfs_url_to_blob_url
-from ._models import FileSystemPropertiesPaged
 
 
 class DataLakeServiceClient(StorageAccountHostsMixin):
@@ -113,7 +111,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
         :return a DataLakeServiceClient
-        :rtype ~azure.storage.file.datalake.DataLakeServiceClient
+        :rtype ~azure.storage.filedatalake.DataLakeServiceClient
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'dfs')
         if 'secondary_hostname' not in kwargs:
@@ -136,7 +134,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: The user delegation key.
-        :rtype: ~azure.storage.file.datalake.UserDelegationKey
+        :rtype: ~azure.storage.filedatalake.UserDelegationKey
         """
         delegation_key = self._blob_service_client.get_user_delegation_key(key_start_time=key_start_time,
                                                                            key_expiry_time=key_expiry_time,
@@ -165,7 +163,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of FileSystemProperties.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.datalake.FileSystemProperties]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.FileSystemProperties]
 
         .. admonition:: Example:
 
@@ -200,10 +198,10 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         :type metadata: dict(str, str)
         :param public_access:
             Possible values include: file system, file.
-        :type public_access: ~azure.storage.file.datalake.PublicAccess
+        :type public_access: ~azure.storage.filedatalake.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.file.datalake.FileSystemClient
+        :rtype: ~azure.storage.filedatalake.FileSystemClient
 
         .. admonition:: Example:
 
@@ -229,8 +227,8 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         :param file_system:
             The file system to delete. This can either be the name of the file system,
             or an instance of FileSystemProperties.
-        :type file_system: str or ~azure.storage.file.datalake.FileSystemProperties
-        :keyword ~azure.storage.file.datalake.DataLakeLeaseClient lease:
+        :type file_system: str or ~azure.storage.filedatalake.FileSystemProperties
+        :keyword ~azure.storage.filedatalake.DataLakeLeaseClient lease:
             If specified, delete_file_system only succeeds if the
             file system's lease is active and matches this ID.
             Required if the file system has an active lease.
@@ -278,9 +276,9 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         :param file_system:
             The file system. This can either be the name of the file system,
             or an instance of FileSystemProperties.
-        :type file_system: str or ~azure.storage.file.datalake.FileSystemProperties
+        :type file_system: str or ~azure.storage.filedatalake.FileSystemProperties
         :returns: A FileSystemClient.
-        :rtype: ~azure.storage.file.datalake.FileSystemClient
+        :rtype: ~azure.storage.filedatalake.FileSystemClient
 
         .. admonition:: Example:
 
@@ -307,13 +305,13 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         :param file_system:
             The file system that the directory is in. This can either be the name of the file system,
             or an instance of FileSystemProperties.
-        :type file_system: str or ~azure.storage.file.datalake.FileSystemProperties
+        :type file_system: str or ~azure.storage.filedatalake.FileSystemProperties
         :param directory:
             The directory with which to interact. This can either be the name of the directory,
             or an instance of DirectoryProperties.
-        :type directory: str or ~azure.storage.file.datalake.DirectoryProperties
+        :type directory: str or ~azure.storage.filedatalake.DirectoryProperties
         :returns: A DataLakeDirectoryClient.
-        :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient
+        :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
 
         .. admonition:: Example:
 
@@ -344,13 +342,13 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         :param file_system:
             The file system that the file is in. This can either be the name of the file system,
             or an instance of FileSystemProperties.
-        :type file_system: str or ~azure.storage.file.datalake.FileSystemProperties
+        :type file_system: str or ~azure.storage.filedatalake.FileSystemProperties
         :param file_path:
             The file with which to interact. This can either be the full path of the file(from the root directory),
             or an instance of FileProperties. eg. directory/subdirectory/file
-        :type file_path: str or ~azure.storage.file.datalake.FileProperties
+        :type file_path: str or ~azure.storage.filedatalake.FileProperties
         :returns: A DataLakeFileClient.
-        :rtype: ~azure.storage.file.datalake..DataLakeFileClient
+        :rtype: ~azure.storage.filedatalake..DataLakeFileClient
 
         .. admonition:: Example:
 

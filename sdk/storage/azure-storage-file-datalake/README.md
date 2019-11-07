@@ -7,7 +7,7 @@ This preview package for Python includes ADLS Gen2 specific API support made ava
 2. Permission related operations (Get/Set ACLs) for hierarchical namespace enabled (HNS) accounts.
 
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/azure/storage/file/datalake) | [Package (PyPi)](https://pypi.org/project/azure-storage-file-datalake/) | [API reference documentation](https://aka.ms/azsdk-python-storage-file-datalake-ref) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/azure/storage/filedatalake) | [Package (PyPi)](https://pypi.org/project/azure-storage-file-datalake/) | [API reference documentation](https://aka.ms/azsdk-python-storage-filedatalake-ref) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples)
 
 
 ## Getting started
@@ -59,7 +59,7 @@ You can omit the credential if your account URL already has a SAS token.
 Once you have your account URL and credentials ready, you can create the DataLakeServiceClient:
 
 ```python
-from azure.storage.file.datalake import DataLakeServiceClient
+from azure.storage.filedatalake import DataLakeServiceClient
 
 service = DataLakeServiceClient(account_url="https://<my-storage-account-name>.dfs.core.windows.net/", credential=credential)
 ```
@@ -111,7 +111,7 @@ The following sections provide several code snippets covering some of the most c
 Create the DataLakeServiceClient using the connection string to your Azure Storage account.
 
 ```python
-from azure.storage.file.datalake import DataLakeServiceClient
+from azure.storage.filedatalake import DataLakeServiceClient
 
 service = DataLakeServiceClient.from_connection_string(conn_str="my_connection_string")
 ```
@@ -120,7 +120,7 @@ service = DataLakeServiceClient.from_connection_string(conn_str="my_connection_s
 Upload a file to your file system.
 
 ```python
-from azure.storage.file.datalake import DataLakeFileClient
+from azure.storage.filedatalake import DataLakeFileClient
 
 data = b"abc"
 file = DataLakeFileClient.from_connection_string("my_connection_string", 
@@ -134,7 +134,7 @@ file.flush_data(len(data))
 Download a file from your file system.
 
 ```python
-from azure.storage.file.datalake import DataLakeFileClient
+from azure.storage.filedatalake import DataLakeFileClient
 
 file = DataLakeFileClient.from_connection_string("my_connection_string", 
                                                  file_system_name="myfilesystem", file_path="myfile")
@@ -147,7 +147,7 @@ with open("./BlockDestination.txt", "wb") as my_file:
 List the paths in your file system.
 
 ```python
-from azure.storage.file.datalake import FileSystemClient
+from azure.storage.filedatalake import FileSystemClient
 
 file_system = FileSystemClient.from_connection_string("my_connection_string", file_system_name="myfilesystem")
 

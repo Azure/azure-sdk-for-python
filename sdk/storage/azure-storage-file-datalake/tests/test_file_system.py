@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 import unittest
 
-from azure.storage.file.datalake import DataLakeServiceClient, PublicAccess
+from azure.storage.filedatalake import DataLakeServiceClient, PublicAccess
 from testcase import (
     StorageTestCase,
     record,

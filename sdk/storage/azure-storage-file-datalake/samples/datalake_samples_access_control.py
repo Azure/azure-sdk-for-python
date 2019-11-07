@@ -2,7 +2,7 @@ import os
 import random
 import uuid
 
-from azure.storage.file.datalake import (
+from azure.storage.filedatalake import (
     DataLakeServiceClient,
 )
 
