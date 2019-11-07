@@ -73,14 +73,23 @@ class EventHubProducerClient(EventHubClient):
                         # self._producers_locks = [asyncio.Lock()] * num_of_producers
 
     @classmethod
-    def from_connection_string(cls, conn_str, **kwargs):
+    def from_connection_string(cls, conn_str: str,
+                               *,
+                               event_hub_path: str = None,
+                               logging_enable: bool = False,
+                               http_proxy: dict = None,
+                               auth_timeout: float = 60,
+                               user_agent: str = None,
+                               retry_total: int = 3,
+                               transport_type=None,
+                               ):
         # type: (str, Any) -> EventHubProducerClient
         """
         Create an EventHubProducerClient from a connection string.
 
         :param str conn_str: The connection string of an eventhub.
         :keyword str event_hub_path: The path of the specific Event Hub to connect the client to.
-        :keyword bool network_tracing: Whether to output network trace logs to the logger. Default is `False`.
+        :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword dict[str,Any] http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys - 'proxy_hostname' (str value) and 'proxy_port' (int value).
          Additionally the following keys may also be present - 'username', 'password'.

@@ -77,14 +77,24 @@ class EventHubConsumerClient(EventHubClient):
         self._closed = False
 
     @classmethod
-    def from_connection_string(cls, conn_str, **kwargs):
-        # type: (str, Any) -> EventHubConsumerClient
+    def from_connection_string(cls, conn_str: str,
+                               *,
+                               event_hub_path: str = None,
+                               logging_enable: bool = False,
+                               http_proxy: dict = None,
+                               auth_timeout: float = 60,
+                               user_agent: str = None,
+                               retry_total: int = 3,
+                               transport_type=None,
+                               partition_manager=None,
+                               load_balancing_interval: float = 10
+                               ):
         """
         Create an EventHubConsumerClient from a connection string.
 
         :param str conn_str: The connection string of an eventhub.
         :keyword str event_hub_path: The path of the specific Event Hub to connect the client to.
-        :keyword bool network_tracing: Whether to output network trace logs to the logger. Default is `False`.
+        :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword dict[str,Any] http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys - 'proxy_hostname' (str value) and 'proxy_port' (int value).
          Additionally the following keys may also be present - 'username', 'password'.
@@ -114,7 +124,17 @@ class EventHubConsumerClient(EventHubClient):
                 :caption: Create a new instance of the EventHubConsumerClient from connection string.
 
         """
-        return super(EventHubConsumerClient, cls).from_connection_string(conn_str, **kwargs)
+        return super(EventHubConsumerClient, cls).\
+            from_connection_string(conn_str,
+                                   event_hub_path=event_hub_path,
+                                   network_tracing=network_tracing,
+                                   http_proxy=http_proxy,
+                                   auth_timeout=auth_timeout,
+                                   user_agent=user_agent,
+                                   retry_total=retry_total,
+                                   transport_type=transport_type,
+                                   partition_manager=partition_manager,
+                                   load_balancing_interval=load_balancing_interval)
 
     async def receive(
             self, on_events, consumer_group: str,
