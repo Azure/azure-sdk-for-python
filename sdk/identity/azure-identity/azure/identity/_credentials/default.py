@@ -37,10 +37,11 @@ class DefaultAzureCredential(ChainedTokenCredential):
           defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
     :keyword bool exclude_environment_credential: Whether to exclude a service principal configured by environment
         variables from the credential. Defaults to **False**.
-    :keyword bool exclude_managed_identity: Whether to exclude managed identity from the credential. Defaults to
+    :keyword bool exclude_managed_identity_credential: Whether to exclude managed identity from the credential.
+        Defaults to **False**.
+    :keyword bool exclude_shared_token_cache_credential: Whether to exclude the shared token cache. Defaults to
         **False**.
-    :keyword bool exclude_shared_token_cache: Whether to exclude the shared token cache. Defaults to **False**.
-    :keyword bool exclude_interactive_authentication: Whether to exclude interactive browser authentication (see
+    :keyword bool exclude_interactive_browser_credential: Whether to exclude interactive browser authentication (see
         :class:`~azure.identity.InteractiveBrowserCredential`). Defaults to **True**.
     """
 
@@ -50,16 +51,16 @@ class DefaultAzureCredential(ChainedTokenCredential):
         username = kwargs.pop("username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
 
         exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
-        exclude_managed_identity = kwargs.pop("exclude_managed_identity", False)
-        exclude_shared_token_cache = kwargs.pop("exclude_shared_token_cache", False)
-        exclude_interactive_authentication = kwargs.pop("exclude_interactive_authentication", True)
+        exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
+        exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
+        exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
 
         credentials = []
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
-        if not exclude_managed_identity:
+        if not exclude_managed_identity_credential:
             credentials.append(ManagedIdentityCredential(**kwargs))
-        if not exclude_shared_token_cache and SharedTokenCacheCredential.supported():
+        if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
             try:
                 # username is only required to disambiguate, when the cache contains tokens for multiple identities
                 shared_cache = SharedTokenCacheCredential(username=username, authority=authority, **kwargs)
@@ -67,7 +68,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             except Exception as ex:  # pylint:disable=broad-except
                 # transitive dependency pywin32 doesn't support 3.8 (https://github.com/mhammond/pywin32/issues/1431)
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
-        if not exclude_interactive_authentication:
+        if not exclude_interactive_browser_credential:
             credentials.append(InteractiveBrowserCredential())
 
         super(DefaultAzureCredential, self).__init__(*credentials)
