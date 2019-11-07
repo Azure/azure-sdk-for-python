@@ -10,19 +10,19 @@
 # --------------------------------------------------------------------------
 
 from ._operations import Operations
+from ._net_app_resource_operations import NetAppResourceOperations
 from ._accounts_operations import AccountsOperations
 from ._pools_operations import PoolsOperations
 from ._volumes_operations import VolumesOperations
 from ._mount_targets_operations import MountTargetsOperations
 from ._snapshots_operations import SnapshotsOperations
-from ._azure_net_app_files_management_client_operations import AzureNetAppFilesManagementClientOperationsMixin
 
 __all__ = [
     'Operations',
+    'NetAppResourceOperations',
     'AccountsOperations',
     'PoolsOperations',
     'VolumesOperations',
     'MountTargetsOperations',
     'SnapshotsOperations',
-    'AzureNetAppFilesManagementClientOperationsMixin',
 ]
