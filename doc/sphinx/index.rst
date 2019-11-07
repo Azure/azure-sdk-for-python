@@ -2,7 +2,7 @@
 Azure SDK for Python
 ====================
 
-.. important:: The most part of this documentation has moved to https://docs.microsoft.com/python/azure
+.. important:: You can find all of the Python on Azure documentation at https://docs.microsoft.com/python/azure
 
 The Azure SDK for Python is a set of libraries which allow you to work on Azure for your management, runtime or data needs.
 
