@@ -15,10 +15,11 @@ from setuptools import setup, find_packages
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-storage-file-datalake"
-PACKAGE_PPRINT_NAME = "Azure Storage File DataLake"
+NAMESPACE_NAME = "azure.storage.filedatalake"
+PACKAGE_PPRINT_NAME = "Azure File DataLake Storage"
 
 # a-b-c => a/b/c
-package_folder_path = PACKAGE_NAME.replace('-', '/')
+package_folder_path = NAMESPACE_NAME.replace('.', '/')
 
 
 # azure v0.x is not compatible with this package
