@@ -509,6 +509,12 @@ class SapMonitor(Resource):
     :param log_analytics_workspace_arm_id: The ARM ID of the Log Analytics
      Workspace that is used for monitoring
     :type log_analytics_workspace_arm_id: str
+    :param log_analytics_workspace_id: The workspace ID of the log analytics
+     workspace to be used for monitoring
+    :type log_analytics_workspace_id: str
+    :param log_analytics_workspace_shared_key: The shared key of the log
+     analytics workspace that is used for monitoring
+    :type log_analytics_workspace_shared_key: str
     """
 
     _validation = {
@@ -538,6 +544,8 @@ class SapMonitor(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_resource_group_name': {'key': 'properties.managedResourceGroupName', 'type': 'str'},
         'log_analytics_workspace_arm_id': {'key': 'properties.logAnalyticsWorkspaceArmId', 'type': 'str'},
+        'log_analytics_workspace_id': {'key': 'properties.logAnalyticsWorkspaceID', 'type': 'str'},
+        'log_analytics_workspace_shared_key': {'key': 'properties.logAnalyticsWorkspaceSharedKey', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -554,6 +562,8 @@ class SapMonitor(Resource):
         self.provisioning_state = None
         self.managed_resource_group_name = None
         self.log_analytics_workspace_arm_id = kwargs.get('log_analytics_workspace_arm_id', None)
+        self.log_analytics_workspace_id = kwargs.get('log_analytics_workspace_id', None)
+        self.log_analytics_workspace_shared_key = kwargs.get('log_analytics_workspace_shared_key', None)
 
 
 class StorageProfile(Model):

@@ -509,6 +509,12 @@ class SapMonitor(Resource):
     :param log_analytics_workspace_arm_id: The ARM ID of the Log Analytics
      Workspace that is used for monitoring
     :type log_analytics_workspace_arm_id: str
+    :param log_analytics_workspace_id: The workspace ID of the log analytics
+     workspace to be used for monitoring
+    :type log_analytics_workspace_id: str
+    :param log_analytics_workspace_shared_key: The shared key of the log
+     analytics workspace that is used for monitoring
+    :type log_analytics_workspace_shared_key: str
     """
 
     _validation = {
@@ -538,9 +544,11 @@ class SapMonitor(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_resource_group_name': {'key': 'properties.managedResourceGroupName', 'type': 'str'},
         'log_analytics_workspace_arm_id': {'key': 'properties.logAnalyticsWorkspaceArmId', 'type': 'str'},
+        'log_analytics_workspace_id': {'key': 'properties.logAnalyticsWorkspaceID', 'type': 'str'},
+        'log_analytics_workspace_shared_key': {'key': 'properties.logAnalyticsWorkspaceSharedKey', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, hana_subnet: str=None, hana_hostname: str=None, hana_db_name: str=None, hana_db_sql_port: int=None, hana_db_username: str=None, hana_db_password: str=None, hana_db_password_key_vault_url: str=None, hana_db_credentials_msi_id: str=None, key_vault_id: str=None, log_analytics_workspace_arm_id: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, hana_subnet: str=None, hana_hostname: str=None, hana_db_name: str=None, hana_db_sql_port: int=None, hana_db_username: str=None, hana_db_password: str=None, hana_db_password_key_vault_url: str=None, hana_db_credentials_msi_id: str=None, key_vault_id: str=None, log_analytics_workspace_arm_id: str=None, log_analytics_workspace_id: str=None, log_analytics_workspace_shared_key: str=None, **kwargs) -> None:
         super(SapMonitor, self).__init__(location=location, **kwargs)
         self.hana_subnet = hana_subnet
         self.hana_hostname = hana_hostname
@@ -554,6 +562,8 @@ class SapMonitor(Resource):
         self.provisioning_state = None
         self.managed_resource_group_name = None
         self.log_analytics_workspace_arm_id = log_analytics_workspace_arm_id
+        self.log_analytics_workspace_id = log_analytics_workspace_id
+        self.log_analytics_workspace_shared_key = log_analytics_workspace_shared_key
 
 
 class StorageProfile(Model):
