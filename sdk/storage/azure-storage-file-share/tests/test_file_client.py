@@ -401,6 +401,16 @@ class StorageFileClientTest(FileTestCase):
         custom_headers = {'User-Agent': 'customer_user_agent'}
         service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
 
+    def test_error_with_blank_conn_str(self):
+        # Arrange
+
+        for service_type in SERVICES.items():
+            # Act
+            with self.assertRaises(ValueError) as e:
+                service = service_type[0].from_connection_string("", share_name="test", directory_path="foo/bar", file_path="temp/dat")
+            
+            self.assertEqual(
+                str(e.exception), "Connection string is either blank or malformed.")
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

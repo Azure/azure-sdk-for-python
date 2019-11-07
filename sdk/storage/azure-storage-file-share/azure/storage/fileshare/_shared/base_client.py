@@ -318,7 +318,7 @@ def format_shared_key_credential(account, credential):
 def parse_connection_str(conn_str, credential, service):
     conn_str = conn_str.rstrip(";")
     conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
-    if  any([len(tup) != 2 for tup in conn_settings]):
+    if  any(len(tup) != 2 for tup in conn_settings):
         raise ValueError("Connection string is either blank or malformed.")
     conn_settings = dict(conn_settings)
     endpoints = _SERVICE_PARAMS[service]
