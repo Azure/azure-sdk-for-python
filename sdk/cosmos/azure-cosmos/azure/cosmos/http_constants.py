@@ -406,7 +406,6 @@ class ResourceType(object):
     Offer = "offers"
     Topology = "topology"
     DatabaseAccount = "databaseaccount"
-    Media = "media"
 
     @staticmethod
     def IsCollectionChild(resourceType):
