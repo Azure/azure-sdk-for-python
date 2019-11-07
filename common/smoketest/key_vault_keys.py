@@ -4,8 +4,8 @@
 # ------------------------------------
 import os
 import uuid
-from azure.identity.aio import DefaultAzureCredential
-from azure.keyvault.keys.aio import KeyClient
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.keys import KeyClient
 
 
 class KeyVaultKeys:
@@ -21,23 +21,22 @@ class KeyVaultKeys:
 
         self.key_name = "key-name-" + uuid.uuid1().hex
 
-    async def create_rsa_key(self):
+    def create_rsa_key(self):
         print("Creating an RSA key...")
-        await self.key_client.create_rsa_key(name=self.key_name, size=2048)
+        self.key_client.create_rsa_key(name=self.key_name, size=2048, hsm=False)
         print("\tdone")
 
-    async def get_key(self):
+    def get_key(self):
         print("Getting a key...")
-        key = await self.key_client.get_key(name=self.key_name)
-        print(f"\tdone, key: {key.name}.")
+        key = self.key_client.get_key(name=self.key_name)
+        print("\tdone, key: %s." % key.name)
 
-    async def delete_key(self):
+    def delete_key(self):
         print("Deleting a key...")
-        deleted_key = await self.key_client.delete_key(name=self.key_name)
+        deleted_key = self.key_client.delete_key(name=self.key_name)
         print("\tdone: " + deleted_key.name)
 
-    async def run(self):
-
+    def run(self):
         print("")
         print("------------------------")
         print("Key Vault - Keys\nIdentity - Credential")
@@ -48,7 +47,7 @@ class KeyVaultKeys:
         print("")
 
         try:
-            await self.create_rsa_key()
-            await self.get_key()
+            self.create_rsa_key()
+            self.get_key()
         finally:
-            await self.delete_key()
+            self.delete_key()
