@@ -5,8 +5,8 @@ jobs:
   - job:
     strategy:
       matrix:
-        Python_374:
-          PythonVersion: '3.7.4'
+        Python_37:
+          PythonVersion: '3.7'
         Python_27:
           PythonVersion: '2.7'
           InstallAsyncRequirements: false
