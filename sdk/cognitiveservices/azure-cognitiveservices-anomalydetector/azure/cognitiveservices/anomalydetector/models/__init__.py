@@ -15,12 +15,16 @@ try:
     from .request_py3 import Request
     from .entire_detect_response_py3 import EntireDetectResponse
     from .last_detect_response_py3 import LastDetectResponse
+    from .change_point_detect_request_py3 import ChangePointDetectRequest
+    from .change_point_detect_response_py3 import ChangePointDetectResponse
 except (SyntaxError, ImportError):
     from .api_error import APIError, APIErrorException
     from .point import Point
     from .request import Request
     from .entire_detect_response import EntireDetectResponse
     from .last_detect_response import LastDetectResponse
+    from .change_point_detect_request import ChangePointDetectRequest
+    from .change_point_detect_response import ChangePointDetectResponse
 from .anomaly_detector_client_enums import (
     Granularity,
 )
@@ -31,5 +35,7 @@ __all__ = [
     'Request',
     'EntireDetectResponse',
     'LastDetectResponse',
+    'ChangePointDetectRequest',
+    'ChangePointDetectResponse',
     'Granularity',
 ]

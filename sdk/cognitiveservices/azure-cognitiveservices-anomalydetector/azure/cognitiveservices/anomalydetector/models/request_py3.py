@@ -22,10 +22,8 @@ class Request(Model):
      the data is not sorted correctly or there is duplicated timestamp, the API
      will not work. In such case, an error message will be returned.
     :type series: list[~azure.cognitiveservices.anomalydetector.models.Point]
-    :param granularity: Required. Can only be one of yearly, monthly, weekly,
-     daily, hourly or minutely. Granularity is used for verify whether input
-     series is valid. Possible values include: 'yearly', 'monthly', 'weekly',
-     'daily', 'hourly', 'minutely'
+    :param granularity: Required. Possible values include: 'yearly',
+     'monthly', 'weekly', 'daily', 'hourly', 'minutely'
     :type granularity: str or
      ~azure.cognitiveservices.anomalydetector.models.Granularity
     :param custom_interval: Custom Interval is used to set non-standard time
