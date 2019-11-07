@@ -19,6 +19,7 @@ from ._response_handlers import (
     deserialize_sentiment_result,
     deserialize_language_result
 )
+from ._models import Error
 if TYPE_CHECKING:
     from ._models import (
         LanguageInput,
@@ -31,13 +32,18 @@ if TYPE_CHECKING:
         DocumentError
     )
 
+MAX_BATCH_SIZE = 1000
+
 
 class TextAnalyticsClient(TextAnalyticsClientBase):
-    """The Text Analytics API is a suite of text analytics web services built with best-in-class Microsoft machine learning algorithms.
-    The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase and entity extraction as well as language detection.
+    """The Text Analytics API is a suite of text analytics web services built with best-in-class Microsoft
+    machine learning algorithms. The API can be used to analyze unstructured text for tasks such as sentiment analysis,
+    key phrase and entity extraction as well as language detection.
     No training data is needed to use this API; just bring your text data.
     This API uses advanced natural language processing techniques to deliver best in class predictions.
-    Further documentation can be found in https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview
+    Further documentation can be found in
+    https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview
+
     This API is currently available in:
     * Australia East - australiaeast.api.cognitive.microsoft.com
     * Brazil South - brazilsouth.api.cognitive.microsoft.com
@@ -76,6 +82,38 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         super(TextAnalyticsClient, self).__init__(credentials=credential, **kwargs)
         self._client = TextAnalyticsAPI(endpoint=endpoint, credentials=credential, pipeline=self._pipeline)
 
+    def _segment_batch(self, docs, func, **kwargs):
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", False)
+        cls = kwargs.pop("cls", None)
+
+        segmented_batches, result = [], []
+        num_batches = len(docs) // MAX_BATCH_SIZE
+        for x in range(num_batches):
+            segmented_batches.append(docs[x*MAX_BATCH_SIZE:(x+1)*MAX_BATCH_SIZE])
+        segmented_batches.append(docs[num_batches*MAX_BATCH_SIZE:])
+
+        try:
+            for doc in segmented_batches:
+                response = func(
+                    documents=doc,
+                    model_version=model_version,
+                    show_stats=show_stats,
+                    cls=cls,
+                    **kwargs
+                )
+
+                # this might be unnecessary... e.g. accounting for a batch of 1000 to only return 1 Error
+                # and duplicating that Error such that the ordered response is maintained
+                if len(response) != len(doc):
+                    if isinstance(response[0], Error) and len(response) == 1:
+                        [result.append(response) for _ in doc]
+                else:
+                    result.extend(response)
+            return result
+        except HttpResponseError as error:
+            process_batch_error(error)
+
     def detect_language(self,
                         documents,  # type: List[str] or List[LanguageInput]
                         model_version=None,  # type: Optional[str]
@@ -107,6 +145,16 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
         """
         docs = _validate_batch_input(documents)
+        if len(docs) > MAX_BATCH_SIZE:
+            return self._segment_batch(
+                docs,
+                self._client.languages,
+                model_version=model_version,
+                show_stats=show_stats,
+                cls=deserialize_language_result,
+                **kwargs
+            )
+
         try:
             return self._client.languages(
                 documents=docs,
@@ -118,12 +166,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_batch_error(error)
 
-    def detect_entities(self,
-                        documents,  # type: List[str] or List[MultiLanguageInput]
-                        model_version=None,  # type: Optional[str]
-                        show_stats=False,  # type:  Optional[bool]
-                        **kwargs  # type: Any
-                        ):
+    def recognize_entities(self,
+                           documents,  # type: List[str] or List[MultiLanguageInput]
+                           model_version=None,  # type: Optional[str]
+                           show_stats=False,  # type:  Optional[bool]
+                           **kwargs  # type: Any
+                           ):
         # type: (...) -> List[Union[DocumentEntities, DocumentError]]
         """Named Entity Recognition.
 
@@ -152,6 +200,16 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
         """
         docs = _validate_batch_input(documents)
+        if len(docs) > MAX_BATCH_SIZE:
+            return self._segment_batch(
+                docs,
+                self._client.entities_recognition_general,
+                model_version=model_version,
+                show_stats=show_stats,
+                cls=deserialize_entities_result,
+                **kwargs
+            )
+
         try:
             return self._client.entities_recognition_general(
                 documents=docs,
@@ -163,12 +221,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_batch_error(error)
 
-    def detect_pii_entities(self,
-                            documents,  # type: List[str] or List[MultiLanguageInput]
-                            model_version=None,  # type: Optional[str]
-                            show_stats=False,  # type:  Optional[bool]
-                            **kwargs  # type: Any
-                            ):
+    def recognize_pii_entities(self,
+                               documents,  # type: List[str] or List[MultiLanguageInput]
+                               model_version=None,  # type: Optional[str]
+                               show_stats=False,  # type:  Optional[bool]
+                               **kwargs  # type: Any
+                               ):
         # type: (...) -> List[Union[DocumentEntities, DocumentError]]
         """Entities containing personal information.
 
@@ -195,6 +253,16 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
         """
         docs = _validate_batch_input(documents)
+        if len(docs) > MAX_BATCH_SIZE:
+            return self._segment_batch(
+                docs,
+                self._client.entities_recognition_pii,
+                model_version=model_version,
+                show_stats=show_stats,
+                cls=deserialize_entities_result,
+                **kwargs
+            )
+
         try:
             return self._client.entities_recognition_pii(
                 documents=docs,
@@ -206,12 +274,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_batch_error(error)
 
-    def detect_linked_entities(self,
-                               documents,  # type: List[str] or List[MultiLanguageInput]
-                               model_version=None,  # type: Optional[str]
-                               show_stats=False,  # type:  Optional[bool]
-                               **kwargs  # type: Any
-                               ):
+    def recognize_linked_entities(self,
+                                  documents,  # type: List[str] or List[MultiLanguageInput]
+                                  model_version=None,  # type: Optional[str]
+                                  show_stats=False,  # type:  Optional[bool]
+                                  **kwargs  # type: Any
+                                  ):
         # type: (...) -> List[Union[DocumentLinkedEntities, DocumentError]]
         """Linked entities from a well-known knowledge base.
 
@@ -238,6 +306,16 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
         """
         docs = _validate_batch_input(documents)
+        if len(docs) > MAX_BATCH_SIZE:
+            return self._segment_batch(
+                docs,
+                self._client.entities_linking,
+                model_version=model_version,
+                show_stats=show_stats,
+                cls=deserialize_linked_entities_result,
+                **kwargs
+            )
+
         try:
             return self._client.entities_linking(
                 documents=docs,
@@ -249,12 +327,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_batch_error(error)
 
-    def detect_key_phrases(self,
-                           documents,  # type: List[str] or List[MultiLanguageInput]
-                           model_version=None,  # type: Optional[str]
-                           show_stats=False,  # type:  Optional[bool]
-                           **kwargs  # type: Any
-                           ):
+    def extract_key_phrases(self,
+                            documents,  # type: List[str] or List[MultiLanguageInput]
+                            model_version=None,  # type: Optional[str]
+                            show_stats=False,  # type:  Optional[bool]
+                            **kwargs  # type: Any
+                            ):
         # type: (...) -> List[Union[DocumentKeyPhrases, DocumentError]]
         """Key Phrases.
 
@@ -280,6 +358,16 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
         """
         docs = _validate_batch_input(documents)
+        if len(docs) > MAX_BATCH_SIZE:
+            return self._segment_batch(
+                docs,
+                self._client.key_phrases,
+                model_version=model_version,
+                show_stats=show_stats,
+                cls=deserialize_key_phrases_result,
+                **kwargs
+            )
+
         try:
             return self._client.key_phrases(
                 documents=docs,
@@ -291,12 +379,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_batch_error(error)
 
-    def detect_sentiment(self,
-                         documents,  # type: List[str] or List[MultiLanguageInput]
-                         model_version=None,  # type: Optional[str]
-                         show_stats=False,  # type:  Optional[bool]
-                         **kwargs  # type: Any
-                         ):
+    def analyze_sentiment(self,
+                          documents,  # type: List[str] or List[MultiLanguageInput]
+                          model_version=None,  # type: Optional[str]
+                          show_stats=False,  # type:  Optional[bool]
+                          **kwargs  # type: Any
+                          ):
         # type: (...) -> List[Union[DocumentSentiment, DocumentError]]
         """Sentiment.
 
@@ -323,6 +411,16 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
         """
         docs = _validate_batch_input(documents)
+        if len(docs) > MAX_BATCH_SIZE:
+            return self._segment_batch(
+                docs,
+                self._client.sentiment,
+                model_version=model_version,
+                show_stats=show_stats,
+                cls=deserialize_sentiment_result,
+                **kwargs
+            )
+
         try:
             return self._client.sentiment(
                 documents=docs,

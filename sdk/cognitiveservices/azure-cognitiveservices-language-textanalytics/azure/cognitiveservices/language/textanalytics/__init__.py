@@ -28,11 +28,11 @@ __all__ = [
     'LanguageInput',
     'MultiLanguageInput',
     'single_detect_language',
-    'single_detect_entities',
-    'single_detect_pii_entities',
-    'single_detect_linked_entities',
-    'single_detect_key_phrases',
-    'single_detect_sentiment'
+    'single_recognize_entities',
+    'single_recognize_pii_entities',
+    'single_recognize_linked_entities',
+    'single_extract_key_phrases',
+    'single_analyze_sentiment'
 ]
 
 __version__ = VERSION
@@ -61,7 +61,7 @@ def single_detect_language(
         return response[0].detected_languages[0]  # DetectedLanguage
 
 
-def single_detect_entities(
+def single_recognize_entities(
         endpoint,  # type: str
         credential,  # type: str
         text,  # type: str
@@ -73,7 +73,7 @@ def single_detect_entities(
     doc = _validate_single_input(text, "language", language)
     show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential) as client:
-        response = client.detect_entities(
+        response = client.recognize_entities(
             documents=doc,
             model_version=model_version,
             show_stats=show_stats,
@@ -85,7 +85,7 @@ def single_detect_entities(
             return process_entities_error(response)
 
 
-def single_detect_pii_entities(
+def single_recognize_pii_entities(
         endpoint,  # type: str
         credential,  # type: str
         text,  # type: str
@@ -97,7 +97,7 @@ def single_detect_pii_entities(
     doc = _validate_single_input(text, "language", language)
     show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential) as client:
-        response = client.detect_pii_entities(
+        response = client.recognize_pii_entities(
             documents=doc,
             model_version=model_version,
             show_stats=show_stats,
@@ -109,7 +109,7 @@ def single_detect_pii_entities(
             return process_entities_error(response)
 
 
-def single_detect_linked_entities(
+def single_recognize_linked_entities(
         endpoint,  # type: str
         credential,  # type: str
         text,  # type: str
@@ -121,7 +121,7 @@ def single_detect_linked_entities(
     doc = _validate_single_input(text, "language", language)
     show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential) as client:
-        response = client.detect_linked_entities(
+        response = client.recognize_linked_entities(
             documents=doc,
             model_version=model_version,
             show_stats=show_stats,
@@ -133,7 +133,7 @@ def single_detect_linked_entities(
             return process_entities_error(response)
 
 
-def single_detect_key_phrases(
+def single_extract_key_phrases(
         endpoint,  # type: str
         credential,  # type: str
         text,  # type: str
@@ -145,7 +145,7 @@ def single_detect_key_phrases(
     doc = _validate_single_input(text, "language", language)
     show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential) as client:
-        response = client.detect_key_phrases(
+        response = client.extract_key_phrases(
             documents=doc,
             model_version=model_version,
             show_stats=show_stats,
@@ -156,7 +156,7 @@ def single_detect_key_phrases(
         return response[0].key_phrases  # list[str]
 
 
-def single_detect_sentiment(
+def single_analyze_sentiment(
         endpoint,  # type: str
         credential,  # type: str
         text,  # type: str
@@ -168,7 +168,7 @@ def single_detect_sentiment(
     doc = _validate_single_input(text, "language", language)
     show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential) as client:
-        response = client.detect_sentiment(
+        response = client.analyze_sentiment(
             documents=doc,
             model_version=model_version,
             show_stats=show_stats,

@@ -6,6 +6,7 @@ from collections import OrderedDict
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import (
     HttpResponseError,
+    ClientAuthenticationError,
     DecodeError
 )
 
@@ -28,6 +29,8 @@ from ._models import (
 
 
 def process_entities_error(error):
+    """This should be removed after the bug with entities APIs is fixed.
+    """
     raise_error = HttpResponseError
     error_message = error.message
     error_code = error.code
@@ -38,6 +41,10 @@ def process_entities_error(error):
 
 
 def process_single_error(error):
+    """We actually raise the DocumentError for single text operations.
+    :param error:
+    :return:
+    """
     raise_error = HttpResponseError
     error_message = error.error['innerError']['message']
     error_code = error.error['code']
@@ -49,6 +56,8 @@ def process_single_error(error):
 
 def process_batch_error(error):
     raise_error = HttpResponseError
+    if error.status_code == 401:
+        raise_error = ClientAuthenticationError
     error_message = error.message
 
     try:
