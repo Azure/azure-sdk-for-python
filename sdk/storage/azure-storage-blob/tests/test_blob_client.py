@@ -559,17 +559,17 @@ class StorageClientTest(StorageTestCase):
         custom_headers = {'User-Agent': 'customer_user_agent'}
         service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
 
-    @GlobalStorageAccountPreparer()
-    def test_error_with_blank_conn_str(self, resource_group, location, storage_account, storage_account_key):
+    def test_error_with_malformed_conn_str(self):
         # Arrange
 
-        for service_type in SERVICES.items():
-            # Act
-            with self.assertRaises(ValueError) as e:
-                service = service_type[0].from_connection_string("", blob_name="test", container_name="container")
-            
-            self.assertEqual(
-                str(e.exception), "Connection string is either blank or malformed.")
+        for conn_str in ["", "foobar", "foobar=baz=foo", "foo;bar;baz", "foo=;bar=;", "=", ";", "=;=="]:
+            for service_type in SERVICES.items():
+                # Act
+                with self.assertRaises(ValueError) as e:
+                    service = service_type[0].from_connection_string(conn_str, blob_name="test", container_name="foo/bar")
+                
+                self.assertEqual(
+                    str(e.exception), "Connection string is either blank or malformed.")
 
 
 # ------------------------------------------------------------------------------
