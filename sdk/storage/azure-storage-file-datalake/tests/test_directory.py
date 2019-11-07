@@ -295,7 +295,7 @@ class DirectoryTest(StorageTestCase):
         # Assert
         self.assertTrue(properties)
         self.assertIsNotNone(properties.metadata)
-        self.assertEqual(properties.metadata['hello'], metadata['hello'])
+        self.assertEqual(properties.metadata['hello'], "abc")
 
     @record
     def test_using_directory_sas_to_read(self):
