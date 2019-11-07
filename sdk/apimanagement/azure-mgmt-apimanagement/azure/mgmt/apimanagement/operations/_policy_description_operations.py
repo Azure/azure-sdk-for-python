@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class PolicySnippetOperations(object):
-    """PolicySnippetOperations operations.
+class PolicyDescriptionOperations(object):
+    """PolicyDescriptionOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -40,7 +40,7 @@ class PolicySnippetOperations(object):
 
     def list_by_service(
             self, resource_group_name, service_name, scope=None, custom_headers=None, raw=False, **operation_config):
-        """Lists all policy snippets.
+        """Lists all policy descriptions.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -55,9 +55,9 @@ class PolicySnippetOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PolicySnippetsCollection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.apimanagement.models.PolicySnippetsCollection or
-         ~msrest.pipeline.ClientRawResponse
+        :return: PolicyDescriptionCollection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.apimanagement.models.PolicyDescriptionCollection
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
@@ -95,11 +95,11 @@ class PolicySnippetOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PolicySnippetsCollection', response)
+            deserialized = self._deserialize('PolicyDescriptionCollection', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list_by_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/policySnippets'}
+    list_by_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/policyDescriptions'}

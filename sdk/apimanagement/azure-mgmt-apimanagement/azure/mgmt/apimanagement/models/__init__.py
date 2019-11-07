@@ -110,8 +110,8 @@ try:
     from ._models_py3 import PipelineDiagnosticSettings
     from ._models_py3 import PolicyCollection
     from ._models_py3 import PolicyContract
-    from ._models_py3 import PolicySnippetContract
-    from ._models_py3 import PolicySnippetsCollection
+    from ._models_py3 import PolicyDescriptionCollection
+    from ._models_py3 import PolicyDescriptionContract
     from ._models_py3 import PortalDelegationSettings
     from ._models_py3 import PortalSigninSettings
     from ._models_py3 import PortalSignupSettings
@@ -268,8 +268,8 @@ except (SyntaxError, ImportError):
     from ._models import PipelineDiagnosticSettings
     from ._models import PolicyCollection
     from ._models import PolicyContract
-    from ._models import PolicySnippetContract
-    from ._models import PolicySnippetsCollection
+    from ._models import PolicyDescriptionCollection
+    from ._models import PolicyDescriptionContract
     from ._models import PortalDelegationSettings
     from ._models import PortalSigninSettings
     from ._models import PortalSignupSettings
@@ -499,8 +499,8 @@ __all__ = [
     'PipelineDiagnosticSettings',
     'PolicyCollection',
     'PolicyContract',
-    'PolicySnippetContract',
-    'PolicySnippetsCollection',
+    'PolicyDescriptionCollection',
+    'PolicyDescriptionContract',
     'PortalDelegationSettings',
     'PortalSigninSettings',
     'PortalSignupSettings',

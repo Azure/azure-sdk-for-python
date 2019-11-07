@@ -134,7 +134,7 @@ class ApiTagDescriptionOperations(object):
     list_by_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tagDescriptions'}
 
     def get_entity_tag(
-            self, resource_group_name, service_name, api_id, tag_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, api_id, tag_description_id, custom_headers=None, raw=False, **operation_config):
         """Gets the entity state version of the tag specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -145,9 +145,10 @@ class ApiTagDescriptionOperations(object):
          API Management service instance. Non-current revision has ;rev=n as a
          suffix where n is the revision number.
         :type api_id: str
-        :param tag_id: Tag identifier. Must be unique in the current API
-         Management service instance.
-        :type tag_id: str
+        :param tag_description_id: Tag description identifier. Used when
+         creating tagDescription for API/Tag association. Based on API and Tag
+         names.
+        :type tag_description_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -164,7 +165,7 @@ class ApiTagDescriptionOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
             'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'tagId': self._serialize.url("tag_id", tag_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'tagDescriptionId': self._serialize.url("tag_description_id", tag_description_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -195,10 +196,10 @@ class ApiTagDescriptionOperations(object):
                 'ETag': 'str',
             })
             return client_raw_response
-    get_entity_tag.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tagDescriptions/{tagId}'}
+    get_entity_tag.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tagDescriptions/{tagDescriptionId}'}
 
     def get(
-            self, resource_group_name, service_name, api_id, tag_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, api_id, tag_description_id, custom_headers=None, raw=False, **operation_config):
         """Get Tag description in scope of API.
 
         :param resource_group_name: The name of the resource group.
@@ -209,9 +210,10 @@ class ApiTagDescriptionOperations(object):
          API Management service instance. Non-current revision has ;rev=n as a
          suffix where n is the revision number.
         :type api_id: str
-        :param tag_id: Tag identifier. Must be unique in the current API
-         Management service instance.
-        :type tag_id: str
+        :param tag_description_id: Tag description identifier. Used when
+         creating tagDescription for API/Tag association. Based on API and Tag
+         names.
+        :type tag_description_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -229,7 +231,7 @@ class ApiTagDescriptionOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
             'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'tagId': self._serialize.url("tag_id", tag_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'tagDescriptionId': self._serialize.url("tag_description_id", tag_description_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -269,10 +271,10 @@ class ApiTagDescriptionOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tagDescriptions/{tagId}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tagDescriptions/{tagDescriptionId}'}
 
     def create_or_update(
-            self, resource_group_name, service_name, api_id, tag_id, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, api_id, tag_description_id, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Create/Update tag description in scope of the Api.
 
         :param resource_group_name: The name of the resource group.
@@ -283,9 +285,10 @@ class ApiTagDescriptionOperations(object):
          API Management service instance. Non-current revision has ;rev=n as a
          suffix where n is the revision number.
         :type api_id: str
-        :param tag_id: Tag identifier. Must be unique in the current API
-         Management service instance.
-        :type tag_id: str
+        :param tag_description_id: Tag description identifier. Used when
+         creating tagDescription for API/Tag association. Based on API and Tag
+         names.
+        :type tag_description_id: str
         :param parameters: Create parameters.
         :type parameters:
          ~azure.mgmt.apimanagement.models.TagDescriptionCreateParameters
@@ -309,7 +312,7 @@ class ApiTagDescriptionOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
             'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'tagId': self._serialize.url("tag_id", tag_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'tagDescriptionId': self._serialize.url("tag_description_id", tag_description_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -360,10 +363,10 @@ class ApiTagDescriptionOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tagDescriptions/{tagId}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tagDescriptions/{tagDescriptionId}'}
 
     def delete(
-            self, resource_group_name, service_name, api_id, tag_id, if_match, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, api_id, tag_description_id, if_match, custom_headers=None, raw=False, **operation_config):
         """Delete tag description for the Api.
 
         :param resource_group_name: The name of the resource group.
@@ -374,9 +377,10 @@ class ApiTagDescriptionOperations(object):
          API Management service instance. Non-current revision has ;rev=n as a
          suffix where n is the revision number.
         :type api_id: str
-        :param tag_id: Tag identifier. Must be unique in the current API
-         Management service instance.
-        :type tag_id: str
+        :param tag_description_id: Tag description identifier. Used when
+         creating tagDescription for API/Tag association. Based on API and Tag
+         names.
+        :type tag_description_id: str
         :param if_match: ETag of the Entity. ETag should match the current
          entity state from the header response of the GET request or it should
          be * for unconditional update.
@@ -397,7 +401,7 @@ class ApiTagDescriptionOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
             'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'tagId': self._serialize.url("tag_id", tag_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'tagDescriptionId': self._serialize.url("tag_description_id", tag_description_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -426,4 +430,4 @@ class ApiTagDescriptionOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tagDescriptions/{tagId}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tagDescriptions/{tagDescriptionId}'}

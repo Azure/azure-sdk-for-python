@@ -45,7 +45,7 @@ from ._notification_recipient_user_operations import NotificationRecipientUserOp
 from ._notification_recipient_email_operations import NotificationRecipientEmailOperations
 from ._open_id_connect_provider_operations import OpenIdConnectProviderOperations
 from ._policy_operations import PolicyOperations
-from ._policy_snippet_operations import PolicySnippetOperations
+from ._policy_description_operations import PolicyDescriptionOperations
 from ._sign_in_settings_operations import SignInSettingsOperations
 from ._sign_up_settings_operations import SignUpSettingsOperations
 from ._delegation_settings_operations import DelegationSettingsOperations
@@ -108,7 +108,7 @@ __all__ = [
     'NotificationRecipientEmailOperations',
     'OpenIdConnectProviderOperations',
     'PolicyOperations',
-    'PolicySnippetOperations',
+    'PolicyDescriptionOperations',
     'SignInSettingsOperations',
     'SignUpSettingsOperations',
     'DelegationSettingsOperations',

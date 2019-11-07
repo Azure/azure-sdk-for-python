@@ -5079,58 +5079,61 @@ class PolicyContract(Resource):
         self.format = format
 
 
-class PolicySnippetContract(Model):
-    """Policy snippet.
+class PolicyDescriptionCollection(Model):
+    """Descriptions of APIM policies.
+
+    :param value: Descriptions of APIM policies.
+    :type value:
+     list[~azure.mgmt.apimanagement.models.PolicyDescriptionContract]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PolicyDescriptionContract]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(PolicyDescriptionCollection, self).__init__(**kwargs)
+        self.value = value
+
+
+class PolicyDescriptionContract(Resource):
+    """Policy description details.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Snippet name.
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar content: Snippet content.
-    :vartype content: str
-    :ivar tool_tip: Snippet toolTip.
-    :vartype tool_tip: str
+    :ivar type: Resource type for API Management resource.
+    :vartype type: str
+    :ivar description: Policy description.
+    :vartype description: str
     :ivar scope: Binary OR value of the Snippet scope.
     :vartype scope: int
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
-        'content': {'readonly': True},
-        'tool_tip': {'readonly': True},
+        'type': {'readonly': True},
+        'description': {'readonly': True},
         'scope': {'readonly': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'content': {'key': 'content', 'type': 'str'},
-        'tool_tip': {'key': 'toolTip', 'type': 'str'},
-        'scope': {'key': 'scope', 'type': 'int'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'scope': {'key': 'properties.scope', 'type': 'int'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(PolicySnippetContract, self).__init__(**kwargs)
-        self.name = None
-        self.content = None
-        self.tool_tip = None
+        super(PolicyDescriptionContract, self).__init__(**kwargs)
+        self.description = None
         self.scope = None
-
-
-class PolicySnippetsCollection(Model):
-    """The response of the list policy snippets operation.
-
-    :param value: Policy snippet value.
-    :type value: list[~azure.mgmt.apimanagement.models.PolicySnippetContract]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[PolicySnippetContract]'},
-    }
-
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(PolicySnippetsCollection, self).__init__(**kwargs)
-        self.value = value
 
 
 class PortalDelegationSettings(Resource):
@@ -6793,6 +6796,8 @@ class TagDescriptionContract(Resource):
     :param external_docs_description: Description of the external resources
      describing the tag.
     :type external_docs_description: str
+    :param tag_id: Identifier of the tag in the form of /tags/{tagId}
+    :type tag_id: str
     :param display_name: Tag name.
     :type display_name: str
     """
@@ -6812,14 +6817,16 @@ class TagDescriptionContract(Resource):
         'description': {'key': 'properties.description', 'type': 'str'},
         'external_docs_url': {'key': 'properties.externalDocsUrl', 'type': 'str'},
         'external_docs_description': {'key': 'properties.externalDocsDescription', 'type': 'str'},
+        'tag_id': {'key': 'properties.tagId', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
     }
 
-    def __init__(self, *, description: str=None, external_docs_url: str=None, external_docs_description: str=None, display_name: str=None, **kwargs) -> None:
+    def __init__(self, *, description: str=None, external_docs_url: str=None, external_docs_description: str=None, tag_id: str=None, display_name: str=None, **kwargs) -> None:
         super(TagDescriptionContract, self).__init__(**kwargs)
         self.description = description
         self.external_docs_url = external_docs_url
         self.external_docs_description = external_docs_description
+        self.tag_id = tag_id
         self.display_name = display_name
 
 

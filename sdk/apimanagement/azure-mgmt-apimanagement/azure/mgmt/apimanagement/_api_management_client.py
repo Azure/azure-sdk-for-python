@@ -49,7 +49,7 @@ from .operations import NotificationRecipientUserOperations
 from .operations import NotificationRecipientEmailOperations
 from .operations import OpenIdConnectProviderOperations
 from .operations import PolicyOperations
-from .operations import PolicySnippetOperations
+from .operations import PolicyDescriptionOperations
 from .operations import SignInSettingsOperations
 from .operations import SignUpSettingsOperations
 from .operations import DelegationSettingsOperations
@@ -155,8 +155,8 @@ class ApiManagementClient(SDKClient):
     :vartype open_id_connect_provider: azure.mgmt.apimanagement.operations.OpenIdConnectProviderOperations
     :ivar policy: Policy operations
     :vartype policy: azure.mgmt.apimanagement.operations.PolicyOperations
-    :ivar policy_snippet: PolicySnippet operations
-    :vartype policy_snippet: azure.mgmt.apimanagement.operations.PolicySnippetOperations
+    :ivar policy_description: PolicyDescription operations
+    :vartype policy_description: azure.mgmt.apimanagement.operations.PolicyDescriptionOperations
     :ivar sign_in_settings: SignInSettings operations
     :vartype sign_in_settings: azure.mgmt.apimanagement.operations.SignInSettingsOperations
     :ivar sign_up_settings: SignUpSettings operations
@@ -299,7 +299,7 @@ class ApiManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.policy = PolicyOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.policy_snippet = PolicySnippetOperations(
+        self.policy_description = PolicyDescriptionOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.sign_in_settings = SignInSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
