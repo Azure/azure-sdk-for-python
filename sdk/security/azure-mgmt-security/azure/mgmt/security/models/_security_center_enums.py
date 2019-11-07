@@ -176,6 +176,13 @@ class Severity(str, Enum):
     high = "High"
 
 
+class RuleState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+    expired = "Expired"
+
+
 class ConnectionType(str, Enum):
 
     internal = "Internal"

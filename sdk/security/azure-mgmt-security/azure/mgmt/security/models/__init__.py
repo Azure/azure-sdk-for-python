@@ -27,6 +27,8 @@ try:
     from ._models_py3 import AscLocation
     from ._models_py3 import AtaExternalSecuritySolution
     from ._models_py3 import AtaSolutionProperties
+    from ._models_py3 import AutoDismissAlertsRule
+    from ._models_py3 import AutoDismissAlertsScope
     from ._models_py3 import AutoProvisioningSetting
     from ._models_py3 import AwsResourceDetails
     from ._models_py3 import AzureResourceDetails
@@ -88,6 +90,7 @@ try:
     from ._models_py3 import RegulatoryComplianceStandard
     from ._models_py3 import Resource
     from ._models_py3 import ResourceDetails
+    from ._models_py3 import RuleImpact
     from ._models_py3 import SecurityContact
     from ._models_py3 import SecuritySubAssessment
     from ._models_py3 import SecurityTask
@@ -131,6 +134,8 @@ except (SyntaxError, ImportError):
     from ._models import AscLocation
     from ._models import AtaExternalSecuritySolution
     from ._models import AtaSolutionProperties
+    from ._models import AutoDismissAlertsRule
+    from ._models import AutoDismissAlertsScope
     from ._models import AutoProvisioningSetting
     from ._models import AwsResourceDetails
     from ._models import AzureResourceDetails
@@ -192,6 +197,7 @@ except (SyntaxError, ImportError):
     from ._models import RegulatoryComplianceStandard
     from ._models import Resource
     from ._models import ResourceDetails
+    from ._models import RuleImpact
     from ._models import SecurityContact
     from ._models import SecuritySubAssessment
     from ._models import SecurityTask
@@ -220,6 +226,7 @@ except (SyntaxError, ImportError):
 from ._paged_models import AlertPaged
 from ._paged_models import AllowedConnectionsResourcePaged
 from ._paged_models import AscLocationPaged
+from ._paged_models import AutoDismissAlertsRulePaged
 from ._paged_models import AutoProvisioningSettingPaged
 from ._paged_models import CompliancePaged
 from ._paged_models import ComplianceResultPaged
@@ -265,6 +272,7 @@ from ._security_center_enums import (
     State,
     SubAssessmentStatusCode,
     Severity,
+    RuleState,
     ConnectionType,
 )
 
@@ -286,6 +294,8 @@ __all__ = [
     'AscLocation',
     'AtaExternalSecuritySolution',
     'AtaSolutionProperties',
+    'AutoDismissAlertsRule',
+    'AutoDismissAlertsScope',
     'AutoProvisioningSetting',
     'AwsResourceDetails',
     'AzureResourceDetails',
@@ -347,6 +357,7 @@ __all__ = [
     'RegulatoryComplianceStandard',
     'Resource',
     'ResourceDetails',
+    'RuleImpact',
     'SecurityContact',
     'SecuritySubAssessment',
     'SecurityTask',
@@ -396,6 +407,7 @@ __all__ = [
     'RegulatoryComplianceControlPaged',
     'RegulatoryComplianceAssessmentPaged',
     'SecuritySubAssessmentPaged',
+    'AutoDismissAlertsRulePaged',
     'ResourceStatus',
     'PricingTier',
     'ReportedSeverity',
@@ -419,5 +431,6 @@ __all__ = [
     'State',
     'SubAssessmentStatusCode',
     'Severity',
+    'RuleState',
     'ConnectionType',
 ]

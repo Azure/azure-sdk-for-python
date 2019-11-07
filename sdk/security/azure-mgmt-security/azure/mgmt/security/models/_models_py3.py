@@ -941,6 +941,101 @@ class AtaSolutionProperties(ExternalSecuritySolutionProperties):
         self.last_event_received = last_event_received
 
 
+class AutoDismissAlertsRule(Resource):
+    """Describes the auto dismiss rule.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param alert_type: Required. Type of the auto dismissed alert. For all
+     alert types, use '*'
+    :type alert_type: str
+    :ivar last_modified_utc: The last time this rule was modified
+    :vartype last_modified_utc: datetime
+    :param expiration_date_utc: Expiration date of the rule
+    :type expiration_date_utc: datetime
+    :param reason: Required. The reason for dismissing the alert
+    :type reason: str
+    :param state: Required. Possible states of the rule. Possible values
+     include: 'Enabled', 'Disabled', 'Expired'
+    :type state: str or ~azure.mgmt.security.models.RuleState
+    :param comment: Any comment regarding the rule
+    :type comment: str
+    :param auto_dismiss_alerts_scope: The auto dismiss conditions
+    :type auto_dismiss_alerts_scope:
+     ~azure.mgmt.security.models.AutoDismissAlertsScope
+    :ivar rule_impact: Statistics about the impact of this rule, if enabled
+    :vartype rule_impact: ~azure.mgmt.security.models.RuleImpact
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'alert_type': {'required': True},
+        'last_modified_utc': {'readonly': True},
+        'reason': {'required': True},
+        'state': {'required': True},
+        'rule_impact': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'alert_type': {'key': 'properties.alertType', 'type': 'str'},
+        'last_modified_utc': {'key': 'properties.lastModifiedUTC', 'type': 'iso-8601'},
+        'expiration_date_utc': {'key': 'properties.expirationDateUTC', 'type': 'iso-8601'},
+        'reason': {'key': 'properties.reason', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'RuleState'},
+        'comment': {'key': 'properties.comment', 'type': 'str'},
+        'auto_dismiss_alerts_scope': {'key': 'properties.autoDismissAlertsScope', 'type': 'AutoDismissAlertsScope'},
+        'rule_impact': {'key': 'properties.ruleImpact', 'type': 'RuleImpact'},
+    }
+
+    def __init__(self, *, alert_type: str, reason: str, state, expiration_date_utc=None, comment: str=None, auto_dismiss_alerts_scope=None, **kwargs) -> None:
+        super(AutoDismissAlertsRule, self).__init__(**kwargs)
+        self.alert_type = alert_type
+        self.last_modified_utc = None
+        self.expiration_date_utc = expiration_date_utc
+        self.reason = reason
+        self.state = state
+        self.comment = comment
+        self.auto_dismiss_alerts_scope = auto_dismiss_alerts_scope
+        self.rule_impact = None
+
+
+class AutoDismissAlertsScope(Model):
+    """AutoDismissAlertsScope.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param all_of: Required. All the conditions inside need to be true in
+     order to auto dismiss the alert
+    :type all_of: list[object]
+    """
+
+    _validation = {
+        'all_of': {'required': True},
+    }
+
+    _attribute_map = {
+        'all_of': {'key': 'allOf', 'type': '[object]'},
+    }
+
+    def __init__(self, *, all_of, **kwargs) -> None:
+        super(AutoDismissAlertsScope, self).__init__(**kwargs)
+        self.all_of = all_of
+
+
 class AutoProvisioningSetting(Resource):
     """Auto provisioning setting.
 
@@ -3391,6 +3486,33 @@ class RegulatoryComplianceStandard(Resource):
         self.failed_controls = None
         self.skipped_controls = None
         self.unsupported_controls = None
+
+
+class RuleImpact(Model):
+    """RuleImpact.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param scanned_alerts_number: Required.
+    :type scanned_alerts_number: int
+    :param dismissed_alerts_number: Required.
+    :type dismissed_alerts_number: int
+    """
+
+    _validation = {
+        'scanned_alerts_number': {'required': True},
+        'dismissed_alerts_number': {'required': True},
+    }
+
+    _attribute_map = {
+        'scanned_alerts_number': {'key': 'scannedAlertsNumber', 'type': 'int'},
+        'dismissed_alerts_number': {'key': 'dismissedAlertsNumber', 'type': 'int'},
+    }
+
+    def __init__(self, *, scanned_alerts_number: int, dismissed_alerts_number: int, **kwargs) -> None:
+        super(RuleImpact, self).__init__(**kwargs)
+        self.scanned_alerts_number = scanned_alerts_number
+        self.dismissed_alerts_number = dismissed_alerts_number
 
 
 class SecurityContact(Resource):
