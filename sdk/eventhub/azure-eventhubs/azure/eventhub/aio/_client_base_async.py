@@ -9,7 +9,7 @@ import asyncio
 import time
 import datetime
 import functools
-from typing import Union, Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from uamqp import authentication, constants  # type: ignore
 from uamqp import Message, AMQPClientAsync  # type: ignore
@@ -18,12 +18,6 @@ from ..common import parse_sas_token, EventHubSharedKeyCredential, EventHubSASTo
 from .error_async import _handle_exception
 from .._client_base import ClientBase
 from ._connection_manager_async import get_connection_manager
-
-try:
-    from urlparse import urlparse  # type: ignore
-    from urllib import urlencode, quote_plus  # type: ignore
-except ImportError:
-    from urllib.parse import urlparse, urlencode, quote_plus
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore

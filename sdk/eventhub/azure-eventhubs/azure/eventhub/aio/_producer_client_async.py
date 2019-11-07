@@ -97,6 +97,7 @@ class EventHubProducerClient(ClientBaseAsync):
                                transport_type=None,
                                ):
         # type: (str, Any) -> EventHubProducerClient
+        # pylint: disable=arguments-differ
         """
         Create an EventHubProducerClient from a connection string.
 
@@ -114,6 +115,7 @@ class EventHubProducerClient(ClientBaseAsync):
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
+        :rtype: ~azure.eventhub.aio.EventHubConsumerClient
 
         .. admonition:: Example:
 

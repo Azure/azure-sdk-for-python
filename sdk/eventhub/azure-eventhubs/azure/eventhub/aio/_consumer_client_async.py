@@ -109,7 +109,8 @@ class EventHubConsumerClient(ClientBaseAsync):
                                transport_type=None,
                                partition_manager=None,
                                load_balancing_interval: float = 10
-                               ):
+                               ) -> 'EventHubConsumerClient':
+        # pylint: disable=arguments-differ
         """
         Create an EventHubConsumerClient from a connection string.
 
@@ -134,6 +135,7 @@ class EventHubConsumerClient(ClientBaseAsync):
         :paramtype partition_manager: ~azure.eventhub.aio.PartitionManager
         :keyword float load_balancing_interval:
          When load balancing kicks in, this is the interval in seconds between two load balancing. Default is 10.
+        :rtype: ~azure.eventhub.aio.EventHubConsumerClient
 
         .. admonition:: Example:
 

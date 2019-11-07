@@ -100,6 +100,7 @@ class EventHubProducerClient(ClientBase):
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
+        :rtype: ~azure.eventhub.EventHubConsumerClient
 
         .. admonition:: Example:
 

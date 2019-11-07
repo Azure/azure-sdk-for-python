@@ -138,6 +138,7 @@ class EventHubConsumerClient(ClientBase):
         :paramtype partition_manager: ~azure.eventhub.PartitionManager
         :keyword float load_balancing_interval:
          When load balancing kicks in, this is the interval in seconds between two load balancing. Default is 10.
+        :rtype: ~azure.eventhub.EventHubConsumerClient
 
         .. admonition:: Example:
 

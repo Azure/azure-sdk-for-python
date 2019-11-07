@@ -12,7 +12,7 @@ import uuid
 import time
 import functools
 import threading
-from typing import Union, Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 import uamqp  # type: ignore
 from uamqp import Message  # type: ignore
@@ -94,7 +94,7 @@ def _build_uri(address, entity):
     return address
 
 
-class ClientBase(object):
+class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, host, event_hub_path, credential, **kwargs):
         self.eh_name = event_hub_path
         self._host = host
