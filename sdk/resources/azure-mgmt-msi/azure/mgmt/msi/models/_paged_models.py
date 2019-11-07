@@ -25,3 +25,16 @@ class OperationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(OperationPaged, self).__init__(*args, **kwargs)
+class IdentityPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Identity <azure.mgmt.msi.models.Identity>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Identity]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(IdentityPaged, self).__init__(*args, **kwargs)
