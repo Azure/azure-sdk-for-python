@@ -39,10 +39,9 @@ class SystemAssignedIdentitiesOperations(object):
 
         self.config = config
 
-    def display_by_scope(
+    def get_by_scope(
             self, scope, custom_headers=None, raw=False, **operation_config):
-        """Displays the systemAssignedIdentity available under the specified RP
-        scope.
+        """Gets the systemAssignedIdentity available under the specified RP scope.
 
         :param scope: The scope of the resource. Parent resource being
          extended by Managed Identities.
@@ -58,7 +57,7 @@ class SystemAssignedIdentitiesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.display_by_scope.metadata['url']
+        url = self.get_by_scope.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
         }
@@ -96,4 +95,4 @@ class SystemAssignedIdentitiesOperations(object):
             return client_raw_response
 
         return deserialized
-    display_by_scope.metadata = {'url': '/{scope}/providers/Microsoft.ManagedIdentity/identities/default'}
+    get_by_scope.metadata = {'url': '/{scope}/providers/Microsoft.ManagedIdentity/identities/default'}
