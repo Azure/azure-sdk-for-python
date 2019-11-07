@@ -569,7 +569,7 @@ class CertificatePolicy(object):
     :param lifetime_actions: Actions that will be performed by Key Vault over the lifetime
         of a certificate
     :type lifetime_actions: Iterable[~azure.keyvault.certificates.LifetimeAction]
-    :param str issuer_name: Name of the referenced issuer object or reserved names. The enum class
+    :param str issuer_name: Name of the referenced issuer object or reserved names.
         :class:`~azure.keyvault.certificates.WellKnownIssuerNames` contains popular issuer names.
     :param str certificate_type: Type of certificate to be requested from the issuer provider.
     :param bool certificate_transparency: Indicates if the certificates generated under this policy

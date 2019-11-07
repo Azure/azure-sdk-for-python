@@ -56,5 +56,4 @@ class WellKnownIssuerNames(str, Enum):
     """Collection of well-known issuer names"""
 
     Self = "Self"  #: Use this issuer for a self-signed certificate
-    Unknown = "Unknown"  #: If you use this, you must manually get the cert yourself from the issuer of your choice.
-                         #: Must call :func:`merge_certificate` to complete creation.
+    Unknown = "Unknown"  #: Here you must get the cert yourself from your issuer and call :func:`merge_certificate`.

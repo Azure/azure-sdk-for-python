@@ -40,10 +40,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_crud_operations(self, vault_client, **kwargs):
 
+        certificate_client = vault_client.certificates
+
         # [START create_certificate]
         from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
-
-        certificate_client = vault_client.certificates
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
