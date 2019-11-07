@@ -143,7 +143,6 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
             "users",
             "permissions",
             "attachments",
-            "media",
             "conflicts",
             "offers",
         ]

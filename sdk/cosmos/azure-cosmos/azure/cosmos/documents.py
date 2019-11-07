@@ -227,27 +227,6 @@ class ConnectionMode(object):
     Gateway = 0
 
 
-class MediaReadMode(object):
-    """Represents the mode for use with downloading attachment content
-    (aka media).
-
-    :ivar str Buffered:
-        Content is buffered at the client and not directly
-        streamed from the content store.
-
-        Use Buffered to reduce the time taken to read and write media files.
-    :ivar str Streamed:
-        Content is directly streamed from the content store
-        without any buffering at the client.
-
-        Use Streamed to reduce the client memory overhead of reading and
-        writing media files.
-    """
-
-    Buffered = "Buffered"
-    Streamed = "Streamed"
-
-
 class PermissionMode(object):
     """Enumeration specifying applicability of permission.
 
@@ -338,14 +317,9 @@ class ConnectionPolicy(object):  # pylint: disable=too-many-instance-attributes
     :ivar int RequestTimeout:
         Gets or sets the request timeout (time to wait
         for response from network peer).
-    :ivar int MediaRequestTimeout:
-        Gets or sets Time to wait for response
-        from network peer for attachment content (aka media) operations.
     :ivar documents.ConnectionMode ConnectionMode:
         Gets or sets the connection mode used in the client. Currently
         only Gateway is supported.
-    :ivar MediaReadMode.Buffered MediaReadMode:
-        Gets or sets the attachment content (aka media) download mode.
     :ivar documents.SSLConfiguration SSLConfiguration:
         Gets or sets the SSL configuration.
     :ivar documents.ProxyConfiguration ProxyConfiguration:
@@ -379,15 +353,10 @@ class ConnectionPolicy(object):  # pylint: disable=too-many-instance-attributes
     """
 
     __defaultRequestTimeout = 60000  # milliseconds
-    # defaultMediaRequestTimeout is based upon the blob client timeout and the
-    # retry policy.
-    __defaultMediaRequestTimeout = 300000  # milliseconds
 
     def __init__(self):
         self.RequestTimeout = self.__defaultRequestTimeout
-        self.MediaRequestTimeout = self.__defaultMediaRequestTimeout
         self.ConnectionMode = ConnectionMode.Gateway
-        self.MediaReadMode = MediaReadMode.Buffered
         self.SSLConfiguration = None
         self.ProxyConfiguration = None
         self.EnableEndpointDiscovery = True
