@@ -48,7 +48,8 @@ sphinx_conf = os.path.join(root_dir, "doc", "sphinx", "individual_build_conf.py"
 UNFRIENDLY_PACKAGE_TO_NAMESPACE = {
     'azure-storage-file-share': 'azure.storage.fileshare',
     'azure-core-tracing-opencensus': 'azure.core.tracing.ext.opencensus_span',
-    'azure-eventhub-checkpointstoreblob-aio': 'azure.eventhub.extensions.checkpointstoreblobaio'
+    'azure-eventhub-checkpointstoreblob-aio': 'azure.eventhub.extensions.checkpointstoreblobaio',
+    'azure-storage-file-datalake': 'azure.storage.filedatalake'
 }
 
 def should_build_docs(package_name):
