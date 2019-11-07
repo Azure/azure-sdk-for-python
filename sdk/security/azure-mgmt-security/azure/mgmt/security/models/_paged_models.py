@@ -12,6 +12,19 @@
 from msrest.paging import Paged
 
 
+class NetworkDataPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`NetworkData <azure.mgmt.security.models.NetworkData>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[NetworkData]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(NetworkDataPaged, self).__init__(*args, **kwargs)
 class ComplianceResultPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ComplianceResult <azure.mgmt.security.models.ComplianceResult>` object
@@ -51,19 +64,6 @@ class SettingPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SettingPaged, self).__init__(*args, **kwargs)
-class DeviceSecurityGroupPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`DeviceSecurityGroup <azure.mgmt.security.models.DeviceSecurityGroup>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[DeviceSecurityGroup]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(DeviceSecurityGroupPaged, self).__init__(*args, **kwargs)
 class IoTSecuritySolutionModelPaged(Paged):
     """
     A paging container for iterating over a list of :class:`IoTSecuritySolutionModel <azure.mgmt.security.models.IoTSecuritySolutionModel>` object
@@ -311,16 +311,3 @@ class RegulatoryComplianceAssessmentPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(RegulatoryComplianceAssessmentPaged, self).__init__(*args, **kwargs)
-class SecuritySubAssessmentPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`SecuritySubAssessment <azure.mgmt.security.models.SecuritySubAssessment>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[SecuritySubAssessment]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(SecuritySubAssessmentPaged, self).__init__(*args, **kwargs)

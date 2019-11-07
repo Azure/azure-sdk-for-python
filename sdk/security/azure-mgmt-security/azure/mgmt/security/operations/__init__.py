@@ -9,15 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from ._network_data_operations import NetworkDataOperations
 from ._compliance_results_operations import ComplianceResultsOperations
 from ._pricings_operations import PricingsOperations
 from ._alerts_operations import AlertsOperations
 from ._settings_operations import SettingsOperations
-from ._device_security_groups_operations import DeviceSecurityGroupsOperations
+from ._io_tsecurity_solutions_operations import IoTSecuritySolutionsOperations
+from ._io_tsecurity_solutions_resource_group_operations import IoTSecuritySolutionsResourceGroupOperations
 from ._iot_security_solution_operations import IotSecuritySolutionOperations
-from ._iot_security_solution_analytics_operations import IotSecuritySolutionAnalyticsOperations
-from ._iot_security_solutions_analytics_aggregated_alert_operations import IotSecuritySolutionsAnalyticsAggregatedAlertOperations
-from ._iot_security_solutions_analytics_recommendation_operations import IotSecuritySolutionsAnalyticsRecommendationOperations
+from ._io_tsecurity_solutions_analytics_operations import IoTSecuritySolutionsAnalyticsOperations
+from ._io_tsecurity_solutions_analytics_aggregated_alerts_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations
+from ._io_tsecurity_solutions_analytics_aggregated_alert_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertOperations
+from ._io_tsecurity_solutions_analytics_recommendation_operations import IoTSecuritySolutionsAnalyticsRecommendationOperations
+from ._io_tsecurity_solutions_analytics_recommendations_operations import IoTSecuritySolutionsAnalyticsRecommendationsOperations
 from ._allowed_connections_operations import AllowedConnectionsOperations
 from ._discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
 from ._external_security_solutions_operations import ExternalSecuritySolutionsOperations
@@ -37,18 +41,21 @@ from ._regulatory_compliance_standards_operations import RegulatoryComplianceSta
 from ._regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
 from ._regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
 from ._server_vulnerability_assessment_operations import ServerVulnerabilityAssessmentOperations
-from ._sub_assessments_operations import SubAssessmentsOperations
 
 __all__ = [
+    'NetworkDataOperations',
     'ComplianceResultsOperations',
     'PricingsOperations',
     'AlertsOperations',
     'SettingsOperations',
-    'DeviceSecurityGroupsOperations',
+    'IoTSecuritySolutionsOperations',
+    'IoTSecuritySolutionsResourceGroupOperations',
     'IotSecuritySolutionOperations',
-    'IotSecuritySolutionAnalyticsOperations',
-    'IotSecuritySolutionsAnalyticsAggregatedAlertOperations',
-    'IotSecuritySolutionsAnalyticsRecommendationOperations',
+    'IoTSecuritySolutionsAnalyticsOperations',
+    'IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations',
+    'IoTSecuritySolutionsAnalyticsAggregatedAlertOperations',
+    'IoTSecuritySolutionsAnalyticsRecommendationOperations',
+    'IoTSecuritySolutionsAnalyticsRecommendationsOperations',
     'AllowedConnectionsOperations',
     'DiscoveredSecuritySolutionsOperations',
     'ExternalSecuritySolutionsOperations',
@@ -68,5 +75,4 @@ __all__ = [
     'RegulatoryComplianceControlsOperations',
     'RegulatoryComplianceAssessmentsOperations',
     'ServerVulnerabilityAssessmentOperations',
-    'SubAssessmentsOperations',
 ]
