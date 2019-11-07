@@ -98,7 +98,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START delete_certificate]
 
         # delete a certificate
-        deleted_certificate = certificate_client.delete_certificate(name=certificate.name)
+        deleted_certificate = certificate_client.begin_delete_certificate(name=certificate.name).result()
 
         print(deleted_certificate.name)
 
@@ -130,8 +130,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             san_dns_names=["sdk.azure-int.net"],
         )
 
+        polling_interval = 0 if self.is_playback() else None
+
         for i in range(4):
-            certificate_client.begin_create_certificate(name="certificate{}".format(i), policy=cert_policy).wait()
+            certificate_client.begin_create_certificate(
+                name="certificate{}".format(i),
+                policy=cert_policy,
+                _polling_interval=polling_interval
+            ).wait()
 
         # [START list_properties_of_certificates]
 
@@ -190,9 +196,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             validity_in_months=24,
             san_dns_names=["sdk.azure-int.net"],
         )
-
+        polling_interval = 0 if self.is_playback() else None
         cert_name = "cert-name"
-        certificate_client.begin_create_certificate(name=cert_name, policy=cert_policy).wait()
+        certificate_client.begin_create_certificate(
+            name=cert_name, policy=cert_policy, _polling_interval=polling_interval
+        ).wait()
 
         # [START backup_certificate]
 
@@ -204,7 +212,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END backup_certificate]
 
-        certificate_client.delete_certificate(name=cert_name)
+        certificate_client.begin_delete_certificate(name=cert_name, _polling_interval=polling_interval).wait()
 
         # [START restore_certificate]
 
@@ -239,11 +247,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        certificate_client.begin_create_certificate(name=cert_name, policy=cert_policy).wait()
-        certificate_client.delete_certificate(name=cert_name)
-        self._poll_until_no_exception(
-            functools.partial(certificate_client.get_deleted_certificate, cert_name), HttpResponseError
-        )
+
+        polling_interval = 0 if self.is_playback() else None
+        certificate_client.begin_create_certificate(name=cert_name, policy=cert_policy, _polling_interval=polling_interval).wait()
+
+        certificate_client.begin_delete_certificate(name=cert_name, _polling_interval=polling_interval).wait()
         # [START get_deleted_certificate]
 
         # get a deleted certificate (requires soft-delete enabled for the vault)
@@ -260,7 +268,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START recover_deleted_certificate]
 
         # recover a deleted certificate to its latest version (requires soft-delete enabled for the vault)
-        recovered_certificate = certificate_client.recover_deleted_certificate(name=cert_name)
+        recovered_certificate = certificate_client.begin_recover_deleted_certificate(name=cert_name).result()
 
         print(recovered_certificate.id)
         print(recovered_certificate.name)

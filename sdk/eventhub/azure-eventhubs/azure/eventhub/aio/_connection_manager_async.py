@@ -6,6 +6,7 @@
 from asyncio import Lock
 from uamqp import TransportType, c_uamqp  # type: ignore
 from uamqp.async_ops import ConnectionAsync  # type: ignore
+from .._connection_manager import _ConnectionMode
 
 
 class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attributes
@@ -75,4 +76,7 @@ class _SeparateConnectionManager(object):
 
 
 def get_connection_manager(**kwargs):
+    connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
+    if connection_mode == _ConnectionMode.ShareConnection:
+        return _SharedConnectionManager(**kwargs)
     return _SeparateConnectionManager(**kwargs)

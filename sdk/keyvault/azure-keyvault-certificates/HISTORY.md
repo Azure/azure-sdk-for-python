@@ -15,6 +15,12 @@
 - Renamed `list_certificate_versions` to `list_properties_of_certificate_versions`
 - `create_certificate` now has policy as a required parameter
 - All optional positional parameters besides `version` have been moved to kwargs
+- Renamed sync method `delete_certificate` to `begin_delete_certificate`
+- Renamed sync method `recover_certificate` to `begin_recover_deleted_certificate`
+- Renamed async method `recover_certificate` to `recover_deleted_certificate`
+- The sync method `begin_delete_certificate` and async `delete_certificate` now return pollers that return a `DeletedCertificate`
+- The sync method `begin_recover_deleted_certificate` and async `recover_deleted_certificate` now return pollers that return a `KeyVaultCertificate`
+
 - Renamed enum `ActionType` to `CertificatePolicyAction`
 - Renamed `Certificate` to `KeyVaultCertificate`
 - Renamed `Contact` to `CertificateContact`

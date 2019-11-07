@@ -63,6 +63,10 @@ class AuthnClientBase(ABC):
             self._auth_url = "https://" + "/".join((authority.strip("/"), tenant.strip("/"), "oauth2/v2.0/token"))
         self._cache = kwargs.get("cache") or TokenCache()  # type: TokenCache
 
+    @property
+    def auth_url(self):
+        return self._auth_url
+
     def get_cached_token(self, scopes):
         # type: (Iterable[str]) -> Optional[AccessToken]
         tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=list(scopes))

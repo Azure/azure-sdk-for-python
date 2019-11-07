@@ -25,7 +25,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. Update an existing certificate (update_certificate)
 #
-# 4. Delete a certificate (delete_certificate)
+# 4. Delete a certificate (begin_delete_certificate)
 #
 # ----------------------------------------------------------------------------------------------------------
 
@@ -89,8 +89,7 @@ try:
 
     # The bank account was closed, need to delete its credentials from the Key Vault.
     print("\n.. Delete Certificate")
-    deleted_certificate = client.delete_certificate(name=bank_certificate.name)
-    print("Deleting Certificate..")
+    deleted_certificate = client.begin_delete_certificate(name=bank_certificate.name).result()
     print("Certificate with name '{0}' was deleted.".format(deleted_certificate.name))
 
 except HttpResponseError as e:

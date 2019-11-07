@@ -11,6 +11,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
+from ._shared._polling import DeletePollingMethod, RecoverDeletedPollingMethod, KeyVaultOperationPoller
 from .models import (
     KeyVaultCertificate,
     CertificateProperties,
@@ -92,7 +93,9 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Create a certificate
                 :dedent: 8
         """
-
+        polling_interval = kwargs.pop("_polling_interval", None)
+        if polling_interval is None:
+            polling_interval = 5
         enabled = kwargs.pop("enabled", None)
         tags = kwargs.pop("tags", None)
 
@@ -116,7 +119,10 @@ class CertificateClient(KeyVaultClientBase):
 
         get_certificate_command = partial(self.get_certificate, name=name, **kwargs)
 
-        create_certificate_polling = CreateCertificatePoller(get_certificate_command=get_certificate_command)
+        create_certificate_polling = CreateCertificatePoller(
+            get_certificate_command=get_certificate_command,
+            interval=polling_interval
+        )
         return LROPoller(command, create_certificate_operation, None, create_certificate_polling)
 
     @distributed_trace
@@ -187,18 +193,21 @@ class CertificateClient(KeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def delete_certificate(self, name, **kwargs):
+    def begin_delete_certificate(self, name, **kwargs):
         # type: (str, **Any) -> DeletedCertificate
-        """Deletes a certificate from the key vault.
+        """Delete all versions of a certificate. Requires certificates/delete permission.
 
-        Deletes all versions of a certificate object along with its associated
-        policy. Delete certificate cannot be used to remove individual versions
-        of a certificate object. This operation requires the
-        certificates/delete permission.
+        When this method returns Key Vault has begun deleting the certificate. Deletion may take several seconds in a
+        vault with soft-delete enabled. This method therefore returns a poller enabling you to wait for deletion to
+        complete.
 
-        :param str name: The name of the certificate.
-        :returns: The deleted certificate
-        :rtype: ~azure.keyvault.certificates.models.DeletedCertificate
+        :param str name: The name of the certificate to delete.
+        :returns: A poller for the delete certificate operation. The poller's `result` method returns the
+         :class:`~azure.keyvault.certificates.DeletedCertificate` without waiting for deletion to complete. If the vault
+         has soft-delete enabled and you want to permanently delete the certificate with
+         :func:`purge_deleted_certificate`, call the poller's `wait` method first. It will block until the deletion is
+         complete. The `wait` method requires certificates/get permission.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.certificates.DeletedCertificate]
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -211,10 +220,24 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Delete a certificate
                 :dedent: 8
         """
-        bundle = self._client.delete_certificate(
+        polling_interval = kwargs.pop("_polling_interval", None)
+        if polling_interval is None:
+            polling_interval = 2
+        deleted_cert_bundle = self._client.delete_certificate(
             vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
         )
-        return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
+        deleted_cert = DeletedCertificate._from_deleted_certificate_bundle(deleted_cert_bundle)
+        sd_disabled = deleted_cert.recovery_id is None
+        command = partial(self.get_deleted_certificate, name=name, **kwargs)
+        delete_cert_polling_method = DeletePollingMethod(
+            command=command,
+            final_resource=deleted_cert,
+            initial_status="deleting",
+            finished_status="deleted",
+            sd_disabled=sd_disabled,
+            interval=polling_interval
+        )
+        return KeyVaultOperationPoller(delete_cert_polling_method)
 
     @distributed_trace
     def get_deleted_certificate(self, name, **kwargs):
@@ -264,19 +287,22 @@ class CertificateClient(KeyVaultClientBase):
         self._client.purge_deleted_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
 
     @distributed_trace
-    def recover_deleted_certificate(self, name, **kwargs):
+    def begin_recover_deleted_certificate(self, name, **kwargs):
         # type: (str, **Any) -> KeyVaultCertificate
-        """Recovers the deleted certificate back to its current version under
-        /certificates.
+        """Recover a deleted certificate to its latest version. Possible only in a vault with soft-delete enabled.
 
-        Performs the reversal of the Delete operation. The operation is applicable
-        in vaults enabled for soft-delete, and must be issued during the retention
-        interval (available in the deleted certificate's attributes). This operation
-        requires the certificates/recover permission.
+        Requires certificates/recover permission.
 
-        :param str name: The name of the deleted certificate
-        :return: The recovered certificate
-        :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
+        When this method returns Key Vault has begun recovering the certificate. Recovery may take several seconds. This
+        method therefore returns a poller enabling you to wait for recovery to complete. Waiting is only necessary when
+        you want to use the recovered certificate in another operation immediately.
+
+        :param str name: The name of the deleted certificate to recover
+        :returns: A poller for the recovery operation. The poller's `result` method returns the recovered
+         :class:`~azure.keyvault.certificates.KeyVaultCertificate` without waiting for recovery to complete. If you want
+         to use the recovered certificate immediately, call the poller's `wait` method, which blocks until the
+         certificate is ready to use. The `wait` method requires certificate/get permission.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.certificates.KeyVaultCertificate]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -287,10 +313,22 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Recover a deleted certificate
                 :dedent: 8
         """
-        bundle = self._client.recover_deleted_certificate(
+        polling_interval = kwargs.pop("_polling_interval", None)
+        if polling_interval is None:
+            polling_interval = 2
+        recovered_cert_bundle = self._client.recover_deleted_certificate(
             vault_base_url=self.vault_url, certificate_name=name, **kwargs
         )
-        return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
+        recovered_certificate = KeyVaultCertificate._from_certificate_bundle(recovered_cert_bundle)
+        command = partial(self.get_certificate, name=name, **kwargs)
+        recover_cert_polling_method = RecoverDeletedPollingMethod(
+            command=command,
+            final_resource=recovered_certificate,
+            initial_status="recovering",
+            finished_status="recovered",
+            interval=polling_interval
+        )
+        return KeyVaultOperationPoller(recover_cert_polling_method)
 
     @distributed_trace
     def import_certificate(self, name, certificate_bytes, **kwargs):

@@ -7,9 +7,9 @@ import base64
 from typing import Any, AsyncIterable, Optional, Iterable, List, Dict, Union
 from functools import partial
 
+from azure.core.polling import async_poller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.polling import async_poller
 
 from azure.keyvault.certificates.models import (
     KeyVaultCertificate,
@@ -23,6 +23,7 @@ from azure.keyvault.certificates.models import (
 )
 from ._polling_async import CreateCertificatePollerAsync
 from .._shared import AsyncKeyVaultClientBase
+from .._shared._polling_async import DeleteAsyncPollingMethod, RecoverDeletedAsyncPollingMethod
 from .._shared.exceptions import error_map as _error_map
 
 
@@ -77,7 +78,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :caption: Create a certificate
                 :dedent: 8
         """
-
+        polling_interval = kwargs.pop("_polling_interval", None)
+        if polling_interval is None:
+            polling_interval = 5
         enabled = kwargs.pop("enabled", None)
         tags = kwargs.pop("tags", None)
 
@@ -100,7 +103,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         get_certificate_command = partial(self.get_certificate, name=name, **kwargs)
 
-        create_certificate_polling = CreateCertificatePollerAsync(get_certificate_command=get_certificate_command)
+        create_certificate_polling = CreateCertificatePollerAsync(
+            get_certificate_command=get_certificate_command, interval=polling_interval
+        )
         return await async_poller(command, create_certificate_operation, None, create_certificate_polling)
 
     @distributed_trace_async
@@ -170,12 +175,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def delete_certificate(self, name: str, **kwargs: "**Any") -> DeletedCertificate:
-        """Deletes a certificate from the key vault.
+        """Delete all versions of a certificate. Requires certificates/delete permission.
 
-        Deletes all versions of a certificate object along with its associated
-        policy. Delete certificate cannot be used to remove individual versions
-        of a certificate object. This operation requires the
-        certificates/delete permission.
+        If the vault has soft-delete enabled, deletion may take several seconds to complete.
 
         :param str name: The name of the certificate.
         :returns: The deleted certificate
@@ -192,10 +194,20 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :caption: Delete a certificate
                 :dedent: 8
         """
-        bundle = await self._client.delete_certificate(
+        polling_interval = kwargs.pop("_polling_interval", None)
+        if polling_interval is None:
+            polling_interval = 2
+        deleted_cert_bundle = await self._client.delete_certificate(
             vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
         )
-        return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
+        deleted_certificate = DeletedCertificate._from_deleted_certificate_bundle(deleted_cert_bundle)
+        sd_disabled = deleted_certificate.recovery_id is None
+        command = partial(self.get_deleted_certificate, name=name, **kwargs)
+
+        delete_certificate_poller = DeleteAsyncPollingMethod(
+            initial_status="deleting", finished_status="deleted", sd_disabled=sd_disabled, interval=polling_interval
+        )
+        return await async_poller(command, deleted_certificate, None, delete_certificate_poller)
 
     @distributed_trace_async
     async def get_deleted_certificate(self, name: str, **kwargs: "**Any") -> DeletedCertificate:
@@ -246,17 +258,15 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def recover_deleted_certificate(self, name: str, **kwargs: "**Any") -> KeyVaultCertificate:
-        """Recovers the deleted certificate back to its current version under
-        /certificates.
+        """Recover a deleted certificate to its latest version. Possible only in a vault with soft-delete enabled.
 
-        Performs the reversal of the Delete operation. The operation is applicable
-        in vaults enabled for soft-delete, and must be issued during the retention
-        interval (available in the deleted certificate's attributes). This operation
-        requires the certificates/recover permission.
+        Requires certificates/recover permission. If the vault does not have soft-delete enabled,
+        :func:`delete_certificate` is permanent, and this method will raise an error. Attempting to recover a
+        non-deleted certificate will also raise an error.
 
         :param str name: The name of the deleted certificate
-        :return: The recovered certificate
-        :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
+        :returns: The recovered certificate
+        :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -267,10 +277,19 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :caption: Recover a deleted certificate
                 :dedent: 8
         """
-        bundle = await self._client.recover_deleted_certificate(
+        polling_interval = kwargs.pop("_polling_interval", None)
+        if polling_interval is None:
+            polling_interval = 2
+        recovered_cert_bundle = await self._client.recover_deleted_certificate(
             vault_base_url=self.vault_url, certificate_name=name, **kwargs
         )
-        return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
+        recovered_certificate = KeyVaultCertificate._from_certificate_bundle(recovered_cert_bundle)
+        command = partial(self.get_certificate, name=name, **kwargs)
+
+        recover_cert_poller = RecoverDeletedAsyncPollingMethod(
+            initial_status="recovering", finished_status="recovered", interval=polling_interval
+        )
+        return await async_poller(command, recovered_certificate, None, recover_cert_poller)
 
     @distributed_trace_async
     async def import_certificate(

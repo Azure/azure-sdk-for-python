@@ -1,5 +1,42 @@
 # Release History
 
+## 2019-11-04 5.0.0b5
+
+**Breaking changes**
+
+- `EventHubClient`, `EventHubConsumer` and `EventHubProducer` has been removed. Use `EventHubProducerClient` and `EventHubConsumerClient` instead.
+    - Construction of both objects is the same as it was for the previous client.
+- Introduced `EventHubProducerClient` as substitution for`EventHubProducer`.
+    - `EventHubProducerClient` supports sending events to different partitions.
+- Introduced `EventHubConsumerClient` as substitution for `EventHubConsumer`.
+    - `EventHubConsumerClient` supports receiving events from single/all partitions.
+    - There are no longer methods which directly return `EventData`, all receiving is done via callback method: `on_events`.
+- `EventHubConsumerClient` has taken on the responsibility of `EventProcessor`.
+    - `EventHubConsumerClient` now accepts `PartitionManager` to do load-balancing and checkpoint.
+- Replaced `PartitionProcessor`by four independent callback methods accepted by the `receive` method on `EventHubConsumerClient`.
+    - `on_events(partition_context, events)` called when events are received.
+    - `on_error(partition_context, exception` called when errors occur.
+    - `on_partition_initialize(partition_context)` called when a partition consumer is opened.
+    - `on_partition_close(partition_context, reason)` called when a partition consumer is closed.
+- Some modules and classes that were importable from several different places have been removed:
+    - `azure.eventhub.common` has been removed. Import from `azure.eventhub` instead.
+    - `azure.eventhub.client_abstract` has been removed. Use `azure.eventhub.EventHubProducerClient` or `azure.eventhub.EventHubConsumerClient` instead.
+    - `azure.eventhub.client` has been removed. Use `azure.eventhub.EventHubProducerClient` or `azure.eventhub.EventHubConsumerClient` instead.
+    - `azure.eventhub.producer` has been removed. Use `azure.eventhub.EventHubProducerClient` instead.
+    - `azure.eventhub.consumer` has been removed. Use `azure.eventhub.EventHubConsumerClient` instead.
+    - `azure.eventhub.aio.client_async` has been removed. Use `azure.eventhub.aio.EventHubProducerClient` or `azure.eventhub.aio.EventHubConsumerClient` instead.
+    - `azure.eventhub.aio.producer_async` has been removed. Use `azure.eventhub.aio.EventHubProducerClient` instead.
+    - `azure.eventhub.aio.consumer_async` has been removed. Use `azure.eventhub.aio.EventHubConsumerClient` instead.
+    - `azure.eventhub.aio.event_processor.event_processor` has been removed. Use `azure.eventhub.aio.EventHubConsumerClient` instead.
+    - `azure.eventhub.aio.event_processor.partition_processor` has been removed. Use callback methods instead.
+    - `azure.eventhub.aio.event_processor.partition_manager` has been removed. Import from `azure.eventhub.aio` instead.
+    - `azure.eventhub.aio.event_processor.partition_context` has been removed. Import from `azure.eventhub.aio` instead.
+    - `azure.eventhub.aio.event_processor.sample_partition_manager` has been removed.
+
+**Bug fixes**
+
+- Fixed bug in user-agent string not being parsed.
+
 ## 5.0.0b4 (2019-10-08)
 
 **New features**

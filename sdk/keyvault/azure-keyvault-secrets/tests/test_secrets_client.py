@@ -156,7 +156,7 @@ class SecretClientTests(KeyVaultTestCase):
                 expected[secret.name] = secret
 
         # list secrets
-        result = list(client.list_properties_of_secrets(max_page_size=max_secrets))
+        result = list(client.list_properties_of_secrets(max_page_size=max_secrets - 1))
         self._validate_secret_list(result, expected)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
@@ -169,7 +169,6 @@ class SecretClientTests(KeyVaultTestCase):
         secret_value = self.get_resource_name("secVal")
 
         max_secrets = self.list_test_size
-        max_page_size = 2
         expected = {}
 
         # create many secret versions
@@ -179,7 +178,7 @@ class SecretClientTests(KeyVaultTestCase):
                 secret = client.set_secret(secret_name, secret_value)
                 expected[secret.id] = secret
 
-        result = client.list_properties_of_secret_versions(secret_name, max_page_size=max_page_size)
+        result = client.list_properties_of_secret_versions(secret_name, max_page_size=max_secrets - 1)
 
         # validate list secret versions with attributes
         for secret in result:
