@@ -10,11 +10,11 @@ from datetime import datetime, timedelta
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
     ClientAuthenticationError
-from azure.storage.file.datalake import ContentSettings, generate_account_sas, generate_file_sas, \
+from azure.storage.filedatalake import ContentSettings, generate_account_sas, generate_file_sas, \
     ResourceTypes, AccountSasPermissions, \
     DataLakeFileClient, FileSystemClient, DataLakeDirectoryClient, FileSasPermissions
-from azure.storage.file.datalake import DataLakeServiceClient
-from azure.storage.file.datalake._generated.models import StorageErrorException
+from azure.storage.filedatalake import DataLakeServiceClient
+from azure.storage.filedatalake._generated.models import StorageErrorException
 from testcase import (
     StorageTestCase,
     record,

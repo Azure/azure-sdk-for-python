@@ -132,7 +132,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
         :return a FileSystemClient
-        :rtype ~azure.storage.file.datalake.FileSystemClient
+        :rtype ~azure.storage.filedatalake.FileSystemClient
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'dfs')
         if 'secondary_hostname' not in kwargs:
@@ -179,7 +179,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A DataLakeLeaseClient object, that can be run in a context manager.
-        :rtype: ~azure.storage.file.datalake.DataLakeLeaseClient
+        :rtype: ~azure.storage.filedatalake.DataLakeLeaseClient
 
         .. admonition:: Example:
 
@@ -210,10 +210,10 @@ class FileSystemClient(StorageAccountHostsMixin):
         :type metadata: dict(str, str)
         :param public_access:
             Possible values include: file system, file.
-        :type public_access: ~azure.storage.file.datalake.PublicAccess
+        :type public_access: ~azure.storage.filedatalake.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: ~azure.storage.file.datalake.FileSystemClient
+        :rtype: ~azure.storage.filedatalake.FileSystemClient
 
         .. admonition:: Example:
 
@@ -235,7 +235,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         The file system and any files contained within it are later deleted during garbage collection.
         If the file system is not found, a ResourceNotFoundError will be raised.
 
-        :keyword str or ~azure.storage.file.datalake.DataLakeLeaseClient lease:
+        :keyword str or ~azure.storage.filedatalake.DataLakeLeaseClient lease:
             If specified, delete_file_system only succeeds if the
             file system's lease is active and matches this ID.
             Required if the file system has an active lease.
@@ -276,13 +276,13 @@ class FileSystemClient(StorageAccountHostsMixin):
         """Returns all user-defined metadata and system properties for the specified
         file system. The data returned does not include the file system's list of paths.
 
-        :keyword str or ~azure.storage.file.datalake.DataLakeLeaseClient lease:
+        :keyword str or ~azure.storage.filedatalake.DataLakeLeaseClient lease:
             If specified, get_file_system_properties only succeeds if the
             file system's lease is active and matches this ID.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: Properties for the specified file system within a file system object.
-        :rtype: ~azure.storage.file.datalake.FileSystemProperties
+        :rtype: ~azure.storage.filedatalake.FileSystemProperties
 
         .. admonition:: Example:
 
@@ -310,7 +310,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             A dict containing name-value pairs to associate with the file system as
             metadata. Example: {'category':'test'}
         :type metadata: dict[str, str]
-        :keyword str or ~azure.storage.file.datalake.DataLakeLeaseClient lease:
+        :keyword str or ~azure.storage.filedatalake.DataLakeLeaseClient lease:
             If specified, set_file_system_metadata only succeeds if the
             file system's lease is active and matches this ID.
         :keyword ~datetime.datetime if_modified_since:
@@ -371,7 +371,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of PathProperties.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.file.datalake.PathProperties]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.PathProperties]
 
         .. admonition:: Example:
 
@@ -403,13 +403,13 @@ class FileSystemClient(StorageAccountHostsMixin):
         :param directory:
             The directory with which to interact. This can either be the name of the directory,
             or an instance of DirectoryProperties.
-        :type directory: str or ~azure.storage.file.datalake.DirectoryProperties
-        :param ~azure.storage.file.datalake.ContentSettings content_settings:
+        :type directory: str or ~azure.storage.filedatalake.DirectoryProperties
+        :param ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :keyword ~azure.storage.file.datalake.DataLakeLeaseClient or str lease:
+        :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
         :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
@@ -463,7 +463,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :param directory:
             The directory with which to interact. This can either be the name of the directory,
             or an instance of DirectoryProperties.
-        :type directory: str or ~azure.storage.file.datalake.DirectoryProperties
+        :type directory: str or ~azure.storage.filedatalake.DirectoryProperties
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
@@ -506,13 +506,13 @@ class FileSystemClient(StorageAccountHostsMixin):
         :param file:
             The file with which to interact. This can either be the name of the file,
             or an instance of FileProperties.
-        :type file: str or ~azure.storage.file.datalake.FileProperties
-        :param ~azure.storage.file.datalake.ContentSettings content_settings:
+        :type file: str or ~azure.storage.filedatalake.FileProperties
+        :param ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :keyword ~azure.storage.file.datalake.DataLakeLeaseClient or str lease:
+        :keyword ~azure.storage.filedatalake.DataLakeLeaseClient or str lease:
             Required if the blob has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
         :keyword str umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
@@ -567,7 +567,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :param file:
             The file with which to interact. This can either be the name of the file,
             or an instance of FileProperties.
-        :type file: str or ~azure.storage.file.datalake.FileProperties
+        :type file: str or ~azure.storage.filedatalake.FileProperties
         :keyword lease:
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
@@ -611,9 +611,9 @@ class FileSystemClient(StorageAccountHostsMixin):
         :param directory:
             The directory with which to interact. This can either be the name of the directory,
             or an instance of DirectoryProperties.
-        :type directory: str or ~azure.storage.file.datalake.DirectoryProperties
+        :type directory: str or ~azure.storage.filedatalake.DirectoryProperties
         :returns: A DataLakeDirectoryClient.
-        :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient
+        :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
 
         .. admonition:: Example:
 
@@ -643,9 +643,9 @@ class FileSystemClient(StorageAccountHostsMixin):
         :param file_path:
             The file with which to interact. This can either be the path of the file(from root directory),
             or an instance of FileProperties. eg. directory/subdirectory/file
-        :type file_path: str or ~azure.storage.file.datalake.FileProperties
+        :type file_path: str or ~azure.storage.filedatalake.FileProperties
         :returns: A DataLakeFileClient.
-        :rtype: ~azure.storage.file.datalake..DataLakeFileClient
+        :rtype: ~azure.storage.filedatalake..DataLakeFileClient
 
         .. admonition:: Example:
 

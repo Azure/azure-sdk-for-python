@@ -20,8 +20,8 @@ autorest --use=C:/work/autorest.python --version=2.0.4280
 ### Settings
 ``` yaml
 input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/storage-dataplane-preview/specification/storage/data-plane/Microsoft.StorageDataLake/stable/2018-11-09/DataLakeStorage.json
-output-folder: ../azure/storage/file/datalake/_generated
-namespace: azure.storage.file.datalake
+output-folder: ../azure/storage/filedatalake/_generated
+namespace: azure.storage.filedatalake
 no-namespace-folders: true
 license-header: MICROSOFT_MIT_NO_VERSION
 enable-xml: true

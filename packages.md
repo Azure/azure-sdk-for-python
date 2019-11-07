@@ -139,3 +139,4 @@
 | [`azure-storage-blob`]( sdk/storage/azure-storage-blob/setup.py )| [Readme](sdk/storage/azure-storage-blob/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-storage-blob ) |
 | [`azure-storage-file-share`]( sdk/storage/azure-storage-file-share/setup.py )| [Readme](sdk/storage/azure-storage-file-share/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-storage-file-share ) |
 | [`azure-storage-queue`]( sdk/storage/azure-storage-queue/setup.py )| [Readme](sdk/storage/azure-storage-queue/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-storage-queue ) |
+| [`azure-storage-file-datalake`]( sdk/storage/azure-storage-file-datalake/setup.py )| [Readme](sdk/storage/azure-storage-file-datalake/README.md) |  N/A  | [PyPI]( https://pypi.org/project/azure-storage-file-datalake ) |

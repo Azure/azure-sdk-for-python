@@ -9,8 +9,8 @@ import unittest
 from datetime import datetime, timedelta
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
-from azure.storage.file.datalake import ContentSettings, DirectorySasPermissions, DataLakeDirectoryClient
-from azure.storage.file.datalake import DataLakeServiceClient, generate_directory_sas
+from azure.storage.filedatalake import ContentSettings, DirectorySasPermissions, DataLakeDirectoryClient
+from azure.storage.filedatalake import DataLakeServiceClient, generate_directory_sas
 from testcase import (
     StorageTestCase,
     record,

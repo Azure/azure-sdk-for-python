@@ -37,8 +37,8 @@ class DataLakeLeaseClient(object):
 
     :param client:
         The client of the file system, directory, or file to lease.
-    :type client: ~azure.storage.file.datalake.FileSystemClient or
-        ~azure.storage.file.datalake.DataLakeDirectoryClient or ~azure.storage.file.datalake.DataLakeFileClient
+    :type client: ~azure.storage.filedatalake.FileSystemClient or
+        ~azure.storage.filedatalake.DataLakeDirectoryClient or ~azure.storage.filedatalake.DataLakeFileClient
     :param str lease_id:
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
