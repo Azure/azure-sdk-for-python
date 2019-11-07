@@ -2,6 +2,7 @@
 
 import json
 import six
+from collections import OrderedDict
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import (
     HttpResponseError,
@@ -88,100 +89,123 @@ def _validate_batch_input(documents):
     return documents
 
 
-def get_index(err, resp):
-    request = json.loads(resp.request.body)
-    docs = request['documents']
-    for idx, item in enumerate(docs):
-        if item["id"] == err.id:
-            return idx
+def order_results(response, combined):
+    request = json.loads(response.request.body)['documents']
+    mapping = {}
+    for item in combined:
+        mapping[item.id] = item
 
-
-def add_document_errors(obj, resp, result):
-    error_map = {}
-    if obj.errors:
-        for idx, err in enumerate(obj.errors):
-            index = get_index(err, resp)
-            error_map[index] = err
-
-        for idx, error in error_map.items():
-            result.insert(idx, DocumentError(id=error.id, error=error.error))
-    return result
+    ordered_response = []
+    for item in request:
+        ordered_response.append(mapping[item['id']])
+    return ordered_response
 
 
 def deserialize_language_result(response, obj, response_headers):
-    doc_entities = []
     try:
-        if obj.documents:
-            for language in obj.documents:
-                doc_entities.append(
+        if obj.errors:
+            combined = [*obj.documents, *obj.errors]
+            results = order_results(response, combined)
+        else:
+            results = obj.documents
+
+        for idx, language in enumerate(results):
+            if hasattr(language, "error"):
+                results[idx] = (DocumentError(id=language.id, error=language.error))
+            else:
+                results[idx] = \
                     DocumentLanguage(
                         id=language.id,
                         detected_languages=[DetectedLanguage._from_generated(l) for l in language.detected_languages],
                         statistics=DocumentStatistics._from_generated(language.statistics)
                     )
-                )
-        return add_document_errors(obj, response, doc_entities)
+        return results
     except AttributeError:
         return obj
 
+
 def deserialize_entities_result(response, obj, response_headers):
-    doc_entities = []
     try:
-        if obj.documents:
-            for entity in obj.documents:
-                doc_entities.append(
+        if obj.errors:
+            combined = [*obj.documents, *obj.errors]
+            results = order_results(response, combined)
+        else:
+            results = obj.documents
+
+        for idx, entity in enumerate(results):
+            if hasattr(entity, "error"):
+                results[idx] = (DocumentError(id=entity.id, error=entity.error))
+            else:
+                results[idx] = \
                     DocumentEntities(
                         id=entity.id,
                         entities=[Entity._from_generated(e) for e in entity.entities],
                         statistics=DocumentStatistics._from_generated(entity.statistics)
                     )
-                )
-        return add_document_errors(obj, response, doc_entities)
+        return results
     except AttributeError:
         return obj
 
 
 def deserialize_linked_entities_result(response, obj, response_headers):
-    linked_entities = []
     try:
-        if obj.documents:
-            for entity in obj.documents:
-                linked_entities.append(
+        if obj.errors:
+            combined = [*obj.documents, *obj.errors]
+            results = order_results(response, combined)
+        else:
+            results = obj.documents
+
+        for idx, entity in enumerate(results):
+            if hasattr(entity, "error"):
+                results[idx] = (DocumentError(id=entity.id, error=entity.error))
+            else:
+                results[idx] = \
                     DocumentLinkedEntities(
                         id=entity.id,
                         entities=[LinkedEntity._from_generated(e) for e in entity.entities],
                         statistics=DocumentStatistics._from_generated(entity.statistics)
                     )
-                )
-
-        return add_document_errors(obj, response, linked_entities)
+        return results
     except AttributeError:
         return obj
 
 
 def deserialize_key_phrases_result(response, obj, response_headers):
-    key_phrases = []
     try:
-        if obj.documents:
-            for phrases in obj.documents:
-                key_phrases.append(
+        if obj.errors:
+            combined = [*obj.documents, *obj.errors]
+            results = order_results(response, combined)
+        else:
+            results = obj.documents
+
+        for idx, phrases in enumerate(results):
+            if hasattr(phrases, "error"):
+                results[idx] = (DocumentError(id=phrases.id, error=phrases.error))
+            else:
+                results[idx] = \
                     DocumentKeyPhrases(
                         id=phrases.id,
                         key_phrases=phrases.key_phrases,
                         statistics=DocumentStatistics._from_generated(phrases.statistics)
                     )
-                )
-        return add_document_errors(obj, response, key_phrases)
+        return results
     except AttributeError:
         return obj
 
 
 def deserialize_sentiment_result(response, obj, response_headers):
-    sentiments = []
     try:
-        if obj.documents:
-            for sentiment in obj.documents:
-                sentiments.append(
+        if obj.errors:
+            combined = [*obj.documents, *obj.errors]
+            results = order_results(response, combined)
+        else:
+            results = obj.documents
+
+        for idx, sentiment in enumerate(results):
+            if hasattr(sentiment, "error"):
+                results[idx] = (DocumentError(id=sentiment.id, error=sentiment.error))
+            else:
+                results[idx] = \
                     DocumentSentiment(
                         id=sentiment.id,
                         sentiment=sentiment.sentiment,
@@ -189,8 +213,6 @@ def deserialize_sentiment_result(response, obj, response_headers):
                         document_scores=sentiment.document_scores,
                         sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences]
                     )
-                )
-
-        return add_document_errors(obj, response, sentiments)
+        return results
     except AttributeError:
         return obj
