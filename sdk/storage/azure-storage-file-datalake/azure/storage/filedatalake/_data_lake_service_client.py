@@ -4,10 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from ._data_lake_directory_client import DataLakeDirectoryClient
-from ._data_lake_file_client import DataLakeFileClient
-from ._models import UserDelegationKey
-
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -18,9 +14,10 @@ from azure.core.paging import ItemPaged
 from azure.storage.blob import BlobServiceClient
 from ._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._file_system_client import FileSystemClient
-
+from ._data_lake_directory_client import DataLakeDirectoryClient
+from ._data_lake_file_client import DataLakeFileClient
+from ._models import UserDelegationKey, FileSystemPropertiesPaged
 from ._serialize import convert_dfs_url_to_blob_url
-from ._models import FileSystemPropertiesPaged
 
 
 class DataLakeServiceClient(StorageAccountHostsMixin):
