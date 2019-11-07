@@ -164,35 +164,6 @@ class AadSolutionProperties(Model):
         self.connectivity_state = kwargs.get('connectivity_state', None)
 
 
-class ActualTrafficConnectedResources(Model):
-    """The actual traffic details.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar volume: The actual traffic volume between the actual traffic start
-     time to the actual traffic end time
-    :vartype volume: str
-    :param connections_details:
-    :type connections_details:
-     list[~azure.mgmt.security.models.ConnectionDetails]
-    """
-
-    _validation = {
-        'volume': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'volume': {'key': 'volume', 'type': 'str'},
-        'connections_details': {'key': 'connectionsDetails', 'type': '[ConnectionDetails]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ActualTrafficConnectedResources, self).__init__(**kwargs)
-        self.volume = None
-        self.connections_details = kwargs.get('connections_details', None)
-
-
 class Resource(Model):
     """Describes an Azure resource.
 
@@ -1199,35 +1170,6 @@ class ConnectedWorkspace(Model):
     def __init__(self, **kwargs):
         super(ConnectedWorkspace, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
-
-
-class ConnectionDetails(Model):
-    """Details of the actual traffic connections.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar port_and_protocol: The port and the protocol of the traffic
-    :vartype port_and_protocol: str
-    :ivar volume: The volume of the traffic between the actual traffic start
-     time to the actual traffic end time
-    :vartype volume: str
-    """
-
-    _validation = {
-        'port_and_protocol': {'readonly': True},
-        'volume': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'port_and_protocol': {'key': 'portAndProtocol', 'type': 'str'},
-        'volume': {'key': 'volume', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ConnectionDetails, self).__init__(**kwargs)
-        self.port_and_protocol = None
-        self.volume = None
 
 
 class SettingResource(Resource):
@@ -2621,10 +2563,10 @@ class NetworkDataConnectableResourceActualTraffic(Model):
      ~azure.mgmt.security.models.TrafficDataState
     :param inbound_connected_resources:
     :type inbound_connected_resources:
-     ~azure.mgmt.security.models.ActualTrafficConnectedResources
+     ~azure.mgmt.security.models.ConnectedResources
     :param outbound_connected_resources:
     :type outbound_connected_resources:
-     ~azure.mgmt.security.models.ActualTrafficConnectedResources
+     ~azure.mgmt.security.models.ConnectedResources
     """
 
     _validation = {
@@ -2636,8 +2578,8 @@ class NetworkDataConnectableResourceActualTraffic(Model):
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'traffic_data_state': {'key': 'trafficDataState', 'type': 'str'},
-        'inbound_connected_resources': {'key': 'inboundConnectedResources', 'type': 'ActualTrafficConnectedResources'},
-        'outbound_connected_resources': {'key': 'outboundConnectedResources', 'type': 'ActualTrafficConnectedResources'},
+        'inbound_connected_resources': {'key': 'inboundConnectedResources', 'type': 'ConnectedResources'},
+        'outbound_connected_resources': {'key': 'outboundConnectedResources', 'type': 'ConnectedResources'},
     }
 
     def __init__(self, **kwargs):

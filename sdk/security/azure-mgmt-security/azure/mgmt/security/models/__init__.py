@@ -13,7 +13,6 @@ try:
     from ._models_py3 import AadConnectivityState1
     from ._models_py3 import AadExternalSecuritySolution
     from ._models_py3 import AadSolutionProperties
-    from ._models_py3 import ActualTrafficConnectedResources
     from ._models_py3 import AdvancedThreatProtectionSetting
     from ._models_py3 import Alert
     from ._models_py3 import AlertConfidenceReason
@@ -36,7 +35,6 @@ try:
     from ._models_py3 import ConnectedResource
     from ._models_py3 import ConnectedResources
     from ._models_py3 import ConnectedWorkspace
-    from ._models_py3 import ConnectionDetails
     from ._models_py3 import DataExportSetting
     from ._models_py3 import DiscoveredSecuritySolution
     from ._models_py3 import ExternalSecuritySolution
@@ -108,7 +106,6 @@ except (SyntaxError, ImportError):
     from ._models import AadConnectivityState1
     from ._models import AadExternalSecuritySolution
     from ._models import AadSolutionProperties
-    from ._models import ActualTrafficConnectedResources
     from ._models import AdvancedThreatProtectionSetting
     from ._models import Alert
     from ._models import AlertConfidenceReason
@@ -131,7 +128,6 @@ except (SyntaxError, ImportError):
     from ._models import ConnectedResource
     from ._models import ConnectedResources
     from ._models import ConnectedWorkspace
-    from ._models import ConnectionDetails
     from ._models import DataExportSetting
     from ._models import DiscoveredSecuritySolution
     from ._models import ExternalSecuritySolution
@@ -252,7 +248,6 @@ __all__ = [
     'AadConnectivityState1',
     'AadExternalSecuritySolution',
     'AadSolutionProperties',
-    'ActualTrafficConnectedResources',
     'AdvancedThreatProtectionSetting',
     'Alert',
     'AlertConfidenceReason',
@@ -275,7 +270,6 @@ __all__ = [
     'ConnectedResource',
     'ConnectedResources',
     'ConnectedWorkspace',
-    'ConnectionDetails',
     'DataExportSetting',
     'DiscoveredSecuritySolution',
     'ExternalSecuritySolution',
