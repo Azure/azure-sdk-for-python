@@ -124,19 +124,21 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             san_dns_names=["sdk.azure-int.net"],
         )
 
+        polling_interval = 0 if self.is_playback() else None
+
         create_certificate_pollers = []
         for i in range(4):
             create_certificate_pollers.append(
-                certificate_client.create_certificate(name="certificate{}".format(i), policy=cert_policy)
+                certificate_client.create_certificate(name="certificate{}".format(i), policy=cert_policy, _polling_interval=polling_interval)
             )
 
         for poller in create_certificate_pollers:
             await poller
 
-        # [START list_certificates]
+        # [START list_properties_of_certificates]
 
         # list certificates
-        certificates = certificate_client.list_certificates()
+        certificates = certificate_client.list_properties_of_certificates()
 
         async for certificate in certificates:
             print(certificate.id)
@@ -145,18 +147,18 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(certificate.updated_on)
             print(certificate.enabled)
 
-        # [END list_certificates]
-        # [START list_certificate_versions]
+        # [END list_properties_of_certificates]
+        # [START list_properties_of_certificate_versions]
 
         # get an iterator of all versions of a certificate
-        certificate_versions = certificate_client.list_certificate_versions(name="cert-name")
+        certificate_versions = certificate_client.list_properties_of_certificate_versions(name="cert-name")
 
         async for certificate in certificate_versions:
             print(certificate.id)
             print(certificate.properties.updated_on)
             print(certificate.properties.version)
 
-        # [END list_certificate_versions]
+        # [END list_properties_of_certificate_versions]
         # [START list_deleted_certificates]
 
         # get an iterator of deleted certificates (requires soft-delete enabled for the vault)
@@ -194,7 +196,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
+        polling_interval = 0 if self.is_playback() else None
+        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy, _polling_interval=polling_interval)
 
         await create_certificate_poller
 
@@ -208,7 +211,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END backup_certificate]
 
-        await certificate_client.delete_certificate(name=cert_name)
+        await certificate_client.delete_certificate(name=cert_name, _polling_interval=polling_interval)
 
         # [START restore_certificate]
 
@@ -243,13 +246,11 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
+        polling_interval = 0 if self.is_playback() else None
+        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy, _polling_interval=polling_interval)
         await create_certificate_poller
 
-        await certificate_client.delete_certificate(name=cert_name)
-        await self._poll_until_no_exception(
-            certificate_client.get_deleted_certificate, cert_name, expected_exception=HttpResponseError
-        )
+        await certificate_client.delete_certificate(name=cert_name, _polling_interval=polling_interval)
 
         # [START get_deleted_certificate]
 
@@ -318,15 +319,15 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_issuers(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import AdministratorDetails, CertificatePolicy
+        from azure.keyvault.certificates import AdministratorContact, CertificatePolicy
 
         certificate_client = vault_client.certificates
 
         # [START create_issuer]
 
-        # First we specify the AdministratorDetails for a issuer.
+        # First we specify the AdministratorContact for a issuer.
         admin_details = [
-            AdministratorDetails(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+            AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
 
         issuer = await certificate_client.create_issuer(
@@ -363,15 +364,15 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         await certificate_client.create_issuer(name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)
 
-        # [START list_issuers]
+        # [START list_properties_of_issuers]
 
-        issuers = certificate_client.list_issuers()
+        issuers = certificate_client.list_properties_of_issuers()
 
         async for issuer in issuers:
             print(issuer.name)
             print(issuer.provider)
 
-        # [END list_issuers]
+        # [END list_properties_of_issuers]
 
         # [START delete_issuer]
 

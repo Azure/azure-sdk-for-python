@@ -23,9 +23,9 @@ from azure.core.exceptions import HttpResponseError
 #
 # 1. Create certificate (begin_create_certificate)
 #
-# 2. List certificates from the Key Vault (list_certificates)
+# 2. List certificates from the Key Vault (list_properties_of_certificates)
 #
-# 3. List certificate versions from the Key Vault (list_certificate_versions)
+# 3. List certificate versions from the Key Vault (list_properties_of_certificate_versions)
 #
 # 4. List deleted certificates from the Key Vault (list_deleted_certificates). The vault has to be soft-delete enabled
 # to perform this operation.
@@ -61,7 +61,7 @@ try:
 
     # Let's list the certificates.
     print("\n.. List certificates from the Key Vault")
-    certificates = client.list_certificates()
+    certificates = client.list_properties_of_certificates()
     for certificate in certificates:
         print("Certificate with name '{0}' was found.".format(certificate.name))
 
@@ -82,7 +82,7 @@ try:
     # You need to check all the different tags your bank account certificate had previously. Let's print
     # all the versions of this certificate.
     print("\n.. List versions of the certificate using its name")
-    certificate_versions = client.list_certificate_versions(bank_cert_name)
+    certificate_versions = client.list_properties_of_certificate_versions(bank_cert_name)
     for certificate_version in certificate_versions:
         print(
             "Bank Certificate with name '{0}' with version '{1}' has tags: '{2}'.".format(
@@ -91,8 +91,8 @@ try:
         )
 
     # The bank account and storage accounts got closed. Let's delete bank and storage accounts certificates.
-    client.delete_certificate(name=bank_cert_name)
-    client.delete_certificate(name=storage_cert_name)
+    client.begin_delete_certificate(name=bank_cert_name).wait()
+    client.begin_delete_certificate(name=storage_cert_name).wait()
 
     # You can list all the deleted and non-purged certificates, assuming Key Vault is soft-delete enabled.
     print("\n.. List deleted certificates from the Key Vault")

@@ -57,10 +57,6 @@ class CertificateCredential(CertificateCredentialBase):
           defines authorities for other clouds.
     """
 
-    def __init__(self, tenant_id: str, client_id: str, certificate_path: str, **kwargs: "Mapping[str, Any]") -> None:
-        super(CertificateCredential, self).__init__(tenant_id, client_id, certificate_path, **kwargs)
-        self._client = AsyncAuthnClient(tenant=tenant_id, **kwargs)
-
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """Asynchronously request an access token for `scopes`.
 
@@ -75,3 +71,6 @@ class CertificateCredential(CertificateCredentialBase):
             data = self._get_request_data(*scopes)
             token = await self._client.request_token(scopes, form_data=data)
         return token  # type: ignore
+
+    def _get_auth_client(self, tenant_id, **kwargs):
+        return AsyncAuthnClient(tenant=tenant_id, **kwargs)

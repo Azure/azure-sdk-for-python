@@ -97,7 +97,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START delete_certificate]
 
         # delete a certificate
-        deleted_certificate = certificate_client.delete_certificate(name=certificate.name)
+        deleted_certificate = certificate_client.begin_delete_certificate(name=certificate.name).result()
 
         print(deleted_certificate.name)
 
@@ -129,13 +129,19 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             san_dns_names=["sdk.azure-int.net"],
         )
 
-        for i in range(4):
-            certificate_client.begin_create_certificate(name="certificate{}".format(i), policy=cert_policy).wait()
+        polling_interval = 0 if self.is_playback() else None
 
-        # [START list_certificates]
+        for i in range(4):
+            certificate_client.begin_create_certificate(
+                name="certificate{}".format(i),
+                policy=cert_policy,
+                _polling_interval=polling_interval
+            ).wait()
+
+        # [START list_properties_of_certificates]
 
         # get an iterator of certificates
-        certificates = certificate_client.list_certificates()
+        certificates = certificate_client.list_properties_of_certificates()
 
         for certificate in certificates:
             print(certificate.id)
@@ -144,18 +150,18 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(certificate.updated_on)
             print(certificate.enabled)
 
-        # [END list_certificates]
-        # [START list_certificate_versions]
+        # [END list_properties_of_certificates]
+        # [START list_properties_of_certificate_versions]
 
         # get an iterator of a certificate's versions
-        certificate_versions = certificate_client.list_certificate_versions(name="certificate-name")
+        certificate_versions = certificate_client.list_properties_of_certificate_versions(name="certificate-name")
 
         for certificate in certificate_versions:
             print(certificate.id)
             print(certificate.updated_on)
             print(certificate.version)
 
-        # [END list_certificate_versions]
+        # [END list_properties_of_certificate_versions]
         # [START list_deleted_certificates]
 
         # get an iterator of deleted certificates (requires soft-delete enabled for the vault)
@@ -189,9 +195,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             validity_in_months=24,
             san_dns_names=["sdk.azure-int.net"],
         )
-
+        polling_interval = 0 if self.is_playback() else None
         cert_name = "cert-name"
-        certificate_client.begin_create_certificate(name=cert_name, policy=cert_policy).wait()
+        certificate_client.begin_create_certificate(
+            name=cert_name, policy=cert_policy, _polling_interval=polling_interval
+        ).wait()
 
         # [START backup_certificate]
 
@@ -203,7 +211,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END backup_certificate]
 
-        certificate_client.delete_certificate(name=cert_name)
+        certificate_client.begin_delete_certificate(name=cert_name, _polling_interval=polling_interval).wait()
 
         # [START restore_certificate]
 
@@ -238,11 +246,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         )
 
         cert_name = "cert-name"
-        certificate_client.begin_create_certificate(name=cert_name, policy=cert_policy).wait()
-        certificate_client.delete_certificate(name=cert_name)
-        self._poll_until_no_exception(
-            functools.partial(certificate_client.get_deleted_certificate, cert_name), HttpResponseError
-        )
+
+        polling_interval = 0 if self.is_playback() else None
+        certificate_client.begin_create_certificate(name=cert_name, policy=cert_policy, _polling_interval=polling_interval).wait()
+
+        certificate_client.begin_delete_certificate(name=cert_name, _polling_interval=polling_interval).wait()
         # [START get_deleted_certificate]
 
         # get a deleted certificate (requires soft-delete enabled for the vault)
@@ -259,7 +267,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START recover_deleted_certificate]
 
         # recover a deleted certificate to its latest version (requires soft-delete enabled for the vault)
-        recovered_certificate = certificate_client.recover_deleted_certificate(name=cert_name)
+        recovered_certificate = certificate_client.begin_recover_deleted_certificate(name=cert_name).result()
 
         print(recovered_certificate.id)
         print(recovered_certificate.name)
@@ -315,15 +323,15 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_example_issuers(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import AdministratorDetails, CertificatePolicy
+        from azure.keyvault.certificates import AdministratorContact, CertificatePolicy
 
         certificate_client = vault_client.certificates
 
         # [START create_issuer]
 
-        # First we specify the AdministratorDetails for a issuer.
+        # First we specify the AdministratorContact for a issuer.
         admin_details = [
-            AdministratorDetails(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+            AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
 
         issuer = certificate_client.create_issuer(
@@ -360,15 +368,15 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         certificate_client.create_issuer(name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)
 
-        # [START list_issuers]
+        # [START list_properties_of_issuers]
 
-        issuers = certificate_client.list_issuers()
+        issuers = certificate_client.list_properties_of_issuers()
 
         for issuer in issuers:
             print(issuer.name)
             print(issuer.provider)
 
-        # [END list_issuers]
+        # [END list_properties_of_issuers]
 
         # [START delete_issuer]
 

@@ -34,14 +34,16 @@ logging.getLogger().setLevel(logging.INFO)
 OMITTED_CI_PACKAGES = [
     "azure-mgmt-documentdb",
     "azure-servicemanagement-legacy",
-    "azure-mgmt-scheduler",
-    "azure-keyvault",
+    "azure-mgmt-scheduler"
 ]
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
     "azure-cognitiveservices",
     "azure-servicefabric",
     "nspkg"
+]
+NON_MANAGEMENT_CODE_5_ALLOWED = [
+    "azure-keyvault"
 ]
 
 def log_file(file_location, is_error=False):
@@ -226,3 +228,20 @@ def create_code_coverage_params(parsed_args, package_name):
         coverage_args.append("--cov={}".format(current_package_name))
         logging.info("Code coverage is enabled for package {0}, pytest arguements: {1}".format(current_package_name, coverage_args))
     return coverage_args
+
+# This function returns if error code 5 is allowed for a given package
+def is_error_code_5_allowed(target_pkg, pkg_name):
+    if (
+            all(
+                map(
+                    lambda x: any(
+                        [pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]
+                    ),
+                    [target_pkg],
+                )
+            )
+            or pkg_name in NON_MANAGEMENT_CODE_5_ALLOWED
+        ):
+        return True
+    else:
+        return False

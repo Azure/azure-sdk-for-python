@@ -132,3 +132,41 @@ jobs:
             inputs:
               artifactName: 'artifacts' 
               targetPath: $(Build.ArtifactStagingDirectory)
+
+  - job: 'RunMyPy'
+    condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'], 'true'))
+    displayName: 'Run MyPy'
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+    - template: ../steps/run_mypy.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+
+  - job: 'RunPyLint'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'], 'true'))
+    displayName: 'Run Pylint'
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+    - template: ../steps/run_pylint.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}

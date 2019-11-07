@@ -17,14 +17,14 @@ jobs:
         inputs:
           versionSpec: $(PythonVersion)
 
-      - script: pip install -r ./samples/smoketest/requirements.txt
+      - script: pip install -r ./common/smoketest/requirements.txt
         displayName: "Install requirements.txt"
 
-      - script: pip install -r ./samples/smoketest/requirements_async.txt
+      - script: pip install -r ./common/smoketest/requirements_async.txt
         displayName: "Install requirements_async.txt"
         condition: eq(variables['InstallAsyncRequirements'], true)
 
-      - script: python ./samples/smoketest/program.py
+      - script: python ./common/smoketest/program.py
         displayName: "Run Smoke Test"
         env:
           AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)

@@ -14,8 +14,8 @@ from uamqp import SendClientAsync  # type: ignore
 from azure.core.tracing import SpanKind, AbstractSpan  # type: ignore
 from azure.core.settings import settings  # type: ignore
 
-from azure.eventhub.common import EventData, EventDataBatch
-from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
+from ..common import EventData, EventDataBatch
+from ..error import _error_handler, OperationTimeoutError, EventDataError
 from ..producer import _error, _set_partition_key, _set_trace_message
 from ._consumer_producer_mixin_async import ConsumerProducerMixin
 
@@ -138,28 +138,16 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         self._outcome = outcome
         self._condition = condition
 
-    async def create_batch(self, max_size=None, partition_key=None):
-        # type:(int, str) -> EventDataBatch
+    async def create_batch(self, max_size=None):
+        # type:(int) -> EventDataBatch
         """
         Create an EventDataBatch object with max size being max_size.
         The max_size should be no greater than the max allowed message size defined by the service side.
 
         :param max_size: The maximum size of bytes data that an EventDataBatch object can hold.
         :type max_size: int
-        :param partition_key: With the given partition_key, event data will land to
-         a particular partition of the Event Hub decided by the service.
-        :type partition_key: str
         :return: an EventDataBatch instance
         :rtype: ~azure.eventhub.EventDataBatch
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START eventhub_client_async_create_batch]
-                :end-before: [END eventhub_client_async_create_batch]
-                :language: python
-                :dedent: 4
-                :caption: Create EventDataBatch object within limited size
-
         """
 
         if not self._max_message_size_on_link:
@@ -169,7 +157,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
                              .format(max_size, self._max_message_size_on_link))
 
-        return EventDataBatch(max_size=(max_size or self._max_message_size_on_link), partition_key=partition_key)
+        return EventDataBatch(max_size=(max_size or self._max_message_size_on_link))
 
     async def send(
             self, event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
@@ -192,15 +180,6 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                 ~azure.eventhub.EventDataError, ~azure.eventhub.EventDataSendError, ~azure.eventhub.EventHubError
         :return: None
         :rtype: None
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START eventhub_client_async_send]
-                :end-before: [END eventhub_client_async_send]
-                :language: python
-                :dedent: 4
-                :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
-
         """
         # Tracing code
         span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
@@ -241,14 +220,5 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         """
         Close down the handler. If the handler has already closed,
         this will be a no op.
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START eventhub_client_async_sender_close]
-                :end-before: [END eventhub_client_async_sender_close]
-                :language: python
-                :dedent: 4
-                :caption: Close down the handler.
-
         """
         await super(EventHubProducer, self).close()

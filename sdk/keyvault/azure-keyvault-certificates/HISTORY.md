@@ -1,17 +1,30 @@
 # Release History
 
+### 4.0.0b6
+- Renamed `AdministratorDetails` to `AdministratorContact`
+
 ### 4.0.0b5
 - Removed redundant method `get_pending_certificate_signing_request()`. A pending CSR can be retrieved via `get_certificate_operation()`.
 - Renamed the sync method `create_certificate` to `begin_create_certificate`
 - Renamed `restore_certificate` to `restore_certificate_backup`
 - Renamed `get_certificate` to `get_certificate_version`
 - Renamed `get_certificate_with_policy` to `get_certificate`
+- Renamed `list_certificates` to `list_properties_of_certificates`
+- Renamed `list_properties_of_issuers` to `list_properties_of_issuers`
+- Renamed `list_certificate_versions` to `list_properties_of_certificate_versions`
 - `create_certificate` now has policy as a required parameter
 - All optional positional parameters besides `version` have been moved to kwargs
+- Renamed sync method `delete_certificate` to `begin_delete_certificate`
+- Renamed sync method `recover_certificate` to `begin_recover_deleted_certificate`
+- Renamed async method `recover_certificate` to `recover_deleted_certificate`
+- The sync method `begin_delete_certificate` and async `delete_certificate` now return pollers that return a `DeletedCertificate`
+- The sync method `begin_recover_deleted_certificate` and async `recover_deleted_certificate` now return pollers that return a `KeyVaultCertificate`
+
 - Renamed enum `ActionType` to `CertificatePolicyAction`
 - Renamed `Certificate` to `KeyVaultCertificate`
 - Renamed `Contact` to `CertificateContact`
 - Renamed `Issuer` to `CertificateIssuer`
+- Renamed `CertificateError` to `CertificateOperationError`
 - Renamed `expires` property of `CertificateProperties` and `CertificatePolicy` to `expires_on`
 - Renamed `created` property of `CertificateProperties`, `CertificatePolicy`, and `CertificateIssuer` to `created_on`
 - Renamed `updated` property of `CertificateProperties`, `CertificatePolicy`, and `CertificateIssuer` to `updated_on`

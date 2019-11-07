@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.7.4 (Windows-10-10.0.18362-SP0)
     method: PUT
     uri: https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
   response:
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Oct 2019 20:52:17 GMT
+      - Thu, 31 Oct 2019 23:15:29 GMT
       expires:
       - '-1'
       pragma:
@@ -71,7 +71,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.7.4 (Windows-10-10.0.18362-SP0)
     method: PUT
     uri: https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
   response:
@@ -86,7 +86,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Oct 2019 20:52:17 GMT
+      - Thu, 31 Oct 2019 23:15:29 GMT
       expires:
       - '-1'
       pragma:
@@ -120,7 +120,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.7.4 (Windows-10-10.0.18362-SP0)
     method: GET
     uri: https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
   response:
@@ -135,7 +135,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Oct 2019 20:52:18 GMT
+      - Thu, 31 Oct 2019 23:15:29 GMT
       expires:
       - '-1'
       pragma:
@@ -171,7 +171,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.7.4 (Windows-10-10.0.18362-SP0)
     method: DELETE
     uri: https://vault458ad70cc7e5f213cb.vault.azure.net/certificates/contacts?api-version=7.0
   response:
@@ -186,7 +186,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Oct 2019 20:52:18 GMT
+      - Thu, 31 Oct 2019 23:15:29 GMT
       expires:
       - '-1'
       pragma:

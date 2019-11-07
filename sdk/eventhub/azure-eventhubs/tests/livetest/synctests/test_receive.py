@@ -9,35 +9,15 @@ import pytest
 import time
 import datetime
 
-from azure.eventhub import EventData, EventHubClient, EventPosition, TransportType
-
-
-# def test_receive_without_events(connstr_senders):
-#     connection_str, senders = connstr_senders
-#     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-#     receiver = client.create_consumer(consumer_group="$default", partition_id"$default", "0", event_position=EventPosition('@latest'))
-#     finish = datetime.datetime.now() + datetime.timedelta(seconds=240)
-#     count = 0
-#     try:
-#         client.run()
-#         while True: #datetime.datetime.now() < finish:
-#             senders[0].send(EventData("Receiving an event {}".format(count)))
-#             received = receiver.receive(timeout=1)
-#             if received:
-#                 print(received[0].body_as_str())
-#             count += 1
-#             time.sleep(1)
-#     except:
-#         raise
-#     finally:
-#         client.stop()
+from azure.eventhub import EventData, EventPosition, TransportType
+from azure.eventhub.client import EventHubClient
 
 
 @pytest.mark.liveTest
 def test_receive_end_of_stream(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    client = EventHubClient.from_connection_string(connection_str)
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     with receiver:
         received = receiver.receive(timeout=5)
         assert len(received) == 0
@@ -47,15 +27,16 @@ def test_receive_end_of_stream(connstr_senders):
 
         assert received[0].body_as_str() == "Receiving only a single event"
         assert list(received[-1].body)[0] == b"Receiving only a single event"
+    client.close()
 
 
 @pytest.mark.liveTest
 def test_receive_with_offset_sync(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     partitions = client.get_properties()
     assert partitions["partition_ids"] == ["0", "1"]
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     with receiver:
         more_partitions = client.get_properties()
         assert more_partitions["partition_ids"] == ["0", "1"]
@@ -70,20 +51,21 @@ def test_receive_with_offset_sync(connstr_senders):
         assert list(received[0].body) == [b'Data']
         assert received[0].body_as_str() == "Data"
 
-    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, inclusive=False))
+    offset_receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, inclusive=False))
     with offset_receiver:
         received = offset_receiver.receive(timeout=5)
         assert len(received) == 0
         senders[0].send(EventData(b"Message after offset"))
         received = offset_receiver.receive(timeout=5)
         assert len(received) == 1
+    client.close()
 
 
 @pytest.mark.liveTest
 def test_receive_with_inclusive_offset(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    client = EventHubClient.from_connection_string(connection_str)
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
 
     with receiver:
         received = receiver.receive(timeout=5)
@@ -97,19 +79,20 @@ def test_receive_with_inclusive_offset(connstr_senders):
         assert list(received[0].body) == [b'Data']
         assert received[0].body_as_str() == "Data"
 
-    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, inclusive=True))
+    offset_receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, inclusive=True))
     with offset_receiver:
         received = offset_receiver.receive(timeout=5)
         assert len(received) == 1
+    client.close()
 
 
 @pytest.mark.liveTest
 def test_receive_with_datetime_sync(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     partitions = client.get_properties()
     assert partitions["partition_ids"] == ["0", "1"]
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     with receiver:
         more_partitions = client.get_properties()
         assert more_partitions["partition_ids"] == ["0", "1"]
@@ -123,19 +106,20 @@ def test_receive_with_datetime_sync(connstr_senders):
         assert list(received[0].body) == [b'Data']
         assert received[0].body_as_str() == "Data"
 
-    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset))
+    offset_receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset))
     with offset_receiver:
         received = offset_receiver.receive(timeout=5)
         assert len(received) == 0
         senders[0].send(EventData(b"Message after timestamp"))
         received = offset_receiver.receive(timeout=5)
         assert len(received) == 1
+    client.close()
 
 
 @pytest.mark.liveTest
 def test_receive_with_custom_datetime_sync(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str)
     for i in range(5):
         senders[0].send(EventData(b"Message before timestamp"))
     time.sleep(65)
@@ -145,7 +129,7 @@ def test_receive_with_custom_datetime_sync(connstr_senders):
     for i in range(5):
         senders[0].send(EventData(b"Message after timestamp"))
 
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset))
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset))
     with receiver:
         all_received = []
         received = receiver.receive(timeout=5)
@@ -157,13 +141,14 @@ def test_receive_with_custom_datetime_sync(connstr_senders):
         for received_event in all_received:
             assert received_event.body_as_str() == "Message after timestamp"
             assert received_event.enqueued_time > offset
+    client.close()
 
 
 @pytest.mark.liveTest
 def test_receive_with_sequence_no(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    client = EventHubClient.from_connection_string(connection_str)
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
 
     with receiver:
         received = receiver.receive(timeout=5)
@@ -174,7 +159,7 @@ def test_receive_with_sequence_no(connstr_senders):
         assert len(received) == 1
         offset = received[0].sequence_number
 
-    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, False))
+    offset_receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, False))
     with offset_receiver:
         received = offset_receiver.receive(timeout=5)
         assert len(received) == 0
@@ -182,12 +167,14 @@ def test_receive_with_sequence_no(connstr_senders):
         time.sleep(1)
         received = offset_receiver.receive(timeout=5)
         assert len(received) == 1
+    client.close()
+
 
 @pytest.mark.liveTest
 def test_receive_with_inclusive_sequence_no(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
+    client = EventHubClient.from_connection_string(connection_str)
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
     with receiver:
         received = receiver.receive(timeout=5)
         assert len(received) == 0
@@ -195,17 +182,18 @@ def test_receive_with_inclusive_sequence_no(connstr_senders):
         received = receiver.receive(timeout=5)
         assert len(received) == 1
         offset = received[0].sequence_number
-    offset_receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, inclusive=True))
+    offset_receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, inclusive=True))
     with offset_receiver:
         received = offset_receiver.receive(timeout=5)
         assert len(received) == 1
+    client.close()
 
 
 @pytest.mark.liveTest
 def test_receive_batch(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
+    client = EventHubClient.from_connection_string(connection_str)
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
     with receiver:
         received = receiver.receive(timeout=5)
         assert len(received) == 0
@@ -219,6 +207,7 @@ def test_receive_batch(connstr_senders):
             assert event.sequence_number is not None
             assert event.offset
             assert event.enqueued_time
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -239,8 +228,8 @@ def test_receive_batch_with_app_prop_sync(connstr_senders):
             ed.application_properties = batch_app_prop
             yield ed
 
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
+    client = EventHubClient.from_connection_string(connection_str)
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
     with receiver:
         received = receiver.receive(timeout=5)
         assert len(received) == 0
@@ -256,13 +245,14 @@ def test_receive_batch_with_app_prop_sync(connstr_senders):
             assert list(message.body)[0] == "Event Data {}".format(index).encode('utf-8')
             assert (app_prop_key.encode('utf-8') in message.application_properties) \
                 and (dict(message.application_properties)[app_prop_key.encode('utf-8')] == app_prop_value.encode('utf-8'))
+    client.close()
 
 
 @pytest.mark.liveTest
 def test_receive_over_websocket_sync(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
+    client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket)
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'), prefetch=500)
 
     event_list = []
     for i in range(20):
@@ -278,6 +268,7 @@ def test_receive_over_websocket_sync(connstr_senders):
 
         received = receiver.receive(max_batch_size=50, timeout=5)
         assert len(received) == 20
+    client.close()
 
 
 @pytest.mark.liveTest
@@ -287,9 +278,8 @@ def test_receive_run_time_metric(connstr_senders):
     if StrictVersion(uamqp_version) < StrictVersion('1.2.3'):
         pytest.skip("Disabled for uamqp 1.2.2. Will enable after uamqp 1.2.3 is released.")
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket,
-                                                   network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0",
+    client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket)
+    receiver = client._create_consumer(consumer_group="$default", partition_id="0",
                                       event_position=EventPosition('@latest'), prefetch=500,
                                       track_last_enqueued_event_properties=True)
 
@@ -312,3 +302,4 @@ def test_receive_run_time_metric(connstr_senders):
         assert receiver.last_enqueued_event_properties.get('offset', None)
         assert receiver.last_enqueued_event_properties.get('enqueued_time', None)
         assert receiver.last_enqueued_event_properties.get('retrieval_time', None)
+    client.close()
