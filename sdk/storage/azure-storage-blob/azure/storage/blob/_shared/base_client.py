@@ -237,7 +237,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
     def _batch_send( # type: ignore
         self, *reqs,  # type: HttpRequest
-        **kwargs, # type: Any
+        **kwargs
     ):
         """Given a series of request, do a Storage batch call.
         """
