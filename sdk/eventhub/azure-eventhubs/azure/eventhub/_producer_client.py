@@ -7,8 +7,8 @@ import threading
 
 from typing import Any, Union, TYPE_CHECKING, Iterable, List
 from uamqp import constants  # type:ignore
-from .client import EventHubClient
-from .producer import EventHubProducer
+from ._client_base import ClientBase
+from ._producer import EventHubProducer
 from .common import EventData, \
     EventHubSharedKeyCredential, EventHubSASTokenCredential, EventDataBatch
 
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 log = logging.getLogger(__name__)
 
 
-class EventHubProducerClient(EventHubClient):
+class EventHubProducerClient(ClientBase):
     """
     The EventHubProducerClient class defines a high level interface for
     sending events to the Azure Event Hubs service.
@@ -71,6 +71,14 @@ class EventHubProducerClient(EventHubClient):
                     self._producers = [None] * num_of_producers
                     for _ in range(num_of_producers):
                         self._producers_locks.append(threading.Lock())
+
+    def _create_producer(self, partition_id=None, send_timeout=None):
+        target = "amqps://{}{}".format(self._address.hostname, self._address.path)
+        send_timeout = self._config.send_timeout if send_timeout is None else send_timeout
+
+        handler = EventHubProducer(
+            self, target, partition=partition_id, send_timeout=send_timeout)
+        return handler
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):

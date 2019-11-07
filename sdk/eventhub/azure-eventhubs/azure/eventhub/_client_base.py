@@ -12,7 +12,6 @@ import uuid
 import time
 import functools
 import threading
-from abc import abstractmethod
 from typing import Union, Any, TYPE_CHECKING
 
 import uamqp  # type: ignore
@@ -234,6 +233,18 @@ class ClientBase(object):
         span.add_attribute("component", "eventhubs")
         span.add_attribute("message_bus.destination", self._address.path)
         span.add_attribute("peer.address", self._address.hostname)
+
+    @classmethod
+    def from_connection_string(cls, conn_str, **kwargs):
+        event_hub_path = kwargs.pop("event_hub_path", None)
+        address, policy, key, entity = _parse_conn_str(conn_str)
+        entity = event_hub_path or entity
+        left_slash_pos = address.find("//")
+        if left_slash_pos != -1:
+            host = address[left_slash_pos + 2:]
+        else:
+            host = address
+        return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
 
     def get_properties(self):
         # type:() -> Dict[str, Any]

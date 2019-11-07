@@ -6,7 +6,8 @@ import logging
 from typing import Any, Union, Dict, Tuple, TYPE_CHECKING, Callable, List
 
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, EventData
-from .client import EventHubClient
+from ._client_base import ClientBase
+from ._consumer import EventHubConsumer
 from ._eventprocessor.event_processor import EventProcessor
 from ._eventprocessor.partition_context import PartitionContext
 
@@ -16,7 +17,7 @@ if TYPE_CHECKING:
 log = logging.getLogger(__name__)
 
 
-class EventHubConsumerClient(EventHubClient):
+class EventHubConsumerClient(ClientBase):
     """ The EventHubProducerClient class defines a high level interface for
     receiving events from the Azure Event Hubs service.
 
@@ -83,6 +84,19 @@ class EventHubConsumerClient(EventHubClient):
             network_tracing=kwargs.get("logging_enable"), **kwargs)
         self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
         self._closed = False
+
+    def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
+        owner_level = kwargs.get("owner_level")
+        prefetch = kwargs.get("prefetch") or self._config.prefetch
+        track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
+
+        source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
+            self._address.hostname, self._address.path, consumer_group, partition_id)
+        handler = EventHubConsumer(
+            self, source_url, event_position=event_position, owner_level=owner_level,
+            prefetch=prefetch,
+            track_last_enqueued_event_properties=track_last_enqueued_event_properties)
+        return handler
 
     @classmethod
     def _stop_eventprocessor(cls, event_processor):

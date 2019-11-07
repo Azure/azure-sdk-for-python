@@ -16,7 +16,7 @@ from azure.core.settings import settings  # type: ignore
 
 from ..common import EventData, EventDataBatch
 from ..error import _error_handler, OperationTimeoutError, EventDataError
-from ..producer import _error, _set_partition_key, _set_trace_message
+from .._producer import _error, _set_partition_key, _set_trace_message
 from ._consumer_producer_mixin_async import ConsumerProducerMixin
 
 log = logging.getLogger(__name__)
@@ -72,7 +72,8 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
         self._timeout = send_timeout
-        self._retry_policy = errors.ErrorPolicy(max_retries=self._client._config.max_retries, on_error=_error_handler)  # pylint:disable=protected-access
+        self._retry_policy = errors.ErrorPolicy(
+            max_retries=self._client._config.max_retries, on_error=_error_handler)  # pylint:disable=protected-access
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
         self._unsent_events = None

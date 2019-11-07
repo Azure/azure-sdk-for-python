@@ -8,8 +8,8 @@ import logging
 from typing import Any, Union, TYPE_CHECKING, Iterable, List
 from uamqp import constants  # type: ignore
 from azure.eventhub import EventData, EventHubSharedKeyCredential, EventHubSASTokenCredential, EventDataBatch
-from .client_async import EventHubClient
-from .producer_async import EventHubProducer
+from ._client_base_async import ClientBaseAsync
+from ._producer_async import EventHubProducer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 log = logging.getLogger(__name__)
 
 
-class EventHubProducerClient(EventHubClient):
+class EventHubProducerClient(ClientBaseAsync):
     """
     The EventHubProducerClient class defines a high level interface for
     sending events to the Azure Event Hubs service.
@@ -56,7 +56,7 @@ class EventHubProducerClient(EventHubClient):
         """"""
         super(EventHubProducerClient, self).__init__(
             host=host, event_hub_path=event_hub_path, credential=credential,
-            network_tracing=kwargs.get("logging_enable"), **kwargs)
+            network_tracing=kwargs.pop("logging_enable", False), **kwargs)
         self._producers = []  # type: List[EventHubProducer]
         self._client_lock = asyncio.Lock()  # sync the creation of self._producers
         self._producers_locks = []  # type: List[asyncio.Lock]
@@ -71,6 +71,19 @@ class EventHubProducerClient(EventHubClient):
                     for _ in range(num_of_producers):
                         self._producers_locks.append(asyncio.Lock())
                         # self._producers_locks = [asyncio.Lock()] * num_of_producers
+
+    def _create_producer(
+            self, *,
+            partition_id: str = None,
+            send_timeout: float = None,
+            loop: asyncio.AbstractEventLoop = None
+    ) -> EventHubProducer:
+        target = "amqps://{}{}".format(self._address.hostname, self._address.path)
+        send_timeout = self._config.send_timeout if send_timeout is None else send_timeout
+
+        handler = EventHubProducer(
+            self, target, partition=partition_id, send_timeout=send_timeout, loop=loop)
+        return handler
 
     @classmethod
     def from_connection_string(cls, conn_str: str,
@@ -111,7 +124,15 @@ class EventHubProducerClient(EventHubClient):
                 :dedent: 4
                 :caption: Create a new instance of the EventHubProducerClient from connection string.
         """
-        return super(EventHubProducerClient, cls).from_connection_string(conn_str, **kwargs)
+        return super(EventHubProducerClient, cls).\
+            from_connection_string(conn_str,
+                                   event_hub_path=event_hub_path,
+                                   logging_enable=logging_enable,
+                                   http_proxy=http_proxy,
+                                   auth_timeout=auth_timeout,
+                                   user_agent=user_agent,
+                                   retry_total=retry_total,
+                                   transport_type=transport_type)
 
     async def send(self, event_data,
             *, partition_key: Union[str, bytes] = None, partition_id: str = None, timeout: float = None) -> None:

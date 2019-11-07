@@ -6,14 +6,15 @@ import logging
 from typing import Any, Union, TYPE_CHECKING, Dict, Tuple
 from azure.eventhub import EventPosition, EventHubSharedKeyCredential, EventHubSASTokenCredential
 from .eventprocessor.event_processor import EventProcessor
-from .client_async import EventHubClient
+from ._consumer_async import EventHubConsumer
+from ._client_base_async import ClientBaseAsync
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
 
 log = logging.getLogger(__name__)
 
 
-class EventHubConsumerClient(EventHubClient):
+class EventHubConsumerClient(ClientBaseAsync):
     """ The EventHubProducerClient class defines a high level interface for
     receiving events from the Azure Event Hubs service.
 
@@ -70,11 +71,31 @@ class EventHubConsumerClient(EventHubClient):
         """"""
         self._partition_manager = kwargs.pop("partition_manager", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", 10)
+        network_tracing = kwargs.pop("logging_enable", False)
         super(EventHubConsumerClient, self).__init__(
             host=host, event_hub_path=event_hub_path, credential=credential,
-            network_tracing=kwargs.get("logging_enable"), **kwargs)
+            network_tracing=network_tracing, **kwargs)
         self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
         self._closed = False
+
+    def _create_consumer(
+            self,
+            consumer_group: str,
+            partition_id: str,
+            event_position: EventPosition, **kwargs
+    ) -> EventHubConsumer:
+        owner_level = kwargs.get("owner_level")
+        prefetch = kwargs.get("prefetch") or self._config.prefetch
+        track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
+        loop = kwargs.get("loop")
+
+        source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
+            self._address.hostname, self._address.path, consumer_group, partition_id)
+        handler = EventHubConsumer(
+            self, source_url, event_position=event_position, owner_level=owner_level,
+            prefetch=prefetch,
+            track_last_enqueued_event_properties=track_last_enqueued_event_properties, loop=loop)
+        return handler
 
     @classmethod
     def from_connection_string(cls, conn_str: str,
@@ -127,7 +148,7 @@ class EventHubConsumerClient(EventHubClient):
         return super(EventHubConsumerClient, cls).\
             from_connection_string(conn_str,
                                    event_hub_path=event_hub_path,
-                                   network_tracing=network_tracing,
+                                   logging_enable=logging_enable,
                                    http_proxy=http_proxy,
                                    auth_timeout=auth_timeout,
                                    user_agent=user_agent,

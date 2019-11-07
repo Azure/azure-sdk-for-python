@@ -6,22 +6,15 @@ from __future__ import unicode_literals
 
 import logging
 import asyncio
-import sys
-import platform
-import uuid
 import time
 import datetime
 import functools
-from abc import abstractmethod
 from typing import Union, Any, TYPE_CHECKING
 
 from uamqp import authentication, constants  # type: ignore
 from uamqp import Message, AMQPClientAsync  # type: ignore
 
-from .producer_async import EventHubProducer
-from .consumer_async import EventHubConsumer
-from ..common import parse_sas_token, EventPosition, \
-    EventHubSharedKeyCredential, EventHubSASTokenCredential
+from ..common import parse_sas_token, EventHubSharedKeyCredential, EventHubSASTokenCredential
 from .error_async import _handle_exception
 from .._client_base import ClientBase
 from ._connection_manager_async import get_connection_manager
@@ -198,38 +191,6 @@ class ClientBaseAsync(ClientBase):
                 float(partition_info[b'last_enqueued_time_utc'] / 1000))
             output['is_empty'] = partition_info[b'is_partition_empty']
         return output
-
-    def _create_consumer(
-            self,
-            consumer_group: str,
-            partition_id: str,
-            event_position: EventPosition, **kwargs
-    ) -> EventHubConsumer:
-        owner_level = kwargs.get("owner_level")
-        prefetch = kwargs.get("prefetch") or self._config.prefetch
-        track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
-        loop = kwargs.get("loop")
-
-        source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            self._address.hostname, self._address.path, consumer_group, partition_id)
-        handler = EventHubConsumer(
-            self, source_url, event_position=event_position, owner_level=owner_level,
-            prefetch=prefetch,
-            track_last_enqueued_event_properties=track_last_enqueued_event_properties, loop=loop)
-        return handler
-
-    def _create_producer(
-            self, *,
-            partition_id: str = None,
-            send_timeout: float = None,
-            loop: asyncio.AbstractEventLoop = None
-    ) -> EventHubProducer:
-        target = "amqps://{}{}".format(self._address.hostname, self._address.path)
-        send_timeout = self._config.send_timeout if send_timeout is None else send_timeout
-
-        handler = EventHubProducer(
-            self, target, partition=partition_id, send_timeout=send_timeout, loop=loop)
-        return handler
 
     async def close(self):
         # type: () -> None
