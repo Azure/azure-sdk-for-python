@@ -6336,15 +6336,17 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
     :vartype id: str
     :param name: The name of the extension.
     :type name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param force_update_tag: If a value is provided and is different from the
      previous value, the extension handler will be forced to update even if the
      extension configuration has not changed.
     :type force_update_tag: str
     :param publisher: The name of the extension handler publisher.
     :type publisher: str
-    :param type: Specifies the type of the extension; an example is
+    :param type1: Specifies the type of the extension; an example is
      "CustomScriptExtension".
-    :type type: str
+    :type type1: str
     :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
     :param auto_upgrade_minor_version: Indicates whether the extension should
@@ -6368,15 +6370,17 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
 
     _validation = {
         'id': {'readonly': True},
+        'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
         'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'type': {'key': 'properties.type', 'type': 'str'},
+        'type1': {'key': 'properties.type', 'type': 'str'},
         'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
         'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
         'settings': {'key': 'properties.settings', 'type': 'object'},
@@ -6388,9 +6392,10 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
     def __init__(self, **kwargs):
         super(VirtualMachineScaleSetExtension, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
+        self.type = None
         self.force_update_tag = kwargs.get('force_update_tag', None)
         self.publisher = kwargs.get('publisher', None)
-        self.type = kwargs.get('type', None)
+        self.type1 = kwargs.get('type1', None)
         self.type_handler_version = kwargs.get('type_handler_version', None)
         self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
         self.settings = kwargs.get('settings', None)
@@ -6427,15 +6432,17 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
     :vartype id: str
     :ivar name: The name of the extension.
     :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param force_update_tag: If a value is provided and is different from the
      previous value, the extension handler will be forced to update even if the
      extension configuration has not changed.
     :type force_update_tag: str
     :param publisher: The name of the extension handler publisher.
     :type publisher: str
-    :ivar type: Specifies the type of the extension; an example is
+    :param type1: Specifies the type of the extension; an example is
      "CustomScriptExtension".
-    :vartype type: str
+    :type type1: str
     :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
     :param auto_upgrade_minor_version: Indicates whether the extension should
@@ -6463,9 +6470,10 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
         'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'type': {'key': 'properties.type', 'type': 'str'},
+        'type1': {'key': 'properties.type', 'type': 'str'},
         'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
         'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
         'settings': {'key': 'properties.settings', 'type': 'object'},
@@ -6476,9 +6484,10 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
     def __init__(self, **kwargs):
         super(VirtualMachineScaleSetExtensionUpdate, self).__init__(**kwargs)
         self.name = None
+        self.type = None
         self.force_update_tag = kwargs.get('force_update_tag', None)
         self.publisher = kwargs.get('publisher', None)
-        self.type = None
+        self.type1 = kwargs.get('type1', None)
         self.type_handler_version = kwargs.get('type_handler_version', None)
         self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
         self.settings = kwargs.get('settings', None)
