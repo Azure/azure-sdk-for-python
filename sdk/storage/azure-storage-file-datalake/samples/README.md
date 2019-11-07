@@ -53,5 +53,5 @@ pip install azure-storage-file-datalake --pre
 
 ## Next steps
 
-Check out the [API reference documentation](https://aka.ms/azsdk-python-storage-file-datalake-ref) to learn more about
+Check out the [API reference documentation](https://aka.ms/azsdk-python-storage-filedatalake-ref) to learn more about
 what you can do with the DataLake Storage client library.
