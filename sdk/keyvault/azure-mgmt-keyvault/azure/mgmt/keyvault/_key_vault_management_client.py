@@ -46,7 +46,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2018-02-14'
+    DEFAULT_API_VERSION = '2019-09-01'
     _PROFILE_TAG = "azure.mgmt.keyvault.KeyVaultManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -74,12 +74,16 @@ class KeyVaultManagementClient(MultiApiClientMixin, SDKClient):
 
            * 2016-10-01: :mod:`v2016_10_01.models<azure.mgmt.keyvault.v2016_10_01.models>`
            * 2018-02-14: :mod:`v2018_02_14.models<azure.mgmt.keyvault.v2018_02_14.models>`
+           * 2019-09-01: :mod:`v2019_09_01.models<azure.mgmt.keyvault.v2019_09_01.models>`
         """
         if api_version == '2016-10-01':
             from .v2016_10_01 import models
             return models
         elif api_version == '2018-02-14':
             from .v2018_02_14 import models
+            return models
+        elif api_version == '2019-09-01':
+            from .v2019_09_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
@@ -89,12 +93,28 @@ class KeyVaultManagementClient(MultiApiClientMixin, SDKClient):
 
            * 2016-10-01: :class:`Operations<azure.mgmt.keyvault.v2016_10_01.operations.Operations>`
            * 2018-02-14: :class:`Operations<azure.mgmt.keyvault.v2018_02_14.operations.Operations>`
+           * 2019-09-01: :class:`Operations<azure.mgmt.keyvault.v2019_09_01.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2016-10-01':
             from .v2016_10_01.operations import Operations as OperationClass
         elif api_version == '2018-02-14':
             from .v2018_02_14.operations import Operations as OperationClass
+        elif api_version == '2019-09-01':
+            from .v2019_09_01.operations import Operations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def secrets(self):
+        """Instance depends on the API version:
+
+           * 2019-09-01: :class:`SecretsOperations<azure.mgmt.keyvault.v2019_09_01.operations.SecretsOperations>`
+        """
+        api_version = self._get_api_version('secrets')
+        if api_version == '2019-09-01':
+            from .v2019_09_01.operations import SecretsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -105,12 +125,15 @@ class KeyVaultManagementClient(MultiApiClientMixin, SDKClient):
 
            * 2016-10-01: :class:`VaultsOperations<azure.mgmt.keyvault.v2016_10_01.operations.VaultsOperations>`
            * 2018-02-14: :class:`VaultsOperations<azure.mgmt.keyvault.v2018_02_14.operations.VaultsOperations>`
+           * 2019-09-01: :class:`VaultsOperations<azure.mgmt.keyvault.v2019_09_01.operations.VaultsOperations>`
         """
         api_version = self._get_api_version('vaults')
         if api_version == '2016-10-01':
             from .v2016_10_01.operations import VaultsOperations as OperationClass
         elif api_version == '2018-02-14':
             from .v2018_02_14.operations import VaultsOperations as OperationClass
+        elif api_version == '2019-09-01':
+            from .v2019_09_01.operations import VaultsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
