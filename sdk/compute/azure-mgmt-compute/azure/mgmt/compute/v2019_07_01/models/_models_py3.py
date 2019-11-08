@@ -6438,11 +6438,11 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
      previous value, the extension handler will be forced to update even if the
      extension configuration has not changed.
     :type force_update_tag: str
-    :param publisher: The name of the extension handler publisher.
-    :type publisher: str
-    :param type1: Specifies the type of the extension; an example is
+    :ivar publisher: The name of the extension handler publisher.
+    :vartype publisher: str
+    :ivar type1: Specifies the type of the extension; an example is
      "CustomScriptExtension".
-    :type type1: str
+    :vartype type1: str
     :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
     :param auto_upgrade_minor_version: Indicates whether the extension should
@@ -6465,6 +6465,8 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'publisher': {'readonly': True},
+        'type1': {'readonly': True},
     }
 
     _attribute_map = {
@@ -6481,13 +6483,13 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
         'provision_after_extensions': {'key': 'properties.provisionAfterExtensions', 'type': '[str]'},
     }
 
-    def __init__(self, *, force_update_tag: str=None, publisher: str=None, type1: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, provision_after_extensions=None, **kwargs) -> None:
+    def __init__(self, *, force_update_tag: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, provision_after_extensions=None, **kwargs) -> None:
         super(VirtualMachineScaleSetExtensionUpdate, self).__init__(**kwargs)
         self.name = None
         self.type = None
         self.force_update_tag = force_update_tag
-        self.publisher = publisher
-        self.type1 = type1
+        self.publisher = None
+        self.type1 = None
         self.type_handler_version = type_handler_version
         self.auto_upgrade_minor_version = auto_upgrade_minor_version
         self.settings = settings
