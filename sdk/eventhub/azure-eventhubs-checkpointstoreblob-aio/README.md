@@ -86,7 +86,7 @@ async def do_operation(events):
 
 async def process_events(partition_context, events):
     await do_operation(events)
-    partition_context.update_checkpoint(events[-1])
+    await partition_context.update_checkpoint(events[-1])
 
 async def main():
     storage_container_client = ContainerClient.from_connection_string(storage_container_connection_str, storage_container_name)
@@ -116,7 +116,7 @@ Refer to [Logging](#logging) to enable loggers for related libraries.
 
 ### Documentation
 
-Reference documentation is available at https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b5/azure.eventhub.extensions.html
+Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b5/azure.eventhub.aio.html#azure.eventhub.aio.PartitionManager)
 
 ### Logging
 
