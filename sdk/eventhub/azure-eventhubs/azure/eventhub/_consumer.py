@@ -13,6 +13,7 @@ from distutils.version import StrictVersion
 import uamqp  # type: ignore
 from uamqp import types, errors, utils  # type: ignore
 from uamqp import ReceiveClient, Source  # type: ignore
+from uamqp.compat import queue
 
 from .common import EventData, EventPosition
 from .error import _error_handler
@@ -97,6 +98,9 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
         self._last_enqueued_event_properties = {}
 
+        self._queue = queue.Queue()
+        self._receive_callback = None
+
     def __iter__(self):
         return self
 
@@ -156,6 +160,41 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
     def _open_with_retry(self):
         return self._do_retryable_operation(self._open, operation_need_param=False)
+
+    # Option1: single event callback
+
+    def _message_received_single_event(self, message):
+        event_data = EventData._from_message(message)
+        event_data._trace_link_message()
+        self._receive_callback(event_data)
+
+    def streaming_receive_for_single_eventdata(self, callback):
+        self._receive_callback = callback
+        self._open()
+        self._handler.receive_messages(self._message_received_single_event)
+
+    # Option2: list events callback, needs batch and timeout control
+
+    def _message_received_option1(self, message):
+        event_data = EventData._from_message(message)
+        event_data._trace_link_message()
+        self.callback(event_data)
+
+    def _streaming_receive_for_list_eventdata_callback_option1(self):
+        self._open()
+        self._handler.receive_messages(self._message_received_option1)  # need adjustment in uamqp?
+
+    # Option3: list events callback, needs batch and timeout control
+
+    def _message_received_option2(self, message):
+        event_data = EventData._from_message(message)
+        event_data._trace_link_message()
+
+    def streaming_receive_for_list_eventdata_callback_option2(self):
+        self._open()
+        self._handler._message_received_callback = self._message_received_option2
+        while self._running:
+            self._handler.do_work()  # can do the control in eventhub
 
     def _receive(self, timeout_time=None, max_batch_size=None, **kwargs):
         last_exception = kwargs.get("last_exception")

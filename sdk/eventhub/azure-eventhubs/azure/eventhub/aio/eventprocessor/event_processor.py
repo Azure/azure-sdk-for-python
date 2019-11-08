@@ -8,6 +8,7 @@ from typing import Dict, Type, Callable, List, Any
 import uuid
 import asyncio
 import logging
+from functools import partial
 
 from azure.core.tracing import SpanKind  # type: ignore
 from azure.core.settings import settings  # type: ignore
@@ -186,6 +187,27 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                 prefetch=self._prefetch,
             )
 
+            # new: single or list event
+            '''
+            callback_with_partition_context = partial(self._event_handler, partition_context)
+
+            try:
+                await partition_consumer.streaming_receive_for_single_eventdata(callback=callback_with_partition_context)
+            except asyncio.CancelledError:
+                log.info(
+                    "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+                    " is cancelled",
+                    owner_id,
+                    eventhub_name,
+                    partition_id,
+                    consumer_group_name
+                )
+                raise
+            except Exception as error:  # pylint:disable=broad-except
+                await self._process_error(partition_context, error)
+            '''
+
+            # origin
             try:
                 if self._partition_initialize_handler:
                     try:
