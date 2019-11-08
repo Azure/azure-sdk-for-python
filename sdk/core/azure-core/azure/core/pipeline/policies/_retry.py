@@ -333,9 +333,6 @@ class RetryPolicy(HTTPPolicy):
             return True
         return False
 
-
-        return not self.is_exhausted(settings)
-
     def update_context(self, context, retry_settings):
         """Updates retry history in pipeline context.
 
