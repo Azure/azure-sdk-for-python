@@ -53,7 +53,7 @@ try:
             'TrioRequestsTransport',
             'TrioRequestsTransportResponse'
         ])
-    except ImportError:
+    except ModuleNotFoundError:
         pass  # Trio not installed
 
     try:
@@ -64,5 +64,5 @@ try:
         ])
     except ModuleNotFoundError:
         pass  # Aiohttp not installed
-except (ImportError, SyntaxError):
+except (ModuleNotFoundError, SyntaxError):
     pass  # Asynchronous pipelines not supported.
