@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 from enum import Enum
 import pytest
+import aiohttp
 import asyncio
 import requests
 import time
@@ -333,6 +334,19 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         resp = await blob.upload_blob(data=data.raw)
 
         self.assertIsNotNone(resp.get('etag'))
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_blob_with_aiohttp_async(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account.name, storage_account_key)
+        blob = self.bsc.get_blob_client(self.container_name, "gutenberg")
+        # Act
+        uri = "http://www.gutenberg.org/files/59466/59466-0.txt"
+        async with aiohttp.ClientSession() as session:
+            async with session.get(uri) as data:
+                text_data = await data.text()
+                resp = await blob.upload_blob(data=text_data)
+                self.assertIsNotNone(resp.get('etag'))
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
