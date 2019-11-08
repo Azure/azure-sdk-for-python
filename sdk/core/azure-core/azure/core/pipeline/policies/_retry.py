@@ -329,7 +329,6 @@ class RetryPolicy(HTTPPolicy):
                 except (UnsupportedOperation, ValueError):
                     # if body is not seekable, then retry would not work
                     return False
-            settings['count'] += 1
             return True
         return False
 
