@@ -5,7 +5,6 @@
 # ------------------------------------
 
 import six
-from ._policies import CognitiveServicesCredentialPolicy, TextAnalyticsResponseHook
 from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
@@ -20,6 +19,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
 )
+from ._policies import CognitiveServicesCredentialPolicy, TextAnalyticsResponseHook
 from ._version import VERSION
 
 

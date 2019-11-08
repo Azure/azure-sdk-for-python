@@ -12,7 +12,6 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     DecodeError,
 )
-
 from ._models import (
     LanguageInput,
     MultiLanguageInput,
@@ -27,6 +26,7 @@ from ._models import (
     DocumentLanguage,
     DetectedLanguage,
     DocumentError,
+    Error
 )
 
 
@@ -44,8 +44,6 @@ def process_entities_error(error):
 
 def process_single_error(error):
     """We actually raise the DocumentError for single text operations.
-    :param error:
-    :return:
     """
     raise_error = HttpResponseError
     error_message = error.error["innerError"]["message"]
@@ -85,20 +83,16 @@ def _validate_single_input(text, hint, hint_value):
     if isinstance(text, six.text_type):
         return [{"id": "0", "text": text, hint: hint_value}]
     else:
-        raise TypeError("Text parameter should be string.")
+        raise TypeError("Text parameter must be string.")
 
 
 def _validate_batch_input(documents):
     string_input = False
-    for idx, item in enumerate(documents):
-        if type(item) == str:
-            documents[idx] = {"id": str(idx), "text": item}
+    for idx, doc in enumerate(documents):
+        if isinstance(doc, six.text_type):
+            documents[idx] = {"id": str(idx), "text": doc}
             string_input = True
-        if (
-            type(item) == dict
-            or isinstance(item, MultiLanguageInput)
-            or isinstance(item, LanguageInput)
-        ):
+        if type(doc) == dict or isinstance(doc, MultiLanguageInput) or isinstance(doc, LanguageInput):
             if string_input:
                 raise TypeError("Mixing string and dictionary input unsupported.")
     return documents
@@ -116,7 +110,20 @@ def order_results(response, combined):
     return ordered_response
 
 
+def whole_batch_error(err):
+    return Error(
+        code=err.code,
+        message=err.message,
+        target=err.target,
+        innererror=err.innererror,
+        details=err.details
+    )
+
+
 def deserialize_language_result(response, obj, response_headers):
+    if hasattr(obj, "innererror"):
+        return whole_batch_error(obj)
+
     if obj.errors:
         combined = [*obj.documents, *obj.errors]
         results = order_results(response, combined)
@@ -129,16 +136,16 @@ def deserialize_language_result(response, obj, response_headers):
         else:
             results[idx] = DocumentLanguage(
                 id=language.id,
-                detected_languages=[
-                    DetectedLanguage._from_generated(l)
-                    for l in language.detected_languages
-                ],
+                detected_languages=[DetectedLanguage._from_generated(l) for l in language.detected_languages],
                 statistics=DocumentStatistics._from_generated(language.statistics),
             )
     return results
 
 
 def deserialize_entities_result(response, obj, response_headers):
+    if hasattr(obj, "innererror"):
+        return whole_batch_error(obj)
+
     if obj.errors:
         combined = [*obj.documents, *obj.errors]
         results = order_results(response, combined)
@@ -156,7 +163,11 @@ def deserialize_entities_result(response, obj, response_headers):
             )
     return results
 
+
 def deserialize_linked_entities_result(response, obj, response_headers):
+    if hasattr(obj, "innererror"):
+        return whole_batch_error(obj)
+
     if obj.errors:
         combined = [*obj.documents, *obj.errors]
         results = order_results(response, combined)
@@ -176,6 +187,9 @@ def deserialize_linked_entities_result(response, obj, response_headers):
 
 
 def deserialize_key_phrases_result(response, obj, response_headers):
+    if hasattr(obj, "innererror"):
+        return whole_batch_error(obj)
+
     if obj.errors:
         combined = [*obj.documents, *obj.errors]
         results = order_results(response, combined)
@@ -195,6 +209,9 @@ def deserialize_key_phrases_result(response, obj, response_headers):
 
 
 def deserialize_sentiment_result(response, obj, response_headers):
+    if hasattr(obj, "innererror"):
+        return whole_batch_error(obj)
+
     if obj.errors:
         combined = [*obj.documents, *obj.errors]
         results = order_results(response, combined)
@@ -210,9 +227,6 @@ def deserialize_sentiment_result(response, obj, response_headers):
                 sentiment=sentiment.sentiment,
                 statistics=DocumentStatistics._from_generated(sentiment.statistics),
                 document_scores=sentiment.document_scores,
-                sentences=[
-                    SentenceSentiment._from_generated(s)
-                    for s in sentiment.sentences
-                ],
+                sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences],
             )
     return results

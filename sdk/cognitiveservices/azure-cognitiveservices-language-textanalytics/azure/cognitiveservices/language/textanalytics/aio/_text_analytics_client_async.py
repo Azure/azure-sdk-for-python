@@ -15,6 +15,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from .._generated.aio._text_analytics_api_async import TextAnalyticsAPI
 from ._base_client_async import AsyncTextAnalyticsClientBase
+from .._models import Error
 from .._response_handlers import (
     _validate_batch_input,
     process_batch_error,
@@ -152,15 +153,18 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            async for doc in segmented_batches:
+            async for batch in segmented_batches:
                 response = await self._client.languages(
-                    documents=doc,
+                    documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
                     cls=deserialize_language_result,
                     **kwargs
                 )
-                result.extend(response)
+                if isinstance(response, Error):
+                    [result.append(response) for _ in batch]
+                else:
+                    result.extend(response)
             return result
         except HttpResponseError as error:
             process_batch_error(error)
@@ -215,15 +219,18 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            async for doc in segmented_batches:
+            async for batch in segmented_batches:
                 response = await self._client.entities_recognition_general(
-                    documents=doc,
+                    documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
                     cls=deserialize_entities_result,
                     **kwargs
                 )
-                result.extend(response)
+                if isinstance(response, Error):
+                    [result.append(response) for _ in batch]
+                else:
+                    result.extend(response)
             return result
         except HttpResponseError as error:
             process_batch_error(error)
@@ -276,15 +283,18 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            async for doc in segmented_batches:
+            async for batch in segmented_batches:
                 response = await self._client.entities_recognition_pii(
-                    documents=doc,
+                    documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
                     cls=deserialize_entities_result,
                     **kwargs
                 )
-                result.extend(response)
+                if isinstance(response, Error):
+                    [result.append(response) for _ in batch]
+                else:
+                    result.extend(response)
             return result
         except HttpResponseError as error:
             process_batch_error(error)
@@ -337,15 +347,18 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            async for doc in segmented_batches:
+            async for batch in segmented_batches:
                 response = await self._client.entities_linking(
-                    documents=doc,
+                    documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
                     cls=deserialize_linked_entities_result,
                     **kwargs
                 )
-                result.extend(response)
+                if isinstance(response, Error):
+                    [result.append(response) for _ in batch]
+                else:
+                    result.extend(response)
             return result
         except HttpResponseError as error:
             process_batch_error(error)
@@ -398,15 +411,18 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            async for doc in segmented_batches:
+            async for batch in segmented_batches:
                 response = await self._client.key_phrases(
-                    documents=doc,
+                    documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
                     cls=deserialize_key_phrases_result,
                     **kwargs
                 )
-                result.extend(response)
+                if isinstance(response, Error):
+                    [result.append(response) for _ in batch]
+                else:
+                    result.extend(response)
             return result
         except HttpResponseError as error:
             process_batch_error(error)
@@ -460,15 +476,18 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            async for doc in segmented_batches:
+            async for batch in segmented_batches:
                 response = await self._client.sentiment(
-                    documents=doc,
+                    documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
                     cls=deserialize_sentiment_result,
                     **kwargs
                 )
-                result.extend(response)
+                if isinstance(response, Error):
+                    [result.append(response) for _ in batch]
+                else:
+                    result.extend(response)
             return result
         except HttpResponseError as error:
             process_batch_error(error)

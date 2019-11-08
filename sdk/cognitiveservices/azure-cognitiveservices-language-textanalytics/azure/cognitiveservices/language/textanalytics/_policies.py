@@ -37,9 +37,7 @@ class TextAnalyticsResponseHook(HTTPPolicy):
 
             response = self.next.send(request)
             if statistics is None and model_version is None:
-                data = ContentDecodePolicy.deserialize_from_http_generics(
-                    response.http_response
-                )
+                data = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
                 statistics = data.get("statistics", None)
                 model_version = data.get("modelVersion", None)
             for pipeline_obj in [request, response]:

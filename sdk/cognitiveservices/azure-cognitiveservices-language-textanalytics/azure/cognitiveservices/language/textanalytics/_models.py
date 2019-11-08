@@ -140,6 +140,8 @@ class Error(object):
     :param details: Details about specific errors that led to this reported
      error.
     :type details: list[~textanalytics.models.Error]
+    :param is_error: Boolean check for error item when iterating over list of
+     results. Always True for an instance of a Error.
     """
 
     def __init__(self, **kwargs):
@@ -148,6 +150,7 @@ class Error(object):
         self.target = kwargs.get("target", None)
         self.innererror = kwargs.get("innererror", None)
         self.details = kwargs.get("details", None)
+        self.is_error = True
 
 
 class InnerError(object):

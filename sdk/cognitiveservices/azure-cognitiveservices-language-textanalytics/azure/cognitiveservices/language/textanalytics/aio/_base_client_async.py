@@ -5,8 +5,6 @@
 # ------------------------------------
 
 import six
-from .._policies import CognitiveServicesCredentialPolicy
-from ._policies_async import AsyncTextAnalyticsResponseHook
 from azure.core.pipeline import AsyncPipeline
 from azure.core.configuration import Configuration
 from azure.core.pipeline.policies import (
@@ -20,6 +18,8 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     DistributedTracingPolicy
 )
+from .._policies import CognitiveServicesCredentialPolicy
+from ._policies_async import AsyncTextAnalyticsResponseHook
 from .._version import VERSION
 
 

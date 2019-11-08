@@ -14,6 +14,7 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._generated._text_analytics_api import TextAnalyticsAPI
+from ._models import Error
 from ._base_client import TextAnalyticsClientBase
 from ._response_handlers import (
     _validate_batch_input,
@@ -100,9 +101,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         num_batches = len(docs) // MAX_BATCH_SIZE
         for x in range(num_batches):
             segmented_batches.append(
-                docs[x * MAX_BATCH_SIZE : (x + 1) * MAX_BATCH_SIZE]
+                docs[x*MAX_BATCH_SIZE:(x+1)*MAX_BATCH_SIZE]
             )
-        segmented_batches.append(docs[num_batches * MAX_BATCH_SIZE :])
+        segmented_batches.append(docs[num_batches*MAX_BATCH_SIZE:])
         return segmented_batches
 
     @distributed_trace
@@ -154,15 +155,18 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            for doc in segmented_batches:
+            for batch in segmented_batches:
                 response = self._client.languages(
-                    documents=doc,
+                    documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
                     cls=deserialize_language_result,
                     **kwargs
                 )
-                result.extend(response)
+                if isinstance(response, Error):
+                    [result.append(response) for _ in batch]
+                else:
+                    result.extend(response)
             return result
         except HttpResponseError as error:
             process_batch_error(error)
@@ -217,15 +221,18 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            for doc in segmented_batches:
+            for batch in segmented_batches:
                 response = self._client.entities_recognition_general(
-                    documents=doc,
+                    documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
                     cls=deserialize_entities_result,
                     **kwargs
                 )
-                result.extend(response)
+                if isinstance(response, Error):
+                    [result.append(response) for _ in batch]
+                else:
+                    result.extend(response)
             return result
         except HttpResponseError as error:
             process_batch_error(error)
@@ -278,15 +285,18 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            for doc in segmented_batches:
+            for batch in segmented_batches:
                 response = self._client.entities_recognition_pii(
-                    documents=doc,
+                    documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
                     cls=deserialize_entities_result,
                     **kwargs
                 )
-                result.extend(response)
+                if isinstance(response, Error):
+                    [result.append(response) for _ in batch]
+                else:
+                    result.extend(response)
             return result
         except HttpResponseError as error:
             process_batch_error(error)
@@ -339,15 +349,18 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            for doc in segmented_batches:
+            for batch in segmented_batches:
                 response = self._client.entities_linking(
-                    documents=doc,
+                    documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
                     cls=deserialize_linked_entities_result,
                     **kwargs
                 )
-                result.extend(response)
+                if isinstance(response, Error):
+                    [result.append(response) for _ in batch]
+                else:
+                    result.extend(response)
             return result
         except HttpResponseError as error:
             process_batch_error(error)
@@ -400,15 +413,18 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            for doc in segmented_batches:
+            for batch in segmented_batches:
                 response = self._client.key_phrases(
-                    documents=doc,
+                    documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
                     cls=deserialize_key_phrases_result,
                     **kwargs
                 )
-                result.extend(response)
+                if isinstance(response, Error):
+                    [result.append(response) for _ in batch]
+                else:
+                    result.extend(response)
             return result
         except HttpResponseError as error:
             process_batch_error(error)
@@ -462,15 +478,18 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            for doc in segmented_batches:
+            for batch in segmented_batches:
                 response = self._client.sentiment(
-                    documents=doc,
+                    documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
                     cls=deserialize_sentiment_result,
                     **kwargs
                 )
-                result.extend(response)
+                if isinstance(response, Error):
+                    [result.append(response) for _ in batch]
+                else:
+                    result.extend(response)
             return result
         except HttpResponseError as error:
             process_batch_error(error)
