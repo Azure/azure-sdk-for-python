@@ -1,5 +1,11 @@
 # Release History
 
+## 4.0.0b6
+
+- Fixed bug in synchronized_request for media APIs.
+- Removed MediaReadMode and MediaRequestTimeout from ConnectionPolicy as media requests are not supported.
+
+
 ## 4.0.0b5
 
 - azure.cosmos.errors module deprecated and replaced by azure.cosmos.exceptions

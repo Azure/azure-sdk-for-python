@@ -10632,22 +10632,22 @@ class PrivateLinkServiceConnectionState(Model):
     :type status: str
     :param description: The reason for approval/rejection of the connection.
     :type description: str
-    :param action_required: A message indicating if changes on the service
+    :param actions_required: A message indicating if changes on the service
      provider require any updates on the consumer.
-    :type action_required: str
+    :type actions_required: str
     """
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
-        'action_required': {'key': 'actionRequired', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
     }
 
-    def __init__(self, *, status: str=None, description: str=None, action_required: str=None, **kwargs) -> None:
+    def __init__(self, *, status: str=None, description: str=None, actions_required: str=None, **kwargs) -> None:
         super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
         self.status = status
         self.description = description
-        self.action_required = action_required
+        self.actions_required = actions_required
 
 
 class PrivateLinkServiceIpConfiguration(SubResource):

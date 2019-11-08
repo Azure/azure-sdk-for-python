@@ -46,6 +46,8 @@ stages:
       safeName: azurestorageblob
     - name: azure_storage_file_share
       safeName: azurestoragefileshare
+    - name: azure_storage_file_datalake
+      safeName: azurestoragefiledatalake
     - name: azure_storage_queue
       safeName: azurestoragequeue
     - name: azure_mgmt_storage

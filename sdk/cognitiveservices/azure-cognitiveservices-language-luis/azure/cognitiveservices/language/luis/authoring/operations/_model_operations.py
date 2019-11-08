@@ -164,14 +164,17 @@ class ModelOperations(object):
     list_intents.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents'}
 
     def add_entity(
-            self, app_id, version_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Adds a simple entity extractor to a version of the application.
+            self, app_id, version_id, children=None, name=None, custom_headers=None, raw=False, **operation_config):
+        """Adds an entity extractor to a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
         :type version_id: str
-        :param name: Name of the new entity extractor.
+        :param children: Child entities.
+        :type children:
+         list[~azure.cognitiveservices.language.luis.authoring.models.ChildEntityModelCreateObject]
+        :param name: Entity name.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -183,7 +186,7 @@ class ModelOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
-        model_create_object = models.ModelCreateObject(name=name)
+        entity_model_create_object = models.EntityModelCreateObject(children=children, name=name)
 
         # Construct URL
         url = self.add_entity.metadata['url']
@@ -205,7 +208,7 @@ class ModelOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(model_create_object, 'ModelCreateObject')
+        body_content = self._serialize.body(entity_model_create_object, 'EntityModelCreateObject')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -246,7 +249,7 @@ class ModelOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: list or ClientRawResponse if raw=true
         :rtype:
-         list[~azure.cognitiveservices.language.luis.authoring.models.EntityExtractor]
+         list[~azure.cognitiveservices.language.luis.authoring.models.NDepthEntityExtractor]
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
@@ -282,7 +285,7 @@ class ModelOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[EntityExtractor]', response)
+            deserialized = self._deserialize('[NDepthEntityExtractor]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -290,70 +293,6 @@ class ModelOperations(object):
 
         return deserialized
     list_entities.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities'}
-
-    def add_hierarchical_entity(
-            self, app_id, version_id, children=None, name=None, custom_headers=None, raw=False, **operation_config):
-        """Adds a hierarchical entity extractor to a version of the application.
-
-        :param app_id: The application ID.
-        :type app_id: str
-        :param version_id: The version ID.
-        :type version_id: str
-        :param children: Child entities.
-        :type children: list[str]
-        :param name: Entity name.
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: str or ClientRawResponse if raw=true
-        :rtype: str or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
-        """
-        hierarchical_model_create_object = models.HierarchicalEntityModel(children=children, name=name)
-
-        # Construct URL
-        url = self.add_hierarchical_entity.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'appId': self._serialize.url("app_id", app_id, 'str'),
-            'versionId': self._serialize.url("version_id", version_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(hierarchical_model_create_object, 'HierarchicalEntityModel')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [201]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 201:
-            deserialized = self._deserialize('str', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    add_hierarchical_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities'}
 
     def list_hierarchical_entities(
             self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
@@ -420,70 +359,6 @@ class ModelOperations(object):
 
         return deserialized
     list_hierarchical_entities.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities'}
-
-    def add_composite_entity(
-            self, app_id, version_id, children=None, name=None, custom_headers=None, raw=False, **operation_config):
-        """Adds a composite entity extractor to a version of the application.
-
-        :param app_id: The application ID.
-        :type app_id: str
-        :param version_id: The version ID.
-        :type version_id: str
-        :param children: Child entities.
-        :type children: list[str]
-        :param name: Entity name.
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: str or ClientRawResponse if raw=true
-        :rtype: str or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
-        """
-        composite_model_create_object = models.CompositeEntityModel(children=children, name=name)
-
-        # Construct URL
-        url = self.add_composite_entity.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'appId': self._serialize.url("app_id", app_id, 'str'),
-            'versionId': self._serialize.url("version_id", version_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(composite_model_create_object, 'CompositeEntityModel')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [201]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 201:
-            deserialized = self._deserialize('str', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    add_composite_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/compositeentities'}
 
     def list_composite_entities(
             self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
@@ -1210,9 +1085,9 @@ class ModelOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: EntityExtractor or ClientRawResponse if raw=true
+        :return: NDepthEntityExtractor or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.language.luis.authoring.models.EntityExtractor
+         ~azure.cognitiveservices.language.luis.authoring.models.NDepthEntityExtractor
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
@@ -1245,7 +1120,7 @@ class ModelOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('EntityExtractor', response)
+            deserialized = self._deserialize('NDepthEntityExtractor', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1254,82 +1129,16 @@ class ModelOperations(object):
         return deserialized
     get_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}'}
 
-    def update_entity(
-            self, app_id, version_id, entity_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the name of an entity in a version of the application.
-
-        :param app_id: The application ID.
-        :type app_id: str
-        :param version_id: The version ID.
-        :type version_id: str
-        :param entity_id: The entity extractor ID.
-        :type entity_id: str
-        :param name: The entity's new name.
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: OperationStatus or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.language.luis.authoring.models.OperationStatus
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
-        """
-        model_update_object = models.ModelUpdateObject(name=name)
-
-        # Construct URL
-        url = self.update_entity.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'appId': self._serialize.url("app_id", app_id, 'str'),
-            'versionId': self._serialize.url("version_id", version_id, 'str'),
-            'entityId': self._serialize.url("entity_id", entity_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(model_update_object, 'ModelUpdateObject')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('OperationStatus', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    update_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}'}
-
     def delete_entity(
             self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes an entity from a version of the application.
+        """Deletes an entity or a child from a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
         :type version_id: str
-        :param entity_id: The entity extractor ID.
+        :param entity_id: The entity extractor or the child entity extractor
+         ID.
         :type entity_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1379,6 +1188,473 @@ class ModelOperations(object):
 
         return deserialized
     delete_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}'}
+
+    def update_entity_child(
+            self, app_id, version_id, entity_id, name=None, instance_of=None, custom_headers=None, raw=False, **operation_config):
+        """Updates the name of an entity extractor or the name and instanceOf
+        model of a child entity extractor.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param entity_id: The entity extractor or the child entity extractor
+         ID.
+        :type entity_id: str
+        :param name: Entity name.
+        :type name: str
+        :param instance_of: The instance of model name
+        :type instance_of: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: OperationStatus or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.luis.authoring.models.OperationStatus
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        entity_model_update_object = models.EntityModelUpdateObject(name=name, instance_of=instance_of)
+
+        # Construct URL
+        url = self.update_entity_child.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str'),
+            'entityId': self._serialize.url("entity_id", entity_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(entity_model_update_object, 'EntityModelUpdateObject')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatus', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update_entity_child.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}'}
+
+    def get_intent_features(
+            self, app_id, version_id, intent_id, custom_headers=None, raw=False, **operation_config):
+        """Gets the information of the features used by the intent in a version of
+        the application.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param intent_id: The intent classifier ID.
+        :type intent_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype:
+         list[~azure.cognitiveservices.language.luis.authoring.models.ModelFeatureInformation]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.get_intent_features.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str'),
+            'intentId': self._serialize.url("intent_id", intent_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ModelFeatureInformation]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_intent_features.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents/{intentId}/features'}
+
+    def replace_intent_features(
+            self, app_id, version_id, intent_id, feature_relations_update_object, custom_headers=None, raw=False, **operation_config):
+        """Updates the information of the features used by the intent in a version
+        of the application.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param intent_id: The intent classifier ID.
+        :type intent_id: str
+        :param feature_relations_update_object: A list of feature information
+         objects containing the new feature relations.
+        :type feature_relations_update_object:
+         list[~azure.cognitiveservices.language.luis.authoring.models.ModelFeatureInformation]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: OperationStatus or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.luis.authoring.models.OperationStatus
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.replace_intent_features.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str'),
+            'intentId': self._serialize.url("intent_id", intent_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(feature_relations_update_object, '[ModelFeatureInformation]')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatus', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    replace_intent_features.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents/{intentId}/features'}
+
+    def delete_intent_feature(
+            self, app_id, version_id, intent_id, model_name=None, feature_name=None, custom_headers=None, raw=False, **operation_config):
+        """Deletes a relation from the feature relations used by the intent in a
+        version of the application.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param intent_id: The intent classifier ID.
+        :type intent_id: str
+        :param model_name: The name of the model used.
+        :type model_name: str
+        :param feature_name: The name of the feature used.
+        :type feature_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: OperationStatus or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.luis.authoring.models.OperationStatus
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        feature_relation_delete_object = models.ModelFeatureInformation(model_name=model_name, feature_name=feature_name)
+
+        # Construct URL
+        url = self.delete_intent_feature.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str'),
+            'intentId': self._serialize.url("intent_id", intent_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(feature_relation_delete_object, 'ModelFeatureInformation')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatus', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    delete_intent_feature.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents/{intentId}/features'}
+
+    def get_entity_features(
+            self, app_id, version_id, entity_id, custom_headers=None, raw=False, **operation_config):
+        """Gets the information of the features used by the entity in a version of
+        the application.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param entity_id: The entity extractor ID.
+        :type entity_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype:
+         list[~azure.cognitiveservices.language.luis.authoring.models.ModelFeatureInformation]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.get_entity_features.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str'),
+            'entityId': self._serialize.url("entity_id", entity_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ModelFeatureInformation]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_entity_features.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/features'}
+
+    def replace_entity_features(
+            self, app_id, version_id, entity_id, feature_relations_update_object, custom_headers=None, raw=False, **operation_config):
+        """Updates the information of the features used by the entity in a version
+        of the application.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param entity_id: The entity extractor ID.
+        :type entity_id: str
+        :param feature_relations_update_object: A list of feature information
+         objects containing the new feature relations.
+        :type feature_relations_update_object:
+         list[~azure.cognitiveservices.language.luis.authoring.models.ModelFeatureInformation]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: OperationStatus or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.luis.authoring.models.OperationStatus
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.replace_entity_features.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str'),
+            'entityId': self._serialize.url("entity_id", entity_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(feature_relations_update_object, '[ModelFeatureInformation]')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatus', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    replace_entity_features.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/features'}
+
+    def delete_entity_feature(
+            self, app_id, version_id, entity_id, model_name=None, feature_name=None, custom_headers=None, raw=False, **operation_config):
+        """Deletes a relation from the feature relations used by the entity in a
+        version of the application.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param entity_id: The entity extractor ID.
+        :type entity_id: str
+        :param model_name: The name of the model used.
+        :type model_name: str
+        :param feature_name: The name of the feature used.
+        :type feature_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: OperationStatus or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.luis.authoring.models.OperationStatus
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        feature_relation_delete_object = models.ModelFeatureInformation(model_name=model_name, feature_name=feature_name)
+
+        # Construct URL
+        url = self.delete_entity_feature.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str'),
+            'entityId': self._serialize.url("entity_id", entity_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(feature_relation_delete_object, 'ModelFeatureInformation')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatus', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    delete_entity_feature.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/features'}
 
     def get_hierarchical_entity(
             self, app_id, version_id, h_entity_id, custom_headers=None, raw=False, **operation_config):
@@ -1441,9 +1717,9 @@ class ModelOperations(object):
     get_hierarchical_entity.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}'}
 
     def update_hierarchical_entity(
-            self, app_id, version_id, h_entity_id, children=None, name=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the name and children of a hierarchical entity model in a
-        version of the application.
+            self, app_id, version_id, h_entity_id, name=None, custom_headers=None, raw=False, **operation_config):
+        """Updates the name of a hierarchical entity model in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -1451,9 +1727,7 @@ class ModelOperations(object):
         :type version_id: str
         :param h_entity_id: The hierarchical entity extractor ID.
         :type h_entity_id: str
-        :param children: Child entities.
-        :type children: list[str]
-        :param name: Entity name.
+        :param name: The entity's new name.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1467,7 +1741,7 @@ class ModelOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
-        hierarchical_model_update_object = models.HierarchicalEntityModel(children=children, name=name)
+        model_update_object = models.ModelUpdateObject(name=name)
 
         # Construct URL
         url = self.update_hierarchical_entity.metadata['url']
@@ -1490,10 +1764,10 @@ class ModelOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(hierarchical_model_update_object, 'HierarchicalEntityModel')
+        body_content = self._serialize.body(model_update_object, 'ModelUpdateObject')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -2888,6 +3162,72 @@ class ModelOperations(object):
         return deserialized
     delete_custom_prebuilt_domain.metadata = {'url': '/apps/{appId}/versions/{versionId}/customprebuiltdomains/{domainName}'}
 
+    def add_entity_child(
+            self, app_id, version_id, entity_id, child_entity_model_create_object, custom_headers=None, raw=False, **operation_config):
+        """Creates a single child in an existing entity model hierarchy in a
+        version of the application.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param entity_id: The entity extractor ID.
+        :type entity_id: str
+        :param child_entity_model_create_object: A model object containing the
+         name of the new child model and its children.
+        :type child_entity_model_create_object:
+         ~azure.cognitiveservices.language.luis.authoring.models.ChildEntityModelCreateObject
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.add_entity_child.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str'),
+            'entityId': self._serialize.url("entity_id", entity_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(child_entity_model_create_object, 'ChildEntityModelCreateObject')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [201]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 201:
+            deserialized = self._deserialize('str', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    add_entity_child.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/children'}
+
     def get_hierarchical_entity_child(
             self, app_id, version_id, h_entity_id, h_child_id, custom_headers=None, raw=False, **operation_config):
         """Gets information about the child's model contained in an hierarchical
@@ -3005,7 +3345,7 @@ class ModelOperations(object):
         body_content = self._serialize.body(hierarchical_child_model_update_object, 'HierarchicalChildModelUpdateObject')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -3084,72 +3424,6 @@ class ModelOperations(object):
 
         return deserialized
     delete_hierarchical_entity_child.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}/children/{hChildId}'}
-
-    def add_hierarchical_entity_child(
-            self, app_id, version_id, h_entity_id, name=None, custom_headers=None, raw=False, **operation_config):
-        """Creates a single child in an existing hierarchical entity model in a
-        version of the application.
-
-        :param app_id: The application ID.
-        :type app_id: str
-        :param version_id: The version ID.
-        :type version_id: str
-        :param h_entity_id: The hierarchical entity extractor ID.
-        :type h_entity_id: str
-        :param name:
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: str or ClientRawResponse if raw=true
-        :rtype: str or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
-        """
-        hierarchical_child_model_create_object = models.HierarchicalChildModelCreateObject(name=name)
-
-        # Construct URL
-        url = self.add_hierarchical_entity_child.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'appId': self._serialize.url("app_id", app_id, 'str'),
-            'versionId': self._serialize.url("version_id", version_id, 'str'),
-            'hEntityId': self._serialize.url("h_entity_id", h_entity_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(hierarchical_child_model_create_object, 'HierarchicalChildModelCreateObject')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [201]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 201:
-            deserialized = self._deserialize('str', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    add_hierarchical_entity_child.metadata = {'url': '/apps/{appId}/versions/{versionId}/hierarchicalentities/{hEntityId}/children'}
 
     def add_composite_entity_child(
             self, app_id, version_id, c_entity_id, name=None, custom_headers=None, raw=False, **operation_config):
