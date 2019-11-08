@@ -4,6 +4,7 @@
 
 - Fixed bug in synchronized_request for media APIs.
 - Removed MediaReadMode and MediaRequestTimeout from ConnectionPolicy as media requests are not supported.
+- Added HttpLoggingPolicy to pipeline to enable passing in a custom logger for request and response headers.
 
 
 ## 4.0.0b5
