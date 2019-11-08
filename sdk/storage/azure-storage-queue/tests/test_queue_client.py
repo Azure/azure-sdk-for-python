@@ -468,8 +468,12 @@ class StorageQueueClientTest(StorageTestCase):
                 with self.assertRaises(ValueError) as e:
                     service = service_type[0].from_connection_string(conn_str, queue_name="test")
                 
-                self.assertEqual(
-                    str(e.exception), "Connection string is either blank or malformed.")
+                if conn_str in("", "foobar", "foo;bar;baz", ";"):
+                    self.assertEqual(
+                        str(e.exception), "Connection string is either blank or malformed.")
+                elif conn_str in ("foobar=baz=foo" , "foo=;bar=;", "=", "=;=="):
+                    self.assertEqual(
+                        str(e.exception), "Connection string missing required connection details.")
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
