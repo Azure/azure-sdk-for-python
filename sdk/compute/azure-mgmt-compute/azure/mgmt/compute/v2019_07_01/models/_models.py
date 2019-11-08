@@ -6438,11 +6438,11 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
      previous value, the extension handler will be forced to update even if the
      extension configuration has not changed.
     :type force_update_tag: str
-    :ivar publisher: The name of the extension handler publisher.
-    :vartype publisher: str
-    :ivar type1: Specifies the type of the extension; an example is
+    :param publisher: The name of the extension handler publisher.
+    :type publisher: str
+    :param type1: Specifies the type of the extension; an example is
      "CustomScriptExtension".
-    :vartype type1: str
+    :type type1: str
     :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
     :param auto_upgrade_minor_version: Indicates whether the extension should
@@ -6456,6 +6456,9 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
      protectedSettings or protectedSettingsFromKeyVault or no protected
      settings at all.
     :type protected_settings: object
+    :ivar provisioning_state: The provisioning state, which only appears in
+     the response.
+    :vartype provisioning_state: str
     :param provision_after_extensions: Collection of extension names after
      which this extension needs to be provisioned.
     :type provision_after_extensions: list[str]
@@ -6465,8 +6468,7 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'publisher': {'readonly': True},
-        'type1': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -6480,6 +6482,7 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
         'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
         'settings': {'key': 'properties.settings', 'type': 'object'},
         'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'provision_after_extensions': {'key': 'properties.provisionAfterExtensions', 'type': '[str]'},
     }
 
@@ -6488,12 +6491,13 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
         self.name = None
         self.type = None
         self.force_update_tag = kwargs.get('force_update_tag', None)
-        self.publisher = None
-        self.type1 = None
+        self.publisher = kwargs.get('publisher', None)
+        self.type1 = kwargs.get('type1', None)
         self.type_handler_version = kwargs.get('type_handler_version', None)
         self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
         self.settings = kwargs.get('settings', None)
         self.protected_settings = kwargs.get('protected_settings', None)
+        self.provisioning_state = None
         self.provision_after_extensions = kwargs.get('provision_after_extensions', None)
 
 
