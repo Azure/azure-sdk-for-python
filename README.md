@@ -35,7 +35,7 @@ The libraries released in the November 2019 GA release:
 The libraries released in the November 2019 preview:
 - [azure-cosmos](./sdk/cosmos/azure-cosmos)
 - [azure-eventhubs](./sdk/eventhub/azure-eventhubs)
-- [azure-storage-file](./sdk/storage/azure-storage-file-share)
+- [azure-storage-file-share](./sdk/storage/azure-storage-file-share)
 
 > NOTE: If you need to ensure your code is ready for production use one of the stable, non-preview libraries.
 
