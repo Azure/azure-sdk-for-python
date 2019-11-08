@@ -28,6 +28,7 @@
 This module is the requests implementation of Pipeline ABC
 """
 from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
+from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
 import email
@@ -316,6 +317,22 @@ class RetryPolicy(HTTPPolicy):
             if response:
                 settings['status'] -= 1
                 settings['history'].append(RequestHistory(response.http_request, http_response=response.http_response))
+
+        if not self.is_exhausted(settings):
+            if response.http_request.body and hasattr(response.http_request.body, 'read'):
+                # no position was saved, then retry would not work
+                if settings['body_position'] is None:
+                    return False
+                try:
+                    # attempt to rewind the body to the initial position
+                    response.http_request.body.seek(settings['body_position'], SEEK_SET)
+                except (UnsupportedOperation, ValueError):
+                    # if body is not seekable, then retry would not work
+                    return False
+            settings['count'] += 1
+            return True
+        return False
+
 
         return not self.is_exhausted(settings)
 
