@@ -67,7 +67,7 @@ class EventHubPartitionPump(PartitionPump):
                 _logger.warning(
                     "%r,%r PartitionPumpWarning: Failure starting client or receiver: %r",
                     self.host.guid, self.partition_context.partition_id, last_exception)
-                await self.process_error_async(self.partition_context, last_exception)
+                await self.processor.process_error_async(self.partition_context, last_exception)
                 self.set_pump_status("Errored")
             else:
                 self.running = loop.create_task(self.partition_receiver.run())
