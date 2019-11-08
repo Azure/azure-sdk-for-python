@@ -205,8 +205,9 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
         """
         http_request = request.http_request
         options = request.context.options
-        if options.pop("logging_enable", self.enable_http_logger):
-            request.context["logging_enable"] = True
+        logging_enable = options.pop("logging_enable", self.enable_http_logger)
+        request.context["logging_enable"] = logging_enable
+        if logging_enable:
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
 
@@ -237,35 +238,37 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
         """
-        if response.context.pop("logging_enable", self.enable_http_logger):
-            if not _LOGGER.isEnabledFor(logging.DEBUG):
-                return
+        http_response = response.http_response
+        try:
+            logging_enable = response.context["logging_enable"]
+            if logging_enable:
+                if not _LOGGER.isEnabledFor(logging.DEBUG):
+                    return
 
-            try:
-                _LOGGER.debug("Response status: %r", response.http_response.status_code)
+                _LOGGER.debug("Response status: %r", http_response.status_code)
                 _LOGGER.debug("Response headers:")
-                for res_header, value in response.http_response.headers.items():
+                for res_header, value in http_response.headers.items():
                     _LOGGER.debug("    %r: %r", res_header, value)
 
                 # We don't want to log binary data if the response is a file.
                 _LOGGER.debug("Response content:")
                 pattern = re.compile(r'attachment; ?filename=["\w.]+', re.IGNORECASE)
-                header = response.http_response.headers.get('content-disposition')
+                header = http_response.headers.get('content-disposition')
 
                 if header and pattern.match(header):
                     filename = header.partition('=')[2]
                     _LOGGER.debug("File attachments: %s", filename)
-                elif response.http_response.headers.get("content-type", "").endswith("octet-stream"):
+                elif http_response.headers.get("content-type", "").endswith("octet-stream"):
                     _LOGGER.debug("Body contains binary data.")
-                elif response.http_response.headers.get("content-type", "").startswith("image"):
+                elif http_response.headers.get("content-type", "").startswith("image"):
                     _LOGGER.debug("Body contains image data.")
                 else:
                     if response.context.options.get('stream', False):
                         _LOGGER.debug("Body is streamable")
                     else:
                         _LOGGER.debug(response.http_response.text())
-            except Exception as err:  # pylint: disable=broad-except
-                _LOGGER.debug("Failed to log response: %s", repr(err))
+        except Exception as err:  # pylint: disable=broad-except
+            _LOGGER.debug("Failed to log response: %s", repr(err))
 
 
 class HttpLoggingPolicy(SansIOHTTPPolicy):
