@@ -68,13 +68,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     * West US - westus.api.cognitive.microsoft.com
     * West US 2 - westus2.api.cognitive.microsoft.com
 
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param endpoint: Supported Cognitive Services endpoints (protocol and
-     hostname, for example: https://westus.api.cognitive.microsoft.com).
-    :type endpoint: str
+    :param str endpoint: Supported Cognitive Services endpoints (protocol and
+        hostname, for example: https://westus.api.cognitive.microsoft.com).
+    :param credential: Credentials needed for the client to connect to Azure.
+        This can be the cognitive services subscription key or a token credential
+        from azure.identity.
+    :type credentials: str or token credential
     """
 
     def __init__(self, endpoint, credential, **kwargs):
@@ -83,6 +82,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self._client = TextAnalyticsAPI(endpoint=endpoint, credentials=credential, pipeline=self._pipeline)
 
     def _segment_batch(self, docs, func, **kwargs):
+        """Internal method that segments an input batch > 1000 items into
+        batches < 1000 items, calls the operation, and then pieces the result
+        back together into one list.
+
+        :param docs: The original input documents
+        :type docs: list[dict] or list[(Multi)LanguageInput]
+        :param callable func: The operation the user is calling
+        :return: list[object]
+        """
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         cls = kwargs.pop("cls", None)

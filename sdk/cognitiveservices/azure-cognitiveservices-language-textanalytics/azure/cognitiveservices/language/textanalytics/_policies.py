@@ -1,4 +1,4 @@
-import json
+from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.policies import SansIOHTTPPolicy, HTTPPolicy
 from ._models import RequestStatistics
 
@@ -33,7 +33,7 @@ class TextAnalyticsResponseHook(HTTPPolicy):
 
             response = self.next.send(request)
             if statistics is None and model_version is None:
-                data = json.loads(response.http_response.internal_response.text)
+                data = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
                 statistics = data.get('statistics', None)
                 model_version = data.get('modelVersion', None)
             for pipeline_obj in [request, response]:
