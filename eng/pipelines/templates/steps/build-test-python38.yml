@@ -33,7 +33,7 @@ steps:
       sudo python3.8 get-pip.py
       sudo python3.8 -m pip install tox tox-monorepo packaging
       cd $(Build.SourcesDirectory)
-      sudo python3.8 -m pip install twine codecov beautifulsoup4
+      sudo python3.8 -m pip install twine codecov beautifulsoup4 psutil
     displayName: 'Prep Environment Using Python 3.8'
 
   - ${{ parameters.BeforeTestSteps }}

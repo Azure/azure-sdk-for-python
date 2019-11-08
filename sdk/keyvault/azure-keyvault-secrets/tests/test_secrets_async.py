@@ -128,10 +128,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         updated = await _update_secret(created)
 
         # delete secret
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         deleted = await client.delete_secret(updated.name, _polling_interval=polling_interval)
         self.assertIsNotNone(deleted)
 
@@ -155,7 +152,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 expected[secret_name] = secret
 
         # list secrets
-        result = client.list_properties_of_secrets(max_page_size=max_secrets)
+        result = client.list_properties_of_secrets(max_page_size=max_secrets - 1)
         await self._validate_secret_list(result, expected)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
@@ -172,10 +169,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secret_name = "secret{}".format(i)
             secret_value = "value{}".format(i)
             expected[secret_name] = await client.set_secret(secret_name, secret_value)
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         # delete them
         for secret_name in expected.keys():
             await client.delete_secret(secret_name, _polling_interval=polling_interval)
@@ -208,7 +202,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 expected[secret.id] = secret
 
         # list secret versions
-        result = client.list_properties_of_secret_versions(secret_name)
+        result = client.list_properties_of_secret_versions(secret_name, max_page_size=max_secrets - 1)
 
         # validate list secret versions with attributes
         async for secret in result:
@@ -235,10 +229,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         self.assertIsNotNone(secret_backup, "secret_backup")
 
         # delete secret
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         await client.delete_secret(created_bundle.name, _polling_interval=polling_interval)
 
         # restore secret
@@ -262,10 +253,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secrets[secret_name] = await client.set_secret(secret_name, secret_value)
 
         # delete all secrets
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         for secret_name in secrets.keys():
             await client.delete_secret(secret_name, _polling_interval=polling_interval)
 
@@ -298,10 +286,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secrets[secret_name] = await client.set_secret(secret_name, secret_value)
 
         # delete all secrets
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         for secret_name in secrets.keys():
             await client.delete_secret(secret_name, _polling_interval=polling_interval)
 

@@ -6,7 +6,7 @@ import os
 import asyncio
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
-from azure.keyvault.certificates import AdministratorDetails
+from azure.keyvault.certificates import AdministratorContact
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. Get an issuer (get_issuer)
 #
-# 3. List issuers for the key vault (list_issuers)
+# 3. List issuers for the key vault (list_properties_of_issuers)
 #
 # 4. Update an issuer (update_issuer)
 #
@@ -42,9 +42,9 @@ async def run_sample():
     credential = DefaultAzureCredential()
     client = CertificateClient(vault_url=VAULT_URL, credential=credential)
     try:
-        # First we specify the AdministratorDetails for our issuers.
+        # First we specify the AdministratorContact for our issuers.
         admin_details = [
-            AdministratorDetails(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+            AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
 
         # Next we create an issuer with these administrator details
@@ -69,7 +69,7 @@ async def run_sample():
         # Now we will list all of the certificate issuers for this key vault. To better demonstrate this, we will first create another issuer.
         await client.create_issuer(name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)
 
-        issuers = client.list_issuers()
+        issuers = client.list_properties_of_issuers()
 
         async for issuer in issuers:
             print(issuer.name)

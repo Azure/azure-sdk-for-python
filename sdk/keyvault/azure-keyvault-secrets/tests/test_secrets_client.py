@@ -132,10 +132,7 @@ class SecretClientTests(KeyVaultTestCase):
         updated = _update_secret(created)
 
         # delete secret
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         deleted = client.begin_delete_secret(updated.name, _polling_interval=polling_interval).result()
         self.assertIsNotNone(deleted)
 
@@ -159,7 +156,7 @@ class SecretClientTests(KeyVaultTestCase):
                 expected[secret.name] = secret
 
         # list secrets
-        result = list(client.list_properties_of_secrets(max_page_size=max_secrets))
+        result = list(client.list_properties_of_secrets(max_page_size=max_secrets - 1))
         self._validate_secret_list(result, expected)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
@@ -172,7 +169,6 @@ class SecretClientTests(KeyVaultTestCase):
         secret_value = self.get_resource_name("secVal")
 
         max_secrets = self.list_test_size
-        max_page_size = 2
         expected = {}
 
         # create many secret versions
@@ -182,7 +178,7 @@ class SecretClientTests(KeyVaultTestCase):
                 secret = client.set_secret(secret_name, secret_value)
                 expected[secret.id] = secret
 
-        result = client.list_properties_of_secret_versions(secret_name, max_page_size=max_page_size)
+        result = client.list_properties_of_secret_versions(secret_name, max_page_size=max_secrets - 1)
 
         # validate list secret versions with attributes
         for secret in result:
@@ -207,10 +203,7 @@ class SecretClientTests(KeyVaultTestCase):
             expected[secret_name] = client.set_secret(secret_name, secret_value)
 
         # delete them
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         for secret_name in expected.keys():
             client.begin_delete_secret(secret_name, _polling_interval=polling_interval).wait()
 
@@ -238,10 +231,7 @@ class SecretClientTests(KeyVaultTestCase):
         self.assertIsNotNone(secret_backup, "secret_backup")
 
         # delete secret
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         client.begin_delete_secret(created_bundle.name, _polling_interval=polling_interval).wait()
 
         # restore secret
@@ -262,11 +252,7 @@ class SecretClientTests(KeyVaultTestCase):
             secret_value = "value{}".format(i)
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
 
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
-
+        polling_interval = 0 if self.is_playback() else 2
         # delete all secrets
         for secret_name in secrets.keys():
             client.begin_delete_secret(secret_name, _polling_interval=polling_interval).wait()
@@ -299,10 +285,7 @@ class SecretClientTests(KeyVaultTestCase):
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
 
         # delete all secrets
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         for secret_name in secrets.keys():
             client.begin_delete_secret(secret_name, _polling_interval=polling_interval).wait()
 

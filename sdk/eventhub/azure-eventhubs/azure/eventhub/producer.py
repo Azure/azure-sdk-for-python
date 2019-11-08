@@ -15,8 +15,8 @@ from uamqp import SendClient  # type: ignore
 from azure.core.tracing import SpanKind, AbstractSpan  # type: ignore
 from azure.core.settings import settings  # type: ignore
 
-from azure.eventhub.common import EventData, EventDataBatch
-from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
+from .common import EventData, EventDataBatch
+from .error import _error_handler, OperationTimeoutError, EventDataError
 from ._consumer_producer_mixin import ConsumerProducerMixin
 
 
@@ -164,15 +164,6 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         :type partition_key: str
         :return: an EventDataBatch instance
         :rtype: ~azure.eventhub.EventDataBatch
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START eventhub_client_sync_create_batch]
-                :end-before: [END eventhub_client_sync_create_batch]
-                :language: python
-                :dedent: 4
-                :caption: Create EventDataBatch object within limited size
-
         """
 
         if not self._max_message_size_on_link:
@@ -204,15 +195,6 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 ~azure.eventhub.EventDataError, ~azure.eventhub.EventDataSendError, ~azure.eventhub.EventHubError
         :return: None
         :rtype: None
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START eventhub_client_sync_send]
-                :end-before: [END eventhub_client_sync_send]
-                :language: python
-                :dedent: 4
-                :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
-
         """
         # Tracing code
         span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
@@ -252,14 +234,5 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         """
         Close down the handler. If the handler has already closed,
         this will be a no op.
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START eventhub_client_sender_close]
-                :end-before: [END eventhub_client_sender_close]
-                :language: python
-                :dedent: 4
-                :caption: Close down the handler.
-
         """
         super(EventHubProducer, self).close()

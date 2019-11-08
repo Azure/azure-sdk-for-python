@@ -52,7 +52,7 @@ UNFRIENDLY_PACKAGE_TO_NAMESPACE = {
 }
 
 def should_build_docs(package_name):
-    return not ("nspkg" in package_name or "azure-mgmt" == package_name or "azure" == package_name)
+    return not ("nspkg" in package_name or package_name in ["azure", "azure-mgmt", "azure-keyvault", "azure-documentdb", "azure-mgmt-documentdb", "azure-servicemanagement-legacy"])
 
 def create_index_file(readme_location, package_rst):
     readme_ext = os.path.splitext(readme_location)[1]

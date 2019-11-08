@@ -4,7 +4,7 @@
 # ------------------------------------
 import os
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import AdministratorDetails, CertificateClient
+from azure.keyvault.certificates import AdministratorContact, CertificateClient
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. Get an issuer (get_issuer)
 #
-# 3. List issuers for the key vault (list_issuers)
+# 3. List issuers for the key vault (list_properties_of_issuers)
 #
 # 4. Update an issuer (update_issuer)
 #
@@ -38,9 +38,9 @@ VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = CertificateClient(vault_url=VAULT_URL, credential=credential)
 try:
-    # First we specify the AdministratorDetails for our issuers.
+    # First we specify the AdministratorContact for our issuers.
     admin_details = [
-        AdministratorDetails(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
+        AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
     ]
 
     # Next we create an issuer with these administrator details
@@ -66,7 +66,7 @@ try:
     # Now we will list all of the certificate issuers for this key vault. To better demonstrate this, we will first create another issuer.
     client.create_issuer(name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)
 
-    issuers = client.list_issuers()
+    issuers = client.list_properties_of_issuers()
 
     for issuer in issuers:
         print(issuer.name)

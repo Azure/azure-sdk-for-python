@@ -191,7 +191,9 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Delete a key
                 :dedent: 8
         """
-        polling_interval = kwargs.pop("_polling_interval", 2)
+        polling_interval = kwargs.pop("_polling_interval", None)
+        if polling_interval is None:
+            polling_interval = 2
         deleted_key = DeletedKey._from_deleted_key_bundle(
             self._client.delete_key(self.vault_url, name, error_map=_error_map, **kwargs)
         )
@@ -378,7 +380,9 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Recover a deleted key
                 :dedent: 8
         """
-        polling_interval = kwargs.pop("_polling_interval", 2)
+        polling_interval = kwargs.pop("_polling_interval", None)
+        if polling_interval is None:
+            polling_interval = 2
         recovered_key = KeyVaultKey._from_key_bundle(
             self._client.recover_deleted_key(vault_base_url=self.vault_url, key_name=name, **kwargs)
         )

@@ -1,8 +1,9 @@
 # Azure Identity client library for Python
-Azure Identity simplifies authentication across the Azure SDK.
-It supports token authentication using an Azure Active Directory
+Azure Identity authenticating with Azure Active Directory for Azure SDK
+libraries. It provides credentials Azure SDK clients can use to authenticate
+their requests.
 
-This library is in preview and currently supports:
+This library currently supports:
   - [Service principal authentication](https://docs.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals)
   - [Managed identity authentication](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview)
   - User authentication
@@ -62,9 +63,9 @@ in the types of identities they can authenticate as, and in their configuration:
 
 |credential class|identity|configuration
 |-|-|-
-|[DefaultAzureCredential](#defaultazurecredential)|service principal, managed identity, user|none for managed identity, [environment variables](#environment-variables) for service principal or user authentication
+|[DefaultAzureCredential](#defaultazurecredential "DefaultAzureCredential")|service principal, managed identity, user|none for managed identity, [environment variables](#environment-variables "environment variables") for service principal or user authentication
 |[ManagedIdentityCredential][managed_id_cred_ref]|managed identity|none
-|[EnvironmentCredential][environment_cred_ref]|service principal, user|[environment variables](#environment-variables)
+|[EnvironmentCredential][environment_cred_ref]|service principal, user|[environment variables](#environment-variables "environment variables")
 |[ClientSecretCredential][client_secret_cred_ref]|service principal|constructor parameters
 |[CertificateCredential][cert_cred_ref]|service principal|constructor parameters
 |[DeviceCodeCredential][device_code_cred_ref]|user|constructor parameters
@@ -72,12 +73,12 @@ in the types of identities they can authenticate as, and in their configuration:
 |[UsernamePasswordCredential][userpass_cred_ref]|user|constructor parameters
 
 Credentials can be chained together and tried in turn until one succeeds; see
-[chaining credentials](#chaining-credentials) for details.
+[chaining credentials](#chaining-credentials "chaining credentials") for details.
 
 Service principal and managed identity credentials have async equivalents in
 the [azure.identity.aio][ref_docs_aio] namespace, supported on Python 3.5.3+.
-See the [async credentials](#async-credentials) example for details. Async user
-credentials will be part of a future release.
+See the [async credentials](#async-credentials "async credentials") example for
+details. Async user credentials will be part of a future release.
 
 ## DefaultAzureCredential
 [DefaultAzureCredential][default_cred_ref] is appropriate for most
@@ -86,7 +87,7 @@ principal, managed identity, or user, and can be configured for local
 development and production environments without code changes.
 
 To authenticate as a service principal, provide configuration in
-[environment variables](#environment-variables) as described in the next section.
+[environment variables](#environment-variables "environment variables") as described in the next section.
 
 Authenticating as a managed identity requires no configuration but is only
 possible in a supported hosting environment. See Azure Active Directory's
@@ -138,7 +139,7 @@ client secret and certificate are both present, the client secret will be used.
 ## Authenticating with `DefaultAzureCredential`
 This example demonstrates authenticating the `BlobServiceClient` from the
 [azure-storage-blob][azure_storage_blob] library using
-[DefaultAzureCredential][default_cred_ref].
+[DefaultAzureCredential](#defaultazurecredential "DefaultAzureCredential").
 
 ```py
 from azure.identity import DefaultAzureCredential

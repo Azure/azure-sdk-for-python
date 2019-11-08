@@ -2,9 +2,8 @@ omitted_paths:
   - tools/*
   - scripts/*
   - azure-mgmt-netapp/tests/*
-  - "azure-mgmt*/*"
-  - "sdk/azure-mgmt*/*"
   - "sdk/*/azure-mgmt*/*"
+  - "sdk/keyvault/azure-keyvault/*"
   - "doc/*"
   - "sdk/keyvault/azure-keyvault-*/samples/*"
 language: python
@@ -52,6 +51,7 @@ known_content_issues:
   - ['sdk/storage/azure-storage-file-share/swagger/README.md', '#4554']
   - ['sdk/storage/azure-storage-queue/swagger/README.md', '#4554']
   - ['sdk/storage/azure-storage-blob/swagger/README.md', '#4554']
+  - ['sdk/storage/azure-storage-file-datalake/swagger/README.md', '#4554']
 
   # nspckg and common.
   - ['sdk/cognitiveservices/azure-cognitiveservices-nspkg/README.rst', 'nspkg and common']
@@ -70,6 +70,7 @@ known_content_issues:
   - ['sdk/storage/azure-storage-blob/samples/README.md', 'nspkg and common']
   - ['sdk/storage/azure-storage-queue/samples/README.md', 'nspkg and common']
   - ['sdk/storage/azure-storage-file-share/samples/README.md', 'nspkg and common']
+  - ['sdk/storage/azure-storage-file-datalake/samples/README.md', 'nspkg and common']
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'nspkg and common']
   - ['sdk/appconfiguration/azure-appconfiguration/samples/README.md', 'nspkg and common']
   - ['sdk/keyvault/azure-keyvault-nspkg/README.md', 'nspkg and common']

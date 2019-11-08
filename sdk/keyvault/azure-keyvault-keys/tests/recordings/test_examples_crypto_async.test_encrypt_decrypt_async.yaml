@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-keys/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-keys/4.0.0 Python/3.7.4 (Windows-10-10.0.18362-SP0)
     method: POST
     uri: https://vault458ad70cc756281625.vault.azure.net/keys/crypto-test-encrypt-key56281625/create?api-version=7.0
   response:
@@ -20,7 +20,7 @@ interactions:
       cache-control: no-cache
       content-length: '87'
       content-type: application/json; charset=utf-8
-      date: Tue, 22 Oct 2019 00:31:38 GMT
+      date: Thu, 31 Oct 2019 17:46:40 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -54,17 +54,17 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-keys/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-keys/4.0.0 Python/3.7.4 (Windows-10-10.0.18362-SP0)
     method: POST
     uri: https://vault458ad70cc756281625.vault.azure.net/keys/crypto-test-encrypt-key56281625/create?api-version=7.0
   response:
     body:
-      string: '{"key":{"kid":"https://vault458ad70cc756281625.vault.azure.net/keys/crypto-test-encrypt-key56281625/5e33834694ca4d48bbfe2a6f43db2a9a","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"qsojs4cz6AdPTRIDwEjnKVPEQCowzoMoKDmf_60U925AiANwLG4BXc5f1wd0YdyP_bOxI_JD-7vU1cMSmZEdzrhLRW1NAwg3vipjM8KEzg5ll3LvXSl-KNG1SNNPeRdFa65jkIPcfGF8SUZm1zEfhswWp94-nJXq-fwWGxvBqWXIhGuQsbqpOQvKPEm-_06i9d0NqQ12keIrsNkIfhhkDOUNrPWkiekTlaApBkBdaF4INemhtRuEUUO2DVzSKdZudya4xn9G405EFN4_g1NsEyL1JlOi3b9nVGYnjXg41YdPYh8heumE49dVXILepuqAbS-035Cr6BFUWC4fF9yZSw","e":"AQAB"},"attributes":{"enabled":true,"created":1571704299,"updated":1571704299,"recoveryLevel":"Purgeable"}}'
+      string: '{"key":{"kid":"https://vault458ad70cc756281625.vault.azure.net/keys/crypto-test-encrypt-key56281625/4ab8e50e18c74578b30c39eff5b276a7","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"6FJf-6gn9GPkDN3mXb0hmW7BEaN7JxmPRywjDF61tA9VDHxH77n8HYV76LkN5r0MSg6FWkeaT9CYLyEfikHKVog6oSOV6L67e9fvcoG375jgke0RQpsft9CcVBFRLxKCGuRl5Ayg6HBSJYqono7RQNwH_zgaI5yZnUkxrrbmtixS8MAGSo-LptgoO6V_3tvs-R0e1SUP3OR5kfHTFAoVzoZtwG9at1ttG8kcjGjQZM-aMdr9Kz-gvcpNLfeWXNdlQA-HrKGCED0SGxibMwY4DnR6KQukufRxttqAaGKKQRGGbfkydtHo6qBYzeV7xxZVvfS7INb-dShZp-qvTyUb6Q","e":"AQAB"},"attributes":{"enabled":true,"created":1572544001,"updated":1572544001,"recoveryLevel":"Purgeable"}}'
     headers:
       cache-control: no-cache
       content-length: '677'
       content-type: application/json; charset=utf-8
-      date: Tue, 22 Oct 2019 00:31:39 GMT
+      date: Thu, 31 Oct 2019 17:46:40 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -87,7 +87,7 @@ interactions:
         - api-version=7.0
         - ''
 - request:
-    body: '{"alg": "RSA-OAEP", "value": "RXzgCsQgADqRz8SGcUPMAm5lUwuq2bEF4UNeoRMiVENecXMXjssQbdOWAiUbx2kFQvnaig1SOAvBN-geD9tMlEPmjWnimAEU7Dg9Vb3uPqpfATvwJWQ0MyRl9nClFWxODQxJ5AftthnvjDXz8WxfGEdC2rFJiYCCRltlkztfSk4sPg8FY_R84QpOldyR6Ii7-SjXTpjPvKGp8r-UCBhGeAib5HNMrlOaOMzwXeJZHBWYEX9VIqi2Aj3rbp9X0An2eD5JXGNxUu25Fv8lEF6SqjsW3tr14H10UFD6yLloA6yHhp3xZ49Wzjfhpx6wgKhvFd7FJEYjHO7AEvoHVvNHkw"}'
+    body: '{"alg": "RSA-OAEP", "value": "shNb1QbF42oMPEpGMF07ZvTiBH6J-GPoarz9V3zpNcFzCY-HMOx7jOa5kwrsmu_CvjHxHHNDQgUgBcIe0H8u9Bvu0iQWn4pR1CNMi2m6uR2ekEwmYPRbYLe3DxL9linBbdphrOuwQ7kUfOdaqDoGjj3JjpwL1prP5EpJivdMM5g4VDU1lneYDYk9POPu_L7D05WCXeESS9pL0TmQqPt17s4Y0cTlZ3BG_NFOAOhRgcmd-y6KXgDuZeKYdU19gfP6GdqFRXz1mIIPORP97FGjOkX-pQmRaJJsQZyiCvg0NVh7JhmzqqyllgizaSFYri83R8eDetMxWy2D72VNIFYoEA"}'
     headers:
       Accept:
       - application/json
@@ -96,17 +96,17 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-keys/4.0.0b5 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-keys/4.0.0 Python/3.7.4 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault458ad70cc756281625.vault.azure.net/keys/crypto-test-encrypt-key56281625/5e33834694ca4d48bbfe2a6f43db2a9a/decrypt?api-version=7.0
+    uri: https://vault458ad70cc756281625.vault.azure.net/keys/crypto-test-encrypt-key56281625/4ab8e50e18c74578b30c39eff5b276a7/decrypt?api-version=7.0
   response:
     body:
-      string: '{"kid":"https://vault458ad70cc756281625.vault.azure.net/keys/crypto-test-encrypt-key56281625/5e33834694ca4d48bbfe2a6f43db2a9a","value":"cGxhaW50ZXh0"}'
+      string: '{"kid":"https://vault458ad70cc756281625.vault.azure.net/keys/crypto-test-encrypt-key56281625/4ab8e50e18c74578b30c39eff5b276a7","value":"cGxhaW50ZXh0"}'
     headers:
       cache-control: no-cache
       content-length: '150'
       content-type: application/json; charset=utf-8
-      date: Tue, 22 Oct 2019 00:31:39 GMT
+      date: Thu, 31 Oct 2019 17:46:41 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -125,7 +125,7 @@ interactions:
       - !!python/object/new:urllib.parse.SplitResult
         - https
         - vault458ad70cc756281625.vault.azure.net
-        - /keys/crypto-test-encrypt-key56281625/5e33834694ca4d48bbfe2a6f43db2a9a/decrypt
+        - /keys/crypto-test-encrypt-key56281625/4ab8e50e18c74578b30c39eff5b276a7/decrypt
         - api-version=7.0
         - ''
 version: 1
