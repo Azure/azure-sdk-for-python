@@ -1,4 +1,9 @@
-from azure.core.exceptions import HttpResponseError
+# coding=utf-8
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
 from ._generated.models._models import LanguageInput as GeneratedLanguageInput
 from ._generated.models._models import MultiLanguageInput as GeneratedMultiLanguageInput
 
@@ -18,17 +23,16 @@ class DetectedLanguage(object):
      to 1 indicate 100% certainty that the identified language is true.
     :type score: float
     """
+
     def __init__(self, **kwargs):
-        self.name = kwargs.get('name', None)
-        self.iso6391_name = kwargs.get('iso6391_name', None)
-        self.score = kwargs.get('score', None)
+        self.name = kwargs.get("name", None)
+        self.iso6391_name = kwargs.get("iso6391_name", None)
+        self.score = kwargs.get("score", None)
 
     @classmethod
     def _from_generated(cls, language):
         return cls(
-            name=language.name,
-            iso6391_name=language.iso6391_name,
-            score=language.score
+            name=language.name, iso6391_name=language.iso6391_name, score=language.score
         )
 
 
@@ -49,9 +53,9 @@ class DocumentEntities(object):
     """
 
     def __init__(self, **kwargs):
-        self.id = kwargs.get('id', None)
-        self.entities = kwargs.get('entities', None)
-        self.statistics = kwargs.get('statistics', None)
+        self.id = kwargs.get("id", None)
+        self.entities = kwargs.get("entities", None)
+        self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
 
@@ -70,10 +74,11 @@ class DocumentLanguage(object):
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a DocumentLanguage.
     """
+
     def __init__(self, **kwargs):
-        self.id = kwargs.get('id', None)
-        self.detected_languages = kwargs.get('detected_languages', None)
-        self.statistics = kwargs.get('statistics', None)
+        self.id = kwargs.get("id", None)
+        self.detected_languages = kwargs.get("detected_languages", None)
+        self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
 
@@ -100,12 +105,12 @@ class Entity(object):
     """
 
     def __init__(self, **kwargs):
-        self.text = kwargs.get('text', None)
-        self.type = kwargs.get('type', None)
-        self.sub_type = kwargs.get('sub_type', None)
-        self.offset = kwargs.get('offset', None)
-        self.length = kwargs.get('length', None)
-        self.score = kwargs.get('score', None)
+        self.text = kwargs.get("text", None)
+        self.type = kwargs.get("type", None)
+        self.sub_type = kwargs.get("sub_type", None)
+        self.offset = kwargs.get("offset", None)
+        self.length = kwargs.get("length", None)
+        self.score = kwargs.get("score", None)
 
     @classmethod
     def _from_generated(cls, entity):
@@ -115,7 +120,7 @@ class Entity(object):
             sub_type=entity.sub_type,
             offset=entity.offset,
             length=entity.length,
-            score=entity.score
+            score=entity.score,
         )
 
 
@@ -136,12 +141,13 @@ class Error(object):
      error.
     :type details: list[~textanalytics.models.Error]
     """
+
     def __init__(self, **kwargs):
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
-        self.innererror = kwargs.get('innererror', None)
-        self.details = kwargs.get('details', None)
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
+        self.target = kwargs.get("target", None)
+        self.innererror = kwargs.get("innererror", None)
+        self.details = kwargs.get("details", None)
 
 
 class InnerError(object):
@@ -160,10 +166,10 @@ class InnerError(object):
     """
 
     def __init__(self, **kwargs):
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.target = kwargs.get('target', None)
-        self.innererror = kwargs.get('innererror', None)
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
+        self.target = kwargs.get("target", None)
+        self.innererror = kwargs.get("innererror", None)
 
 
 class DocumentKeyPhrases(object):
@@ -183,10 +189,11 @@ class DocumentKeyPhrases(object):
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a DocumentKeyPhrases.
     """
+
     def __init__(self, **kwargs):
-        self.id = kwargs.get('id', None)
-        self.key_phrases = kwargs.get('key_phrases', None)
-        self.statistics = kwargs.get('statistics', None)
+        self.id = kwargs.get("id", None)
+        self.key_phrases = kwargs.get("key_phrases", None)
+        self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
 
@@ -205,10 +212,11 @@ class DocumentLinkedEntities(object):
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a DocumentLinkedEntities.
     """
+
     def __init__(self, **kwargs):
-        self.id = kwargs.get('id', None)
-        self.entities = kwargs.get('entities', None)
-        self.statistics = kwargs.get('statistics', None)
+        self.id = kwargs.get("id", None)
+        self.entities = kwargs.get("entities", None)
+        self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
 
@@ -233,12 +241,13 @@ class DocumentSentiment(object):
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a DocumentSentiment.
     """
+
     def __init__(self, **kwargs):
-        self.id = kwargs.get('id', None)
-        self.sentiment = kwargs.get('sentiment', None)
-        self.statistics = kwargs.get('statistics', None)
-        self.document_scores = kwargs.get('document_scores', None)
-        self.sentences = kwargs.get('sentences', None)
+        self.id = kwargs.get("id", None)
+        self.sentiment = kwargs.get("sentiment", None)
+        self.statistics = kwargs.get("statistics", None)
+        self.document_scores = kwargs.get("document_scores", None)
+        self.sentences = kwargs.get("sentences", None)
         self.is_error = False
 
 
@@ -257,8 +266,8 @@ class DocumentStatistics(object):
     """
 
     def __init__(self, **kwargs):
-        self.characters_count = kwargs.get('characters_count', None)
-        self.transactions_count = kwargs.get('transactions_count', None)
+        self.characters_count = kwargs.get("characters_count", None)
+        self.transactions_count = kwargs.get("transactions_count", None)
 
     @classmethod
     def _from_generated(cls, stats):
@@ -266,7 +275,7 @@ class DocumentStatistics(object):
             return None
         return cls(
             characters_count=stats.characters_count,
-            transactions_count=stats.transactions_count
+            transactions_count=stats.transactions_count,
         )
 
 
@@ -284,8 +293,8 @@ class DocumentError(object):
     """
 
     def __init__(self, **kwargs):
-        self.id = kwargs.get('id', None)
-        self.error = kwargs.get('error', None)
+        self.id = kwargs.get("id", None)
+        self.error = kwargs.get("error", None)
         self.is_error = True
 
 
@@ -301,11 +310,12 @@ class LanguageInput(GeneratedLanguageInput):
     :param country_hint:
     :type country_hint: str
     """
+
     def __init__(self, **kwargs):
         super(LanguageInput, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.text = kwargs.get('text', None)
-        self.country_hint = kwargs.get('country_hint', None)
+        self.id = kwargs.get("id", None)
+        self.text = kwargs.get("text", None)
+        self.country_hint = kwargs.get("country_hint", None)
 
 
 class LinkedEntity(object):
@@ -331,13 +341,14 @@ class LinkedEntity(object):
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a LinkedEntity.
     """
+
     def __init__(self, **kwargs):
-        self.name = kwargs.get('name', None)
-        self.matches = kwargs.get('matches', None)
-        self.language = kwargs.get('language', None)
-        self.id = kwargs.get('id', None)
-        self.url = kwargs.get('url', None)
-        self.data_source = kwargs.get('data_source', None)
+        self.name = kwargs.get("name", None)
+        self.matches = kwargs.get("matches", None)
+        self.language = kwargs.get("language", None)
+        self.id = kwargs.get("id", None)
+        self.url = kwargs.get("url", None)
+        self.data_source = kwargs.get("data_source", None)
         self.is_error = False
 
     @classmethod
@@ -348,7 +359,7 @@ class LinkedEntity(object):
             language=entity.language,
             id=entity.id,
             url=entity.url,
-            data_source=entity.data_source
+            data_source=entity.data_source,
         )
 
 
@@ -370,19 +381,17 @@ class Match(object):
      match text.
     :type length: int
     """
+
     def __init__(self, **kwargs):
-        self.score = kwargs.get('score', None)
-        self.text = kwargs.get('text', None)
-        self.offset = kwargs.get('offset', None)
-        self.length = kwargs.get('length', None)
+        self.score = kwargs.get("score", None)
+        self.text = kwargs.get("text", None)
+        self.offset = kwargs.get("offset", None)
+        self.length = kwargs.get("length", None)
 
     @classmethod
     def _from_generated(cls, match):
         return cls(
-            score=match.score,
-            text=match.text,
-            offset=match.offset,
-            length=match.length
+            score=match.score, text=match.text, offset=match.offset, length=match.length
         )
 
 
@@ -400,11 +409,12 @@ class MultiLanguageInput(GeneratedMultiLanguageInput):
      not set, use "en" for English as default.
     :type language: str
     """
+
     def __init__(self, **kwargs):
         super(MultiLanguageInput, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.text = kwargs.get('text', None)
-        self.language = kwargs.get('language', None)
+        self.id = kwargs.get("id", None)
+        self.text = kwargs.get("text", None)
+        self.language = kwargs.get("language", None)
 
 
 class RequestStatistics(object):
@@ -426,19 +436,20 @@ class RequestStatistics(object):
      request.
     :type transactions_count: long
     """
+
     def __init__(self, **kwargs):
-        self.documents_count = kwargs.get('documents_count', None)
-        self.valid_documents_count = kwargs.get('valid_documents_count', None)
-        self.erroneous_documents_count = kwargs.get('erroneous_documents_count', None)
-        self.transactions_count = kwargs.get('transactions_count', None)
+        self.documents_count = kwargs.get("documents_count", None)
+        self.valid_documents_count = kwargs.get("valid_documents_count", None)
+        self.erroneous_documents_count = kwargs.get("erroneous_documents_count", None)
+        self.transactions_count = kwargs.get("transactions_count", None)
 
     @classmethod
     def _from_generated(cls, statistics):
         return cls(
-            documents_count=statistics['documentsCount'],
-            valid_documents_count=statistics['validDocumentsCount'],
-            erroneous_documents_count=statistics['erroneousDocumentsCount'],
-            transactions_count=statistics['transactionsCount'],
+            documents_count=statistics["documentsCount"],
+            valid_documents_count=statistics["validDocumentsCount"],
+            erroneous_documents_count=statistics["erroneousDocumentsCount"],
+            transactions_count=statistics["transactionsCount"],
         )
 
 
@@ -461,12 +472,13 @@ class SentenceSentiment(object):
     :param warnings: Required. The warnings generated for the sentence.
     :type warnings: list[str]
     """
+
     def __init__(self, **kwargs):
-        self.sentiment = kwargs.get('sentiment', None)
-        self.sentence_scores = kwargs.get('sentence_scores', None)
-        self.offset = kwargs.get('offset', None)
-        self.length = kwargs.get('length', None)
-        self.warnings = kwargs.get('warnings', None)
+        self.sentiment = kwargs.get("sentiment", None)
+        self.sentence_scores = kwargs.get("sentence_scores", None)
+        self.offset = kwargs.get("offset", None)
+        self.length = kwargs.get("length", None)
+        self.warnings = kwargs.get("warnings", None)
 
     @classmethod
     def _from_generated(cls, sentence):
@@ -475,5 +487,5 @@ class SentenceSentiment(object):
             sentence_scores=sentence.sentence_scores,
             offset=sentence.offset,
             length=sentence.length,
-            warnings=sentence.warnings
+            warnings=sentence.warnings,
         )

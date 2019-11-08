@@ -11,11 +11,11 @@ from typing import (  # pylint: disable=unused-import
     List,
     TYPE_CHECKING,
 )
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
-from ._generated._text_analytics_api import TextAnalyticsAPI
-from ._base_client import TextAnalyticsClientBase
-from ._response_handlers import (
+from .._generated.aio._text_analytics_api_async import TextAnalyticsAPI
+from ._base_client_async import AsyncTextAnalyticsClientBase
+from .._response_handlers import (
     _validate_batch_input,
     process_batch_error,
     deserialize_entities_result,
@@ -26,7 +26,7 @@ from ._response_handlers import (
 )
 
 if TYPE_CHECKING:
-    from ._models import (
+    from .._models import (
         LanguageInput,
         MultiLanguageInput,
         DocumentLanguage,
@@ -40,7 +40,7 @@ if TYPE_CHECKING:
 MAX_BATCH_SIZE = 1000
 
 
-class TextAnalyticsClient(TextAnalyticsClientBase):
+class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     """The Text Analytics API is a suite of text analytics web services built with best-in-class Microsoft
     machine learning algorithms. The API can be used to analyze unstructured text for tasks such as sentiment analysis,
     key phrase and entity extraction as well as language detection.
@@ -99,14 +99,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         segmented_batches = []
         num_batches = len(docs) // MAX_BATCH_SIZE
         for x in range(num_batches):
-            segmented_batches.append(
-                docs[x * MAX_BATCH_SIZE : (x + 1) * MAX_BATCH_SIZE]
-            )
-        segmented_batches.append(docs[num_batches * MAX_BATCH_SIZE :])
+            segmented_batches.append(docs[x*MAX_BATCH_SIZE:(x+1)*MAX_BATCH_SIZE])
+        segmented_batches.append(docs[num_batches*MAX_BATCH_SIZE:])
         return segmented_batches
 
-    @distributed_trace
-    def detect_language(
+    @distributed_trace_async
+    async def detect_language(
         self,
         documents,  # type: List[str] or List[LanguageInput]
         model_version=None,  # type: Optional[str]
@@ -141,7 +139,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_batch_input(documents)
         if len(docs) < MAX_BATCH_SIZE:
             try:
-                return self._client.languages(
+                return await self._client.languages(
                     documents=docs,
                     model_version=model_version,
                     show_stats=show_stats,
@@ -154,8 +152,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            for doc in segmented_batches:
-                response = self._client.languages(
+            async for doc in segmented_batches:
+                response = await self._client.languages(
                     documents=doc,
                     model_version=model_version,
                     show_stats=show_stats,
@@ -167,8 +165,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_batch_error(error)
 
-    @distributed_trace
-    def recognize_entities(
+    @distributed_trace_async
+    async def recognize_entities(
         self,
         documents,  # type: List[str] or List[MultiLanguageInput]
         model_version=None,  # type: Optional[str]
@@ -204,7 +202,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_batch_input(documents)
         if len(docs) < MAX_BATCH_SIZE:
             try:
-                return self._client.entities_recognition_general(
+                return await self._client.entities_recognition_general(
                     documents=docs,
                     model_version=model_version,
                     show_stats=show_stats,
@@ -217,8 +215,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            for doc in segmented_batches:
-                response = self._client.entities_recognition_general(
+            async for doc in segmented_batches:
+                response = await self._client.entities_recognition_general(
                     documents=doc,
                     model_version=model_version,
                     show_stats=show_stats,
@@ -230,8 +228,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_batch_error(error)
 
-    @distributed_trace
-    def recognize_pii_entities(
+    @distributed_trace_async
+    async def recognize_pii_entities(
         self,
         documents,  # type: List[str] or List[MultiLanguageInput]
         model_version=None,  # type: Optional[str]
@@ -265,7 +263,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_batch_input(documents)
         if len(docs) < MAX_BATCH_SIZE:
             try:
-                return self._client.entities_recognition_pii(
+                return await self._client.entities_recognition_pii(
                     documents=docs,
                     model_version=model_version,
                     show_stats=show_stats,
@@ -278,8 +276,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            for doc in segmented_batches:
-                response = self._client.entities_recognition_pii(
+            async for doc in segmented_batches:
+                response = await self._client.entities_recognition_pii(
                     documents=doc,
                     model_version=model_version,
                     show_stats=show_stats,
@@ -291,8 +289,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_batch_error(error)
 
-    @distributed_trace
-    def recognize_linked_entities(
+    @distributed_trace_async
+    async def recognize_linked_entities(
         self,
         documents,  # type: List[str] or List[MultiLanguageInput]
         model_version=None,  # type: Optional[str]
@@ -326,7 +324,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_batch_input(documents)
         if len(docs) < MAX_BATCH_SIZE:
             try:
-                return self._client.entities_linking(
+                return await self._client.entities_linking(
                     documents=docs,
                     model_version=model_version,
                     show_stats=show_stats,
@@ -339,8 +337,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            for doc in segmented_batches:
-                response = self._client.entities_linking(
+            async for doc in segmented_batches:
+                response = await self._client.entities_linking(
                     documents=doc,
                     model_version=model_version,
                     show_stats=show_stats,
@@ -352,8 +350,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_batch_error(error)
 
-    @distributed_trace
-    def extract_key_phrases(
+    @distributed_trace_async
+    async def extract_key_phrases(
         self,
         documents,  # type: List[str] or List[MultiLanguageInput]
         model_version=None,  # type: Optional[str]
@@ -387,7 +385,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_batch_input(documents)
         if len(docs) < MAX_BATCH_SIZE:
             try:
-                return self._client.key_phrases(
+                return await self._client.key_phrases(
                     documents=docs,
                     model_version=model_version,
                     show_stats=show_stats,
@@ -400,8 +398,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            for doc in segmented_batches:
-                response = self._client.key_phrases(
+            async for doc in segmented_batches:
+                response = await self._client.key_phrases(
                     documents=doc,
                     model_version=model_version,
                     show_stats=show_stats,
@@ -413,8 +411,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_batch_error(error)
 
-    @distributed_trace
-    def analyze_sentiment(
+    @distributed_trace_async
+    async def analyze_sentiment(
         self,
         documents,  # type: List[str] or List[MultiLanguageInput]
         model_version=None,  # type: Optional[str]
@@ -449,7 +447,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_batch_input(documents)
         if len(docs) < MAX_BATCH_SIZE:
             try:
-                return self._client.sentiment(
+                return await self._client.sentiment(
                     documents=docs,
                     model_version=model_version,
                     show_stats=show_stats,
@@ -462,8 +460,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            for doc in segmented_batches:
-                response = self._client.sentiment(
+            async for doc in segmented_batches:
+                response = await self._client.sentiment(
                     documents=doc,
                     model_version=model_version,
                     show_stats=show_stats,

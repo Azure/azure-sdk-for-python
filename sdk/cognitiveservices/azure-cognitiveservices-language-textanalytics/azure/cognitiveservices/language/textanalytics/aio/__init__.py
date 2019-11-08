@@ -4,4 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-VERSION = "V3.0-Preview.1"
+from ._text_analytics_client_async import TextAnalyticsClient
+
+__all__ = [
+    'TextAnalyticsClient'
+]
+
