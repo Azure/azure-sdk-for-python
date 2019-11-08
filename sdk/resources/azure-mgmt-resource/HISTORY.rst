@@ -3,6 +3,44 @@
 Release History
 ===============
 
+6.0.0 (2019-11-01)
+++++++++++++++++++
+
+**Features**
+
+- Model PolicySetDefinition has a new parameter policy_definition_groups
+
+**Breaking changes**
+
+- Operation DeploymentsOperations.validate_at_tenant_scope has a new signature
+- Operation DeploymentsOperations.create_or_update_at_management_group_scope has a new signature
+- Operation DeploymentsOperations.validate_at_management_group_scope has a new signature
+- Operation DeploymentsOperations.create_or_update_at_tenant_scope has a new signature
+- Model PolicyDefinitionReference has a new signature
+
+5.1.0 (2019-10-04)
+++++++++++++++++++
+
+**Features**
+
+- Added operation DeploymentsOperations.what_if
+- Added operation DeploymentsOperations.what_if_at_subscription_scope
+
+5.0.0 (2019-09-22)
+++++++++++++++++++
+
+**Features**
+
+- Model DeploymentValidateResult has a new parameter error
+- Model Subscription has a new parameter managed_by_tenants
+
+**Breaking changes**
+
+- Model Application no longer has parameter ui_definition_uri
+- Model ApplicationPatchable no longer has parameter ui_definition_uri
+- Model TenantIdDescription no longer has parameter display_name
+- Model TenantIdDescription no longer has parameter domains
+
 4.0.0 (2019-09-03)
 ++++++++++++++++++
 

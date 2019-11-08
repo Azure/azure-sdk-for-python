@@ -103,3 +103,29 @@ class TaskPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(TaskPaged, self).__init__(*args, **kwargs)
+class ScopeMapPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ScopeMap <azure.mgmt.containerregistry.v2019_06_01_preview.models.ScopeMap>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ScopeMap]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ScopeMapPaged, self).__init__(*args, **kwargs)
+class TokenPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Token <azure.mgmt.containerregistry.v2019_06_01_preview.models.Token>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Token]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(TokenPaged, self).__init__(*args, **kwargs)

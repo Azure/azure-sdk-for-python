@@ -8,7 +8,7 @@ import logging
 import time
 
 from uamqp import errors, constants, compat  # type: ignore
-from azure.eventhub.error import EventHubError, _handle_exception
+from .error import EventHubError, _handle_exception
 
 log = logging.getLogger(__name__)
 
@@ -18,46 +18,34 @@ class ConsumerProducerMixin(object):
         self._client = None
         self._handler = None
         self._name = None
+        self._running = False
+        self._closed = False
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close(exc_val)
+        self.close()
 
     def _check_closed(self):
-        if self._error:
+        if self._closed:
             raise EventHubError("{} has been closed. Please create a new one to handle event data.".format(self._name))
 
     def _create_handler(self):
         pass
 
-    def _redirect(self, redirect):
-        self._redirected = redirect
-        self._running = False
-        self._close_connection()
-
     def _open(self):
-        """
-        Open the EventHubConsumer/EventHubProducer using the supplied connection.
-        If the handler has previously been redirected, the redirect
-        context will be used to create a new handler before opening it.
+        """Open the EventHubConsumer/EventHubProducer using the supplied connection.
 
         """
         # pylint: disable=protected-access
         if not self._running:
             if self._handler:
                 self._handler.close()
-            if self._redirected:
-                alt_creds = {
-                    "username": self._client._auth_config.get("iot_username"),
-                    "password": self._client._auth_config.get("iot_password")}
-            else:
-                alt_creds = {}
             self._create_handler()
             self._handler.open(connection=self._client._conn_manager.get_connection(  # pylint: disable=protected-access
                 self._client._address.hostname,
-                self._client._get_auth(**alt_creds)
+                self._client._create_auth()
             ))
             while not self._handler.client_ready():
                 time.sleep(0.05)
@@ -66,7 +54,8 @@ class ConsumerProducerMixin(object):
             self._running = True
 
     def _close_handler(self):
-        self._handler.close()  # close the link (sharing connection) or connection (not sharing)
+        if self._handler:
+            self._handler.close()  # close the link (sharing connection) or connection (not sharing)
         self._running = False
 
     def _close_connection(self):
@@ -76,8 +65,6 @@ class ConsumerProducerMixin(object):
     def _handle_exception(self, exception):
         if not self._running and isinstance(exception, compat.TimeoutException):
             exception = errors.AuthenticationException("Authorization timeout.")
-            return _handle_exception(exception, self)
-
         return _handle_exception(exception, self)
 
     def _do_retryable_operation(self, operation, timeout=100000, **kwargs):
@@ -102,36 +89,13 @@ class ConsumerProducerMixin(object):
         log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
         raise last_exception
 
-    def close(self, exception=None):
-        # type:(Exception) -> None
+    def close(self):
+        # type:() -> None
         """
         Close down the handler. If the handler has already closed,
-        this will be a no op. An optional exception can be passed in to
-        indicate that the handler was shutdown due to error.
-
-        :param exception: An optional exception if the handler is closing
-         due to an error.
-        :type exception: Exception
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START eventhub_client_receiver_close]
-                :end-before: [END eventhub_client_receiver_close]
-                :language: python
-                :dedent: 4
-                :caption: Close down the handler.
-
+        this will be a no op.
         """
-        self._running = False
-        if self._error:  # type: ignore
-            return
-        if isinstance(exception, errors.LinkRedirect):
-            self._redirected = exception
-        elif isinstance(exception, EventHubError):
-            self._error = exception
-        elif exception:
-            self._error = EventHubError(str(exception))
-        else:
-            self._error = EventHubError("{} handler is closed.".format(self._name))
         if self._handler:
             self._handler.close()  # this will close link if sharing connection. Otherwise close connection
+        self._running = False
+        self._closed = True

@@ -84,10 +84,24 @@ class ErrorResponseCode(str, Enum):
     calculate_price_failed = "CalculatePriceFailed"
 
 
+class ReservationBillingPlan(str, Enum):
+
+    upfront = "Upfront"
+    monthly = "Monthly"
+
+
 class ReservationTerm(str, Enum):
 
     p1_y = "P1Y"
     p3_y = "P3Y"
+
+
+class PaymentStatus(str, Enum):
+
+    succeeded = "Succeeded"
+    failed = "Failed"
+    scheduled = "Scheduled"
+    cancelled = "Cancelled"
 
 
 class ReservedResourceType(str, Enum):

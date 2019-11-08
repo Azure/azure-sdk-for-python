@@ -2,11 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import datetime
 import functools
 import json
-import os
 import time
-import uuid
 
 try:
     from unittest.mock import Mock, patch
@@ -22,10 +21,9 @@ from azure.identity import (
     DeviceCodeCredential,
     EnvironmentCredential,
     ManagedIdentityCredential,
-    InteractiveBrowserCredential,
     UsernamePasswordCredential,
 )
-from azure.identity._managed_identity import ImdsCredential
+from azure.identity._credentials.managed_identity import ImdsCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
@@ -48,7 +46,9 @@ def test_client_secret_credential_cache():
     mock_send = Mock(return_value=mock_response(json_payload=token_payload))
     scope = "scope"
 
-    credential = ClientSecretCredential("client_id", "secret", tenant_id="some-guid", transport=Mock(send=mock_send))
+    credential = ClientSecretCredential(
+        tenant_id="some-guid", client_id="client_id", client_secret="secret", transport=Mock(send=mock_send)
+    )
 
     # get_token initially returns the expired token because the credential
     # doesn't check whether tokens it receives from the service have expired
@@ -86,15 +86,13 @@ def test_client_secret_credential():
         ],
     )
 
-    token = ClientSecretCredential(
-        client_id=client_id, secret=secret, tenant_id=tenant_id, transport=transport
-    ).get_token("scope")
+    token = ClientSecretCredential(tenant_id, client_id, secret, transport=transport).get_token("scope")
 
     # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
     assert token.token == access_token
 
 
-def test_client_secret_environment_credential(monkeypatch):
+def test_client_secret_environment_credential():
     client_id = "fake-client-id"
     secret = "fake-client-secret"
     tenant_id = "fake-tenant-id"
@@ -114,11 +112,13 @@ def test_client_secret_environment_credential(monkeypatch):
         ],
     )
 
-    monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_ID, client_id)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_SECRET, secret)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_TENANT_ID, tenant_id)
-
-    token = EnvironmentCredential(transport=transport).get_token("scope")
+    environment = {
+        EnvironmentVariables.AZURE_CLIENT_ID: client_id,
+        EnvironmentVariables.AZURE_CLIENT_SECRET: secret,
+        EnvironmentVariables.AZURE_TENANT_ID: tenant_id,
+    }
+    with patch("os.environ", environment):
+        token = EnvironmentCredential(transport=transport).get_token("scope")
 
     # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
     assert token.token == access_token
@@ -236,7 +236,7 @@ def test_imds_credential_retries():
         assert mock_send.call_count == 2 + total_retries
 
 
-@patch("azure.identity.SharedTokenCacheCredential")
+@patch("azure.identity._credentials.default.SharedTokenCacheCredential")
 def test_default_credential_shared_cache_use(mock_credential):
     mock_credential.supported = Mock(return_value=False)
 
@@ -246,36 +246,13 @@ def test_default_credential_shared_cache_use(mock_credential):
     assert mock_credential.supported.call_count == 1
     mock_credential.supported.reset_mock()
 
-    # unsupported platform, $AZURE_USERNAME set, $AZURE_PASSWORD not set -> default credential shouldn't use shared cache
-    credential = DefaultAzureCredential()
-    assert mock_credential.call_count == 0
-    assert mock_credential.supported.call_count == 1
-
     mock_credential.supported = Mock(return_value=True)
 
-    # supported platform, $AZURE_USERNAME not set -> default credential shouldn't use shared cache
+    # supported platform -> default credential should use shared cache
     credential = DefaultAzureCredential()
-    assert mock_credential.call_count == 0
+    assert mock_credential.call_count == 1
     assert mock_credential.supported.call_count == 1
     mock_credential.supported.reset_mock()
-
-    # supported platform, $AZURE_USERNAME and $AZURE_PASSWORD set -> default credential shouldn't use shared cache
-    # (EnvironmentCredential should be used when both variables are set)
-    with patch.dict("os.environ", {"AZURE_USERNAME": "foo@bar.com", "AZURE_PASSWORD": "***"}):
-        credential = DefaultAzureCredential()
-        assert mock_credential.call_count == 0
-
-    # supported platform, $AZURE_USERNAME set, $AZURE_PASSWORD not set -> default credential should use shared cache
-    with patch.dict("os.environ", {"AZURE_USERNAME": "foo@bar.com"}):
-        expected_token = AccessToken("***", 42)
-        mock_credential.return_value = Mock(get_token=lambda *_: expected_token)
-
-        credential = DefaultAzureCredential()
-        assert mock_credential.call_count == 1
-
-        token = credential.get_token("scope")
-        assert token == expected_token
-
 
 def test_device_code_credential():
     expected_token = "access-token"
@@ -313,12 +290,21 @@ def test_device_code_credential():
         client_id="_", prompt_callback=callback, transport=transport, instance_discovery=False
     )
 
+    now = datetime.datetime.utcnow()
     token = credential.get_token("scope")
     assert token.token == expected_token
 
     # prompt_callback should have been called as documented
     assert callback.call_count == 1
-    assert callback.call_args[0] == (verification_uri, user_code, expires_in)
+    uri, code, expires_on = callback.call_args[0]
+    assert uri == verification_uri
+    assert code == user_code
+
+    # validating expires_on exactly would require depending on internals of the credential and
+    # patching time, so we'll be satisfied if expires_on is a datetime at least expires_in
+    # seconds later than our call to get_token
+    assert isinstance(expires_on, datetime.datetime)
+    assert expires_on - now >= datetime.timedelta(seconds=expires_in)
 
 
 def test_device_code_credential_timeout():
@@ -341,80 +327,16 @@ def test_device_code_credential_timeout():
     assert "timed out" in ex.value.message.lower()
 
 
-@patch("azure.identity._browser_auth.webbrowser.open", lambda _: None)  # prevent the credential opening a browser
-def test_interactive_credential():
-    oauth_state = "state"
-    expected_token = "access-token"
-
-    transport = validating_transport(
-        requests=[Request()] * 2,  # not validating requests because they're formed by MSAL
-        responses=[
-            # expecting tenant discovery then a token request
-            mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
-            mock_response(
-                json_payload={
-                    "access_token": expected_token,
-                    "expires_in": 42,
-                    "token_type": "Bearer",
-                    "ext_expires_in": 42,
-                }
-            ),
-        ],
-    )
-
-    # mock local server fakes successful authentication by immediately returning a well-formed response
-    auth_code_response = {"code": "authorization-code", "state": [oauth_state]}
-    server_class = Mock(return_value=Mock(wait_for_redirect=lambda: auth_code_response))
-
-    credential = InteractiveBrowserCredential(
-        client_id="guid",
-        client_secret="secret",
-        server_class=server_class,
-        transport=transport,
-        instance_discovery=False,  # kwargs are passed to MSAL; this one prevents an AAD verification request
-    )
-
-    # ensure the request beginning the flow has a known state value
-    with patch("azure.identity._browser_auth.uuid.uuid4", lambda: oauth_state):
-        token = credential.get_token("scope")
-    assert token.token == expected_token
-
-
-@patch("azure.identity._browser_auth.webbrowser.open", lambda _: None)  # prevent the credential opening a browser
-def test_interactive_credential_timeout():
-    # mock transport handles MSAL's tenant discovery
-    transport = Mock(
-        send=lambda _, **__: mock_response(
-            json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}
-        )
-    )
-
-    # mock local server blocks long enough to exceed the timeout
-    timeout = 0.01
-    server_instance = Mock(wait_for_redirect=functools.partial(time.sleep, timeout + 0.01))
-    server_class = Mock(return_value=server_instance)
-
-    credential = InteractiveBrowserCredential(
-        client_id="guid",
-        client_secret="secret",
-        server_class=server_class,
-        timeout=timeout,
-        transport=transport,
-        instance_discovery=False,  # kwargs are passed to MSAL; this one prevents an AAD verification request
-    )
-
-    with pytest.raises(ClientAuthenticationError) as ex:
-        credential.get_token("scope")
-    assert "timed out" in ex.value.message.lower()
-
-
 def test_username_password_credential():
     expected_token = "access-token"
     transport = validating_transport(
-        requests=[Request()] * 2,  # not validating requests because they're formed by MSAL
+        requests=[Request()] * 3,  # not validating requests because they're formed by MSAL
         responses=[
-            # expecting tenant discovery then a token request
+            # tenant discovery
             mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
+            # user realm discovery, interests MSAL only when the response body contains account_type == "Federated"
+            mock_response(json_payload={}),
+            # token request
             mock_response(
                 json_payload={
                     "access_token": expected_token,
@@ -435,4 +357,54 @@ def test_username_password_credential():
     )
 
     token = credential.get_token("scope")
+    assert token.token == expected_token
+
+
+def test_username_password_environment_credential():
+    client_id = "fake-client-id"
+    username = "foo@bar.com"
+    password = "password"
+    expected_token = "***"
+
+    create_transport = functools.partial(
+        validating_transport,
+        requests=[Request()] * 3,  # not validating requests because they're formed by MSAL
+        responses=[
+            # tenant discovery
+            mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
+            # user realm discovery, interests MSAL only when the response body contains account_type == "Federated"
+            mock_response(json_payload={}),
+            # token request
+            mock_response(
+                json_payload={
+                    "access_token": expected_token,
+                    "expires_in": 42,
+                    "token_type": "Bearer",
+                    "ext_expires_in": 42,
+                }
+            ),
+        ],
+    )
+
+    environment = {
+        EnvironmentVariables.AZURE_CLIENT_ID: client_id,
+        EnvironmentVariables.AZURE_USERNAME: username,
+        EnvironmentVariables.AZURE_PASSWORD: password,
+    }
+    with patch("os.environ", environment):
+        token = EnvironmentCredential(transport=create_transport()).get_token("scope")
+
+    # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
+    assert token.token == expected_token
+
+    # now with a tenant id
+    environment = {
+        EnvironmentVariables.AZURE_CLIENT_ID: client_id,
+        EnvironmentVariables.AZURE_USERNAME: username,
+        EnvironmentVariables.AZURE_PASSWORD: password,
+        EnvironmentVariables.AZURE_TENANT_ID: "tenant_id",
+    }
+    with patch("os.environ", environment):
+        token = EnvironmentCredential(transport=create_transport()).get_token("scope")
+
     assert token.token == expected_token

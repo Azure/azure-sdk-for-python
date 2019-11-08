@@ -24,6 +24,7 @@ class _AesCbcCryptoTransform(BlockCryptoTransform):
     def block_size(self):
         pass
 
+
 class _AesCbcDecryptor(_AesCbcCryptoTransform):
     def __init__(self, key, iv):
         super(_AesCbcDecryptor, self).__init__(key, iv)

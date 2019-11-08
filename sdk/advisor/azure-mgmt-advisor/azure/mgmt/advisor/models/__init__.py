@@ -10,49 +10,59 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .config_data_properties_py3 import ConfigDataProperties
-    from .config_data_py3 import ConfigData
-    from .arm_error_response_body_py3 import ARMErrorResponseBody
-    from .short_description_py3 import ShortDescription
-    from .resource_recommendation_base_py3 import ResourceRecommendationBase
-    from .resource_py3 import Resource
-    from .operation_display_info_py3 import OperationDisplayInfo
-    from .operation_entity_py3 import OperationEntity
-    from .suppression_contract_py3 import SuppressionContract
+    from ._models_py3 import ARMErrorResponseBody
+    from ._models_py3 import ConfigData
+    from ._models_py3 import ConfigDataProperties
+    from ._models_py3 import MetadataEntity
+    from ._models_py3 import MetadataSupportedValueDetail
+    from ._models_py3 import OperationDisplayInfo
+    from ._models_py3 import OperationEntity
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceRecommendationBase
+    from ._models_py3 import ShortDescription
+    from ._models_py3 import SuppressionContract
 except (SyntaxError, ImportError):
-    from .config_data_properties import ConfigDataProperties
-    from .config_data import ConfigData
-    from .arm_error_response_body import ARMErrorResponseBody
-    from .short_description import ShortDescription
-    from .resource_recommendation_base import ResourceRecommendationBase
-    from .resource import Resource
-    from .operation_display_info import OperationDisplayInfo
-    from .operation_entity import OperationEntity
-    from .suppression_contract import SuppressionContract
-from .config_data_paged import ConfigDataPaged
-from .resource_recommendation_base_paged import ResourceRecommendationBasePaged
-from .operation_entity_paged import OperationEntityPaged
-from .suppression_contract_paged import SuppressionContractPaged
-from .advisor_management_client_enums import (
+    from ._models import ARMErrorResponseBody
+    from ._models import ConfigData
+    from ._models import ConfigDataProperties
+    from ._models import MetadataEntity
+    from ._models import MetadataSupportedValueDetail
+    from ._models import OperationDisplayInfo
+    from ._models import OperationEntity
+    from ._models import Resource
+    from ._models import ResourceRecommendationBase
+    from ._models import ShortDescription
+    from ._models import SuppressionContract
+from ._paged_models import ConfigDataPaged
+from ._paged_models import MetadataEntityPaged
+from ._paged_models import OperationEntityPaged
+from ._paged_models import ResourceRecommendationBasePaged
+from ._paged_models import SuppressionContractPaged
+from ._advisor_management_client_enums import (
+    Scenario,
     Category,
     Impact,
     Risk,
 )
 
 __all__ = [
-    'ConfigDataProperties',
-    'ConfigData',
     'ARMErrorResponseBody',
-    'ShortDescription',
-    'ResourceRecommendationBase',
-    'Resource',
+    'ConfigData',
+    'ConfigDataProperties',
+    'MetadataEntity',
+    'MetadataSupportedValueDetail',
     'OperationDisplayInfo',
     'OperationEntity',
+    'Resource',
+    'ResourceRecommendationBase',
+    'ShortDescription',
     'SuppressionContract',
+    'MetadataEntityPaged',
     'ConfigDataPaged',
     'ResourceRecommendationBasePaged',
     'OperationEntityPaged',
     'SuppressionContractPaged',
+    'Scenario',
     'Category',
     'Impact',
     'Risk',

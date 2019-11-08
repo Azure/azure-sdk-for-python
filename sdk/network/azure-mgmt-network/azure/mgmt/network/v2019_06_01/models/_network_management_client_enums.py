@@ -547,11 +547,11 @@ class ConnectionStatus(str, Enum):
     degraded = "Degraded"
 
 
-class ConnectionMonitorSourceStatus(str, Enum):
+class VerbosityLevel(str, Enum):
 
-    unknown = "Unknown"
-    active = "Active"
-    inactive = "Inactive"
+    normal = "Normal"
+    minimum = "Minimum"
+    full = "Full"
 
 
 class ConnectionState(str, Enum):
@@ -568,11 +568,11 @@ class EvaluationState(str, Enum):
     completed = "Completed"
 
 
-class VerbosityLevel(str, Enum):
+class ConnectionMonitorSourceStatus(str, Enum):
 
-    normal = "Normal"
-    minimum = "Minimum"
-    full = "Full"
+    unknown = "Unknown"
+    active = "Active"
+    inactive = "Inactive"
 
 
 class PublicIPPrefixSkuName(str, Enum):

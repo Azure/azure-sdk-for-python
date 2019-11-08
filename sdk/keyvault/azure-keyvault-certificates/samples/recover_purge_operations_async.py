@@ -4,6 +4,7 @@
 # ------------------------------------
 import asyncio
 import os
+from azure.keyvault.certificates import CertificatePolicy
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -42,16 +43,18 @@ async def run_sample():
         # Let's create certificates holding storage and bank accounts credentials. If the certificate
         # already exists in the Key Vault, then a new version of the certificate is created.
         print("\n.. Create Certificates")
-        bank_cert_name = "BankRecoverCertificatezxv2"
-        storage_cert_name = "ServerRecoverCertificatezxcv2"
+        bank_cert_name = "BankRecoverCertificate"
+        storage_cert_name = "ServerRecoverCertificate"
 
-        bank_certificate_poller = await client.create_certificate(name=bank_cert_name)
-        storage_certificate_poller = await client.create_certificate(name=storage_cert_name)
+        bank_certificate = await client.create_certificate(
+            name=bank_cert_name, policy=CertificatePolicy.get_default()
+        )
+        storage_certificate = await client.create_certificate(
+            name=storage_cert_name, policy=CertificatePolicy.get_default()
+        )
 
-        await bank_certificate_poller
-        await storage_certificate_poller
-        print("Certificate with name '{0}' was created.".format(bank_cert_name))
-        print("Certificate with name '{0}' was created.".format(storage_cert_name))
+        print("Certificate with name '{0}' was created.".format(bank_certificate.name))
+        print("Certificate with name '{0}' was created.".format(storage_certificate.name))
 
         # The storage account was closed, need to delete its credentials from the Key Vault.
         print("\n.. Delete a Certificate")
@@ -59,9 +62,10 @@ async def run_sample():
         # To ensure certificate is deleted on the server side.
         await asyncio.sleep(30)
 
-        print("Certificate with name '{0}' was deleted on date {1}.".format(
-            deleted_bank_certificate.name,
-            deleted_bank_certificate.deleted_date)
+        print(
+            "Certificate with name '{0}' was deleted on date {1}.".format(
+                deleted_bank_certificate.name, deleted_bank_certificate.deleted_date
+            )
         )
 
         # We accidentally deleted the bank account certificate. Let's recover it.

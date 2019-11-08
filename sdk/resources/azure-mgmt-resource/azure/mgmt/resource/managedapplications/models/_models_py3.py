@@ -143,9 +143,6 @@ class Application(GenericResource):
      'Updating'
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.managedapplications.models.ProvisioningState
-    :param ui_definition_uri: The blob URI where the UI definition file is
-     located.
-    :type ui_definition_uri: str
     :param plan: The plan information.
     :type plan: ~azure.mgmt.resource.managedapplications.models.Plan
     :param kind: Required. The kind of the managed application. Allowed values
@@ -177,19 +174,17 @@ class Application(GenericResource):
         'parameters': {'key': 'properties.parameters', 'type': 'object'},
         'outputs': {'key': 'properties.outputs', 'type': 'object'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'ui_definition_uri': {'key': 'properties.uiDefinitionUri', 'type': 'str'},
         'plan': {'key': 'plan', 'type': 'Plan'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, *, managed_resource_group_id: str, kind: str, location: str=None, tags=None, managed_by: str=None, sku=None, identity=None, application_definition_id: str=None, parameters=None, ui_definition_uri: str=None, plan=None, **kwargs) -> None:
+    def __init__(self, *, managed_resource_group_id: str, kind: str, location: str=None, tags=None, managed_by: str=None, sku=None, identity=None, application_definition_id: str=None, parameters=None, plan=None, **kwargs) -> None:
         super(Application, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity, **kwargs)
         self.managed_resource_group_id = managed_resource_group_id
         self.application_definition_id = application_definition_id
         self.parameters = parameters
         self.outputs = None
         self.provisioning_state = None
-        self.ui_definition_uri = ui_definition_uri
         self.plan = plan
         self.kind = kind
 
@@ -357,9 +352,6 @@ class ApplicationPatchable(GenericResource):
      'Updating'
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.managedapplications.models.ProvisioningState
-    :param ui_definition_uri: The blob URI where the UI definition file is
-     located.
-    :type ui_definition_uri: str
     :param plan: The plan information.
     :type plan: ~azure.mgmt.resource.managedapplications.models.PlanPatchable
     :param kind: The kind of the managed application. Allowed values are
@@ -390,19 +382,17 @@ class ApplicationPatchable(GenericResource):
         'parameters': {'key': 'properties.parameters', 'type': 'object'},
         'outputs': {'key': 'properties.outputs', 'type': 'object'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'ui_definition_uri': {'key': 'properties.uiDefinitionUri', 'type': 'str'},
         'plan': {'key': 'plan', 'type': 'PlanPatchable'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, managed_by: str=None, sku=None, identity=None, managed_resource_group_id: str=None, application_definition_id: str=None, parameters=None, ui_definition_uri: str=None, plan=None, kind: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, managed_by: str=None, sku=None, identity=None, managed_resource_group_id: str=None, application_definition_id: str=None, parameters=None, plan=None, kind: str=None, **kwargs) -> None:
         super(ApplicationPatchable, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity, **kwargs)
         self.managed_resource_group_id = managed_resource_group_id
         self.application_definition_id = application_definition_id
         self.parameters = parameters
         self.outputs = None
         self.provisioning_state = None
-        self.ui_definition_uri = ui_definition_uri
         self.plan = plan
         self.kind = kind
 

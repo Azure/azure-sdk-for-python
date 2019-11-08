@@ -19,6 +19,7 @@ from keys_vault_client_async import VaultClient
 class AiohttpTestTransport(AioHttpTransport):
     """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
     """
+
     async def send(self, request, **config):
         response = await super(AiohttpTestTransport, self).send(request, **config)
         if not isinstance(response.headers, CIMultiDictProxy):
@@ -33,4 +34,4 @@ class AsyncVaultClientPreparer(VaultClientPreparer):
             credential = EnvironmentCredential()
         else:
             credential = Mock(get_token=asyncio.coroutine(lambda _: AccessToken("fake-token", 0)))
-        return VaultClient(vault_uri, credential, transport=AiohttpTestTransport())
+        return VaultClient(vault_uri, credential, transport=AiohttpTestTransport(), **self.client_kwargs)

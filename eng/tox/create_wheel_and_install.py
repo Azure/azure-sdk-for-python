@@ -91,7 +91,9 @@ if __name__ == "__main__":
             # it does't exist, so we need to error out
             else:
                 logging.error(
-                    "{w} not present in the prebuilt wheels directory. Exiting."
+                    "{w} not present in the prebuilt wheels directory. Exiting.".format(
+                        w=wheel
+                    )
                 )
                 exit(1)
         else:

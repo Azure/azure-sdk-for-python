@@ -109,6 +109,9 @@ class CalculatePriceResponseProperties(Model):
      during refund for calculating refund limit. Tax is not included.
     :type pricing_currency_total:
      ~azure.mgmt.reservations.models.CalculatePriceResponsePropertiesPricingCurrencyTotal
+    :param payment_schedule:
+    :type payment_schedule:
+     list[~azure.mgmt.reservations.models.PaymentDetail]
     """
 
     _attribute_map = {
@@ -118,6 +121,7 @@ class CalculatePriceResponseProperties(Model):
         'sku_title': {'key': 'skuTitle', 'type': 'str'},
         'sku_description': {'key': 'skuDescription', 'type': 'str'},
         'pricing_currency_total': {'key': 'pricingCurrencyTotal', 'type': 'CalculatePriceResponsePropertiesPricingCurrencyTotal'},
+        'payment_schedule': {'key': 'paymentSchedule', 'type': '[PaymentDetail]'},
     }
 
     def __init__(self, **kwargs):
@@ -128,6 +132,7 @@ class CalculatePriceResponseProperties(Model):
         self.sku_title = kwargs.get('sku_title', None)
         self.sku_description = kwargs.get('sku_description', None)
         self.pricing_currency_total = kwargs.get('pricing_currency_total', None)
+        self.payment_schedule = kwargs.get('payment_schedule', None)
 
 
 class CalculatePriceResponsePropertiesBillingCurrencyTotal(Model):
@@ -182,6 +187,9 @@ class Catalog(Model):
     :vartype resource_type: str
     :ivar name: The name of SKU
     :vartype name: str
+    :param billing_plans: The billing plan options available for this SKU.
+    :type billing_plans: dict[str, list[str or
+     ~azure.mgmt.reservations.models.ReservationBillingPlan]]
     :ivar terms: Available reservation terms for this resource
     :vartype terms: list[str or
      ~azure.mgmt.reservations.models.ReservationTerm]
@@ -206,6 +214,7 @@ class Catalog(Model):
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'billing_plans': {'key': 'billingPlans', 'type': '{[str]}'},
         'terms': {'key': 'terms', 'type': '[str]'},
         'locations': {'key': 'locations', 'type': '[str]'},
         'sku_properties': {'key': 'skuProperties', 'type': '[SkuProperty]'},
@@ -216,6 +225,7 @@ class Catalog(Model):
         super(Catalog, self).__init__(**kwargs)
         self.resource_type = None
         self.name = None
+        self.billing_plans = kwargs.get('billing_plans', None)
         self.terms = None
         self.locations = None
         self.sku_properties = None
@@ -451,6 +461,73 @@ class PatchPropertiesRenewProperties(Model):
         self.purchase_properties = kwargs.get('purchase_properties', None)
 
 
+class PaymentDetail(Model):
+    """Information about payment related to a reservation order.
+
+    :param due_date: Date when the payment needs to be done.
+    :type due_date: date
+    :param payment_date: Date when the transaction is completed. Is null when
+     it is scheduled.
+    :type payment_date: date
+    :param pricing_currency_total: Amount in pricing currency. Tax not
+     included.
+    :type pricing_currency_total: ~azure.mgmt.reservations.models.Price
+    :param billing_currency_total: Amount charged in Billing currency. Tax not
+     included. Is null for future payments
+    :type billing_currency_total: ~azure.mgmt.reservations.models.Price
+    :param billing_account: Shows the Account that is charged for this
+     payment.
+    :type billing_account: str
+    :param status: Possible values include: 'Succeeded', 'Failed',
+     'Scheduled', 'Cancelled'
+    :type status: str or ~azure.mgmt.reservations.models.PaymentStatus
+    :param extended_status_info:
+    :type extended_status_info:
+     ~azure.mgmt.reservations.models.ExtendedStatusInfo
+    """
+
+    _attribute_map = {
+        'due_date': {'key': 'dueDate', 'type': 'date'},
+        'payment_date': {'key': 'paymentDate', 'type': 'date'},
+        'pricing_currency_total': {'key': 'pricingCurrencyTotal', 'type': 'Price'},
+        'billing_currency_total': {'key': 'billingCurrencyTotal', 'type': 'Price'},
+        'billing_account': {'key': 'billingAccount', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'extended_status_info': {'key': 'extendedStatusInfo', 'type': 'ExtendedStatusInfo'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PaymentDetail, self).__init__(**kwargs)
+        self.due_date = kwargs.get('due_date', None)
+        self.payment_date = kwargs.get('payment_date', None)
+        self.pricing_currency_total = kwargs.get('pricing_currency_total', None)
+        self.billing_currency_total = kwargs.get('billing_currency_total', None)
+        self.billing_account = kwargs.get('billing_account', None)
+        self.status = kwargs.get('status', None)
+        self.extended_status_info = kwargs.get('extended_status_info', None)
+
+
+class Price(Model):
+    """Price.
+
+    :param currency_code: The ISO 4217 3-letter currency code for the currency
+     used by this purchase record.
+    :type currency_code: str
+    :param amount:
+    :type amount: float
+    """
+
+    _attribute_map = {
+        'currency_code': {'key': 'currencyCode', 'type': 'str'},
+        'amount': {'key': 'amount', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Price, self).__init__(**kwargs)
+        self.currency_code = kwargs.get('currency_code', None)
+        self.amount = kwargs.get('amount', None)
+
+
 class Properties(Model):
     """Properties.
 
@@ -484,6 +561,9 @@ class PurchaseRequest(Model):
     :type billing_scope_id: str
     :param term: Possible values include: 'P1Y', 'P3Y'
     :type term: str or ~azure.mgmt.reservations.models.ReservationTerm
+    :param billing_plan: Possible values include: 'Upfront', 'Monthly'
+    :type billing_plan: str or
+     ~azure.mgmt.reservations.models.ReservationBillingPlan
     :param quantity:
     :type quantity: int
     :param display_name: Friendly name of the Reservation
@@ -507,6 +587,7 @@ class PurchaseRequest(Model):
         'reserved_resource_type': {'key': 'properties.reservedResourceType', 'type': 'str'},
         'billing_scope_id': {'key': 'properties.billingScopeId', 'type': 'str'},
         'term': {'key': 'properties.term', 'type': 'str'},
+        'billing_plan': {'key': 'properties.billingPlan', 'type': 'str'},
         'quantity': {'key': 'properties.quantity', 'type': 'int'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'applied_scope_type': {'key': 'properties.appliedScopeType', 'type': 'str'},
@@ -522,6 +603,7 @@ class PurchaseRequest(Model):
         self.reserved_resource_type = kwargs.get('reserved_resource_type', None)
         self.billing_scope_id = kwargs.get('billing_scope_id', None)
         self.term = kwargs.get('term', None)
+        self.billing_plan = kwargs.get('billing_plan', None)
         self.quantity = kwargs.get('quantity', None)
         self.display_name = kwargs.get('display_name', None)
         self.applied_scope_type = kwargs.get('applied_scope_type', None)
@@ -645,6 +727,36 @@ class ReservationMergeProperties(Model):
         self.merge_sources = kwargs.get('merge_sources', None)
 
 
+class ReservationOrderBillingPlanInformation(Model):
+    """Information describing the type of billing plan for this reservation.
+
+    :param pricing_currency_total: Amount of money to be paid for the Order.
+     Tax is not included.
+    :type pricing_currency_total: ~azure.mgmt.reservations.models.Price
+    :param start_date: Date when the billing plan has started.
+    :type start_date: date
+    :param next_payment_due_date: For recurring billing plans, indicates the
+     date when next payment will be processed. Null when total is paid off.
+    :type next_payment_due_date: date
+    :param transactions:
+    :type transactions: list[~azure.mgmt.reservations.models.PaymentDetail]
+    """
+
+    _attribute_map = {
+        'pricing_currency_total': {'key': 'pricingCurrencyTotal', 'type': 'Price'},
+        'start_date': {'key': 'startDate', 'type': 'date'},
+        'next_payment_due_date': {'key': 'nextPaymentDueDate', 'type': 'date'},
+        'transactions': {'key': 'transactions', 'type': '[PaymentDetail]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReservationOrderBillingPlanInformation, self).__init__(**kwargs)
+        self.pricing_currency_total = kwargs.get('pricing_currency_total', None)
+        self.start_date = kwargs.get('start_date', None)
+        self.next_payment_due_date = kwargs.get('next_payment_due_date', None)
+        self.transactions = kwargs.get('transactions', None)
+
+
 class ReservationOrderResponse(Model):
     """ReservationOrderResponse.
 
@@ -674,6 +786,12 @@ class ReservationOrderResponse(Model):
     :type term: str or ~azure.mgmt.reservations.models.ReservationTerm
     :param provisioning_state: Current state of the reservation.
     :type provisioning_state: str
+    :param billing_plan: Possible values include: 'Upfront', 'Monthly'
+    :type billing_plan: str or
+     ~azure.mgmt.reservations.models.ReservationBillingPlan
+    :param plan_information:
+    :type plan_information:
+     ~azure.mgmt.reservations.models.ReservationOrderBillingPlanInformation
     :param reservations:
     :type reservations:
      list[~azure.mgmt.reservations.models.ReservationResponse]
@@ -698,6 +816,8 @@ class ReservationOrderResponse(Model):
         'original_quantity': {'key': 'properties.originalQuantity', 'type': 'int'},
         'term': {'key': 'properties.term', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'billing_plan': {'key': 'properties.billingPlan', 'type': 'str'},
+        'plan_information': {'key': 'properties.planInformation', 'type': 'ReservationOrderBillingPlanInformation'},
         'reservations': {'key': 'properties.reservations', 'type': '[ReservationResponse]'},
         'type': {'key': 'type', 'type': 'str'},
     }
@@ -714,6 +834,8 @@ class ReservationOrderResponse(Model):
         self.original_quantity = kwargs.get('original_quantity', None)
         self.term = kwargs.get('term', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.billing_plan = kwargs.get('billing_plan', None)
+        self.plan_information = kwargs.get('plan_information', None)
         self.reservations = kwargs.get('reservations', None)
         self.type = None
 
@@ -757,6 +879,9 @@ class ReservationProperties(Model):
     :param extended_status_info:
     :type extended_status_info:
      ~azure.mgmt.reservations.models.ExtendedStatusInfo
+    :param billing_plan: Possible values include: 'Upfront', 'Monthly'
+    :type billing_plan: str or
+     ~azure.mgmt.reservations.models.ReservationBillingPlan
     :param split_properties:
     :type split_properties:
      ~azure.mgmt.reservations.models.ReservationSplitProperties
@@ -799,6 +924,7 @@ class ReservationProperties(Model):
         'expiry_date': {'key': 'expiryDate', 'type': 'date'},
         'sku_description': {'key': 'skuDescription', 'type': 'str'},
         'extended_status_info': {'key': 'extendedStatusInfo', 'type': 'ExtendedStatusInfo'},
+        'billing_plan': {'key': 'billingPlan', 'type': 'str'},
         'split_properties': {'key': 'splitProperties', 'type': 'ReservationSplitProperties'},
         'merge_properties': {'key': 'mergeProperties', 'type': 'ReservationMergeProperties'},
         'billing_scope_id': {'key': 'billingScopeId', 'type': 'str'},
@@ -823,6 +949,7 @@ class ReservationProperties(Model):
         self.expiry_date = kwargs.get('expiry_date', None)
         self.sku_description = kwargs.get('sku_description', None)
         self.extended_status_info = kwargs.get('extended_status_info', None)
+        self.billing_plan = kwargs.get('billing_plan', None)
         self.split_properties = kwargs.get('split_properties', None)
         self.merge_properties = kwargs.get('merge_properties', None)
         self.billing_scope_id = kwargs.get('billing_scope_id', None)

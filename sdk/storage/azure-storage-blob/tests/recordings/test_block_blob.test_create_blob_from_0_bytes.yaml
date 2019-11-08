@@ -10,42 +10,80 @@ interactions:
       - keep-alive
       Content-Length:
       - '0'
-      Content-Type:
-      - application/octet-stream
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-client-request-id:
-      - 9e7a8478-8eca-11e9-8fea-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:34:10 GMT
+      - Fri, 25 Oct 2019 18:40:17 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/utcontainera1ae1210/bloba1ae1210
+    uri: https://storagename.blob.core.windows.net/utcontainera1ae1210?restype=container
   response:
     body:
       string: ''
     headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 25 Oct 2019 18:40:17 GMT
+      etag:
+      - '"0x8D7597AC85BBB19"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:40:17 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       Content-Length:
       - '0'
-      Content-MD5:
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Fri, 25 Oct 2019 18:40:18 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainera1ae1210/bloba1ae1210
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      content-md5:
       - 1B2M2Y8AsgTpgAmY7PhCfg==
-      Date:
-      - Fri, 14 Jun 2019 17:34:10 GMT
-      ETag:
-      - '"0x8D6F0EE83402546"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:34:11 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:40:17 GMT
+      etag:
+      - '"0x8D7597AC864C286"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:40:17 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 7ac057ca-401e-0049-3fd7-225760000000
+      x-ms-content-crc64:
+      - AAAAAAAAAAA=
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -59,37 +97,33 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 9e9a3b10-8eca-11e9-bcc9-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:34:10 GMT
+      - Fri, 25 Oct 2019 18:40:18 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: HEAD
-    uri: https://remotestoragename.blob.core.windows.net/utcontainera1ae1210/bloba1ae1210
+    uri: https://storagename.blob.core.windows.net/utcontainera1ae1210/bloba1ae1210
   response:
     body:
       string: ''
     headers:
-      Accept-Ranges:
+      accept-ranges:
       - bytes
-      Content-Length:
+      content-length:
       - '0'
-      Content-MD5:
+      content-md5:
       - 1B2M2Y8AsgTpgAmY7PhCfg==
-      Content-Type:
+      content-type:
       - application/octet-stream
-      Date:
-      - Fri, 14 Jun 2019 17:34:10 GMT
-      ETag:
-      - '"0x8D6F0EE83402546"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:34:11 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:40:17 GMT
+      etag:
+      - '"0x8D7597AC864C286"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:40:17 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
       x-ms-access-tier:
       - Hot
       x-ms-access-tier-inferred:
@@ -97,17 +131,15 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Fri, 14 Jun 2019 17:34:11 GMT
+      - Fri, 25 Oct 2019 18:40:17 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
       - unlocked
-      x-ms-request-id:
-      - 7ac057d9-401e-0049-4bd7-225760000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -121,41 +153,34 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 9ea35452-8eca-11e9-9b03-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:34:10 GMT
+      - Fri, 25 Oct 2019 18:40:18 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: GET
-    uri: https://remotestoragename.blob.core.windows.net/utcontainera1ae1210/bloba1ae1210
+    uri: https://storagename.blob.core.windows.net/utcontainera1ae1210/bloba1ae1210
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:7ac057ea-401e-0049-5ad7-225760000000\n\
-        Time:2019-06-14T17:34:11.5535932Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:af01c2b1-801e-008d-5a63-8b7cd0000000\nTime:2019-10-25T18:40:18.0263246Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '249'
-      Content-Range:
+      content-range:
       - bytes */0
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Fri, 14 Jun 2019 17:34:10 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:40:17 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
       x-ms-error-code:
       - InvalidRange
-      x-ms-request-id:
-      - 7ac057ea-401e-0049-5ad7-225760000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 416
       message: The range specified is invalid for the current size of the resource.
@@ -169,269 +194,45 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 9eab437e-8eca-11e9-87df-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:34:10 GMT
+      - Fri, 25 Oct 2019 18:40:18 GMT
       x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://remotestoragename.blob.core.windows.net/utcontainera1ae1210/bloba1ae1210
-  response:
-    body:
-      string: ''
-    headers:
-      Accept-Ranges:
-      - bytes
-      Content-Length:
-      - '0'
-      Content-MD5:
-      - 1B2M2Y8AsgTpgAmY7PhCfg==
-      Content-Type:
-      - application/octet-stream
-      Date:
-      - Fri, 14 Jun 2019 17:34:10 GMT
-      ETag:
-      - '"0x8D6F0EE83402546"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 17:34:11 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-creation-time:
-      - Fri, 14 Jun 2019 17:34:11 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-request-id:
-      - 7ac057fa-401e-0049-6ad7-225760000000
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      Content-Type:
-      - application/octet-stream
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-client-request-id:
-      - 5c80ae4a-8ed3-11e9-91e6-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:36:45 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainera1ae1210/bloba1ae1210
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Content-MD5:
-      - 1B2M2Y8AsgTpgAmY7PhCfg==
-      Date:
-      - Fri, 14 Jun 2019 18:36:45 GMT
-      ETag:
-      - '"0x8D6F0F740D150FC"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 18:36:45 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 6836d8f4-401e-00ac-14e0-224597000000
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 5ca14146-8ed3-11e9-bf0a-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:36:45 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: HEAD
-    uri: https://storagename.blob.core.windows.net/utcontainera1ae1210/bloba1ae1210
-  response:
-    body:
-      string: ''
-    headers:
-      Accept-Ranges:
-      - bytes
-      Content-Length:
-      - '0'
-      Content-MD5:
-      - 1B2M2Y8AsgTpgAmY7PhCfg==
-      Content-Type:
-      - application/octet-stream
-      Date:
-      - Fri, 14 Jun 2019 18:36:45 GMT
-      ETag:
-      - '"0x8D6F0F740D150FC"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 18:36:45 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-access-tier:
-      - Hot
-      x-ms-access-tier-inferred:
-      - 'true'
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-creation-time:
-      - Fri, 14 Jun 2019 18:36:45 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-request-id:
-      - 6836d907-401e-00ac-22e0-224597000000
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 5cab0c6c-8ed3-11e9-8d1b-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:36:45 GMT
-      x-ms-range:
-      - bytes=0-33554431
-      x-ms-version:
-      - '2018-03-28'
-    method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainera1ae1210/bloba1ae1210
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:6836d91f-401e-00ac-38e0-224597000000\n\
-        Time:2019-06-14T18:36:45.5762174Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '249'
-      Content-Range:
-      - bytes */0
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 18:36:45 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-error-code:
-      - InvalidRange
-      x-ms-request-id:
-      - 6836d91f-401e-00ac-38e0-224597000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 416
-      message: The range specified is invalid for the current size of the resource.
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 5cb34a12-8ed3-11e9-91e0-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:36:45 GMT
-      x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.blob.core.windows.net/utcontainera1ae1210/bloba1ae1210
   response:
     body:
       string: ''
     headers:
-      Accept-Ranges:
+      accept-ranges:
       - bytes
-      Content-Length:
+      content-length:
       - '0'
-      Content-MD5:
+      content-md5:
       - 1B2M2Y8AsgTpgAmY7PhCfg==
-      Content-Type:
+      content-type:
       - application/octet-stream
-      Date:
-      - Fri, 14 Jun 2019 18:36:45 GMT
-      ETag:
-      - '"0x8D6F0F740D150FC"'
-      Last-Modified:
-      - Fri, 14 Jun 2019 18:36:45 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 18:40:17 GMT
+      etag:
+      - '"0x8D7597AC864C286"'
+      last-modified:
+      - Fri, 25 Oct 2019 18:40:17 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Fri, 14 Jun 2019 18:36:45 GMT
+      - Fri, 25 Oct 2019 18:40:17 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
       - unlocked
-      x-ms-request-id:
-      - 6836d92f-401e-00ac-48e0-224597000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 200
       message: OK

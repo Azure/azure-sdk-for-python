@@ -28,14 +28,14 @@ import pytest
 
 import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 from azure.cosmos import _endpoint_discovery_retry_policy
 from azure.cosmos import _retry_utility
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import test_config
 
-pytestmark = pytest.mark.cosmosEmulator
+pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.globaldb]
 
 #IMPORTANT NOTES: 
   
@@ -72,7 +72,7 @@ class Test_globaldb_tests(unittest.TestCase):
         try:
             func(*args, **kwargs)
             self.assertFalse(True, 'function should fail.')
-        except errors.CosmosHttpResponseError as inst:
+        except exceptions.CosmosHttpResponseError as inst:
             self.assertEqual(inst.status_code, status_code)
             self.assertEqual(inst.sub_status, sub_status)
 
@@ -386,7 +386,7 @@ class Test_globaldb_tests(unittest.TestCase):
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
         response = test_config.FakeResponse({'x-ms-substatus' : SubStatusCodes.WRITE_FORBIDDEN})
-        raise errors.CosmosHttpResponseError(
+        raise exceptions.CosmosHttpResponseError(
             status_code=StatusCodes.FORBIDDEN,
             message="Write Forbidden",
             response=response)

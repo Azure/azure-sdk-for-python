@@ -1,0 +1,276 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - eef7cd00-d9a6-11e9-9f9a-001a7dda7113
+      x-ms-content-length:
+      - '1024'
+      x-ms-date:
+      - Tue, 17 Sep 2019 23:57:40 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - Inherit
+      x-ms-type:
+      - file
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare8f720a9e/file8f720a9e
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 17 Sep 2019 23:57:40 GMT
+      ETag:
+      - '"0x8D73BCAD3345ADC"'
+      Last-Modified:
+      - Tue, 17 Sep 2019 23:57:40 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-17T23:57:40.9070812Z'
+      x-ms-file-creation-time:
+      - '2019-09-17T23:57:40.9070812Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2019-09-17T23:57:40.9070812Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
+      x-ms-request-id:
+      - 33db104e-101a-00df-73b3-6d18ce000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: !!binary |
+      E9R7q/YlqZZbA6KiUwSTXi1v3ChjVxyqhpjQOwoy/SOpr5D6YYNV62uDmdiBLJWMrYulqyDjPETZ
+      z5gCDr8ujTBC4yn0gZK72Qj4eT5JRGc0g2yUFanXQc0ZCerSY5hV2pW53bgeviVSKvnuELcpCVOG
+      m8qw5bQVdM9O21LPZXTsXm2ietc3He2mlsNZKR/pwuuZxuY/bNyk9S+2gty/90jbq6e30mb8fsg+
+      5a2IeRGvQebEOWQkreZDwgtvRTaacDyNdMsaZsILwX4JGpLHATx8nUAfDnS43eR8mZzWZ+2zLKzh
+      K1I4nKdI5srOR2m/O6AJ0+kQum2CxAOT3pWgBdwvX9r3vyq1DsQi1/wb0JX17xUjlEPpuDQMGomm
+      IN+VxBkHWsNvIy8+QVuEws/lp46HFhTP3gj12z4sLKaT5m7ghw6UpFuKS+chYN10LFx7foyAp4HM
+      sbjxFCwIC+zoJfzKFR5T472A4ThCXdzU5JIySsX8c6tdutODnGoreJUjPOwrTrCZxjSH5iCa38nl
+      UF37jAApdKi4f1OKuu1xt6ZCXGEbGTaqUffszxRi26+Y5glVsk9Xbfyk6ariHE08k8EkfUmylY5u
+      4KpG5grIyMOM0Rx4HEa9QExFFfefsYC+A3cNRpC1o09wHiM2r/4rZbwot1SRByU6fHKiWGz4sqhA
+      veyjnF6+nK0fRLIjKziAxa+TL493rBuJu0/867bdualQM+uMB3qCsE/D7ChTXPCGoPBYNQ8JXocF
+      E7t6YTJkHbTNnzEb1Kjkw/gixrSjufwdwZJCr2kzbYus8i7lkuTq3ebFHD1b1w49F6er0G7daMrL
+      LC+mKlEEu2TU742MX3VpOPMAWCHSBdO1BMsGZy/+3jw0jVo5t4zQd4SzBMNh4UoQyJiq/KaiHAvV
+      bZqoteT19erP4grUi+EJHGo//h9l6OW+u4/kCTOiQ7N8FKn4WeR/I9KLWaeLOfEVRopCEXlSqvxR
+      /op8w3ivsxQ3JComHfKo74UCb2KwlcLcrd4Na8pfRiZrD7ou9gukH9TIIvWYSPjWmWlB6RTnz4td
+      llwagN+3AtmXHQ44csQgh+gNhin3tZ4a1ZHEu9vsaEOfrI8hwdpH/Uzem395iRjosXQ0OfucDgvI
+      Eh9q3Ndvw8C0sHpD+VmJwnlNeMXi5tl+guipOWDSuIZPflPzRzJ+C+ZxHJtU3rajWnqx8Dbn6GVQ
+      Q/6SCNViZdhps2xz/ZiXYRY5mkZUFVKB7UIwKmncQt7X3mdCTWtmUyEFCLl5fFkGICR8vb4yyfMb
+      f0Fd0Awkf6l4SxikqfVM1QOpJ/c8zDXgmcvJirG7DhtHqUF83mKautWn76AHZe+gbp5fyJsHaA==
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - ef0f7692-d9a6-11e9-9860-001a7dda7113
+      x-ms-date:
+      - Tue, 17 Sep 2019 23:57:41 GMT
+      x-ms-range:
+      - bytes=0-1023
+      x-ms-version:
+      - '2019-02-02'
+      x-ms-write:
+      - update
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare8f720a9e/file8f720a9e?comp=range
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - rwDDDNfjNUZE7Ee1SUu3JA==
+      Date:
+      - Tue, 17 Sep 2019 23:57:40 GMT
+      ETag:
+      - '"0x8D73BCAD33B8891"'
+      Last-Modified:
+      - Tue, 17 Sep 2019 23:57:40 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 33db104f-101a-00df-74b3-6d18ce000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - ef173970-d9a6-11e9-adbf-001a7dda7113
+      x-ms-content-length:
+      - '5'
+      x-ms-date:
+      - Tue, 17 Sep 2019 23:57:41 GMT
+      x-ms-file-attributes:
+      - preserve
+      x-ms-file-creation-time:
+      - preserve
+      x-ms-file-last-write-time:
+      - preserve
+      x-ms-file-permission:
+      - preserve
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare8f720a9e/file8f720a9e?comp=properties
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 17 Sep 2019 23:57:40 GMT
+      ETag:
+      - '"0x8D73BCAD34379BD"'
+      Last-Modified:
+      - Tue, 17 Sep 2019 23:57:41 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-17T23:57:41.0061757Z'
+      x-ms-file-creation-time:
+      - '2019-09-17T23:57:40.9070812Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2019-09-17T23:57:40.9070812Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
+      x-ms-request-id:
+      - 33db1050-101a-00df-75b3-6d18ce000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - ef1e888a-d9a6-11e9-be80-001a7dda7113
+      x-ms-date:
+      - Tue, 17 Sep 2019 23:57:41 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://storagename.file.core.windows.net/utshare8f720a9e/file8f720a9e
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '5'
+      Content-Type:
+      - application/xml; charset=utf-8
+      Date:
+      - Tue, 17 Sep 2019 23:57:40 GMT
+      ETag:
+      - '"0x8D73BCAD34379BD"'
+      Last-Modified:
+      - Tue, 17 Sep 2019 23:57:41 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-17T23:57:41.0061757Z'
+      x-ms-file-creation-time:
+      - '2019-09-17T23:57:40.9070812Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2019-09-17T23:57:40.9070812Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
+      x-ms-request-id:
+      - 33db1051-101a-00df-76b3-6d18ce000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-type:
+      - File
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+version: 1

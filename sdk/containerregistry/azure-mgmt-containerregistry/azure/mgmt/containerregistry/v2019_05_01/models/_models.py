@@ -1556,7 +1556,7 @@ class OperationMetricSpecificationDefinition(Model):
 
 
 class OperationServiceSpecificationDefinition(Model):
-    """The definition of Azure Monitoring metrics list.
+    """The definition of Azure Monitoring list.
 
     :param metric_specifications: A list of Azure Monitoring metrics
      definition.
@@ -1702,7 +1702,8 @@ class QuarantinePolicy(Model):
     """The quarantine policy for a container registry.
 
     :param status: The value that indicates whether the policy is enabled or
-     not. Possible values include: 'enabled', 'disabled'
+     not. Possible values include: 'enabled', 'disabled'. Default value:
+     "disabled" .
     :type status: str or
      ~azure.mgmt.containerregistry.v2019_05_01.models.PolicyStatus
     """
@@ -1713,7 +1714,7 @@ class QuarantinePolicy(Model):
 
     def __init__(self, **kwargs):
         super(QuarantinePolicy, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
+        self.status = kwargs.get('status', "disabled")
 
 
 class RegenerateCredentialParameters(Model):
@@ -2172,12 +2173,14 @@ class RetentionPolicy(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param days: The number of days to retain manifest before it expires.
+    :param days: The number of days to retain an untagged manifest after which
+     it gets purged. Default value: 7 .
     :type days: int
     :ivar last_updated_time: The timestamp when the policy was last updated.
     :vartype last_updated_time: datetime
     :param status: The value that indicates whether the policy is enabled or
-     not. Possible values include: 'enabled', 'disabled'
+     not. Possible values include: 'enabled', 'disabled'. Default value:
+     "disabled" .
     :type status: str or
      ~azure.mgmt.containerregistry.v2019_05_01.models.PolicyStatus
     """
@@ -2194,9 +2197,9 @@ class RetentionPolicy(Model):
 
     def __init__(self, **kwargs):
         super(RetentionPolicy, self).__init__(**kwargs)
-        self.days = kwargs.get('days', None)
+        self.days = kwargs.get('days', 7)
         self.last_updated_time = None
-        self.status = kwargs.get('status', None)
+        self.status = kwargs.get('status', "disabled")
 
 
 class Run(ProxyResource):
@@ -3216,11 +3219,13 @@ class TriggerUpdateParameters(Model):
 class TrustPolicy(Model):
     """The content trust policy for a container registry.
 
-    :param type: The type of trust policy. Possible values include: 'Notary'
+    :param type: The type of trust policy. Possible values include: 'Notary'.
+     Default value: "Notary" .
     :type type: str or
      ~azure.mgmt.containerregistry.v2019_05_01.models.TrustPolicyType
     :param status: The value that indicates whether the policy is enabled or
-     not. Possible values include: 'enabled', 'disabled'
+     not. Possible values include: 'enabled', 'disabled'. Default value:
+     "disabled" .
     :type status: str or
      ~azure.mgmt.containerregistry.v2019_05_01.models.PolicyStatus
     """
@@ -3232,8 +3237,8 @@ class TrustPolicy(Model):
 
     def __init__(self, **kwargs):
         super(TrustPolicy, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.status = kwargs.get('status', None)
+        self.type = kwargs.get('type', "Notary")
+        self.status = kwargs.get('status', "disabled")
 
 
 class UserIdentityProperties(Model):

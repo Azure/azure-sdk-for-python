@@ -1,0 +1,339 @@
+{
+    "recognitionUnits": [
+        {
+            "alternates": [
+                {
+                    "category": "inkWord",
+                    "recognizedString": "hello"
+                },
+                {
+                    "category": "inkWord",
+                    "recognizedString": "Hello,"
+                },
+                {
+                    "category": "inkWord",
+                    "recognizedString": "bello,"
+                },
+                {
+                    "category": "inkWord",
+                    "recognizedString": "hellos,"
+                },
+                {
+                    "category": "inkWord",
+                    "recognizedString": "helio,"
+                },
+                {
+                    "category": "inkWord",
+                    "recognizedString": "hell,"
+                },
+                {
+                    "category": "inkWord",
+                    "recognizedString": "hells,"
+                },
+                {
+                    "category": "inkWord",
+                    "recognizedString": "hellos"
+                },
+                {
+                    "category": "inkWord",
+                    "recognizedString": "Bello,"
+                }
+            ],
+            "boundingRectangle": {
+                "height": 29.90999984741211,
+                "topX": 24.600000381469727,
+                "topY": 46.560001373291016,
+                "width": 70.66000366210938
+            },
+            "category": "inkWord",
+            "class": "leaf",
+            "id": 4,
+            "parentId": 3,
+            "recognizedText": "hello,",
+            "rotatedBoundingRectangle": [
+                {
+                    "x": 23.68000030517578,
+                    "y": 46.75
+                },
+                {
+                    "x": 94.36000061035156,
+                    "y": 44.209999084472656
+                },
+                {
+                    "x": 95.4800033569336,
+                    "y": 75.27999877929688
+                },
+                {
+                    "x": 24.799999237060547,
+                    "y": 77.81999969482422
+                }
+            ],
+            "strokeIds": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+            ]
+        },
+        {
+            "alternates": [
+                {
+                    "category": "inkWord",
+                    "recognizedString": "would!"
+                },
+                {
+                    "category": "inkWord",
+                    "recognizedString": "world,"
+                },
+                {
+                    "category": "inkWord",
+                    "recognizedString": "world!!"
+                },
+                {
+                    "category": "inkWord",
+                    "recognizedString": "word!"
+                },
+                {
+                    "category": "inkWord",
+                    "recognizedString": "world"
+                },
+                {
+                    "category": "inkWord",
+                    "recognizedString": "worlds!"
+                },
+                {
+                    "category": "inkWord",
+                    "recognizedString": "worlds"
+                },
+                {
+                    "category": "inkWord",
+                    "recognizedString": "would,"
+                },
+                {
+                    "category": "inkWord",
+                    "recognizedString": "would!!"
+                }
+            ],
+            "boundingRectangle": {
+                "height": 25.149999618530273,
+                "topX": 110.33000183105469,
+                "topY": 46.560001373291016,
+                "width": 73.83000183105469
+            },
+            "category": "inkWord",
+            "class": "leaf",
+            "id": 5,
+            "parentId": 3,
+            "recognizedText": "world!",
+            "rotatedBoundingRectangle": [
+                {
+                    "x": 109.55999755859375,
+                    "y": 49.22999954223633
+                },
+                {
+                    "x": 184.14999389648438,
+                    "y": 46.54999923706055
+                },
+                {
+                    "x": 185.02999877929688,
+                    "y": 71.33999633789062
+                },
+                {
+                    "x": 110.44999694824219,
+                    "y": 74.01000213623047
+                }
+            ],
+            "strokeIds": [
+                6,
+                7,
+                8,
+                9,
+                11,
+                10
+            ]
+        },
+        {
+            "alternates": [
+                {
+                    "category": "line",
+                    "recognizedString": "hell0,world!"
+                },
+                {
+                    "category": "line",
+                    "recognizedString": "hello,world!"
+                },
+                {
+                    "category": "line",
+                    "recognizedString": "hello.world!"
+                },
+                {
+                    "category": "line",
+                    "recognizedString": "hellu,world!"
+                },
+                {
+                    "category": "line",
+                    "recognizedString": "hellaworld!"
+                },
+                {
+                    "category": "line",
+                    "recognizedString": "yellowwood!"
+                },
+                {
+                    "category": "line",
+                    "recognizedString": "yellowbird!"
+                },
+                {
+                    "category": "line",
+                    "recognizedString": "Yellowbird!"
+                },
+                {
+                    "category": "line",
+                    "recognizedString": "Yellowwood!"
+                }
+            ],
+            "boundingRectangle": {
+                "height": 29.90999984741211,
+                "topX": 24.600000381469727,
+                "topY": 46.560001373291016,
+                "width": 159.55999755859375
+            },
+            "category": "line",
+            "childIds": [
+                4,
+                5
+            ],
+            "class": "container",
+            "id": 3,
+            "parentId": 2,
+            "recognizedText": "hello, world!",
+            "rotatedBoundingRectangle": [
+                {
+                    "x": 23.68000030517578,
+                    "y": 46.75
+                },
+                {
+                    "x": 183.9499969482422,
+                    "y": 41
+                },
+                {
+                    "x": 185.05999755859375,
+                    "y": 72.06999969482422
+                },
+                {
+                    "x": 24.799999237060547,
+                    "y": 77.81999969482422
+                }
+            ],
+            "strokeIds": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                11,
+                10
+            ]
+        },
+        {
+            "boundingRectangle": {
+                "height": 29.90999984741211,
+                "topX": 24.600000381469727,
+                "topY": 46.560001373291016,
+                "width": 159.55999755859375
+            },
+            "category": "paragraph",
+            "childIds": [
+                3
+            ],
+            "class": "container",
+            "id": 2,
+            "parentId": 1,
+            "rotatedBoundingRectangle": [
+                {
+                    "x": 23.68000030517578,
+                    "y": 46.75
+                },
+                {
+                    "x": 183.9499969482422,
+                    "y": 41
+                },
+                {
+                    "x": 185.05999755859375,
+                    "y": 72.06999969482422
+                },
+                {
+                    "x": 24.799999237060547,
+                    "y": 77.81999969482422
+                }
+            ],
+            "strokeIds": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                11,
+                10
+            ]
+        },
+        {
+            "boundingRectangle": {
+                "height": 29.90999984741211,
+                "topX": 24.600000381469727,
+                "topY": 46.560001373291016,
+                "width": 159.55999755859375
+            },
+            "category": "writingRegion",
+            "childIds": [
+                2
+            ],
+            "class": "container",
+            "id": 1,
+            "parentId": 0,
+            "rotatedBoundingRectangle": [
+                {
+                    "x": 23.68000030517578,
+                    "y": 46.75
+                },
+                {
+                    "x": 183.9499969482422,
+                    "y": 41
+                },
+                {
+                    "x": 185.05999755859375,
+                    "y": 72.06999969482422
+                },
+                {
+                    "x": 24.799999237060547,
+                    "y": 77.81999969482422
+                }
+            ],
+            "strokeIds": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                11,
+                10
+            ]
+        }
+    ]
+}

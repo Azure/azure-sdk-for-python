@@ -109,6 +109,9 @@ class CalculatePriceResponseProperties(Model):
      during refund for calculating refund limit. Tax is not included.
     :type pricing_currency_total:
      ~azure.mgmt.reservations.models.CalculatePriceResponsePropertiesPricingCurrencyTotal
+    :param payment_schedule:
+    :type payment_schedule:
+     list[~azure.mgmt.reservations.models.PaymentDetail]
     """
 
     _attribute_map = {
@@ -118,9 +121,10 @@ class CalculatePriceResponseProperties(Model):
         'sku_title': {'key': 'skuTitle', 'type': 'str'},
         'sku_description': {'key': 'skuDescription', 'type': 'str'},
         'pricing_currency_total': {'key': 'pricingCurrencyTotal', 'type': 'CalculatePriceResponsePropertiesPricingCurrencyTotal'},
+        'payment_schedule': {'key': 'paymentSchedule', 'type': '[PaymentDetail]'},
     }
 
-    def __init__(self, *, billing_currency_total=None, is_billing_partner_managed: bool=None, reservation_order_id: str=None, sku_title: str=None, sku_description: str=None, pricing_currency_total=None, **kwargs) -> None:
+    def __init__(self, *, billing_currency_total=None, is_billing_partner_managed: bool=None, reservation_order_id: str=None, sku_title: str=None, sku_description: str=None, pricing_currency_total=None, payment_schedule=None, **kwargs) -> None:
         super(CalculatePriceResponseProperties, self).__init__(**kwargs)
         self.billing_currency_total = billing_currency_total
         self.is_billing_partner_managed = is_billing_partner_managed
@@ -128,6 +132,7 @@ class CalculatePriceResponseProperties(Model):
         self.sku_title = sku_title
         self.sku_description = sku_description
         self.pricing_currency_total = pricing_currency_total
+        self.payment_schedule = payment_schedule
 
 
 class CalculatePriceResponsePropertiesBillingCurrencyTotal(Model):
@@ -182,6 +187,9 @@ class Catalog(Model):
     :vartype resource_type: str
     :ivar name: The name of SKU
     :vartype name: str
+    :param billing_plans: The billing plan options available for this SKU.
+    :type billing_plans: dict[str, list[str or
+     ~azure.mgmt.reservations.models.ReservationBillingPlan]]
     :ivar terms: Available reservation terms for this resource
     :vartype terms: list[str or
      ~azure.mgmt.reservations.models.ReservationTerm]
@@ -206,16 +214,18 @@ class Catalog(Model):
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'billing_plans': {'key': 'billingPlans', 'type': '{[str]}'},
         'terms': {'key': 'terms', 'type': '[str]'},
         'locations': {'key': 'locations', 'type': '[str]'},
         'sku_properties': {'key': 'skuProperties', 'type': '[SkuProperty]'},
         'restrictions': {'key': 'restrictions', 'type': '[SkuRestriction]'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, billing_plans=None, **kwargs) -> None:
         super(Catalog, self).__init__(**kwargs)
         self.resource_type = None
         self.name = None
+        self.billing_plans = billing_plans
         self.terms = None
         self.locations = None
         self.sku_properties = None
@@ -451,6 +461,73 @@ class PatchPropertiesRenewProperties(Model):
         self.purchase_properties = purchase_properties
 
 
+class PaymentDetail(Model):
+    """Information about payment related to a reservation order.
+
+    :param due_date: Date when the payment needs to be done.
+    :type due_date: date
+    :param payment_date: Date when the transaction is completed. Is null when
+     it is scheduled.
+    :type payment_date: date
+    :param pricing_currency_total: Amount in pricing currency. Tax not
+     included.
+    :type pricing_currency_total: ~azure.mgmt.reservations.models.Price
+    :param billing_currency_total: Amount charged in Billing currency. Tax not
+     included. Is null for future payments
+    :type billing_currency_total: ~azure.mgmt.reservations.models.Price
+    :param billing_account: Shows the Account that is charged for this
+     payment.
+    :type billing_account: str
+    :param status: Possible values include: 'Succeeded', 'Failed',
+     'Scheduled', 'Cancelled'
+    :type status: str or ~azure.mgmt.reservations.models.PaymentStatus
+    :param extended_status_info:
+    :type extended_status_info:
+     ~azure.mgmt.reservations.models.ExtendedStatusInfo
+    """
+
+    _attribute_map = {
+        'due_date': {'key': 'dueDate', 'type': 'date'},
+        'payment_date': {'key': 'paymentDate', 'type': 'date'},
+        'pricing_currency_total': {'key': 'pricingCurrencyTotal', 'type': 'Price'},
+        'billing_currency_total': {'key': 'billingCurrencyTotal', 'type': 'Price'},
+        'billing_account': {'key': 'billingAccount', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'extended_status_info': {'key': 'extendedStatusInfo', 'type': 'ExtendedStatusInfo'},
+    }
+
+    def __init__(self, *, due_date=None, payment_date=None, pricing_currency_total=None, billing_currency_total=None, billing_account: str=None, status=None, extended_status_info=None, **kwargs) -> None:
+        super(PaymentDetail, self).__init__(**kwargs)
+        self.due_date = due_date
+        self.payment_date = payment_date
+        self.pricing_currency_total = pricing_currency_total
+        self.billing_currency_total = billing_currency_total
+        self.billing_account = billing_account
+        self.status = status
+        self.extended_status_info = extended_status_info
+
+
+class Price(Model):
+    """Price.
+
+    :param currency_code: The ISO 4217 3-letter currency code for the currency
+     used by this purchase record.
+    :type currency_code: str
+    :param amount:
+    :type amount: float
+    """
+
+    _attribute_map = {
+        'currency_code': {'key': 'currencyCode', 'type': 'str'},
+        'amount': {'key': 'amount', 'type': 'float'},
+    }
+
+    def __init__(self, *, currency_code: str=None, amount: float=None, **kwargs) -> None:
+        super(Price, self).__init__(**kwargs)
+        self.currency_code = currency_code
+        self.amount = amount
+
+
 class Properties(Model):
     """Properties.
 
@@ -484,6 +561,9 @@ class PurchaseRequest(Model):
     :type billing_scope_id: str
     :param term: Possible values include: 'P1Y', 'P3Y'
     :type term: str or ~azure.mgmt.reservations.models.ReservationTerm
+    :param billing_plan: Possible values include: 'Upfront', 'Monthly'
+    :type billing_plan: str or
+     ~azure.mgmt.reservations.models.ReservationBillingPlan
     :param quantity:
     :type quantity: int
     :param display_name: Friendly name of the Reservation
@@ -507,6 +587,7 @@ class PurchaseRequest(Model):
         'reserved_resource_type': {'key': 'properties.reservedResourceType', 'type': 'str'},
         'billing_scope_id': {'key': 'properties.billingScopeId', 'type': 'str'},
         'term': {'key': 'properties.term', 'type': 'str'},
+        'billing_plan': {'key': 'properties.billingPlan', 'type': 'str'},
         'quantity': {'key': 'properties.quantity', 'type': 'int'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'applied_scope_type': {'key': 'properties.appliedScopeType', 'type': 'str'},
@@ -515,13 +596,14 @@ class PurchaseRequest(Model):
         'reserved_resource_properties': {'key': 'properties.reservedResourceProperties', 'type': 'PurchaseRequestPropertiesReservedResourceProperties'},
     }
 
-    def __init__(self, *, sku=None, location: str=None, reserved_resource_type=None, billing_scope_id: str=None, term=None, quantity: int=None, display_name: str=None, applied_scope_type=None, applied_scopes=None, renew: bool=None, reserved_resource_properties=None, **kwargs) -> None:
+    def __init__(self, *, sku=None, location: str=None, reserved_resource_type=None, billing_scope_id: str=None, term=None, billing_plan=None, quantity: int=None, display_name: str=None, applied_scope_type=None, applied_scopes=None, renew: bool=None, reserved_resource_properties=None, **kwargs) -> None:
         super(PurchaseRequest, self).__init__(**kwargs)
         self.sku = sku
         self.location = location
         self.reserved_resource_type = reserved_resource_type
         self.billing_scope_id = billing_scope_id
         self.term = term
+        self.billing_plan = billing_plan
         self.quantity = quantity
         self.display_name = display_name
         self.applied_scope_type = applied_scope_type
@@ -645,6 +727,36 @@ class ReservationMergeProperties(Model):
         self.merge_sources = merge_sources
 
 
+class ReservationOrderBillingPlanInformation(Model):
+    """Information describing the type of billing plan for this reservation.
+
+    :param pricing_currency_total: Amount of money to be paid for the Order.
+     Tax is not included.
+    :type pricing_currency_total: ~azure.mgmt.reservations.models.Price
+    :param start_date: Date when the billing plan has started.
+    :type start_date: date
+    :param next_payment_due_date: For recurring billing plans, indicates the
+     date when next payment will be processed. Null when total is paid off.
+    :type next_payment_due_date: date
+    :param transactions:
+    :type transactions: list[~azure.mgmt.reservations.models.PaymentDetail]
+    """
+
+    _attribute_map = {
+        'pricing_currency_total': {'key': 'pricingCurrencyTotal', 'type': 'Price'},
+        'start_date': {'key': 'startDate', 'type': 'date'},
+        'next_payment_due_date': {'key': 'nextPaymentDueDate', 'type': 'date'},
+        'transactions': {'key': 'transactions', 'type': '[PaymentDetail]'},
+    }
+
+    def __init__(self, *, pricing_currency_total=None, start_date=None, next_payment_due_date=None, transactions=None, **kwargs) -> None:
+        super(ReservationOrderBillingPlanInformation, self).__init__(**kwargs)
+        self.pricing_currency_total = pricing_currency_total
+        self.start_date = start_date
+        self.next_payment_due_date = next_payment_due_date
+        self.transactions = transactions
+
+
 class ReservationOrderResponse(Model):
     """ReservationOrderResponse.
 
@@ -674,6 +786,12 @@ class ReservationOrderResponse(Model):
     :type term: str or ~azure.mgmt.reservations.models.ReservationTerm
     :param provisioning_state: Current state of the reservation.
     :type provisioning_state: str
+    :param billing_plan: Possible values include: 'Upfront', 'Monthly'
+    :type billing_plan: str or
+     ~azure.mgmt.reservations.models.ReservationBillingPlan
+    :param plan_information:
+    :type plan_information:
+     ~azure.mgmt.reservations.models.ReservationOrderBillingPlanInformation
     :param reservations:
     :type reservations:
      list[~azure.mgmt.reservations.models.ReservationResponse]
@@ -698,11 +816,13 @@ class ReservationOrderResponse(Model):
         'original_quantity': {'key': 'properties.originalQuantity', 'type': 'int'},
         'term': {'key': 'properties.term', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'billing_plan': {'key': 'properties.billingPlan', 'type': 'str'},
+        'plan_information': {'key': 'properties.planInformation', 'type': 'ReservationOrderBillingPlanInformation'},
         'reservations': {'key': 'properties.reservations', 'type': '[ReservationResponse]'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, etag: int=None, display_name: str=None, request_date_time=None, created_date_time=None, expiry_date=None, original_quantity: int=None, term=None, provisioning_state: str=None, reservations=None, **kwargs) -> None:
+    def __init__(self, *, etag: int=None, display_name: str=None, request_date_time=None, created_date_time=None, expiry_date=None, original_quantity: int=None, term=None, provisioning_state: str=None, billing_plan=None, plan_information=None, reservations=None, **kwargs) -> None:
         super(ReservationOrderResponse, self).__init__(**kwargs)
         self.etag = etag
         self.id = None
@@ -714,6 +834,8 @@ class ReservationOrderResponse(Model):
         self.original_quantity = original_quantity
         self.term = term
         self.provisioning_state = provisioning_state
+        self.billing_plan = billing_plan
+        self.plan_information = plan_information
         self.reservations = reservations
         self.type = None
 
@@ -757,6 +879,9 @@ class ReservationProperties(Model):
     :param extended_status_info:
     :type extended_status_info:
      ~azure.mgmt.reservations.models.ExtendedStatusInfo
+    :param billing_plan: Possible values include: 'Upfront', 'Monthly'
+    :type billing_plan: str or
+     ~azure.mgmt.reservations.models.ReservationBillingPlan
     :param split_properties:
     :type split_properties:
      ~azure.mgmt.reservations.models.ReservationSplitProperties
@@ -799,6 +924,7 @@ class ReservationProperties(Model):
         'expiry_date': {'key': 'expiryDate', 'type': 'date'},
         'sku_description': {'key': 'skuDescription', 'type': 'str'},
         'extended_status_info': {'key': 'extendedStatusInfo', 'type': 'ExtendedStatusInfo'},
+        'billing_plan': {'key': 'billingPlan', 'type': 'str'},
         'split_properties': {'key': 'splitProperties', 'type': 'ReservationSplitProperties'},
         'merge_properties': {'key': 'mergeProperties', 'type': 'ReservationMergeProperties'},
         'billing_scope_id': {'key': 'billingScopeId', 'type': 'str'},
@@ -809,7 +935,7 @@ class ReservationProperties(Model):
         'term': {'key': 'term', 'type': 'str'},
     }
 
-    def __init__(self, *, reserved_resource_type=None, instance_flexibility=None, display_name: str=None, applied_scopes=None, applied_scope_type=None, quantity: int=None, provisioning_state: str=None, effective_date_time=None, expiry_date=None, sku_description: str=None, extended_status_info=None, split_properties=None, merge_properties=None, billing_scope_id: str=None, renew: bool=None, renew_source: str=None, renew_destination: str=None, renew_properties=None, term=None, **kwargs) -> None:
+    def __init__(self, *, reserved_resource_type=None, instance_flexibility=None, display_name: str=None, applied_scopes=None, applied_scope_type=None, quantity: int=None, provisioning_state: str=None, effective_date_time=None, expiry_date=None, sku_description: str=None, extended_status_info=None, billing_plan=None, split_properties=None, merge_properties=None, billing_scope_id: str=None, renew: bool=None, renew_source: str=None, renew_destination: str=None, renew_properties=None, term=None, **kwargs) -> None:
         super(ReservationProperties, self).__init__(**kwargs)
         self.reserved_resource_type = reserved_resource_type
         self.instance_flexibility = instance_flexibility
@@ -823,6 +949,7 @@ class ReservationProperties(Model):
         self.expiry_date = expiry_date
         self.sku_description = sku_description
         self.extended_status_info = extended_status_info
+        self.billing_plan = billing_plan
         self.split_properties = split_properties
         self.merge_properties = merge_properties
         self.billing_scope_id = billing_scope_id

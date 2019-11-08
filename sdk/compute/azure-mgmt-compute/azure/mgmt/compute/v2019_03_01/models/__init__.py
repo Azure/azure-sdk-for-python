@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AccessUri
     from ._models_py3 import AdditionalCapabilities
     from ._models_py3 import AdditionalUnattendContent
     from ._models_py3 import ApiEntityReference
@@ -17,12 +18,14 @@ try:
     from ._models_py3 import ApiErrorBase
     from ._models_py3 import AutomaticOSUpgradePolicy
     from ._models_py3 import AutomaticOSUpgradeProperties
+    from ._models_py3 import AutomaticRepairsPolicy
     from ._models_py3 import AvailabilitySet
     from ._models_py3 import AvailabilitySetUpdate
     from ._models_py3 import BillingProfile
     from ._models_py3 import BootDiagnostics
     from ._models_py3 import BootDiagnosticsInstanceView
     from ._models_py3 import ComputeOperationValue
+    from ._models_py3 import CreationData
     from ._models_py3 import DataDisk
     from ._models_py3 import DataDiskImage
     from ._models_py3 import DedicatedHost
@@ -35,8 +38,13 @@ try:
     from ._models_py3 import DiagnosticsProfile
     from ._models_py3 import DiffDiskSettings
     from ._models_py3 import Disallowed
+    from ._models_py3 import Disk
     from ._models_py3 import DiskEncryptionSettings
     from ._models_py3 import DiskInstanceView
+    from ._models_py3 import DiskSku
+    from ._models_py3 import DiskUpdate
+    from ._models_py3 import EncryptionSettingsCollection
+    from ._models_py3 import EncryptionSettingsElement
     from ._models_py3 import Gallery
     from ._models_py3 import GalleryApplication
     from ._models_py3 import GalleryApplicationVersion
@@ -52,9 +60,11 @@ try:
     from ._models_py3 import GalleryImageVersionPublishingProfile
     from ._models_py3 import GalleryImageVersionStorageProfile
     from ._models_py3 import GalleryOSDiskImage
+    from ._models_py3 import GrantAccessData
     from ._models_py3 import HardwareProfile
     from ._models_py3 import Image
     from ._models_py3 import ImageDataDisk
+    from ._models_py3 import ImageDiskReference
     from ._models_py3 import ImageOSDisk
     from ._models_py3 import ImagePurchasePlan
     from ._models_py3 import ImageReference
@@ -62,6 +72,8 @@ try:
     from ._models_py3 import ImageUpdate
     from ._models_py3 import InnerError
     from ._models_py3 import InstanceViewStatus
+    from ._models_py3 import KeyVaultAndKeyReference
+    from ._models_py3 import KeyVaultAndSecretReference
     from ._models_py3 import KeyVaultKeyReference
     from ._models_py3 import KeyVaultSecretReference
     from ._models_py3 import LinuxConfiguration
@@ -98,8 +110,13 @@ try:
     from ._models_py3 import RunCommandInputParameter
     from ._models_py3 import RunCommandParameterDefinition
     from ._models_py3 import RunCommandResult
+    from ._models_py3 import ScaleInPolicy
     from ._models_py3 import ScheduledEventsProfile
     from ._models_py3 import Sku
+    from ._models_py3 import Snapshot
+    from ._models_py3 import SnapshotSku
+    from ._models_py3 import SnapshotUpdate
+    from ._models_py3 import SourceVault
     from ._models_py3 import SshConfiguration
     from ._models_py3 import SshPublicKey
     from ._models_py3 import StorageProfile
@@ -184,6 +201,7 @@ try:
     from ._models_py3 import WinRMConfiguration
     from ._models_py3 import WinRMListener
 except (SyntaxError, ImportError):
+    from ._models import AccessUri
     from ._models import AdditionalCapabilities
     from ._models import AdditionalUnattendContent
     from ._models import ApiEntityReference
@@ -191,12 +209,14 @@ except (SyntaxError, ImportError):
     from ._models import ApiErrorBase
     from ._models import AutomaticOSUpgradePolicy
     from ._models import AutomaticOSUpgradeProperties
+    from ._models import AutomaticRepairsPolicy
     from ._models import AvailabilitySet
     from ._models import AvailabilitySetUpdate
     from ._models import BillingProfile
     from ._models import BootDiagnostics
     from ._models import BootDiagnosticsInstanceView
     from ._models import ComputeOperationValue
+    from ._models import CreationData
     from ._models import DataDisk
     from ._models import DataDiskImage
     from ._models import DedicatedHost
@@ -209,8 +229,13 @@ except (SyntaxError, ImportError):
     from ._models import DiagnosticsProfile
     from ._models import DiffDiskSettings
     from ._models import Disallowed
+    from ._models import Disk
     from ._models import DiskEncryptionSettings
     from ._models import DiskInstanceView
+    from ._models import DiskSku
+    from ._models import DiskUpdate
+    from ._models import EncryptionSettingsCollection
+    from ._models import EncryptionSettingsElement
     from ._models import Gallery
     from ._models import GalleryApplication
     from ._models import GalleryApplicationVersion
@@ -226,9 +251,11 @@ except (SyntaxError, ImportError):
     from ._models import GalleryImageVersionPublishingProfile
     from ._models import GalleryImageVersionStorageProfile
     from ._models import GalleryOSDiskImage
+    from ._models import GrantAccessData
     from ._models import HardwareProfile
     from ._models import Image
     from ._models import ImageDataDisk
+    from ._models import ImageDiskReference
     from ._models import ImageOSDisk
     from ._models import ImagePurchasePlan
     from ._models import ImageReference
@@ -236,6 +263,8 @@ except (SyntaxError, ImportError):
     from ._models import ImageUpdate
     from ._models import InnerError
     from ._models import InstanceViewStatus
+    from ._models import KeyVaultAndKeyReference
+    from ._models import KeyVaultAndSecretReference
     from ._models import KeyVaultKeyReference
     from ._models import KeyVaultSecretReference
     from ._models import LinuxConfiguration
@@ -272,8 +301,13 @@ except (SyntaxError, ImportError):
     from ._models import RunCommandInputParameter
     from ._models import RunCommandParameterDefinition
     from ._models import RunCommandResult
+    from ._models import ScaleInPolicy
     from ._models import ScheduledEventsProfile
     from ._models import Sku
+    from ._models import Snapshot
+    from ._models import SnapshotSku
+    from ._models import SnapshotUpdate
+    from ._models import SourceVault
     from ._models import SshConfiguration
     from ._models import SshPublicKey
     from ._models import StorageProfile
@@ -361,6 +395,7 @@ from ._paged_models import AvailabilitySetPaged
 from ._paged_models import ComputeOperationValuePaged
 from ._paged_models import DedicatedHostGroupPaged
 from ._paged_models import DedicatedHostPaged
+from ._paged_models import DiskPaged
 from ._paged_models import GalleryApplicationPaged
 from ._paged_models import GalleryApplicationVersionPaged
 from ._paged_models import GalleryImagePaged
@@ -369,6 +404,7 @@ from ._paged_models import GalleryPaged
 from ._paged_models import ImagePaged
 from ._paged_models import ProximityPlacementGroupPaged
 from ._paged_models import RunCommandDocumentBasePaged
+from ._paged_models import SnapshotPaged
 from ._paged_models import UpgradeOperationHistoricalStatusInfoPaged
 from ._paged_models import UsagePaged
 from ._paged_models import VirtualMachinePaged
@@ -399,6 +435,7 @@ from ._compute_management_client_enums import (
     VirtualMachinePriorityTypes,
     VirtualMachineEvictionPolicyTypes,
     UpgradeMode,
+    VirtualMachineScaleSetScaleInRules,
     OperatingSystemStateTypes,
     IPVersion,
     VirtualMachineScaleSetSkuScaleType,
@@ -411,11 +448,18 @@ from ._compute_management_client_enums import (
     ReplicationState,
     StorageAccountType,
     HostCaching,
+    DiskStorageAccountTypes,
+    HyperVGeneration,
+    DiskCreateOption,
+    DiskState,
+    SnapshotStorageAccountTypes,
+    AccessLevel,
     InstanceViewTypes,
     ReplicationStatusTypes,
 )
 
 __all__ = [
+    'AccessUri',
     'AdditionalCapabilities',
     'AdditionalUnattendContent',
     'ApiEntityReference',
@@ -423,12 +467,14 @@ __all__ = [
     'ApiErrorBase',
     'AutomaticOSUpgradePolicy',
     'AutomaticOSUpgradeProperties',
+    'AutomaticRepairsPolicy',
     'AvailabilitySet',
     'AvailabilitySetUpdate',
     'BillingProfile',
     'BootDiagnostics',
     'BootDiagnosticsInstanceView',
     'ComputeOperationValue',
+    'CreationData',
     'DataDisk',
     'DataDiskImage',
     'DedicatedHost',
@@ -441,8 +487,13 @@ __all__ = [
     'DiagnosticsProfile',
     'DiffDiskSettings',
     'Disallowed',
+    'Disk',
     'DiskEncryptionSettings',
     'DiskInstanceView',
+    'DiskSku',
+    'DiskUpdate',
+    'EncryptionSettingsCollection',
+    'EncryptionSettingsElement',
     'Gallery',
     'GalleryApplication',
     'GalleryApplicationVersion',
@@ -458,9 +509,11 @@ __all__ = [
     'GalleryImageVersionPublishingProfile',
     'GalleryImageVersionStorageProfile',
     'GalleryOSDiskImage',
+    'GrantAccessData',
     'HardwareProfile',
     'Image',
     'ImageDataDisk',
+    'ImageDiskReference',
     'ImageOSDisk',
     'ImagePurchasePlan',
     'ImageReference',
@@ -468,6 +521,8 @@ __all__ = [
     'ImageUpdate',
     'InnerError',
     'InstanceViewStatus',
+    'KeyVaultAndKeyReference',
+    'KeyVaultAndSecretReference',
     'KeyVaultKeyReference',
     'KeyVaultSecretReference',
     'LinuxConfiguration',
@@ -504,8 +559,13 @@ __all__ = [
     'RunCommandInputParameter',
     'RunCommandParameterDefinition',
     'RunCommandResult',
+    'ScaleInPolicy',
     'ScheduledEventsProfile',
     'Sku',
+    'Snapshot',
+    'SnapshotSku',
+    'SnapshotUpdate',
+    'SourceVault',
     'SshConfiguration',
     'SshPublicKey',
     'StorageProfile',
@@ -609,6 +669,8 @@ __all__ = [
     'GalleryImageVersionPaged',
     'GalleryApplicationPaged',
     'GalleryApplicationVersionPaged',
+    'DiskPaged',
+    'SnapshotPaged',
     'HyperVGenerationTypes',
     'StatusLevelTypes',
     'AvailabilitySetSkuTypes',
@@ -630,6 +692,7 @@ __all__ = [
     'VirtualMachinePriorityTypes',
     'VirtualMachineEvictionPolicyTypes',
     'UpgradeMode',
+    'VirtualMachineScaleSetScaleInRules',
     'OperatingSystemStateTypes',
     'IPVersion',
     'VirtualMachineScaleSetSkuScaleType',
@@ -642,6 +705,12 @@ __all__ = [
     'ReplicationState',
     'StorageAccountType',
     'HostCaching',
+    'DiskStorageAccountTypes',
+    'HyperVGeneration',
+    'DiskCreateOption',
+    'DiskState',
+    'SnapshotStorageAccountTypes',
+    'AccessLevel',
     'InstanceViewTypes',
     'ReplicationStatusTypes',
 ]

@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-__version__ = "1.0.0b1"
+__version__ = "1.0.0b5"
 
-from .blobstoragepm import BlobPartitionManager
+from .blobstoragepmaio import BlobPartitionManager
 
 __all__ = [
     "BlobPartitionManager",

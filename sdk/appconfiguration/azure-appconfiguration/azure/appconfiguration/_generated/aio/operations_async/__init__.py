@@ -5,8 +5,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration_client_operations_async import ConfigurationClientOperationsMixin
+from ._azure_app_configuration_operations_async import AzureAppConfigurationOperationsMixin
 
 __all__ = [
-    'ConfigurationClientOperationsMixin',
+    'AzureAppConfigurationOperationsMixin',
 ]

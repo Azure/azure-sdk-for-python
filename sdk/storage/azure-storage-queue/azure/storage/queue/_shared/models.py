@@ -225,16 +225,6 @@ class ResourceTypes(object):
     """
     Specifies the resource types that are accessible with the account SAS.
 
-    :cvar ResourceTypes ResourceTypes.CONTAINER:
-        Access to container-level APIs (e.g., Create/Delete Container,
-        Create/Delete Queue, Create/Delete Share,
-        List Blobs/Files and Directories)
-    :cvar ResourceTypes ResourceTypes.OBJECT:
-        Access to object-level APIs for blobs, queue messages, and
-        files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
-    :cvar ResourceTypes ResourceTypes.SERVICE:
-        Access to service-level APIs (e.g., Get/Set Service Properties,
-        Get Service Stats, List Containers/Queues/Shares)
     :param bool service:
         Access to service-level APIs (e.g., Get/Set Service Properties,
         Get Service Stats, List Containers/Queues/Shares)
@@ -245,66 +235,50 @@ class ResourceTypes(object):
     :param bool object:
         Access to object-level APIs for blobs, queue messages, and
         files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
-    :param str _str:
-        A string representing the resource types.
     """
 
-    SERVICE = None  # type: ResourceTypes
-    CONTAINER = None  # type: ResourceTypes
-    OBJECT = None  # type: ResourceTypes
-
-    def __init__(self, service=False, container=False, object=False, _str=None):  # pylint: disable=redefined-builtin
-        if not _str:
-            _str = ''
-        self.service = service or ('s' in _str)
-        self.container = container or ('c' in _str)
-        self.object = object or ('o' in _str)
-
-    def __or__(self, other):
-        return ResourceTypes(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return ResourceTypes(_str=str(self) + str(other))
-
-    def __str__(self):
-        return (('s' if self.service else '') +
+    def __init__(self, service=False, container=False, object=False):  # pylint: disable=redefined-builtin
+        self.service = service
+        self.container = container
+        self.object = object
+        self._str = (('s' if self.service else '') +
                 ('c' if self.container else '') +
                 ('o' if self.object else ''))
 
+    def __str__(self):
+        return self._str
 
-ResourceTypes.SERVICE = ResourceTypes(service=True)
-ResourceTypes.CONTAINER = ResourceTypes(container=True)
-ResourceTypes.OBJECT = ResourceTypes(object=True)
+    @classmethod
+    def from_string(cls, string):
+        """Create a ResourceTypes from a string.
+
+        To specify service, container, or object you need only to
+        include the first letter of the word in the string. E.g. service and container,
+        you would provide a string "sc".
+
+        :param str string: Specify service, container, or object in
+            in the string with the first letter of the word.
+        :return: A ResourceTypes object
+        :rtype: ~azure.storage.queue.ResourceTypes
+        """
+        res_service = 's' in string
+        res_container = 'c' in string
+        res_object = 'o' in string
+
+        parsed = cls(res_service, res_container, res_object)
+        parsed._str = string  # pylint: disable = protected-access
+        return parsed
 
 
-class AccountPermissions(object):
+class AccountSasPermissions(object):
     """
-    :class:`~ResourceTypes` class to be used with generate_shared_access_signature
-    method and for the AccessPolicies used with set_*_acl. There are two types of
+    :class:`~ResourceTypes` class to be used with generate_account_sas
+    function and for the AccessPolicies used with set_*_acl. There are two types of
     SAS which may be used to grant resource access. One is to grant access to a
     specific resource (resource-specific). Another is to grant access to the
     entire service for a specific account and allow certain operations based on
     perms found here.
 
-    :cvar AccountPermissions AccountPermissions.ADD:
-        Valid for the following Object resource types only: queue messages and append blobs.
-    :cvar AccountPermissions AccountPermissions.CREATE:
-        Valid for the following Object resource types only: blobs and files. Users
-        can create new blobs or files, but may not overwrite existing blobs or files.
-    :cvar AccountPermissions AccountPermissions.DELETE:
-        Valid for Container and Object resource types, except for queue messages.
-    :cvar AccountPermissions AccountPermissions.LIST:
-        Valid for Service and Container resource types only.
-    :cvar AccountPermissions AccountPermissions.PROCESS:
-        Valid for the following Object resource type only: queue messages.
-    :cvar AccountPermissions AccountPermissions.READ:
-        Valid for all signed resources types (Service, Container, and Object).
-        Permits read permissions to the specified resource type.
-    :cvar AccountPermissions AccountPermissions.UPDATE:
-        Valid for the following Object resource types only: queue messages.
-    :cvar AccountPermissions AccountPermissions.WRITE:
-        Valid for all signed resources types (Service, Container, and Object).
-        Permits write permissions to the specified resource type.
     :param bool read:
         Valid for all signed resources types (Service, Container, and Object).
         Permits read permissions to the specified resource type.
@@ -325,101 +299,97 @@ class AccountPermissions(object):
         Valid for the following Object resource types only: queue messages.
     :param bool process:
         Valid for the following Object resource type only: queue messages.
-    :param str _str:
-        A string representing the permissions.
     """
-
-    READ = None  # type: AccountPermissions
-    WRITE = None  # type: AccountPermissions
-    DELETE = None  # type: AccountPermissions
-    LIST = None  # type: AccountPermissions
-    ADD = None  # type: AccountPermissions
-    CREATE = None  # type: AccountPermissions
-    UPDATE = None  # type: AccountPermissions
-    PROCESS = None  # type: AccountPermissions
-
     def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
-                 add=False, create=False, update=False, process=False, _str=None):
-        if not _str:
-            _str = ''
-        self.read = read or ('r' in _str)
-        self.write = write or ('w' in _str)
-        self.delete = delete or ('d' in _str)
-        self.list = list or ('l' in _str)
-        self.add = add or ('a' in _str)
-        self.create = create or ('c' in _str)
-        self.update = update or ('u' in _str)
-        self.process = process or ('p' in _str)
-
-    def __or__(self, other):
-        return AccountPermissions(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return AccountPermissions(_str=str(self) + str(other))
+                 add=False, create=False, update=False, process=False):
+        self.read = read
+        self.write = write
+        self.delete = delete
+        self.list = list
+        self.add = add
+        self.create = create
+        self.update = update
+        self.process = process
+        self._str = (('r' if self.read else '') +
+                     ('w' if  self.write else '') +
+                     ('d' if self.delete else '') +
+                     ('l' if self.list else '') +
+                     ('a' if self.add else '') +
+                     ('c' if self.create else '') +
+                     ('u' if self.update else '') +
+                     ('p' if self.process else ''))
 
     def __str__(self):
-        return (('r' if self.read else '') +
-                ('w' if self.write else '') +
-                ('d' if self.delete else '') +
-                ('l' if self.list else '') +
-                ('a' if self.add else '') +
-                ('c' if self.create else '') +
-                ('u' if self.update else '') +
-                ('p' if self.process else ''))
+        return self._str
 
+    @classmethod
+    def from_string(cls, permission):
+        """Create AccountSasPermissions from a string.
 
-AccountPermissions.READ = AccountPermissions(read=True)
-AccountPermissions.WRITE = AccountPermissions(write=True)
-AccountPermissions.DELETE = AccountPermissions(delete=True)
-AccountPermissions.LIST = AccountPermissions(list=True)
-AccountPermissions.ADD = AccountPermissions(add=True)
-AccountPermissions.CREATE = AccountPermissions(create=True)
-AccountPermissions.UPDATE = AccountPermissions(update=True)
-AccountPermissions.PROCESS = AccountPermissions(process=True)
+        To specify read, write, delete, etc. permissions you need only to
+        include the first letter of the word in the string. E.g. for read and write
+        permissions you would provide a string "rw".
 
+        :param str permission: Specify permissions in
+            the string with the first letter of the word.
+        :return: A AccountSasPermissions object
+        :rtype: ~azure.storage.queue.AccountSasPermissions
+        """
+        p_read = 'r' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+        p_list = 'l' in permission
+        p_add = 'a' in permission
+        p_create = 'c' in permission
+        p_update = 'u' in permission
+        p_process = 'p' in permission
+
+        parsed = cls(p_read, p_write, p_delete, p_list, p_add, p_create, p_update, p_process)
+        parsed._str = permission # pylint: disable = protected-access
+        return parsed
 
 class Services(object):
     """Specifies the services accessible with the account SAS.
 
-    :cvar Services Services.BLOB: The blob service.
-    :cvar Services Services.FILE: The file service
-    :cvar Services Services.QUEUE: The queue service.
     :param bool blob:
-        Access for the `~azure.storage.blob.blob_service_client.BlobServiceClient`
+        Access for the `~azure.storage.blob.BlobServiceClient`
     :param bool queue:
-        Access for the `~azure.storage.queue.queue_service_client.QueueServiceClient`
-    :param bool file:
-        Access for the `~azure.storage.file.file_service_client.FileServiceClient`
-    :param str _str:
-        A string representing the services.
+        Access for the `~azure.storage.queue.QueueServiceClient`
+    :param bool fileshare:
+        Access for the `~azure.storage.fileshare.ShareServiceClient`
     """
 
-    BLOB = None # type: Services
-    QUEUE = None # type: Services
-    FILE = None # type: Services
-
-    def __init__(self, blob=False, queue=False, file=False, _str=None):
-        if not _str:
-            _str = ''
-        self.blob = blob or ('b' in _str)
-        self.queue = queue or ('q' in _str)
-        self.file = file or ('f' in _str)
-
-    def __or__(self, other):
-        return Services(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return Services(_str=str(self) + str(other))
+    def __init__(self, blob=False, queue=False, fileshare=False):
+        self.blob = blob
+        self.queue = queue
+        self.fileshare = fileshare
+        self._str = (('b' if self.blob else '') +
+                ('q' if self.queue else '') +
+                ('f' if self.fileshare else ''))
 
     def __str__(self):
-        return (('b' if self.blob else '') +
-                ('q' if self.queue else '') +
-                ('f' if self.file else ''))
+        return self._str
 
+    @classmethod
+    def from_string(cls, string):
+        """Create Services from a string.
 
-Services.BLOB = Services(blob=True)
-Services.QUEUE = Services(queue=True)
-Services.FILE = Services(file=True)
+        To specify blob, queue, or file you need only to
+        include the first letter of the word in the string. E.g. for blob and queue
+        you would provide a string "bq".
+
+        :param str string: Specify blob, queue, or file in
+            in the string with the first letter of the word.
+        :return: A Services object
+        :rtype: ~azure.storage.queue.Services
+        """
+        res_blob = 'b' in string
+        res_queue = 'q' in string
+        res_file = 'f' in string
+
+        parsed = cls(res_blob, res_queue, res_file)
+        parsed._str = string  # pylint: disable = protected-access
+        return parsed
 
 
 class UserDelegationKey(object):

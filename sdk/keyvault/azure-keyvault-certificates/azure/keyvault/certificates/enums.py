@@ -5,7 +5,7 @@
 from enum import Enum
 
 
-class ActionType(str, Enum):
+class CertificatePolicyAction(str, Enum):
     """The supported action types for the lifetime of a certificate"""
 
     email_contacts = "EmailContacts"
@@ -15,8 +15,8 @@ class ActionType(str, Enum):
 class SecretContentType(str, Enum):
     """Content type of the secrets as specified in Certificate Policy"""
 
-    PKCS12 = 'application/x-pkcs12'
-    PEM = 'application/x-pem-file'
+    PKCS12 = "application/x-pkcs12"
+    PEM = "application/x-pem-file"
 
 
 class KeyUsageType(str, Enum):
@@ -28,7 +28,7 @@ class KeyUsageType(str, Enum):
     data_encipherment = "dataEncipherment"
     key_agreement = "keyAgreement"
     key_cert_sign = "keyCertSign"
-    c_rl_sign = "cRLSign"
+    crl_sign = "cRLSign"
     encipher_only = "encipherOnly"
     decipher_only = "decipherOnly"
 

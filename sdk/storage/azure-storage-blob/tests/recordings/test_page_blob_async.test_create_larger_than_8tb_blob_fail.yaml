@@ -3,38 +3,23 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - d989a358-b4d5-11e9-a8c8-b831b58100e8
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 02 Aug 2019 03:30:18 GMT
+      - Fri, 25 Oct 2019 18:13:37 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainerb4271745?restype=container
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Fri, 02 Aug 2019 03:30:17 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Etag
-      : '"0x8D716F9BDCCF82C"'
-      ? !!python/object/new:multidict._istr.istr
-      - Last-Modified
-      : Fri, 02 Aug 2019 03:30:18 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 70fa60ac-401e-0042-17e2-484f14000000
-      x-ms-version: '2018-03-28'
+      content-length: '0'
+      date: Fri, 25 Oct 2019 18:13:37 GMT
+      etag: '"0x8D759770E668E4F"'
+      last-modified: Fri, 25 Oct 2019 18:13:37 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -42,8 +27,40 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - amqptest.blob.core.windows.net
+        - pyacrstoragewusi22ibboee.blob.core.windows.net
         - /utcontainerb4271745
+        - restype=container
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 25 Oct 2019 18:13:37 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainersourceb4271745?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 25 Oct 2019 18:13:37 GMT
+      etag: '"0x8D759770E6DE318"'
+      last-modified: Fri, 25 Oct 2019 18:13:37 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoragewusi22ibboee.blob.core.windows.net
+        - /utcontainersourceb4271745
         - restype=container
         - ''
 - request:
@@ -52,41 +69,28 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-blob-content-length:
       - '8796093022209'
       x-ms-blob-type:
       - PageBlob
-      x-ms-client-request-id:
-      - d9a2343a-b4d5-11e9-b917-b831b58100e8
       x-ms-date:
-      - Fri, 02 Aug 2019 03:30:18 GMT
+      - Fri, 25 Oct 2019 18:13:37 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utcontainerb4271745/blobb4271745
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidHeaderValue</Code><Message>The
-        value for one of the HTTP headers is not in the correct format.\nRequestId:70fa60d6-401e-0042-3ce2-484f14000000\nTime:2019-08-02T03:30:18.3729379Z</Message><HeaderName>x-ms-blob-content-length</HeaderName><HeaderValue>8796093022209</HeaderValue></Error>"
+        value for one of the HTTP headers is not in the correct format.\nRequestId:caa7443e-401e-00ad-135f-8bc462000000\nTime:2019-10-25T18:13:37.4747848Z</Message><HeaderName>x-ms-blob-content-length</HeaderName><HeaderValue>8796093022209</HeaderValue></Error>"
     headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '343'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Fri, 02 Aug 2019 03:30:18 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      content-length: '343'
+      content-type: application/xml
+      date: Fri, 25 Oct 2019 18:13:37 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: InvalidHeaderValue
-      x-ms-request-id: 70fa60d6-401e-0042-3ce2-484f14000000
-      x-ms-version: '2018-03-28'
+      x-ms-version: '2019-02-02'
     status:
       code: 400
       message: The value for one of the HTTP headers is not in the correct format.
@@ -94,7 +98,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - amqptest.blob.core.windows.net
+        - pyacrstoragewusi22ibboee.blob.core.windows.net
         - /utcontainerb4271745/blobb4271745
         - ''
         - ''

@@ -8,12 +8,14 @@ import uuid
 import logging
 import time
 from typing import List
+from distutils.version import StrictVersion
 
-from uamqp import types, errors  # type: ignore
+import uamqp  # type: ignore
+from uamqp import types, errors, utils  # type: ignore
 from uamqp import ReceiveClient, Source  # type: ignore
 
-from azure.eventhub.common import EventData, EventPosition
-from azure.eventhub.error import _error_handler
+from .common import EventData, EventPosition
+from .error import _error_handler
 from ._consumer_producer_mixin import ConsumerProducerMixin
 
 
@@ -38,6 +40,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
     _timeout = 0
     _epoch_symbol = b'com.microsoft:epoch'
     _timeout_symbol = b'com.microsoft:timeout'
+    _receiver_runtime_metric_symbol = b'com.microsoft:enable-receiver-runtime-metric'
 
     def __init__(self, client, source, **kwargs):
         """
@@ -54,15 +57,23 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         :param owner_level: The priority of the exclusive consumer. An exclusive
          consumer will be created if owner_level is set.
         :type owner_level: int
+        :param track_last_enqueued_event_properties: Indicates whether or not the consumer should request information
+         on the last enqueued event on its associated partition, and track that information as events are received.
+         When information about the partition's last enqueued event is being tracked, each event received from the
+         Event Hubs service will carry metadata about the partition. This results in a small amount of additional
+         network bandwidth consumption that is generally a favorable trade-off when considered against periodically
+         making requests for partition properties using the Event Hub client.
+         It is set to `False` by default.
+        :type track_last_enqueued_event_properties: bool
         """
         event_position = kwargs.get("event_position", None)
         prefetch = kwargs.get("prefetch", 300)
         owner_level = kwargs.get("owner_level", None)
         keep_alive = kwargs.get("keep_alive", None)
         auto_reconnect = kwargs.get("auto_reconnect", True)
+        track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
 
         super(EventHubConsumer, self).__init__()
-        self._running = False
         self._client = client
         self._source = source
         self._offset = event_position
@@ -71,10 +82,9 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._owner_level = owner_level
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
-        self._retry_policy = errors.ErrorPolicy(max_retries=self._client._config.max_retries, on_error=_error_handler)    # pylint:disable=protected-access
+        self._retry_policy = errors.ErrorPolicy(max_retries=self._client._config.max_retries, on_error=_error_handler)  # pylint:disable=protected-access
         self._reconnect_backoff = 1
         self._link_properties = {}
-        self._redirected = None
         self._error = None
         partition = self._source.split('/')[-1]
         self._partition = partition
@@ -84,6 +94,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         link_property_timeout_ms = (self._client._config.receive_timeout or self._timeout) * 1000  # pylint:disable=protected-access
         self._link_properties[types.AMQPSymbol(self._timeout_symbol)] = types.AMQPLong(int(link_property_timeout_ms))
         self._handler = None
+        self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
+        self._last_enqueued_event_properties = {}
 
     def __iter__(self):
         return self
@@ -98,8 +110,11 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                     self._messages_iter = self._handler.receive_messages_iter()
                 message = next(self._messages_iter)
                 event_data = EventData._from_message(message)  # pylint:disable=protected-access
+                event_data._trace_link_message()  # pylint:disable=protected-access
                 self._offset = EventPosition(event_data.offset, inclusive=False)
                 retried_times = 0
+                if self._track_last_enqueued_event_properties:
+                    self._last_enqueued_event_properties = event_data._get_last_enqueued_event_properties()  # pylint:disable=protected-access
                 return event_data
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = self._handle_exception(exception)
@@ -110,17 +125,21 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         raise last_exception
 
     def _create_handler(self):
-        alt_creds = {
-            "username": self._client._auth_config.get("iot_username") if self._redirected else None,  # pylint:disable=protected-access
-            "password": self._client._auth_config.get("iot_password") if self._redirected else None  # pylint:disable=protected-access
-        }
-
         source = Source(self._source)
         if self._offset is not None:
             source.set_filter(self._offset._selector())  # pylint:disable=protected-access
+
+        if StrictVersion(uamqp.__version__) < StrictVersion("1.2.3"):  # backward compatible until uamqp 1.2.3 released
+            desired_capabilities = {}
+        elif self._track_last_enqueued_event_properties:
+            symbol_array = [types.AMQPSymbol(self._receiver_runtime_metric_symbol)]
+            desired_capabilities = {"desired_capabilities": utils.data_factory(types.AMQPArray(symbol_array))}
+        else:
+            desired_capabilities = {"desired_capabilities": None}
+
         self._handler = ReceiveClient(
             source,
-            auth=self._client._get_auth(**alt_creds),  # pylint:disable=protected-access
+            auth=self._client._create_auth(),  # pylint:disable=protected-access
             debug=self._client._config.network_tracing,  # pylint:disable=protected-access
             prefetch=self._prefetch,
             link_properties=self._link_properties,
@@ -128,28 +147,12 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             error_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
+            receive_settle_mode=uamqp.constants.ReceiverSettleMode.ReceiveAndDelete,
+            auto_complete=False,
             properties=self._client._create_properties(  # pylint:disable=protected-access
-            self._client._config.user_agent))  # pylint:disable=protected-access
+            self._client._config.user_agent),  # pylint:disable=protected-access
+            **desired_capabilities)  # pylint:disable=protected-access
         self._messages_iter = None
-
-    def _redirect(self, redirect):
-        self._messages_iter = None
-        super(EventHubConsumer, self)._redirect(redirect)
-
-    def _open(self):
-        """
-        Open the EventHubConsumer using the supplied connection.
-        If the handler has previously been redirected, the redirect
-        context will be used to create a new handler before opening it.
-
-        """
-        # pylint: disable=protected-access
-        self._redirected = self._redirected or self._client._iothub_redirect_info
-
-        if not self._running and self._redirected:
-            self._client._process_redirect_uri(self._redirected)
-            self._source = self._redirected.address
-        super(EventHubConsumer, self)._open()
 
     def _open_with_retry(self):
         return self._do_retryable_operation(self._open, operation_need_param=False)
@@ -171,13 +174,36 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             timeout=remaining_time_ms)
         for message in message_batch:
             event_data = EventData._from_message(message)  # pylint:disable=protected-access
-            self._offset = EventPosition(event_data.offset)
             data_batch.append(event_data)
+            event_data._trace_link_message()  # pylint:disable=protected-access
+
+        if data_batch:
+            self._offset = EventPosition(data_batch[-1].offset)
+
+        if self._track_last_enqueued_event_properties and data_batch:
+            self._last_enqueued_event_properties = data_batch[-1]._get_last_enqueued_event_properties()  # pylint:disable=protected-access
+
         return data_batch
 
     def _receive_with_retry(self, timeout=None, max_batch_size=None, **kwargs):
         return self._do_retryable_operation(self._receive, timeout=timeout,
                                             max_batch_size=max_batch_size, **kwargs)
+
+    @property
+    def last_enqueued_event_properties(self):
+        """
+        The latest enqueued event information. This property will be updated each time an event is received when
+        the receiver is created with `track_last_enqueued_event_properties` being `True`.
+        The dict includes following information of the partition:
+
+            - `sequence_number`
+            - `offset`
+            - `enqueued_time`
+            - `retrieval_time`
+
+        :rtype: dict or None
+        """
+        return self._last_enqueued_event_properties if self._track_last_enqueued_event_properties else None
 
     @property
     def queue_size(self):
@@ -209,15 +235,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         :rtype: list[~azure.eventhub.common.EventData]
         :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
                 ~azure.eventhub.EventHubError
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START eventhub_client_sync_receive]
-                :end-before: [END eventhub_client_sync_receive]
-                :language: python
-                :dedent: 4
-                :caption: Receive events from the EventHub.
-
         """
         self._check_closed()
 
@@ -226,29 +243,12 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
         return self._receive_with_retry(timeout=timeout, max_batch_size=max_batch_size)
 
-    def close(self, exception=None):
-        # type:(Exception) -> None
+    def close(self):  # pylint:disable=useless-super-delegation
+        # type:() -> None
         """
         Close down the handler. If the handler has already closed,
-        this will be a no op. An optional exception can be passed in to
-        indicate that the handler was shutdown due to error.
-
-        :param exception: An optional exception if the handler is closing
-         due to an error.
-        :type exception: Exception
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START eventhub_client_receiver_close]
-                :end-before: [END eventhub_client_receiver_close]
-                :language: python
-                :dedent: 4
-                :caption: Close down the handler.
-
+        this will be a no op.
         """
-        if self._messages_iter:
-            self._messages_iter.close()
-            self._messages_iter = None
-        super(EventHubConsumer, self).close(exception)
+        super(EventHubConsumer, self).close()
 
     next = __next__  # for python2.7

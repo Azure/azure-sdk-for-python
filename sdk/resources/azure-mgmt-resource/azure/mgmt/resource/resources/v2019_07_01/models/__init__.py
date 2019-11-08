@@ -24,6 +24,9 @@ try:
     from ._models_py3 import DeploymentProperties
     from ._models_py3 import DeploymentPropertiesExtended
     from ._models_py3 import DeploymentValidateResult
+    from ._models_py3 import DeploymentWhatIf
+    from ._models_py3 import DeploymentWhatIfProperties
+    from ._models_py3 import DeploymentWhatIfSettings
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorResponse
     from ._models_py3 import ExportTemplateRequest
@@ -56,6 +59,9 @@ try:
     from ._models_py3 import TargetResource
     from ._models_py3 import TemplateHashResult
     from ._models_py3 import TemplateLink
+    from ._models_py3 import WhatIfChange
+    from ._models_py3 import WhatIfOperationResult
+    from ._models_py3 import WhatIfPropertyChange
 except (SyntaxError, ImportError):
     from ._models import AliasPathType
     from ._models import AliasType
@@ -71,6 +77,9 @@ except (SyntaxError, ImportError):
     from ._models import DeploymentProperties
     from ._models import DeploymentPropertiesExtended
     from ._models import DeploymentValidateResult
+    from ._models import DeploymentWhatIf
+    from ._models import DeploymentWhatIfProperties
+    from ._models import DeploymentWhatIfSettings
     from ._models import ErrorAdditionalInfo
     from ._models import ErrorResponse
     from ._models import ExportTemplateRequest
@@ -103,6 +112,9 @@ except (SyntaxError, ImportError):
     from ._models import TargetResource
     from ._models import TemplateHashResult
     from ._models import TemplateLink
+    from ._models import WhatIfChange
+    from ._models import WhatIfOperationResult
+    from ._models import WhatIfPropertyChange
 from ._paged_models import DeploymentExtendedPaged
 from ._paged_models import DeploymentOperationPaged
 from ._paged_models import GenericResourcePaged
@@ -113,7 +125,10 @@ from ._paged_models import TagDetailsPaged
 from ._resource_management_client_enums import (
     DeploymentMode,
     OnErrorDeploymentType,
+    WhatIfResultFormat,
     ResourceIdentityType,
+    PropertyChangeType,
+    ChangeType,
 )
 
 __all__ = [
@@ -131,6 +146,9 @@ __all__ = [
     'DeploymentProperties',
     'DeploymentPropertiesExtended',
     'DeploymentValidateResult',
+    'DeploymentWhatIf',
+    'DeploymentWhatIfProperties',
+    'DeploymentWhatIfSettings',
     'ErrorAdditionalInfo',
     'ErrorResponse',
     'ExportTemplateRequest',
@@ -163,6 +181,9 @@ __all__ = [
     'TargetResource',
     'TemplateHashResult',
     'TemplateLink',
+    'WhatIfChange',
+    'WhatIfOperationResult',
+    'WhatIfPropertyChange',
     'OperationPaged',
     'DeploymentExtendedPaged',
     'ProviderPaged',
@@ -172,5 +193,8 @@ __all__ = [
     'DeploymentOperationPaged',
     'DeploymentMode',
     'OnErrorDeploymentType',
+    'WhatIfResultFormat',
     'ResourceIdentityType',
+    'PropertyChangeType',
+    'ChangeType',
 ]

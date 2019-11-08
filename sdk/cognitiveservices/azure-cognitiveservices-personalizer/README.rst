@@ -7,13 +7,24 @@ This package has been tested with Python 2.7, 3.4, 3.5, 3.6 and 3.7.
 
 For a more complete set of Azure libraries, see the `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
 
+What is Personalizer? 
+=====================
+
+* `What is Personalizer? <https://docs.microsoft.com/azure/cognitive-services/personalizer/what-is-personalizer>`__
+* `How to create a Personalizer service <https://docs.microsoft.com/azure/cognitive-services/personalizer/how-to-settings>`__
 
 Usage
 =====
 
-For code examples, see `Personalizer
+`Quickstart: Personalize client library for Python <https://docs.microsoft.com/azure/cognitive-services/personalizer/python-quickstart-commandline-feedback-loop>`__
+
+Documentation
+=============
+
+For SDK reference documentation, see `Personalizer
 <https://docs.microsoft.com/python/api/overview/azure/>`__
 on docs.microsoft.com.
+
 
 
 Provide Feedback

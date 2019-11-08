@@ -56,6 +56,9 @@ class EllipticCurveKey(Key):
 
         return cls(_bytes_to_int(jwk.x), _bytes_to_int(jwk.y), kid=jwk.kid, curve=jwk.crv)
 
+    def is_private_key(self):
+        return False
+
     def decrypt(self, cipher_text, **kwargs):
         raise NotImplementedError()
 

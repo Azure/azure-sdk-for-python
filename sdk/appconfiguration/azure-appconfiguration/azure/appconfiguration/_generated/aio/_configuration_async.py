@@ -4,34 +4,38 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-from azure.core.configuration import Configuration, ConnectionConfiguration
+from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from ..version import VERSION
 
 
-class ConfigurationClientConfiguration(Configuration):
-    """Configuration for ConfigurationClient
+class AzureAppConfigurationConfiguration(Configuration):
+    """Configuration for AzureAppConfiguration
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param sync_token: Used to guarantee real-time consistency between
+     requests.
+    :type sync_token: str
     """
 
-    def __init__(self, credentials, **kwargs):
+    def __init__(self, credentials, sync_token=None, **kwargs):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
 
-        super(ConfigurationClientConfiguration, self).__init__(**kwargs)
+        super(AzureAppConfigurationConfiguration, self).__init__(**kwargs)
         self._configure(**kwargs)
 
-        self.user_agent_policy.add_user_agent('azsdk-python-configurationclient/{}'.format(VERSION))
+        self.user_agent_policy.add_user_agent('azsdk-python-azureappconfiguration/{}'.format(VERSION))
         self.generate_client_request_id = True
 
         self.credentials = credentials
+        self.sync_token = sync_token
 
     def _configure(self, **kwargs):
         self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)

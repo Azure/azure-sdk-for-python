@@ -3,6 +3,16 @@
 Release History
 ===============
 
+0.14.0 (2019-10-04)
++++++++++++++++++++
+
+**Features**
+
+- Added operation ServerBlobAuditingPoliciesOperations.list_by_server
+- Added operation ManagedDatabasesOperations.complete_restore
+- Added operation DatabaseBlobAuditingPoliciesOperations.list_by_database
+- Added operation group ManagedDatabaseRestoreDetailsOperations
+
 0.13.0 (2019-09-03)
 +++++++++++++++++++
 

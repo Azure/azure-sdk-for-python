@@ -1,0 +1,705 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - a24bad1a-d9a9-11e9-b70a-001a7dda7113
+      x-ms-date:
+      - Wed, 18 Sep 2019 00:17:00 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share7bd421e4?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Etag
+      : '"0x8D73BCD8677E56E"'
+      ? !!python/object/new:multidict._istr.istr
+      - Last-Modified
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 88690f76-801a-0039-1fb6-6da8e8000000
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilydevtest.file.core.windows.net
+        - /share7bd421e4
+        - restype=share
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - a2567b26-d9a9-11e9-8e0b-001a7dda7113
+      x-ms-date:
+      - Wed, 18 Sep 2019 00:17:00 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share7bd421e4/dir1?restype=directory
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Etag
+      : '"0x8D73BCD867E2AB8"'
+      ? !!python/object/new:multidict._istr.istr
+      - Last-Modified
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Directory
+      x-ms-file-change-time: '2019-09-18T00:17:00.6964408Z'
+      x-ms-file-creation-time: '2019-09-18T00:17:00.6964408Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2019-09-18T00:17:00.6964408Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 17913408918638655783*10394889115079208622
+      x-ms-request-id: 88690f79-801a-0039-20b6-6da8e8000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilydevtest.file.core.windows.net
+        - /share7bd421e4/dir1
+        - restype=directory
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - a25b0c4a-d9a9-11e9-a6b0-001a7dda7113
+      x-ms-content-length:
+      - '4'
+      x-ms-date:
+      - Wed, 18 Sep 2019 00:17:00 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - Inherit
+      x-ms-type:
+      - file
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share7bd421e4/dir1/filea1
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Etag
+      : '"0x8D73BCD86824A69"'
+      ? !!python/object/new:multidict._istr.istr
+      - Last-Modified
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2019-09-18T00:17:00.7234665Z'
+      x-ms-file-creation-time: '2019-09-18T00:17:00.7234665Z'
+      x-ms-file-id: '11529285414812647424'
+      x-ms-file-last-write-time: '2019-09-18T00:17:00.7234665Z'
+      x-ms-file-parent-id: '13835128424026341376'
+      x-ms-file-permission-key: 4099112195243312672*10394889115079208622
+      x-ms-request-id: 88690f7a-801a-0039-21b6-6da8e8000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilydevtest.file.core.windows.net
+        - /share7bd421e4/dir1/filea1
+        - ''
+        - ''
+- request:
+    body: '1024'
+    headers:
+      Content-Length:
+      - '4'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - a25f4eba-d9a9-11e9-a1b8-001a7dda7113
+      x-ms-date:
+      - Wed, 18 Sep 2019 00:17:00 GMT
+      x-ms-range:
+      - bytes=0-3
+      x-ms-version:
+      - '2019-02-02'
+      x-ms-write:
+      - update
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share7bd421e4/dir1/filea1?comp=range
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Md5
+      : Ahu8fuILcRNNU+ICBr1v6w==
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Etag
+      : '"0x8D73BCD86866A1B"'
+      ? !!python/object/new:multidict._istr.istr
+      - Last-Modified
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 88690f7b-801a-0039-22b6-6da8e8000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilydevtest.file.core.windows.net
+        - /share7bd421e4/dir1/filea1
+        - comp=range
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - a2636bb6-d9a9-11e9-964b-001a7dda7113
+      x-ms-content-length:
+      - '4'
+      x-ms-date:
+      - Wed, 18 Sep 2019 00:17:00 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - Inherit
+      x-ms-type:
+      - file
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share7bd421e4/dir1/filea2
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Etag
+      : '"0x8D73BCD868A62B2"'
+      ? !!python/object/new:multidict._istr.istr
+      - Last-Modified
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2019-09-18T00:17:00.7765170Z'
+      x-ms-file-creation-time: '2019-09-18T00:17:00.7765170Z'
+      x-ms-file-id: '16140971433240035328'
+      x-ms-file-last-write-time: '2019-09-18T00:17:00.7765170Z'
+      x-ms-file-parent-id: '13835128424026341376'
+      x-ms-file-permission-key: 4099112195243312672*10394889115079208622
+      x-ms-request-id: 88690f7c-801a-0039-23b6-6da8e8000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilydevtest.file.core.windows.net
+        - /share7bd421e4/dir1/filea2
+        - ''
+        - ''
+- request:
+    body: '1024'
+    headers:
+      Content-Length:
+      - '4'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - a265d9ee-d9a9-11e9-a337-001a7dda7113
+      x-ms-date:
+      - Wed, 18 Sep 2019 00:17:00 GMT
+      x-ms-range:
+      - bytes=0-3
+      x-ms-version:
+      - '2019-02-02'
+      x-ms-write:
+      - update
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share7bd421e4/dir1/filea2?comp=range
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Md5
+      : Ahu8fuILcRNNU+ICBr1v6w==
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Etag
+      : '"0x8D73BCD868CD44B"'
+      ? !!python/object/new:multidict._istr.istr
+      - Last-Modified
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 88690f7d-801a-0039-24b6-6da8e8000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilydevtest.file.core.windows.net
+        - /share7bd421e4/dir1/filea2
+        - comp=range
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - a26a1cc2-d9a9-11e9-95f3-001a7dda7113
+      x-ms-content-length:
+      - '4'
+      x-ms-date:
+      - Wed, 18 Sep 2019 00:17:00 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - Inherit
+      x-ms-type:
+      - file
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share7bd421e4/dir1/filea3
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Etag
+      : '"0x8D73BCD8690F3FC"'
+      ? !!python/object/new:multidict._istr.istr
+      - Last-Modified
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2019-09-18T00:17:00.8195580Z'
+      x-ms-file-creation-time: '2019-09-18T00:17:00.8195580Z'
+      x-ms-file-id: '10376363910205800448'
+      x-ms-file-last-write-time: '2019-09-18T00:17:00.8195580Z'
+      x-ms-file-parent-id: '13835128424026341376'
+      x-ms-file-permission-key: 4099112195243312672*10394889115079208622
+      x-ms-request-id: 88690f7e-801a-0039-25b6-6da8e8000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilydevtest.file.core.windows.net
+        - /share7bd421e4/dir1/filea3
+        - ''
+        - ''
+- request:
+    body: '1024'
+    headers:
+      Content-Length:
+      - '4'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - a26d00fe-d9a9-11e9-8ff1-001a7dda7113
+      x-ms-date:
+      - Wed, 18 Sep 2019 00:17:00 GMT
+      x-ms-range:
+      - bytes=0-3
+      x-ms-version:
+      - '2019-02-02'
+      x-ms-write:
+      - update
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share7bd421e4/dir1/filea3?comp=range
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Md5
+      : Ahu8fuILcRNNU+ICBr1v6w==
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Etag
+      : '"0x8D73BCD869401FA"'
+      ? !!python/object/new:multidict._istr.istr
+      - Last-Modified
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 88690f7f-801a-0039-26b6-6da8e8000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilydevtest.file.core.windows.net
+        - /share7bd421e4/dir1/filea3
+        - comp=range
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - a2708106-d9a9-11e9-befa-001a7dda7113
+      x-ms-content-length:
+      - '4'
+      x-ms-date:
+      - Wed, 18 Sep 2019 00:17:00 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - Inherit
+      x-ms-type:
+      - file
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share7bd421e4/dir1/fileb1
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Etag
+      : '"0x8D73BCD8697D377"'
+      ? !!python/object/new:multidict._istr.istr
+      - Last-Modified
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2019-09-18T00:17:00.8646007Z'
+      x-ms-file-creation-time: '2019-09-18T00:17:00.8646007Z'
+      x-ms-file-id: '14988049928633188352'
+      x-ms-file-last-write-time: '2019-09-18T00:17:00.8646007Z'
+      x-ms-file-parent-id: '13835128424026341376'
+      x-ms-file-permission-key: 4099112195243312672*10394889115079208622
+      x-ms-request-id: 88690f80-801a-0039-27b6-6da8e8000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilydevtest.file.core.windows.net
+        - /share7bd421e4/dir1/fileb1
+        - ''
+        - ''
+- request:
+    body: '1024'
+    headers:
+      Content-Length:
+      - '4'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - a2747708-d9a9-11e9-9c83-001a7dda7113
+      x-ms-date:
+      - Wed, 18 Sep 2019 00:17:00 GMT
+      x-ms-range:
+      - bytes=0-3
+      x-ms-version:
+      - '2019-02-02'
+      x-ms-write:
+      - update
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share7bd421e4/dir1/fileb1?comp=range
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Md5
+      : Ahu8fuILcRNNU+ICBr1v6w==
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Etag
+      : '"0x8D73BCD869B7DD6"'
+      ? !!python/object/new:multidict._istr.istr
+      - Last-Modified
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 88690f81-801a-0039-28b6-6da8e8000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilydevtest.file.core.windows.net
+        - /share7bd421e4/dir1/fileb1
+        - comp=range
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - a277f6fa-d9a9-11e9-ba3b-001a7dda7113
+      x-ms-date:
+      - Wed, 18 Sep 2019 00:17:00 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/share7bd421e4/dir1?maxresults=2&restype=directory&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\" ShareName=\"share7bd421e4\"
+        DirectoryPath=\"dir1\"><MaxResults>2</MaxResults><Entries><File><Name>filea1</Name><Properties><Content-Length>4</Content-Length></Properties></File><File><Name>filea2</Name><Properties><Content-Length>4</Content-Length></Properties></File></Entries><NextMarker>1!8!ZmlsZWEz</NextMarker></EnumerationResults>"
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      ? !!python/object/new:multidict._istr.istr
+      - Transfer-Encoding
+      : chunked
+      x-ms-request-id: 88690f82-801a-0039-29b6-6da8e8000000
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilydevtest.file.core.windows.net
+        - /share7bd421e4/dir1
+        - maxresults=2&restype=directory&comp=list
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - a27b5066-d9a9-11e9-9201-001a7dda7113
+      x-ms-date:
+      - Wed, 18 Sep 2019 00:17:01 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/share7bd421e4/dir1?marker=1!8!ZmlsZWEz&maxresults=2&restype=directory&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\" ShareName=\"share7bd421e4\"
+        DirectoryPath=\"dir1\"><Marker>1!8!ZmlsZWEz</Marker><MaxResults>2</MaxResults><Entries><File><Name>filea3</Name><Properties><Content-Length>4</Content-Length></Properties></File><File><Name>fileb1</Name><Properties><Content-Length>4</Content-Length></Properties></File></Entries><NextMarker
+        /></EnumerationResults>"
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Wed, 18 Sep 2019 00:17:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      ? !!python/object/new:multidict._istr.istr
+      - Transfer-Encoding
+      : chunked
+      x-ms-request-id: 88690f84-801a-0039-2bb6-6da8e8000000
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - emilydevtest.file.core.windows.net
+        - /share7bd421e4/dir1
+        - marker=1!8!ZmlsZWEz&maxresults=2&restype=directory&comp=list
+        - ''
+version: 1

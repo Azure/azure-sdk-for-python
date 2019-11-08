@@ -52,7 +52,7 @@ class AuthCodeRedirectServer(HTTPServer):
 
     def __init__(self, port, timeout):
         # type: (int, int) -> None
-        super(AuthCodeRedirectServer, self).__init__(("localhost", port), AuthCodeRedirectHandler)
+        HTTPServer.__init__(self, ("localhost", port), AuthCodeRedirectHandler)
         self.timeout = timeout
 
     def wait_for_redirect(self):

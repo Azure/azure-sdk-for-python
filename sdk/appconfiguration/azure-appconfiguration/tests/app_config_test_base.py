@@ -8,12 +8,14 @@ import datetime
 import logging
 import pytest
 
+from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotFoundError,
     ResourceExistsError,
     AzureError,
 )
+from azure.appconfiguration import ResourceReadOnlyError
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.appconfiguration import ConfigurationSetting
 from devtools_testutils import AzureMgmtTestCase

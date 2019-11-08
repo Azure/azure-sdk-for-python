@@ -3,6 +3,33 @@
 Release History
 ===============
 
+0.6.0 (2019-10-24)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fixed Catalog model structure not matching actual API
+
+**Breaking changes**
+
+- Removed CatalogBillingPlansItem that could be considered a breaking change
+
+0.5.0 (2019-10-04)
+++++++++++++++++++
+
+**Features**
+
+- Model ReservationProperties has a new parameter billing_plan
+- Model CalculatePriceResponseProperties has a new parameter payment_schedule
+- Model ReservationOrderResponse has a new parameter plan_information
+- Model ReservationOrderResponse has a new parameter billing_plan
+- Model Catalog has a new parameter billing_plans
+- Model PurchaseRequest has a new parameter billing_plan
+
+**Breaking changes**
+
+- Operation ReservationOrderOperations.get has a new signature
+
 0.4.0 (2019-09-09)
 ++++++++++++++++++
 

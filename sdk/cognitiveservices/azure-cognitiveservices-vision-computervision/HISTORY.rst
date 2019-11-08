@@ -3,6 +3,21 @@
 Release History
 ===============
 
+0.5.0 (2019-10-01)
+++++++++++++++++++
+
+**Features**
+
+- Model AdultInfo has a new parameter is_gory_content
+- Model AdultInfo has a new parameter gore_score
+
+**Breaking changes**
+
+- Operation ComputerVisionClientOperationsMixin.analyze_image has a new signature
+- Operation ComputerVisionClientOperationsMixin.analyze_image_in_stream has a new signature
+- Operation ComputerVisionClientOperationsMixin.describe_image has a new signature
+- Operation ComputerVisionClientOperationsMixin.describe_image_in_stream has a new signature
+
 0.4.0 (2019-06-27)
 ++++++++++++++++++
 

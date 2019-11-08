@@ -32,7 +32,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         assert (
             created_kv.etag is not None
             and created_kv.last_modified is not None
-            and created_kv.locked is False
+            and created_kv.read_only is False
         )
 
     def test_add_existing_configuration_setting(self):
@@ -65,7 +65,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         to_set_kv.tags = {"a": "b", "c": "d"}
         to_set_kv.etag = "wrong etag"
         with pytest.raises(ResourceModifiedError):
-            self.get_config_client().set_configuration_setting(to_set_kv)
+            self.get_config_client().set_configuration_setting(to_set_kv, match_condition=MatchConditions.IfNotModified)
 
     def test_set_configuration_setting_etag(self):
         kv = ConfigurationSetting(
@@ -77,7 +77,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         )
         kv.etag = "random etag"
         with pytest.raises(ResourceModifiedError):
-            self.get_config_client().set_configuration_setting(kv)
+            self.get_config_client().set_configuration_setting(kv, match_condition=MatchConditions.IfNotModified)
 
     def test_set_configuration_setting_no_etag(self):
         to_set_kv = ConfigurationSetting(
@@ -97,62 +97,6 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
             and to_set_kv.tags == set_kv.tags
             and to_set_kv.etag != set_kv.etag
         )
-
-    # method: update_configuration_setting
-    def test_update_existing_configuration_setting_etag(self):
-        to_update_kv = self.test_config_setting
-        tags = {"a": "b", "c": "d"}
-        updated_kv = self.get_config_client().update_configuration_setting(
-            to_update_kv.key,
-            label=to_update_kv.label,
-            value="updated_value",
-            tags=tags,
-            etag=to_update_kv.etag,
-        )
-        assert (
-            to_update_kv.key == updated_kv.key
-            and to_update_kv.label == updated_kv.label
-            and "updated_value" == updated_kv.value
-            and to_update_kv.content_type == updated_kv.content_type
-            and tags == updated_kv.tags
-            and to_update_kv.etag != updated_kv.etag
-        )
-
-    def test_update_existing_configuration_setting_label_noetag(self):
-        to_update_kv = self.test_config_setting
-        tags = {"a": "b", "c": "d"}
-        updated_kv = self.get_config_client().update_configuration_setting(
-            to_update_kv.key, label=to_update_kv.label, value="updated_value", tags=tags
-        )
-        assert (
-            to_update_kv.key == updated_kv.key
-            and to_update_kv.label == updated_kv.label
-            and "updated_value" == updated_kv.value
-            and to_update_kv.content_type == updated_kv.content_type
-            and tags == updated_kv.tags
-            and to_update_kv.etag != updated_kv.etag
-        )
-
-    def test_update_existing_configuration_setting_label_wrong_etag(self):
-        to_update_kv = self.test_config_setting
-        tags = {"a": "b", "c": "d"}
-        etag = "wrong etag"
-        with pytest.raises(ResourceModifiedError):
-            self.get_config_client().update_configuration_setting(
-                to_update_kv.key,
-                label=to_update_kv.label,
-                value="updated_value",
-                tags=tags,
-                etag=etag,
-            )
-
-    def test_update_no_existing_configuration_setting_label_noetag(self):
-        key = KEY_UUID
-        label = "test_label1"
-        with pytest.raises(ResourceNotFoundError):
-            self.get_config_client().update_configuration_setting(
-                key, label=label, value="some value"
-            )
 
     # method: get_configuration_setting
     def test_get_configuration_setting_no_label(self):
@@ -225,7 +169,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         to_delete_kv = self.test_config_setting_no_label
         with pytest.raises(ResourceModifiedError):
             self.get_config_client().delete_configuration_setting(
-                to_delete_kv.key, etag="wrong etag"
+                to_delete_kv.key, etag="wrong etag", match_condition=MatchConditions.IfNotModified
             )
 
     # method: list_configuration_settings
@@ -322,7 +266,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         except ResourceExistsError:
             pass
         items = self.get_config_client().list_configuration_settings(keys=["multi_*"])
-        assert len(list(items)) == PAGE_SIZE
+        assert len(list(items)) > PAGE_SIZE
 
         # Remove the configuration settings
         try:
@@ -339,9 +283,9 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         items = self.get_config_client().list_configuration_settings(labels=[""])
         assert len(list(items)) > 0
 
-    def test_list_configuration_settings_only_accept_time(self):
+    def test_list_configuration_settings_only_accepttime(self):
         exclude_today = self.get_config_client().list_configuration_settings(
-            accept_date_time=datetime.datetime.today() + datetime.timedelta(days=-1)
+            accept_datetime=datetime.datetime.today() + datetime.timedelta(days=-1)
         )
         all_inclusive = self.get_config_client().list_configuration_settings()
         assert len(list(all_inclusive)) > len(list(exclude_today))
@@ -398,3 +342,41 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
             assert kv.key == to_list_kv.key and kv.label == to_list_kv.label
             cnt += 1
         assert cnt > 0
+
+    def test_read_only(self):
+        kv = self.test_config_setting_no_label
+        read_only_kv = self.get_config_client().set_read_only(kv)
+        assert read_only_kv.read_only
+        readable_kv = self.get_config_client().clear_read_only(read_only_kv)
+        assert not readable_kv.read_only
+
+    def test_delete_read_only(self):
+        to_delete_kv = self.test_config_setting_no_label
+        read_only_kv = self.get_config_client().set_read_only(to_delete_kv)
+        with pytest.raises(ResourceReadOnlyError):
+            self.get_config_client().delete_configuration_setting(to_delete_kv.key)
+        self.get_config_client().clear_read_only(read_only_kv)
+        self.get_config_client().delete_configuration_setting(to_delete_kv.key)
+        self.to_delete.remove(to_delete_kv)
+        with pytest.raises(ResourceNotFoundError):
+            self.get_config_client().get_configuration_setting(to_delete_kv.key)
+
+    def test_set_read_only(self):
+        to_set_kv = self.test_config_setting
+        to_set_kv.value = to_set_kv.value + "a"
+        to_set_kv.tags = {"a": "b", "c": "d"}
+        read_only_kv = self.get_config_client().set_read_only(to_set_kv)
+        with pytest.raises(ResourceReadOnlyError):
+            self.get_config_client().set_configuration_setting(read_only_kv)
+        readable_kv = self.get_config_client().clear_read_only(read_only_kv)
+        readable_kv.value = to_set_kv.value
+        readable_kv.tags = to_set_kv.tags
+        set_kv = self.get_config_client().set_configuration_setting(readable_kv)
+        assert (
+                to_set_kv.key == set_kv.key
+                and to_set_kv.label == to_set_kv.label
+                and to_set_kv.value == set_kv.value
+                and to_set_kv.content_type == set_kv.content_type
+                and to_set_kv.tags == set_kv.tags
+                and to_set_kv.etag != set_kv.etag
+        )

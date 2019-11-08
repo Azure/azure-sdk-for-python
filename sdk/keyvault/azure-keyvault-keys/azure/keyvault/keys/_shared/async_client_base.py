@@ -6,8 +6,7 @@ from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import UserAgentPolicy
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
+from azure.core.pipeline.policies import UserAgentPolicy, DistributedTracingPolicy, HttpLoggingPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport
 
 from ._generated import KeyVaultClient
@@ -28,9 +27,7 @@ class AsyncKeyVaultClientBase:
     """Base class for async Key Vault clients"""
 
     @staticmethod
-    def _create_config(
-        credential: "TokenCredential", api_version: str = None, **kwargs: "**Any"
-    ) -> Configuration:
+    def _create_config(credential: "TokenCredential", api_version: str = None, **kwargs: "Any") -> Configuration:
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=True)(credential, **kwargs)
@@ -59,14 +56,7 @@ class AsyncKeyVaultClientBase:
 
         return config
 
-    def __init__(
-        self,
-        vault_url: str,
-        credential: "TokenCredential",
-        transport: AsyncHttpTransport = None,
-        api_version: str = None,
-        **kwargs: "**Any"
-    ) -> None:
+    def __init__(self, vault_url: str, credential: "TokenCredential", **kwargs: "Any") -> None:
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the TokenCredential protocol, "
@@ -77,21 +67,21 @@ class AsyncKeyVaultClientBase:
 
         self._vault_url = vault_url.strip(" /")
 
-        client = kwargs.pop("generated_client", None)
+        client = kwargs.get("generated_client")
         if client:
             # caller provided a configured client -> nothing left to initialize
             self._client = client
             return
 
-        if api_version is None:
-            api_version = KeyVaultClient.DEFAULT_API_VERSION
-
-        config = self._create_config(credential, api_version=api_version, **kwargs)
+        config = self._create_config(credential, **kwargs)
+        transport = kwargs.pop("transport", None)
         pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport=transport, **kwargs)
-        self._client = KeyVaultClient(credential, api_version=api_version, pipeline=pipeline, aio=True)
+        self._client = KeyVaultClient(credential, pipeline=pipeline, aio=True)
 
     @staticmethod
-    def _build_pipeline(config: Configuration, transport: AsyncHttpTransport, **kwargs: "**Any") -> AsyncPipeline:
+    def _build_pipeline(config: Configuration, transport: AsyncHttpTransport, **kwargs: "Any") -> AsyncPipeline:
+        logging_policy = HttpLoggingPolicy(**kwargs)
+        logging_policy.allowed_header_names.add("x-ms-keyvault-network-info")
         policies = [
             config.headers_policy,
             config.user_agent_policy,
@@ -100,7 +90,8 @@ class AsyncKeyVaultClientBase:
             config.retry_policy,
             config.authentication_policy,
             config.logging_policy,
-            DistributedTracingPolicy(),
+            DistributedTracingPolicy(**kwargs),
+            logging_policy,
         ]
 
         if transport is None:

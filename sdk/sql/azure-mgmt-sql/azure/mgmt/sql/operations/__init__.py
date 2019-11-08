@@ -61,7 +61,6 @@ from ._job_versions_operations import JobVersionsOperations
 from ._long_term_retention_backups_operations import LongTermRetentionBackupsOperations
 from ._backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
 from ._managed_backup_short_term_retention_policies_operations import ManagedBackupShortTermRetentionPoliciesOperations
-from ._managed_databases_operations import ManagedDatabasesOperations
 from ._managed_restorable_dropped_database_backup_short_term_retention_policies_operations import ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
 from ._server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from ._server_dns_aliases_operations import ServerDnsAliasesOperations
@@ -92,6 +91,8 @@ from ._managed_database_sensitivity_labels_operations import ManagedDatabaseSens
 from ._instance_pools_operations import InstancePoolsOperations
 from ._usages_operations import UsagesOperations
 from ._managed_instances_operations import ManagedInstancesOperations
+from ._managed_database_restore_details_operations import ManagedDatabaseRestoreDetailsOperations
+from ._managed_databases_operations import ManagedDatabasesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 
@@ -148,7 +149,6 @@ __all__ = [
     'LongTermRetentionBackupsOperations',
     'BackupLongTermRetentionPoliciesOperations',
     'ManagedBackupShortTermRetentionPoliciesOperations',
-    'ManagedDatabasesOperations',
     'ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations',
     'ServerAutomaticTuningOperations',
     'ServerDnsAliasesOperations',
@@ -179,6 +179,8 @@ __all__ = [
     'InstancePoolsOperations',
     'UsagesOperations',
     'ManagedInstancesOperations',
+    'ManagedDatabaseRestoreDetailsOperations',
+    'ManagedDatabasesOperations',
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
 ]

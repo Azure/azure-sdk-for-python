@@ -23,7 +23,6 @@
 """
 from azure.core.paging import PageIterator  # type: ignore
 from azure.cosmos._execution_context import execution_dispatcher
-from azure.cosmos._execution_context import base_execution_context
 
 # pylint: disable=protected-access
 
@@ -54,7 +53,9 @@ class QueryIterable(PageIterator):
         :param dict options:
             The request options for the request.
         :param method fetch_function:
-        :param str collection_link:
+        :param method resource_type:
+            The type of the resource being queried
+        :param str resource_link:
             If this is a Document query/feed collection_link is required.
 
         Example of `fetch_function`:
@@ -73,20 +74,10 @@ class QueryIterable(PageIterator):
         self._collection_link = collection_link
         self._database_link = database_link
         self._partition_key = partition_key
-        self._ex_context = self._create_execution_context()
-        super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
-
-    def _create_execution_context(self):
-        """instantiates the internal query execution context based.
-        """
-        if self._database_link:
-            # client side partitioning query
-            return base_execution_context._MultiCollectionQueryExecutionContext(
-                self._client, self._options, self._database_link, self._query, self._partition_key
-            )
-        return execution_dispatcher._ProxyQueryExecutionContext(
+        self._ex_context = execution_dispatcher._ProxyQueryExecutionContext(
             self._client, self._collection_link, self._query, self._options, self._fetch_function
         )
+        super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
     def _unpack(self, block):
         continuation = None

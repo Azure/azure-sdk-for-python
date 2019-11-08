@@ -1263,7 +1263,8 @@ class VirtualMachineScaleSetsOperations(object):
 
     def redeploy(
             self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Redeploy one or more virtual machines in a VM scale set.
+        """Shuts down all the virtual machines in the virtual machine scale set,
+        moves them to a new node, and powers them back on.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

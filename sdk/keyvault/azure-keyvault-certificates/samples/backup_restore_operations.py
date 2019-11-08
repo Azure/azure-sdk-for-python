@@ -4,7 +4,7 @@
 # ------------------------------------
 import os
 import time
-from azure.keyvault.certificates import CertificateClient
+from azure.keyvault.certificates import CertificateClient, CertificatePolicy
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -20,15 +20,15 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic backup and restore operations on a vault(certificates) resource for Azure Key Vault
 #
-# 1. Create a certificate (create_certificate)
+# 1. Create a certificate (begin_create_certificate)
 #
 # 2. Backup a certificate (backup_certificate)
 #
-# 3. Delete a certificate (delete_certificate)
+# 3. Delete a certificate (begin_delete_certificate)
 #
 # 4. Purge a deleted certificate (purge_deleted_certificate)
 #
-# 5. Restore a certificate (restore_certificate)
+# 5. Restore a certificate (restore_certificate_backup)
 # ----------------------------------------------------------------------------------------------------------
 
 # Instantiate a certificate client that will be used to call the service.
@@ -39,17 +39,17 @@ VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = CertificateClient(vault_url=VAULT_URL, credential=credential)
 try:
-
     print("\n.. Create Certificate")
-    cert_name = 'BackupRestoreCertificate'
+    cert_name = "BackupRestoreCertificate"
 
     # Let's create a certificate for your key vault.
     # if the certificate already exists in the Key Vault, then a new version of the certificate is created.
     # A long running poller is returned for the create certificate operation.
-    create_certificate_poller = client.create_certificate(name=cert_name)
+    create_certificate_poller = client.begin_create_certificate(name=cert_name, policy=CertificatePolicy.get_default())
 
-    # The wait call awaits the completion of the create certificate operation
-    create_certificate_poller.wait()
+    # The result call awaits the completion of the create certificate operation and returns the final result.
+    # It will return a certificate if creation is successful, and will return the CertificateOperation if not.
+    certificate = create_certificate_poller.result()
     print("Certificate with name '{0}' created.".format(cert_name))
 
     # Backups are good to have, if in case certificates gets deleted accidentally.
@@ -59,23 +59,13 @@ try:
     print("Backup created for certificate with name '{0}'.".format(cert_name))
 
     # The storage account certificate is no longer in use, so you can delete it.
-    client.delete_certificate(name=cert_name)
-    # To ensure certificate is deleted on the server side.
-    time.sleep(30)
-    print("Deleted Certificate with name '{0}'".format(cert_name))
-
-    # Even though the certificate is deleted, it can still be recovered so its name cannot be reused.
-    # In order to be able to reuse the name during restoration, we must purge the certificate
-    # after the initial deletion.
-    print("\nPurging certificate...")
-    client.purge_deleted_certificate(name=cert_name)
-    # To ensure certificate is purged on the server side.
-    time.sleep(30)
-    print("Purged Certificate with name '{0}'".format(cert_name))
+    print("\n.. Delete the certificate")
+    client.begin_delete_certificate(name=cert_name).wait()
+    print("Deleted certificate '{0}'".format(cert_name))
 
     # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
-    print("\n.. Restore the certificate using the backed up certificate bytes")
-    certificate = client.restore_certificate(certificate_backup)
+    print("\n.. Restore the certificate from the backup")
+    certificate = client.restore_certificate_backup(certificate_backup)
     print("Restored Certificate with name '{0}'".format(certificate.name))
 
 except HttpResponseError as e:

@@ -10,147 +10,167 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .resource_py3 import Resource
-    from .tracked_resource_py3 import TrackedResource
-    from .domain_py3 import Domain
-    from .domain_update_parameters_py3 import DomainUpdateParameters
-    from .domain_shared_access_keys_py3 import DomainSharedAccessKeys
-    from .domain_regenerate_key_request_py3 import DomainRegenerateKeyRequest
-    from .domain_topic_py3 import DomainTopic
-    from .event_subscription_destination_py3 import EventSubscriptionDestination
-    from .advanced_filter_py3 import AdvancedFilter
-    from .event_subscription_filter_py3 import EventSubscriptionFilter
-    from .retry_policy_py3 import RetryPolicy
-    from .dead_letter_destination_py3 import DeadLetterDestination
-    from .number_in_advanced_filter_py3 import NumberInAdvancedFilter
-    from .storage_blob_dead_letter_destination_py3 import StorageBlobDeadLetterDestination
-    from .number_not_in_advanced_filter_py3 import NumberNotInAdvancedFilter
-    from .number_less_than_advanced_filter_py3 import NumberLessThanAdvancedFilter
-    from .number_greater_than_advanced_filter_py3 import NumberGreaterThanAdvancedFilter
-    from .number_less_than_or_equals_advanced_filter_py3 import NumberLessThanOrEqualsAdvancedFilter
-    from .number_greater_than_or_equals_advanced_filter_py3 import NumberGreaterThanOrEqualsAdvancedFilter
-    from .bool_equals_advanced_filter_py3 import BoolEqualsAdvancedFilter
-    from .string_in_advanced_filter_py3 import StringInAdvancedFilter
-    from .string_not_in_advanced_filter_py3 import StringNotInAdvancedFilter
-    from .string_begins_with_advanced_filter_py3 import StringBeginsWithAdvancedFilter
-    from .string_ends_with_advanced_filter_py3 import StringEndsWithAdvancedFilter
-    from .string_contains_advanced_filter_py3 import StringContainsAdvancedFilter
-    from .web_hook_event_subscription_destination_py3 import WebHookEventSubscriptionDestination
-    from .event_hub_event_subscription_destination_py3 import EventHubEventSubscriptionDestination
-    from .storage_queue_event_subscription_destination_py3 import StorageQueueEventSubscriptionDestination
-    from .hybrid_connection_event_subscription_destination_py3 import HybridConnectionEventSubscriptionDestination
-    from .service_bus_queue_event_subscription_destination_py3 import ServiceBusQueueEventSubscriptionDestination
-    from .event_subscription_py3 import EventSubscription
-    from .event_subscription_update_parameters_py3 import EventSubscriptionUpdateParameters
-    from .event_subscription_full_url_py3 import EventSubscriptionFullUrl
-    from .operation_info_py3 import OperationInfo
-    from .operation_py3 import Operation
-    from .topic_py3 import Topic
-    from .topic_update_parameters_py3 import TopicUpdateParameters
-    from .topic_shared_access_keys_py3 import TopicSharedAccessKeys
-    from .topic_regenerate_key_request_py3 import TopicRegenerateKeyRequest
-    from .event_type_py3 import EventType
-    from .topic_type_info_py3 import TopicTypeInfo
+    from ._models_py3 import AdvancedFilter
+    from ._models_py3 import AzureFunctionEventSubscriptionDestination
+    from ._models_py3 import BoolEqualsAdvancedFilter
+    from ._models_py3 import DeadLetterDestination
+    from ._models_py3 import Domain
+    from ._models_py3 import DomainRegenerateKeyRequest
+    from ._models_py3 import DomainSharedAccessKeys
+    from ._models_py3 import DomainTopic
+    from ._models_py3 import DomainUpdateParameters
+    from ._models_py3 import EventHubEventSubscriptionDestination
+    from ._models_py3 import EventSubscription
+    from ._models_py3 import EventSubscriptionDestination
+    from ._models_py3 import EventSubscriptionFilter
+    from ._models_py3 import EventSubscriptionFullUrl
+    from ._models_py3 import EventSubscriptionUpdateParameters
+    from ._models_py3 import EventType
+    from ._models_py3 import HybridConnectionEventSubscriptionDestination
+    from ._models_py3 import InputSchemaMapping
+    from ._models_py3 import JsonField
+    from ._models_py3 import JsonFieldWithDefault
+    from ._models_py3 import JsonInputSchemaMapping
+    from ._models_py3 import NumberGreaterThanAdvancedFilter
+    from ._models_py3 import NumberGreaterThanOrEqualsAdvancedFilter
+    from ._models_py3 import NumberInAdvancedFilter
+    from ._models_py3 import NumberLessThanAdvancedFilter
+    from ._models_py3 import NumberLessThanOrEqualsAdvancedFilter
+    from ._models_py3 import NumberNotInAdvancedFilter
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationInfo
+    from ._models_py3 import Resource
+    from ._models_py3 import RetryPolicy
+    from ._models_py3 import ServiceBusQueueEventSubscriptionDestination
+    from ._models_py3 import ServiceBusTopicEventSubscriptionDestination
+    from ._models_py3 import StorageBlobDeadLetterDestination
+    from ._models_py3 import StorageQueueEventSubscriptionDestination
+    from ._models_py3 import StringBeginsWithAdvancedFilter
+    from ._models_py3 import StringContainsAdvancedFilter
+    from ._models_py3 import StringEndsWithAdvancedFilter
+    from ._models_py3 import StringInAdvancedFilter
+    from ._models_py3 import StringNotInAdvancedFilter
+    from ._models_py3 import Topic
+    from ._models_py3 import TopicRegenerateKeyRequest
+    from ._models_py3 import TopicSharedAccessKeys
+    from ._models_py3 import TopicTypeInfo
+    from ._models_py3 import TopicUpdateParameters
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import WebHookEventSubscriptionDestination
 except (SyntaxError, ImportError):
-    from .resource import Resource
-    from .tracked_resource import TrackedResource
-    from .domain import Domain
-    from .domain_update_parameters import DomainUpdateParameters
-    from .domain_shared_access_keys import DomainSharedAccessKeys
-    from .domain_regenerate_key_request import DomainRegenerateKeyRequest
-    from .domain_topic import DomainTopic
-    from .event_subscription_destination import EventSubscriptionDestination
-    from .advanced_filter import AdvancedFilter
-    from .event_subscription_filter import EventSubscriptionFilter
-    from .retry_policy import RetryPolicy
-    from .dead_letter_destination import DeadLetterDestination
-    from .number_in_advanced_filter import NumberInAdvancedFilter
-    from .storage_blob_dead_letter_destination import StorageBlobDeadLetterDestination
-    from .number_not_in_advanced_filter import NumberNotInAdvancedFilter
-    from .number_less_than_advanced_filter import NumberLessThanAdvancedFilter
-    from .number_greater_than_advanced_filter import NumberGreaterThanAdvancedFilter
-    from .number_less_than_or_equals_advanced_filter import NumberLessThanOrEqualsAdvancedFilter
-    from .number_greater_than_or_equals_advanced_filter import NumberGreaterThanOrEqualsAdvancedFilter
-    from .bool_equals_advanced_filter import BoolEqualsAdvancedFilter
-    from .string_in_advanced_filter import StringInAdvancedFilter
-    from .string_not_in_advanced_filter import StringNotInAdvancedFilter
-    from .string_begins_with_advanced_filter import StringBeginsWithAdvancedFilter
-    from .string_ends_with_advanced_filter import StringEndsWithAdvancedFilter
-    from .string_contains_advanced_filter import StringContainsAdvancedFilter
-    from .web_hook_event_subscription_destination import WebHookEventSubscriptionDestination
-    from .event_hub_event_subscription_destination import EventHubEventSubscriptionDestination
-    from .storage_queue_event_subscription_destination import StorageQueueEventSubscriptionDestination
-    from .hybrid_connection_event_subscription_destination import HybridConnectionEventSubscriptionDestination
-    from .service_bus_queue_event_subscription_destination import ServiceBusQueueEventSubscriptionDestination
-    from .event_subscription import EventSubscription
-    from .event_subscription_update_parameters import EventSubscriptionUpdateParameters
-    from .event_subscription_full_url import EventSubscriptionFullUrl
-    from .operation_info import OperationInfo
-    from .operation import Operation
-    from .topic import Topic
-    from .topic_update_parameters import TopicUpdateParameters
-    from .topic_shared_access_keys import TopicSharedAccessKeys
-    from .topic_regenerate_key_request import TopicRegenerateKeyRequest
-    from .event_type import EventType
-    from .topic_type_info import TopicTypeInfo
-from .domain_paged import DomainPaged
-from .domain_topic_paged import DomainTopicPaged
-from .event_subscription_paged import EventSubscriptionPaged
-from .operation_paged import OperationPaged
-from .topic_paged import TopicPaged
-from .event_type_paged import EventTypePaged
-from .topic_type_info_paged import TopicTypeInfoPaged
-from .event_grid_management_client_enums import (
+    from ._models import AdvancedFilter
+    from ._models import AzureFunctionEventSubscriptionDestination
+    from ._models import BoolEqualsAdvancedFilter
+    from ._models import DeadLetterDestination
+    from ._models import Domain
+    from ._models import DomainRegenerateKeyRequest
+    from ._models import DomainSharedAccessKeys
+    from ._models import DomainTopic
+    from ._models import DomainUpdateParameters
+    from ._models import EventHubEventSubscriptionDestination
+    from ._models import EventSubscription
+    from ._models import EventSubscriptionDestination
+    from ._models import EventSubscriptionFilter
+    from ._models import EventSubscriptionFullUrl
+    from ._models import EventSubscriptionUpdateParameters
+    from ._models import EventType
+    from ._models import HybridConnectionEventSubscriptionDestination
+    from ._models import InputSchemaMapping
+    from ._models import JsonField
+    from ._models import JsonFieldWithDefault
+    from ._models import JsonInputSchemaMapping
+    from ._models import NumberGreaterThanAdvancedFilter
+    from ._models import NumberGreaterThanOrEqualsAdvancedFilter
+    from ._models import NumberInAdvancedFilter
+    from ._models import NumberLessThanAdvancedFilter
+    from ._models import NumberLessThanOrEqualsAdvancedFilter
+    from ._models import NumberNotInAdvancedFilter
+    from ._models import Operation
+    from ._models import OperationInfo
+    from ._models import Resource
+    from ._models import RetryPolicy
+    from ._models import ServiceBusQueueEventSubscriptionDestination
+    from ._models import ServiceBusTopicEventSubscriptionDestination
+    from ._models import StorageBlobDeadLetterDestination
+    from ._models import StorageQueueEventSubscriptionDestination
+    from ._models import StringBeginsWithAdvancedFilter
+    from ._models import StringContainsAdvancedFilter
+    from ._models import StringEndsWithAdvancedFilter
+    from ._models import StringInAdvancedFilter
+    from ._models import StringNotInAdvancedFilter
+    from ._models import Topic
+    from ._models import TopicRegenerateKeyRequest
+    from ._models import TopicSharedAccessKeys
+    from ._models import TopicTypeInfo
+    from ._models import TopicUpdateParameters
+    from ._models import TrackedResource
+    from ._models import WebHookEventSubscriptionDestination
+from ._paged_models import DomainPaged
+from ._paged_models import DomainTopicPaged
+from ._paged_models import EventSubscriptionPaged
+from ._paged_models import EventTypePaged
+from ._paged_models import OperationPaged
+from ._paged_models import TopicPaged
+from ._paged_models import TopicTypeInfoPaged
+from ._event_grid_management_client_enums import (
     DomainProvisioningState,
+    InputSchema,
     DomainTopicProvisioningState,
     EventSubscriptionProvisioningState,
+    EventDeliverySchema,
     TopicProvisioningState,
     ResourceRegionType,
     TopicTypeProvisioningState,
 )
 
 __all__ = [
-    'Resource',
-    'TrackedResource',
-    'Domain',
-    'DomainUpdateParameters',
-    'DomainSharedAccessKeys',
-    'DomainRegenerateKeyRequest',
-    'DomainTopic',
-    'EventSubscriptionDestination',
     'AdvancedFilter',
-    'EventSubscriptionFilter',
-    'RetryPolicy',
-    'DeadLetterDestination',
-    'NumberInAdvancedFilter',
-    'StorageBlobDeadLetterDestination',
-    'NumberNotInAdvancedFilter',
-    'NumberLessThanAdvancedFilter',
-    'NumberGreaterThanAdvancedFilter',
-    'NumberLessThanOrEqualsAdvancedFilter',
-    'NumberGreaterThanOrEqualsAdvancedFilter',
+    'AzureFunctionEventSubscriptionDestination',
     'BoolEqualsAdvancedFilter',
+    'DeadLetterDestination',
+    'Domain',
+    'DomainRegenerateKeyRequest',
+    'DomainSharedAccessKeys',
+    'DomainTopic',
+    'DomainUpdateParameters',
+    'EventHubEventSubscriptionDestination',
+    'EventSubscription',
+    'EventSubscriptionDestination',
+    'EventSubscriptionFilter',
+    'EventSubscriptionFullUrl',
+    'EventSubscriptionUpdateParameters',
+    'EventType',
+    'HybridConnectionEventSubscriptionDestination',
+    'InputSchemaMapping',
+    'JsonField',
+    'JsonFieldWithDefault',
+    'JsonInputSchemaMapping',
+    'NumberGreaterThanAdvancedFilter',
+    'NumberGreaterThanOrEqualsAdvancedFilter',
+    'NumberInAdvancedFilter',
+    'NumberLessThanAdvancedFilter',
+    'NumberLessThanOrEqualsAdvancedFilter',
+    'NumberNotInAdvancedFilter',
+    'Operation',
+    'OperationInfo',
+    'Resource',
+    'RetryPolicy',
+    'ServiceBusQueueEventSubscriptionDestination',
+    'ServiceBusTopicEventSubscriptionDestination',
+    'StorageBlobDeadLetterDestination',
+    'StorageQueueEventSubscriptionDestination',
+    'StringBeginsWithAdvancedFilter',
+    'StringContainsAdvancedFilter',
+    'StringEndsWithAdvancedFilter',
     'StringInAdvancedFilter',
     'StringNotInAdvancedFilter',
-    'StringBeginsWithAdvancedFilter',
-    'StringEndsWithAdvancedFilter',
-    'StringContainsAdvancedFilter',
-    'WebHookEventSubscriptionDestination',
-    'EventHubEventSubscriptionDestination',
-    'StorageQueueEventSubscriptionDestination',
-    'HybridConnectionEventSubscriptionDestination',
-    'ServiceBusQueueEventSubscriptionDestination',
-    'EventSubscription',
-    'EventSubscriptionUpdateParameters',
-    'EventSubscriptionFullUrl',
-    'OperationInfo',
-    'Operation',
     'Topic',
-    'TopicUpdateParameters',
-    'TopicSharedAccessKeys',
     'TopicRegenerateKeyRequest',
-    'EventType',
+    'TopicSharedAccessKeys',
     'TopicTypeInfo',
+    'TopicUpdateParameters',
+    'TrackedResource',
+    'WebHookEventSubscriptionDestination',
     'DomainPaged',
     'DomainTopicPaged',
     'EventSubscriptionPaged',
@@ -159,8 +179,10 @@ __all__ = [
     'EventTypePaged',
     'TopicTypeInfoPaged',
     'DomainProvisioningState',
+    'InputSchema',
     'DomainTopicProvisioningState',
     'EventSubscriptionProvisioningState',
+    'EventDeliverySchema',
     'TopicProvisioningState',
     'ResourceRegionType',
     'TopicTypeProvisioningState',
