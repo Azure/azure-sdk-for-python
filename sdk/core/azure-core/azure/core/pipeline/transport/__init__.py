@@ -63,7 +63,7 @@ try:
             'AioHttpTransportResponse',
         ])
     except ImportError as err:
-        if 'no module' in err.msg.lower():
+        if 'no module' in err.message.lower():
             pass  # Aiohttp not installed
 except (ImportError, SyntaxError):
     pass  # Asynchronous pipelines not supported.
