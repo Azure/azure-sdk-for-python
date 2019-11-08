@@ -15,6 +15,14 @@ Release History
 - Fixes bug preventing application_properties from being transmitted when set individually in key-value form.
 
 
+1.3.2 (2019-09-18)
+------------------
+
+**BugFixes**
+
+- Fixed bug where errors were not handled when `EventProcessorHost` was initializing `EventHubClient`.
+
+
 1.3.1 (2019-02-28)
 ------------------
 
