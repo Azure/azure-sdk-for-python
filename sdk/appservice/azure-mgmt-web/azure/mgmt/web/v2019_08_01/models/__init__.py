@@ -16,8 +16,11 @@ try:
     from ._models_py3 import AnalysisData
     from ._models_py3 import AnalysisDefinition
     from ._models_py3 import ApiDefinitionInfo
+    from ._models_py3 import ApiKVReference
+    from ._models_py3 import ApiManagementConfig
     from ._models_py3 import ApplicationLogsConfig
     from ._models_py3 import ApplicationStack
+    from ._models_py3 import ApplicationStackResource
     from ._models_py3 import AppServiceCertificate
     from ._models_py3 import AppServiceCertificateOrder
     from ._models_py3 import AppServiceCertificateOrderPatchResource
@@ -52,8 +55,15 @@ try:
     from ._models_py3 import ConnStringInfo
     from ._models_py3 import ConnStringValueTypePair
     from ._models_py3 import Contact
+    from ._models_py3 import ContainerCpuStatistics
+    from ._models_py3 import ContainerCpuUsage
+    from ._models_py3 import ContainerInfo
+    from ._models_py3 import ContainerMemoryStatistics
+    from ._models_py3 import ContainerNetworkInterfaceStatistics
+    from ._models_py3 import ContainerThrottlingData
     from ._models_py3 import ContinuousWebJob
     from ._models_py3 import CorsSettings
+    from ._models_py3 import CsmCopySlotEntity
     from ._models_py3 import CsmMoveResourceEnvelope
     from ._models_py3 import CsmOperationDescription
     from ._models_py3 import CsmOperationDescriptionProperties
@@ -85,7 +95,7 @@ try:
     from ._models_py3 import DiagnosticMetricSet
     from ._models_py3 import Dimension
     from ._models_py3 import Domain
-    from ._models_py3 import DomainAvailablilityCheckResult
+    from ._models_py3 import DomainAvailabilityCheckResult
     from ._models_py3 import DomainControlCenterSsoRequest
     from ._models_py3 import DomainOwnershipIdentifier
     from ._models_py3 import DomainPatchResource
@@ -100,14 +110,12 @@ try:
     from ._models_py3 import FileSystemHttpLogsConfig
     from ._models_py3 import FunctionEnvelope
     from ._models_py3 import FunctionSecrets
-    from ._models_py3 import GeoDistribution
     from ._models_py3 import GeoRegion
     from ._models_py3 import GlobalCsmSkuDescription
     from ._models_py3 import HandlerMapping
     from ._models_py3 import HostingEnvironmentDeploymentInfo
     from ._models_py3 import HostingEnvironmentDiagnostics
     from ._models_py3 import HostingEnvironmentProfile
-    from ._models_py3 import HostKeys
     from ._models_py3 import HostName
     from ._models_py3 import HostNameBinding
     from ._models_py3 import HostNameSslState
@@ -118,14 +126,13 @@ try:
     from ._models_py3 import Identifier
     from ._models_py3 import InboundEnvironmentEndpoint
     from ._models_py3 import IpSecurityRestriction
-    from ._models_py3 import KeyInfo
+    from ._models_py3 import KeyVaultReferenceCollection
+    from ._models_py3 import KeyVaultReferenceResource
     from ._models_py3 import LocalizableString
     from ._models_py3 import LogSpecification
     from ._models_py3 import ManagedServiceIdentity
     from ._models_py3 import ManagedServiceIdentityUserAssignedIdentitiesValue
-    from ._models_py3 import MetricAvailabilily
     from ._models_py3 import MetricAvailability
-    from ._models_py3 import MetricDefinition
     from ._models_py3 import MetricSpecification
     from ._models_py3 import MigrateMySqlRequest
     from ._models_py3 import MigrateMySqlStatus
@@ -165,12 +172,8 @@ try:
     from ._models_py3 import RequestsBasedTrigger
     from ._models_py3 import Resource
     from ._models_py3 import ResourceHealthMetadata
-    from ._models_py3 import ResourceMetric
     from ._models_py3 import ResourceMetricAvailability
     from ._models_py3 import ResourceMetricDefinition
-    from ._models_py3 import ResourceMetricName
-    from ._models_py3 import ResourceMetricProperty
-    from ._models_py3 import ResourceMetricValue
     from ._models_py3 import ResourceNameAvailability
     from ._models_py3 import ResourceNameAvailabilityRequest
     from ._models_py3 import ResponseMetaData
@@ -222,7 +225,6 @@ try:
     from ._models_py3 import TriggeredWebJob
     from ._models_py3 import Usage
     from ._models_py3 import User
-    from ._models_py3 import ValidateContainerSettingsRequest
     from ._models_py3 import ValidateRequest
     from ._models_py3 import ValidateResponse
     from ._models_py3 import ValidateResponseError
@@ -238,6 +240,7 @@ try:
     from ._models_py3 import VnetValidationTestFailure
     from ._models_py3 import WebAppCollection
     from ._models_py3 import WebJob
+    from ._models_py3 import WebSiteInstanceStatus
     from ._models_py3 import WorkerPool
     from ._models_py3 import WorkerPoolResource
 except (SyntaxError, ImportError):
@@ -247,8 +250,11 @@ except (SyntaxError, ImportError):
     from ._models import AnalysisData
     from ._models import AnalysisDefinition
     from ._models import ApiDefinitionInfo
+    from ._models import ApiKVReference
+    from ._models import ApiManagementConfig
     from ._models import ApplicationLogsConfig
     from ._models import ApplicationStack
+    from ._models import ApplicationStackResource
     from ._models import AppServiceCertificate
     from ._models import AppServiceCertificateOrder
     from ._models import AppServiceCertificateOrderPatchResource
@@ -283,8 +289,15 @@ except (SyntaxError, ImportError):
     from ._models import ConnStringInfo
     from ._models import ConnStringValueTypePair
     from ._models import Contact
+    from ._models import ContainerCpuStatistics
+    from ._models import ContainerCpuUsage
+    from ._models import ContainerInfo
+    from ._models import ContainerMemoryStatistics
+    from ._models import ContainerNetworkInterfaceStatistics
+    from ._models import ContainerThrottlingData
     from ._models import ContinuousWebJob
     from ._models import CorsSettings
+    from ._models import CsmCopySlotEntity
     from ._models import CsmMoveResourceEnvelope
     from ._models import CsmOperationDescription
     from ._models import CsmOperationDescriptionProperties
@@ -316,7 +329,7 @@ except (SyntaxError, ImportError):
     from ._models import DiagnosticMetricSet
     from ._models import Dimension
     from ._models import Domain
-    from ._models import DomainAvailablilityCheckResult
+    from ._models import DomainAvailabilityCheckResult
     from ._models import DomainControlCenterSsoRequest
     from ._models import DomainOwnershipIdentifier
     from ._models import DomainPatchResource
@@ -331,14 +344,12 @@ except (SyntaxError, ImportError):
     from ._models import FileSystemHttpLogsConfig
     from ._models import FunctionEnvelope
     from ._models import FunctionSecrets
-    from ._models import GeoDistribution
     from ._models import GeoRegion
     from ._models import GlobalCsmSkuDescription
     from ._models import HandlerMapping
     from ._models import HostingEnvironmentDeploymentInfo
     from ._models import HostingEnvironmentDiagnostics
     from ._models import HostingEnvironmentProfile
-    from ._models import HostKeys
     from ._models import HostName
     from ._models import HostNameBinding
     from ._models import HostNameSslState
@@ -349,14 +360,13 @@ except (SyntaxError, ImportError):
     from ._models import Identifier
     from ._models import InboundEnvironmentEndpoint
     from ._models import IpSecurityRestriction
-    from ._models import KeyInfo
+    from ._models import KeyVaultReferenceCollection
+    from ._models import KeyVaultReferenceResource
     from ._models import LocalizableString
     from ._models import LogSpecification
     from ._models import ManagedServiceIdentity
     from ._models import ManagedServiceIdentityUserAssignedIdentitiesValue
-    from ._models import MetricAvailabilily
     from ._models import MetricAvailability
-    from ._models import MetricDefinition
     from ._models import MetricSpecification
     from ._models import MigrateMySqlRequest
     from ._models import MigrateMySqlStatus
@@ -396,12 +406,8 @@ except (SyntaxError, ImportError):
     from ._models import RequestsBasedTrigger
     from ._models import Resource
     from ._models import ResourceHealthMetadata
-    from ._models import ResourceMetric
     from ._models import ResourceMetricAvailability
     from ._models import ResourceMetricDefinition
-    from ._models import ResourceMetricName
-    from ._models import ResourceMetricProperty
-    from ._models import ResourceMetricValue
     from ._models import ResourceNameAvailability
     from ._models import ResourceNameAvailabilityRequest
     from ._models import ResponseMetaData
@@ -453,7 +459,6 @@ except (SyntaxError, ImportError):
     from ._models import TriggeredWebJob
     from ._models import Usage
     from ._models import User
-    from ._models import ValidateContainerSettingsRequest
     from ._models import ValidateRequest
     from ._models import ValidateResponse
     from ._models import ValidateResponseError
@@ -469,10 +474,11 @@ except (SyntaxError, ImportError):
     from ._models import VnetValidationTestFailure
     from ._models import WebAppCollection
     from ._models import WebJob
+    from ._models import WebSiteInstanceStatus
     from ._models import WorkerPool
     from ._models import WorkerPoolResource
 from ._paged_models import AnalysisDefinitionPaged
-from ._paged_models import ApplicationStackPaged
+from ._paged_models import ApplicationStackResourcePaged
 from ._paged_models import AppServiceCertificateOrderPaged
 from ._paged_models import AppServiceCertificateResourcePaged
 from ._paged_models import AppServiceEnvironmentResourcePaged
@@ -507,7 +513,6 @@ from ._paged_models import PublicCertificatePaged
 from ._paged_models import RecommendationPaged
 from ._paged_models import ResourceHealthMetadataPaged
 from ._paged_models import ResourceMetricDefinitionPaged
-from ._paged_models import ResourceMetricPaged
 from ._paged_models import SiteConfigResourcePaged
 from ._paged_models import SiteConfigurationSnapshotInfoPaged
 from ._paged_models import SiteExtensionInfoPaged
@@ -537,8 +542,6 @@ from ._web_site_management_client_enums import (
     IpFilterTag,
     AutoHealActionType,
     ConnectionStringType,
-    AzureStorageType,
-    AzureStorageState,
     ScmType,
     ManagedPipelineMode,
     SiteLoadBalancing,
@@ -572,7 +575,12 @@ from ._web_site_management_client_enums import (
     InAvailabilityReasonType,
     CheckNameResourceTypes,
     ValidateResourceTypes,
+    ResolveStatus,
+    ConfigReferenceSource,
+    ConfigReferenceLocation,
     LogLevel,
+    AzureStorageType,
+    AzureStorageState,
     BackupItemStatus,
     DatabaseType,
     FrequencyUnit,
@@ -590,6 +598,7 @@ from ._web_site_management_client_enums import (
     CloneAbilityResult,
     SiteExtensionType,
     TriggeredWebJobStatus,
+    SiteRuntimeState,
     SkuName,
 )
 
@@ -600,8 +609,11 @@ __all__ = [
     'AnalysisData',
     'AnalysisDefinition',
     'ApiDefinitionInfo',
+    'ApiKVReference',
+    'ApiManagementConfig',
     'ApplicationLogsConfig',
     'ApplicationStack',
+    'ApplicationStackResource',
     'AppServiceCertificate',
     'AppServiceCertificateOrder',
     'AppServiceCertificateOrderPatchResource',
@@ -636,8 +648,15 @@ __all__ = [
     'ConnStringInfo',
     'ConnStringValueTypePair',
     'Contact',
+    'ContainerCpuStatistics',
+    'ContainerCpuUsage',
+    'ContainerInfo',
+    'ContainerMemoryStatistics',
+    'ContainerNetworkInterfaceStatistics',
+    'ContainerThrottlingData',
     'ContinuousWebJob',
     'CorsSettings',
+    'CsmCopySlotEntity',
     'CsmMoveResourceEnvelope',
     'CsmOperationDescription',
     'CsmOperationDescriptionProperties',
@@ -669,7 +688,7 @@ __all__ = [
     'DiagnosticMetricSet',
     'Dimension',
     'Domain',
-    'DomainAvailablilityCheckResult',
+    'DomainAvailabilityCheckResult',
     'DomainControlCenterSsoRequest',
     'DomainOwnershipIdentifier',
     'DomainPatchResource',
@@ -684,14 +703,12 @@ __all__ = [
     'FileSystemHttpLogsConfig',
     'FunctionEnvelope',
     'FunctionSecrets',
-    'GeoDistribution',
     'GeoRegion',
     'GlobalCsmSkuDescription',
     'HandlerMapping',
     'HostingEnvironmentDeploymentInfo',
     'HostingEnvironmentDiagnostics',
     'HostingEnvironmentProfile',
-    'HostKeys',
     'HostName',
     'HostNameBinding',
     'HostNameSslState',
@@ -702,14 +719,13 @@ __all__ = [
     'Identifier',
     'InboundEnvironmentEndpoint',
     'IpSecurityRestriction',
-    'KeyInfo',
+    'KeyVaultReferenceCollection',
+    'KeyVaultReferenceResource',
     'LocalizableString',
     'LogSpecification',
     'ManagedServiceIdentity',
     'ManagedServiceIdentityUserAssignedIdentitiesValue',
-    'MetricAvailabilily',
     'MetricAvailability',
-    'MetricDefinition',
     'MetricSpecification',
     'MigrateMySqlRequest',
     'MigrateMySqlStatus',
@@ -749,12 +765,8 @@ __all__ = [
     'RequestsBasedTrigger',
     'Resource',
     'ResourceHealthMetadata',
-    'ResourceMetric',
     'ResourceMetricAvailability',
     'ResourceMetricDefinition',
-    'ResourceMetricName',
-    'ResourceMetricProperty',
-    'ResourceMetricValue',
     'ResourceNameAvailability',
     'ResourceNameAvailabilityRequest',
     'ResponseMetaData',
@@ -806,7 +818,6 @@ __all__ = [
     'TriggeredWebJob',
     'Usage',
     'User',
-    'ValidateContainerSettingsRequest',
     'ValidateRequest',
     'ValidateResponse',
     'ValidateResponseError',
@@ -822,6 +833,7 @@ __all__ = [
     'VnetValidationTestFailure',
     'WebAppCollection',
     'WebJob',
+    'WebSiteInstanceStatus',
     'WorkerPool',
     'WorkerPoolResource',
     'AppServiceCertificateOrderPaged',
@@ -838,7 +850,7 @@ __all__ = [
     'DiagnosticCategoryPaged',
     'AnalysisDefinitionPaged',
     'DetectorDefinitionPaged',
-    'ApplicationStackPaged',
+    'ApplicationStackResourcePaged',
     'RecommendationPaged',
     'SourceControlPaged',
     'BillingMeterPaged',
@@ -857,8 +869,6 @@ __all__ = [
     'ProcessInfoPaged',
     'ProcessModuleInfoPaged',
     'ProcessThreadInfoPaged',
-    'ResourceMetricDefinitionPaged',
-    'ResourceMetricPaged',
     'PerfMonResponsePaged',
     'PublicCertificatePaged',
     'SiteExtensionInfoPaged',
@@ -872,6 +882,7 @@ __all__ = [
     'StampCapacityPaged',
     'InboundEnvironmentEndpointPaged',
     'WorkerPoolResourcePaged',
+    'ResourceMetricDefinitionPaged',
     'SkuInfoPaged',
     'UsagePaged',
     'OutboundEnvironmentEndpointPaged',
@@ -889,8 +900,6 @@ __all__ = [
     'IpFilterTag',
     'AutoHealActionType',
     'ConnectionStringType',
-    'AzureStorageType',
-    'AzureStorageState',
     'ScmType',
     'ManagedPipelineMode',
     'SiteLoadBalancing',
@@ -924,7 +933,12 @@ __all__ = [
     'InAvailabilityReasonType',
     'CheckNameResourceTypes',
     'ValidateResourceTypes',
+    'ResolveStatus',
+    'ConfigReferenceSource',
+    'ConfigReferenceLocation',
     'LogLevel',
+    'AzureStorageType',
+    'AzureStorageState',
     'BackupItemStatus',
     'DatabaseType',
     'FrequencyUnit',
@@ -942,5 +956,6 @@ __all__ = [
     'CloneAbilityResult',
     'SiteExtensionType',
     'TriggeredWebJobStatus',
+    'SiteRuntimeState',
     'SkuName',
 ]

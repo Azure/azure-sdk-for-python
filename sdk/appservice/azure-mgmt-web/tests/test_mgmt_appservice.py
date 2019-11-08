@@ -39,6 +39,8 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
         azure_operation_poller = self.mgmt_client.app_service_plans.create_or_update(resource_group.name, SERVERFARM_NAME, BODY)
         result_create = azure_operation_poller.result()
 
+        self.mgmt_client.list_skus()
+
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
