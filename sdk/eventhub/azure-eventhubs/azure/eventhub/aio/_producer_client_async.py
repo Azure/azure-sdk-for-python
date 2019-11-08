@@ -126,15 +126,16 @@ class EventHubProducerClient(ClientBaseAsync):
                 :dedent: 4
                 :caption: Create a new instance of the EventHubProducerClient from connection string.
         """
-        return super(EventHubProducerClient, cls).\
-            from_connection_string(conn_str,
-                                   event_hub_path=event_hub_path,
-                                   logging_enable=logging_enable,
-                                   http_proxy=http_proxy,
-                                   auth_timeout=auth_timeout,
-                                   user_agent=user_agent,
-                                   retry_total=retry_total,
-                                   transport_type=transport_type)
+        return super(EventHubProducerClient, cls).from_connection_string(
+            conn_str,
+            event_hub_path=event_hub_path,
+            logging_enable=logging_enable,
+            http_proxy=http_proxy,
+            auth_timeout=auth_timeout,
+            user_agent=user_agent,
+            retry_total=retry_total,
+            transport_type=transport_type
+        )
 
     async def send(self, event_data,
             *, partition_key: Union[str, bytes] = None, partition_id: str = None, timeout: float = None) -> None:

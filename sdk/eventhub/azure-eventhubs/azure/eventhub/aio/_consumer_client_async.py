@@ -147,17 +147,18 @@ class EventHubConsumerClient(ClientBaseAsync):
                 :caption: Create a new instance of the EventHubConsumerClient from connection string.
 
         """
-        return super(EventHubConsumerClient, cls).\
-            from_connection_string(conn_str,
-                                   event_hub_path=event_hub_path,
-                                   logging_enable=logging_enable,
-                                   http_proxy=http_proxy,
-                                   auth_timeout=auth_timeout,
-                                   user_agent=user_agent,
-                                   retry_total=retry_total,
-                                   transport_type=transport_type,
-                                   partition_manager=partition_manager,
-                                   load_balancing_interval=load_balancing_interval)
+        return super(EventHubConsumerClient, cls).from_connection_string(
+            conn_str,
+            event_hub_path=event_hub_path,
+            logging_enable=logging_enable,
+            http_proxy=http_proxy,
+            auth_timeout=auth_timeout,
+            user_agent=user_agent,
+            retry_total=retry_total,
+            transport_type=transport_type,
+            partition_manager=partition_manager,
+            load_balancing_interval=load_balancing_interval
+        )
 
     async def receive(
             self, on_events, consumer_group: str,
