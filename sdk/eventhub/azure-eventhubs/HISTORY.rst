@@ -3,6 +3,18 @@
 Release History
 ===============
 
+1.3.3 (2019-11-07)
+------------------
+
+**Features**
+
+- Updated UAMQP version to 1.2.3
+
+**BugFixes**
+
+- Fixes bug preventing application_properties from being transmitted when set individually in key-value form.
+
+
 1.3.1 (2019-02-28)
 ------------------
 

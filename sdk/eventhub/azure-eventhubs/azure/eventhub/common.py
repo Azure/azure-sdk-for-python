@@ -103,7 +103,7 @@ class EventData(object):
         if to_device:
             self.msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
         if batch:
-            self.message = BatchMessage(data=batch, multi_messages=True, properties=self.msg_properties)
+            self.message = BatchMessage(data=batch, multi_messages=True, properties=self.msg_properties, application_properties=self._app_properties)
         elif message:
             self.message = message
             self.msg_properties = message.properties
@@ -111,13 +111,13 @@ class EventData(object):
             self._app_properties = message.application_properties
         else:
             if isinstance(body, list) and body:
-                self.message = Message(body[0], properties=self.msg_properties)
+                self.message = Message(body[0], properties=self.msg_properties, application_properties=self._app_properties)
                 for more in body[1:]:
                     self.message._body.append(more)  # pylint: disable=protected-access
             elif body is None:
                 raise ValueError("EventData cannot be None.")
             else:
-                self.message = Message(body, properties=self.msg_properties)
+                self.message = Message(body, properties=self.msg_properties, application_properties=self._app_properties)
 
     @property
     def sequence_number(self):
@@ -257,6 +257,9 @@ class EventData(object):
             return json.loads(data_str)
         except Exception as e:
             raise TypeError("Event data is not compatible with JSON type: {}".format(e))
+
+    def encode_message(self):
+        return self.message.encode_message()
 
 
 class Offset(object):
