@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.9.0 (2019-11-09)
+++++++++++++++++++
+
+**Features**
+
+- Added operation group PrivateLinkResourcesOperations
+- Added operation group PrivateEndpointConnectionsOperations
+
 0.8.0 (2019-08-15)
 ++++++++++++++++++
 

@@ -233,3 +233,29 @@ class PartitionUsagePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PartitionUsagePaged, self).__init__(*args, **kwargs)
+class PrivateLinkResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PrivateLinkResource <azure.mgmt.cosmosdb.models.PrivateLinkResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PrivateLinkResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PrivateLinkResourcePaged, self).__init__(*args, **kwargs)
+class PrivateEndpointConnectionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PrivateEndpointConnection <azure.mgmt.cosmosdb.models.PrivateEndpointConnection>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PrivateEndpointConnection]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PrivateEndpointConnectionPaged, self).__init__(*args, **kwargs)
