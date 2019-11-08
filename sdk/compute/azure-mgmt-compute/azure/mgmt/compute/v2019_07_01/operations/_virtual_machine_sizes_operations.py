@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ResourceSkusOperations(object):
-    """ResourceSkusOperations operations.
+class VirtualMachineSizesOperations(object):
+    """VirtualMachineSizesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +25,7 @@ class ResourceSkusOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2019-04-01".
+    :ivar api_version: Client Api Version. Constant value: "2019-07-01".
     """
 
     models = models
@@ -35,25 +35,26 @@ class ResourceSkusOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-04-01"
+        self.api_version = "2019-07-01"
 
         self.config = config
 
     def list(
-            self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the list of Microsoft.Compute SKUs available for your
-        Subscription.
+            self, location, custom_headers=None, raw=False, **operation_config):
+        """This API is deprecated. Use [Resources
+        Skus](https://docs.microsoft.com/en-us/rest/api/compute/resourceskus/list).
 
-        :param filter: The filter to apply on the operation.
-        :type filter: str
+        :param location: The location upon which virtual-machine-sizes is
+         queried.
+        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ResourceSku
+        :return: An iterator like instance of VirtualMachineSize
         :rtype:
-         ~azure.mgmt.compute.v2019_04_01.models.ResourceSkuPaged[~azure.mgmt.compute.v2019_04_01.models.ResourceSku]
+         ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineSizePaged[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineSize]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -61,6 +62,7 @@ class ResourceSkusOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
+                    'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -68,8 +70,6 @@ class ResourceSkusOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -105,7 +105,7 @@ class ResourceSkusOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.ResourceSkuPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.VirtualMachineSizePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/skus'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/vmSizes'}
