@@ -11,15 +11,14 @@ import json
 import sys
 
 from azure.eventhub import EventData, TransportType
-from azure.eventhub.client import EventHubClient
+from azure.eventhub import EventHubProducerClient
 
 
 @pytest.mark.liveTest
 def test_send_with_partition_key(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(connection_str)
-    sender = client._create_producer()
-    with sender:
+    client = EventHubProducerClient.from_connection_string(connection_str)
+    with client:
         data_val = 0
         for partition in [b"a", b"b", b"c", b"d", b"e", b"f"]:
             partition_key = b"test_partition_" + partition
@@ -27,7 +26,7 @@ def test_send_with_partition_key(connstr_receivers):
                 data = EventData(str(data_val))
                 #data.partition_key = partition_key
                 data_val += 1
-                sender.send(data, partition_key=partition_key)
+                client.send(data, partition_key=partition_key)
 
     found_partition_keys = {}
     for index, partition in enumerate(receivers):

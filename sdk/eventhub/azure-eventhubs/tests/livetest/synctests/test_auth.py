@@ -14,7 +14,7 @@ from azure.eventhub import EventData, EventHubProducerClient, EventHubConsumerCl
 def test_client_secret_credential(aad_credential, live_eventhub):
     try:
         from azure.identity import EnvironmentCredential
-    except ImportError:
+    except ImportError as e:
         pytest.skip("No azure identity library")
     credential = EnvironmentCredential()
     producer_client = EventHubProducerClient(host=live_eventhub['hostname'],
@@ -26,9 +26,10 @@ def test_client_secret_credential(aad_credential, live_eventhub):
                                              credential=credential,
                                              user_agent='customized information')
     with producer_client:
-        producer_client.send(EventData(body='A single message'))
+        producer_client.send(EventData(body='A single message'), partition_id="0")
 
     def on_events(partition_context, events):
+        on_events.called = True
         assert partition_context.partition_id == '0'
         assert len(events) == 1
         assert list(events[0].body)[0] == 'A single message'.encode('utf-8')
@@ -38,3 +39,6 @@ def test_client_secret_credential(aad_credential, live_eventhub):
                                           "partition_id": '0'})
         worker.start()
         time.sleep(2)
+
+    worker.join()
+    assert on_events.called is True

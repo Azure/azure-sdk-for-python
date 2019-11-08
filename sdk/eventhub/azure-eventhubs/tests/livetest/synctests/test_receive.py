@@ -5,68 +5,76 @@
 #--------------------------------------------------------------------------
 
 import os
+import threading
 import pytest
 import time
 import datetime
 
 from azure.eventhub import EventData, EventPosition, TransportType
-from azure.eventhub.client import EventHubClient
+from azure.eventhub import EventHubConsumerClient
 
 
 @pytest.mark.liveTest
 def test_receive_end_of_stream(connstr_senders):
+    def on_events(partition_context, events):
+        if partition_context.partition_id == "0":
+            on_events.called = True
+            assert events[0].body_as_str() == "Receiving only a single event"
+            assert list(events[-1].body)[0] == b"Receiving only a single event"
+    on_events.called = False
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str)
-    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
-    with receiver:
-        received = receiver.receive(timeout=5)
-        assert len(received) == 0
+    client = EventHubConsumerClient.from_connection_string(connection_str)
+    with client:
+        thread = threading.Thread(target=client.receive, args=(on_events, "$default"),
+                                  kwargs={"partition_id": "0", "initial_event_position": "@latest"})
+        thread.daemon = True
+        thread.start()
+        time.sleep(5)
+        assert on_events.called is False
         senders[0].send(EventData(b"Receiving only a single event"))
-        received = receiver.receive(timeout=5)
-        assert len(received) == 1
-
-        assert received[0].body_as_str() == "Receiving only a single event"
-        assert list(received[-1].body)[0] == b"Receiving only a single event"
-    client.close()
+        time.sleep(5)
+        assert on_events.called is True
+    thread.join()
 
 
 @pytest.mark.liveTest
 def test_receive_with_offset_sync(connstr_senders):
+    def on_events(partition_context, events):
+        if partition_context.partition_id == "0":
+            on_events.offset = events[-1].offset
+            on_events.event = events[0]
+
+
+    on_events.offset = None
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str)
-    partitions = client.get_properties()
-    assert partitions["partition_ids"] == ["0", "1"]
-    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
-    with receiver:
-        more_partitions = client.get_properties()
-        assert more_partitions["partition_ids"] == ["0", "1"]
-
-        received = receiver.receive(timeout=5)
-        assert len(received) == 0
+    senders[0].send(EventData(b"Data"))
+    client = EventHubConsumerClient.from_connection_string(connection_str)
+    with client:
+        thread = threading.Thread(target=client.receive, args=(on_events, "$default"),
+                                  kwargs={"initial_event_position": "-1"})
+        thread.daemon = True
+        thread.start()
+        time.sleep(5)
+        assert on_events.offset is not None
+    thread.join()
+    senders[0].send(EventData(b"Message after offset"))
+    client2 = EventHubConsumerClient.from_connection_string(connection_str)
+    with client2:
+        thread = threading.Thread(target=client.receive, args=(on_events, "$default"),
+                                  kwargs={"initial_event_position": EventPosition(on_events.offset)})
+        thread.daemon = True
+        thread.start()
+        time.sleep(5)
+        assert on_events.event.body_as_str() == "Message after offset"
         senders[0].send(EventData(b"Data"))
-        received = receiver.receive(timeout=5)
-        assert len(received) == 1
-        offset = received[0].offset
-
-        assert list(received[0].body) == [b'Data']
-        assert received[0].body_as_str() == "Data"
-
-    offset_receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset, inclusive=False))
-    with offset_receiver:
-        received = offset_receiver.receive(timeout=5)
-        assert len(received) == 0
-        senders[0].send(EventData(b"Message after offset"))
-        received = offset_receiver.receive(timeout=5)
-        assert len(received) == 1
-    client.close()
+    thread.join()
 
 
 @pytest.mark.liveTest
 def test_receive_with_inclusive_offset(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str)
+    client = EventHubConsumerClient.from_connection_string(connection_str)
     receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
-
     with receiver:
         received = receiver.receive(timeout=5)
         assert len(received) == 0
@@ -75,7 +83,6 @@ def test_receive_with_inclusive_offset(connstr_senders):
         received = receiver.receive(timeout=5)
         assert len(received) == 1
         offset = received[0].offset
-
         assert list(received[0].body) == [b'Data']
         assert received[0].body_as_str() == "Data"
 
