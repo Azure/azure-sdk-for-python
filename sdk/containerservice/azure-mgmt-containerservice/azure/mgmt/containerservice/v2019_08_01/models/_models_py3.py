@@ -62,9 +62,9 @@ class AgentPool(SubResource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param count: Required. Number of agents (VMs) to host docker containers.
-     Allowed values must be in the range of 1 to 100 (inclusive). The default
-     value is 1. . Default value: 1 .
+    :param count: Number of agents (VMs) to host docker containers. Allowed
+     values must be in the range of 1 to 100 (inclusive). The default value is
+     1. . Default value: 1 .
     :type count: int
     :param vm_size: Required. Size of agent VMs. Possible values include:
      'Standard_A1', 'Standard_A10', 'Standard_A11', 'Standard_A1_v2',
@@ -174,7 +174,7 @@ class AgentPool(SubResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'count': {'required': True, 'maximum': 100, 'minimum': 1},
+        'count': {'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
         'provisioning_state': {'readonly': True},
     }
@@ -1075,9 +1075,9 @@ class ManagedClusterAgentPoolProfileProperties(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param count: Required. Number of agents (VMs) to host docker containers.
-     Allowed values must be in the range of 1 to 100 (inclusive). The default
-     value is 1. . Default value: 1 .
+    :param count: Number of agents (VMs) to host docker containers. Allowed
+     values must be in the range of 1 to 100 (inclusive). The default value is
+     1. . Default value: 1 .
     :type count: int
     :param vm_size: Required. Size of agent VMs. Possible values include:
      'Standard_A1', 'Standard_A10', 'Standard_A11', 'Standard_A1_v2',
@@ -1184,7 +1184,7 @@ class ManagedClusterAgentPoolProfileProperties(Model):
     """
 
     _validation = {
-        'count': {'required': True, 'maximum': 100, 'minimum': 1},
+        'count': {'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
         'provisioning_state': {'readonly': True},
     }
@@ -1238,9 +1238,9 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param count: Required. Number of agents (VMs) to host docker containers.
-     Allowed values must be in the range of 1 to 100 (inclusive). The default
-     value is 1. . Default value: 1 .
+    :param count: Number of agents (VMs) to host docker containers. Allowed
+     values must be in the range of 1 to 100 (inclusive). The default value is
+     1. . Default value: 1 .
     :type count: int
     :param vm_size: Required. Size of agent VMs. Possible values include:
      'Standard_A1', 'Standard_A10', 'Standard_A11', 'Standard_A1_v2',
@@ -1350,7 +1350,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     """
 
     _validation = {
-        'count': {'required': True, 'maximum': 100, 'minimum': 1},
+        'count': {'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
         'provisioning_state': {'readonly': True},
         'name': {'required': True, 'pattern': r'^[a-z][a-z0-9]{0,11}$'},
