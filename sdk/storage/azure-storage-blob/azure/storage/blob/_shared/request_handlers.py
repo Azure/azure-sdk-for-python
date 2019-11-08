@@ -66,7 +66,10 @@ def get_length(data):
         except (AttributeError, UnsupportedOperation):
             pass
         else:
-            return fstat(fileno).st_size
+            try:
+                return fstat(fileno).st_size
+            except:
+                pass
 
         # If the stream is seekable and tell() is implemented, calculate the stream size.
         try:
