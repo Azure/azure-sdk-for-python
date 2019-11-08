@@ -48,7 +48,7 @@ try:
     from ._models_py3 import ScopeMapUpdateParameters
     from ._models_py3 import Sku
     from ._models_py3 import Source
-    from ._models_py3 import Status1
+    from ._models_py3 import Status
     from ._models_py3 import StorageAccountProperties
     from ._models_py3 import Target
     from ._models_py3 import Token
@@ -100,7 +100,7 @@ except (SyntaxError, ImportError):
     from ._models import ScopeMapUpdateParameters
     from ._models import Sku
     from ._models import Source
-    from ._models import Status1
+    from ._models import Status
     from ._models import StorageAccountProperties
     from ._models import Target
     from ._models import Token
@@ -135,7 +135,7 @@ from ._container_registry_management_client_enums import (
     WebhookAction,
     TokenCertificateName,
     TokenPasswordName,
-    Status,
+    TokenStatus,
 )
 
 __all__ = [
@@ -177,7 +177,7 @@ __all__ = [
     'ScopeMapUpdateParameters',
     'Sku',
     'Source',
-    'Status1',
+    'Status',
     'StorageAccountProperties',
     'Target',
     'Token',
@@ -211,5 +211,5 @@ __all__ = [
     'WebhookAction',
     'TokenCertificateName',
     'TokenPasswordName',
-    'Status',
+    'TokenStatus',
 ]

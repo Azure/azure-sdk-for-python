@@ -59,7 +59,7 @@ class ScopeMapsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: ScopeMap or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ScopeMap or
+         ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ScopeMap or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -188,9 +188,9 @@ class ScopeMapsOperations(object):
         :return: An instance of LROPoller that returns ScopeMap or
          ClientRawResponse<ScopeMap> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerregistry.v2019_05_01_preview.models.ScopeMap]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerregistry.v2019_06_01_preview.models.ScopeMap]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerregistry.v2019_05_01_preview.models.ScopeMap]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerregistry.v2019_06_01_preview.models.ScopeMap]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_initial(
@@ -386,9 +386,9 @@ class ScopeMapsOperations(object):
         :return: An instance of LROPoller that returns ScopeMap or
          ClientRawResponse<ScopeMap> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerregistry.v2019_05_01_preview.models.ScopeMap]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerregistry.v2019_06_01_preview.models.ScopeMap]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerregistry.v2019_05_01_preview.models.ScopeMap]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerregistry.v2019_06_01_preview.models.ScopeMap]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
@@ -436,7 +436,7 @@ class ScopeMapsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ScopeMap
         :rtype:
-         ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ScopeMapPaged[~azure.mgmt.containerregistry.v2019_05_01_preview.models.ScopeMap]
+         ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ScopeMapPaged[~azure.mgmt.containerregistry.v2019_06_01_preview.models.ScopeMap]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):

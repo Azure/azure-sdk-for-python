@@ -35,6 +35,8 @@ try:
     from ._models_py3 import FileTaskRunRequest
     from ._models_py3 import FileTaskStep
     from ._models_py3 import FileTaskStepUpdateParameters
+    from ._models_py3 import GenerateCredentialsParameters
+    from ._models_py3 import GenerateCredentialsResult
     from ._models_py3 import IdentityProperties
     from ._models_py3 import ImageDescriptor
     from ._models_py3 import ImageUpdateTrigger
@@ -72,6 +74,8 @@ try:
     from ._models_py3 import RunGetLogResult
     from ._models_py3 import RunRequest
     from ._models_py3 import RunUpdateParameters
+    from ._models_py3 import ScopeMap
+    from ._models_py3 import ScopeMapUpdateParameters
     from ._models_py3 import SecretObject
     from ._models_py3 import SetValue
     from ._models_py3 import Sku
@@ -96,6 +100,11 @@ try:
     from ._models_py3 import TimerTrigger
     from ._models_py3 import TimerTriggerDescriptor
     from ._models_py3 import TimerTriggerUpdateParameters
+    from ._models_py3 import Token
+    from ._models_py3 import TokenCertificate
+    from ._models_py3 import TokenCredentialsProperties
+    from ._models_py3 import TokenPassword
+    from ._models_py3 import TokenUpdateParameters
     from ._models_py3 import TriggerProperties
     from ._models_py3 import TriggerUpdateParameters
     from ._models_py3 import TrustPolicy
@@ -130,6 +139,8 @@ except (SyntaxError, ImportError):
     from ._models import FileTaskRunRequest
     from ._models import FileTaskStep
     from ._models import FileTaskStepUpdateParameters
+    from ._models import GenerateCredentialsParameters
+    from ._models import GenerateCredentialsResult
     from ._models import IdentityProperties
     from ._models import ImageDescriptor
     from ._models import ImageUpdateTrigger
@@ -167,6 +178,8 @@ except (SyntaxError, ImportError):
     from ._models import RunGetLogResult
     from ._models import RunRequest
     from ._models import RunUpdateParameters
+    from ._models import ScopeMap
+    from ._models import ScopeMapUpdateParameters
     from ._models import SecretObject
     from ._models import SetValue
     from ._models import Sku
@@ -191,6 +204,11 @@ except (SyntaxError, ImportError):
     from ._models import TimerTrigger
     from ._models import TimerTriggerDescriptor
     from ._models import TimerTriggerUpdateParameters
+    from ._models import Token
+    from ._models import TokenCertificate
+    from ._models import TokenCredentialsProperties
+    from ._models import TokenPassword
+    from ._models import TokenUpdateParameters
     from ._models import TriggerProperties
     from ._models import TriggerUpdateParameters
     from ._models import TrustPolicy
@@ -204,8 +222,10 @@ from ._paged_models import OperationDefinitionPaged
 from ._paged_models import RegistryPaged
 from ._paged_models import ReplicationPaged
 from ._paged_models import RunPaged
+from ._paged_models import ScopeMapPaged
 from ._paged_models import TaskPaged
 from ._paged_models import TaskRunPaged
+from ._paged_models import TokenPaged
 from ._paged_models import WebhookPaged
 from ._container_registry_management_client_enums import (
     ImportMode,
@@ -236,6 +256,9 @@ from ._container_registry_management_client_enums import (
     UpdateTriggerPayloadType,
     SourceRegistryLoginMode,
     SecretObjectType,
+    TokenCertificateName,
+    TokenPasswordName,
+    TokenStatus,
 )
 
 __all__ = [
@@ -264,6 +287,8 @@ __all__ = [
     'FileTaskRunRequest',
     'FileTaskStep',
     'FileTaskStepUpdateParameters',
+    'GenerateCredentialsParameters',
+    'GenerateCredentialsResult',
     'IdentityProperties',
     'ImageDescriptor',
     'ImageUpdateTrigger',
@@ -301,6 +326,8 @@ __all__ = [
     'RunGetLogResult',
     'RunRequest',
     'RunUpdateParameters',
+    'ScopeMap',
+    'ScopeMapUpdateParameters',
     'SecretObject',
     'SetValue',
     'Sku',
@@ -325,6 +352,11 @@ __all__ = [
     'TimerTrigger',
     'TimerTriggerDescriptor',
     'TimerTriggerUpdateParameters',
+    'Token',
+    'TokenCertificate',
+    'TokenCredentialsProperties',
+    'TokenPassword',
+    'TokenUpdateParameters',
     'TriggerProperties',
     'TriggerUpdateParameters',
     'TrustPolicy',
@@ -341,6 +373,8 @@ __all__ = [
     'RunPaged',
     'TaskRunPaged',
     'TaskPaged',
+    'ScopeMapPaged',
+    'TokenPaged',
     'ImportMode',
     'SkuName',
     'SkuTier',
@@ -369,4 +403,7 @@ __all__ = [
     'UpdateTriggerPayloadType',
     'SourceRegistryLoginMode',
     'SecretObjectType',
+    'TokenCertificateName',
+    'TokenPasswordName',
+    'TokenStatus',
 ]

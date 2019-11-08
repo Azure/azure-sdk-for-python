@@ -1223,6 +1223,57 @@ class FileTaskStepUpdateParameters(TaskStepUpdateParameters):
         self.type = 'FileTask'
 
 
+class GenerateCredentialsParameters(Model):
+    """The parameters used to generate credentials for a specified token or user
+    of a container registry.
+
+    :param token_id: The resource ID of the token for which credentials have
+     to be generated.
+    :type token_id: str
+    :param expiry: The expiry date of the generated credentials after which
+     the credentials become invalid.
+    :type expiry: datetime
+    :param name: Specifies name of the password which should be regenerated if
+     any -- password1 or password2. Possible values include: 'password1',
+     'password2'
+    :type name: str or
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenPasswordName
+    """
+
+    _attribute_map = {
+        'token_id': {'key': 'tokenId', 'type': 'str'},
+        'expiry': {'key': 'expiry', 'type': 'iso-8601'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, *, token_id: str=None, expiry=None, name=None, **kwargs) -> None:
+        super(GenerateCredentialsParameters, self).__init__(**kwargs)
+        self.token_id = token_id
+        self.expiry = expiry
+        self.name = name
+
+
+class GenerateCredentialsResult(Model):
+    """The response from the GenerateCredentials operation.
+
+    :param username: The username for a container registry.
+    :type username: str
+    :param passwords: The list of passwords for a container registry.
+    :type passwords:
+     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenPassword]
+    """
+
+    _attribute_map = {
+        'username': {'key': 'username', 'type': 'str'},
+        'passwords': {'key': 'passwords', 'type': '[TokenPassword]'},
+    }
+
+    def __init__(self, *, username: str=None, passwords=None, **kwargs) -> None:
+        super(GenerateCredentialsResult, self).__init__(**kwargs)
+        self.username = username
+        self.passwords = passwords
+
+
 class IdentityProperties(Model):
     """Managed identity for the resource.
 
@@ -2418,8 +2469,6 @@ class RunFilter(Model):
      'QuickRun', 'AutoBuild', 'AutoRun'
     :type run_type: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunType
-    :param task_run_name: The name of task run associated with this run.
-    :type task_run_name: str
     :param status: The current status of the run. Possible values include:
      'Queued', 'Started', 'Running', 'Succeeded', 'Failed', 'Canceled',
      'Error', 'Timeout'
@@ -2443,7 +2492,6 @@ class RunFilter(Model):
     _attribute_map = {
         'run_id': {'key': 'runId', 'type': 'str'},
         'run_type': {'key': 'runType', 'type': 'str'},
-        'task_run_name': {'key': 'taskRunName', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'create_time': {'key': 'createTime', 'type': 'iso-8601'},
         'finish_time': {'key': 'finishTime', 'type': 'iso-8601'},
@@ -2452,11 +2500,10 @@ class RunFilter(Model):
         'task_name': {'key': 'taskName', 'type': 'str'},
     }
 
-    def __init__(self, *, run_id: str=None, run_type=None, task_run_name: str=None, status=None, create_time=None, finish_time=None, output_image_manifests: str=None, is_archive_enabled: bool=None, task_name: str=None, **kwargs) -> None:
+    def __init__(self, *, run_id: str=None, run_type=None, status=None, create_time=None, finish_time=None, output_image_manifests: str=None, is_archive_enabled: bool=None, task_name: str=None, **kwargs) -> None:
         super(RunFilter, self).__init__(**kwargs)
         self.run_id = run_id
         self.run_type = run_type
-        self.task_run_name = task_run_name
         self.status = status
         self.create_time = create_time
         self.finish_time = finish_time
@@ -2496,6 +2543,90 @@ class RunUpdateParameters(Model):
     def __init__(self, *, is_archive_enabled: bool=None, **kwargs) -> None:
         super(RunUpdateParameters, self).__init__(**kwargs)
         self.is_archive_enabled = is_archive_enabled
+
+
+class ScopeMap(ProxyResource):
+    """An object that represents a scope map for a container registry.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :param description: The user friendly description of the scope map.
+    :type description: str
+    :ivar scope_map_type: The type of the scope map. E.g. BuildIn scope map.
+    :vartype scope_map_type: str
+    :ivar creation_date: The creation date of scope map.
+    :vartype creation_date: datetime
+    :ivar provisioning_state: Provisioning state of the resource. Possible
+     values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
+     'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+    :param actions: Required. The list of scoped permissions for registry
+     artifacts.
+     E.g. repositories/repository-name/content/read,
+     repositories/repository-name/metadata/write
+    :type actions: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'scope_map_type': {'readonly': True},
+        'creation_date': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'actions': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'scope_map_type': {'key': 'properties.type', 'type': 'str'},
+        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'actions': {'key': 'properties.actions', 'type': '[str]'},
+    }
+
+    def __init__(self, *, actions, description: str=None, **kwargs) -> None:
+        super(ScopeMap, self).__init__(**kwargs)
+        self.description = description
+        self.scope_map_type = None
+        self.creation_date = None
+        self.provisioning_state = None
+        self.actions = actions
+
+
+class ScopeMapUpdateParameters(Model):
+    """The properties for updating the scope map.
+
+    :param description: The user friendly description of the scope map.
+    :type description: str
+    :param actions: The list of scope permissions for registry artifacts.
+     E.g. repositories/repository-name/pull,
+     repositories/repository-name/delete
+    :type actions: list[str]
+    """
+
+    _attribute_map = {
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'actions': {'key': 'properties.actions', 'type': '[str]'},
+    }
+
+    def __init__(self, *, description: str=None, actions=None, **kwargs) -> None:
+        super(ScopeMapUpdateParameters, self).__init__(**kwargs)
+        self.description = description
+        self.actions = actions
 
 
 class SecretObject(Model):
@@ -3096,6 +3227,9 @@ class TaskRun(Resource):
     :ivar run_result: The result of this task run
     :vartype run_result:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Run
+    :param force_update_tag: How the run should be forced to rerun even if the
+     run request configuration has not changed
+    :type force_update_tag: str
     """
 
     _validation = {
@@ -3117,14 +3251,16 @@ class TaskRun(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'run_request': {'key': 'properties.runRequest', 'type': 'RunRequest'},
         'run_result': {'key': 'properties.runResult', 'type': 'Run'},
+        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, run_request=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, run_request=None, force_update_tag: str=None, **kwargs) -> None:
         super(TaskRun, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.provisioning_state = None
         self.run_request = run_request
         self.run_result = None
+        self.force_update_tag = force_update_tag
 
 
 class TaskRunRequest(RunRequest):
@@ -3174,6 +3310,9 @@ class TaskRunUpdateParameters(Model):
     :param run_request: The request (parameters) for the new run
     :type run_request:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunRequest
+    :param force_update_tag: How the run should be forced to rerun even if the
+     run request configuration has not changed
+    :type force_update_tag: str
     :param tags: The ARM resource tags.
     :type tags: dict[str, str]
     """
@@ -3181,13 +3320,15 @@ class TaskRunUpdateParameters(Model):
     _attribute_map = {
         'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'run_request': {'key': 'properties.runRequest', 'type': 'RunRequest'},
+        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, identity=None, run_request=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, identity=None, run_request=None, force_update_tag: str=None, tags=None, **kwargs) -> None:
         super(TaskRunUpdateParameters, self).__init__(**kwargs)
         self.identity = identity
         self.run_request = run_request
+        self.force_update_tag = force_update_tag
         self.tags = tags
 
 
@@ -3332,6 +3473,191 @@ class TimerTriggerUpdateParameters(Model):
         self.schedule = schedule
         self.status = status
         self.name = name
+
+
+class Token(ProxyResource):
+    """An object that represents a token for a container registry.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar creation_date: The creation date of scope map.
+    :vartype creation_date: datetime
+    :ivar provisioning_state: Provisioning state of the resource. Possible
+     values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
+     'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+    :param scope_map_id: The resource ID of the scope map to which the token
+     will be associated with.
+    :type scope_map_id: str
+    :param object_id: The user/group/application object ID for which the token
+     has to be created.
+    :type object_id: str
+    :param credentials: The credentials that can be used for authenticating
+     the token.
+    :type credentials:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenCredentialsProperties
+    :param status: The status of the token example enabled or disabled.
+     Possible values include: 'enabled', 'disabled'
+    :type status: str or
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenStatus
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'creation_date': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'scope_map_id': {'key': 'properties.scopeMapId', 'type': 'str'},
+        'object_id': {'key': 'properties.objectId', 'type': 'str'},
+        'credentials': {'key': 'properties.credentials', 'type': 'TokenCredentialsProperties'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+    }
+
+    def __init__(self, *, scope_map_id: str=None, object_id: str=None, credentials=None, status=None, **kwargs) -> None:
+        super(Token, self).__init__(**kwargs)
+        self.creation_date = None
+        self.provisioning_state = None
+        self.scope_map_id = scope_map_id
+        self.object_id = object_id
+        self.credentials = credentials
+        self.status = status
+
+
+class TokenCertificate(Model):
+    """The properties of a certificate used for authenticating a token.
+
+    :param name: Possible values include: 'certificate1', 'certificate2'
+    :type name: str or
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenCertificateName
+    :param expiry: The expiry datetime of the certificate.
+    :type expiry: datetime
+    :param thumbprint: The thumbprint of the certificate.
+    :type thumbprint: str
+    :param encoded_pem_certificate: Base 64 encoded string of the public
+     certificate1 in PEM format that will be used for authenticating the token.
+    :type encoded_pem_certificate: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'expiry': {'key': 'expiry', 'type': 'iso-8601'},
+        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+        'encoded_pem_certificate': {'key': 'encodedPemCertificate', 'type': 'str'},
+    }
+
+    def __init__(self, *, name=None, expiry=None, thumbprint: str=None, encoded_pem_certificate: str=None, **kwargs) -> None:
+        super(TokenCertificate, self).__init__(**kwargs)
+        self.name = name
+        self.expiry = expiry
+        self.thumbprint = thumbprint
+        self.encoded_pem_certificate = encoded_pem_certificate
+
+
+class TokenCredentialsProperties(Model):
+    """The properties of the credentials that can be used for authenticating the
+    token.
+
+    :param certificates:
+    :type certificates:
+     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenCertificate]
+    :param passwords:
+    :type passwords:
+     list[~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenPassword]
+    """
+
+    _attribute_map = {
+        'certificates': {'key': 'certificates', 'type': '[TokenCertificate]'},
+        'passwords': {'key': 'passwords', 'type': '[TokenPassword]'},
+    }
+
+    def __init__(self, *, certificates=None, passwords=None, **kwargs) -> None:
+        super(TokenCredentialsProperties, self).__init__(**kwargs)
+        self.certificates = certificates
+        self.passwords = passwords
+
+
+class TokenPassword(Model):
+    """The password that will be used for authenticating the token of a container
+    registry.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param creation_time: The creation datetime of the password.
+    :type creation_time: datetime
+    :param expiry: The expiry datetime of the password.
+    :type expiry: datetime
+    :param name: The password name "password1" or "password2". Possible values
+     include: 'password1', 'password2'
+    :type name: str or
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenPasswordName
+    :ivar value: The password value.
+    :vartype value: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
+        'expiry': {'key': 'expiry', 'type': 'iso-8601'},
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, *, creation_time=None, expiry=None, name=None, **kwargs) -> None:
+        super(TokenPassword, self).__init__(**kwargs)
+        self.creation_time = creation_time
+        self.expiry = expiry
+        self.name = name
+        self.value = None
+
+
+class TokenUpdateParameters(Model):
+    """The parameters for updating a token.
+
+    :param scope_map_id: The resource ID of the scope map to which the token
+     will be associated with.
+    :type scope_map_id: str
+    :param status: The status of the token example enabled or disabled.
+     Possible values include: 'enabled', 'disabled'
+    :type status: str or
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenStatus
+    :param credentials: The credentials that can be used for authenticating
+     the token.
+    :type credentials:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenCredentialsProperties
+    """
+
+    _attribute_map = {
+        'scope_map_id': {'key': 'properties.scopeMapId', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'credentials': {'key': 'properties.credentials', 'type': 'TokenCredentialsProperties'},
+    }
+
+    def __init__(self, *, scope_map_id: str=None, status=None, credentials=None, **kwargs) -> None:
+        super(TokenUpdateParameters, self).__init__(**kwargs)
+        self.scope_map_id = scope_map_id
+        self.status = status
+        self.credentials = credentials
 
 
 class TriggerProperties(Model):

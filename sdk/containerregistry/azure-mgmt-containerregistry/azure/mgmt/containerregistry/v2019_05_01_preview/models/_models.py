@@ -228,11 +228,10 @@ class GenerateCredentialsParameters(Model):
      to be generated.
     :type token_id: str
     :param expiry: The expiry date of the generated credentials after which
-     the credentials become invalid. Default value:
-     "9999-12-31T15:59:59.9999999-08:00" .
+     the credentials become invalid.
     :type expiry: datetime
     :param name: Specifies name of the password which should be regenerated if
-     any -- password or password2. Possible values include: 'password1',
+     any -- password1 or password2. Possible values include: 'password1',
      'password2'
     :type name: str or
      ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPasswordName
@@ -247,7 +246,7 @@ class GenerateCredentialsParameters(Model):
     def __init__(self, **kwargs):
         super(GenerateCredentialsParameters, self).__init__(**kwargs)
         self.token_id = kwargs.get('token_id', None)
-        self.expiry = kwargs.get('expiry', "9999-12-31T15:59:59.9999999-08:00")
+        self.expiry = kwargs.get('expiry', None)
         self.name = kwargs.get('name', None)
 
 
@@ -717,7 +716,7 @@ class Registry(Resource):
     :ivar status: The status of the container registry at the time the
      operation was called.
     :vartype status:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Status1
+     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Status
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled. Default value: False .
     :type admin_user_enabled: bool
@@ -752,7 +751,7 @@ class Registry(Resource):
         'login_server': {'key': 'properties.loginServer', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'Status1'},
+        'status': {'key': 'properties.status', 'type': 'Status'},
         'admin_user_enabled': {'key': 'properties.adminUserEnabled', 'type': 'bool'},
         'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountProperties'},
         'network_rule_set': {'key': 'properties.networkRuleSet', 'type': 'NetworkRuleSet'},
@@ -1009,7 +1008,7 @@ class Replication(Resource):
     :ivar status: The status of the replication at the time the operation was
      called.
     :vartype status:
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Status1
+     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Status
     """
 
     _validation = {
@@ -1028,7 +1027,7 @@ class Replication(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'Status1'},
+        'status': {'key': 'properties.status', 'type': 'Status'},
     }
 
     def __init__(self, **kwargs):
@@ -1115,8 +1114,8 @@ class ScopeMap(ProxyResource):
      ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ProvisioningState
     :param actions: Required. The list of scoped permissions for registry
      artifacts.
-     E.g. repositories/repository-name/pull,
-     repositories/repository-name/delete
+     E.g. repositories/repository-name/content/read,
+     repositories/repository-name/metadata/write
     :type actions: list[str]
     """
 
@@ -1231,7 +1230,7 @@ class Source(Model):
         self.instance_id = kwargs.get('instance_id', None)
 
 
-class Status1(Model):
+class Status(Model):
     """The status of an Azure resource at the time the operation was called.
 
     Variables are only populated by the server, and will be ignored when
@@ -1260,7 +1259,7 @@ class Status1(Model):
     }
 
     def __init__(self, **kwargs):
-        super(Status1, self).__init__(**kwargs)
+        super(Status, self).__init__(**kwargs)
         self.display_status = None
         self.message = None
         self.timestamp = None
@@ -1370,7 +1369,7 @@ class Token(ProxyResource):
     :param status: The status of the token example enabled or disabled.
      Possible values include: 'enabled', 'disabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Status
+     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenStatus
     """
 
     _validation = {
@@ -1463,11 +1462,11 @@ class TokenPassword(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param creation_time: The password created datetime of the password.
+    :param creation_time: The creation datetime of the password.
     :type creation_time: datetime
     :param expiry: The expiry datetime of the password.
     :type expiry: datetime
-    :param name: The password name "password" or "password2". Possible values
+    :param name: The password name "password1" or "password2". Possible values
      include: 'password1', 'password2'
     :type name: str or
      ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPasswordName
@@ -1503,7 +1502,7 @@ class TokenUpdateParameters(Model):
     :param status: The status of the token example enabled or disabled.
      Possible values include: 'enabled', 'disabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.Status
+     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenStatus
     :param credentials: The credentials that can be used for authenticating
      the token.
     :type credentials:
