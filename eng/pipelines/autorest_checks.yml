@@ -1,6 +1,3 @@
-# Skip triggering this pipeline for CI and run it only for PR
-trigger: none
-
 pr:
   branches:
     include:
