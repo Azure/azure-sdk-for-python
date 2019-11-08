@@ -326,6 +326,8 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_with_requests_async(self, resource_group, location, storage_account, storage_account_key):
+        if not self.is_live:
+            pytest.skip("Recording is too big becasue of text.")
         await self._setup(storage_account.name, storage_account_key)
         # Act
         uri = "http://www.gutenberg.org/files/59466/59466-0.txt"
@@ -338,6 +340,8 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_with_aiohttp_async(self, resource_group, location, storage_account, storage_account_key):
+        if not self.is_live:
+            pytest.skip("Recording is too big becasue of text.")
         await self._setup(storage_account.name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, "gutenberg")
         # Act
