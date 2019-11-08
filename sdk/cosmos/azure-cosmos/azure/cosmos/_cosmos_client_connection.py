@@ -37,6 +37,7 @@ from azure.core.pipeline.policies import (  # type: ignore
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
     DistributedTracingPolicy,
+    HttpLoggingPolicy,
     ProxyPolicy)
 
 from . import _base as base
@@ -184,8 +185,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             ContentDecodePolicy(),
             retry_policy,
             CustomHookPolicy(**kwargs),
-            DistributedTracingPolicy(),
             NetworkTraceLoggingPolicy(**kwargs),
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
             ]
 
         transport = kwargs.pop("transport", None)
