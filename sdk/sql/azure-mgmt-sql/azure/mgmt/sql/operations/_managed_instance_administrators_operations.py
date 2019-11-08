@@ -28,6 +28,7 @@ class ManagedInstanceAdministratorsOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the request. Constant value: "2017-03-01-preview".
+    :ivar administrator_name: The administrator name. Constant value: "ActiveDirectory".
     """
 
     models = models
@@ -38,6 +39,7 @@ class ManagedInstanceAdministratorsOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.api_version = "2017-03-01-preview"
+        self.administrator_name = "ActiveDirectory"
 
         self.config = config
 
@@ -116,7 +118,7 @@ class ManagedInstanceAdministratorsOperations(object):
     list_by_instance.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/administrators'}
 
     def get(
-            self, resource_group_name, managed_instance_name, administrator_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, managed_instance_name, custom_headers=None, raw=False, **operation_config):
         """Gets a managed instance administrator.
 
         :param resource_group_name: The name of the resource group that
@@ -125,8 +127,6 @@ class ManagedInstanceAdministratorsOperations(object):
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
-        :param administrator_name: The administrator name.
-        :type administrator_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -142,7 +142,7 @@ class ManagedInstanceAdministratorsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
-            'administratorName': self._serialize.url("administrator_name", administrator_name, 'str'),
+            'administratorName': self._serialize.url("self.administrator_name", self.administrator_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -183,13 +183,13 @@ class ManagedInstanceAdministratorsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, managed_instance_name, administrator_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, managed_instance_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
-            'administratorName': self._serialize.url("administrator_name", administrator_name, 'str'),
+            'administratorName': self._serialize.url("self.administrator_name", self.administrator_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -235,7 +235,7 @@ class ManagedInstanceAdministratorsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, managed_instance_name, administrator_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, managed_instance_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates a managed instance administrator.
 
         :param resource_group_name: The name of the resource group that
@@ -244,8 +244,6 @@ class ManagedInstanceAdministratorsOperations(object):
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
-        :param administrator_name: The requested administrator name.
-        :type administrator_name: str
         :param parameters: The requested administrator parameters.
         :type parameters: ~azure.mgmt.sql.models.ManagedInstanceAdministrator
         :param dict custom_headers: headers that will be added to the request
@@ -265,7 +263,6 @@ class ManagedInstanceAdministratorsOperations(object):
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
-            administrator_name=administrator_name,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -292,13 +289,13 @@ class ManagedInstanceAdministratorsOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, managed_instance_name, administrator_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, managed_instance_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str'),
-            'administratorName': self._serialize.url("administrator_name", administrator_name, 'str'),
+            'administratorName': self._serialize.url("self.administrator_name", self.administrator_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -330,7 +327,7 @@ class ManagedInstanceAdministratorsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, managed_instance_name, administrator_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, managed_instance_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a managed instance administrator.
 
         :param resource_group_name: The name of the resource group that
@@ -339,8 +336,6 @@ class ManagedInstanceAdministratorsOperations(object):
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
-        :param administrator_name: The administrator name.
-        :type administrator_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -355,7 +350,6 @@ class ManagedInstanceAdministratorsOperations(object):
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
-            administrator_name=administrator_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
