@@ -20,8 +20,9 @@ excluded_packages = [
     "azure-mgmt",
     "azure.core.tracing.opencensus",
     "azure.eventhub.checkpointstoreblob.aio",
-    "azure.storage.file.share" # Github issue 7879.
-    ]
+    "azure.storage.fileshare", # Github issue 7879.
+    "azure.storage.filedatalake", # Github issue 7879.
+]
 
 def should_run_import_all(package_name):
     return not (package_name in excluded_packages or "nspkg" in package_name)
