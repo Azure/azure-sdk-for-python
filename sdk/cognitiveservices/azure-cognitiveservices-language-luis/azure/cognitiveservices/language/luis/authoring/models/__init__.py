@@ -60,8 +60,10 @@ try:
     from ._models_py3 import IntentClassifier
     from ._models_py3 import IntentPrediction
     from ._models_py3 import IntentsSuggestionExample
+    from ._models_py3 import JsonChild
     from ._models_py3 import JSONEntity
     from ._models_py3 import JSONModelFeature
+    from ._models_py3 import JsonModelFeatureInformation
     from ._models_py3 import JSONRegexFeature
     from ._models_py3 import JSONUtterance
     from ._models_py3 import LabeledUtterance
@@ -69,6 +71,7 @@ try:
     from ._models_py3 import LabelTextObject
     from ._models_py3 import LuisApp
     from ._models_py3 import ModelCreateObject
+    from ._models_py3 import ModelFeatureInformation
     from ._models_py3 import ModelInfo
     from ._models_py3 import ModelInfoResponse
     from ._models_py3 import ModelTrainingDetails
@@ -81,13 +84,11 @@ try:
     from ._models_py3 import PatternAnyEntityExtractor
     from ._models_py3 import PatternAnyModelCreateObject
     from ._models_py3 import PatternAnyModelUpdateObject
-    from ._models_py3 import PatternCreateObject
     from ._models_py3 import PatternFeatureInfo
     from ._models_py3 import PatternRule
     from ._models_py3 import PatternRuleCreateObject
     from ._models_py3 import PatternRuleInfo
     from ._models_py3 import PatternRuleUpdateObject
-    from ._models_py3 import PatternUpdateObject
     from ._models_py3 import PersonalAssistantsResponse
     from ._models_py3 import PhraselistCreateObject
     from ._models_py3 import PhraseListFeatureInfo
@@ -166,8 +167,10 @@ except (SyntaxError, ImportError):
     from ._models import IntentClassifier
     from ._models import IntentPrediction
     from ._models import IntentsSuggestionExample
+    from ._models import JsonChild
     from ._models import JSONEntity
     from ._models import JSONModelFeature
+    from ._models import JsonModelFeatureInformation
     from ._models import JSONRegexFeature
     from ._models import JSONUtterance
     from ._models import LabeledUtterance
@@ -175,6 +178,7 @@ except (SyntaxError, ImportError):
     from ._models import LabelTextObject
     from ._models import LuisApp
     from ._models import ModelCreateObject
+    from ._models import ModelFeatureInformation
     from ._models import ModelInfo
     from ._models import ModelInfoResponse
     from ._models import ModelTrainingDetails
@@ -187,13 +191,11 @@ except (SyntaxError, ImportError):
     from ._models import PatternAnyEntityExtractor
     from ._models import PatternAnyModelCreateObject
     from ._models import PatternAnyModelUpdateObject
-    from ._models import PatternCreateObject
     from ._models import PatternFeatureInfo
     from ._models import PatternRule
     from ._models import PatternRuleCreateObject
     from ._models import PatternRuleInfo
     from ._models import PatternRuleUpdateObject
-    from ._models import PatternUpdateObject
     from ._models import PersonalAssistantsResponse
     from ._models import PhraselistCreateObject
     from ._models import PhraseListFeatureInfo
@@ -277,8 +279,10 @@ __all__ = [
     'IntentClassifier',
     'IntentPrediction',
     'IntentsSuggestionExample',
+    'JsonChild',
     'JSONEntity',
     'JSONModelFeature',
+    'JsonModelFeatureInformation',
     'JSONRegexFeature',
     'JSONUtterance',
     'LabeledUtterance',
@@ -286,6 +290,7 @@ __all__ = [
     'LabelTextObject',
     'LuisApp',
     'ModelCreateObject',
+    'ModelFeatureInformation',
     'ModelInfo',
     'ModelInfoResponse',
     'ModelTrainingDetails',
@@ -298,13 +303,11 @@ __all__ = [
     'PatternAnyEntityExtractor',
     'PatternAnyModelCreateObject',
     'PatternAnyModelUpdateObject',
-    'PatternCreateObject',
     'PatternFeatureInfo',
     'PatternRule',
     'PatternRuleCreateObject',
     'PatternRuleInfo',
     'PatternRuleUpdateObject',
-    'PatternUpdateObject',
     'PersonalAssistantsResponse',
     'PhraselistCreateObject',
     'PhraseListFeatureInfo',

@@ -1262,19 +1262,24 @@ class FeatureInfoObject(Model):
     :type name: str
     :param is_active: Indicates if the feature is enabled.
     :type is_active: bool
+    :param enabled_for_all_models: Indicates if the feature is enabled for all
+     models in the application.
+    :type enabled_for_all_models: bool
     """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'int'},
         'name': {'key': 'name', 'type': 'str'},
         'is_active': {'key': 'isActive', 'type': 'bool'},
+        'enabled_for_all_models': {'key': 'enabledForAllModels', 'type': 'bool'},
     }
 
-    def __init__(self, *, id: int=None, name: str=None, is_active: bool=None, **kwargs) -> None:
+    def __init__(self, *, id: int=None, name: str=None, is_active: bool=None, enabled_for_all_models: bool=None, **kwargs) -> None:
         super(FeatureInfoObject, self).__init__(**kwargs)
         self.id = id
         self.name = name
         self.is_active = is_active
+        self.enabled_for_all_models = enabled_for_all_models
 
 
 class FeaturesResponseObject(Model):
@@ -1414,27 +1419,33 @@ class HierarchicalModel(Model):
     :param name:
     :type name: str
     :param children:
-    :type children: list[str]
+    :type children:
+     list[~azure.cognitiveservices.language.luis.authoring.models.JsonChild]
+    :param features:
+    :type features:
+     list[~azure.cognitiveservices.language.luis.authoring.models.JsonModelFeatureInformation]
+    :param roles:
+    :type roles: list[str]
     :param inherits:
     :type inherits:
      ~azure.cognitiveservices.language.luis.authoring.models.PrebuiltDomainObject
-    :param roles:
-    :type roles: list[str]
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'children': {'key': 'children', 'type': '[str]'},
-        'inherits': {'key': 'inherits', 'type': 'PrebuiltDomainObject'},
+        'children': {'key': 'children', 'type': '[JsonChild]'},
+        'features': {'key': 'features', 'type': '[JsonModelFeatureInformation]'},
         'roles': {'key': 'roles', 'type': '[str]'},
+        'inherits': {'key': 'inherits', 'type': 'PrebuiltDomainObject'},
     }
 
-    def __init__(self, *, name: str=None, children=None, inherits=None, roles=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, children=None, features=None, roles=None, inherits=None, **kwargs) -> None:
         super(HierarchicalModel, self).__init__(**kwargs)
         self.name = name
         self.children = children
-        self.inherits = inherits
+        self.features = features
         self.roles = roles
+        self.inherits = inherits
 
 
 class IntentClassifier(ModelInfo):
@@ -1533,6 +1544,36 @@ class IntentsSuggestionExample(Model):
         self.entity_predictions = entity_predictions
 
 
+class JsonChild(Model):
+    """JsonChild.
+
+    :param name:
+    :type name: str
+    :param instance_of:
+    :type instance_of: str
+    :param children:
+    :type children:
+     list[~azure.cognitiveservices.language.luis.authoring.models.JsonChild]
+    :param features:
+    :type features:
+     list[~azure.cognitiveservices.language.luis.authoring.models.JsonModelFeatureInformation]
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'instance_of': {'key': 'instanceOf', 'type': 'str'},
+        'children': {'key': 'children', 'type': '[JsonChild]'},
+        'features': {'key': 'features', 'type': '[JsonModelFeatureInformation]'},
+    }
+
+    def __init__(self, *, name: str=None, instance_of: str=None, children=None, features=None, **kwargs) -> None:
+        super(JsonChild, self).__init__(**kwargs)
+        self.name = name
+        self.instance_of = instance_of
+        self.children = children
+        self.features = features
+
+
 class JSONEntity(Model):
     """Exported Model - Extracted Entity from utterance.
 
@@ -1590,6 +1631,9 @@ class JSONModelFeature(Model):
      lookup feature where its value is 1 if the lexicon contains a given word
      or 0 if it doesn’t.  Default value is true.
     :type mode: bool
+    :param enabled_for_all_models: Indicates if the Phraselist is enabled for
+     all models in the application. Default value: True .
+    :type enabled_for_all_models: bool
     """
 
     _attribute_map = {
@@ -1597,14 +1641,37 @@ class JSONModelFeature(Model):
         'name': {'key': 'name', 'type': 'str'},
         'words': {'key': 'words', 'type': 'str'},
         'mode': {'key': 'mode', 'type': 'bool'},
+        'enabled_for_all_models': {'key': 'enabledForAllModels', 'type': 'bool'},
     }
 
-    def __init__(self, *, activated: bool=None, name: str=None, words: str=None, mode: bool=None, **kwargs) -> None:
+    def __init__(self, *, activated: bool=None, name: str=None, words: str=None, mode: bool=None, enabled_for_all_models: bool=True, **kwargs) -> None:
         super(JSONModelFeature, self).__init__(**kwargs)
         self.activated = activated
         self.name = name
         self.words = words
         self.mode = mode
+        self.enabled_for_all_models = enabled_for_all_models
+
+
+class JsonModelFeatureInformation(Model):
+    """An object containing the model feature information either the model name or
+    feature name.
+
+    :param model_name: The name of the model used.
+    :type model_name: str
+    :param feature_name: The name of the feature used.
+    :type feature_name: str
+    """
+
+    _attribute_map = {
+        'model_name': {'key': 'modelName', 'type': 'str'},
+        'feature_name': {'key': 'featureName', 'type': 'str'},
+    }
+
+    def __init__(self, *, model_name: str=None, feature_name: str=None, **kwargs) -> None:
+        super(JsonModelFeatureInformation, self).__init__(**kwargs)
+        self.model_name = model_name
+        self.feature_name = feature_name
 
 
 class JSONRegexFeature(Model):
@@ -1766,6 +1833,9 @@ class LuisApp(Model):
     :param composites: List of composite entities.
     :type composites:
      list[~azure.cognitiveservices.language.luis.authoring.models.HierarchicalModel]
+    :param hierarchicals: List of hierarchical entities.
+    :type hierarchicals:
+     list[~azure.cognitiveservices.language.luis.authoring.models.HierarchicalModel]
     :param pattern_any_entities: List of Pattern.Any entities.
     :type pattern_any_entities:
      list[~azure.cognitiveservices.language.luis.authoring.models.PatternAny]
@@ -1778,8 +1848,8 @@ class LuisApp(Model):
     :param regex_features: List of pattern features.
     :type regex_features:
      list[~azure.cognitiveservices.language.luis.authoring.models.JSONRegexFeature]
-    :param model_features: List of model features.
-    :type model_features:
+    :param phraselists: List of model features.
+    :type phraselists:
      list[~azure.cognitiveservices.language.luis.authoring.models.JSONModelFeature]
     :param patterns: List of patterns.
     :type patterns:
@@ -1799,16 +1869,17 @@ class LuisApp(Model):
         'entities': {'key': 'entities', 'type': '[HierarchicalModel]'},
         'closed_lists': {'key': 'closedLists', 'type': '[ClosedList]'},
         'composites': {'key': 'composites', 'type': '[HierarchicalModel]'},
+        'hierarchicals': {'key': 'hierarchicals', 'type': '[HierarchicalModel]'},
         'pattern_any_entities': {'key': 'patternAnyEntities', 'type': '[PatternAny]'},
         'regex_entities': {'key': 'regex_entities', 'type': '[RegexEntity]'},
         'prebuilt_entities': {'key': 'prebuiltEntities', 'type': '[PrebuiltEntity]'},
         'regex_features': {'key': 'regex_features', 'type': '[JSONRegexFeature]'},
-        'model_features': {'key': 'model_features', 'type': '[JSONModelFeature]'},
+        'phraselists': {'key': 'phraselists', 'type': '[JSONModelFeature]'},
         'patterns': {'key': 'patterns', 'type': '[PatternRule]'},
         'utterances': {'key': 'utterances', 'type': '[JSONUtterance]'},
     }
 
-    def __init__(self, *, additional_properties=None, name: str=None, version_id: str=None, desc: str=None, culture: str=None, intents=None, entities=None, closed_lists=None, composites=None, pattern_any_entities=None, regex_entities=None, prebuilt_entities=None, regex_features=None, model_features=None, patterns=None, utterances=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, name: str=None, version_id: str=None, desc: str=None, culture: str=None, intents=None, entities=None, closed_lists=None, composites=None, hierarchicals=None, pattern_any_entities=None, regex_entities=None, prebuilt_entities=None, regex_features=None, phraselists=None, patterns=None, utterances=None, **kwargs) -> None:
         super(LuisApp, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.name = name
@@ -1819,11 +1890,12 @@ class LuisApp(Model):
         self.entities = entities
         self.closed_lists = closed_lists
         self.composites = composites
+        self.hierarchicals = hierarchicals
         self.pattern_any_entities = pattern_any_entities
         self.regex_entities = regex_entities
         self.prebuilt_entities = prebuilt_entities
         self.regex_features = regex_features
-        self.model_features = model_features
+        self.phraselists = phraselists
         self.patterns = patterns
         self.utterances = utterances
 
@@ -1842,6 +1914,27 @@ class ModelCreateObject(Model):
     def __init__(self, *, name: str=None, **kwargs) -> None:
         super(ModelCreateObject, self).__init__(**kwargs)
         self.name = name
+
+
+class ModelFeatureInformation(Model):
+    """An object containing the model feature information either the model name or
+    feature name.
+
+    :param model_name: The name of the model used.
+    :type model_name: str
+    :param feature_name: The name of the feature used.
+    :type feature_name: str
+    """
+
+    _attribute_map = {
+        'model_name': {'key': 'modelName', 'type': 'str'},
+        'feature_name': {'key': 'featureName', 'type': 'str'},
+    }
+
+    def __init__(self, *, model_name: str=None, feature_name: str=None, **kwargs) -> None:
+        super(ModelFeatureInformation, self).__init__(**kwargs)
+        self.model_name = model_name
+        self.feature_name = feature_name
 
 
 class ModelInfoResponse(Model):
@@ -2204,26 +2297,6 @@ class PatternAnyModelUpdateObject(Model):
         self.explicit_list = explicit_list
 
 
-class PatternCreateObject(Model):
-    """Object model for creating a Pattern feature.
-
-    :param pattern: The Regular Expression to match.
-    :type pattern: str
-    :param name: Name of the feature.
-    :type name: str
-    """
-
-    _attribute_map = {
-        'pattern': {'key': 'pattern', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(self, *, pattern: str=None, name: str=None, **kwargs) -> None:
-        super(PatternCreateObject, self).__init__(**kwargs)
-        self.pattern = pattern
-        self.name = name
-
-
 class PatternFeatureInfo(FeatureInfoObject):
     """Pattern feature.
 
@@ -2233,6 +2306,9 @@ class PatternFeatureInfo(FeatureInfoObject):
     :type name: str
     :param is_active: Indicates if the feature is enabled.
     :type is_active: bool
+    :param enabled_for_all_models: Indicates if the feature is enabled for all
+     models in the application.
+    :type enabled_for_all_models: bool
     :param pattern: The Regular Expression to match.
     :type pattern: str
     """
@@ -2241,11 +2317,12 @@ class PatternFeatureInfo(FeatureInfoObject):
         'id': {'key': 'id', 'type': 'int'},
         'name': {'key': 'name', 'type': 'str'},
         'is_active': {'key': 'isActive', 'type': 'bool'},
+        'enabled_for_all_models': {'key': 'enabledForAllModels', 'type': 'bool'},
         'pattern': {'key': 'pattern', 'type': 'str'},
     }
 
-    def __init__(self, *, id: int=None, name: str=None, is_active: bool=None, pattern: str=None, **kwargs) -> None:
-        super(PatternFeatureInfo, self).__init__(id=id, name=name, is_active=is_active, **kwargs)
+    def __init__(self, *, id: int=None, name: str=None, is_active: bool=None, enabled_for_all_models: bool=None, pattern: str=None, **kwargs) -> None:
+        super(PatternFeatureInfo, self).__init__(id=id, name=name, is_active=is_active, enabled_for_all_models=enabled_for_all_models, **kwargs)
         self.pattern = pattern
 
 
@@ -2337,31 +2414,6 @@ class PatternRuleUpdateObject(Model):
         self.intent = intent
 
 
-class PatternUpdateObject(Model):
-    """Object model for updating an existing Pattern feature.
-
-    :param pattern: The Regular Expression to match.
-    :type pattern: str
-    :param name: Name of the feature.
-    :type name: str
-    :param is_active: Indicates if the Pattern feature is enabled. Default
-     value: True .
-    :type is_active: bool
-    """
-
-    _attribute_map = {
-        'pattern': {'key': 'pattern', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'is_active': {'key': 'isActive', 'type': 'bool'},
-    }
-
-    def __init__(self, *, pattern: str=None, name: str=None, is_active: bool=True, **kwargs) -> None:
-        super(PatternUpdateObject, self).__init__(**kwargs)
-        self.pattern = pattern
-        self.name = name
-        self.is_active = is_active
-
-
 class PersonalAssistantsResponse(Model):
     """Response containing user's endpoint keys and the endpoint URLs of the
     prebuilt Cortana applications.
@@ -2400,19 +2452,24 @@ class PhraselistCreateObject(Model):
      lookup feature where its value is 1 if the lexicon contains a given word
      or 0 if it doesn’t.  Default value is true. Default value: True .
     :type is_exchangeable: bool
+    :param enabled_for_all_models: Indicates if the Phraselist is enabled for
+     all models in the application. Default value: True .
+    :type enabled_for_all_models: bool
     """
 
     _attribute_map = {
         'phrases': {'key': 'phrases', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'is_exchangeable': {'key': 'isExchangeable', 'type': 'bool'},
+        'enabled_for_all_models': {'key': 'enabledForAllModels', 'type': 'bool'},
     }
 
-    def __init__(self, *, phrases: str=None, name: str=None, is_exchangeable: bool=True, **kwargs) -> None:
+    def __init__(self, *, phrases: str=None, name: str=None, is_exchangeable: bool=True, enabled_for_all_models: bool=True, **kwargs) -> None:
         super(PhraselistCreateObject, self).__init__(**kwargs)
         self.phrases = phrases
         self.name = name
         self.is_exchangeable = is_exchangeable
+        self.enabled_for_all_models = enabled_for_all_models
 
 
 class PhraseListFeatureInfo(FeatureInfoObject):
@@ -2424,6 +2481,9 @@ class PhraseListFeatureInfo(FeatureInfoObject):
     :type name: str
     :param is_active: Indicates if the feature is enabled.
     :type is_active: bool
+    :param enabled_for_all_models: Indicates if the feature is enabled for all
+     models in the application.
+    :type enabled_for_all_models: bool
     :param phrases: A list of comma-separated values.
     :type phrases: str
     :param is_exchangeable: An exchangeable phrase list feature are serves as
@@ -2444,12 +2504,13 @@ class PhraseListFeatureInfo(FeatureInfoObject):
         'id': {'key': 'id', 'type': 'int'},
         'name': {'key': 'name', 'type': 'str'},
         'is_active': {'key': 'isActive', 'type': 'bool'},
+        'enabled_for_all_models': {'key': 'enabledForAllModels', 'type': 'bool'},
         'phrases': {'key': 'phrases', 'type': 'str'},
         'is_exchangeable': {'key': 'isExchangeable', 'type': 'bool'},
     }
 
-    def __init__(self, *, id: int=None, name: str=None, is_active: bool=None, phrases: str=None, is_exchangeable: bool=None, **kwargs) -> None:
-        super(PhraseListFeatureInfo, self).__init__(id=id, name=name, is_active=is_active, **kwargs)
+    def __init__(self, *, id: int=None, name: str=None, is_active: bool=None, enabled_for_all_models: bool=None, phrases: str=None, is_exchangeable: bool=None, **kwargs) -> None:
+        super(PhraseListFeatureInfo, self).__init__(id=id, name=name, is_active=is_active, enabled_for_all_models=enabled_for_all_models, **kwargs)
         self.phrases = phrases
         self.is_exchangeable = is_exchangeable
 
@@ -2477,6 +2538,9 @@ class PhraselistUpdateObject(Model):
      existing vocabulary features. Think of a non-exchangeable as set of
      different words. Default value is true. Default value: True .
     :type is_exchangeable: bool
+    :param enabled_for_all_models: Indicates if the Phraselist is enabled for
+     all models in the application. Default value: True .
+    :type enabled_for_all_models: bool
     """
 
     _attribute_map = {
@@ -2484,14 +2548,16 @@ class PhraselistUpdateObject(Model):
         'name': {'key': 'name', 'type': 'str'},
         'is_active': {'key': 'isActive', 'type': 'bool'},
         'is_exchangeable': {'key': 'isExchangeable', 'type': 'bool'},
+        'enabled_for_all_models': {'key': 'enabledForAllModels', 'type': 'bool'},
     }
 
-    def __init__(self, *, phrases: str=None, name: str=None, is_active: bool=True, is_exchangeable: bool=True, **kwargs) -> None:
+    def __init__(self, *, phrases: str=None, name: str=None, is_active: bool=True, is_exchangeable: bool=True, enabled_for_all_models: bool=True, **kwargs) -> None:
         super(PhraselistUpdateObject, self).__init__(**kwargs)
         self.phrases = phrases
         self.name = name
         self.is_active = is_active
         self.is_exchangeable = is_exchangeable
+        self.enabled_for_all_models = enabled_for_all_models
 
 
 class PrebuiltDomain(Model):
