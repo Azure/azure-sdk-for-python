@@ -64,7 +64,7 @@ class AgentPool(SubResource):
     :vartype type: str
     :param count: Number of agents (VMs) to host docker containers. Allowed
      values must be in the range of 1 to 100 (inclusive). The default value is
-     1. . Default value: 1 .
+     1.
     :type count: int
     :param vm_size: Required. Size of agent VMs. Possible values include:
      'Standard_A1', 'Standard_A10', 'Standard_A11', 'Standard_A1_v2',
@@ -174,7 +174,6 @@ class AgentPool(SubResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'count': {'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
         'provisioning_state': {'readonly': True},
     }
@@ -202,7 +201,7 @@ class AgentPool(SubResource):
         'node_taints': {'key': 'properties.nodeTaints', 'type': '[str]'},
     }
 
-    def __init__(self, *, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, agent_pool_type=None, orchestrator_version: str=None, availability_zones=None, enable_node_public_ip: bool=None, scale_set_priority="Regular", scale_set_eviction_policy="Delete", node_taints=None, **kwargs) -> None:
+    def __init__(self, *, vm_size, count: int=None, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, agent_pool_type=None, orchestrator_version: str=None, availability_zones=None, enable_node_public_ip: bool=None, scale_set_priority="Regular", scale_set_eviction_policy="Delete", node_taints=None, **kwargs) -> None:
         super(AgentPool, self).__init__(**kwargs)
         self.count = count
         self.vm_size = vm_size
@@ -1077,7 +1076,7 @@ class ManagedClusterAgentPoolProfileProperties(Model):
 
     :param count: Number of agents (VMs) to host docker containers. Allowed
      values must be in the range of 1 to 100 (inclusive). The default value is
-     1. . Default value: 1 .
+     1.
     :type count: int
     :param vm_size: Required. Size of agent VMs. Possible values include:
      'Standard_A1', 'Standard_A10', 'Standard_A11', 'Standard_A1_v2',
@@ -1184,7 +1183,6 @@ class ManagedClusterAgentPoolProfileProperties(Model):
     """
 
     _validation = {
-        'count': {'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
         'provisioning_state': {'readonly': True},
     }
@@ -1209,7 +1207,7 @@ class ManagedClusterAgentPoolProfileProperties(Model):
         'node_taints': {'key': 'nodeTaints', 'type': '[str]'},
     }
 
-    def __init__(self, *, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type=None, orchestrator_version: str=None, availability_zones=None, enable_node_public_ip: bool=None, scale_set_priority="Regular", scale_set_eviction_policy="Delete", node_taints=None, **kwargs) -> None:
+    def __init__(self, *, vm_size, count: int=None, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type=None, orchestrator_version: str=None, availability_zones=None, enable_node_public_ip: bool=None, scale_set_priority="Regular", scale_set_eviction_policy="Delete", node_taints=None, **kwargs) -> None:
         super(ManagedClusterAgentPoolProfileProperties, self).__init__(**kwargs)
         self.count = count
         self.vm_size = vm_size
@@ -1240,7 +1238,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
 
     :param count: Number of agents (VMs) to host docker containers. Allowed
      values must be in the range of 1 to 100 (inclusive). The default value is
-     1. . Default value: 1 .
+     1.
     :type count: int
     :param vm_size: Required. Size of agent VMs. Possible values include:
      'Standard_A1', 'Standard_A10', 'Standard_A11', 'Standard_A1_v2',
@@ -1350,7 +1348,6 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     """
 
     _validation = {
-        'count': {'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
         'provisioning_state': {'readonly': True},
         'name': {'required': True, 'pattern': r'^[a-z][a-z0-9]{0,11}$'},
@@ -1377,7 +1374,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, vm_size, name: str, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type=None, orchestrator_version: str=None, availability_zones=None, enable_node_public_ip: bool=None, scale_set_priority="Regular", scale_set_eviction_policy="Delete", node_taints=None, **kwargs) -> None:
+    def __init__(self, *, vm_size, name: str, count: int=None, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type=None, orchestrator_version: str=None, availability_zones=None, enable_node_public_ip: bool=None, scale_set_priority="Regular", scale_set_eviction_policy="Delete", node_taints=None, **kwargs) -> None:
         super(ManagedClusterAgentPoolProfile, self).__init__(count=count, vm_size=vm_size, os_disk_size_gb=os_disk_size_gb, vnet_subnet_id=vnet_subnet_id, max_pods=max_pods, os_type=os_type, max_count=max_count, min_count=min_count, enable_auto_scaling=enable_auto_scaling, type=type, orchestrator_version=orchestrator_version, availability_zones=availability_zones, enable_node_public_ip=enable_node_public_ip, scale_set_priority=scale_set_priority, scale_set_eviction_policy=scale_set_eviction_policy, node_taints=node_taints, **kwargs)
         self.name = name
 

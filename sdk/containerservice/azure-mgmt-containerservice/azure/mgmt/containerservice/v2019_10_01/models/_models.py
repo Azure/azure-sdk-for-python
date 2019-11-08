@@ -64,7 +64,7 @@ class AgentPool(SubResource):
     :vartype type: str
     :param count: Number of agents (VMs) to host docker containers. Allowed
      values must be in the range of 1 to 100 (inclusive). The default value is
-     1. . Default value: 1 .
+     1.
     :type count: int
     :param vm_size: Required. Size of agent VMs. Possible values include:
      'Standard_A1', 'Standard_A10', 'Standard_A11', 'Standard_A1_v2',
@@ -174,7 +174,6 @@ class AgentPool(SubResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'count': {'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
         'provisioning_state': {'readonly': True},
     }
@@ -204,7 +203,7 @@ class AgentPool(SubResource):
 
     def __init__(self, **kwargs):
         super(AgentPool, self).__init__(**kwargs)
-        self.count = kwargs.get('count', 1)
+        self.count = kwargs.get('count', None)
         self.vm_size = kwargs.get('vm_size', None)
         self.os_disk_size_gb = kwargs.get('os_disk_size_gb', None)
         self.vnet_subnet_id = kwargs.get('vnet_subnet_id', None)
@@ -1082,7 +1081,7 @@ class ManagedClusterAgentPoolProfileProperties(Model):
 
     :param count: Number of agents (VMs) to host docker containers. Allowed
      values must be in the range of 1 to 100 (inclusive). The default value is
-     1. . Default value: 1 .
+     1.
     :type count: int
     :param vm_size: Required. Size of agent VMs. Possible values include:
      'Standard_A1', 'Standard_A10', 'Standard_A11', 'Standard_A1_v2',
@@ -1189,7 +1188,6 @@ class ManagedClusterAgentPoolProfileProperties(Model):
     """
 
     _validation = {
-        'count': {'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
         'provisioning_state': {'readonly': True},
     }
@@ -1216,7 +1214,7 @@ class ManagedClusterAgentPoolProfileProperties(Model):
 
     def __init__(self, **kwargs):
         super(ManagedClusterAgentPoolProfileProperties, self).__init__(**kwargs)
-        self.count = kwargs.get('count', 1)
+        self.count = kwargs.get('count', None)
         self.vm_size = kwargs.get('vm_size', None)
         self.os_disk_size_gb = kwargs.get('os_disk_size_gb', None)
         self.vnet_subnet_id = kwargs.get('vnet_subnet_id', None)
@@ -1245,7 +1243,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
 
     :param count: Number of agents (VMs) to host docker containers. Allowed
      values must be in the range of 1 to 100 (inclusive). The default value is
-     1. . Default value: 1 .
+     1.
     :type count: int
     :param vm_size: Required. Size of agent VMs. Possible values include:
      'Standard_A1', 'Standard_A10', 'Standard_A11', 'Standard_A1_v2',
@@ -1355,7 +1353,6 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     """
 
     _validation = {
-        'count': {'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
         'provisioning_state': {'readonly': True},
         'name': {'required': True, 'pattern': r'^[a-z][a-z0-9]{0,11}$'},
