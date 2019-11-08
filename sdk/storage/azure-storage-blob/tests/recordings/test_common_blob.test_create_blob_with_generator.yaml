@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.1.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 07 Nov 2019 21:05:07 GMT
+      - Fri, 08 Nov 2019 18:26:18 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 07 Nov 2019 21:05:08 GMT
+      - Fri, 08 Nov 2019 18:26:18 GMT
       etag:
-      - '"0x8D763C62BE73BA6"'
+      - '"0x8D7647925CFA591"'
       last-modified:
-      - Thu, 07 Nov 2019 21:05:08 GMT
+      - Fri, 08 Nov 2019 18:26:18 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -53,11 +53,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.1.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 07 Nov 2019 21:31:37 GMT
+      - Fri, 08 Nov 2019 18:26:19 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainere08213a7/test_blob?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQSUzRA%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainere08213a7/gen_blob?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQSUzRA%3D%3D&comp=block
   response:
     body:
       string: ''
@@ -65,7 +65,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 07 Nov 2019 21:31:52 GMT
+      - Fri, 08 Nov 2019 18:26:18 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -97,11 +97,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.1.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 07 Nov 2019 21:31:53 GMT
+      - Fri, 08 Nov 2019 18:26:19 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainere08213a7/test_blob?comp=blocklist
+    uri: https://storagename.blob.core.windows.net/utcontainere08213a7/gen_blob?comp=blocklist
   response:
     body:
       string: ''
@@ -109,11 +109,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 07 Nov 2019 21:31:53 GMT
+      - Fri, 08 Nov 2019 18:26:18 GMT
       etag:
-      - '"0x8D763C9E89B34B1"'
+      - '"0x8D7647925E1758B"'
       last-modified:
-      - Thu, 07 Nov 2019 21:31:53 GMT
+      - Fri, 08 Nov 2019 18:26:18 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -137,13 +137,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.1.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 07 Nov 2019 21:31:53 GMT
+      - Fri, 08 Nov 2019 18:26:19 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainere08213a7/test_blob
+    uri: https://storagename.blob.core.windows.net/utcontainere08213a7/gen_blob
   response:
     body:
       string: helloworld! eom
@@ -157,17 +157,17 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Thu, 07 Nov 2019 21:31:53 GMT
+      - Fri, 08 Nov 2019 18:26:18 GMT
       etag:
-      - '"0x8D763C9E89B34B1"'
+      - '"0x8D7647925E1758B"'
       last-modified:
-      - Thu, 07 Nov 2019 21:31:53 GMT
+      - Fri, 08 Nov 2019 18:26:18 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Thu, 07 Nov 2019 21:31:53 GMT
+      - Fri, 08 Nov 2019 18:26:18 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:

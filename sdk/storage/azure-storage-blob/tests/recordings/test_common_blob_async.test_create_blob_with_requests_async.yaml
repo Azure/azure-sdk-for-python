@@ -2,41 +2,35 @@ interactions:
 - request:
     body: null
     headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.1.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 08 Nov 2019 18:25:21 GMT
+      - Fri, 08 Nov 2019 18:25:25 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainercd9b135c?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainerd6f71856?timeout=5&restype=container
   response:
     body:
       string: ''
     headers:
-      content-length:
-      - '0'
-      date:
-      - Fri, 08 Nov 2019 18:25:21 GMT
-      etag:
-      - '"0x8D7647903DFAC9B"'
-      last-modified:
-      - Fri, 08 Nov 2019 18:25:21 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version:
-      - '2019-02-02'
+      content-length: '0'
+      date: Fri, 08 Nov 2019 18:25:23 GMT
+      etag: '"0x8D764790595FFB3"'
+      last-modified: Fri, 08 Nov 2019 18:25:24 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage3fvxrr4ndrzn.blob.core.windows.net
+        - /utcontainerd6f71856
+        - timeout=5&restype=container
+        - ''
 - request:
     body: null
     headers:
@@ -5962,7 +5956,7 @@ interactions:
       content-type:
       - text/plain
       date:
-      - Fri, 08 Nov 2019 18:25:22 GMT
+      - Fri, 08 Nov 2019 18:25:24 GMT
       last-modified:
       - Mon, 13 May 2019 15:10:58 GMT
       server:
@@ -5974,9 +5968,9 @@ interactions:
       x-frame-options:
       - sameorigin
       x-powered-by:
-      - '2'
+      - '3'
       x-varnish:
-      - '670355065'
+      - '197232296'
     status:
       code: 200
       message: OK
@@ -11739,12 +11733,6 @@ interactions:
       Gutenberg Literary\r\nArchive Foundation, how to help produce our new eBooks,
       and how to\r\nsubscribe to our email newsletter to hear about new eBooks.\r\n\r\n"
     headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '439274'
       Content-Type:
@@ -11752,41 +11740,37 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.1.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 08 Nov 2019 18:25:24 GMT
+      - Fri, 08 Nov 2019 18:25:27 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainercd9b135c/gutenberg?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQSUzRA%3D%3D&comp=block
+    uri: https://storagename.blob.core.windows.net/utcontainerd6f71856/gutenberg?blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQSUzRA%3D%3D&comp=block
   response:
     body:
       string: ''
     headers:
-      content-length:
-      - '0'
-      date:
-      - Fri, 08 Nov 2019 18:25:23 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-content-crc64:
-      - 0eqms+OzSao=
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2019-02-02'
+      content-length: '0'
+      date: Fri, 08 Nov 2019 18:25:25 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: 0eqms+OzSao=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage3fvxrr4ndrzn.blob.core.windows.net
+        - /utcontainerd6f71856/gutenberg
+        - blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQSUzRA%3D%3D&comp=block
+        - ''
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
       <BlockList><Latest>TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQSUzRA==</Latest></BlockList>'
     headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '143'
       Content-Type:
@@ -11796,32 +11780,32 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.1.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 08 Nov 2019 18:25:25 GMT
+      - Fri, 08 Nov 2019 18:25:27 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainercd9b135c/gutenberg?comp=blocklist
+    uri: https://storagename.blob.core.windows.net/utcontainerd6f71856/gutenberg?comp=blocklist
   response:
     body:
       string: ''
     headers:
-      content-length:
-      - '0'
-      date:
-      - Fri, 08 Nov 2019 18:25:24 GMT
-      etag:
-      - '"0x8D76479056A58FC"'
-      last-modified:
-      - Fri, 08 Nov 2019 18:25:24 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-content-crc64:
-      - 7XagkOrfW/A=
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2019-02-02'
+      content-length: '0'
+      date: Fri, 08 Nov 2019 18:25:25 GMT
+      etag: '"0x8D7647906D8F54B"'
+      last-modified: Fri, 08 Nov 2019 18:25:26 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: 7XagkOrfW/A=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage3fvxrr4ndrzn.blob.core.windows.net
+        - /utcontainerd6f71856/gutenberg
+        - comp=blocklist
+        - ''
 version: 1
