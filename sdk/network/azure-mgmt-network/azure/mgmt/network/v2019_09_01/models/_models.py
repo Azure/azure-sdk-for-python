@@ -2697,7 +2697,7 @@ class AzureFirewall(Resource):
     :param sku: The Azure Firewall Resource SKU.
     :type sku: ~azure.mgmt.network.v2019_09_01.models.AzureFirewallSku
     :param additional_properties: The additional properties used to further
-     config this azure firewall
+     config this azure firewall.
     :type additional_properties: dict[str, str]
     :param zones: A list of availability zones denoting where the resource
      needs to come from.
@@ -4443,6 +4443,10 @@ class ConnectivityParameters(Model):
     :param protocol_configuration: Configuration of the protocol.
     :type protocol_configuration:
      ~azure.mgmt.network.v2019_09_01.models.ProtocolConfiguration
+    :param preferred_ip_version: Preferred IP version of the connection.
+     Possible values include: 'IPv4', 'IPv6'
+    :type preferred_ip_version: str or
+     ~azure.mgmt.network.v2019_09_01.models.IPVersion
     """
 
     _validation = {
@@ -4455,6 +4459,7 @@ class ConnectivityParameters(Model):
         'destination': {'key': 'destination', 'type': 'ConnectivityDestination'},
         'protocol': {'key': 'protocol', 'type': 'str'},
         'protocol_configuration': {'key': 'protocolConfiguration', 'type': 'ProtocolConfiguration'},
+        'preferred_ip_version': {'key': 'preferredIPVersion', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -4463,6 +4468,7 @@ class ConnectivityParameters(Model):
         self.destination = kwargs.get('destination', None)
         self.protocol = kwargs.get('protocol', None)
         self.protocol_configuration = kwargs.get('protocol_configuration', None)
+        self.preferred_ip_version = kwargs.get('preferred_ip_version', None)
 
 
 class ConnectivitySource(Model):
@@ -8057,7 +8063,7 @@ class IpGroup(Resource):
      resource.
     :type ip_addresses: list[str]
     :ivar firewalls: List of references to Azure resources that this IpGroups
-     is associated with
+     is associated with.
     :vartype firewalls:
      list[~azure.mgmt.network.v2019_09_01.models.SubResource]
     :ivar etag: A unique read-only string that changes whenever the resource
@@ -11256,22 +11262,22 @@ class PrivateLinkServiceConnectionState(Model):
     :type status: str
     :param description: The reason for approval/rejection of the connection.
     :type description: str
-    :param action_required: A message indicating if changes on the service
+    :param actions_required: A message indicating if changes on the service
      provider require any updates on the consumer.
-    :type action_required: str
+    :type actions_required: str
     """
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
-        'action_required': {'key': 'actionRequired', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
         self.status = kwargs.get('status', None)
         self.description = kwargs.get('description', None)
-        self.action_required = kwargs.get('action_required', None)
+        self.actions_required = kwargs.get('actions_required', None)
 
 
 class PrivateLinkServiceIpConfiguration(SubResource):
@@ -13169,10 +13175,10 @@ class TrafficSelectorPolicy(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param local_address_ranges: Required. A collection of local address
-     spaces in CIDR format
+     spaces in CIDR format.
     :type local_address_ranges: list[str]
     :param remote_address_ranges: Required. A collection of remote address
-     spaces in CIDR format
+     spaces in CIDR format.
     :type remote_address_ranges: list[str]
     """
 
@@ -13748,11 +13754,11 @@ class VirtualHubRouteTableV2(SubResource):
 class VirtualHubRouteV2(Model):
     """VirtualHubRouteTableV2 route.
 
-    :param destination_type: The type of destinations
+    :param destination_type: The type of destinations.
     :type destination_type: str
     :param destinations: List of all destinations.
     :type destinations: list[str]
-    :param next_hop_type: The type of next hops
+    :param next_hop_type: The type of next hops.
     :type next_hop_type: str
     :param next_hops: NextHops ip address.
     :type next_hops: list[str]
@@ -13880,10 +13886,10 @@ class VirtualNetworkBgpCommunities(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param virtual_network_community: Required. The BGP community associated
-     with the virtual network
+     with the virtual network.
     :type virtual_network_community: str
     :ivar regional_community: The BGP community associated with the region of
-     the virtual network
+     the virtual network.
     :vartype regional_community: str
     """
 
@@ -14717,21 +14723,21 @@ class VirtualRouter(Resource):
     :type tags: dict[str, str]
     :param virtual_router_asn: VirtualRouter ASN.
     :type virtual_router_asn: long
-    :param virtual_router_ips: VirtualRouter IPs
+    :param virtual_router_ips: VirtualRouter IPs.
     :type virtual_router_ips: list[str]
     :param hosted_subnet: The Subnet on which VirtualRouter is hosted.
     :type hosted_subnet: ~azure.mgmt.network.v2019_09_01.models.SubResource
     :param hosted_gateway: The Gateway on which VirtualRouter is hosted.
     :type hosted_gateway: ~azure.mgmt.network.v2019_09_01.models.SubResource
-    :ivar peerings: List of references to VirtualRouterPeerings
+    :ivar peerings: List of references to VirtualRouterPeerings.
     :vartype peerings:
      list[~azure.mgmt.network.v2019_09_01.models.SubResource]
     :ivar provisioning_state: The provisioning state of the resource. Possible
      values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2019_09_01.models.ProvisioningState
-    :ivar etag: Gets a unique read-only string that changes whenever the
-     resource is updated.
+    :ivar etag: A unique read-only string that changes whenever the resource
+     is updated.
     :vartype etag: str
     """
 
@@ -14786,11 +14792,11 @@ class VirtualRouterPeering(SubResource):
      values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.network.v2019_09_01.models.ProvisioningState
-    :param name: Gets name of the peering unique to VirtualRouter. This name
-     can be used to access the resource.
+    :param name: Name of the virtual router peering that is unique within a
+     virtual router.
     :type name: str
-    :ivar etag: Gets a unique read-only string that changes whenever the
-     resource is updated.
+    :ivar etag: A unique read-only string that changes whenever the resource
+     is updated.
     :vartype etag: str
     :ivar type: Peering type.
     :vartype type: str
@@ -15779,8 +15785,8 @@ class VpnServerConfiguration(Resource):
     :ivar vpn_server_configuration_properties_etag: A unique read-only string
      that changes whenever the resource is updated.
     :vartype vpn_server_configuration_properties_etag: str
-    :ivar etag: Gets a unique read-only string that changes whenever the
-     resource is updated.
+    :ivar etag: A unique read-only string that changes whenever the resource
+     is updated.
     :vartype etag: str
     """
 
@@ -16261,7 +16267,7 @@ class WebApplicationFirewallPolicy(Resource):
      'Disabling', 'Disabled', 'Deleting'
     :vartype resource_state: str or
      ~azure.mgmt.network.v2019_09_01.models.WebApplicationFirewallPolicyResourceState
-    :param managed_rules: Required. Describes the managedRules structure
+    :param managed_rules: Required. Describes the managedRules structure.
     :type managed_rules:
      ~azure.mgmt.network.v2019_09_01.models.ManagedRulesDefinition
     :ivar http_listeners: A collection of references to application gateway
