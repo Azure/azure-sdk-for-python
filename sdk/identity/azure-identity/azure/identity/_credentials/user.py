@@ -144,7 +144,7 @@ class SharedTokenCacheCredential(object):
             cache.add = lambda *_: None
 
         if cache:
-            self._client = self._get_auth_client(cache)  # type: Optional[AuthnClientBase]
+            self._client = self._get_auth_client(cache=cache, **kwargs)  # type: Optional[AuthnClientBase]
         else:
             self._client = None
 
@@ -179,9 +179,9 @@ class SharedTokenCacheCredential(object):
         return sys.platform.startswith("win")
 
     @staticmethod
-    def _get_auth_client(cache):
+    def _get_auth_client(**kwargs):
         # type: (msal_extensions.FileTokenCache) -> AuthnClientBase
-        return AuthnClient(tenant="common", cache=cache)
+        return AuthnClient(tenant="common", **kwargs)
 
 
 class UsernamePasswordCredential(PublicClientCredential):

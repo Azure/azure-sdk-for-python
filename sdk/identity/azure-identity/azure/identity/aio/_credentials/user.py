@@ -48,5 +48,5 @@ class SharedTokenCacheCredential(SyncSharedTokenCacheCredential):
         return await self._client.obtain_token_by_refresh_token(scopes, self._username)
 
     @staticmethod
-    def _get_auth_client(cache: "msal_extensions.FileTokenCache") -> "AuthnClientBase":
-        return AsyncAuthnClient(tenant="common", cache=cache)
+    def _get_auth_client(**kwargs: "Any") -> "AuthnClientBase":
+        return AsyncAuthnClient(tenant="common", **kwargs)
