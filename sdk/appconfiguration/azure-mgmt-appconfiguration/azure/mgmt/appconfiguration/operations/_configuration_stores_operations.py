@@ -26,7 +26,7 @@ class ConfigurationStoresOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The client API version. Constant value: "2019-02-01-preview".
+    :ivar api_version: The client API version. Constant value: "2019-10-01".
     """
 
     models = models
@@ -36,7 +36,7 @@ class ConfigurationStoresOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-02-01-preview"
+        self.api_version = "2019-10-01"
 
         self.config = config
 
@@ -253,9 +253,7 @@ class ConfigurationStoresOperations(object):
 
 
     def _create_initial(
-            self, resource_group_name, config_store_name, location, tags=None, custom_headers=None, raw=False, **operation_config):
-        config_store_creation_parameters = models.ConfigurationStore(location=location, tags=tags)
-
+            self, resource_group_name, config_store_name, config_store_creation_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -304,7 +302,7 @@ class ConfigurationStoresOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, config_store_name, location, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, config_store_name, config_store_creation_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates a configuration store with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which
@@ -312,11 +310,10 @@ class ConfigurationStoresOperations(object):
         :type resource_group_name: str
         :param config_store_name: The name of the configuration store.
         :type config_store_name: str
-        :param location: The location of the resource. This cannot be changed
-         after the resource is created.
-        :type location: str
-        :param tags: The tags of the resource.
-        :type tags: dict[str, str]
+        :param config_store_creation_parameters: The parameters for creating a
+         configuration store.
+        :type config_store_creation_parameters:
+         ~azure.mgmt.appconfiguration.models.ConfigurationStore
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -334,8 +331,7 @@ class ConfigurationStoresOperations(object):
         raw_result = self._create_initial(
             resource_group_name=resource_group_name,
             config_store_name=config_store_name,
-            location=location,
-            tags=tags,
+            config_store_creation_parameters=config_store_creation_parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -440,9 +436,7 @@ class ConfigurationStoresOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, config_store_name, properties=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        config_store_update_parameters = models.ConfigurationStoreUpdateParameters(properties=properties, tags=tags)
-
+            self, resource_group_name, config_store_name, config_store_update_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -491,7 +485,7 @@ class ConfigurationStoresOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, config_store_name, properties=None, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, config_store_name, config_store_update_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates a configuration store with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which
@@ -499,10 +493,10 @@ class ConfigurationStoresOperations(object):
         :type resource_group_name: str
         :param config_store_name: The name of the configuration store.
         :type config_store_name: str
-        :param properties: The properties for updating a configuration store.
-        :type properties: object
-        :param tags: The ARM resource tags.
-        :type tags: dict[str, str]
+        :param config_store_update_parameters: The parameters for updating a
+         configuration store.
+        :type config_store_update_parameters:
+         ~azure.mgmt.appconfiguration.models.ConfigurationStoreUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -520,8 +514,7 @@ class ConfigurationStoresOperations(object):
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
             config_store_name=config_store_name,
-            properties=properties,
-            tags=tags,
+            config_store_update_parameters=config_store_update_parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
