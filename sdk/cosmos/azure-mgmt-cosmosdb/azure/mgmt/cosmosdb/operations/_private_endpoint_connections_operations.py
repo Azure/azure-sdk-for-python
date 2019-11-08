@@ -57,7 +57,7 @@ class PrivateEndpointConnectionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of PrivateEndpointConnection
         :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.PrivateEndpointConnectionPaged[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.PrivateEndpointConnection]
+         ~azure.mgmt.cosmosdb.models.PrivateEndpointConnectionPaged[~azure.mgmt.cosmosdb.models.PrivateEndpointConnection]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -132,9 +132,8 @@ class PrivateEndpointConnectionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PrivateEndpointConnection or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.PrivateEndpointConnection
-         or ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.cosmosdb.models.PrivateEndpointConnection or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -247,11 +246,11 @@ class PrivateEndpointConnectionsOperations(object):
         :param private_endpoint: Private endpoint which the connection belongs
          to.
         :type private_endpoint:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.PrivateEndpointProperty
+         ~azure.mgmt.cosmosdb.models.PrivateEndpointProperty
         :param private_link_service_connection_state: Connection State of the
          Private Endpoint Connection.
         :type private_link_service_connection_state:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.PrivateLinkServiceConnectionStateProperty
+         ~azure.mgmt.cosmosdb.models.PrivateLinkServiceConnectionStateProperty
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -261,11 +260,11 @@ class PrivateEndpointConnectionsOperations(object):
          PrivateEndpointConnection or
          ClientRawResponse<PrivateEndpointConnection> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.PrivateEndpointConnection]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.PrivateEndpointConnection]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.PrivateEndpointConnection]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.PrivateEndpointConnection]]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.cosmosdb.v2019_08_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.cosmosdb.models.ErrorResponseException>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
@@ -355,7 +354,7 @@ class PrivateEndpointConnectionsOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.cosmosdb.v2019_08_01_preview.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.cosmosdb.models.ErrorResponseException>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,

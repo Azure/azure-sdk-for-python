@@ -55,7 +55,7 @@ class PrivateLinkResourcesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of PrivateLinkResource
         :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.PrivateLinkResourcePaged[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.PrivateLinkResource]
+         ~azure.mgmt.cosmosdb.models.PrivateLinkResourcePaged[~azure.mgmt.cosmosdb.models.PrivateLinkResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -129,8 +129,7 @@ class PrivateLinkResourcesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PrivateLinkResource or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.PrivateLinkResource or
+        :rtype: ~azure.mgmt.cosmosdb.models.PrivateLinkResource or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """

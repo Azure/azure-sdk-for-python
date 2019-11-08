@@ -10,6 +10,8 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import ARMProxyResource
+    from ._models_py3 import AzureEntityResource
     from ._models_py3 import Capability
     from ._models_py3 import CassandraKeyspace
     from ._models_py3 import CassandraKeyspaceCreateUpdateParameters
@@ -32,6 +34,7 @@ try:
     from ._models_py3 import DatabaseAccountListReadOnlyKeysResult
     from ._models_py3 import DatabaseAccountPatchParameters
     from ._models_py3 import DatabaseAccountRegenerateKeyParameters
+    from ._models_py3 import DbResource
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import ExcludedPath
     from ._models_py3 import ExtendedResourceProperties
@@ -67,6 +70,11 @@ try:
     from ._models_py3 import PartitionUsage
     from ._models_py3 import PercentileMetric
     from ._models_py3 import PercentileMetricValue
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointProperty
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkServiceConnectionStateProperty
+    from ._models_py3 import ProxyResource
     from ._models_py3 import RegionForOnlineOffline
     from ._models_py3 import Resource
     from ._models_py3 import SqlContainer
@@ -81,11 +89,14 @@ try:
     from ._models_py3 import Throughput
     from ._models_py3 import ThroughputResource
     from ._models_py3 import ThroughputUpdateParameters
+    from ._models_py3 import TrackedResource
     from ._models_py3 import UniqueKey
     from ._models_py3 import UniqueKeyPolicy
     from ._models_py3 import Usage
     from ._models_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
+    from ._models import ARMProxyResource
+    from ._models import AzureEntityResource
     from ._models import Capability
     from ._models import CassandraKeyspace
     from ._models import CassandraKeyspaceCreateUpdateParameters
@@ -108,6 +119,7 @@ except (SyntaxError, ImportError):
     from ._models import DatabaseAccountListReadOnlyKeysResult
     from ._models import DatabaseAccountPatchParameters
     from ._models import DatabaseAccountRegenerateKeyParameters
+    from ._models import DbResource
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import ExcludedPath
     from ._models import ExtendedResourceProperties
@@ -143,6 +155,11 @@ except (SyntaxError, ImportError):
     from ._models import PartitionUsage
     from ._models import PercentileMetric
     from ._models import PercentileMetricValue
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateEndpointProperty
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkServiceConnectionStateProperty
+    from ._models import ProxyResource
     from ._models import RegionForOnlineOffline
     from ._models import Resource
     from ._models import SqlContainer
@@ -157,6 +174,7 @@ except (SyntaxError, ImportError):
     from ._models import Throughput
     from ._models import ThroughputResource
     from ._models import ThroughputUpdateParameters
+    from ._models import TrackedResource
     from ._models import UniqueKey
     from ._models import UniqueKeyPolicy
     from ._models import Usage
@@ -174,6 +192,8 @@ from ._paged_models import OperationPaged
 from ._paged_models import PartitionMetricPaged
 from ._paged_models import PartitionUsagePaged
 from ._paged_models import PercentileMetricPaged
+from ._paged_models import PrivateEndpointConnectionPaged
+from ._paged_models import PrivateLinkResourcePaged
 from ._paged_models import SqlContainerPaged
 from ._paged_models import SqlDatabasePaged
 from ._paged_models import TablePaged
@@ -194,6 +214,8 @@ from ._cosmos_db_enums import (
 )
 
 __all__ = [
+    'ARMProxyResource',
+    'AzureEntityResource',
     'Capability',
     'CassandraKeyspace',
     'CassandraKeyspaceCreateUpdateParameters',
@@ -216,6 +238,7 @@ __all__ = [
     'DatabaseAccountListReadOnlyKeysResult',
     'DatabaseAccountPatchParameters',
     'DatabaseAccountRegenerateKeyParameters',
+    'DbResource',
     'ErrorResponse', 'ErrorResponseException',
     'ExcludedPath',
     'ExtendedResourceProperties',
@@ -251,6 +274,11 @@ __all__ = [
     'PartitionUsage',
     'PercentileMetric',
     'PercentileMetricValue',
+    'PrivateEndpointConnection',
+    'PrivateEndpointProperty',
+    'PrivateLinkResource',
+    'PrivateLinkServiceConnectionStateProperty',
+    'ProxyResource',
     'RegionForOnlineOffline',
     'Resource',
     'SqlContainer',
@@ -265,6 +293,7 @@ __all__ = [
     'Throughput',
     'ThroughputResource',
     'ThroughputUpdateParameters',
+    'TrackedResource',
     'UniqueKey',
     'UniqueKeyPolicy',
     'Usage',
@@ -286,6 +315,8 @@ __all__ = [
     'PercentileMetricPaged',
     'PartitionMetricPaged',
     'PartitionUsagePaged',
+    'PrivateLinkResourcePaged',
+    'PrivateEndpointConnectionPaged',
     'DatabaseAccountKind',
     'DatabaseAccountOfferType',
     'DefaultConsistencyLevel',
