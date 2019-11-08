@@ -8,7 +8,7 @@ import time
 import pytest
 
 from azure.eventhub import EventData
-from azure.eventhub.client import EventHubClient
+from azure.eventhub import EventHubConsumerClient
 
 @pytest.mark.liveTest
 def test_send_with_long_interval_sync(connstr_receivers, sleep):

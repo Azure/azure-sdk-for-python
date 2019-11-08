@@ -21,7 +21,9 @@ if sys.version_info < (3, 5):
     collect_ignore.append("samples/async_samples")
     collect_ignore.append("examples/async_examples")
 
-from azure.eventhub.client import EventHubClient
+# from azure.eventhub.client import EventHubClient
+from azure.eventhub import EventHubConsumerClient
+from azure.eventhub import EventHubProducerClient
 from azure.eventhub import EventPosition
 
 
@@ -164,7 +166,7 @@ def aad_credential():
 
 @pytest.fixture()
 def connstr_receivers(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubConsumerClient.from_connection_string(connection_str)
     partitions = client.get_partition_ids()
     receivers = []
     for p in partitions:
@@ -180,7 +182,7 @@ def connstr_receivers(connection_str):
 
 @pytest.fixture()
 def connstr_senders(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubProducerClient.from_connection_string(connection_str)
     partitions = client.get_partition_ids()
 
     senders = []
