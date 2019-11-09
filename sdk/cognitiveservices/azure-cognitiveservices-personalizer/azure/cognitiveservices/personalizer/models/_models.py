@@ -723,7 +723,7 @@ class ServiceConfiguration(Model):
      received within the specified wait time.
     :type default_reward: float
     :param reward_aggregation: Required. The function used to process rewards,
-     if multiple reward scores are recieved before rewardWaitTime is over.
+     if multiple reward scores are received before rewardWaitTime is over.
     :type reward_aggregation: str
     :param exploration_percentage: Required. The percentage of rank responses
      that will use exploration.
