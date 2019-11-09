@@ -340,19 +340,11 @@ class TagsOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/tagNames'}
 
     def resource_create(
-            self, resource_group_name, resource_provider_namespace, resource_type, resource_name, api_version, properties=None, custom_headers=None, raw=False, **operation_config):
+            self, scope, api_version, properties=None, custom_headers=None, raw=False, **operation_config):
         """Creates multiple tags.
 
-        :param resource_group_name: The name of the resource group for the
-         resource. The name is case insensitive.
-        :type resource_group_name: str
-        :param resource_provider_namespace: The namespace of the resource
-         provider.
-        :type resource_provider_namespace: str
-        :param resource_type: The resource type of the resource to create.
-        :type resource_type: str
-        :param resource_name: The name of the resource to create.
-        :type resource_name: str
+        :param scope: The scope of the resources.
+        :type scope: str
         :param api_version: The API version to use for the operation.
         :type api_version: str
         :param properties: tags object passing in the request.
@@ -373,11 +365,7 @@ class TagsOperations(object):
         # Construct URL
         url = self.resource_create.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
-            'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=260, min_length=1)
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -417,23 +405,15 @@ class TagsOperations(object):
             return client_raw_response
 
         return deserialized
-    resource_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}/providers/Microsoft.Resources/tags/default'}
+    resource_create.metadata = {'url': '/{scope}/providers/Microsoft.Resources/tags/default'}
 
     def resource_update(
-            self, resource_group_name, resource_provider_namespace, resource_type, resource_name, api_version, operation=None, properties=None, custom_headers=None, raw=False, **operation_config):
+            self, scope, api_version, operation=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """Update multiple tags: if the tagKey exists, update tagValue with the
         new value; if not, insert the new record.
 
-        :param resource_group_name: The name of the resource group for the
-         resource. The name is case insensitive.
-        :type resource_group_name: str
-        :param resource_provider_namespace: The namespace of the resource
-         provider.
-        :type resource_provider_namespace: str
-        :param resource_type: The resource type of the resource to create.
-        :type resource_type: str
-        :param resource_name: The name of the resource to create.
-        :type resource_name: str
+        :param scope: The scope of the resources.
+        :type scope: str
         :param api_version: The API version to use for the operation.
         :type api_version: str
         :param operation: The operation type for the patch api. Possible
@@ -458,11 +438,7 @@ class TagsOperations(object):
         # Construct URL
         url = self.resource_update.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
-            'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=260, min_length=1)
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -502,22 +478,14 @@ class TagsOperations(object):
             return client_raw_response
 
         return deserialized
-    resource_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}/providers/Microsoft.Resources/tags/default'}
+    resource_update.metadata = {'url': '/{scope}/providers/Microsoft.Resources/tags/default'}
 
     def resource_get(
-            self, resource_group_name, resource_provider_namespace, resource_type, resource_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, scope, api_version, custom_headers=None, raw=False, **operation_config):
         """Gets all the tags for the resource.
 
-        :param resource_group_name: The name of the resource group for the
-         resource. The name is case insensitive.
-        :type resource_group_name: str
-        :param resource_provider_namespace: The namespace of the resource
-         provider.
-        :type resource_provider_namespace: str
-        :param resource_type: The resource type of the resource to create.
-        :type resource_type: str
-        :param resource_name: The name of the resource to create.
-        :type resource_name: str
+        :param scope: The scope of the resources.
+        :type scope: str
         :param api_version: The API version to use for the operation.
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
@@ -533,11 +501,7 @@ class TagsOperations(object):
         # Construct URL
         url = self.resource_get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
-            'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=260, min_length=1)
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -573,22 +537,14 @@ class TagsOperations(object):
             return client_raw_response
 
         return deserialized
-    resource_get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}/providers/Microsoft.Resources/tags/default'}
+    resource_get.metadata = {'url': '/{scope}/providers/Microsoft.Resources/tags/default'}
 
     def resource_delete(
-            self, resource_group_name, resource_provider_namespace, resource_type, resource_name, api_version, custom_headers=None, raw=False, **operation_config):
+            self, scope, api_version, custom_headers=None, raw=False, **operation_config):
         """Deletes all the tags for the resource.
 
-        :param resource_group_name: The name of the resource group for the
-         resource. The name is case insensitive.
-        :type resource_group_name: str
-        :param resource_provider_namespace: The namespace of the resource
-         provider.
-        :type resource_provider_namespace: str
-        :param resource_type: The resource type of the resource to create.
-        :type resource_type: str
-        :param resource_name: The name of the resource to create.
-        :type resource_name: str
+        :param scope: The scope of the resources.
+        :type scope: str
         :param api_version: The API version to use for the operation.
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
@@ -603,11 +559,7 @@ class TagsOperations(object):
         # Construct URL
         url = self.resource_delete.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
-            'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=260, min_length=1)
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -636,7 +588,7 @@ class TagsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    resource_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}/providers/Microsoft.Resources/tags/default'}
+    resource_delete.metadata = {'url': '/{scope}/providers/Microsoft.Resources/tags/default'}
 
     def subscription_create(
             self, api_version, properties=None, custom_headers=None, raw=False, **operation_config):

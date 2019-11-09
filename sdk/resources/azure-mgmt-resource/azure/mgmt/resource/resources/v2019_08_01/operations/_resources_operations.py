@@ -61,10 +61,11 @@ class ResourcesOperations(object):
          $filter=substringof('demo', name)<br><br>You can link more than one
          substringof together by adding and/or operators.<br><br>You can filter
          by tag names and values. For example, to filter for a tag name and
-         value, use $filter=tagName eq 'tag1' and tagValue eq
-         'Value1'<br><br>You can use some properties together when filtering.
-         The combinations you can use are: substringof and/or resourceType,
-         plan and plan/publisher and plan/name, identity and
+         value, use $filter=tagName eq 'tag1' and tagValue eq 'Value1'. When
+         you filter by a tag name and value, the tags for each resource are not
+         returned in the results.<br><br>You can use some properties together
+         when filtering. The combinations you can use are: substringof and/or
+         resourceType, plan and plan/publisher and plan/name, identity and
          identity/principalId.
         :type filter: str
         :param expand: The $expand query parameter. You can expand createdTime
@@ -351,10 +352,11 @@ class ResourcesOperations(object):
          $filter=substringof('demo', name)<br><br>You can link more than one
          substringof together by adding and/or operators.<br><br>You can filter
          by tag names and values. For example, to filter for a tag name and
-         value, use $filter=tagName eq 'tag1' and tagValue eq
-         'Value1'<br><br>You can use some properties together when filtering.
-         The combinations you can use are: substringof and/or resourceType,
-         plan and plan/publisher and plan/name, identity and
+         value, use $filter=tagName eq 'tag1' and tagValue eq 'Value1'. When
+         you filter by a tag name and value, the tags for each resource are not
+         returned in the results.<br><br>You can use some properties together
+         when filtering. The combinations you can use are: substringof and/or
+         resourceType, plan and plan/publisher and plan/name, identity and
          identity/principalId.
         :type filter: str
         :param expand: The $expand query parameter. You can expand createdTime
