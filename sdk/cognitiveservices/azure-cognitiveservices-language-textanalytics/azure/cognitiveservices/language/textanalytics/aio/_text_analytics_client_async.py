@@ -153,7 +153,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            async for batch in segmented_batches:
+            for batch in segmented_batches:
                 response = await self._client.languages(
                     documents=batch,
                     model_version=model_version,
@@ -219,7 +219,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            async for batch in segmented_batches:
+            for batch in segmented_batches:
                 response = await self._client.entities_recognition_general(
                     documents=batch,
                     model_version=model_version,
@@ -283,7 +283,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            async for batch in segmented_batches:
+            for batch in segmented_batches:
                 response = await self._client.entities_recognition_pii(
                     documents=batch,
                     model_version=model_version,
@@ -347,7 +347,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            async for batch in segmented_batches:
+            for batch in segmented_batches:
                 response = await self._client.entities_linking(
                     documents=batch,
                     model_version=model_version,
@@ -411,7 +411,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            async for batch in segmented_batches:
+            for batch in segmented_batches:
                 response = await self._client.key_phrases(
                     documents=batch,
                     model_version=model_version,
@@ -476,7 +476,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         result = []
         segmented_batches = self._segment_batch(docs)
         try:
-            async for batch in segmented_batches:
+            for batch in segmented_batches:
                 response = await self._client.sentiment(
                     documents=batch,
                     model_version=model_version,

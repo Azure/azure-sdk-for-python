@@ -30,6 +30,7 @@ from ._models import (
 )
 
 
+# TODO: remove this method after service bug fix
 def process_entities_error(error):
     """This should be removed after the bug with entities APIs is fixed.
     """
@@ -55,6 +56,8 @@ def process_single_error(error):
 
 
 def process_batch_error(error):
+    """Raise and return detailed error message for HttpResponseErrors
+    """
     raise_error = HttpResponseError
     if error.status_code == 401:
         raise_error = ClientAuthenticationError
@@ -79,7 +82,27 @@ def process_batch_error(error):
     raise error
 
 
+def whole_batch_error(err):
+    """500 status code error for batch.
+    """
+    return Error(
+        code=err.code,
+        message=err.message,
+        target=err.target,
+        innererror=err.innererror,
+        details=err.details
+    )
+
+
 def _validate_single_input(text, hint, hint_value):
+    """Validate text input is string. Let service handle
+    validity of hint and hint value.
+
+    :param str text: A single text document.
+    :param str hint: Could be country_hint or language
+    :param str hint_value: The user passed country_hint or language
+    :return: A LanguageInput or MultiLanguageInput
+    """
     if isinstance(text, six.text_type):
         return [{"id": "0", "text": text, hint: hint_value}]
     else:
@@ -87,6 +110,12 @@ def _validate_single_input(text, hint, hint_value):
 
 
 def _validate_batch_input(documents):
+    """Validate that batch input has either all string docs
+    or dict/LanguageInput/MultiLanguageInput, not a mix of both.
+
+    :param list documents: The input documents.
+    :return: A list of LanguageInput or MultiLanguageInput
+    """
     string_input = False
     for idx, doc in enumerate(documents):
         if isinstance(doc, six.text_type):
@@ -99,6 +128,12 @@ def _validate_batch_input(documents):
 
 
 def order_results(response, combined):
+    """Order results in the order the user passed them in.
+
+    :param response: Used to get the original documents in the request
+    :param combined: A combined list of the results | errors
+    :return: In order list of results | errors (if any)
+    """
     request = json.loads(response.request.body)["documents"]
     mapping = {}
     for item in combined:
@@ -108,16 +143,6 @@ def order_results(response, combined):
     for item in request:
         ordered_response.append(mapping[item["id"]])
     return ordered_response
-
-
-def whole_batch_error(err):
-    return Error(
-        code=err.code,
-        message=err.message,
-        target=err.target,
-        innererror=err.innererror,
-        details=err.details
-    )
 
 
 def deserialize_language_result(response, obj, response_headers):
