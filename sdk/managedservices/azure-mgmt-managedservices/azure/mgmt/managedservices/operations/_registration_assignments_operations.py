@@ -17,14 +17,16 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class RegistrationDefinitionsOperations(object):
-    """RegistrationDefinitionsOperations operations.
+class RegistrationAssignmentsOperations(object):
+    """RegistrationAssignmentsOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-06-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2019-12-01-preview".
     """
 
     models = models
@@ -34,26 +36,30 @@ class RegistrationDefinitionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01"
+        self.api_version = "2019-12-01-preview"
 
         self.config = config
 
     def get(
-            self, scope, registration_definition_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the registration definition details.
+            self, scope, registration_assignment_id, expand_registration_definition=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the details of specified registration assignment.
 
         :param scope: Scope of the resource.
         :type scope: str
-        :param registration_definition_id: Guid of the registration
-         definition.
-        :type registration_definition_id: str
+        :param registration_assignment_id: Guid of the registration
+         assignment.
+        :type registration_assignment_id: str
+        :param expand_registration_definition: Tells whether to return
+         registration definition details also along with registration
+         assignment details.
+        :type expand_registration_definition: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: RegistrationDefinition or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.managedservices.models.RegistrationDefinition or
+        :return: RegistrationAssignment or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.managedservices.models.RegistrationAssignment or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.managedservices.models.ErrorResponseException>`
@@ -62,12 +68,14 @@ class RegistrationDefinitionsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'registrationDefinitionId': self._serialize.url("registration_definition_id", registration_definition_id, 'str')
+            'registrationAssignmentId': self._serialize.url("registration_assignment_id", registration_assignment_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        if expand_registration_definition is not None:
+            query_parameters['$expandRegistrationDefinition'] = self._serialize.query("expand_registration_definition", expand_registration_definition, 'bool')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -88,41 +96,24 @@ class RegistrationDefinitionsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('RegistrationDefinition', response)
+            deserialized = self._deserialize('RegistrationAssignment', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationDefinitions/{registrationDefinitionId}'}
+    get.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationAssignments/{registrationAssignmentId}'}
 
-    def delete(
-            self, registration_definition_id, scope, custom_headers=None, raw=False, **operation_config):
-        """Deletes the registration definition.
 
-        :param registration_definition_id: Guid of the registration
-         definition.
-        :type registration_definition_id: str
-        :param scope: Scope of the resource.
-        :type scope: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.managedservices.models.ErrorResponseException>`
-        """
+    def _delete_initial(
+            self, scope, registration_assignment_id, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'registrationDefinitionId': self._serialize.url("registration_definition_id", registration_definition_id, 'str'),
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'registrationAssignmentId': self._serialize.url("registration_assignment_id", registration_assignment_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -143,24 +134,66 @@ class RegistrationDefinitionsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200, 202, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationDefinitions/{registrationDefinitionId}'}
+
+    def delete(
+            self, scope, registration_assignment_id, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes the specified registration assignment.
+
+        :param scope: Scope of the resource.
+        :type scope: str
+        :param registration_assignment_id: Guid of the registration
+         assignment.
+        :type registration_assignment_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.managedservices.models.ErrorResponseException>`
+        """
+        raw_result = self._delete_initial(
+            scope=scope,
+            registration_assignment_id=registration_assignment_id,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationAssignments/{registrationAssignmentId}'}
 
 
     def _create_or_update_initial(
-            self, registration_definition_id, scope, properties=None, plan=None, custom_headers=None, raw=False, **operation_config):
-        request_body = models.RegistrationDefinition(properties=properties, plan=plan)
+            self, scope, registration_assignment_id, properties=None, custom_headers=None, raw=False, **operation_config):
+        request_body = models.RegistrationAssignment(properties=properties)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'registrationDefinitionId': self._serialize.url("registration_definition_id", registration_definition_id, 'str'),
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'registrationAssignmentId': self._serialize.url("registration_assignment_id", registration_assignment_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -180,7 +213,7 @@ class RegistrationDefinitionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(request_body, 'RegistrationDefinition')
+        body_content = self._serialize.body(request_body, 'RegistrationAssignment')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -192,9 +225,9 @@ class RegistrationDefinitionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('RegistrationDefinition', response)
+            deserialized = self._deserialize('RegistrationAssignment', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('RegistrationDefinition', response)
+            deserialized = self._deserialize('RegistrationAssignment', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -203,45 +236,42 @@ class RegistrationDefinitionsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, registration_definition_id, scope, properties=None, plan=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updates a registration definition.
+            self, scope, registration_assignment_id, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates or updates a registration assignment.
 
-        :param registration_definition_id: Guid of the registration
-         definition.
-        :type registration_definition_id: str
         :param scope: Scope of the resource.
         :type scope: str
-        :param properties: Properties of a registration definition.
+        :param registration_assignment_id: Guid of the registration
+         assignment.
+        :type registration_assignment_id: str
+        :param properties: Properties of a registration assignment.
         :type properties:
-         ~azure.mgmt.managedservices.models.RegistrationDefinitionProperties
-        :param plan: Plan details for the managed services.
-        :type plan: ~azure.mgmt.managedservices.models.Plan
+         ~azure.mgmt.managedservices.models.RegistrationAssignmentProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns RegistrationDefinition
-         or ClientRawResponse<RegistrationDefinition> if raw==True
+        :return: An instance of LROPoller that returns RegistrationAssignment
+         or ClientRawResponse<RegistrationAssignment> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.managedservices.models.RegistrationDefinition]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.managedservices.models.RegistrationAssignment]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.managedservices.models.RegistrationDefinition]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.managedservices.models.RegistrationAssignment]]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.managedservices.models.ErrorResponseException>`
         """
         raw_result = self._create_or_update_initial(
-            registration_definition_id=registration_definition_id,
             scope=scope,
+            registration_assignment_id=registration_assignment_id,
             properties=properties,
-            plan=plan,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('RegistrationDefinition', response)
+            deserialized = self._deserialize('RegistrationAssignment', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -256,27 +286,30 @@ class RegistrationDefinitionsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationDefinitions/{registrationDefinitionId}'}
+    create_or_update.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationAssignments/{registrationAssignmentId}'}
 
     def list(
-            self, scope, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of the registration definitions.
+            self, scope, expand_registration_definition=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of the registration assignments.
 
         :param scope: Scope of the resource.
         :type scope: str
+        :param expand_registration_definition: Tells whether to return
+         registration definition details also along with registration
+         assignment details.
+        :type expand_registration_definition: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of RegistrationDefinition
+        :return: An iterator like instance of RegistrationAssignment
         :rtype:
-         ~azure.mgmt.managedservices.models.RegistrationDefinitionPaged[~azure.mgmt.managedservices.models.RegistrationDefinition]
+         ~azure.mgmt.managedservices.models.RegistrationAssignmentPaged[~azure.mgmt.managedservices.models.RegistrationAssignment]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.managedservices.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -287,6 +320,8 @@ class RegistrationDefinitionsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                if expand_registration_definition is not None:
+                    query_parameters['$expandRegistrationDefinition'] = self._serialize.query("expand_registration_definition", expand_registration_definition, 'bool')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -305,6 +340,11 @@ class RegistrationDefinitionsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -313,12 +353,10 @@ class RegistrationDefinitionsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.RegistrationDefinitionPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.RegistrationDefinitionPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.RegistrationAssignmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationDefinitions'}
+    list.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationAssignments'}

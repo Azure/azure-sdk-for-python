@@ -9,12 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .registration_definitions_operations import RegistrationDefinitionsOperations
-from .registration_assignments_operations import RegistrationAssignmentsOperations
-from .operations import Operations
+from ._registration_definitions_operations import RegistrationDefinitionsOperations
+from ._registration_assignments_operations import RegistrationAssignmentsOperations
+from ._marketplace_registration_definitions_operations import MarketplaceRegistrationDefinitionsOperations
+from ._operations import Operations
 
 __all__ = [
     'RegistrationDefinitionsOperations',
     'RegistrationAssignmentsOperations',
+    'MarketplaceRegistrationDefinitionsOperations',
     'Operations',
 ]

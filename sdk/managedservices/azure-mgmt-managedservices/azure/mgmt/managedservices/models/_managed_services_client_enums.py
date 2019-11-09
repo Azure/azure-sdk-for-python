@@ -12,6 +12,18 @@
 from enum import Enum
 
 
+class RoleAssignmentType(str, Enum):
+
+    permanent = "Permanent"
+    eligible = "Eligible"
+
+
+class MultiFactorAuthProvider(str, Enum):
+
+    azure = "Azure"
+    none = "None"
+
+
 class ProvisioningState(str, Enum):
 
     not_specified = "NotSpecified"
