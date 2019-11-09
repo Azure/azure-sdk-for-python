@@ -88,7 +88,7 @@ class EvaluationsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/evaluations/{evaluationId}'}
+    get.metadata = {'url': '/evaluations/{evaluationId}:maxlength(256)'}
 
     def delete(
             self, evaluation_id, custom_headers=None, raw=False, **operation_config):
@@ -134,7 +134,7 @@ class EvaluationsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/evaluations/{evaluationId}'}
+    delete.metadata = {'url': '/evaluations/{evaluationId}:maxlength(256)'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
@@ -234,12 +234,17 @@ class EvaluationsOperations(object):
         if response.status_code not in [201]:
             raise models.ErrorResponseException(self._deserialize, response)
 
+        header_dict = {}
         deserialized = None
         if response.status_code == 201:
             deserialized = self._deserialize('Evaluation', response)
+            header_dict = {
+                'Location': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized

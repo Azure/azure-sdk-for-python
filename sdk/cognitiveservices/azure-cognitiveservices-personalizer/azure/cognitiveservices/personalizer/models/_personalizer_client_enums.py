@@ -12,11 +12,27 @@
 from enum import Enum
 
 
-class ErrorCode(str, Enum):
+class PersonalizerErrorCode(str, Enum):
 
-    bad_request = "BadRequest"  #: BadRequest - Request could not be understood by the server.
-    resource_not_found = "ResourceNotFound"  #: ResourceNotFound - Requested resource does not exist on the server.
-    internal_server_error = "InternalServerError"  #: InternalServerError - A generic error has occurred on the server.
+    bad_request = "BadRequest"  #: Request could not be understood by the server.
+    resource_not_found = "ResourceNotFound"  #: Requested resource does not exist on the server.
+    invalid_service_configuration = "InvalidServiceConfiguration"  #: Invalid service configuration.
+    invalid_policy_configuration = "InvalidPolicyConfiguration"  #: Invalid policy configuration.
+    invalid_policy_contract = "InvalidPolicyContract"  #: Invalid policy contract.
+    invalid_evaluation_contract = "InvalidEvaluationContract"  #: Invalid evaluation contract.
+    invalid_reward_request = "InvalidRewardRequest"  #: Invalid reward request.
+    invalid_event_id_to_activate = "InvalidEventIdToActivate"  #: Invalid activate event request.
+    model_reset_failed = "ModelResetFailed"  #: Model reset failed.
+    invalid_rank_request = "InvalidRankRequest"  #: Invalid rank request.
+    invalid_export_logs_request = "InvalidExportLogsRequest"  #: Invalid export logs request.
+    invalid_container = "InvalidContainer"  #: SAS Uri must be the Uri to a container that has write permissions.
+    missing_container = "MissingContainer"  #: SAS Uri container is required to enable copying.
+    front_end_not_found = "FrontEndNotFound"  #: Front end not found.
+    evaluation_not_found = "EvaluationNotFound"  #: Evaluation not found.
+    logs_properties_not_found = "LogsPropertiesNotFound"  #: Logs properties not found.
+    internal_server_error = "InternalServerError"  #: A generic error has occurred on the server.
+    rank_null_response = "RankNullResponse"  #: Rank call returned null response.
+    update_configuration_failed = "UpdateConfigurationFailed"  #: Failed to update configuration.
 
 
 class EvaluationJobStatus(str, Enum):

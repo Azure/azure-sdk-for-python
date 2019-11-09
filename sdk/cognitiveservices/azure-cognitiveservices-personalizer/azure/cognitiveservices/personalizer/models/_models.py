@@ -128,8 +128,8 @@ class Evaluation(Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
+        'id': {'readonly': True, 'max_length': 256},
+        'name': {'readonly': True, 'max_length': 256},
         'start_time': {'readonly': True},
         'end_time': {'readonly': True},
         'job_id': {'readonly': True},
@@ -308,8 +308,15 @@ class PersonalizerError(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param code: Required. High level error code. Possible values include:
-     'BadRequest', 'ResourceNotFound', 'InternalServerError'
-    :type code: str or ~azure.cognitiveservices.personalizer.models.ErrorCode
+     'BadRequest', 'ResourceNotFound', 'InvalidServiceConfiguration',
+     'InvalidPolicyConfiguration', 'InvalidPolicyContract',
+     'InvalidEvaluationContract', 'InvalidRewardRequest',
+     'InvalidEventIdToActivate', 'ModelResetFailed', 'InvalidRankRequest',
+     'InvalidExportLogsRequest', 'InvalidContainer', 'MissingContainer',
+     'FrontEndNotFound', 'EvaluationNotFound', 'LogsPropertiesNotFound',
+     'InternalServerError', 'RankNullResponse', 'UpdateConfigurationFailed'
+    :type code: str or
+     ~azure.cognitiveservices.personalizer.models.PersonalizerErrorCode
     :param message: Required. A message explaining the error reported by the
      service.
     :type message: str
@@ -428,7 +435,7 @@ class PolicyResultSummary(Model):
     :ivar snips_estimator_denominator:
     :vartype snips_estimator_denominator: float
     :ivar aggregate_time_window:
-    :vartype aggregate_time_window: str
+    :vartype aggregate_time_window: timedelta
     :param non_zero_probability:
     :type non_zero_probability: float
     :ivar confidence_interval:
@@ -452,7 +459,7 @@ class PolicyResultSummary(Model):
         'ips_estimator_numerator': {'key': 'ipsEstimatorNumerator', 'type': 'float'},
         'ips_estimator_denominator': {'key': 'ipsEstimatorDenominator', 'type': 'float'},
         'snips_estimator_denominator': {'key': 'snipsEstimatorDenominator', 'type': 'float'},
-        'aggregate_time_window': {'key': 'aggregateTimeWindow', 'type': 'str'},
+        'aggregate_time_window': {'key': 'aggregateTimeWindow', 'type': 'duration'},
         'non_zero_probability': {'key': 'nonZeroProbability', 'type': 'float'},
         'confidence_interval': {'key': 'confidenceInterval', 'type': 'float'},
         'sum_of_squares': {'key': 'sumOfSquares', 'type': 'float'},
@@ -485,7 +492,7 @@ class PolicyResultTotalSummary(PolicyResultSummary):
     :ivar snips_estimator_denominator:
     :vartype snips_estimator_denominator: float
     :ivar aggregate_time_window:
-    :vartype aggregate_time_window: str
+    :vartype aggregate_time_window: timedelta
     :param non_zero_probability:
     :type non_zero_probability: float
     :ivar confidence_interval:
@@ -509,7 +516,7 @@ class PolicyResultTotalSummary(PolicyResultSummary):
         'ips_estimator_numerator': {'key': 'ipsEstimatorNumerator', 'type': 'float'},
         'ips_estimator_denominator': {'key': 'ipsEstimatorDenominator', 'type': 'float'},
         'snips_estimator_denominator': {'key': 'snipsEstimatorDenominator', 'type': 'float'},
-        'aggregate_time_window': {'key': 'aggregateTimeWindow', 'type': 'str'},
+        'aggregate_time_window': {'key': 'aggregateTimeWindow', 'type': 'duration'},
         'non_zero_probability': {'key': 'nonZeroProbability', 'type': 'float'},
         'confidence_interval': {'key': 'confidenceInterval', 'type': 'float'},
         'sum_of_squares': {'key': 'sumOfSquares', 'type': 'float'},
@@ -709,7 +716,9 @@ class ServiceConfiguration(Model):
 
     :param reward_wait_time: Required. The time span waited until a request is
      marked with the default reward.
-    :type reward_wait_time: str
+     For example, PT5M (5 mins). For information about the time format,
+     see http://en.wikipedia.org/wiki/ISO_8601#Durations
+    :type reward_wait_time: timedelta
     :param default_reward: Required. The reward given if a reward is not
      received within the specified wait time.
     :type default_reward: float
@@ -722,7 +731,9 @@ class ServiceConfiguration(Model):
     :param model_export_frequency: Required. Personalizer will start using the
      most updated trained model for online ranks automatically every specified
      time period.
-    :type model_export_frequency: str
+     For example, PT5M (5 mins). For information about the time format,
+     see http://en.wikipedia.org/wiki/ISO_8601#Durations
+    :type model_export_frequency: timedelta
     :param log_mirror_enabled: Flag indicates whether log mirroring is
      enabled.
     :type log_mirror_enabled: bool
@@ -740,16 +751,15 @@ class ServiceConfiguration(Model):
         'reward_aggregation': {'required': True, 'max_length': 256},
         'exploration_percentage': {'required': True, 'maximum': 1, 'minimum': 0},
         'model_export_frequency': {'required': True},
-        'log_mirror_sas_uri': {'max_length': 2048},
         'log_retention_days': {'required': True, 'maximum': 2147483647, 'minimum': -1},
     }
 
     _attribute_map = {
-        'reward_wait_time': {'key': 'rewardWaitTime', 'type': 'str'},
+        'reward_wait_time': {'key': 'rewardWaitTime', 'type': 'duration'},
         'default_reward': {'key': 'defaultReward', 'type': 'float'},
         'reward_aggregation': {'key': 'rewardAggregation', 'type': 'str'},
         'exploration_percentage': {'key': 'explorationPercentage', 'type': 'float'},
-        'model_export_frequency': {'key': 'modelExportFrequency', 'type': 'str'},
+        'model_export_frequency': {'key': 'modelExportFrequency', 'type': 'duration'},
         'log_mirror_enabled': {'key': 'logMirrorEnabled', 'type': 'bool'},
         'log_mirror_sas_uri': {'key': 'logMirrorSasUri', 'type': 'str'},
         'log_retention_days': {'key': 'logRetentionDays', 'type': 'int'},

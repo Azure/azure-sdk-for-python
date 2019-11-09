@@ -63,7 +63,7 @@ class EventsOperations(object):
         url = self.reward.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'eventId': self._serialize.url("event_id", event_id, 'str', max_length=256)
+            'eventId': self._serialize.url("event_id", event_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -89,7 +89,7 @@ class EventsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    reward.metadata = {'url': '/events/{eventId}/reward'}
+    reward.metadata = {'url': '/events/{eventId}:maxlength(256)/reward'}
 
     def activate(
             self, event_id, custom_headers=None, raw=False, **operation_config):
@@ -114,7 +114,7 @@ class EventsOperations(object):
         url = self.activate.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'eventId': self._serialize.url("event_id", event_id, 'str', max_length=256)
+            'eventId': self._serialize.url("event_id", event_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -136,4 +136,4 @@ class EventsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    activate.metadata = {'url': '/events/{eventId}/activate'}
+    activate.metadata = {'url': '/events/{eventId}:maxlength(256)/activate'}

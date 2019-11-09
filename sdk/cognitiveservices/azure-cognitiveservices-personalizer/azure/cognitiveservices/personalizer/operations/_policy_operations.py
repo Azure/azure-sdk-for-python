@@ -151,7 +151,7 @@ class PolicyOperations(object):
 
     def delete(
             self, custom_headers=None, raw=False, **operation_config):
-        """Delete Policy.
+        """Reset Policy.
 
         Resets the Learning settings of the Personalizer service to default.
 

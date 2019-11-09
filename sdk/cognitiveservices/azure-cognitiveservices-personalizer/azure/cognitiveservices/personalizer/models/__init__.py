@@ -52,8 +52,8 @@ except (SyntaxError, ImportError):
     from ._models import RewardRequest
     from ._models import ServiceConfiguration
 from ._personalizer_client_enums import (
-    ErrorCode,
     EvaluationJobStatus,
+    PersonalizerErrorCode,
 )
 
 __all__ = [
@@ -77,6 +77,6 @@ __all__ = [
     'RankResponse',
     'RewardRequest',
     'ServiceConfiguration',
-    'ErrorCode',
+    'PersonalizerErrorCode',
     'EvaluationJobStatus',
 ]
