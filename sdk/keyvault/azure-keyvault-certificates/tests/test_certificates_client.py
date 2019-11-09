@@ -11,19 +11,29 @@ import json
 
 from azure_devtools.scenario_tests import RecordingProcessor, RequestUrlNormalizer
 
-from azure.keyvault.certificates import AdministratorContact, CertificateContact, CertificatePolicy
+from azure.keyvault.certificates import (
+    AdministratorContact,
+    CertificateContact,
+    CertificatePolicyAction,
+    CertificatePolicy,
+    KeyType,
+    KeyCurveName,
+    KeyUsageType,
+    SecretContentType,
+    LifetimeAction
+)
 from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer
 from certificates_preparer import VaultClientPreparer
 from certificates_test_case import KeyVaultTestCase
 from azure.keyvault.certificates._shared._generated.v7_0.models import CertificatePolicy as CertificatePolicyGenerated
+from azure.keyvault.certificates._shared._generated.v7_0.models import LifetimeAction as LifetimeActionGenerated
 from azure.keyvault.certificates._shared._generated.v7_0.models import (
     SecretProperties,
     IssuerParameters,
     X509CertificateProperties,
     KeyProperties,
     SubjectAlternativeNames,
-    LifetimeAction,
     Trigger,
     Action,
     ActionType,
@@ -228,7 +238,7 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
         cert_name = self.get_resource_name("cert")
         lifetime_actions = [
-            LifetimeAction(trigger=Trigger(lifetime_percentage=80), action=Action(action_type=ActionType.auto_renew))
+            LifetimeActionGenerated(trigger=Trigger(lifetime_percentage=80), action=Action(action_type=ActionType.auto_renew))
         ]
         cert_policy = CertificatePolicyGenerated(
             key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
@@ -506,6 +516,26 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
 
         cert_name = "policyCertificate"
+        cert_policy = CertificatePolicy(
+            issuer_name="Self",
+            subject_name="CN=DefaultPolicy",
+            exportable=True,
+            key_type=KeyType.rsa,
+            key_size=2048,
+            reuse_key=True,
+            ekus=,
+            key_usage=KeyUsageType.decipher_only,
+            content_type=SecretContentType.PKCS12,
+            validity_in_months=12,
+            lifetime_actions=LifetimeAction(
+                action=CertificatePolicyAction.email_contacts,
+                lifetime_percentage=98,
+                days_before_expiry=1
+            ),
+            certificate_type="self-signed",
+            certificate_transparency=False,
+            san_dns_names=["sdk.azure-int.net"]
+        )
 
         # get certificate policy
         self._import_common_certificate(client=client, cert_name=cert_name)
@@ -563,7 +593,7 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
         cert_name = self.get_resource_name("cert")
         lifetime_actions = [
-            LifetimeAction(trigger=Trigger(lifetime_percentage=2), action=Action(action_type=ActionType.email_contacts))
+            LifetimeActionGenerated(trigger=Trigger(lifetime_percentage=2), action=Action(action_type=ActionType.email_contacts))
         ]
         cert_policy = CertificatePolicyGenerated(
             key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
