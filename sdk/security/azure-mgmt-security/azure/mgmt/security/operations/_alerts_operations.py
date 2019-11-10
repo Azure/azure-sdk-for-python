@@ -486,15 +486,12 @@ class AlertsOperations(object):
         return deserialized
     get_resource_group_level_alerts.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}'}
 
-    def update_subscription_level_alert_state(
-            self, alert_name, alert_update_action_type, custom_headers=None, raw=False, **operation_config):
+    def dismiss(
+            self, alert_name, custom_headers=None, raw=False, **operation_config):
         """Update the alert's state.
 
         :param alert_name: Name of the alert object
         :type alert_name: str
-        :param alert_update_action_type: Type of the action to do on the
-         alert. Possible values include: 'Dismiss', 'Reactivate'
-        :type alert_update_action_type: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -505,12 +502,11 @@ class AlertsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.update_subscription_level_alert_state.metadata['url']
+        url = self.dismiss.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
-            'alertName': self._serialize.url("alert_name", alert_name, 'str'),
-            'alertUpdateActionType': self._serialize.url("alert_update_action_type", alert_update_action_type, 'str')
+            'alertName': self._serialize.url("alert_name", alert_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -539,17 +535,65 @@ class AlertsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    update_subscription_level_alert_state.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/{alertUpdateActionType}'}
+    dismiss.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/dismiss'}
 
-    def update_resource_group_level_alert_state(
-            self, alert_name, alert_update_action_type, resource_group_name, custom_headers=None, raw=False, **operation_config):
+    def reactivate(
+            self, alert_name, custom_headers=None, raw=False, **operation_config):
         """Update the alert's state.
 
         :param alert_name: Name of the alert object
         :type alert_name: str
-        :param alert_update_action_type: Type of the action to do on the
-         alert. Possible values include: 'Dismiss', 'Reactivate'
-        :type alert_update_action_type: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.reactivate.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+            'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
+            'alertName': self._serialize.url("alert_name", alert_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    reactivate.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/reactivate'}
+
+    def dismiss1(
+            self, alert_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        """Update the alert's state.
+
+        :param alert_name: Name of the alert object
+        :type alert_name: str
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
@@ -563,12 +607,11 @@ class AlertsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.update_resource_group_level_alert_state.metadata['url']
+        url = self.dismiss1.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
             'alertName': self._serialize.url("alert_name", alert_name, 'str'),
-            'alertUpdateActionType': self._serialize.url("alert_update_action_type", alert_update_action_type, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -598,4 +641,59 @@ class AlertsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    update_resource_group_level_alert_state.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/{alertUpdateActionType}'}
+    dismiss1.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/dismiss'}
+
+    def reactivate1(
+            self, alert_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        """Update the alert's state.
+
+        :param alert_name: Name of the alert object
+        :type alert_name: str
+        :param resource_group_name: The name of the resource group within the
+         user's subscription. The name is case insensitive.
+        :type resource_group_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.reactivate1.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
+            'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
+            'alertName': self._serialize.url("alert_name", alert_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    reactivate1.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/reactivate'}
