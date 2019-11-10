@@ -95,7 +95,7 @@ class ConsumerProducerMixin(object):
         Close down the handler. If the handler has already closed,
         this will be a no op.
         """
+        self._running = False
         if self._handler:
             self._handler.close()  # this will close link if sharing connection. Otherwise close connection
-        self._running = False
         self._closed = True

@@ -9,6 +9,7 @@ import uuid
 import logging
 import time
 import threading
+from functools import partial
 
 from uamqp.compat import queue  # type: ignore
 
@@ -19,11 +20,12 @@ from azure.eventhub import EventPosition
 from .partition_context import PartitionContext
 from .ownership_manager import OwnershipManager
 from .common import CloseReason
+from. _eventprocessor_mixin import EventProcessorMixin
 
 log = logging.getLogger(__name__)
 
 
-class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
+class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-attributes
     """
     An EventProcessor constantly receives events from one or multiple partitions of the Event Hub
     in the context of a given consumer group.
@@ -57,8 +59,8 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         self._lock = threading.RLock()
 
         # Each partition consumer is working in its own thread
+        self._consumers = {}
         self._working_threads = {}  # type: Dict[str, threading.Thread]
-        self._threads_stop_flags = {}  # type: Dict[str, bool]
 
         self._callback_queue = queue.Queue(maxsize=100)  # Right now the limitation of receiving speed is ~10k
 
@@ -69,7 +71,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         with self._lock:
             for partition_id in to_cancel_partitions:
                 if partition_id in self._working_threads:
-                    self._threads_stop_flags[partition_id] = True  # the cancellation token sent to thread to stop
+                    self._consumers[partition_id].close()
 
         if to_cancel_partitions:
             log.info("EventProcesor %r has cancelled partitions %r", self._id, to_cancel_partitions)
@@ -82,12 +84,11 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     self._working_threads[partition_id] = threading.Thread(target=self._receive,
                                                                            args=(partition_id, checkpoint))
                     self._working_threads[partition_id].daemon = True
-                    self._threads_stop_flags[partition_id] = False
                     self._working_threads[partition_id].start()
                     log.info("Working thread started, ownership %r, checkpoint %r", partition_id, checkpoint)
 
     @contextmanager
-    def _context(self, events):
+    def _context(self, event):
         # Tracing
         span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
         if span_impl_type is None:
@@ -97,8 +98,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             self._eventhub_client._add_span_request_attributes(child)  # pylint: disable=protected-access
             child.kind = SpanKind.SERVER
 
-            for event in events:
-                event._trace_link_message(child)  # pylint: disable=protected-access
+            event._trace_link_message(child)  # pylint: disable=protected-access
             with child:
                 yield
 
@@ -148,72 +148,46 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     exp
                 )
 
+    def _on_event_received(self, partition_context, event):
+        with self._context(event):
+            self._callback_queue.put((self._event_handler, partition_context, event), block=True)
+
     def _receive(self, partition_id, checkpoint=None):  # pylint: disable=too-many-statements
         try:  # pylint:disable =too-many-nested-blocks
             log.info("start ownership %r, checkpoint %r", partition_id, checkpoint)
-            namespace = self._namespace
-            eventhub_name = self._eventhub_name
-            consumer_group_name = self._consumer_group_name
-            owner_id = self._id
-            checkpoint_offset = checkpoint.get("offset") if checkpoint else None
-            if checkpoint_offset:
-                initial_event_position = EventPosition(checkpoint_offset)
-            elif isinstance(self._initial_event_position, EventPosition):
-                initial_event_position = self._initial_event_position
-            elif isinstance(self._initial_event_position, dict):
-                initial_event_position = self._initial_event_position.get(partition_id, EventPosition("-1"))
-            else:
-                initial_event_position = EventPosition(self._initial_event_position)
+            initial_event_position = self.get_init_event_position(partition_id, checkpoint)
             if partition_id in self._partition_contexts:
                 partition_context = self._partition_contexts[partition_id]
             else:
                 partition_context = PartitionContext(
-                    namespace,
-                    eventhub_name,
-                    consumer_group_name,
+                    self._namespace,
+                    self._eventhub_name,
+                    self._consumer_group_name,
                     partition_id,
-                    owner_id,
+                    self._id,
                     self._partition_manager
                 )
                 self._partition_contexts[partition_id] = partition_context
 
-            partition_consumer = self._eventhub_client._create_consumer(  # pylint: disable=protected-access
-                consumer_group_name,
-                partition_id,
-                initial_event_position,
-                owner_level=self._owner_level,
-                track_last_enqueued_event_properties=self._track_last_enqueued_event_properties,
-                prefetch=self._prefetch,
-            )
+            if self._consumers.get(partition_id, None):
+                self._consumers[partition_id].close()
+
+            self._consumers[partition_id] = self.create_consumer(partition_id, initial_event_position)
 
             try:
-                if self._partition_initialize_handler:
-                    self._callback_queue.put((self._partition_initialize_handler, partition_context), block=True)
-                while self._threads_stop_flags[partition_id] is False:
-                    try:
-                        events = partition_consumer.receive()
-                        if events:
-                            if self._track_last_enqueued_event_properties:
-                                self._last_enqueued_event_properties[partition_id] = \
-                                    partition_consumer.last_enqueued_event_properties
-                            with self._context(events):
-                                self._callback_queue.put((self._event_handler, partition_context, events), block=True)
-                    except Exception as error:  # pylint:disable=broad-except
-                        self._process_error(partition_context, error)
-                        break
-                        # Go to finally to stop this partition processor.
-                        # Later an EventProcessor(this one or another one) will pick up this partition again.
+                event_received_callback = partial(self._on_event_received, partition_context)
+                self._consumers[partition_id].receive(event_received_callback)
+            except Exception as error:
+                self._process_error(partition_context, error)
             finally:
-                partition_consumer.close()
-                if self._running:
-                    # Event processor is running but the partition consumer has been stopped.
-                    self._process_close(partition_context, CloseReason.OWNERSHIP_LOST)
-                else:
-                    self._process_close(partition_context, CloseReason.SHUTDOWN)
+                self._consumers[partition_id].close()
+                self._process_close(
+                    partition_context,
+                    CloseReason.OWNERSHIP_LOST if self._running else CloseReason.SHUTDOWN
+                )
         finally:
             with self._lock:
                 del self._working_threads[partition_id]
-                self._threads_stop_flags[partition_id] = True
 
     def _start(self):
         """Start the EventProcessor.
@@ -300,7 +274,5 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
 
         for thread in to_join_threads:
             thread.join()
-
-        # self._threads_stop_flags.clear()
 
         log.info("EventProcessor %r has been stopped.", self._id)

@@ -97,9 +97,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._handler = None
         self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
         self._last_enqueued_event_properties = {}
-
-        self._queue = queue.Queue()
-        self._receive_callback = None
+        self._on_event_received = None
+        self._last_received_event = None
 
     def __iter__(self):
         return self
@@ -161,72 +160,37 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
     def _open_with_retry(self):
         return self._do_retryable_operation(self._open, operation_need_param=False)
 
-    # Option1: single event callback
-
-    def _message_received_single_event(self, message):
+    def _message_received(self, message):
         event_data = EventData._from_message(message)
         event_data._trace_link_message()
-        self._receive_callback(event_data)
+        self._last_received_event = event_data
+        self._on_event_received(event_data)
 
-    def streaming_receive_for_single_eventdata(self, callback):
-        self._receive_callback = callback
-        self._open()
-        self._handler.receive_messages(self._message_received_single_event)
+    def receive(self, on_event_received):
+        self._on_event_received = on_event_received
 
-    # Option2: list events callback, needs batch and timeout control
+        retried_times = 0
+        last_exception = None
 
-    def _message_received_option1(self, message):
-        event_data = EventData._from_message(message)
-        event_data._trace_link_message()
-        self.callback(event_data)
+        while retried_times < self._client._config.max_retries:  # pylint:disable=protected-access
+            try:
+                self._open()
+                self._handler._streaming_receive = True
+                self._handler._message_received_callback = self._message_received
+                while self._running:
+                    self._handler.do_work()
+                return
+            except Exception as exception:
+                if not self._running:  # exit by close
+                    return
+                else:
+                    if self._last_received_event:
+                        self._offset = EventPosition(self._last_received_event.offset)
+                    last_exception = self._handle_exception(exception)
+                    retried_times += 1
 
-    def _streaming_receive_for_list_eventdata_callback_option1(self):
-        self._open()
-        self._handler.receive_messages(self._message_received_option1)  # need adjustment in uamqp?
-
-    # Option3: list events callback, needs batch and timeout control
-
-    def _message_received_option2(self, message):
-        event_data = EventData._from_message(message)
-        event_data._trace_link_message()
-
-    def streaming_receive_for_list_eventdata_callback_option2(self):
-        self._open()
-        self._handler._message_received_callback = self._message_received_option2
-        while self._running:
-            self._handler.do_work()  # can do the control in eventhub
-
-    def _receive(self, timeout_time=None, max_batch_size=None, **kwargs):
-        last_exception = kwargs.get("last_exception")
-        data_batch = []
-
-        self._open()
-        remaining_time = timeout_time - time.time()
-        if remaining_time <= 0.0:
-            if last_exception:
-                log.info("%r receive operation timed out. (%r)", self._name, last_exception)
-                raise last_exception
-            return data_batch
-        remaining_time_ms = 1000 * remaining_time
-        message_batch = self._handler.receive_message_batch(
-            max_batch_size=max_batch_size,
-            timeout=remaining_time_ms)
-        for message in message_batch:
-            event_data = EventData._from_message(message)  # pylint:disable=protected-access
-            data_batch.append(event_data)
-            event_data._trace_link_message()  # pylint:disable=protected-access
-
-        if data_batch:
-            self._offset = EventPosition(data_batch[-1].offset)
-
-        if self._track_last_enqueued_event_properties and data_batch:
-            self._last_enqueued_event_properties = data_batch[-1]._get_last_enqueued_event_properties()  # pylint:disable=protected-access
-
-        return data_batch
-
-    def _receive_with_retry(self, timeout=None, max_batch_size=None, **kwargs):
-        return self._do_retryable_operation(self._receive, timeout=timeout,
-                                            max_batch_size=max_batch_size, **kwargs)
+        log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
+        raise last_exception
 
     @property
     def last_enqueued_event_properties(self):
@@ -257,37 +221,13 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             return self._handler._received_messages.qsize()
         return 0
 
-    def receive(self, max_batch_size=None, timeout=None):
-        # type: (int, float) -> List[EventData]
-        """
-        Receive events from the EventHub.
-
-        :param max_batch_size: Receive a batch of events. Batch size will
-         be up to the maximum specified, but will return as soon as service
-         returns no new events. If combined with a timeout and no events are
-         retrieve before the time, the result will be empty. If no batch
-         size is supplied, the prefetch size will be the maximum.
-        :type max_batch_size: int
-        :param timeout: The maximum wait time to build up the requested message count for the batch.
-         If not specified, the default wait time specified when the consumer was created will be used.
-        :type timeout: float
-        :rtype: list[~azure.eventhub.common.EventData]
-        :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
-                ~azure.eventhub.EventHubError
-        """
-        self._check_closed()
-
-        timeout = timeout or self._client._config.receive_timeout  # pylint:disable=protected-access
-        max_batch_size = max_batch_size or min(self._client._config.max_batch_size, self._prefetch)  # pylint:disable=protected-access
-
-        return self._receive_with_retry(timeout=timeout, max_batch_size=max_batch_size)
-
     def close(self):  # pylint:disable=useless-super-delegation
         # type:() -> None
         """
         Close down the handler. If the handler has already closed,
         this will be a no op.
         """
+        print('I am closing')
         super(EventHubConsumer, self).close()
 
     next = __next__  # for python2.7
