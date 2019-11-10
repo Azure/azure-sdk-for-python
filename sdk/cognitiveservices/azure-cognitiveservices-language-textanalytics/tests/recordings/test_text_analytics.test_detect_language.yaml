@@ -14,33 +14,33 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.10 azure-cognitiveservices-language-textanalytics/0.2.0
+      - azsdk-python-core/1.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/V3.0-Preview.1
       X-BingApis-SDK-Client:
       - Python-SDK
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/text/analytics/v2.1/languages
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[]}'
+      string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[],"modelVersion":"latest"}'
     headers:
       apim-request-id:
-      - 99652aa4-e000-4263-adf2-920d0e1f5d6f
+      - c603b4e3-d8ae-4681-b158-224f4754fa53
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring|1
+      - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Fri, 27 Sep 2019 20:56:30 GMT
+      - Sun, 10 Nov 2019 20:46:48 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
       - chunked
       x-aml-ta-request-id:
-      - 97c455bd-bbb0-4b2b-bce2-1cdde2439e50
+      - d9fd1bcc-b50d-4dad-81ff-8eef4047e4d4
       x-content-type-options:
       - nosniff
-      x-ms-transaction-count:
-      - '1'
+      x-envoy-upstream-service-time:
+      - '3'
     status:
       code: 200
       message: OK

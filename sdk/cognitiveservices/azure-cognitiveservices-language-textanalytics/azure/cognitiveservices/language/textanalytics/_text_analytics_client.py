@@ -19,11 +19,11 @@ from ._base_client import TextAnalyticsClientBase
 from ._response_handlers import (
     _validate_batch_input,
     process_batch_error,
-    deserialize_entities_result,
-    deserialize_linked_entities_result,
-    deserialize_key_phrases_result,
-    deserialize_sentiment_result,
-    deserialize_language_result,
+    entities_result,
+    linked_entities_result,
+    key_phrases_result,
+    sentiment_result,
+    language_result,
 )
 
 if TYPE_CHECKING:
@@ -146,7 +146,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     documents=docs,
                     model_version=model_version,
                     show_stats=show_stats,
-                    cls=deserialize_language_result,
+                    cls=language_result,
                     **kwargs
                 )
             except HttpResponseError as error:
@@ -160,7 +160,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
-                    cls=deserialize_language_result,
+                    cls=language_result,
                     **kwargs
                 )
                 if isinstance(response, Error):
@@ -212,7 +212,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     documents=docs,
                     model_version=model_version,
                     show_stats=show_stats,
-                    cls=deserialize_entities_result,
+                    cls=entities_result,
                     **kwargs
                 )
             except HttpResponseError as error:
@@ -226,7 +226,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
-                    cls=deserialize_entities_result,
+                    cls=entities_result,
                     **kwargs
                 )
                 if isinstance(response, Error):
@@ -276,7 +276,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     documents=docs,
                     model_version=model_version,
                     show_stats=show_stats,
-                    cls=deserialize_entities_result,
+                    cls=entities_result,
                     **kwargs
                 )
             except HttpResponseError as error:
@@ -290,7 +290,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
-                    cls=deserialize_entities_result,
+                    cls=entities_result,
                     **kwargs
                 )
                 if isinstance(response, Error):
@@ -340,7 +340,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     documents=docs,
                     model_version=model_version,
                     show_stats=show_stats,
-                    cls=deserialize_linked_entities_result,
+                    cls=linked_entities_result,
                     **kwargs
                 )
             except HttpResponseError as error:
@@ -354,7 +354,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
-                    cls=deserialize_linked_entities_result,
+                    cls=linked_entities_result,
                     **kwargs
                 )
                 if isinstance(response, Error):
@@ -404,7 +404,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     documents=docs,
                     model_version=model_version,
                     show_stats=show_stats,
-                    cls=deserialize_key_phrases_result,
+                    cls=key_phrases_result,
                     **kwargs
                 )
             except HttpResponseError as error:
@@ -418,7 +418,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
-                    cls=deserialize_key_phrases_result,
+                    cls=key_phrases_result,
                     **kwargs
                 )
                 if isinstance(response, Error):
@@ -469,7 +469,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     documents=docs,
                     model_version=model_version,
                     show_stats=show_stats,
-                    cls=deserialize_sentiment_result,
+                    cls=sentiment_result,
                     **kwargs
                 )
             except HttpResponseError as error:
@@ -483,7 +483,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     documents=batch,
                     model_version=model_version,
                     show_stats=show_stats,
-                    cls=deserialize_sentiment_result,
+                    cls=sentiment_result,
                     **kwargs
                 )
                 if isinstance(response, Error):

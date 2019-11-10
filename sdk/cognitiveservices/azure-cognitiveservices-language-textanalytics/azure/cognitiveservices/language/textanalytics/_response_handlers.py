@@ -55,6 +55,7 @@ def process_single_error(error):
     raise error
 
 
+# TODO: refactor this function
 def process_batch_error(error):
     """Raise and return detailed error message for HttpResponseErrors
     """
@@ -65,17 +66,17 @@ def process_batch_error(error):
 
     try:
         error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
-    except DecodeError:
-        pass
-
-    try:
+        if error_body is None:
+            error = raise_error(message=error_message, response=error.response)
+            error.error_code = error.status_code
+            raise error
         try:
             error_message = error_body["error"]["message"]
         except KeyError:
             error_message = error_body["innerError"]["message"]
         error_message += "\nErrorCode:{}".format(error.status_code)
-    except AttributeError:
-        error_message += "\nErrorCode:{}".format(error.status_code)
+    except DecodeError:
+        pass
 
     error = raise_error(message=error_message, response=error.response)
     error.error_code = error.status_code
@@ -145,7 +146,7 @@ def order_results(response, combined):
     return ordered_response
 
 
-def deserialize_language_result(response, obj, response_headers):
+def language_result(response, obj, response_headers):
     if hasattr(obj, "innererror"):
         return whole_batch_error(obj)
 
@@ -167,7 +168,7 @@ def deserialize_language_result(response, obj, response_headers):
     return results
 
 
-def deserialize_entities_result(response, obj, response_headers):
+def entities_result(response, obj, response_headers):
     if hasattr(obj, "innererror"):
         return whole_batch_error(obj)
 
@@ -189,7 +190,7 @@ def deserialize_entities_result(response, obj, response_headers):
     return results
 
 
-def deserialize_linked_entities_result(response, obj, response_headers):
+def linked_entities_result(response, obj, response_headers):
     if hasattr(obj, "innererror"):
         return whole_batch_error(obj)
 
@@ -211,7 +212,7 @@ def deserialize_linked_entities_result(response, obj, response_headers):
     return results
 
 
-def deserialize_key_phrases_result(response, obj, response_headers):
+def key_phrases_result(response, obj, response_headers):
     if hasattr(obj, "innererror"):
         return whole_batch_error(obj)
 
@@ -233,7 +234,7 @@ def deserialize_key_phrases_result(response, obj, response_headers):
     return results
 
 
-def deserialize_sentiment_result(response, obj, response_headers):
+def sentiment_result(response, obj, response_headers):
     if hasattr(obj, "innererror"):
         return whole_batch_error(obj)
 

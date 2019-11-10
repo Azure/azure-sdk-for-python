@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
-
 from devtools_testutils import ResourceGroupPreparer
 from devtools_testutils.cognitiveservices_testcase import CognitiveServiceTest, CognitiveServicesAccountPreparer
 
@@ -18,7 +17,7 @@ from devtools_testutils.cognitiveservices_testcase import CognitiveServiceTest, 
 class TextAnalyticsTest(CognitiveServiceTest):
 
     @ResourceGroupPreparer()
-    @CognitiveServicesAccountPreparer(name_prefix="pycog", legacy=True)
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
     def test_detect_language(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
@@ -29,6 +28,6 @@ class TextAnalyticsTest(CognitiveServiceTest):
             }]
         )
 
-        self.assertEqual(response.documents[0].detected_languages[0].name, "English")
+        self.assertEqual(response[0].detected_languages[0].name, "English")
 
 

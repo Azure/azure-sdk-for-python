@@ -31,7 +31,7 @@ class CognitiveServiceTest(AzureTestCase):
 class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
     def __init__(self,
                  name_prefix='',
-                 sku='S0', location='westus', kind='cognitiveservices',
+                 sku='S0', location='westus2', kind='cognitiveservices',
                  parameter_name='cognitiveservices_account',
                  legacy=False,
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
