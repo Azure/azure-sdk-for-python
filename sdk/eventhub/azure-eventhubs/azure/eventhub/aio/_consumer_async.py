@@ -12,6 +12,7 @@ from distutils.version import StrictVersion
 import uamqp  # type: ignore
 from uamqp import errors, types, utils  # type: ignore
 from uamqp import ReceiveClientAsync, Source  # type: ignore
+from uamqp.compat import queue
 
 from ..common import EventData, EventPosition
 from ..error import _error_handler
@@ -100,7 +101,11 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
         self._last_enqueued_event_properties = {}
 
-    def __aiter__(self):
+        self._on_event_received = None
+        self._event_queue = queue.Queue()
+        self._last_received_event = None
+
+    async def __aiter__(self):
         return self
 
     async def __anext__(self):
@@ -194,6 +199,43 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         return await self._do_retryable_operation(self._receive, timeout=timeout,
                                                   max_batch_size=max_batch_size, **kwargs)
 
+    def _message_received(self, message):
+        # pylint:disable=protected-access
+        event_data = EventData._from_message(message)
+        event_data._trace_link_message()
+        self._last_received_event = event_data
+        self._event_queue.put(event_data)
+
+    async def receive(self, on_event_received):
+        self._on_event_received = on_event_received
+
+        retried_times = 0
+        last_exception = None
+
+        while retried_times < self._client._config.max_retries:  # pylint:disable=protected-access
+            try:
+                await self._open()
+                self._handler._streaming_receive = True
+                self._handler._message_received_callback = self._message_received
+                while self._running:
+                    await self._handler.do_work_async()
+                    while self._event_queue.qsize():
+                        event_data = self._event_queue.get()
+                        await self._on_event_received(event_data)
+                        self._event_queue.task_done()
+                return
+            except Exception as exception:
+                if not self._running:
+                    return
+                else:
+                    if self._last_received_event:
+                        self._offset = EventPosition(self._last_received_event.offset)
+                    last_exception = await self._handle_exception(exception)
+                    retried_times += 1
+
+            log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
+            raise last_exception
+
     @property
     def last_enqueued_event_properties(self):
         """
@@ -222,31 +264,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         if self._handler._received_messages:
             return self._handler._received_messages.qsize()
         return 0
-
-    async def receive(self, *, max_batch_size=None, timeout=None):
-        # type: (Any, int, float) -> List[EventData]
-        """
-        Receive events asynchronously from the EventHub.
-
-        :param max_batch_size: Receive a batch of events. Batch size will
-         be up to the maximum specified, but will return as soon as service
-         returns no new events. If combined with a timeout and no events are
-         retrieve before the time, the result will be empty. If no batch
-         size is supplied, the prefetch size will be the maximum.
-        :type max_batch_size: int
-        :param timeout: The maximum wait time to build up the requested message count for the batch.
-         If not specified, the default wait time specified when the consumer was created will be used.
-        :type timeout: float
-        :rtype: list[~azure.eventhub.common.EventData]
-        :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
-                ~azure.eventhub.EventHubError
-        """
-        self._check_closed()
-
-        timeout = timeout or self._client._config.receive_timeout  # pylint:disable=protected-access
-        max_batch_size = max_batch_size or min(self._client._config.max_batch_size, self._prefetch)  # pylint:disable=protected-access
-
-        return await self._receive_with_retry(timeout=timeout, max_batch_size=max_batch_size)
 
     async def close(self):
         # type: () -> None

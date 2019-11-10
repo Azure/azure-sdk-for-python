@@ -99,7 +99,7 @@ class ConsumerProducerMixin(object):
         Close down the handler. If the handler has already closed,
         this will be a no op.
         """
+        self._running = False
         if self._handler:
             await self._handler.close_async()
-        self._running = False
         self._closed = True
