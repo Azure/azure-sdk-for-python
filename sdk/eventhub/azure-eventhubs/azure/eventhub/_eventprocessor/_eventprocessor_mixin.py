@@ -1,3 +1,8 @@
+from contextlib import contextmanager
+
+from azure.core.tracing import SpanKind  # type: ignore
+from azure.core.settings import settings  # type: ignore
+
 from azure.eventhub import EventPosition
 
 
@@ -25,3 +30,18 @@ class EventProcessorMixin(object):
             prefetch=self._prefetch,
         )
         return consumer
+
+    @contextmanager
+    def _context(self, event):
+        # Tracing
+        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        if span_impl_type is None:
+            yield
+        else:
+            child = span_impl_type(name="Azure.EventHubs.process")
+            self._eventhub_client._add_span_request_attributes(child)  # pylint: disable=protected-access
+            child.kind = SpanKind.SERVER
+
+            event._trace_link_message(child)  # pylint: disable=protected-access
+            with child:
+                yield
