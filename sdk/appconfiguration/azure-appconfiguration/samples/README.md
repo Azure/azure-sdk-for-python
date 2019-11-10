@@ -34,7 +34,7 @@ pip install azure-appconfiguration
 | hello_world_sample.py / hello_world_async_sample.py       | demos set/get/delete operations |
 | hello_world_advanced_sample.py / hello_world_advanced_async_sample.py | demos add/set with label/list operations |
 | conditional_operation_sample.py / conditional_operation_async_sample.py | demos conditional set/get/delete operations |
-| read_only_sample.py / read_only_async_sample.py | demos set_read_only/clear_read_only operations |
+| read_only_sample.py / read_only_async_sample.py | demos set_read_only operations |
 | list_revision_sample.py / list_revision_async_sample.py | demos list revision operations |
 
 <!-- LINKS -->

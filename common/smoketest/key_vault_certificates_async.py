@@ -4,8 +4,9 @@
 # ------------------------------------
 import os
 import uuid
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import CertificateClient, CertificatePolicy
+from azure.identity.aio import DefaultAzureCredential
+from azure.keyvault.certificates import CertificatePolicy
+from azure.keyvault.certificates.aio import CertificateClient
 
 
 class KeyVaultCertificates:
@@ -21,21 +22,22 @@ class KeyVaultCertificates:
 
         self.certificate_name = "cert-name-" + uuid.uuid1().hex
 
-    def create_certificate(self):
-        self.certificate_client.begin_create_certificate(name=self.certificate_name, policy=CertificatePolicy.get_default()).wait()
+    async def create_certificate(self):
+        create_certificate_poller = await self.certificate_client.create_certificate(name=self.certificate_name)
+        await create_certificate_poller
         print("\tdone")
 
-    def get_certificate(self):
+    async def get_certificate(self):
         print("Getting a certificate...")
-        certificate = self.certificate_client.get_certificate(name=self.certificate_name)
+        certificate = await self.certificate_client.get_certificate_with_policy(name=self.certificate_name)
         print(f"\tdone, certificate: {certificate.name}.")
 
-    def delete_certificate(self):
+    async def delete_certificate(self):
         print("Deleting a certificate...")
-        deleted_certificate = self.certificate_client.delete_certificate(name=self.certificate_name)
+        deleted_certificate = await self.certificate_client.delete_certificate(name=self.certificate_name)
         print("\tdone: " + deleted_certificate.name)
 
-    def run(self):
+    async def run(self):
         print("")
         print("------------------------")
         print("Key Vault - Certificates\nIdentity - Credential")
@@ -46,7 +48,7 @@ class KeyVaultCertificates:
         print("")
 
         try:
-            self.create_certificate()
-            self.get_certificate()
+            await self.create_certificate()
+            await self.get_certificate()
         finally:
-            self.delete_certificate()
+            await self.delete_certificate()
