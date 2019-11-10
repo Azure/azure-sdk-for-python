@@ -486,7 +486,7 @@ class AlertsOperations(object):
         return deserialized
     get_resource_group_level_alerts.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}'}
 
-    def dismiss(
+    def update_subscription_level_alert_state_to_dismiss(
             self, alert_name, custom_headers=None, raw=False, **operation_config):
         """Update the alert's state.
 
@@ -502,7 +502,7 @@ class AlertsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.dismiss.metadata['url']
+        url = self.update_subscription_level_alert_state_to_dismiss.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
@@ -535,9 +535,9 @@ class AlertsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    dismiss.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/dismiss'}
+    update_subscription_level_alert_state_to_dismiss.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/dismiss'}
 
-    def reactivate(
+    def update_subscription_level_alert_state_to_reactivate(
             self, alert_name, custom_headers=None, raw=False, **operation_config):
         """Update the alert's state.
 
@@ -553,7 +553,7 @@ class AlertsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.reactivate.metadata['url']
+        url = self.update_subscription_level_alert_state_to_reactivate.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
@@ -586,9 +586,9 @@ class AlertsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    reactivate.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/reactivate'}
+    update_subscription_level_alert_state_to_reactivate.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/reactivate'}
 
-    def dismiss1(
+    def update_resource_group_level_alert_state_to_dismiss(
             self, alert_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Update the alert's state.
 
@@ -607,7 +607,7 @@ class AlertsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.dismiss1.metadata['url']
+        url = self.update_resource_group_level_alert_state_to_dismiss.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
@@ -641,9 +641,9 @@ class AlertsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    dismiss1.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/dismiss'}
+    update_resource_group_level_alert_state_to_dismiss.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/dismiss'}
 
-    def reactivate1(
+    def update_resource_group_level_alert_state_to_reactivate(
             self, alert_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Update the alert's state.
 
@@ -662,7 +662,7 @@ class AlertsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.reactivate1.metadata['url']
+        url = self.update_resource_group_level_alert_state_to_reactivate.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
@@ -696,4 +696,4 @@ class AlertsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    reactivate1.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/reactivate'}
+    update_resource_group_level_alert_state_to_reactivate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/reactivate'}
