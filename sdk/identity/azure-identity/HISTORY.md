@@ -3,6 +3,10 @@
 ### 1.1.0b1 Unreleased
 
 
+### 2019-11-11 1.0.2
+- Pin last known good version of `pywin32`
+
+
 ### 2019-11-05 1.0.1
 
 - `ClientCertificateCredential` uses application and tenant IDs correctly
