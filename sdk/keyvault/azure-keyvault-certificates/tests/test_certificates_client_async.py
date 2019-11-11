@@ -231,7 +231,7 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
         cert_name = self.get_resource_name("cert")
         lifetime_actions = [
-            LifetimeAction(trigger=Trigger(lifetime_percentage=80), action=Action(action_type=ActionType.auto_renew))
+            LifetimeActionGenerated(trigger=Trigger(lifetime_percentage=80), action=Action(action_type=ActionType.auto_renew))
         ]
         cert_policy = CertificatePolicyGenerated(
             key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
@@ -250,7 +250,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         self._validate_certificate_bundle(
-            cert=cert, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
+            cert=cert, cert_name=cert_name, cert_policy=cert_policy
         )
 
         self.assertEqual((await client.get_certificate_operation(name=cert_name)).status.lower(), "completed")
@@ -258,14 +258,14 @@ class CertificateClientTests(KeyVaultTestCase):
         # get certificate
         cert = await client.get_certificate(name=cert_name)
         self._validate_certificate_bundle(
-            cert=cert, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
+            cert=cert, cert_name=cert_name, cert_policy=cert_policy
         )
 
         # update certificate
         tags = {"tag1": "updated_value1"}
         cert_bundle = await client.update_certificate_properties(name=cert_name, tags=tags)
         self._validate_certificate_bundle(
-            cert=cert_bundle, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
+            cert=cert_bundle, cert_name=cert_name, cert_policy=cert_policy
         )
         self.assertEqual(tags, cert_bundle.properties.tags)
         self.assertEqual(cert.id, cert_bundle.id)
@@ -274,7 +274,7 @@ class CertificateClientTests(KeyVaultTestCase):
         # delete certificate
         deleted_cert_bundle = await client.delete_certificate(name=cert_name, _polling_interval=polling_interval)
         self._validate_certificate_bundle(
-            cert=deleted_cert_bundle, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
+            cert=deleted_cert_bundle, cert_name=cert_name, cert_policy=cert_policy
         )
 
         # get certificate returns not found
@@ -636,7 +636,7 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
         cert_name = self.get_resource_name("cert")
         lifetime_actions = [
-            LifetimeAction(trigger=Trigger(lifetime_percentage=2), action=Action(action_type=ActionType.email_contacts))
+            LifetimeActionGenerated(trigger=Trigger(lifetime_percentage=2), action=Action(action_type=ActionType.email_contacts))
         ]
         cert_policy = CertificatePolicyGenerated(
             key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
@@ -670,7 +670,7 @@ class CertificateClientTests(KeyVaultTestCase):
         # restore certificate
         restored_certificate = await client.restore_certificate_backup(backup=certificate_backup)
         self._validate_certificate_bundle(
-            cert=restored_certificate, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
+            cert=restored_certificate, cert_name=cert_name, cert_policy=cert_policy
         )
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
