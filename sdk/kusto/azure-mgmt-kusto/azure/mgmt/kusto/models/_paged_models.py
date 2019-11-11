@@ -12,6 +12,19 @@
 from msrest.paging import Paged
 
 
+class FollowerDatabaseDefinitionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`FollowerDatabaseDefinition <azure.mgmt.kusto.models.FollowerDatabaseDefinition>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[FollowerDatabaseDefinition]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(FollowerDatabaseDefinitionPaged, self).__init__(*args, **kwargs)
 class ClusterPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Cluster <azure.mgmt.kusto.models.Cluster>` object
@@ -77,6 +90,19 @@ class DatabasePrincipalPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(DatabasePrincipalPaged, self).__init__(*args, **kwargs)
+class AttachedDatabaseConfigurationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AttachedDatabaseConfiguration <azure.mgmt.kusto.models.AttachedDatabaseConfiguration>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AttachedDatabaseConfiguration]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AttachedDatabaseConfigurationPaged, self).__init__(*args, **kwargs)
 class DataConnectionPaged(Paged):
     """
     A paging container for iterating over a list of :class:`DataConnection <azure.mgmt.kusto.models.DataConnection>` object

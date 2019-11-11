@@ -27,7 +27,7 @@ class DatabasesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2019-05-15".
+    :ivar api_version: Client API Version. Constant value: "2019-09-07".
     """
 
     models = models
@@ -37,12 +37,12 @@ class DatabasesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-05-15"
+        self.api_version = "2019-09-07"
 
         self.config = config
 
     def check_name_availability(
-            self, resource_group_name, cluster_name, name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, name, type, custom_headers=None, raw=False, **operation_config):
         """Checks that the database name is valid and is not already in use.
 
         :param resource_group_name: The name of the resource group containing
@@ -50,8 +50,13 @@ class DatabasesOperations(object):
         :type resource_group_name: str
         :param cluster_name: The name of the Kusto cluster.
         :type cluster_name: str
-        :param name: Database name.
+        :param name: Resource name.
         :type name: str
+        :param type: The type of resource, for instance
+         Microsoft.Kusto/clusters/databases. Possible values include:
+         'Microsoft.Kusto/clusters/databases',
+         'Microsoft.Kusto/clusters/attachedDatabaseConfigurations'
+        :type type: str or ~azure.mgmt.kusto.models.Type
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -62,7 +67,7 @@ class DatabasesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        database_name = models.DatabaseCheckNameRequest(name=name)
+        resource_name = models.CheckNameRequest(name=name, type=type)
 
         # Construct URL
         url = self.check_name_availability.metadata['url']
@@ -89,7 +94,7 @@ class DatabasesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(database_name, 'DatabaseCheckNameRequest')
+        body_content = self._serialize.body(resource_name, 'CheckNameRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -295,6 +300,8 @@ class DatabasesOperations(object):
             deserialized = self._deserialize('Database', response)
         if response.status_code == 201:
             deserialized = self._deserialize('Database', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('Database', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -386,7 +393,7 @@ class DatabasesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'DatabaseUpdate')
+        body_content = self._serialize.body(parameters, 'Database')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -402,6 +409,8 @@ class DatabasesOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('Database', response)
         if response.status_code == 201:
+            deserialized = self._deserialize('Database', response)
+        if response.status_code == 202:
             deserialized = self._deserialize('Database', response)
 
         if raw:
@@ -423,7 +432,7 @@ class DatabasesOperations(object):
         :type database_name: str
         :param parameters: The database parameters supplied to the Update
          operation.
-        :type parameters: ~azure.mgmt.kusto.models.DatabaseUpdate
+        :type parameters: ~azure.mgmt.kusto.models.Database
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
