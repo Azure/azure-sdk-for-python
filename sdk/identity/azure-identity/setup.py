@@ -75,7 +75,7 @@ setup(
         "cryptography>=2.1.4",
         "msal<2.0.0,>=1.0.0",
         "msal-extensions~=0.1.3",
-        "pywin32<=225",
+        "pywin32<=225; platform_system == 'Windows'",
         "six>=1.6",
     ],
     extras_require={
