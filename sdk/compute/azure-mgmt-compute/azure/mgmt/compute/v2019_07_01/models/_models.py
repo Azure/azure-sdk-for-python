@@ -448,23 +448,22 @@ class AvailabilitySetUpdate(UpdateResource):
 
 
 class BillingProfile(Model):
-    """Specifies the billing related details of a low priority VM or VMSS.
+    """Specifies the billing related details of a Azure Spot VM or VMSS.
     <br><br>Minimum api-version: 2019-03-01.
 
     :param max_price: Specifies the maximum price you are willing to pay for a
-     low priority VM/VMSS. This price is in US Dollars. <br><br> This price
-     will be compared with the current low priority price for the VM size.
-     Also, the prices are compared at the time of create/update of low priority
-     VM/VMSS and the operation will only succeed if  the maxPrice is greater
-     than the current low priority price. <br><br> The maxPrice will also be
-     used for evicting a low priority VM/VMSS if the current low priority price
-     goes beyond the maxPrice after creation of VM/VMSS. <br><br> Possible
-     values are: <br><br> - Any decimal value greater than zero. Example:
-     $0.01538 <br><br> -1 – indicates default price to be up-to on-demand.
-     <br><br> You can set the maxPrice to -1 to indicate that the low priority
-     VM/VMSS should not be evicted for price reasons. Also, the default max
-     price is -1 if it is not provided by you. <br><br>Minimum api-version:
-     2019-03-01.
+     Azure Spot VM/VMSS. This price is in US Dollars. <br><br> This price will
+     be compared with the current Azure Spot price for the VM size. Also, the
+     prices are compared at the time of create/update of Azure Spot VM/VMSS and
+     the operation will only succeed if  the maxPrice is greater than the
+     current Azure Spot price. <br><br> The maxPrice will also be used for
+     evicting a Azure Spot VM/VMSS if the current Azure Spot price goes beyond
+     the maxPrice after creation of VM/VMSS. <br><br> Possible values are:
+     <br><br> - Any decimal value greater than zero. Example: 0.01538 <br><br>
+     -1 – indicates default price to be up-to on-demand. <br><br> You can set
+     the maxPrice to -1 to indicate that the Azure Spot VM/VMSS should not be
+     evicted for price reasons. Also, the default max price is -1 if it is not
+     provided by you. <br><br>Minimum api-version: 2019-03-01.
     :type max_price: float
     """
 
@@ -1361,7 +1360,8 @@ class DiskEncryptionSet(Resource):
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param identity:
-    :type identity: ~azure.mgmt.compute.v2019_07_01.models.ResourceIdentity
+    :type identity:
+     ~azure.mgmt.compute.v2019_07_01.models.EncryptionSetIdentity
     :param active_key: The key vault key which is currently used by this disk
      encryption set.
     :type active_key:
@@ -1390,7 +1390,7 @@ class DiskEncryptionSet(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
+        'identity': {'key': 'identity', 'type': 'EncryptionSetIdentity'},
         'active_key': {'key': 'properties.activeKey', 'type': 'KeyVaultAndKeyReference'},
         'previous_keys': {'key': 'properties.previousKeys', 'type': '[KeyVaultAndKeyReference]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -1625,6 +1625,46 @@ class Encryption(Model):
         super(Encryption, self).__init__(**kwargs)
         self.disk_encryption_set_id = kwargs.get('disk_encryption_set_id', None)
         self.type = kwargs.get('type', None)
+
+
+class EncryptionSetIdentity(Model):
+    """The managed identity for the disk encryption set. It should be given
+    permission on the key vault before it can be used to encrypt disks.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param type: The type of Managed Identity used by the DiskEncryptionSet.
+     Only SystemAssigned is supported. Possible values include:
+     'SystemAssigned'
+    :type type: str or
+     ~azure.mgmt.compute.v2019_07_01.models.DiskEncryptionSetIdentityType
+    :ivar principal_id: The object id of the Managed Identity Resource. This
+     will be sent to the RP from ARM via the x-ms-identity-principal-id header
+     in the PUT request if the resource has a systemAssigned(implicit) identity
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant id of the Managed Identity Resource. This will
+     be sent to the RP from ARM via the x-ms-client-tenant-id header in the PUT
+     request if the resource has a systemAssigned(implicit) identity
+    :vartype tenant_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(EncryptionSetIdentity, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.principal_id = None
+        self.tenant_id = None
 
 
 class EncryptionSettingsCollection(Model):
@@ -3953,46 +3993,6 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
         self.interval_length = kwargs.get('interval_length', None)
 
 
-class ResourceIdentity(Model):
-    """The managed identity for the disk encryption set. It should be given
-    permission on the key vault before it can be used to encrypt disks.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param type: The type of Managed Identity used by the DiskEncryptionSet.
-     Only SystemAssigned is supported. Possible values include:
-     'SystemAssigned'
-    :type type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.DiskEncryptionSetIdentityType
-    :ivar principal_id: The object id of the Managed Identity Resource. This
-     will be sent to the RP from ARM via the x-ms-identity-principal-id header
-     in the PUT request if the resource has a systemAssigned(implicit) identity
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant id of the Managed Identity Resource. This will
-     be sent to the RP from ARM via the x-ms-client-tenant-id header in the PUT
-     request if the resource has a systemAssigned(implicit) identity
-    :vartype tenant_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ResourceIdentity, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.principal_id = None
-        self.tenant_id = None
-
-
 class ResourceRange(Model):
     """Describes the resource range.
 
@@ -5334,16 +5334,16 @@ class VirtualMachine(Resource):
      ~azure.mgmt.compute.v2019_07_01.models.SubResource
     :param priority: Specifies the priority for the virtual machine.
      <br><br>Minimum api-version: 2019-03-01. Possible values include:
-     'Regular', 'Low'
+     'Regular', 'Low', 'Spot'
     :type priority: str or
      ~azure.mgmt.compute.v2019_07_01.models.VirtualMachinePriorityTypes
-    :param eviction_policy: Specifies the eviction policy for the low priority
+    :param eviction_policy: Specifies the eviction policy for the Azure Spot
      virtual machine. Only supported value is 'Deallocate'. <br><br>Minimum
      api-version: 2019-03-01. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
      ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineEvictionPolicyTypes
-    :param billing_profile: Specifies the billing related details of a low
-     priority virtual machine. <br><br>Minimum api-version: 2019-03-01.
+    :param billing_profile: Specifies the billing related details of a Azure
+     Spot virtual machine. <br><br>Minimum api-version: 2019-03-01.
     :type billing_profile:
      ~azure.mgmt.compute.v2019_07_01.models.BillingProfile
     :param host: Specifies information about the dedicated host that the
@@ -7538,8 +7538,8 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
     :param license_type: The license type, which is for bring your own license
      scenario.
     :type license_type: str
-    :param billing_profile: Specifies the billing related details of a low
-     priority VMSS. <br><br>Minimum api-version: 2019-03-01.
+    :param billing_profile: Specifies the billing related details of a Azure
+     Spot VMSS. <br><br>Minimum api-version: 2019-03-01.
     :type billing_profile:
      ~azure.mgmt.compute.v2019_07_01.models.BillingProfile
     :param scheduled_events_profile: Specifies Scheduled Event related
@@ -7942,16 +7942,16 @@ class VirtualMachineScaleSetVMProfile(Model):
     :type license_type: str
     :param priority: Specifies the priority for the virtual machines in the
      scale set. <br><br>Minimum api-version: 2017-10-30-preview. Possible
-     values include: 'Regular', 'Low'
+     values include: 'Regular', 'Low', 'Spot'
     :type priority: str or
      ~azure.mgmt.compute.v2019_07_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for virtual machines
-     in a low priority scale set. <br><br>Minimum api-version:
+     in a Azure Spot scale set. <br><br>Minimum api-version:
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
      ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineEvictionPolicyTypes
-    :param billing_profile: Specifies the billing related details of a low
-     priority VMSS. <br><br>Minimum api-version: 2019-03-01.
+    :param billing_profile: Specifies the billing related details of a Azure
+     Spot VMSS. <br><br>Minimum api-version: 2019-03-01.
     :type billing_profile:
      ~azure.mgmt.compute.v2019_07_01.models.BillingProfile
     :param scheduled_events_profile: Specifies Scheduled Event related
@@ -8150,16 +8150,16 @@ class VirtualMachineUpdate(UpdateResource):
      ~azure.mgmt.compute.v2019_07_01.models.SubResource
     :param priority: Specifies the priority for the virtual machine.
      <br><br>Minimum api-version: 2019-03-01. Possible values include:
-     'Regular', 'Low'
+     'Regular', 'Low', 'Spot'
     :type priority: str or
      ~azure.mgmt.compute.v2019_07_01.models.VirtualMachinePriorityTypes
-    :param eviction_policy: Specifies the eviction policy for the low priority
+    :param eviction_policy: Specifies the eviction policy for the Azure Spot
      virtual machine. Only supported value is 'Deallocate'. <br><br>Minimum
      api-version: 2019-03-01. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
      ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineEvictionPolicyTypes
-    :param billing_profile: Specifies the billing related details of a low
-     priority virtual machine. <br><br>Minimum api-version: 2019-03-01.
+    :param billing_profile: Specifies the billing related details of a Azure
+     Spot virtual machine. <br><br>Minimum api-version: 2019-03-01.
     :type billing_profile:
      ~azure.mgmt.compute.v2019_07_01.models.BillingProfile
     :param host: Specifies information about the dedicated host that the
