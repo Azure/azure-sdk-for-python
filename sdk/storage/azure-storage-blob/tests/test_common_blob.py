@@ -264,10 +264,9 @@ class StorageCommonBlobTest(StorageTestCase):
         content = blob.download_blob().readall()
         self.assertEqual(content, b"helloworld! eom")
 
+    @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_requests(self, resource_group, location, storage_account, storage_account_key):
-        if not self.is_live:
-            pytest.skip("Recording is too big becasue of text.")
         self._setup(storage_account.name, storage_account_key)
 
         # Act
