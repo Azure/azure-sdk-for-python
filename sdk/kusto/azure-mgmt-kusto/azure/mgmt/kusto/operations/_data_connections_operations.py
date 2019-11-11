@@ -27,7 +27,7 @@ class DataConnectionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2019-05-15".
+    :ivar api_version: Client API Version. Constant value: "2019-09-07".
     """
 
     models = models
@@ -37,7 +37,7 @@ class DataConnectionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-05-15"
+        self.api_version = "2019-09-07"
 
         self.config = config
 
@@ -382,6 +382,8 @@ class DataConnectionsOperations(object):
             deserialized = self._deserialize('DataConnection', response)
         if response.status_code == 201:
             deserialized = self._deserialize('DataConnection', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('DataConnection', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -493,6 +495,8 @@ class DataConnectionsOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('DataConnection', response)
         if response.status_code == 201:
+            deserialized = self._deserialize('DataConnection', response)
+        if response.status_code == 202:
             deserialized = self._deserialize('DataConnection', response)
 
         if raw:
