@@ -155,7 +155,9 @@ credential = DefaultAzureCredential()
 
 certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
-create_certificate_poller = certificate_client.begin_create_certificate(name="cert-name", policy=CertificatePolicy.get_default())
+create_certificate_poller = certificate_client.begin_create_certificate(
+    certificate_name="cert-name", policy=CertificatePolicy.get_default()
+)
 print(create_certificate_poller.result())
 ```
 If you would like to check the status of your certificate creation, you can call `status()` on the poller or
@@ -172,7 +174,7 @@ credential = DefaultAzureCredential()
 
 certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
-certificate = certificate_client.get_certificate(name="cert-name")
+certificate = certificate_client.get_certificate(certificate_name="cert-name")
 
 print(certificate.name)
 print(certificate.properties.version)
@@ -188,7 +190,7 @@ from azure.keyvault.certificates import CertificateClient
 credential = DefaultAzureCredential()
 
 certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
-certificate = certificate_client.get_certificate_version(name="cert-name", version="cert-version")
+certificate = certificate_client.get_certificate_version(certificate_name="cert-name", version="cert-version")
 
 print(certificate.name)
 print(certificate.properties.version)
@@ -205,7 +207,9 @@ credential = DefaultAzureCredential()
 certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
 # we will now disable the certificate for further use
-updated_certificate= certificate_client.update_certificate_properties(name="cert-name", enabled=False)
+updated_certificate= certificate_client.update_certificate_properties(
+    certificate_name="cert-name", enabled=False
+)
 
 print(updated_certificate.name)
 print(updated_certificate.properties.enabled)
@@ -225,7 +229,7 @@ credential = DefaultAzureCredential()
 
 certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
-deleted_certificate = certificate_client.delete_certificate(name="cert-name")
+deleted_certificate = certificate_client.begin_delete_certificate(certificate_name="cert-name")
 
 print(deleted_certificate.name)
 print(deleted_certificate.deleted_date)
@@ -269,7 +273,9 @@ credential = DefaultAzureCredential()
 
 certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
-create_certificate_result = await certificate_client.create_certificate(name="cert-name", policy=CertificatePolicy.get_default())
+create_certificate_result = await certificate_client.create_certificate(
+    certificate_name="cert-name", policy=CertificatePolicy.get_default()
+)
 print(create_certificate_result)
 ```
 
@@ -277,16 +283,12 @@ print(create_certificate_result)
 [list_properties_of_certificates](https://aka.ms/azsdk-python-keyvault-certs-async-listcerts-ref) lists all the
 properties of the certificates in the client's vault:
 ```python
-<<<<<<< HEAD
-certificates = certificate_client.list_properties_of_certificates()
-=======
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
 
 credential = DefaultAzureCredential()
 
 certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
->>>>>>> 9a05c74b0f87b154ad2c941b3cbc5710817ea133
 
 certificates = certificate_client.list_properties_of_certificates()
 async for certificate in certificates:
@@ -341,7 +343,7 @@ client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", cr
 
 Network trace logging can also be enabled for any single operation:
  ```python
-certificate = certificate_client.get_certificate(name="cert-name", logging_enable=True)
+certificate = certificate_client.get_certificate(certificate_name="cert-name", logging_enable=True)
 ```
 
 ## Next steps

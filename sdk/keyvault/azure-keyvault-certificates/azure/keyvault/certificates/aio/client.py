@@ -50,14 +50,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
     # pylint:disable=protected-access
     @distributed_trace_async
     async def create_certificate(
-        self, name: str, policy: CertificatePolicy, **kwargs: "**Any"
+        self, certificate_name: str, policy: CertificatePolicy, **kwargs: "**Any"
     ) -> Union[KeyVaultCertificate, CertificateOperation]:
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This
         operation requires the certificates/create permission.
 
-        :param str name: The name of the certificate.
+        :param str certificate_name: The name of the certificate.
         :param policy: The management policy for the certificate.
         :type policy:
          ~azure.keyvault.certificates.models.CertificatePolicy
@@ -90,7 +90,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             attributes = None
         cert_bundle = await self._client.create_certificate(
             vault_base_url=self.vault_url,
-            certificate_name=name,
+            certificate_name=certificate_name,
             certificate_policy=policy._to_certificate_policy_bundle(),
             certificate_attributes=attributes,
             tags=tags,
@@ -99,9 +99,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         create_certificate_operation = CertificateOperation._from_certificate_operation_bundle(cert_bundle)
 
-        command = partial(self.get_certificate_operation, name=name, **kwargs)
+        command = partial(self.get_certificate_operation, certificate_name=certificate_name, **kwargs)
 
-        get_certificate_command = partial(self.get_certificate, name=name, **kwargs)
+        get_certificate_command = partial(self.get_certificate, certificate_name=certificate_name, **kwargs)
 
         create_certificate_polling = CreateCertificatePollerAsync(
             get_certificate_command=get_certificate_command, interval=polling_interval
@@ -109,7 +109,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return await async_poller(command, create_certificate_operation, None, create_certificate_polling)
 
     @distributed_trace_async
-    async def get_certificate(self, name: str, **kwargs: "**Any") -> KeyVaultCertificate:
+    async def get_certificate(self, certificate_name: str, **kwargs: "**Any") -> KeyVaultCertificate:
         """Gets a certificate with its management policy attached.
 
 
@@ -117,7 +117,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         version of the certificate as a parameter. If you wish to specify version, use
         the get_certificate_version function and specify the desired version.
 
-        :param str name: The name of the certificate in the given vault.
+        :param str certificate_name: The name of the certificate in the given vault.
         :returns: An instance of KeyVaultCertificate
         :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
         :raises:
@@ -134,7 +134,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
         bundle = await self._client.get_certificate(
             vault_base_url=self.vault_url,
-            certificate_name=name,
+            certificate_name=certificate_name,
             certificate_version="",
             error_map=_error_map,
             **kwargs
@@ -142,13 +142,15 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace_async
-    async def get_certificate_version(self, name: str, version: str, **kwargs: "**Any") -> KeyVaultCertificate:
+    async def get_certificate_version(
+        self, certificate_name: str, version: str, **kwargs: "**Any"
+        ) -> KeyVaultCertificate:
         """Gets a specific version of a certificate without returning its management policy.
 
         If you wish to get the latest version of your certificate, or to get the certificate's policy as well,
         use the get_certificate function.
 
-        :param str name: The name of the certificate in the given vault.
+        :param str certificate_name: The name of the certificate in the given vault.
         :param str version: The version of the certificate.
         :returns: An instance of KeyVaultCertificate
         :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
@@ -166,7 +168,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
         bundle = await self._client.get_certificate(
             vault_base_url=self.vault_url,
-            certificate_name=name,
+            certificate_name=certificate_name,
             certificate_version=version,
             error_map=_error_map,
             **kwargs
@@ -174,12 +176,12 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace_async
-    async def delete_certificate(self, name: str, **kwargs: "**Any") -> DeletedCertificate:
+    async def delete_certificate(self, certificate_name: str, **kwargs: "**Any") -> DeletedCertificate:
         """Delete all versions of a certificate. Requires certificates/delete permission.
 
         If the vault has soft-delete enabled, deletion may take several seconds to complete.
 
-        :param str name: The name of the certificate.
+        :param str certificate_name: The name of the certificate.
         :returns: The deleted certificate
         :rtype: ~azure.keyvault.certificates.models.DeletedCertificate
         :raises:
@@ -198,11 +200,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         deleted_cert_bundle = await self._client.delete_certificate(
-            vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, error_map=_error_map, **kwargs
         )
         deleted_certificate = DeletedCertificate._from_deleted_certificate_bundle(deleted_cert_bundle)
         sd_disabled = deleted_certificate.recovery_id is None
-        command = partial(self.get_deleted_certificate, name=name, **kwargs)
+        command = partial(self.get_deleted_certificate, certificate_name=certificate_name, **kwargs)
 
         delete_certificate_poller = DeleteAsyncPollingMethod(
             initial_status="deleting", finished_status="deleted", sd_disabled=sd_disabled, interval=polling_interval
@@ -210,7 +212,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return await async_poller(command, deleted_certificate, None, delete_certificate_poller)
 
     @distributed_trace_async
-    async def get_deleted_certificate(self, name: str, **kwargs: "**Any") -> DeletedCertificate:
+    async def get_deleted_certificate(self, certificate_name: str, **kwargs: "**Any") -> DeletedCertificate:
         """Retrieves information about the specified deleted certificate.
 
         Retrieves the deleted certificate information plus its attributes,
@@ -218,7 +220,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         current deletion recovery level. This operation requires the certificates/
         get permission.
 
-        :param str name: The name of the certificate.
+        :param str certificate_name: The name of the certificate.
         :return: The deleted certificate
         :rtype: ~azure.keyvault.certificates.models.DeletedCertificate
         :raises:
@@ -234,12 +236,12 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.get_deleted_certificate(
-            vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, error_map=_error_map, **kwargs
         )
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
     @distributed_trace_async
-    async def purge_deleted_certificate(self, name: str, **kwargs: "**Any") -> None:
+    async def purge_deleted_certificate(self, certificate_name: str, **kwargs: "**Any") -> None:
         """Permanently deletes the specified deleted certificate.
 
         Performs an irreversible deletion of the specified certificate, without
@@ -247,24 +249,24 @@ class CertificateClient(AsyncKeyVaultClientBase):
         level does not specified 'Purgeable'. This operation requires the
         certificate/purge permission.
 
-        :param str name: The name of the certificate
+        :param str certificate_name: The name of the certificate
         :return: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         await self._client.purge_deleted_certificate(
-            vault_base_url=self.vault_url, certificate_name=name, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
         )
 
     @distributed_trace_async
-    async def recover_deleted_certificate(self, name: str, **kwargs: "**Any") -> KeyVaultCertificate:
+    async def recover_deleted_certificate(self, certificate_name: str, **kwargs: "**Any") -> KeyVaultCertificate:
         """Recover a deleted certificate to its latest version. Possible only in a vault with soft-delete enabled.
 
         Requires certificates/recover permission. If the vault does not have soft-delete enabled,
         :func:`delete_certificate` is permanent, and this method will raise an error. Attempting to recover a
         non-deleted certificate will also raise an error.
 
-        :param str name: The name of the deleted certificate
+        :param str certificate_name: The name of the deleted certificate
         :returns: The recovered certificate
         :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -281,10 +283,10 @@ class CertificateClient(AsyncKeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         recovered_cert_bundle = await self._client.recover_deleted_certificate(
-            vault_base_url=self.vault_url, certificate_name=name, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
         )
         recovered_certificate = KeyVaultCertificate._from_certificate_bundle(recovered_cert_bundle)
-        command = partial(self.get_certificate, name=name, **kwargs)
+        command = partial(self.get_certificate, certificate_name=certificate_name, **kwargs)
 
         recover_cert_poller = RecoverDeletedAsyncPollingMethod(
             initial_status="recovering", finished_status="recovered", interval=polling_interval
@@ -293,7 +295,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def import_certificate(
-        self, name: str, certificate_bytes: bytes, **kwargs: "**Any"
+        self, certificate_name: str, certificate_bytes: bytes, **kwargs: "**Any"
     ) -> KeyVaultCertificate:
         """Imports a certificate into a specified key vault.
 
@@ -303,7 +305,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         contain the key as well as x509 certificates. This operation requires
         the certificates/import permission.
 
-        :param str name: The name of the certificate.
+        :param str certificate_name: The name of the certificate.
         :param bytes certificate_bytes: Bytes of the certificate object to import.
             This certificate needs to contain the private key.
         :keyword bool enabled: Whether the certificate is enabled for use.
@@ -329,7 +331,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         base64_encoded_certificate = base64.b64encode(certificate_bytes).decode("utf-8")
         bundle = await self._client.import_certificate(
             vault_base_url=self.vault_url,
-            certificate_name=name,
+            certificate_name=certificate_name,
             base64_encoded_certificate=base64_encoded_certificate,
             password=password,
             certificate_policy=CertificatePolicy._to_certificate_policy_bundle(policy),
@@ -381,7 +383,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def update_certificate_properties(
-        self, name: str, version: Optional[str] = None, **kwargs: "**Any"
+        self, certificate_name: str, version: Optional[str] = None, **kwargs: "**Any"
     ) -> KeyVaultCertificate:
         """Updates the specified attributes associated with the given certificate.
 
@@ -389,7 +391,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         given certificate; the only elements updated are the certificate's
         attributes. This operation requires the certificates/update permission.
 
-        :param str name: The name of the certificate in the given key vault.
+        :param str certificate_name: The name of the certificate in the given key vault.
         :param str version: The version of the certificate.
         :keyword bool enabled: Whether the certificate is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
@@ -416,7 +418,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         bundle = await self._client.update_certificate(
             vault_base_url=self.vault_url,
-            certificate_name=name,
+            certificate_name=certificate_name,
             certificate_version=version or "",
             certificate_attributes=attributes,
             **kwargs
@@ -424,14 +426,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace_async
-    async def backup_certificate(self, name: str, **kwargs: "**Any") -> bytes:
+    async def backup_certificate(self, certificate_name: str, **kwargs: "**Any") -> bytes:
         """Backs up the specified certificate.
 
         Requests that a backup of the specified certificate be downloaded
         to the client. All versions of the certificate will be downloaded.
         This operation requires the certificates/backup permission.
 
-        :param str name: The name of the certificate.
+        :param str certificate_name: The name of the certificate.
         :return: the backup blob containing the backed up certificate.
         :rtype: bytes
         :raises:
@@ -447,7 +449,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         backup_result = await self._client.backup_certificate(
-            vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, error_map=_error_map, **kwargs
         )
         return backup_result.value
 
@@ -544,7 +546,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
     @distributed_trace
     def list_properties_of_certificate_versions(
-        self, name: str, **kwargs: "**Any"
+        self, certificate_name: str, **kwargs: "**Any"
     ) -> AsyncIterable[CertificateProperties]:
         """List the versions of a certificate.
 
@@ -552,7 +554,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         certificate in the key vault. This operation requires the
         certificates/list permission.
 
-        :param str name: The name of the certificate.
+        :param str certificate_name: The name of the certificate.
         :returns: An iterator like instance of CertificateProperties
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateProperties]
@@ -569,7 +571,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_certificate_versions(
             vault_base_url=self._vault_url,
-            certificate_name=name,
+            certificate_name=certificate_name,
             maxresults=max_page_size,
             cls=lambda objs: [CertificateProperties._from_certificate_item(x) for x in objs],
             **kwargs
@@ -663,13 +665,13 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace_async
-    async def get_certificate_operation(self, name: str, **kwargs: "**Any") -> CertificateOperation:
+    async def get_certificate_operation(self, certificate_name: str, **kwargs: "**Any") -> CertificateOperation:
         """Gets the creation operation of a certificate.
 
         Gets the creation operation associated with a specified certificate.
         This operation requires the certificates/get permission.
 
-        :param str name: The name of the certificate.
+        :param str certificate_name: The name of the certificate.
         :returns: The created CertificateOperation
         :rtype: ~azure.keyvault.certificates.models.CertificateOperation
         :raises:
@@ -678,19 +680,19 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
 
         bundle = await self._client.get_certificate_operation(
-            vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, error_map=_error_map, **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace_async
-    async def delete_certificate_operation(self, name: str, **kwargs: "**Any") -> CertificateOperation:
+    async def delete_certificate_operation(self, certificate_name: str, **kwargs: "**Any") -> CertificateOperation:
         """Deletes the creation operation for a specific certificate.
 
         Deletes the creation operation for a specified certificate that is in
         the process of being created. The certificate is no longer created.
         This operation requires the certificates/update permission.
 
-        :param str name: The name of the certificate.
+        :param str certificate_name: The name of the certificate.
         :return: The deleted CertificateOperation
         :rtype: ~azure.keyvault.certificates.models.CertificateOperation
         :raises:
@@ -698,30 +700,30 @@ class CertificateClient(AsyncKeyVaultClientBase):
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
         """
         bundle = await self._client.delete_certificate_operation(
-            vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, error_map=_error_map, **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace_async
-    async def cancel_certificate_operation(self, name: str, **kwargs: "**Any") -> CertificateOperation:
+    async def cancel_certificate_operation(self, certificate_name: str, **kwargs: "**Any") -> CertificateOperation:
         """Cancels a certificate operation.
 
         Cancels a certificate creation operation that is already in progress.
         This operation requires the certificates/update permission.
 
-        :param str name: The name of the certificate.
+        :param str certificate_name: The name of the certificate.
         :returns: The cancelled certificate operation
         :rtype: ~azure.keyvault.certificates.models.CertificateOperation
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         bundle = await self._client.update_certificate_operation(
-            vault_base_url=self.vault_url, certificate_name=name, cancellation_requested=True, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, cancellation_requested=True, **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace_async
     async def merge_certificate(
-        self, name: str, x509_certificates: List[bytearray], **kwargs: "**Any"
+        self, certificate_name: str, x509_certificates: List[bytearray], **kwargs: "**Any"
     ) -> KeyVaultCertificate:
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 
@@ -731,7 +733,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         its issuer to 'Unknown'. This way Key Vault knows that the certificate will not be signed
         by an issuer known to it.
 
-        :param str name: The name of the certificate
+        :param str certificate_name: The name of the certificate
         :param x509_certificates: The certificate or the certificate chain to merge.
         :type x509_certificates: list[bytearray]
         :keyword bool enabled: Whether the certificate is enabled for use.
@@ -750,7 +752,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             attributes = None
         bundle = await self._client.merge_certificate(
             vault_base_url=self.vault_url,
-            certificate_name=name,
+            certificate_name=certificate_name,
             x509_certificates=x509_certificates,
             certificate_attributes=attributes,
             **kwargs
@@ -758,7 +760,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace_async
-    async def get_issuer(self, name: str, **kwargs: "**Any") -> CertificateIssuer:
+    async def get_issuer(self, issuer_name: str, **kwargs: "**Any") -> CertificateIssuer:
         """Gets the specified certificate issuer.
 
         Returns the specified certificate issuer resources in the key vault.
@@ -780,13 +782,13 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         issuer_bundle = await self._client.get_certificate_issuer(
-            vault_base_url=self.vault_url, issuer_name=name, error_map=_error_map, **kwargs
+            vault_base_url=self.vault_url, issuer_name=issuer_name, error_map=_error_map, **kwargs
         )
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace_async
     async def create_issuer(
-        self, name: str, provider: str, **kwargs: "**Any"
+        self, issuer_name: str, provider: str, **kwargs: "**Any"
     ) -> CertificateIssuer:
         """Sets the specified certificate issuer.
 
@@ -794,7 +796,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         certificate issuer. This operation requires the certificates/setissuers
         permission.
 
-        :param str name: The name of the issuer.
+        :param str issuer_name: The name of the issuer.
         :param str provider: The issuer provider.
         :keyword bool enabled: Whether the issuer is enabled for use.
         :keyword str account_id: The user name/account name/account id.
@@ -850,7 +852,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             issuer_attributes = None
         issuer_bundle = await self._client.set_certificate_issuer(
             vault_base_url=self.vault_url,
-            issuer_name=name,
+            issuer_name=issuer_name,
             provider=provider,
             credentials=issuer_credentials,
             organization_details=organization_details,
@@ -860,13 +862,13 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace_async
-    async def update_issuer(self, name: str, **kwargs: "**Any") -> CertificateIssuer:
+    async def update_issuer(self, issuer_name: str, **kwargs: "**Any") -> CertificateIssuer:
         """Updates the specified certificate issuer.
 
         Performs an update on the specified certificate issuer entity.
         This operation requires the certificates/setissuers permission.
 
-        :param str name: The name of the issuer.
+        :param str issuer_name: The name of the issuer.
         :keyword bool enabled: Whether the issuer is enabled for use.
         :keyword str provider: The issuer provider
         :keyword str account_id: The user name/account name/account id.
@@ -914,7 +916,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             issuer_attributes = None
         issuer_bundle = await self._client.update_certificate_issuer(
             vault_base_url=self.vault_url,
-            issuer_name=name,
+            issuer_name=issuer_name,
             provider=provider,
             credentials=issuer_credentials,
             organization_details=organization_details,
@@ -924,13 +926,13 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace_async
-    async def delete_issuer(self, name: str, **kwargs: "**Any") -> CertificateIssuer:
+    async def delete_issuer(self, issuer_name: str, **kwargs: "**Any") -> CertificateIssuer:
         """Deletes the specified certificate issuer.
 
         Permanently removes the specified certificate issuer from the vault.
         This operation requires the certificates/manageissuers/deleteissuers permission.
 
-        :param str name: The name of the issuer.
+        :param str issuer_name: The name of the issuer.
         :return: CertificateIssuer
         :rtype: ~azure.keyvault.certificates.models.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -944,7 +946,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         issuer_bundle = await self._client.delete_certificate_issuer(
-            vault_base_url=self.vault_url, issuer_name=name, **kwargs
+            vault_base_url=self.vault_url, issuer_name=issuer_name, **kwargs
         )
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 

@@ -47,10 +47,10 @@ async def run_sample():
         storage_cert_name = "ServerRecoverCertificate"
 
         bank_certificate = await client.create_certificate(
-            name=bank_cert_name, policy=CertificatePolicy.get_default()
+            certificate_name=bank_cert_name, policy=CertificatePolicy.get_default()
         )
         storage_certificate = await client.create_certificate(
-            name=storage_cert_name, policy=CertificatePolicy.get_default()
+            certificate_name=storage_cert_name, policy=CertificatePolicy.get_default()
         )
 
         print("Certificate with name '{0}' was created.".format(bank_certificate.name))
@@ -58,7 +58,7 @@ async def run_sample():
 
         # The storage account was closed, need to delete its credentials from the Key Vault.
         print("\n.. Delete a Certificate")
-        deleted_bank_certificate = await client.delete_certificate(name=bank_cert_name)
+        deleted_bank_certificate = await client.delete_certificate(certificate_name=bank_cert_name)
         # To ensure certificate is deleted on the server side.
         await asyncio.sleep(30)
 
@@ -71,18 +71,18 @@ async def run_sample():
         # We accidentally deleted the bank account certificate. Let's recover it.
         # A deleted certificate can only be recovered if the Key Vault is soft-delete enabled.
         print("\n.. Recover Deleted Certificate")
-        recovered_bank_certificate = await client.recover_deleted_certificate(deleted_bank_certificate.name)
+        recovered_bank_certificate = await client.recover_deleted_certificate(
+            certificate_name=deleted_bank_certificate.name
+        )
         print("Recovered Certificate with name '{0}'.".format(recovered_bank_certificate.name))
 
         # Let's delete storage account now.
         # If the keyvault is soft-delete enabled, then for permanent deletion deleted certificate needs to be purged.
-        await client.delete_certificate(name=storage_cert_name)
-        # To ensure certificate is deleted on the server side.
-        await asyncio.sleep(30)
+        await client.delete_certificate(certificate_name=storage_cert_name)\
 
         # To ensure permanent deletion, we might need to purge the secret.
         print("\n.. Purge Deleted Certificate")
-        await client.purge_deleted_certificate(name=storage_cert_name)
+        await client.purge_deleted_certificate(certificate_name=storage_cert_name)
         print("Certificate has been permanently deleted.")
 
     except HttpResponseError as e:
