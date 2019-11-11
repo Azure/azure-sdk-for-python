@@ -50,10 +50,15 @@ def get_package_details(setup_filename):
     os.chdir(current_dir)
     _, kwargs = global_vars["__setup_calls__"][0]
 
-    return kwargs["name"], kwargs["version"]
+    package_name = kwargs["name"]
+    # default namespace for the package
+    name_space = package_name.replace('-', '.')
+    if "packages" in kwargs.keys():
+        packages = kwargs["packages"]
+        if packages:
+            name_space = packages[0]
+            logging.info("Namespaces found for package {0}: {1}".format(package_name, packages))
 
-def get_package_namespace(setup_filename):
-    # traverse until meeting an improperly formatted __init__
-    pass
+    return package_name, name_space, kwargs["version"]
 
     
