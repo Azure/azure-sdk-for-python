@@ -796,7 +796,7 @@ class CertificatePolicy(object):
             key_type=KeyType(key_properties.key_type) if key_properties and key_properties else None,
             key_size=key_properties.key_size if key_properties else None,
             reuse_key=key_properties.reuse_key if key_properties else None,
-            curve=KeyCurveName(key_properties) if key_properties and key_properties.curve else None,
+            curve=KeyCurveName(key_properties.curve) if key_properties and key_properties.curve else None,
             ekus=x509_certificate_properties.ekus if x509_certificate_properties else None,
             key_usage=key_usage,
             content_type=(

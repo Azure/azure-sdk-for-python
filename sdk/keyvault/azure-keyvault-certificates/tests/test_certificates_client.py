@@ -560,10 +560,13 @@ class CertificateClientTests(KeyVaultTestCase):
             )]
         )
 
+        polling_interval = 0 if self.is_playback() else None
+
         # get certificate policy
         client.begin_create_certificate(
             name=cert_name,
-            policy=cert_policy
+            policy=cert_policy,
+            _polling_interval=polling_interval
         ).wait()
 
         policy_to_validate = client.get_policy(certificate_name=cert_name)
@@ -574,8 +577,8 @@ class CertificateClientTests(KeyVaultTestCase):
         cert_policy._key_size = 256
         cert_policy._curve = KeyCurveName.p_256
 
-        cert_policy_generated._key_properties=KeyProperties(
-            exportable=True, key_type="EC", curve="P-256", reuse_key=True
+        cert_policy_generated.key_properties=KeyProperties(
+            exportable=True, key_type="EC", curve="P-256", reuse_key=True, key_size=256
         )
 
         policy_to_validate = client.update_policy(certificate_name=cert_name, policy=cert_policy)
