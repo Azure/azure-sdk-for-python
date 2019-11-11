@@ -346,9 +346,9 @@ class StorageCommonBlobTestAsync(AsyncStorageTestCase):
         uri = "http://www.gutenberg.org/files/59466/59466-0.txt"
         async with aiohttp.ClientSession() as session:
             async with session.get(uri) as data:
-                text_data = await data.text()
-                resp = await blob.upload_blob(data=text_data)
-                self.assertIsNotNone(resp.get('etag'))
+                async for text, _ in data.content.iter_chunks():
+                    resp = await blob.upload_blob(data=text)
+                    self.assertIsNotNone(resp.get('etag'))
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
