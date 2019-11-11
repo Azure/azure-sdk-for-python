@@ -1600,9 +1600,13 @@ class WebHookEventSubscriptionDestination(EventSubscriptionDestination):
     :param preferred_batch_size_in_kilobytes: Preferred batch size in
      Kilobytes.
     :type preferred_batch_size_in_kilobytes: int
-    :param azure_active_directory_application_id_or_uri: The AAD application
-     ID or URI to get the access token that will be included as the bearer
-     token in delivery requests.
+    :param azure_active_directory_tenant_id: The Azure Active Directory Tenant
+     ID to get the access token that will be included as the bearer token in
+     delivery requests.
+    :type azure_active_directory_tenant_id: str
+    :param azure_active_directory_application_id_or_uri: The Azure Active
+     Directory Application ID or URI to get the access token that will be
+     included as the bearer token in delivery requests.
     :type azure_active_directory_application_id_or_uri: str
     """
 
@@ -1617,14 +1621,16 @@ class WebHookEventSubscriptionDestination(EventSubscriptionDestination):
         'endpoint_base_url': {'key': 'properties.endpointBaseUrl', 'type': 'str'},
         'max_events_per_batch': {'key': 'properties.maxEventsPerBatch', 'type': 'int'},
         'preferred_batch_size_in_kilobytes': {'key': 'properties.preferredBatchSizeInKilobytes', 'type': 'int'},
+        'azure_active_directory_tenant_id': {'key': 'properties.azureActiveDirectoryTenantId', 'type': 'str'},
         'azure_active_directory_application_id_or_uri': {'key': 'properties.azureActiveDirectoryApplicationIdOrUri', 'type': 'str'},
     }
 
-    def __init__(self, *, endpoint_url: str=None, max_events_per_batch: int=None, preferred_batch_size_in_kilobytes: int=None, azure_active_directory_application_id_or_uri: str=None, **kwargs) -> None:
+    def __init__(self, *, endpoint_url: str=None, max_events_per_batch: int=None, preferred_batch_size_in_kilobytes: int=None, azure_active_directory_tenant_id: str=None, azure_active_directory_application_id_or_uri: str=None, **kwargs) -> None:
         super(WebHookEventSubscriptionDestination, self).__init__(**kwargs)
         self.endpoint_url = endpoint_url
         self.endpoint_base_url = None
         self.max_events_per_batch = max_events_per_batch
         self.preferred_batch_size_in_kilobytes = preferred_batch_size_in_kilobytes
+        self.azure_active_directory_tenant_id = azure_active_directory_tenant_id
         self.azure_active_directory_application_id_or_uri = azure_active_directory_application_id_or_uri
         self.endpoint_type = 'WebHook'
