@@ -24,19 +24,19 @@ def test_send_with_partition_key(connstr_receivers):
             partition_key = b"test_partition_" + partition
             for i in range(50):
                 data = EventData(str(data_val))
-                #data.partition_key = partition_key
                 data_val += 1
                 client.send(data, partition_key=partition_key)
 
     found_partition_keys = {}
     for index, partition in enumerate(receivers):
-        received = partition.receive(timeout=5)
+        received = partition.receive_message_batch(timeout=5000)
         for message in received:
             try:
-                existing = found_partition_keys[message.partition_key]
+                event_data = EventData._from_message(message)
+                existing = found_partition_keys[event_data.partition_key]
                 assert existing == index
             except KeyError:
-                found_partition_keys[message.partition_key] = index
+                found_partition_keys[event_data.partition_key] = index
     client.close()
 
 
