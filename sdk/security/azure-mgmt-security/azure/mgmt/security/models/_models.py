@@ -1132,6 +1132,8 @@ class ConnectedResources(Model):
     :vartype tcp_ports: str
     :ivar udp_ports: The connections udp ports
     :vartype udp_ports: str
+    :ivar ports: The connections ports
+    :vartype ports: str
     """
 
     _validation = {
@@ -1139,6 +1141,7 @@ class ConnectedResources(Model):
         'udp_ports_count': {'readonly': True},
         'tcp_ports': {'readonly': True},
         'udp_ports': {'readonly': True},
+        'ports': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1146,6 +1149,7 @@ class ConnectedResources(Model):
         'udp_ports_count': {'key': 'udpPortsCount', 'type': 'int'},
         'tcp_ports': {'key': 'tcpPorts', 'type': 'str'},
         'udp_ports': {'key': 'udpPorts', 'type': 'str'},
+        'ports': {'key': 'ports', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1154,6 +1158,7 @@ class ConnectedResources(Model):
         self.udp_ports_count = None
         self.tcp_ports = None
         self.udp_ports = None
+        self.ports = None
 
 
 class ConnectedWorkspace(Model):
