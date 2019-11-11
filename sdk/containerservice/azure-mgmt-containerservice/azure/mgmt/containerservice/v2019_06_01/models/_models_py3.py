@@ -53,8 +53,6 @@ class AgentPool(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: The name of the resource that is unique within a resource
@@ -66,21 +64,21 @@ class AgentPool(SubResource):
      values must be in the range of 1 to 100 (inclusive). The default value is
      1.
     :type count: int
-    :param vm_size: Required. Size of agent VMs. Possible values include:
-     'Standard_A1', 'Standard_A10', 'Standard_A11', 'Standard_A1_v2',
-     'Standard_A2', 'Standard_A2_v2', 'Standard_A2m_v2', 'Standard_A3',
-     'Standard_A4', 'Standard_A4_v2', 'Standard_A4m_v2', 'Standard_A5',
-     'Standard_A6', 'Standard_A7', 'Standard_A8', 'Standard_A8_v2',
-     'Standard_A8m_v2', 'Standard_A9', 'Standard_B2ms', 'Standard_B2s',
-     'Standard_B4ms', 'Standard_B8ms', 'Standard_D1', 'Standard_D11',
-     'Standard_D11_v2', 'Standard_D11_v2_Promo', 'Standard_D12',
-     'Standard_D12_v2', 'Standard_D12_v2_Promo', 'Standard_D13',
-     'Standard_D13_v2', 'Standard_D13_v2_Promo', 'Standard_D14',
-     'Standard_D14_v2', 'Standard_D14_v2_Promo', 'Standard_D15_v2',
-     'Standard_D16_v3', 'Standard_D16s_v3', 'Standard_D1_v2', 'Standard_D2',
-     'Standard_D2_v2', 'Standard_D2_v2_Promo', 'Standard_D2_v3',
-     'Standard_D2s_v3', 'Standard_D3', 'Standard_D32_v3', 'Standard_D32s_v3',
-     'Standard_D3_v2', 'Standard_D3_v2_Promo', 'Standard_D4', 'Standard_D4_v2',
+    :param vm_size: Size of agent VMs. Possible values include: 'Standard_A1',
+     'Standard_A10', 'Standard_A11', 'Standard_A1_v2', 'Standard_A2',
+     'Standard_A2_v2', 'Standard_A2m_v2', 'Standard_A3', 'Standard_A4',
+     'Standard_A4_v2', 'Standard_A4m_v2', 'Standard_A5', 'Standard_A6',
+     'Standard_A7', 'Standard_A8', 'Standard_A8_v2', 'Standard_A8m_v2',
+     'Standard_A9', 'Standard_B2ms', 'Standard_B2s', 'Standard_B4ms',
+     'Standard_B8ms', 'Standard_D1', 'Standard_D11', 'Standard_D11_v2',
+     'Standard_D11_v2_Promo', 'Standard_D12', 'Standard_D12_v2',
+     'Standard_D12_v2_Promo', 'Standard_D13', 'Standard_D13_v2',
+     'Standard_D13_v2_Promo', 'Standard_D14', 'Standard_D14_v2',
+     'Standard_D14_v2_Promo', 'Standard_D15_v2', 'Standard_D16_v3',
+     'Standard_D16s_v3', 'Standard_D1_v2', 'Standard_D2', 'Standard_D2_v2',
+     'Standard_D2_v2_Promo', 'Standard_D2_v3', 'Standard_D2s_v3',
+     'Standard_D3', 'Standard_D32_v3', 'Standard_D32s_v3', 'Standard_D3_v2',
+     'Standard_D3_v2_Promo', 'Standard_D4', 'Standard_D4_v2',
      'Standard_D4_v2_Promo', 'Standard_D4_v3', 'Standard_D4s_v3',
      'Standard_D5_v2', 'Standard_D5_v2_Promo', 'Standard_D64_v3',
      'Standard_D64s_v3', 'Standard_D8_v3', 'Standard_D8s_v3', 'Standard_DS1',
@@ -174,7 +172,6 @@ class AgentPool(SubResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'vm_size': {'required': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -201,7 +198,7 @@ class AgentPool(SubResource):
         'node_taints': {'key': 'properties.nodeTaints', 'type': '[str]'},
     }
 
-    def __init__(self, *, vm_size, count: int=None, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, agent_pool_type=None, orchestrator_version: str=None, availability_zones=None, enable_node_public_ip: bool=None, scale_set_priority="Regular", scale_set_eviction_policy="Delete", node_taints=None, **kwargs) -> None:
+    def __init__(self, *, count: int=None, vm_size=None, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, agent_pool_type=None, orchestrator_version: str=None, availability_zones=None, enable_node_public_ip: bool=None, scale_set_priority="Regular", scale_set_eviction_policy="Delete", node_taints=None, **kwargs) -> None:
         super(AgentPool, self).__init__(**kwargs)
         self.count = count
         self.vm_size = vm_size
@@ -1066,27 +1063,25 @@ class ManagedClusterAgentPoolProfileProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param count: Number of agents (VMs) to host docker containers. Allowed
      values must be in the range of 1 to 100 (inclusive). The default value is
      1.
     :type count: int
-    :param vm_size: Required. Size of agent VMs. Possible values include:
-     'Standard_A1', 'Standard_A10', 'Standard_A11', 'Standard_A1_v2',
-     'Standard_A2', 'Standard_A2_v2', 'Standard_A2m_v2', 'Standard_A3',
-     'Standard_A4', 'Standard_A4_v2', 'Standard_A4m_v2', 'Standard_A5',
-     'Standard_A6', 'Standard_A7', 'Standard_A8', 'Standard_A8_v2',
-     'Standard_A8m_v2', 'Standard_A9', 'Standard_B2ms', 'Standard_B2s',
-     'Standard_B4ms', 'Standard_B8ms', 'Standard_D1', 'Standard_D11',
-     'Standard_D11_v2', 'Standard_D11_v2_Promo', 'Standard_D12',
-     'Standard_D12_v2', 'Standard_D12_v2_Promo', 'Standard_D13',
-     'Standard_D13_v2', 'Standard_D13_v2_Promo', 'Standard_D14',
-     'Standard_D14_v2', 'Standard_D14_v2_Promo', 'Standard_D15_v2',
-     'Standard_D16_v3', 'Standard_D16s_v3', 'Standard_D1_v2', 'Standard_D2',
-     'Standard_D2_v2', 'Standard_D2_v2_Promo', 'Standard_D2_v3',
-     'Standard_D2s_v3', 'Standard_D3', 'Standard_D32_v3', 'Standard_D32s_v3',
-     'Standard_D3_v2', 'Standard_D3_v2_Promo', 'Standard_D4', 'Standard_D4_v2',
+    :param vm_size: Size of agent VMs. Possible values include: 'Standard_A1',
+     'Standard_A10', 'Standard_A11', 'Standard_A1_v2', 'Standard_A2',
+     'Standard_A2_v2', 'Standard_A2m_v2', 'Standard_A3', 'Standard_A4',
+     'Standard_A4_v2', 'Standard_A4m_v2', 'Standard_A5', 'Standard_A6',
+     'Standard_A7', 'Standard_A8', 'Standard_A8_v2', 'Standard_A8m_v2',
+     'Standard_A9', 'Standard_B2ms', 'Standard_B2s', 'Standard_B4ms',
+     'Standard_B8ms', 'Standard_D1', 'Standard_D11', 'Standard_D11_v2',
+     'Standard_D11_v2_Promo', 'Standard_D12', 'Standard_D12_v2',
+     'Standard_D12_v2_Promo', 'Standard_D13', 'Standard_D13_v2',
+     'Standard_D13_v2_Promo', 'Standard_D14', 'Standard_D14_v2',
+     'Standard_D14_v2_Promo', 'Standard_D15_v2', 'Standard_D16_v3',
+     'Standard_D16s_v3', 'Standard_D1_v2', 'Standard_D2', 'Standard_D2_v2',
+     'Standard_D2_v2_Promo', 'Standard_D2_v3', 'Standard_D2s_v3',
+     'Standard_D3', 'Standard_D32_v3', 'Standard_D32s_v3', 'Standard_D3_v2',
+     'Standard_D3_v2_Promo', 'Standard_D4', 'Standard_D4_v2',
      'Standard_D4_v2_Promo', 'Standard_D4_v3', 'Standard_D4s_v3',
      'Standard_D5_v2', 'Standard_D5_v2_Promo', 'Standard_D64_v3',
      'Standard_D64s_v3', 'Standard_D8_v3', 'Standard_D8s_v3', 'Standard_DS1',
@@ -1177,7 +1172,6 @@ class ManagedClusterAgentPoolProfileProperties(Model):
     """
 
     _validation = {
-        'vm_size': {'required': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -1201,7 +1195,7 @@ class ManagedClusterAgentPoolProfileProperties(Model):
         'node_taints': {'key': 'nodeTaints', 'type': '[str]'},
     }
 
-    def __init__(self, *, vm_size, count: int=None, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type=None, orchestrator_version: str=None, availability_zones=None, enable_node_public_ip: bool=None, scale_set_priority="Regular", scale_set_eviction_policy="Delete", node_taints=None, **kwargs) -> None:
+    def __init__(self, *, count: int=None, vm_size=None, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type=None, orchestrator_version: str=None, availability_zones=None, enable_node_public_ip: bool=None, scale_set_priority="Regular", scale_set_eviction_policy="Delete", node_taints=None, **kwargs) -> None:
         super(ManagedClusterAgentPoolProfileProperties, self).__init__(**kwargs)
         self.count = count
         self.vm_size = vm_size
@@ -1234,21 +1228,21 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      values must be in the range of 1 to 100 (inclusive). The default value is
      1.
     :type count: int
-    :param vm_size: Required. Size of agent VMs. Possible values include:
-     'Standard_A1', 'Standard_A10', 'Standard_A11', 'Standard_A1_v2',
-     'Standard_A2', 'Standard_A2_v2', 'Standard_A2m_v2', 'Standard_A3',
-     'Standard_A4', 'Standard_A4_v2', 'Standard_A4m_v2', 'Standard_A5',
-     'Standard_A6', 'Standard_A7', 'Standard_A8', 'Standard_A8_v2',
-     'Standard_A8m_v2', 'Standard_A9', 'Standard_B2ms', 'Standard_B2s',
-     'Standard_B4ms', 'Standard_B8ms', 'Standard_D1', 'Standard_D11',
-     'Standard_D11_v2', 'Standard_D11_v2_Promo', 'Standard_D12',
-     'Standard_D12_v2', 'Standard_D12_v2_Promo', 'Standard_D13',
-     'Standard_D13_v2', 'Standard_D13_v2_Promo', 'Standard_D14',
-     'Standard_D14_v2', 'Standard_D14_v2_Promo', 'Standard_D15_v2',
-     'Standard_D16_v3', 'Standard_D16s_v3', 'Standard_D1_v2', 'Standard_D2',
-     'Standard_D2_v2', 'Standard_D2_v2_Promo', 'Standard_D2_v3',
-     'Standard_D2s_v3', 'Standard_D3', 'Standard_D32_v3', 'Standard_D32s_v3',
-     'Standard_D3_v2', 'Standard_D3_v2_Promo', 'Standard_D4', 'Standard_D4_v2',
+    :param vm_size: Size of agent VMs. Possible values include: 'Standard_A1',
+     'Standard_A10', 'Standard_A11', 'Standard_A1_v2', 'Standard_A2',
+     'Standard_A2_v2', 'Standard_A2m_v2', 'Standard_A3', 'Standard_A4',
+     'Standard_A4_v2', 'Standard_A4m_v2', 'Standard_A5', 'Standard_A6',
+     'Standard_A7', 'Standard_A8', 'Standard_A8_v2', 'Standard_A8m_v2',
+     'Standard_A9', 'Standard_B2ms', 'Standard_B2s', 'Standard_B4ms',
+     'Standard_B8ms', 'Standard_D1', 'Standard_D11', 'Standard_D11_v2',
+     'Standard_D11_v2_Promo', 'Standard_D12', 'Standard_D12_v2',
+     'Standard_D12_v2_Promo', 'Standard_D13', 'Standard_D13_v2',
+     'Standard_D13_v2_Promo', 'Standard_D14', 'Standard_D14_v2',
+     'Standard_D14_v2_Promo', 'Standard_D15_v2', 'Standard_D16_v3',
+     'Standard_D16s_v3', 'Standard_D1_v2', 'Standard_D2', 'Standard_D2_v2',
+     'Standard_D2_v2_Promo', 'Standard_D2_v3', 'Standard_D2s_v3',
+     'Standard_D3', 'Standard_D32_v3', 'Standard_D32s_v3', 'Standard_D3_v2',
+     'Standard_D3_v2_Promo', 'Standard_D4', 'Standard_D4_v2',
      'Standard_D4_v2_Promo', 'Standard_D4_v3', 'Standard_D4s_v3',
      'Standard_D5_v2', 'Standard_D5_v2_Promo', 'Standard_D64_v3',
      'Standard_D64s_v3', 'Standard_D8_v3', 'Standard_D8s_v3', 'Standard_DS1',
@@ -1342,7 +1336,6 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     """
 
     _validation = {
-        'vm_size': {'required': True},
         'provisioning_state': {'readonly': True},
         'name': {'required': True, 'pattern': r'^[a-z][a-z0-9]{0,11}$'},
     }
@@ -1368,7 +1361,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, vm_size, name: str, count: int=None, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type=None, orchestrator_version: str=None, availability_zones=None, enable_node_public_ip: bool=None, scale_set_priority="Regular", scale_set_eviction_policy="Delete", node_taints=None, **kwargs) -> None:
+    def __init__(self, *, name: str, count: int=None, vm_size=None, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type=None, orchestrator_version: str=None, availability_zones=None, enable_node_public_ip: bool=None, scale_set_priority="Regular", scale_set_eviction_policy="Delete", node_taints=None, **kwargs) -> None:
         super(ManagedClusterAgentPoolProfile, self).__init__(count=count, vm_size=vm_size, os_disk_size_gb=os_disk_size_gb, vnet_subnet_id=vnet_subnet_id, max_pods=max_pods, os_type=os_type, max_count=max_count, min_count=min_count, enable_auto_scaling=enable_auto_scaling, type=type, orchestrator_version=orchestrator_version, availability_zones=availability_zones, enable_node_public_ip=enable_node_public_ip, scale_set_priority=scale_set_priority, scale_set_eviction_policy=scale_set_eviction_policy, node_taints=node_taints, **kwargs)
         self.name = name
 
