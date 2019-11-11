@@ -1372,9 +1372,9 @@ class DatabaseVulnerabilityAssessment(ProxyResource):
      is required if server level vulnerability assessment policy doesn't set
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
@@ -1690,127 +1690,6 @@ class DataMaskingRule(ProxyResource):
         self.replacement_string = kwargs.get('replacement_string', None)
         self.location = None
         self.kind = None
-
-
-class DataWarehouseWorkloadClassifier(ProxyResource):
-    """Workload classifier operations for a data warehouse.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param member_name: Required. The workload classifier member name.
-    :type member_name: str
-    :param label: The workload classifier label.
-    :type label: str
-    :param context: The workload classifier context.
-    :type context: str
-    :param start_time: The workload classifier start time for classification.
-    :type start_time: str
-    :param end_time: The workload classifier end time for classification.
-    :type end_time: str
-    :param importance: The workload classifier importance.
-    :type importance: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'member_name': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'member_name': {'key': 'properties.memberName', 'type': 'str'},
-        'label': {'key': 'properties.label', 'type': 'str'},
-        'context': {'key': 'properties.context', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'str'},
-        'end_time': {'key': 'properties.endTime', 'type': 'str'},
-        'importance': {'key': 'properties.importance', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DataWarehouseWorkloadClassifier, self).__init__(**kwargs)
-        self.member_name = kwargs.get('member_name', None)
-        self.label = kwargs.get('label', None)
-        self.context = kwargs.get('context', None)
-        self.start_time = kwargs.get('start_time', None)
-        self.end_time = kwargs.get('end_time', None)
-        self.importance = kwargs.get('importance', None)
-
-
-class DataWarehouseWorkloadGroup(ProxyResource):
-    """Workload group operations for a data warehouse.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param min_resource_percent: Required. The workload group minimum
-     percentage resource.
-    :type min_resource_percent: int
-    :param max_resource_percent: Required. The workload group cap percentage
-     resource.
-    :type max_resource_percent: int
-    :param min_resource_percent_per_request: Required. The workload group
-     request minimum grant percentage.
-    :type min_resource_percent_per_request: float
-    :param max_resource_percent_per_request: The workload group request
-     maximum grant percentage.
-    :type max_resource_percent_per_request: float
-    :param importance: The workload group importance level.
-    :type importance: str
-    :param query_execution_timeout: The workload group query execution
-     timeout.
-    :type query_execution_timeout: int
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'min_resource_percent': {'required': True},
-        'max_resource_percent': {'required': True},
-        'min_resource_percent_per_request': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'min_resource_percent': {'key': 'properties.minResourcePercent', 'type': 'int'},
-        'max_resource_percent': {'key': 'properties.maxResourcePercent', 'type': 'int'},
-        'min_resource_percent_per_request': {'key': 'properties.minResourcePercentPerRequest', 'type': 'float'},
-        'max_resource_percent_per_request': {'key': 'properties.maxResourcePercentPerRequest', 'type': 'float'},
-        'importance': {'key': 'properties.importance', 'type': 'str'},
-        'query_execution_timeout': {'key': 'properties.queryExecutionTimeout', 'type': 'int'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DataWarehouseWorkloadGroup, self).__init__(**kwargs)
-        self.min_resource_percent = kwargs.get('min_resource_percent', None)
-        self.max_resource_percent = kwargs.get('max_resource_percent', None)
-        self.min_resource_percent_per_request = kwargs.get('min_resource_percent_per_request', None)
-        self.max_resource_percent_per_request = kwargs.get('max_resource_percent_per_request', None)
-        self.importance = kwargs.get('importance', None)
-        self.query_execution_timeout = kwargs.get('query_execution_timeout', None)
 
 
 class EditionCapability(Model):
@@ -5611,9 +5490,9 @@ class ManagedInstanceVulnerabilityAssessment(ProxyResource):
      https://myStorage.blob.core.windows.net/VaScans/).
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
@@ -7886,9 +7765,9 @@ class ServerVulnerabilityAssessment(ProxyResource):
      https://myStorage.blob.core.windows.net/VaScans/).
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
@@ -9340,3 +9219,124 @@ class VulnerabilityAssessmentScanRecord(ProxyResource):
         self.errors = None
         self.storage_container_path = None
         self.number_of_failed_security_checks = None
+
+
+class WorkloadClassifier(ProxyResource):
+    """Workload classifier operations for a data warehouse.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param member_name: Required. The workload classifier member name.
+    :type member_name: str
+    :param label: The workload classifier label.
+    :type label: str
+    :param context: The workload classifier context.
+    :type context: str
+    :param start_time: The workload classifier start time for classification.
+    :type start_time: str
+    :param end_time: The workload classifier end time for classification.
+    :type end_time: str
+    :param importance: The workload classifier importance.
+    :type importance: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'member_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'member_name': {'key': 'properties.memberName', 'type': 'str'},
+        'label': {'key': 'properties.label', 'type': 'str'},
+        'context': {'key': 'properties.context', 'type': 'str'},
+        'start_time': {'key': 'properties.startTime', 'type': 'str'},
+        'end_time': {'key': 'properties.endTime', 'type': 'str'},
+        'importance': {'key': 'properties.importance', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WorkloadClassifier, self).__init__(**kwargs)
+        self.member_name = kwargs.get('member_name', None)
+        self.label = kwargs.get('label', None)
+        self.context = kwargs.get('context', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.importance = kwargs.get('importance', None)
+
+
+class WorkloadGroup(ProxyResource):
+    """Workload group operations for a data warehouse.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param min_resource_percent: Required. The workload group minimum
+     percentage resource.
+    :type min_resource_percent: int
+    :param max_resource_percent: Required. The workload group cap percentage
+     resource.
+    :type max_resource_percent: int
+    :param min_resource_percent_per_request: Required. The workload group
+     request minimum grant percentage.
+    :type min_resource_percent_per_request: float
+    :param max_resource_percent_per_request: The workload group request
+     maximum grant percentage.
+    :type max_resource_percent_per_request: float
+    :param importance: The workload group importance level.
+    :type importance: str
+    :param query_execution_timeout: The workload group query execution
+     timeout.
+    :type query_execution_timeout: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'min_resource_percent': {'required': True},
+        'max_resource_percent': {'required': True},
+        'min_resource_percent_per_request': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'min_resource_percent': {'key': 'properties.minResourcePercent', 'type': 'int'},
+        'max_resource_percent': {'key': 'properties.maxResourcePercent', 'type': 'int'},
+        'min_resource_percent_per_request': {'key': 'properties.minResourcePercentPerRequest', 'type': 'float'},
+        'max_resource_percent_per_request': {'key': 'properties.maxResourcePercentPerRequest', 'type': 'float'},
+        'importance': {'key': 'properties.importance', 'type': 'str'},
+        'query_execution_timeout': {'key': 'properties.queryExecutionTimeout', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WorkloadGroup, self).__init__(**kwargs)
+        self.min_resource_percent = kwargs.get('min_resource_percent', None)
+        self.max_resource_percent = kwargs.get('max_resource_percent', None)
+        self.min_resource_percent_per_request = kwargs.get('min_resource_percent_per_request', None)
+        self.max_resource_percent_per_request = kwargs.get('max_resource_percent_per_request', None)
+        self.importance = kwargs.get('importance', None)
+        self.query_execution_timeout = kwargs.get('query_execution_timeout', None)

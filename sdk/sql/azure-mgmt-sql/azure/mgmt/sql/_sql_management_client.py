@@ -99,8 +99,8 @@ from .operations import ManagedDatabaseRestoreDetailsOperations
 from .operations import ManagedDatabasesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
-from .operations import DataWarehouseWorkloadGroupsOperations
-from .operations import DataWarehouseWorkloadClassifiersOperations
+from .operations import WorkloadGroupsOperations
+from .operations import WorkloadClassifiersOperations
 from . import models
 
 
@@ -282,10 +282,10 @@ class SqlManagementClient(SDKClient):
     :vartype private_endpoint_connections: azure.mgmt.sql.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResources operations
     :vartype private_link_resources: azure.mgmt.sql.operations.PrivateLinkResourcesOperations
-    :ivar data_warehouse_workload_groups: DataWarehouseWorkloadGroups operations
-    :vartype data_warehouse_workload_groups: azure.mgmt.sql.operations.DataWarehouseWorkloadGroupsOperations
-    :ivar data_warehouse_workload_classifiers: DataWarehouseWorkloadClassifiers operations
-    :vartype data_warehouse_workload_classifiers: azure.mgmt.sql.operations.DataWarehouseWorkloadClassifiersOperations
+    :ivar workload_groups: WorkloadGroups operations
+    :vartype workload_groups: azure.mgmt.sql.operations.WorkloadGroupsOperations
+    :ivar workload_classifiers: WorkloadClassifiers operations
+    :vartype workload_classifiers: azure.mgmt.sql.operations.WorkloadClassifiersOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -478,7 +478,7 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.data_warehouse_workload_groups = DataWarehouseWorkloadGroupsOperations(
+        self.workload_groups = WorkloadGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.data_warehouse_workload_classifiers = DataWarehouseWorkloadClassifiersOperations(
+        self.workload_classifiers = WorkloadClassifiersOperations(
             self._client, self.config, self._serialize, self._deserialize)

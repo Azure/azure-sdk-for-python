@@ -31,8 +31,6 @@ try:
     from ._models_py3 import DatabaseVulnerabilityAssessmentScansExport
     from ._models_py3 import DataMaskingPolicy
     from ._models_py3 import DataMaskingRule
-    from ._models_py3 import DataWarehouseWorkloadClassifier
-    from ._models_py3 import DataWarehouseWorkloadGroup
     from ._models_py3 import EditionCapability
     from ._models_py3 import ElasticPool
     from ._models_py3 import ElasticPoolActivity
@@ -174,6 +172,8 @@ try:
     from ._models_py3 import VulnerabilityAssessmentRecurringScansProperties
     from ._models_py3 import VulnerabilityAssessmentScanError
     from ._models_py3 import VulnerabilityAssessmentScanRecord
+    from ._models_py3 import WorkloadClassifier
+    from ._models_py3 import WorkloadGroup
 except (SyntaxError, ImportError):
     from ._models import AutomaticTuningOptions
     from ._models import AutomaticTuningServerOptions
@@ -196,8 +196,6 @@ except (SyntaxError, ImportError):
     from ._models import DatabaseVulnerabilityAssessmentScansExport
     from ._models import DataMaskingPolicy
     from ._models import DataMaskingRule
-    from ._models import DataWarehouseWorkloadClassifier
-    from ._models import DataWarehouseWorkloadGroup
     from ._models import EditionCapability
     from ._models import ElasticPool
     from ._models import ElasticPoolActivity
@@ -339,6 +337,8 @@ except (SyntaxError, ImportError):
     from ._models import VulnerabilityAssessmentRecurringScansProperties
     from ._models import VulnerabilityAssessmentScanError
     from ._models import VulnerabilityAssessmentScanRecord
+    from ._models import WorkloadClassifier
+    from ._models import WorkloadGroup
 from ._paged_models import BackupShortTermRetentionPolicyPaged
 from ._paged_models import DatabaseBlobAuditingPolicyPaged
 from ._paged_models import DatabaseOperationPaged
@@ -346,8 +346,6 @@ from ._paged_models import DatabasePaged
 from ._paged_models import DatabaseUsagePaged
 from ._paged_models import DatabaseVulnerabilityAssessmentPaged
 from ._paged_models import DataMaskingRulePaged
-from ._paged_models import DataWarehouseWorkloadClassifierPaged
-from ._paged_models import DataWarehouseWorkloadGroupPaged
 from ._paged_models import ElasticPoolActivityPaged
 from ._paged_models import ElasticPoolDatabaseActivityPaged
 from ._paged_models import ElasticPoolOperationPaged
@@ -413,6 +411,8 @@ from ._paged_models import UsagePaged
 from ._paged_models import VirtualClusterPaged
 from ._paged_models import VirtualNetworkRulePaged
 from ._paged_models import VulnerabilityAssessmentScanRecordPaged
+from ._paged_models import WorkloadClassifierPaged
+from ._paged_models import WorkloadGroupPaged
 from ._sql_management_client_enums import (
     CheckNameAvailabilityReason,
     ServerConnectionType,
@@ -495,6 +495,7 @@ from ._sql_management_client_enums import (
     VulnerabilityAssessmentPolicyBaselineName,
     SensitivityLabelSource,
     CapabilityGroup,
+    ReplicaType,
 )
 
 __all__ = [
@@ -519,8 +520,6 @@ __all__ = [
     'DatabaseVulnerabilityAssessmentScansExport',
     'DataMaskingPolicy',
     'DataMaskingRule',
-    'DataWarehouseWorkloadClassifier',
-    'DataWarehouseWorkloadGroup',
     'EditionCapability',
     'ElasticPool',
     'ElasticPoolActivity',
@@ -662,6 +661,8 @@ __all__ = [
     'VulnerabilityAssessmentRecurringScansProperties',
     'VulnerabilityAssessmentScanError',
     'VulnerabilityAssessmentScanRecord',
+    'WorkloadClassifier',
+    'WorkloadGroup',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',
@@ -734,8 +735,8 @@ __all__ = [
     'ManagedDatabasePaged',
     'PrivateEndpointConnectionPaged',
     'PrivateLinkResourcePaged',
-    'DataWarehouseWorkloadGroupPaged',
-    'DataWarehouseWorkloadClassifierPaged',
+    'WorkloadGroupPaged',
+    'WorkloadClassifierPaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
@@ -817,4 +818,5 @@ __all__ = [
     'VulnerabilityAssessmentPolicyBaselineName',
     'SensitivityLabelSource',
     'CapabilityGroup',
+    'ReplicaType',
 ]
