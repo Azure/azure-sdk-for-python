@@ -6,7 +6,7 @@ import asyncio
 import os
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
-from azure.keyvault.certificates import CertificatePolicy, SecretContentType
+from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ async def run_sample():
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
+            issuer_name=WellKnownIssuerNames.Self,
             subject_name="CN=*.microsoft.com",
             validity_in_months=24,
             san_dns_names=["sdk.azure-int.net"],
@@ -67,18 +67,20 @@ async def run_sample():
 
         # Awaiting create_certificate will return the certificate as a KeyVaultCertificate
         # if creation is successful, and the CertificateOperation if not.
-        certificate = await client.create_certificate(name=cert_name, policy=cert_policy)
+        certificate = await client.create_certificate(certificate_name=cert_name, policy=cert_policy)
         print("Certificate with name '{0}' created".format(certificate.name))
 
         # Let's get the bank certificate using its name
         print("\n.. Get a Certificate by name")
-        bank_certificate = await client.get_certificate(name=cert_name)
+        bank_certificate = await client.get_certificate(cert_name)
         print("Certificate with name '{0}' was found.".format(bank_certificate.name))
 
         # After one year, the bank account is still active, and we have decided to update the tags.
         print("\n.. Update a Certificate by name")
         tags = {"a": "b"}
-        updated_certificate = await client.update_certificate_properties(name=bank_certificate.name, tags=tags)
+        updated_certificate = await client.update_certificate_properties(
+            certificate_name=bank_certificate.name, tags=tags
+        )
         print(
             "Certificate with name '{0}' was updated on date '{1}'".format(
                 bank_certificate.name, updated_certificate.properties.updated_on
@@ -92,7 +94,7 @@ async def run_sample():
 
         # The bank account was closed, need to delete its credentials from the Key Vault.
         print("\n.. Delete Certificate")
-        deleted_certificate = await client.delete_certificate(name=bank_certificate.name)
+        deleted_certificate = await client.delete_certificate(bank_certificate.name)
         print("Deleting Certificate..")
         print("Certificate with name '{0}' was deleted.".format(deleted_certificate.name))
 

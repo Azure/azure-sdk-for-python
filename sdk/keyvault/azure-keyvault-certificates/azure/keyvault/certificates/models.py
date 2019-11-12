@@ -6,7 +6,7 @@
 # pylint: disable=too-many-lines,too-many-public-methods
 from ._shared import parse_vault_id
 from ._shared._generated.v7_0 import models
-from .enums import CertificatePolicyAction, KeyUsageType, KeyCurveName, KeyType, SecretContentType
+from .enums import CertificatePolicyAction, KeyUsageType, KeyCurveName, KeyType, SecretContentType, WellKnownIssuerNames
 
 try:
     from typing import TYPE_CHECKING
@@ -425,11 +425,9 @@ class CertificateOperation(object):
         """Construct a CertificateOperation from an autorest-generated CertificateOperation"""
         return cls(
             cert_operation_id=certificate_operation_bundle.id,
-            issuer_name=(
-                certificate_operation_bundle.issuer_parameters.name
+            issuer_name=(certificate_operation_bundle.issuer_parameters.name
                 if certificate_operation_bundle.issuer_parameters
-                else None
-            ),
+                else None),
             certificate_type=(
                 certificate_operation_bundle.issuer_parameters.certificate_type
                 if certificate_operation_bundle.issuer_parameters
@@ -571,8 +569,8 @@ class CertificatePolicy(object):
     :param lifetime_actions: Actions that will be performed by Key Vault over the lifetime
         of a certificate
     :type lifetime_actions: Iterable[~azure.keyvault.certificates.LifetimeAction]
-    :param str issuer_name: Name of the referenced issuer object or reserved names; for example,
-        'Self' or 'Unknown"
+    :param str issuer_name: Name of the referenced issuer object or reserved names.
+        :class:`~azure.keyvault.certificates.WellKnownIssuerNames` contains popular issuer names.
     :param str certificate_type: Type of certificate to be requested from the issuer provider.
     :param bool certificate_transparency: Indicates if the certificates generated under this policy
         should be published to certificate transparency logs.
@@ -630,7 +628,7 @@ class CertificatePolicy(object):
 
     @classmethod
     def get_default(cls):
-        return cls(issuer_name="Self", subject_name="CN=DefaultPolicy")
+        return cls(issuer_name=WellKnownIssuerNames.Self, subject_name="CN=DefaultPolicy")
 
     def __repr__(self):
         # type () -> str
@@ -642,7 +640,7 @@ class CertificatePolicy(object):
         """Construct a version emulating the generated CertificatePolicy from a wrapped CertificatePolicy"""
         if self.issuer_name or self.certificate_type or self.certificate_transparency:
             issuer_parameters = models.IssuerParameters(
-                name=self.issuer_name,
+                name=self.issuer_name.value if not isinstance(self.issuer_name, str) else self.issuer_name,
                 certificate_type=self.certificate_type,
                 certificate_transparency=self.certificate_transparency,
             )
@@ -774,10 +772,8 @@ class CertificatePolicy(object):
             key_usage = None
         key_properties = certificate_policy_bundle.key_properties
         return cls(
-            issuer_name=(
-                certificate_policy_bundle.issuer_parameters.name
-                if certificate_policy_bundle.issuer_parameters
-                else None
+            issuer_name=(certificate_policy_bundle.issuer_parameters.name
+                if certificate_policy_bundle.issuer_parameters else None
             ),
             subject_name=(x509_certificate_properties.subject if x509_certificate_properties else None),
             cert_policy_id=certificate_policy_bundle.id,
@@ -793,7 +789,7 @@ class CertificatePolicy(object):
             ),
             lifetime_actions=lifetime_actions,
             exportable=key_properties.exportable if key_properties else None,
-            key_type=KeyType(key_properties.key_type) if key_properties and key_properties else None,
+            key_type=KeyType(key_properties.key_type) if key_properties and key_properties.key_type else None,
             key_size=key_properties.key_size if key_properties else None,
             reuse_key=key_properties.reuse_key if key_properties else None,
             curve=KeyCurveName(key_properties.curve) if key_properties and key_properties.curve else None,
@@ -801,7 +797,8 @@ class CertificatePolicy(object):
             key_usage=key_usage,
             content_type=(
                 SecretContentType(certificate_policy_bundle.secret_properties.content_type)
-                if certificate_policy_bundle.secret_properties
+                if certificate_policy_bundle.secret_properties and
+                certificate_policy_bundle.secret_properties.content_type
                 else None
             ),
             attributes=certificate_policy_bundle.attributes,
