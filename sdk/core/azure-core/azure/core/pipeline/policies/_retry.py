@@ -321,7 +321,7 @@ class RetryPolicy(HTTPPolicy):
         if not self.is_exhausted(settings):
             if response.http_request.body and hasattr(response.http_request.body, 'read'):
                 # no position was saved, then retry would not work
-                if settings['body_position'] is None:
+                if 'body_position' not in settings:
                     return False
                 try:
                     # attempt to rewind the body to the initial position

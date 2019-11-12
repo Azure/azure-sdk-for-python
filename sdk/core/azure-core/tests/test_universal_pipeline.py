@@ -52,6 +52,7 @@ from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     UserAgentPolicy,
     HttpLoggingPolicy,
+    RetryPolicy,
 )
 
 def test_user_agent():
@@ -129,6 +130,38 @@ def test_no_log(mock_http_logger):
 
     second_count = mock_http_logger.debug.call_count
     assert second_count == first_count * 2
+
+def test_retry_unseekable_body():
+    def build_response(body, content_type=None):
+        class MockBody():
+            def __init__(self):
+                self.read = True
+
+        class MockRequest(HttpRequest):
+            def __init__(self):
+                self.body = MockBody()
+
+        class MockResponse(HttpResponse):
+            def __init__(self):
+                super(MockResponse, self).__init__(None, None)
+                self._body = MockBody()
+
+            def body(self):
+                return self._body
+
+        return PipelineResponse(MockRequest(), MockResponse(), PipelineContext(None, stream=False))
+    
+    response = build_response(b"<groot/>", content_type="application/xml")
+    http_retry = RetryPolicy()
+    setting = {
+        'total': 3,
+        'status': 3,
+        'history': [],
+        'connect': 3,
+        'read': 3,
+    }
+    increment = http_retry.increment(setting, response)
+    assert not increment
 
 def test_raw_deserializer():
     raw_deserializer = ContentDecodePolicy()
