@@ -12,7 +12,7 @@
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
-from ._configuration import StorageCacheMgmtClientConfiguration
+from ._configuration import StorageCacheManagementClientConfiguration
 from .operations import Operations
 from .operations import SkusOperations
 from .operations import UsageModelsOperations
@@ -21,11 +21,11 @@ from .operations import StorageTargetsOperations
 from . import models
 
 
-class StorageCacheMgmtClient(SDKClient):
-    """A Storage Cache provides scalable caching service for NAS clients, serving data from either NFSv3 or Blob at-rest storage (referred to as "Storage Targets"). These operations allow you to manage caches.
+class StorageCacheManagementClient(SDKClient):
+    """A Storage Cache provides scalable caching service for NAS clients, serving data from either NFSv3 or Blob at-rest storage (referred to as "Storage Targets"). These operations allow you to manage Caches.
 
     :ivar config: Configuration for client.
-    :vartype config: StorageCacheMgmtClientConfiguration
+    :vartype config: StorageCacheManagementClientConfiguration
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.storagecache.operations.Operations
@@ -51,11 +51,11 @@ class StorageCacheMgmtClient(SDKClient):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = StorageCacheMgmtClientConfiguration(credentials, subscription_id, base_url)
-        super(StorageCacheMgmtClient, self).__init__(self.config.credentials, self.config)
+        self.config = StorageCacheManagementClientConfiguration(credentials, subscription_id, base_url)
+        super(StorageCacheManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-08-01-preview'
+        self.api_version = '2019-11-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
