@@ -6,7 +6,7 @@ import asyncio
 import os
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
-from azure.keyvault.certificates import CertificatePolicy, SecretContentType
+from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ async def run_sample():
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
+            issuer_name=WellKnownIssuerNames.Self,
             subject_name="CN=*.microsoft.com",
             validity_in_months=24,
             san_dns_names=["sdk.azure-int.net"],

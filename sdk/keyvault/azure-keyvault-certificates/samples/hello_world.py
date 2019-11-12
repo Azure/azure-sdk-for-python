@@ -4,7 +4,7 @@
 # ------------------------------------
 import os
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import CertificateClient, CertificatePolicy, SecretContentType
+from azure.keyvault.certificates import CertificateClient, CertificatePolicy, SecretContentType, WellKnownIssuerNames
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ try:
         key_size=2048,
         reuse_key=False,
         content_type=SecretContentType.PKCS12,
-        issuer_name="Self",
+        issuer_name=WellKnownIssuerNames.Self,
         subject_name="CN=*.microsoft.com",
         validity_in_months=24,
         san_dns_names=["sdk.azure-int.net"],

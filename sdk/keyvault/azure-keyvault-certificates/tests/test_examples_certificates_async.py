@@ -38,7 +38,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_crud_operations(self, vault_client, **kwargs):
+
         certificate_client = vault_client.certificates
+
         # [START create_certificate]
         from azure.keyvault.certificates import CertificatePolicy, SecretContentType
 
