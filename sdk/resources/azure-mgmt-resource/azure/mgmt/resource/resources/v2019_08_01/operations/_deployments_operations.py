@@ -765,8 +765,8 @@ class DeploymentsOperations(object):
 
 
     def _create_or_update_at_tenant_scope_initial(
-            self, deployment_name, properties, location=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.Deployment(location=location, properties=properties)
+            self, deployment_name, location, properties, custom_headers=None, raw=False, **operation_config):
+        parameters = models.ScopedDeployment(location=location, properties=properties)
 
         # Construct URL
         url = self.create_or_update_at_tenant_scope.metadata['url']
@@ -791,7 +791,7 @@ class DeploymentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'Deployment')
+        body_content = self._serialize.body(parameters, 'ScopedDeployment')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -816,7 +816,7 @@ class DeploymentsOperations(object):
         return deserialized
 
     def create_or_update_at_tenant_scope(
-            self, deployment_name, properties, location=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, deployment_name, location, properties, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deploys resources at tenant scope.
 
         You can provide the template and parameters directly in the request or
@@ -824,11 +824,11 @@ class DeploymentsOperations(object):
 
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
+        :param location: The location to store the deployment data.
+        :type location: str
         :param properties: The deployment properties.
         :type properties:
          ~azure.mgmt.resource.resources.v2019_08_01.models.DeploymentProperties
-        :param location: The location to store the deployment data.
-        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -844,8 +844,8 @@ class DeploymentsOperations(object):
         """
         raw_result = self._create_or_update_at_tenant_scope_initial(
             deployment_name=deployment_name,
-            properties=properties,
             location=location,
+            properties=properties,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -983,17 +983,17 @@ class DeploymentsOperations(object):
     cancel_at_tenant_scope.metadata = {'url': '/providers/Microsoft.Resources/deployments/{deploymentName}/cancel'}
 
     def validate_at_tenant_scope(
-            self, deployment_name, properties, location=None, custom_headers=None, raw=False, **operation_config):
+            self, deployment_name, location, properties, custom_headers=None, raw=False, **operation_config):
         """Validates whether the specified template is syntactically correct and
         will be accepted by Azure Resource Manager..
 
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
+        :param location: The location to store the deployment data.
+        :type location: str
         :param properties: The deployment properties.
         :type properties:
          ~azure.mgmt.resource.resources.v2019_08_01.models.DeploymentProperties
-        :param location: The location to store the deployment data.
-        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1005,7 +1005,7 @@ class DeploymentsOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.Deployment(location=location, properties=properties)
+        parameters = models.ScopedDeployment(location=location, properties=properties)
 
         # Construct URL
         url = self.validate_at_tenant_scope.metadata['url']
@@ -1030,7 +1030,7 @@ class DeploymentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'Deployment')
+        body_content = self._serialize.body(parameters, 'ScopedDeployment')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -1329,8 +1329,8 @@ class DeploymentsOperations(object):
 
 
     def _create_or_update_at_management_group_scope_initial(
-            self, group_id, deployment_name, properties, location=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.Deployment(location=location, properties=properties)
+            self, group_id, deployment_name, location, properties, custom_headers=None, raw=False, **operation_config):
+        parameters = models.ScopedDeployment(location=location, properties=properties)
 
         # Construct URL
         url = self.create_or_update_at_management_group_scope.metadata['url']
@@ -1356,7 +1356,7 @@ class DeploymentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'Deployment')
+        body_content = self._serialize.body(parameters, 'ScopedDeployment')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -1381,7 +1381,7 @@ class DeploymentsOperations(object):
         return deserialized
 
     def create_or_update_at_management_group_scope(
-            self, group_id, deployment_name, properties, location=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, group_id, deployment_name, location, properties, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deploys resources at management group scope.
 
         You can provide the template and parameters directly in the request or
@@ -1391,11 +1391,11 @@ class DeploymentsOperations(object):
         :type group_id: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
+        :param location: The location to store the deployment data.
+        :type location: str
         :param properties: The deployment properties.
         :type properties:
          ~azure.mgmt.resource.resources.v2019_08_01.models.DeploymentProperties
-        :param location: The location to store the deployment data.
-        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1412,8 +1412,8 @@ class DeploymentsOperations(object):
         raw_result = self._create_or_update_at_management_group_scope_initial(
             group_id=group_id,
             deployment_name=deployment_name,
-            properties=properties,
             location=location,
+            properties=properties,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -1557,7 +1557,7 @@ class DeploymentsOperations(object):
     cancel_at_management_group_scope.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel'}
 
     def validate_at_management_group_scope(
-            self, group_id, deployment_name, properties, location=None, custom_headers=None, raw=False, **operation_config):
+            self, group_id, deployment_name, location, properties, custom_headers=None, raw=False, **operation_config):
         """Validates whether the specified template is syntactically correct and
         will be accepted by Azure Resource Manager..
 
@@ -1565,11 +1565,11 @@ class DeploymentsOperations(object):
         :type group_id: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
+        :param location: The location to store the deployment data.
+        :type location: str
         :param properties: The deployment properties.
         :type properties:
          ~azure.mgmt.resource.resources.v2019_08_01.models.DeploymentProperties
-        :param location: The location to store the deployment data.
-        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1581,7 +1581,7 @@ class DeploymentsOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.Deployment(location=location, properties=properties)
+        parameters = models.ScopedDeployment(location=location, properties=properties)
 
         # Construct URL
         url = self.validate_at_management_group_scope.metadata['url']
@@ -1607,7 +1607,7 @@ class DeploymentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'Deployment')
+        body_content = self._serialize.body(parameters, 'ScopedDeployment')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -2202,6 +2202,120 @@ class DeploymentsOperations(object):
 
         return deserialized
     validate_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}
+
+
+    def _what_if_at_subscription_scope_initial(
+            self, deployment_name, properties, location=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.DeploymentWhatIf(location=location, properties=properties)
+
+        # Construct URL
+        url = self.what_if_at_subscription_scope.metadata['url']
+        path_format_arguments = {
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'DeploymentWhatIf')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        header_dict = {}
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('WhatIfOperationResult', response)
+            header_dict = {
+                'Location': 'str',
+                'Retry-After': 'str',
+            }
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def what_if_at_subscription_scope(
+            self, deployment_name, properties, location=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Returns changes that will be made by the deployment if executed at the
+        scope of the subscription.
+
+        :param deployment_name: The name of the deployment.
+        :type deployment_name: str
+        :param properties: The deployment properties.
+        :type properties:
+         ~azure.mgmt.resource.resources.v2019_08_01.models.DeploymentWhatIfProperties
+        :param location: The location to store the deployment data.
+        :type location: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns WhatIfOperationResult
+         or ClientRawResponse<WhatIfOperationResult> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_08_01.models.WhatIfOperationResult]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_08_01.models.WhatIfOperationResult]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._what_if_at_subscription_scope_initial(
+            deployment_name=deployment_name,
+            properties=properties,
+            location=location,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            header_dict = {
+                'Location': 'str',
+                'Retry-After': 'str',
+            }
+            deserialized = self._deserialize('WhatIfOperationResult', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response.add_headers(header_dict)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    what_if_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf'}
 
     def export_template_at_subscription_scope(
             self, deployment_name, custom_headers=None, raw=False, **operation_config):
@@ -2798,6 +2912,125 @@ class DeploymentsOperations(object):
 
         return deserialized
     validate.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}
+
+
+    def _what_if_initial(
+            self, resource_group_name, deployment_name, properties, location=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.DeploymentWhatIf(location=location, properties=properties)
+
+        # Construct URL
+        url = self.what_if.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'DeploymentWhatIf')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        header_dict = {}
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('WhatIfOperationResult', response)
+            header_dict = {
+                'Location': 'str',
+                'Retry-After': 'str',
+            }
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def what_if(
+            self, resource_group_name, deployment_name, properties, location=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Returns changes that will be made by the deployment if executed at the
+        scope of the resource group.
+
+        :param resource_group_name: The name of the resource group the
+         template will be deployed to. The name is case insensitive.
+        :type resource_group_name: str
+        :param deployment_name: The name of the deployment.
+        :type deployment_name: str
+        :param properties: The deployment properties.
+        :type properties:
+         ~azure.mgmt.resource.resources.v2019_08_01.models.DeploymentWhatIfProperties
+        :param location: The location to store the deployment data.
+        :type location: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns WhatIfOperationResult
+         or ClientRawResponse<WhatIfOperationResult> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.resource.resources.v2019_08_01.models.WhatIfOperationResult]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2019_08_01.models.WhatIfOperationResult]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._what_if_initial(
+            resource_group_name=resource_group_name,
+            deployment_name=deployment_name,
+            properties=properties,
+            location=location,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            header_dict = {
+                'Location': 'str',
+                'Retry-After': 'str',
+            }
+            deserialized = self._deserialize('WhatIfOperationResult', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response.add_headers(header_dict)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    what_if.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf'}
 
     def export_template(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):

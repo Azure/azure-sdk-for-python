@@ -54,7 +54,7 @@ class BillingMetersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of BillingMeter
         :rtype:
-         ~azure.mgmt.web.models.BillingMeterPaged[~azure.mgmt.web.models.BillingMeter]
+         ~azure.mgmt.web.v2016_03_01.models.BillingMeterPaged[~azure.mgmt.web.v2016_03_01.models.BillingMeter]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):

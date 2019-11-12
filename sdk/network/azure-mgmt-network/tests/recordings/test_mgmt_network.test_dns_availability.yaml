@@ -9,12 +9,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/5.1.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/CheckDnsNameAvailability?domainNameLabel=pydomain&api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/CheckDnsNameAvailability?domainNameLabel=pydomain&api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"available\": true\r\n}"
@@ -26,7 +26,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Oct 2019 16:16:00 GMT
+      - Fri, 08 Nov 2019 03:16:10 GMT
       expires:
       - '-1'
       pragma:
@@ -43,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 5c86a038-94e0-4ccf-9aff-94a3a672fffa
+      - 95cacf2a-1220-449f-95ee-1ac3952aacfd
     status:
       code: 200
       message: OK

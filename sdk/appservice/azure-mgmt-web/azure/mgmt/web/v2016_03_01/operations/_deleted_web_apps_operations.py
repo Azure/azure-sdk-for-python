@@ -52,7 +52,7 @@ class DeletedWebAppsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeletedSite
         :rtype:
-         ~azure.mgmt.web.models.DeletedSitePaged[~azure.mgmt.web.models.DeletedSite]
+         ~azure.mgmt.web.v2016_03_01.models.DeletedSitePaged[~azure.mgmt.web.v2016_03_01.models.DeletedSite]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):

@@ -14,7 +14,7 @@ except ImportError:
     import mock
 
 from azure.core.pipeline.transport import HttpRequest, HttpResponse, RequestsTransport
-from azure.core.pipeline.transport.base import HttpClientTransportResponse, HttpTransport, _deserialize_response
+from azure.core.pipeline.transport._base import HttpClientTransportResponse, HttpTransport, _deserialize_response
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
 

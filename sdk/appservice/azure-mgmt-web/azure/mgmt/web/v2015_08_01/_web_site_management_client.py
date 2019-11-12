@@ -25,9 +25,9 @@ class WebSiteManagementClient(SDKClient):
     :vartype config: WebSiteManagementClientConfiguration
 
     :ivar app_service_certificate_orders: AppServiceCertificateOrders operations
-    :vartype app_service_certificate_orders: azure.mgmt.web.operations.AppServiceCertificateOrdersOperations
+    :vartype app_service_certificate_orders: azure.mgmt.web.v2015_08_01.operations.AppServiceCertificateOrdersOperations
     :ivar certificate_registration_provider: CertificateRegistrationProvider operations
-    :vartype certificate_registration_provider: azure.mgmt.web.operations.CertificateRegistrationProviderOperations
+    :vartype certificate_registration_provider: azure.mgmt.web.v2015_08_01.operations.CertificateRegistrationProviderOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

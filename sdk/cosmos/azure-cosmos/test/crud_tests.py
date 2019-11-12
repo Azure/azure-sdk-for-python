@@ -41,9 +41,12 @@ else:
     import urllib.parse as urllib
 import uuid
 import pytest
+from azure.core import MatchConditions
+from azure.core.exceptions import AzureError, ServiceResponseError
+from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 from azure.cosmos import _consistent_hash_ring
 import azure.cosmos.documents as documents
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import azure.cosmos._murmur_hash as _murmur_hash
 import test_config
@@ -53,7 +56,8 @@ from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey
 import conftest
 from azure.cosmos import _retry_utility
-from requests.packages.urllib3.util.retry import Retry
+import requests
+from urllib3.util.retry import Retry
 from requests.exceptions import ConnectionError
 
 
@@ -65,6 +69,26 @@ pytestmark = pytest.mark.cosmosEmulator
 
 #  	To Run the test, replace the two member fields (masterKey and host) with values
 #   associated with your Azure Cosmos account.
+
+
+class TimeoutTransport(RequestsTransport):
+
+    def __init__(self, response):
+        self._response = response
+        super(TimeoutTransport, self).__init__()
+
+    def send(self, *args, **kwargs):
+        if kwargs.pop("passthrough", False):
+            return super(TimeoutTransport, self).send(*args, **kwargs)
+
+        time.sleep(5)
+        if isinstance(self._response, Exception):
+            raise self._response
+        output = requests.Response()
+        output.status_code = self._response
+        response = RequestsTransportResponse(None, output)
+        return response
+
 
 @pytest.mark.usefixtures("teardown")
 class CRUDTests(unittest.TestCase):
@@ -87,7 +111,7 @@ class CRUDTests(unittest.TestCase):
         try:
             func(*args, **kwargs)
             self.assertFalse(True, 'function should fail.')
-        except errors.CosmosHttpResponseError as inst:
+        except exceptions.CosmosHttpResponseError as inst:
             self.assertEqual(inst.status_code, status_code)
 
     @classmethod
@@ -834,9 +858,40 @@ class CRUDTests(unittest.TestCase):
             if_match=old_etag,
         )
 
+        # should fail if only etag specified
+        with self.assertRaises(ValueError):
+            created_collection.replace_item(
+                etag=replaced_document['_etag'],
+                item=replaced_document['id'],
+                body=replaced_document
+            )
+
+        # should fail if only match condition specified
+        with self.assertRaises(ValueError):
+            created_collection.replace_item(
+                match_condition=MatchConditions.IfNotModified,
+                item=replaced_document['id'],
+                body=replaced_document
+            )
+        with self.assertRaises(ValueError):
+            created_collection.replace_item(
+                match_condition=MatchConditions.IfModified,
+                item=replaced_document['id'],
+                body=replaced_document
+            )
+
+        # should fail if invalid match condition specified
+        with self.assertRaises(TypeError):
+            created_collection.replace_item(
+                match_condition=replaced_document['_etag'],
+                item=replaced_document['id'],
+                body=replaced_document
+            )
+
         # should pass for most recent etag
         replaced_document_conditional = created_collection.replace_item(
-                access_condition={'type': 'IfMatch', 'condition': replaced_document['_etag']},
+                match_condition=MatchConditions.IfNotModified,
+                etag=replaced_document['_etag'],
                 item=replaced_document['id'],
                 body=replaced_document
             )
@@ -1885,78 +1940,17 @@ class CRUDTests(unittest.TestCase):
         )
         created_properties = created_container.read()
         read_indexing_policy = created_properties['indexingPolicy']
-        self.assertListEqual(indexing_policy['spatialIndexes'], read_indexing_policy['spatialIndexes'])
+
+        if 'localhost' in self.host or '127.0.0.1' in self.host:  # TODO: Differing result between live and emulator
+            self.assertListEqual(indexing_policy['spatialIndexes'], read_indexing_policy['spatialIndexes'])
+        else:
+            # All types are returned for spatial Indexes
+            indexing_policy['spatialIndexes'][0]['types'].append('MultiPolygon')
+            indexing_policy['spatialIndexes'][1]['types'].insert(0, 'Point')
+            self.assertListEqual(indexing_policy['spatialIndexes'], read_indexing_policy['spatialIndexes'])
+
         self.assertListEqual(indexing_policy['compositeIndexes'], read_indexing_policy['compositeIndexes'])
         db.delete_container(container=created_container)
-
-    def disabled_test_create_indexing_policy_with_composite_and_spatial_indexes_self_link(self):
-        self._test_create_indexing_policy_with_composite_and_spatial_indexes(False)
-
-    def disabled_test_create_indexing_policy_with_composite_and_spatial_indexes_name_based(self):
-        self._test_create_indexing_policy_with_composite_and_spatial_indexes(True)
-
-    def _test_create_indexing_policy_with_composite_and_spatial_indexes(self, is_name_based):
-        # create database
-        db = self.databaseForTest
-
-        indexing_policy = {
-            "spatialIndexes": [
-                {
-                    "path": "/path0/*",
-                    "types": [
-                        "Point",
-                        "LineString",
-                        "Polygon"
-                    ]
-                },
-                {
-                    "path": "/path1/*",
-                    "types": [
-                        "LineString",
-                        "Polygon",
-                        "MultiPolygon"
-                    ]
-                }
-            ],
-            "compositeIndexes": [
-                [
-                    {
-                        "path": "/path1",
-                        "order": "ascending"
-                    },
-                    {
-                        "path": "/path2",
-                        "order": "descending"
-                    },
-                    {
-                        "path": "/path3",
-                        "order": "ascending"
-                    }
-                ],
-                [
-                    {
-                        "path": "/path4",
-                        "order": "ascending"
-                    },
-                    {
-                        "path": "/path5",
-                        "order": "descending"
-                    },
-                    {
-                        "path": "/path6",
-                        "order": "ascending"
-                    }
-                ]
-            ]
-        }
-
-        container_id = 'composite_index_spatial_index' + str(uuid.uuid4())
-        container_definition = {'id': container_id, 'indexingPolicy': indexing_policy}
-        created_container = self.client.CreateContainer(self.GetDatabaseLink(db, is_name_based), container_definition)
-        read_indexing_policy = created_container['indexingPolicy']
-        self.assertListEqual(indexing_policy['spatialIndexes'], read_indexing_policy['spatialIndexes'])
-        self.assertListEqual(indexing_policy['compositeIndexes'], read_indexing_policy['compositeIndexes'])
-        self.client.DeleteContainer(created_container['_self'])
 
     def _check_default_indexing_policy_paths(self, indexing_policy):
         def __get_first(array):
@@ -1977,7 +1971,7 @@ class CRUDTests(unittest.TestCase):
     def test_client_request_timeout(self):
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw
-        connection_policy.RequestTimeout = 0
+        connection_policy.RequestTimeout =  0.000000000001
         with self.assertRaises(Exception):
             # client does a getDatabaseAccount on initialization, which will time out
             cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session", connection_policy=connection_policy)
@@ -1985,7 +1979,7 @@ class CRUDTests(unittest.TestCase):
     def test_client_request_timeout_when_connection_retry_configuration_specified(self):
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw
-        connection_policy.RequestTimeout = 0
+        connection_policy.RequestTimeout =  0.000000000001
         connection_policy.ConnectionRetryConfiguration = Retry(
                                                             total=3,
                                                             read=3,
@@ -1993,32 +1987,93 @@ class CRUDTests(unittest.TestCase):
                                                             backoff_factor=0.3,
                                                             status_forcelist=(500, 502, 504)
                                                         )
-        with self.assertRaises(Exception):
+        with self.assertRaises(AzureError):
             # client does a getDatabaseAccount on initialization, which will time out
             cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session", connection_policy=connection_policy)
 
     def test_client_connection_retry_configuration(self):
-        total_time_for_two_retries = self.initialize_client_with_connection_retry_config(2)
-        total_time_for_three_retries = self.initialize_client_with_connection_retry_config(3)
+        total_time_for_two_retries = self.initialize_client_with_connection_urllib_retry_config(2)
+        total_time_for_three_retries = self.initialize_client_with_connection_urllib_retry_config(3)
         self.assertGreater(total_time_for_three_retries, total_time_for_two_retries)
 
-    def initialize_client_with_connection_retry_config(self, retries):
-        from azure.core.exceptions import ServiceRequestError
-        connection_policy = documents.ConnectionPolicy()
-        connection_policy.ConnectionRetryConfiguration = Retry(
-                                                            total=retries,
-                                                            read=retries,
-                                                            connect=retries,
-                                                            backoff_factor=0.3,
-                                                            status_forcelist=(500, 502, 504)
-                                                        )
+        total_time_for_two_retries = self.initialize_client_with_connection_core_retry_config(2)
+        total_time_for_three_retries = self.initialize_client_with_connection_core_retry_config(3)
+        self.assertGreater(total_time_for_three_retries, total_time_for_two_retries)
+
+    def initialize_client_with_connection_urllib_retry_config(self, retries):
+        retry_policy = Retry(
+            total=retries,
+            read=retries,
+            connect=retries,
+            backoff_factor=0.3,
+            status_forcelist=(500, 502, 504)
+        )
         start_time = time.time()
         try:
-            cosmos_client.CosmosClient("https://localhost:9999", CRUDTests.masterKey, "Session", connection_policy=connection_policy)
+            cosmos_client.CosmosClient(
+                "https://localhost:9999",
+                CRUDTests.masterKey,
+                "Session",
+                connection_retry_policy=retry_policy)
             self.fail()
-        except ServiceRequestError as e:
+        except AzureError as e:
             end_time = time.time()
             return end_time - start_time
+
+    def initialize_client_with_connection_core_retry_config(self, retries):
+        start_time = time.time()
+        try:
+            cosmos_client.CosmosClient(
+                "https://localhost:9999",
+                CRUDTests.masterKey,
+                "Session",
+                retry_total=retries,
+                retry_read=retries,
+                retry_connect=retries,
+                retry_status=retries)
+            self.fail()
+        except AzureError as e:
+            end_time = time.time()
+            return end_time - start_time
+
+    def test_absolute_client_timeout(self):
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            cosmos_client.CosmosClient(
+                "https://localhost:9999",
+                CRUDTests.masterKey,
+                "Session",
+                retry_total=3,
+                timeout=1)
+
+        error_response = ServiceResponseError("Read timeout")
+        timeout_transport = TimeoutTransport(error_response)
+        client = cosmos_client.CosmosClient(
+            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
+
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            client.create_database_if_not_exists("test", timeout=2)
+
+        status_response = 500  # Users connection level retry
+        timeout_transport = TimeoutTransport(status_response)
+        client = cosmos_client.CosmosClient(
+            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            client.create_database("test", timeout=2)
+
+        databases = client.list_databases(timeout=2)
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            list(databases)
+
+        status_response = 429  # Uses Cosmos custom retry
+        timeout_transport = TimeoutTransport(status_response)
+        client = cosmos_client.CosmosClient(
+            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            client.create_database_if_not_exists("test", timeout=2)
+
+        databases = client.list_databases(timeout=2)
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            list(databases)
 
     def test_query_iterable_functionality(self):
         def __create_resources(client):

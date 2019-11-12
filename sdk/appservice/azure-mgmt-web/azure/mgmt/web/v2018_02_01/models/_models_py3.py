@@ -21,9 +21,10 @@ class AbnormalTimePeriod(Model):
     :param end_time: End time of the downtime
     :type end_time: datetime
     :param events: List of Possible Cause of downtime
-    :type events: list[~azure.mgmt.web.models.DetectorAbnormalTimePeriod]
+    :type events:
+     list[~azure.mgmt.web.v2018_02_01.models.DetectorAbnormalTimePeriod]
     :param solutions: List of proposed solutions
-    :type solutions: list[~azure.mgmt.web.models.Solution]
+    :type solutions: list[~azure.mgmt.web.v2018_02_01.models.Solution]
     """
 
     _attribute_map = {
@@ -99,7 +100,8 @@ class AddressResponse(Model):
      connections.
     :type outbound_ip_addresses: list[str]
     :param vip_mappings: Additional virtual IPs.
-    :type vip_mappings: list[~azure.mgmt.web.models.VirtualIPMapping]
+    :type vip_mappings:
+     list[~azure.mgmt.web.v2018_02_01.models.VirtualIPMapping]
     """
 
     _attribute_map = {
@@ -123,13 +125,16 @@ class AnalysisData(Model):
     :param source: Name of the Detector
     :type source: str
     :param detector_definition: Detector Definition
-    :type detector_definition: ~azure.mgmt.web.models.DetectorDefinition
+    :type detector_definition:
+     ~azure.mgmt.web.v2018_02_01.models.DetectorDefinition
     :param metrics: Source Metrics
-    :type metrics: list[~azure.mgmt.web.models.DiagnosticMetricSet]
+    :type metrics:
+     list[~azure.mgmt.web.v2018_02_01.models.DiagnosticMetricSet]
     :param data: Additional Source Data
-    :type data: list[list[~azure.mgmt.web.models.NameValuePair]]
+    :type data: list[list[~azure.mgmt.web.v2018_02_01.models.NameValuePair]]
     :param detector_meta_data: Detector Meta Data
-    :type detector_meta_data: ~azure.mgmt.web.models.ResponseMetaData
+    :type detector_meta_data:
+     ~azure.mgmt.web.v2018_02_01.models.ResponseMetaData
     """
 
     _attribute_map = {
@@ -245,14 +250,15 @@ class ApplicationLogsConfig(Model):
     """Application logs configuration.
 
     :param file_system: Application logs to file system configuration.
-    :type file_system: ~azure.mgmt.web.models.FileSystemApplicationLogsConfig
+    :type file_system:
+     ~azure.mgmt.web.v2018_02_01.models.FileSystemApplicationLogsConfig
     :param azure_table_storage: Application logs to azure table storage
      configuration.
     :type azure_table_storage:
-     ~azure.mgmt.web.models.AzureTableStorageApplicationLogsConfig
+     ~azure.mgmt.web.v2018_02_01.models.AzureTableStorageApplicationLogsConfig
     :param azure_blob_storage: Application logs to blob storage configuration.
     :type azure_blob_storage:
-     ~azure.mgmt.web.models.AzureBlobStorageApplicationLogsConfig
+     ~azure.mgmt.web.v2018_02_01.models.AzureBlobStorageApplicationLogsConfig
     """
 
     _attribute_map = {
@@ -278,9 +284,11 @@ class ApplicationStack(Model):
     :param dependency: Application stack dependency.
     :type dependency: str
     :param major_versions: List of major versions available.
-    :type major_versions: list[~azure.mgmt.web.models.StackMajorVersion]
+    :type major_versions:
+     list[~azure.mgmt.web.v2018_02_01.models.StackMajorVersion]
     :param frameworks: List of frameworks associated with application stack.
-    :type frameworks: list[~azure.mgmt.web.models.ApplicationStack]
+    :type frameworks:
+     list[~azure.mgmt.web.v2018_02_01.models.ApplicationStack]
     """
 
     _attribute_map = {
@@ -317,7 +325,7 @@ class AppServiceCertificate(Model):
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'ExternalPrivateKey',
      'Unknown'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.models.KeyVaultSecretStatus
+     ~azure.mgmt.web.v2018_02_01.models.KeyVaultSecretStatus
     """
 
     _validation = {
@@ -407,7 +415,7 @@ class AppServiceCertificateOrder(Resource):
     :type tags: dict[str, str]
     :param certificates: State of the Key Vault secret.
     :type certificates: dict[str,
-     ~azure.mgmt.web.models.AppServiceCertificate]
+     ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificate]
     :param distinguished_name: Certificate distinguished name.
     :type distinguished_name: str
     :ivar domain_verification_token: Domain verification token.
@@ -420,7 +428,8 @@ class AppServiceCertificateOrder(Resource):
     :param product_type: Required. Certificate product type. Possible values
      include: 'StandardDomainValidatedSsl',
      'StandardDomainValidatedWildCardSsl'
-    :type product_type: str or ~azure.mgmt.web.models.CertificateProductType
+    :type product_type: str or
+     ~azure.mgmt.web.v2018_02_01.models.CertificateProductType
     :param auto_renew: <code>true</code> if the certificate should be
      automatically renewed when it expires; otherwise, <code>false</code>.
      Default value: True .
@@ -428,19 +437,22 @@ class AppServiceCertificateOrder(Resource):
     :ivar provisioning_state: Status of certificate order. Possible values
      include: 'Succeeded', 'Failed', 'Canceled', 'InProgress', 'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.models.ProvisioningState
+     ~azure.mgmt.web.v2018_02_01.models.ProvisioningState
     :ivar status: Current order status. Possible values include:
      'Pendingissuance', 'Issued', 'Revoked', 'Canceled', 'Denied',
      'Pendingrevocation', 'PendingRekey', 'Unused', 'Expired', 'NotSubmitted'
-    :vartype status: str or ~azure.mgmt.web.models.CertificateOrderStatus
+    :vartype status: str or
+     ~azure.mgmt.web.v2018_02_01.models.CertificateOrderStatus
     :ivar signed_certificate: Signed certificate.
-    :vartype signed_certificate: ~azure.mgmt.web.models.CertificateDetails
+    :vartype signed_certificate:
+     ~azure.mgmt.web.v2018_02_01.models.CertificateDetails
     :param csr: Last CSR that was created for this order.
     :type csr: str
     :ivar intermediate: Intermediate certificate.
-    :vartype intermediate: ~azure.mgmt.web.models.CertificateDetails
+    :vartype intermediate:
+     ~azure.mgmt.web.v2018_02_01.models.CertificateDetails
     :ivar root: Root certificate.
-    :vartype root: ~azure.mgmt.web.models.CertificateDetails
+    :vartype root: ~azure.mgmt.web.v2018_02_01.models.CertificateDetails
     :ivar serial_number: Current serial number of the certificate.
     :vartype serial_number: str
     :ivar last_certificate_issuance_time: Certificate last issuance time.
@@ -548,7 +560,7 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
     :vartype type: str
     :param certificates: State of the Key Vault secret.
     :type certificates: dict[str,
-     ~azure.mgmt.web.models.AppServiceCertificate]
+     ~azure.mgmt.web.v2018_02_01.models.AppServiceCertificate]
     :param distinguished_name: Certificate distinguished name.
     :type distinguished_name: str
     :ivar domain_verification_token: Domain verification token.
@@ -561,7 +573,8 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
     :param product_type: Required. Certificate product type. Possible values
      include: 'StandardDomainValidatedSsl',
      'StandardDomainValidatedWildCardSsl'
-    :type product_type: str or ~azure.mgmt.web.models.CertificateProductType
+    :type product_type: str or
+     ~azure.mgmt.web.v2018_02_01.models.CertificateProductType
     :param auto_renew: <code>true</code> if the certificate should be
      automatically renewed when it expires; otherwise, <code>false</code>.
      Default value: True .
@@ -569,19 +582,22 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
     :ivar provisioning_state: Status of certificate order. Possible values
      include: 'Succeeded', 'Failed', 'Canceled', 'InProgress', 'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.models.ProvisioningState
+     ~azure.mgmt.web.v2018_02_01.models.ProvisioningState
     :ivar status: Current order status. Possible values include:
      'Pendingissuance', 'Issued', 'Revoked', 'Canceled', 'Denied',
      'Pendingrevocation', 'PendingRekey', 'Unused', 'Expired', 'NotSubmitted'
-    :vartype status: str or ~azure.mgmt.web.models.CertificateOrderStatus
+    :vartype status: str or
+     ~azure.mgmt.web.v2018_02_01.models.CertificateOrderStatus
     :ivar signed_certificate: Signed certificate.
-    :vartype signed_certificate: ~azure.mgmt.web.models.CertificateDetails
+    :vartype signed_certificate:
+     ~azure.mgmt.web.v2018_02_01.models.CertificateDetails
     :param csr: Last CSR that was created for this order.
     :type csr: str
     :ivar intermediate: Intermediate certificate.
-    :vartype intermediate: ~azure.mgmt.web.models.CertificateDetails
+    :vartype intermediate:
+     ~azure.mgmt.web.v2018_02_01.models.CertificateDetails
     :ivar root: Root certificate.
-    :vartype root: ~azure.mgmt.web.models.CertificateDetails
+    :vartype root: ~azure.mgmt.web.v2018_02_01.models.CertificateDetails
     :ivar serial_number: Current serial number of the certificate.
     :vartype serial_number: str
     :ivar last_certificate_issuance_time: Certificate last issuance time.
@@ -694,7 +710,7 @@ class AppServiceCertificatePatchResource(ProxyOnlyResource):
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'ExternalPrivateKey',
      'Unknown'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.models.KeyVaultSecretStatus
+     ~azure.mgmt.web.v2018_02_01.models.KeyVaultSecretStatus
     """
 
     _validation = {
@@ -753,7 +769,7 @@ class AppServiceCertificateResource(Resource):
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'ExternalPrivateKey',
      'Unknown'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.models.KeyVaultSecretStatus
+     ~azure.mgmt.web.v2018_02_01.models.KeyVaultSecretStatus
     """
 
     _validation = {
@@ -800,10 +816,11 @@ class AppServiceEnvironment(Model):
      Environment. Possible values include: 'Succeeded', 'Failed', 'Canceled',
      'InProgress', 'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.models.ProvisioningState
+     ~azure.mgmt.web.v2018_02_01.models.ProvisioningState
     :ivar status: Current status of the App Service Environment. Possible
      values include: 'Preparing', 'Ready', 'Scaling', 'Deleting'
-    :vartype status: str or ~azure.mgmt.web.models.HostingEnvironmentStatus
+    :vartype status: str or
+     ~azure.mgmt.web.v2018_02_01.models.HostingEnvironmentStatus
     :param vnet_name: Name of the Virtual Network for the App Service
      Environment.
     :type vnet_name: str
@@ -812,19 +829,20 @@ class AppServiceEnvironment(Model):
     :param vnet_subnet_name: Subnet of the Virtual Network.
     :type vnet_subnet_name: str
     :param virtual_network: Required. Description of the Virtual Network.
-    :type virtual_network: ~azure.mgmt.web.models.VirtualNetworkProfile
+    :type virtual_network:
+     ~azure.mgmt.web.v2018_02_01.models.VirtualNetworkProfile
     :param internal_load_balancing_mode: Specifies which endpoints to serve
      internally in the Virtual Network for the App Service Environment.
      Possible values include: 'None', 'Web', 'Publishing'
     :type internal_load_balancing_mode: str or
-     ~azure.mgmt.web.models.InternalLoadBalancingMode
+     ~azure.mgmt.web.v2018_02_01.models.InternalLoadBalancingMode
     :param multi_size: Front-end VM size, e.g. "Medium", "Large".
     :type multi_size: str
     :param multi_role_count: Number of front-end instances.
     :type multi_role_count: int
     :param worker_pools: Required. Description of worker pools with worker
      size IDs, VM sizes, and number of workers in each pool.
-    :type worker_pools: list[~azure.mgmt.web.models.WorkerPool]
+    :type worker_pools: list[~azure.mgmt.web.v2018_02_01.models.WorkerPool]
     :param ipssl_address_count: Number of IP SSL addresses reserved for the
      App Service Environment.
     :type ipssl_address_count: int
@@ -857,15 +875,16 @@ class AppServiceEnvironment(Model):
     :vartype maximum_number_of_machines: int
     :ivar vip_mappings: Description of IP SSL mapping for the App Service
      Environment.
-    :vartype vip_mappings: list[~azure.mgmt.web.models.VirtualIPMapping]
+    :vartype vip_mappings:
+     list[~azure.mgmt.web.v2018_02_01.models.VirtualIPMapping]
     :ivar environment_capacities: Current total, used, and available worker
      capacities.
     :vartype environment_capacities:
-     list[~azure.mgmt.web.models.StampCapacity]
+     list[~azure.mgmt.web.v2018_02_01.models.StampCapacity]
     :param network_access_control_list: Access control list for controlling
      traffic to the App Service Environment.
     :type network_access_control_list:
-     list[~azure.mgmt.web.models.NetworkAccessControlEntry]
+     list[~azure.mgmt.web.v2018_02_01.models.NetworkAccessControlEntry]
     :ivar environment_is_healthy: True/false indicating whether the App
      Service Environment is healthy.
     :vartype environment_is_healthy: bool
@@ -893,7 +912,8 @@ class AppServiceEnvironment(Model):
     :type dynamic_cache_enabled: bool
     :param cluster_settings: Custom settings for changing the behavior of the
      App Service Environment.
-    :type cluster_settings: list[~azure.mgmt.web.models.NameValuePair]
+    :type cluster_settings:
+     list[~azure.mgmt.web.v2018_02_01.models.NameValuePair]
     :param user_whitelisted_ip_ranges: User added ip ranges to whitelist on
      ASE db
     :type user_whitelisted_ip_ranges: list[str]
@@ -1043,10 +1063,11 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
      Environment. Possible values include: 'Succeeded', 'Failed', 'Canceled',
      'InProgress', 'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.models.ProvisioningState
+     ~azure.mgmt.web.v2018_02_01.models.ProvisioningState
     :ivar status: Current status of the App Service Environment. Possible
      values include: 'Preparing', 'Ready', 'Scaling', 'Deleting'
-    :vartype status: str or ~azure.mgmt.web.models.HostingEnvironmentStatus
+    :vartype status: str or
+     ~azure.mgmt.web.v2018_02_01.models.HostingEnvironmentStatus
     :param vnet_name: Name of the Virtual Network for the App Service
      Environment.
     :type vnet_name: str
@@ -1055,19 +1076,20 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
     :param vnet_subnet_name: Subnet of the Virtual Network.
     :type vnet_subnet_name: str
     :param virtual_network: Required. Description of the Virtual Network.
-    :type virtual_network: ~azure.mgmt.web.models.VirtualNetworkProfile
+    :type virtual_network:
+     ~azure.mgmt.web.v2018_02_01.models.VirtualNetworkProfile
     :param internal_load_balancing_mode: Specifies which endpoints to serve
      internally in the Virtual Network for the App Service Environment.
      Possible values include: 'None', 'Web', 'Publishing'
     :type internal_load_balancing_mode: str or
-     ~azure.mgmt.web.models.InternalLoadBalancingMode
+     ~azure.mgmt.web.v2018_02_01.models.InternalLoadBalancingMode
     :param multi_size: Front-end VM size, e.g. "Medium", "Large".
     :type multi_size: str
     :param multi_role_count: Number of front-end instances.
     :type multi_role_count: int
     :param worker_pools: Required. Description of worker pools with worker
      size IDs, VM sizes, and number of workers in each pool.
-    :type worker_pools: list[~azure.mgmt.web.models.WorkerPool]
+    :type worker_pools: list[~azure.mgmt.web.v2018_02_01.models.WorkerPool]
     :param ipssl_address_count: Number of IP SSL addresses reserved for the
      App Service Environment.
     :type ipssl_address_count: int
@@ -1100,15 +1122,16 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
     :vartype maximum_number_of_machines: int
     :ivar vip_mappings: Description of IP SSL mapping for the App Service
      Environment.
-    :vartype vip_mappings: list[~azure.mgmt.web.models.VirtualIPMapping]
+    :vartype vip_mappings:
+     list[~azure.mgmt.web.v2018_02_01.models.VirtualIPMapping]
     :ivar environment_capacities: Current total, used, and available worker
      capacities.
     :vartype environment_capacities:
-     list[~azure.mgmt.web.models.StampCapacity]
+     list[~azure.mgmt.web.v2018_02_01.models.StampCapacity]
     :param network_access_control_list: Access control list for controlling
      traffic to the App Service Environment.
     :type network_access_control_list:
-     list[~azure.mgmt.web.models.NetworkAccessControlEntry]
+     list[~azure.mgmt.web.v2018_02_01.models.NetworkAccessControlEntry]
     :ivar environment_is_healthy: True/false indicating whether the App
      Service Environment is healthy.
     :vartype environment_is_healthy: bool
@@ -1136,7 +1159,8 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
     :type dynamic_cache_enabled: bool
     :param cluster_settings: Custom settings for changing the behavior of the
      App Service Environment.
-    :type cluster_settings: list[~azure.mgmt.web.models.NameValuePair]
+    :type cluster_settings:
+     list[~azure.mgmt.web.v2018_02_01.models.NameValuePair]
     :param user_whitelisted_ip_ranges: User added ip ranges to whitelist on
      ASE db
     :type user_whitelisted_ip_ranges: list[str]
@@ -1297,10 +1321,11 @@ class AppServiceEnvironmentResource(Resource):
      Environment. Possible values include: 'Succeeded', 'Failed', 'Canceled',
      'InProgress', 'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.models.ProvisioningState
+     ~azure.mgmt.web.v2018_02_01.models.ProvisioningState
     :ivar status: Current status of the App Service Environment. Possible
      values include: 'Preparing', 'Ready', 'Scaling', 'Deleting'
-    :vartype status: str or ~azure.mgmt.web.models.HostingEnvironmentStatus
+    :vartype status: str or
+     ~azure.mgmt.web.v2018_02_01.models.HostingEnvironmentStatus
     :param vnet_name: Name of the Virtual Network for the App Service
      Environment.
     :type vnet_name: str
@@ -1309,19 +1334,20 @@ class AppServiceEnvironmentResource(Resource):
     :param vnet_subnet_name: Subnet of the Virtual Network.
     :type vnet_subnet_name: str
     :param virtual_network: Required. Description of the Virtual Network.
-    :type virtual_network: ~azure.mgmt.web.models.VirtualNetworkProfile
+    :type virtual_network:
+     ~azure.mgmt.web.v2018_02_01.models.VirtualNetworkProfile
     :param internal_load_balancing_mode: Specifies which endpoints to serve
      internally in the Virtual Network for the App Service Environment.
      Possible values include: 'None', 'Web', 'Publishing'
     :type internal_load_balancing_mode: str or
-     ~azure.mgmt.web.models.InternalLoadBalancingMode
+     ~azure.mgmt.web.v2018_02_01.models.InternalLoadBalancingMode
     :param multi_size: Front-end VM size, e.g. "Medium", "Large".
     :type multi_size: str
     :param multi_role_count: Number of front-end instances.
     :type multi_role_count: int
     :param worker_pools: Required. Description of worker pools with worker
      size IDs, VM sizes, and number of workers in each pool.
-    :type worker_pools: list[~azure.mgmt.web.models.WorkerPool]
+    :type worker_pools: list[~azure.mgmt.web.v2018_02_01.models.WorkerPool]
     :param ipssl_address_count: Number of IP SSL addresses reserved for the
      App Service Environment.
     :type ipssl_address_count: int
@@ -1354,15 +1380,16 @@ class AppServiceEnvironmentResource(Resource):
     :vartype maximum_number_of_machines: int
     :ivar vip_mappings: Description of IP SSL mapping for the App Service
      Environment.
-    :vartype vip_mappings: list[~azure.mgmt.web.models.VirtualIPMapping]
+    :vartype vip_mappings:
+     list[~azure.mgmt.web.v2018_02_01.models.VirtualIPMapping]
     :ivar environment_capacities: Current total, used, and available worker
      capacities.
     :vartype environment_capacities:
-     list[~azure.mgmt.web.models.StampCapacity]
+     list[~azure.mgmt.web.v2018_02_01.models.StampCapacity]
     :param network_access_control_list: Access control list for controlling
      traffic to the App Service Environment.
     :type network_access_control_list:
-     list[~azure.mgmt.web.models.NetworkAccessControlEntry]
+     list[~azure.mgmt.web.v2018_02_01.models.NetworkAccessControlEntry]
     :ivar environment_is_healthy: True/false indicating whether the App
      Service Environment is healthy.
     :vartype environment_is_healthy: bool
@@ -1390,7 +1417,8 @@ class AppServiceEnvironmentResource(Resource):
     :type dynamic_cache_enabled: bool
     :param cluster_settings: Custom settings for changing the behavior of the
      App Service Environment.
-    :type cluster_settings: list[~azure.mgmt.web.models.NameValuePair]
+    :type cluster_settings:
+     list[~azure.mgmt.web.v2018_02_01.models.NameValuePair]
     :param user_whitelisted_ip_ranges: User added ip ranges to whitelist on
      ASE db
     :type user_whitelisted_ip_ranges: list[str]
@@ -1549,13 +1577,13 @@ class AppServicePlan(Resource):
     :type worker_tier_name: str
     :ivar status: App Service plan status. Possible values include: 'Ready',
      'Pending', 'Creating'
-    :vartype status: str or ~azure.mgmt.web.models.StatusOptions
+    :vartype status: str or ~azure.mgmt.web.v2018_02_01.models.StatusOptions
     :ivar subscription: App Service plan subscription.
     :vartype subscription: str
     :param hosting_environment_profile: Specification for the App Service
      Environment to use for the App Service plan.
     :type hosting_environment_profile:
-     ~azure.mgmt.web.models.HostingEnvironmentProfile
+     ~azure.mgmt.web.v2018_02_01.models.HostingEnvironmentProfile
     :ivar maximum_number_of_workers: Maximum number of instances that can be
      assigned to this App Service plan.
     :vartype maximum_number_of_workers: int
@@ -1599,9 +1627,9 @@ class AppServicePlan(Resource):
      Environment. Possible values include: 'Succeeded', 'Failed', 'Canceled',
      'InProgress', 'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.models.ProvisioningState
+     ~azure.mgmt.web.v2018_02_01.models.ProvisioningState
     :param sku:
-    :type sku: ~azure.mgmt.web.models.SkuDescription
+    :type sku: ~azure.mgmt.web.v2018_02_01.models.SkuDescription
     """
 
     _validation = {
@@ -1690,13 +1718,13 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     :type worker_tier_name: str
     :ivar status: App Service plan status. Possible values include: 'Ready',
      'Pending', 'Creating'
-    :vartype status: str or ~azure.mgmt.web.models.StatusOptions
+    :vartype status: str or ~azure.mgmt.web.v2018_02_01.models.StatusOptions
     :ivar subscription: App Service plan subscription.
     :vartype subscription: str
     :param hosting_environment_profile: Specification for the App Service
      Environment to use for the App Service plan.
     :type hosting_environment_profile:
-     ~azure.mgmt.web.models.HostingEnvironmentProfile
+     ~azure.mgmt.web.v2018_02_01.models.HostingEnvironmentProfile
     :ivar maximum_number_of_workers: Maximum number of instances that can be
      assigned to this App Service plan.
     :vartype maximum_number_of_workers: int
@@ -1740,7 +1768,7 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
      Environment. Possible values include: 'Succeeded', 'Failed', 'Canceled',
      'InProgress', 'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.models.ProvisioningState
+     ~azure.mgmt.web.v2018_02_01.models.ProvisioningState
     """
 
     _validation = {
@@ -1810,9 +1838,11 @@ class AutoHealActions(Model):
 
     :param action_type: Predefined action to be taken. Possible values
      include: 'Recycle', 'LogEvent', 'CustomAction'
-    :type action_type: str or ~azure.mgmt.web.models.AutoHealActionType
+    :type action_type: str or
+     ~azure.mgmt.web.v2018_02_01.models.AutoHealActionType
     :param custom_action: Custom action to be taken.
-    :type custom_action: ~azure.mgmt.web.models.AutoHealCustomAction
+    :type custom_action:
+     ~azure.mgmt.web.v2018_02_01.models.AutoHealCustomAction
     :param min_process_execution_time: Minimum time the process must execute
      before taking the action
     :type min_process_execution_time: str
@@ -1857,9 +1887,9 @@ class AutoHealRules(Model):
 
     :param triggers: Conditions that describe when to execute the auto-heal
      actions.
-    :type triggers: ~azure.mgmt.web.models.AutoHealTriggers
+    :type triggers: ~azure.mgmt.web.v2018_02_01.models.AutoHealTriggers
     :param actions: Actions to be executed when a rule is triggered.
-    :type actions: ~azure.mgmt.web.models.AutoHealActions
+    :type actions: ~azure.mgmt.web.v2018_02_01.models.AutoHealActions
     """
 
     _attribute_map = {
@@ -1877,13 +1907,15 @@ class AutoHealTriggers(Model):
     """Triggers for auto-heal.
 
     :param requests: A rule based on total requests.
-    :type requests: ~azure.mgmt.web.models.RequestsBasedTrigger
+    :type requests: ~azure.mgmt.web.v2018_02_01.models.RequestsBasedTrigger
     :param private_bytes_in_kb: A rule based on private bytes.
     :type private_bytes_in_kb: int
     :param status_codes: A rule based on status codes.
-    :type status_codes: list[~azure.mgmt.web.models.StatusCodesBasedTrigger]
+    :type status_codes:
+     list[~azure.mgmt.web.v2018_02_01.models.StatusCodesBasedTrigger]
     :param slow_requests: A rule based on request execution time.
-    :type slow_requests: ~azure.mgmt.web.models.SlowRequestsBasedTrigger
+    :type slow_requests:
+     ~azure.mgmt.web.v2018_02_01.models.SlowRequestsBasedTrigger
     """
 
     _attribute_map = {
@@ -1906,7 +1938,7 @@ class AzureBlobStorageApplicationLogsConfig(Model):
 
     :param level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'
-    :type level: str or ~azure.mgmt.web.models.LogLevel
+    :type level: str or ~azure.mgmt.web.v2018_02_01.models.LogLevel
     :param sas_url: SAS url to a azure blob container with
      read/write/list/delete permissions.
     :type sas_url: str
@@ -1966,7 +1998,7 @@ class AzureStorageInfoValue(Model):
 
     :param type: Type of storage. Possible values include: 'AzureFiles',
      'AzureBlob'
-    :type type: str or ~azure.mgmt.web.models.AzureStorageType
+    :type type: str or ~azure.mgmt.web.v2018_02_01.models.AzureStorageType
     :param account_name: Name of the storage account.
     :type account_name: str
     :param share_name: Name of the file share (container name, for Blob
@@ -1979,7 +2011,8 @@ class AzureStorageInfoValue(Model):
     :type mount_path: str
     :ivar state: State of the storage account. Possible values include: 'Ok',
      'InvalidCredentials', 'InvalidShare'
-    :vartype state: str or ~azure.mgmt.web.models.AzureStorageState
+    :vartype state: str or
+     ~azure.mgmt.web.v2018_02_01.models.AzureStorageState
     """
 
     _validation = {
@@ -2020,7 +2053,8 @@ class AzureStoragePropertyDictionaryResource(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param properties: Azure storage accounts.
-    :type properties: dict[str, ~azure.mgmt.web.models.AzureStorageInfoValue]
+    :type properties: dict[str,
+     ~azure.mgmt.web.v2018_02_01.models.AzureStorageInfoValue]
     """
 
     _validation = {
@@ -2049,7 +2083,7 @@ class AzureTableStorageApplicationLogsConfig(Model):
 
     :param level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'
-    :type level: str or ~azure.mgmt.web.models.LogLevel
+    :type level: str or ~azure.mgmt.web.v2018_02_01.models.LogLevel
     :param sas_url: Required. SAS URL to an Azure table with add/query/delete
      permissions.
     :type sas_url: str
@@ -2096,7 +2130,8 @@ class BackupItem(ProxyOnlyResource):
     :ivar status: Backup status. Possible values include: 'InProgress',
      'Failed', 'Succeeded', 'TimedOut', 'Created', 'Skipped',
      'PartiallySucceeded', 'DeleteInProgress', 'DeleteFailed', 'Deleted'
-    :vartype status: str or ~azure.mgmt.web.models.BackupItemStatus
+    :vartype status: str or
+     ~azure.mgmt.web.v2018_02_01.models.BackupItemStatus
     :ivar size_in_bytes: Size of the backup in bytes.
     :vartype size_in_bytes: long
     :ivar created: Timestamp of the backup creation.
@@ -2104,7 +2139,8 @@ class BackupItem(ProxyOnlyResource):
     :ivar log: Details regarding this backup. Might contain an error message.
     :vartype log: str
     :ivar databases: List of databases included in the backup.
-    :vartype databases: list[~azure.mgmt.web.models.DatabaseBackupSetting]
+    :vartype databases:
+     list[~azure.mgmt.web.v2018_02_01.models.DatabaseBackupSetting]
     :ivar scheduled: True if this backup has been created due to a schedule
      being triggered.
     :vartype scheduled: bool
@@ -2205,9 +2241,10 @@ class BackupRequest(ProxyOnlyResource):
     :type storage_account_url: str
     :param backup_schedule: Schedule for the backup if it is executed
      periodically.
-    :type backup_schedule: ~azure.mgmt.web.models.BackupSchedule
+    :type backup_schedule: ~azure.mgmt.web.v2018_02_01.models.BackupSchedule
     :param databases: Databases included in the backup.
-    :type databases: list[~azure.mgmt.web.models.DatabaseBackupSetting]
+    :type databases:
+     list[~azure.mgmt.web.v2018_02_01.models.DatabaseBackupSetting]
     """
 
     _validation = {
@@ -2255,7 +2292,8 @@ class BackupSchedule(Model):
      should be executed (e.g. for weekly backup, this should be set to Day and
      FrequencyInterval should be set to 7). Possible values include: 'Day',
      'Hour'. Default value: "Day" .
-    :type frequency_unit: str or ~azure.mgmt.web.models.FrequencyUnit
+    :type frequency_unit: str or
+     ~azure.mgmt.web.v2018_02_01.models.FrequencyUnit
     :param keep_at_least_one_backup: Required. True if the retention policy
      should always keep at least one backup in the storage account, regardless
      how old it is; false otherwise. Default value: True .
@@ -2429,7 +2467,7 @@ class Certificate(Resource):
     :ivar hosting_environment_profile: Specification for the App Service
      Environment to use for the certificate.
     :vartype hosting_environment_profile:
-     ~azure.mgmt.web.models.HostingEnvironmentProfile
+     ~azure.mgmt.web.v2018_02_01.models.HostingEnvironmentProfile
     :param key_vault_id: Key Vault Csm resource Id.
     :type key_vault_id: str
     :param key_vault_secret_name: Key Vault secret name.
@@ -2441,7 +2479,7 @@ class Certificate(Resource):
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'ExternalPrivateKey',
      'Unknown'
     :vartype key_vault_secret_status: str or
-     ~azure.mgmt.web.models.KeyVaultSecretStatus
+     ~azure.mgmt.web.v2018_02_01.models.KeyVaultSecretStatus
     :param server_farm_id: Resource ID of the associated App Service plan,
      formatted as:
      "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
@@ -2645,7 +2683,7 @@ class CertificateOrderAction(ProxyOnlyResource):
      'OrgValidationComplete', 'SanDrop', 'FraudCleared', 'CertificateExpired',
      'CertificateExpirationWarning', 'FraudDocumentationRequired', 'Unknown'
     :vartype action_type: str or
-     ~azure.mgmt.web.models.CertificateOrderActionType
+     ~azure.mgmt.web.v2018_02_01.models.CertificateOrderActionType
     :ivar created_at: Time at which the certificate action was performed.
     :vartype created_at: datetime
     """
@@ -2720,7 +2758,7 @@ class CertificatePatchResource(ProxyOnlyResource):
     :ivar hosting_environment_profile: Specification for the App Service
      Environment to use for the certificate.
     :vartype hosting_environment_profile:
-     ~azure.mgmt.web.models.HostingEnvironmentProfile
+     ~azure.mgmt.web.v2018_02_01.models.HostingEnvironmentProfile
     :param key_vault_id: Key Vault Csm resource Id.
     :type key_vault_id: str
     :param key_vault_secret_name: Key Vault secret name.
@@ -2732,7 +2770,7 @@ class CertificatePatchResource(ProxyOnlyResource):
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'ExternalPrivateKey',
      'Unknown'
     :vartype key_vault_secret_status: str or
-     ~azure.mgmt.web.models.KeyVaultSecretStatus
+     ~azure.mgmt.web.v2018_02_01.models.KeyVaultSecretStatus
     :param server_farm_id: Resource ID of the associated App Service plan,
      formatted as:
      "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
@@ -2913,7 +2951,7 @@ class ConnectionStringDictionary(ProxyOnlyResource):
     :vartype type: str
     :param properties: Connection strings.
     :type properties: dict[str,
-     ~azure.mgmt.web.models.ConnStringValueTypePair]
+     ~azure.mgmt.web.v2018_02_01.models.ConnStringValueTypePair]
     """
 
     _validation = {
@@ -2945,7 +2983,7 @@ class ConnStringInfo(Model):
     :param type: Type of database. Possible values include: 'MySql',
      'SQLServer', 'SQLAzure', 'Custom', 'NotificationHub', 'ServiceBus',
      'EventHub', 'ApiHub', 'DocDb', 'RedisCache', 'PostgreSQL'
-    :type type: str or ~azure.mgmt.web.models.ConnectionStringType
+    :type type: str or ~azure.mgmt.web.v2018_02_01.models.ConnectionStringType
     """
 
     _attribute_map = {
@@ -2971,7 +3009,7 @@ class ConnStringValueTypePair(Model):
     :param type: Required. Type of database. Possible values include: 'MySql',
      'SQLServer', 'SQLAzure', 'Custom', 'NotificationHub', 'ServiceBus',
      'EventHub', 'ApiHub', 'DocDb', 'RedisCache', 'PostgreSQL'
-    :type type: str or ~azure.mgmt.web.models.ConnectionStringType
+    :type type: str or ~azure.mgmt.web.v2018_02_01.models.ConnectionStringType
     """
 
     _validation = {
@@ -2999,7 +3037,7 @@ class Contact(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param address_mailing: Mailing address.
-    :type address_mailing: ~azure.mgmt.web.models.Address
+    :type address_mailing: ~azure.mgmt.web.v2018_02_01.models.Address
     :param email: Required. Email address.
     :type email: str
     :param fax: Fax number.
@@ -3066,7 +3104,8 @@ class ContinuousWebJob(ProxyOnlyResource):
     :vartype type: str
     :param status: Job status. Possible values include: 'Initializing',
      'Starting', 'Running', 'PendingRestart', 'Stopped'
-    :type status: str or ~azure.mgmt.web.models.ContinuousWebJobStatus
+    :type status: str or
+     ~azure.mgmt.web.v2018_02_01.models.ContinuousWebJobStatus
     :param detailed_status: Detailed status.
     :type detailed_status: str
     :param log_url: Log URL.
@@ -3079,7 +3118,7 @@ class ContinuousWebJob(ProxyOnlyResource):
     :type extra_info_url: str
     :param web_job_type: Job type. Possible values include: 'Continuous',
      'Triggered'
-    :type web_job_type: str or ~azure.mgmt.web.models.WebJobType
+    :type web_job_type: str or ~azure.mgmt.web.v2018_02_01.models.WebJobType
     :param error: Error information.
     :type error: str
     :param using_sdk: Using SDK?
@@ -3181,11 +3220,12 @@ class CsmOperationDescription(Model):
     :param name:
     :type name: str
     :param display:
-    :type display: ~azure.mgmt.web.models.CsmOperationDisplay
+    :type display: ~azure.mgmt.web.v2018_02_01.models.CsmOperationDisplay
     :param origin:
     :type origin: str
     :param properties:
-    :type properties: ~azure.mgmt.web.models.CsmOperationDescriptionProperties
+    :type properties:
+     ~azure.mgmt.web.v2018_02_01.models.CsmOperationDescriptionProperties
     """
 
     _attribute_map = {
@@ -3207,7 +3247,8 @@ class CsmOperationDescriptionProperties(Model):
     """Properties available for a Microsoft.Web resource provider operation.
 
     :param service_specification:
-    :type service_specification: ~azure.mgmt.web.models.ServiceSpecification
+    :type service_specification:
+     ~azure.mgmt.web.v2018_02_01.models.ServiceSpecification
     """
 
     _attribute_map = {
@@ -3254,7 +3295,8 @@ class CsmPublishingProfileOptions(Model):
      FileZilla3
      WebDeploy -- default
      Ftp. Possible values include: 'FileZilla3', 'WebDeploy', 'Ftp'
-    :type format: str or ~azure.mgmt.web.models.PublishingProfileFormat
+    :type format: str or
+     ~azure.mgmt.web.v2018_02_01.models.PublishingProfileFormat
     :param include_disaster_recovery_endpoints: Include the DisasterRecover
      endpoint if true
     :type include_disaster_recovery_endpoints: bool
@@ -3312,7 +3354,7 @@ class CsmUsageQuota(Model):
     :param limit: The resource limit.
     :type limit: long
     :param name: Quota name.
-    :type name: ~azure.mgmt.web.models.LocalizableString
+    :type name: ~azure.mgmt.web.v2018_02_01.models.LocalizableString
     """
 
     _attribute_map = {
@@ -3352,11 +3394,11 @@ class CustomHostnameAnalysisResult(ProxyOnlyResource):
     :ivar custom_domain_verification_test: DNS verification test result.
      Possible values include: 'Passed', 'Failed', 'Skipped'
     :vartype custom_domain_verification_test: str or
-     ~azure.mgmt.web.models.DnsVerificationTestResult
+     ~azure.mgmt.web.v2018_02_01.models.DnsVerificationTestResult
     :ivar custom_domain_verification_failure_info: Raw failure information if
      DNS verification fails.
     :vartype custom_domain_verification_failure_info:
-     ~azure.mgmt.web.models.ErrorEntity
+     ~azure.mgmt.web.v2018_02_01.models.ErrorEntity
     :ivar has_conflict_on_scale_unit: <code>true</code> if there is a conflict
      on a scale unit; otherwise, <code>false</code>.
     :vartype has_conflict_on_scale_unit: bool
@@ -3432,7 +3474,8 @@ class DatabaseBackupSetting(Model):
 
     :param database_type: Required. Database type (e.g. SqlAzure / MySql).
      Possible values include: 'SqlAzure', 'MySql', 'LocalMySql', 'PostgreSql'
-    :type database_type: str or ~azure.mgmt.web.models.DatabaseType
+    :type database_type: str or
+     ~azure.mgmt.web.v2018_02_01.models.DatabaseType
     :param name:
     :type name: str
     :param connection_string_name: Contains a connection string name that is
@@ -3470,7 +3513,8 @@ class DataSource(Model):
     :param instructions: Instructions if any for the data source
     :type instructions: list[str]
     :param data_source_uri: Datasource Uri Links
-    :type data_source_uri: list[~azure.mgmt.web.models.NameValuePair]
+    :type data_source_uri:
+     list[~azure.mgmt.web.v2018_02_01.models.NameValuePair]
     """
 
     _attribute_map = {
@@ -3514,7 +3558,8 @@ class DataTableResponseObject(Model):
     :param table_name: Name of the table
     :type table_name: str
     :param columns: List of columns with data types
-    :type columns: list[~azure.mgmt.web.models.DataTableResponseColumn]
+    :type columns:
+     list[~azure.mgmt.web.v2018_02_01.models.DataTableResponseColumn]
     :param rows: Raw row values
     :type rows: list[list[str]]
     """
@@ -3539,7 +3584,8 @@ class DefaultErrorResponse(Model):
     sending a request.
 
     :ivar error: Error model.
-    :vartype error: ~azure.mgmt.web.models.DefaultErrorResponseError
+    :vartype error:
+     ~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseError
     """
 
     _validation = {
@@ -3581,7 +3627,7 @@ class DefaultErrorResponseError(Model):
     :vartype target: str
     :param details:
     :type details:
-     list[~azure.mgmt.web.models.DefaultErrorResponseErrorDetailsItem]
+     list[~azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseErrorDetailsItem]
     :ivar innererror: More information to debug error.
     :vartype innererror: str
     """
@@ -3845,15 +3891,15 @@ class DeploymentLocations(Model):
     deployment of App Service resources.
 
     :param locations: Available regions.
-    :type locations: list[~azure.mgmt.web.models.GeoRegion]
+    :type locations: list[~azure.mgmt.web.v2018_02_01.models.GeoRegion]
     :param hosting_environments: Available App Service Environments with full
      descriptions of the environments.
     :type hosting_environments:
-     list[~azure.mgmt.web.models.AppServiceEnvironment]
+     list[~azure.mgmt.web.v2018_02_01.models.AppServiceEnvironment]
     :param hosting_environment_deployment_infos: Available App Service
      Environments with basic information.
     :type hosting_environment_deployment_infos:
-     list[~azure.mgmt.web.models.HostingEnvironmentDeploymentInfo]
+     list[~azure.mgmt.web.v2018_02_01.models.HostingEnvironmentDeploymentInfo]
     """
 
     _attribute_map = {
@@ -3883,13 +3929,14 @@ class DetectorAbnormalTimePeriod(Model):
     :param priority: Represents the rank of the Detector
     :type priority: float
     :param meta_data: Downtime metadata
-    :type meta_data: list[list[~azure.mgmt.web.models.NameValuePair]]
+    :type meta_data:
+     list[list[~azure.mgmt.web.v2018_02_01.models.NameValuePair]]
     :param type: Represents the type of the Detector. Possible values include:
      'ServiceIncident', 'AppDeployment', 'AppCrash', 'RuntimeIssueDetected',
      'AseDeployment', 'UserIssue', 'PlatformIssue', 'Other'
-    :type type: str or ~azure.mgmt.web.models.IssueType
+    :type type: str or ~azure.mgmt.web.v2018_02_01.models.IssueType
     :param solutions: List of proposed solutions
-    :type solutions: list[~azure.mgmt.web.models.Solution]
+    :type solutions: list[~azure.mgmt.web.v2018_02_01.models.Solution]
     """
 
     _attribute_map = {
@@ -4021,9 +4068,9 @@ class DetectorResponse(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param metadata: metadata for the detector
-    :type metadata: ~azure.mgmt.web.models.DetectorInfo
+    :type metadata: ~azure.mgmt.web.v2018_02_01.models.DetectorInfo
     :param dataset: Data Set
-    :type dataset: list[~azure.mgmt.web.models.DiagnosticData]
+    :type dataset: list[~azure.mgmt.web.v2018_02_01.models.DiagnosticData]
     """
 
     _validation = {
@@ -4067,13 +4114,13 @@ class DiagnosticAnalysis(ProxyOnlyResource):
     :type end_time: datetime
     :param abnormal_time_periods: List of time periods.
     :type abnormal_time_periods:
-     list[~azure.mgmt.web.models.AbnormalTimePeriod]
+     list[~azure.mgmt.web.v2018_02_01.models.AbnormalTimePeriod]
     :param payload: Data by each detector
-    :type payload: list[~azure.mgmt.web.models.AnalysisData]
+    :type payload: list[~azure.mgmt.web.v2018_02_01.models.AnalysisData]
     :param non_correlated_detectors: Data by each detector for detectors that
      did not corelate
     :type non_correlated_detectors:
-     list[~azure.mgmt.web.models.DetectorDefinition]
+     list[~azure.mgmt.web.v2018_02_01.models.DetectorDefinition]
     """
 
     _validation = {
@@ -4145,10 +4192,10 @@ class DiagnosticData(Model):
     """Set of data with rendering instructions.
 
     :param table: Data in table form
-    :type table: ~azure.mgmt.web.models.DataTableResponseObject
+    :type table: ~azure.mgmt.web.v2018_02_01.models.DataTableResponseObject
     :param rendering_properties: Properties that describe how the table should
      be rendered
-    :type rendering_properties: ~azure.mgmt.web.models.Rendering
+    :type rendering_properties: ~azure.mgmt.web.v2018_02_01.models.Rendering
     """
 
     _attribute_map = {
@@ -4183,17 +4230,20 @@ class DiagnosticDetectorResponse(ProxyOnlyResource):
     :param issue_detected: Flag representing Issue was detected.
     :type issue_detected: bool
     :param detector_definition: Detector's definition
-    :type detector_definition: ~azure.mgmt.web.models.DetectorDefinition
+    :type detector_definition:
+     ~azure.mgmt.web.v2018_02_01.models.DetectorDefinition
     :param metrics: Metrics provided by the detector
-    :type metrics: list[~azure.mgmt.web.models.DiagnosticMetricSet]
+    :type metrics:
+     list[~azure.mgmt.web.v2018_02_01.models.DiagnosticMetricSet]
     :param abnormal_time_periods: List of Correlated events found by the
      detector
     :type abnormal_time_periods:
-     list[~azure.mgmt.web.models.DetectorAbnormalTimePeriod]
+     list[~azure.mgmt.web.v2018_02_01.models.DetectorAbnormalTimePeriod]
     :param data: Additional Data that detector wants to send.
-    :type data: list[list[~azure.mgmt.web.models.NameValuePair]]
+    :type data: list[list[~azure.mgmt.web.v2018_02_01.models.NameValuePair]]
     :param response_meta_data: Meta Data
-    :type response_meta_data: ~azure.mgmt.web.models.ResponseMetaData
+    :type response_meta_data:
+     ~azure.mgmt.web.v2018_02_01.models.ResponseMetaData
     """
 
     _validation = {
@@ -4290,7 +4340,8 @@ class DiagnosticMetricSet(Model):
     :param values: Collection of metric values for the selected period based
      on the
      {Microsoft.Web.Hosting.Administration.DiagnosticMetricSet.TimeGrain}
-    :type values: list[~azure.mgmt.web.models.DiagnosticMetricSample]
+    :type values:
+     list[~azure.mgmt.web.v2018_02_01.models.DiagnosticMetricSample]
     """
 
     _attribute_map = {
@@ -4363,23 +4414,24 @@ class Domain(Resource):
     :param tags: Resource tags.
     :type tags: dict[str, str]
     :param contact_admin: Required. Administrative contact.
-    :type contact_admin: ~azure.mgmt.web.models.Contact
+    :type contact_admin: ~azure.mgmt.web.v2018_02_01.models.Contact
     :param contact_billing: Required. Billing contact.
-    :type contact_billing: ~azure.mgmt.web.models.Contact
+    :type contact_billing: ~azure.mgmt.web.v2018_02_01.models.Contact
     :param contact_registrant: Required. Registrant contact.
-    :type contact_registrant: ~azure.mgmt.web.models.Contact
+    :type contact_registrant: ~azure.mgmt.web.v2018_02_01.models.Contact
     :param contact_tech: Required. Technical contact.
-    :type contact_tech: ~azure.mgmt.web.models.Contact
+    :type contact_tech: ~azure.mgmt.web.v2018_02_01.models.Contact
     :ivar registration_status: Domain registration status. Possible values
      include: 'Active', 'Awaiting', 'Cancelled', 'Confiscated', 'Disabled',
      'Excluded', 'Expired', 'Failed', 'Held', 'Locked', 'Parked', 'Pending',
      'Reserved', 'Reverted', 'Suspended', 'Transferred', 'Unknown', 'Unlocked',
      'Unparked', 'Updated', 'JsonConverterFailed'
-    :vartype registration_status: str or ~azure.mgmt.web.models.DomainStatus
+    :vartype registration_status: str or
+     ~azure.mgmt.web.v2018_02_01.models.DomainStatus
     :ivar provisioning_state: Domain provisioning state. Possible values
      include: 'Succeeded', 'Failed', 'Canceled', 'InProgress', 'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.models.ProvisioningState
+     ~azure.mgmt.web.v2018_02_01.models.ProvisioningState
     :ivar name_servers: Name servers.
     :vartype name_servers: list[str]
     :param privacy: <code>true</code> if domain privacy is enabled for this
@@ -4402,19 +4454,20 @@ class Domain(Resource):
     :vartype ready_for_dns_record_management: bool
     :ivar managed_host_names: All hostnames derived from the domain and
      assigned to Azure resources.
-    :vartype managed_host_names: list[~azure.mgmt.web.models.HostName]
+    :vartype managed_host_names:
+     list[~azure.mgmt.web.v2018_02_01.models.HostName]
     :param consent: Required. Legal agreement consent.
-    :type consent: ~azure.mgmt.web.models.DomainPurchaseConsent
+    :type consent: ~azure.mgmt.web.v2018_02_01.models.DomainPurchaseConsent
     :ivar domain_not_renewable_reasons: Reasons why domain is not renewable.
     :vartype domain_not_renewable_reasons: list[str]
     :param dns_type: Current DNS type. Possible values include: 'AzureDns',
      'DefaultDomainRegistrarDns'
-    :type dns_type: str or ~azure.mgmt.web.models.DnsType
+    :type dns_type: str or ~azure.mgmt.web.v2018_02_01.models.DnsType
     :param dns_zone_id: Azure DNS Zone to use
     :type dns_zone_id: str
     :param target_dns_type: Target DNS type (would be used for migration).
      Possible values include: 'AzureDns', 'DefaultDomainRegistrarDns'
-    :type target_dns_type: str or ~azure.mgmt.web.models.DnsType
+    :type target_dns_type: str or ~azure.mgmt.web.v2018_02_01.models.DnsType
     :param auth_code:
     :type auth_code: str
     """
@@ -4505,7 +4558,7 @@ class DomainAvailablilityCheckResult(Model):
      full price of domain registration, SoftDeleted: Purchasing this domain
      will simply restore it and this operation will not cost anything. Possible
      values include: 'Regular', 'SoftDeleted'
-    :type domain_type: str or ~azure.mgmt.web.models.DomainType
+    :type domain_type: str or ~azure.mgmt.web.v2018_02_01.models.DomainType
     """
 
     _attribute_map = {
@@ -4609,23 +4662,24 @@ class DomainPatchResource(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param contact_admin: Required. Administrative contact.
-    :type contact_admin: ~azure.mgmt.web.models.Contact
+    :type contact_admin: ~azure.mgmt.web.v2018_02_01.models.Contact
     :param contact_billing: Required. Billing contact.
-    :type contact_billing: ~azure.mgmt.web.models.Contact
+    :type contact_billing: ~azure.mgmt.web.v2018_02_01.models.Contact
     :param contact_registrant: Required. Registrant contact.
-    :type contact_registrant: ~azure.mgmt.web.models.Contact
+    :type contact_registrant: ~azure.mgmt.web.v2018_02_01.models.Contact
     :param contact_tech: Required. Technical contact.
-    :type contact_tech: ~azure.mgmt.web.models.Contact
+    :type contact_tech: ~azure.mgmt.web.v2018_02_01.models.Contact
     :ivar registration_status: Domain registration status. Possible values
      include: 'Active', 'Awaiting', 'Cancelled', 'Confiscated', 'Disabled',
      'Excluded', 'Expired', 'Failed', 'Held', 'Locked', 'Parked', 'Pending',
      'Reserved', 'Reverted', 'Suspended', 'Transferred', 'Unknown', 'Unlocked',
      'Unparked', 'Updated', 'JsonConverterFailed'
-    :vartype registration_status: str or ~azure.mgmt.web.models.DomainStatus
+    :vartype registration_status: str or
+     ~azure.mgmt.web.v2018_02_01.models.DomainStatus
     :ivar provisioning_state: Domain provisioning state. Possible values
      include: 'Succeeded', 'Failed', 'Canceled', 'InProgress', 'Deleting'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.models.ProvisioningState
+     ~azure.mgmt.web.v2018_02_01.models.ProvisioningState
     :ivar name_servers: Name servers.
     :vartype name_servers: list[str]
     :param privacy: <code>true</code> if domain privacy is enabled for this
@@ -4648,19 +4702,20 @@ class DomainPatchResource(ProxyOnlyResource):
     :vartype ready_for_dns_record_management: bool
     :ivar managed_host_names: All hostnames derived from the domain and
      assigned to Azure resources.
-    :vartype managed_host_names: list[~azure.mgmt.web.models.HostName]
+    :vartype managed_host_names:
+     list[~azure.mgmt.web.v2018_02_01.models.HostName]
     :param consent: Required. Legal agreement consent.
-    :type consent: ~azure.mgmt.web.models.DomainPurchaseConsent
+    :type consent: ~azure.mgmt.web.v2018_02_01.models.DomainPurchaseConsent
     :ivar domain_not_renewable_reasons: Reasons why domain is not renewable.
     :vartype domain_not_renewable_reasons: list[str]
     :param dns_type: Current DNS type. Possible values include: 'AzureDns',
      'DefaultDomainRegistrarDns'
-    :type dns_type: str or ~azure.mgmt.web.models.DnsType
+    :type dns_type: str or ~azure.mgmt.web.v2018_02_01.models.DnsType
     :param dns_zone_id: Azure DNS Zone to use
     :type dns_zone_id: str
     :param target_dns_type: Target DNS type (would be used for migration).
      Possible values include: 'AzureDns', 'DefaultDomainRegistrarDns'
-    :type target_dns_type: str or ~azure.mgmt.web.models.DnsType
+    :type target_dns_type: str or ~azure.mgmt.web.v2018_02_01.models.DnsType
     :param auth_code:
     :type auth_code: str
     """
@@ -4809,7 +4864,8 @@ class EndpointDependency(Model):
     :type domain_name: str
     :param endpoint_details: The IP Addresses and Ports used when connecting
      to DomainName.
-    :type endpoint_details: list[~azure.mgmt.web.models.EndpointDetail]
+    :type endpoint_details:
+     list[~azure.mgmt.web.v2018_02_01.models.EndpointDetail]
     """
 
     _attribute_map = {
@@ -4865,7 +4921,7 @@ class ErrorEntity(Model):
     :param parameters: Parameters for the template.
     :type parameters: list[str]
     :param inner_errors: Inner errors.
-    :type inner_errors: list[~azure.mgmt.web.models.ErrorEntity]
+    :type inner_errors: list[~azure.mgmt.web.v2018_02_01.models.ErrorEntity]
     :param code: Basic error code.
     :type code: str
     :param message: Any details of the error.
@@ -4895,7 +4951,7 @@ class Experiments(Model):
     """Routing rules in production experiments.
 
     :param ramp_up_rules: List of ramp-up rules.
-    :type ramp_up_rules: list[~azure.mgmt.web.models.RampUpRule]
+    :type ramp_up_rules: list[~azure.mgmt.web.v2018_02_01.models.RampUpRule]
     """
 
     _attribute_map = {
@@ -4912,7 +4968,7 @@ class FileSystemApplicationLogsConfig(Model):
 
     :param level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'. Default value: "Off" .
-    :type level: str or ~azure.mgmt.web.models.LogLevel
+    :type level: str or ~azure.mgmt.web.v2018_02_01.models.LogLevel
     """
 
     _attribute_map = {
@@ -4959,7 +5015,7 @@ class FileSystemHttpLogsConfig(Model):
 
 
 class FunctionEnvelope(ProxyOnlyResource):
-    """Web Job Information.
+    """Function information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -4980,6 +5036,8 @@ class FunctionEnvelope(ProxyOnlyResource):
     :type script_href: str
     :param config_href: Config URI.
     :type config_href: str
+    :param test_data_href: Test data URI.
+    :type test_data_href: str
     :param secrets_file_href: Secrets file URI.
     :type secrets_file_href: str
     :param href: Function URI.
@@ -4990,6 +5048,12 @@ class FunctionEnvelope(ProxyOnlyResource):
     :type files: dict[str, str]
     :param test_data: Test data used when testing via the Azure Portal.
     :type test_data: str
+    :param invoke_url_template: The invocation URL
+    :type invoke_url_template: str
+    :param language: The function language
+    :type language: str
+    :param is_disabled: Value indicating whether the function is disabled
+    :type is_disabled: bool
     """
 
     _validation = {
@@ -5007,24 +5071,32 @@ class FunctionEnvelope(ProxyOnlyResource):
         'script_root_path_href': {'key': 'properties.script_root_path_href', 'type': 'str'},
         'script_href': {'key': 'properties.script_href', 'type': 'str'},
         'config_href': {'key': 'properties.config_href', 'type': 'str'},
+        'test_data_href': {'key': 'properties.test_data_href', 'type': 'str'},
         'secrets_file_href': {'key': 'properties.secrets_file_href', 'type': 'str'},
         'href': {'key': 'properties.href', 'type': 'str'},
         'config': {'key': 'properties.config', 'type': 'object'},
         'files': {'key': 'properties.files', 'type': '{str}'},
         'test_data': {'key': 'properties.test_data', 'type': 'str'},
+        'invoke_url_template': {'key': 'properties.invoke_url_template', 'type': 'str'},
+        'language': {'key': 'properties.language', 'type': 'str'},
+        'is_disabled': {'key': 'properties.isDisabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, function_app_id: str=None, script_root_path_href: str=None, script_href: str=None, config_href: str=None, secrets_file_href: str=None, href: str=None, config=None, files=None, test_data: str=None, **kwargs) -> None:
+    def __init__(self, *, kind: str=None, function_app_id: str=None, script_root_path_href: str=None, script_href: str=None, config_href: str=None, test_data_href: str=None, secrets_file_href: str=None, href: str=None, config=None, files=None, test_data: str=None, invoke_url_template: str=None, language: str=None, is_disabled: bool=None, **kwargs) -> None:
         super(FunctionEnvelope, self).__init__(kind=kind, **kwargs)
         self.function_app_id = function_app_id
         self.script_root_path_href = script_root_path_href
         self.script_href = script_href
         self.config_href = config_href
+        self.test_data_href = test_data_href
         self.secrets_file_href = secrets_file_href
         self.href = href
         self.config = config
         self.files = files
         self.test_data = test_data
+        self.invoke_url_template = invoke_url_template
+        self.language = language
+        self.is_disabled = is_disabled
 
 
 class FunctionSecrets(ProxyOnlyResource):
@@ -5143,12 +5215,12 @@ class GlobalCsmSkuDescription(Model):
     :param family: Family code of the resource SKU.
     :type family: str
     :param capacity: Min, max, and default scale values of the SKU.
-    :type capacity: ~azure.mgmt.web.models.SkuCapacity
+    :type capacity: ~azure.mgmt.web.v2018_02_01.models.SkuCapacity
     :param locations: Locations of the SKU.
     :type locations: list[str]
     :param capabilities: Capabilities of the SKU, e.g., is traffic manager
      enabled?
-    :type capabilities: list[~azure.mgmt.web.models.Capability]
+    :type capabilities: list[~azure.mgmt.web.v2018_02_01.models.Capability]
     """
 
     _attribute_map = {
@@ -5273,6 +5345,30 @@ class HostingEnvironmentProfile(Model):
         self.type = None
 
 
+class HostKeys(Model):
+    """Functions host level keys.
+
+    :param master_key: Secret key.
+    :type master_key: str
+    :param function_keys: Host level function keys.
+    :type function_keys: dict[str, str]
+    :param system_keys: System keys.
+    :type system_keys: dict[str, str]
+    """
+
+    _attribute_map = {
+        'master_key': {'key': 'masterKey', 'type': 'str'},
+        'function_keys': {'key': 'functionKeys', 'type': '{str}'},
+        'system_keys': {'key': 'systemKeys', 'type': '{str}'},
+    }
+
+    def __init__(self, *, master_key: str=None, function_keys=None, system_keys=None, **kwargs) -> None:
+        super(HostKeys, self).__init__(**kwargs)
+        self.master_key = master_key
+        self.function_keys = function_keys
+        self.system_keys = system_keys
+
+
 class HostName(Model):
     """Details of a hostname derived from a domain.
 
@@ -5288,14 +5384,16 @@ class HostName(Model):
     :type azure_resource_name: str
     :param azure_resource_type: Type of the Azure resource the hostname is
      assigned to. Possible values include: 'Website', 'TrafficManager'
-    :type azure_resource_type: str or ~azure.mgmt.web.models.AzureResourceType
+    :type azure_resource_type: str or
+     ~azure.mgmt.web.v2018_02_01.models.AzureResourceType
     :param custom_host_name_dns_record_type: Type of the DNS record. Possible
      values include: 'CName', 'A'
     :type custom_host_name_dns_record_type: str or
-     ~azure.mgmt.web.models.CustomHostNameDnsRecordType
+     ~azure.mgmt.web.v2018_02_01.models.CustomHostNameDnsRecordType
     :param host_name_type: Type of the hostname. Possible values include:
      'Verified', 'Managed'
-    :type host_name_type: str or ~azure.mgmt.web.models.HostNameType
+    :type host_name_type: str or
+     ~azure.mgmt.web.v2018_02_01.models.HostNameType
     """
 
     _attribute_map = {
@@ -5339,17 +5437,19 @@ class HostNameBinding(ProxyOnlyResource):
     :type azure_resource_name: str
     :param azure_resource_type: Azure resource type. Possible values include:
      'Website', 'TrafficManager'
-    :type azure_resource_type: str or ~azure.mgmt.web.models.AzureResourceType
+    :type azure_resource_type: str or
+     ~azure.mgmt.web.v2018_02_01.models.AzureResourceType
     :param custom_host_name_dns_record_type: Custom DNS record type. Possible
      values include: 'CName', 'A'
     :type custom_host_name_dns_record_type: str or
-     ~azure.mgmt.web.models.CustomHostNameDnsRecordType
+     ~azure.mgmt.web.v2018_02_01.models.CustomHostNameDnsRecordType
     :param host_name_type: Hostname type. Possible values include: 'Verified',
      'Managed'
-    :type host_name_type: str or ~azure.mgmt.web.models.HostNameType
+    :type host_name_type: str or
+     ~azure.mgmt.web.v2018_02_01.models.HostNameType
     :param ssl_state: SSL type. Possible values include: 'Disabled',
      'SniEnabled', 'IpBasedEnabled'
-    :type ssl_state: str or ~azure.mgmt.web.models.SslState
+    :type ssl_state: str or ~azure.mgmt.web.v2018_02_01.models.SslState
     :param thumbprint: SSL certificate thumbprint
     :type thumbprint: str
     :ivar virtual_ip: Virtual IP address assigned to the hostname if IP based
@@ -5400,7 +5500,7 @@ class HostNameSslState(Model):
     :type name: str
     :param ssl_state: SSL type. Possible values include: 'Disabled',
      'SniEnabled', 'IpBasedEnabled'
-    :type ssl_state: str or ~azure.mgmt.web.models.SslState
+    :type ssl_state: str or ~azure.mgmt.web.v2018_02_01.models.SslState
     :param virtual_ip: Virtual IP address assigned to the hostname if IP based
      SSL is enabled.
     :type virtual_ip: str
@@ -5410,7 +5510,7 @@ class HostNameSslState(Model):
     :type to_update: bool
     :param host_type: Indicates whether the hostname is a standard or
      repository hostname. Possible values include: 'Standard', 'Repository'
-    :type host_type: str or ~azure.mgmt.web.models.HostType
+    :type host_type: str or ~azure.mgmt.web.v2018_02_01.models.HostType
     """
 
     _attribute_map = {
@@ -5436,10 +5536,11 @@ class HttpLogsConfig(Model):
     """Http logs configuration.
 
     :param file_system: Http logs to file system configuration.
-    :type file_system: ~azure.mgmt.web.models.FileSystemHttpLogsConfig
+    :type file_system:
+     ~azure.mgmt.web.v2018_02_01.models.FileSystemHttpLogsConfig
     :param azure_blob_storage: Http logs to azure blob storage configuration.
     :type azure_blob_storage:
-     ~azure.mgmt.web.models.AzureBlobStorageHttpLogsConfig
+     ~azure.mgmt.web.v2018_02_01.models.AzureBlobStorageHttpLogsConfig
     """
 
     _attribute_map = {
@@ -5697,7 +5798,7 @@ class IpSecurityRestriction(Model):
     :param tag: Defines what this IP filter will be used for. This is to
      support IP filtering on proxies. Possible values include: 'Default',
      'XffProxy'
-    :type tag: str or ~azure.mgmt.web.models.IpFilterTag
+    :type tag: str or ~azure.mgmt.web.v2018_02_01.models.IpFilterTag
     :param priority: Priority of IP restriction rule.
     :type priority: int
     :param name: IP restriction rule name.
@@ -5731,6 +5832,26 @@ class IpSecurityRestriction(Model):
         self.priority = priority
         self.name = name
         self.description = description
+
+
+class KeyInfo(Model):
+    """Function key info.
+
+    :param name: Key name
+    :type name: str
+    :param value: Key value
+    :type value: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, value: str=None, **kwargs) -> None:
+        super(KeyInfo, self).__init__(**kwargs)
+        self.name = name
+        self.value = value
 
 
 class LocalizableString(Model):
@@ -5785,7 +5906,8 @@ class ManagedServiceIdentity(Model):
 
     :param type: Type of managed service identity. Possible values include:
      'SystemAssigned', 'UserAssigned', 'SystemAssigned, UserAssigned', 'None'
-    :type type: str or ~azure.mgmt.web.models.ManagedServiceIdentityType
+    :type type: str or
+     ~azure.mgmt.web.v2018_02_01.models.ManagedServiceIdentityType
     :ivar tenant_id: Tenant of managed service identity.
     :vartype tenant_id: str
     :ivar principal_id: Principal Id of managed service identity.
@@ -5795,7 +5917,7 @@ class ManagedServiceIdentity(Model):
      will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.web.models.ManagedServiceIdentityUserAssignedIdentitiesValue]
+     ~azure.mgmt.web.v2018_02_01.models.ManagedServiceIdentityUserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -5907,7 +6029,7 @@ class MetricDefinition(ProxyOnlyResource):
     :ivar metric_availabilities: List of time grains supported for the metric
      together with retention period.
     :vartype metric_availabilities:
-     list[~azure.mgmt.web.models.MetricAvailabilily]
+     list[~azure.mgmt.web.v2018_02_01.models.MetricAvailabilily]
     :ivar display_name: Friendly name shown in the UI.
     :vartype display_name: str
     """
@@ -5969,11 +6091,12 @@ class MetricSpecification(Model):
     :param is_internal:
     :type is_internal: bool
     :param dimensions:
-    :type dimensions: list[~azure.mgmt.web.models.Dimension]
+    :type dimensions: list[~azure.mgmt.web.v2018_02_01.models.Dimension]
     :param category:
     :type category: str
     :param availabilities:
-    :type availabilities: list[~azure.mgmt.web.models.MetricAvailability]
+    :type availabilities:
+     list[~azure.mgmt.web.v2018_02_01.models.MetricAvailability]
     """
 
     _attribute_map = {
@@ -6034,7 +6157,8 @@ class MigrateMySqlRequest(ProxyOnlyResource):
     :type connection_string: str
     :param migration_type: Required. The type of migration operation to be
      done. Possible values include: 'LocalToRemote', 'RemoteToLocal'
-    :type migration_type: str or ~azure.mgmt.web.models.MySqlMigrationType
+    :type migration_type: str or
+     ~azure.mgmt.web.v2018_02_01.models.MySqlMigrationType
     """
 
     _validation = {
@@ -6077,7 +6201,7 @@ class MigrateMySqlStatus(ProxyOnlyResource):
     :ivar migration_operation_status: Status of the migration task. Possible
      values include: 'InProgress', 'Failed', 'Succeeded', 'TimedOut', 'Created'
     :vartype migration_operation_status: str or
-     ~azure.mgmt.web.models.OperationStatus
+     ~azure.mgmt.web.v2018_02_01.models.OperationStatus
     :ivar operation_id: Operation ID for the migration task.
     :vartype operation_id: str
     :ivar local_my_sql_enabled: True if the web app has in app MySql enabled
@@ -6196,7 +6320,8 @@ class MSDeployLog(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar entries: List of log entry messages
-    :vartype entries: list[~azure.mgmt.web.models.MSDeployLogEntry]
+    :vartype entries:
+     list[~azure.mgmt.web.v2018_02_01.models.MSDeployLogEntry]
     """
 
     _validation = {
@@ -6229,7 +6354,8 @@ class MSDeployLogEntry(Model):
     :vartype time: datetime
     :ivar type: Log entry type. Possible values include: 'Message', 'Warning',
      'Error'
-    :vartype type: str or ~azure.mgmt.web.models.MSDeployLogEntryType
+    :vartype type: str or
+     ~azure.mgmt.web.v2018_02_01.models.MSDeployLogEntryType
     :ivar message: Log entry message
     :vartype message: str
     """
@@ -6272,7 +6398,7 @@ class MSDeployStatus(ProxyOnlyResource):
     :ivar provisioning_state: Provisioning state. Possible values include:
      'accepted', 'running', 'succeeded', 'failed', 'canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.web.models.MSDeployProvisioningState
+     ~azure.mgmt.web.v2018_02_01.models.MSDeployProvisioningState
     :ivar start_time: Start time of deploy operation
     :vartype start_time: datetime
     :ivar end_time: End time of deploy operation
@@ -6353,7 +6479,8 @@ class NetworkAccessControlEntry(Model):
     """Network access control entry.
 
     :param action: Action object. Possible values include: 'Permit', 'Deny'
-    :type action: str or ~azure.mgmt.web.models.AccessControlEntryAction
+    :type action: str or
+     ~azure.mgmt.web.v2018_02_01.models.AccessControlEntryAction
     :param description: Description of network access control entry.
     :type description: str
     :param order: Order of precedence.
@@ -6395,13 +6522,14 @@ class NetworkFeatures(ProxyOnlyResource):
     :ivar virtual_network_name: The Virtual Network name.
     :vartype virtual_network_name: str
     :ivar virtual_network_connection: The Virtual Network summary view.
-    :vartype virtual_network_connection: ~azure.mgmt.web.models.VnetInfo
+    :vartype virtual_network_connection:
+     ~azure.mgmt.web.v2018_02_01.models.VnetInfo
     :ivar hybrid_connections: The Hybrid Connections summary view.
     :vartype hybrid_connections:
-     list[~azure.mgmt.web.models.RelayServiceConnectionEntity]
+     list[~azure.mgmt.web.v2018_02_01.models.RelayServiceConnectionEntity]
     :ivar hybrid_connections_v2: The Hybrid Connection V2 (Service Bus) view.
     :vartype hybrid_connections_v2:
-     list[~azure.mgmt.web.models.HybridConnection]
+     list[~azure.mgmt.web.v2018_02_01.models.HybridConnection]
     """
 
     _validation = {
@@ -6468,9 +6596,9 @@ class Operation(Model):
     :type name: str
     :param status: The current status of the operation. Possible values
      include: 'InProgress', 'Failed', 'Succeeded', 'TimedOut', 'Created'
-    :type status: str or ~azure.mgmt.web.models.OperationStatus
+    :type status: str or ~azure.mgmt.web.v2018_02_01.models.OperationStatus
     :param errors: Any errors associate with the operation.
-    :type errors: list[~azure.mgmt.web.models.ErrorEntity]
+    :type errors: list[~azure.mgmt.web.v2018_02_01.models.ErrorEntity]
     :param created_time: Time when operation has started.
     :type created_time: datetime
     :param modified_time: Time when operation has been updated.
@@ -6514,7 +6642,8 @@ class OutboundEnvironmentEndpoint(Model):
     :type category: str
     :param endpoints: The endpoints that the App Service Environment reaches
      the service at.
-    :type endpoints: list[~azure.mgmt.web.models.EndpointDependency]
+    :type endpoints:
+     list[~azure.mgmt.web.v2018_02_01.models.EndpointDependency]
     """
 
     _attribute_map = {
@@ -6536,7 +6665,7 @@ class PerfMonResponse(Model):
     :param message: The message.
     :type message: str
     :param data: The performance monitor counters.
-    :type data: ~azure.mgmt.web.models.PerfMonSet
+    :type data: ~azure.mgmt.web.v2018_02_01.models.PerfMonSet
     """
 
     _attribute_map = {
@@ -6588,7 +6717,7 @@ class PerfMonSet(Model):
     :param time_grain: Presented time grain.
     :type time_grain: str
     :param values: Collection of workers that are active during this time.
-    :type values: list[~azure.mgmt.web.models.PerfMonSample]
+    :type values: list[~azure.mgmt.web.v2018_02_01.models.PerfMonSample]
     """
 
     _attribute_map = {
@@ -6699,7 +6828,7 @@ class PremierAddOnOffer(ProxyOnlyResource):
      restricted to. Possible values include: 'None', 'Free', 'Shared', 'Basic',
      'Standard', 'Premium'
     :type web_hosting_plan_restrictions: str or
-     ~azure.mgmt.web.models.AppServicePlanRestrictions
+     ~azure.mgmt.web.v2018_02_01.models.AppServicePlanRestrictions
     :param privacy_policy_url: Privacy policy URL.
     :type privacy_policy_url: str
     :param legal_terms_url: Legal terms URL.
@@ -6819,7 +6948,7 @@ class PrivateAccess(ProxyOnlyResource):
     :param virtual_networks: The Virtual Networks (and subnets) allowed to
      access the site privately.
     :type virtual_networks:
-     list[~azure.mgmt.web.models.PrivateAccessVirtualNetwork]
+     list[~azure.mgmt.web.v2018_02_01.models.PrivateAccessVirtualNetwork]
     """
 
     _validation = {
@@ -6876,7 +7005,8 @@ class PrivateAccessVirtualNetwork(Model):
     :param subnets: A List of subnets that access is allowed to on this
      Virtual Network. An empty array (but not null) is interpreted to mean that
      all subnets are allowed within this Virtual Network.
-    :type subnets: list[~azure.mgmt.web.models.PrivateAccessSubnet]
+    :type subnets:
+     list[~azure.mgmt.web.v2018_02_01.models.PrivateAccessSubnet]
     """
 
     _attribute_map = {
@@ -6927,11 +7057,11 @@ class ProcessInfo(ProxyOnlyResource):
     :param children: Child process list.
     :type children: list[str]
     :param threads: Thread list.
-    :type threads: list[~azure.mgmt.web.models.ProcessThreadInfo]
+    :type threads: list[~azure.mgmt.web.v2018_02_01.models.ProcessThreadInfo]
     :param open_file_handles: List of open files.
     :type open_file_handles: list[str]
     :param modules: List of modules.
-    :type modules: list[~azure.mgmt.web.models.ProcessModuleInfo]
+    :type modules: list[~azure.mgmt.web.v2018_02_01.models.ProcessModuleInfo]
     :param file_name: File name of this process.
     :type file_name: str
     :param command_line: Command line.
@@ -7255,7 +7385,7 @@ class PublicCertificate(ProxyOnlyResource):
     :param public_certificate_location: Public Certificate Location. Possible
      values include: 'CurrentUserMy', 'LocalMachineMy', 'Unknown'
     :type public_certificate_location: str or
-     ~azure.mgmt.web.models.PublicCertificateLocation
+     ~azure.mgmt.web.v2018_02_01.models.PublicCertificateLocation
     :ivar thumbprint: Certificate Thumbprint
     :vartype thumbprint: str
     """
@@ -7430,7 +7560,8 @@ class Recommendation(ProxyOnlyResource):
     :param resource_scope: Name of a resource type this recommendation
      applies, e.g. Subscription, ServerFarm, Site. Possible values include:
      'ServerFarm', 'Subscription', 'WebSite'
-    :type resource_scope: str or ~azure.mgmt.web.models.ResourceScopeType
+    :type resource_scope: str or
+     ~azure.mgmt.web.v2018_02_01.models.ResourceScopeType
     :param rule_name: Unique name of the rule.
     :type rule_name: str
     :param display_name: UI friendly name of the rule (may not be unique).
@@ -7440,10 +7571,10 @@ class Recommendation(ProxyOnlyResource):
     :param level: Level indicating how critical this recommendation can
      impact. Possible values include: 'Critical', 'Warning', 'Information',
      'NonUrgentSuggestion'
-    :type level: str or ~azure.mgmt.web.models.NotificationLevel
+    :type level: str or ~azure.mgmt.web.v2018_02_01.models.NotificationLevel
     :param channels: List of channels that this recommendation can apply.
      Possible values include: 'Notification', 'Api', 'Email', 'Webhook', 'All'
-    :type channels: str or ~azure.mgmt.web.models.Channels
+    :type channels: str or ~azure.mgmt.web.v2018_02_01.models.Channels
     :ivar category_tags: The list of category tags that this recommendation
      belongs to.
     :vartype category_tags: list[str]
@@ -7581,10 +7712,10 @@ class RecommendationRule(ProxyOnlyResource):
     :param level: Level of impact indicating how critical this rule is.
      Possible values include: 'Critical', 'Warning', 'Information',
      'NonUrgentSuggestion'
-    :type level: str or ~azure.mgmt.web.models.NotificationLevel
+    :type level: str or ~azure.mgmt.web.v2018_02_01.models.NotificationLevel
     :param channels: List of available channels that this rule applies.
      Possible values include: 'Notification', 'Api', 'Email', 'Webhook', 'All'
-    :type channels: str or ~azure.mgmt.web.models.Channels
+    :type channels: str or ~azure.mgmt.web.v2018_02_01.models.Channels
     :ivar category_tags: The list of category tags that this recommendation
      rule belongs to.
     :vartype category_tags: list[str]
@@ -7763,7 +7894,7 @@ class Rendering(Model):
 
     :param type: Rendering Type. Possible values include: 'NoGraph', 'Table',
      'TimeSeries', 'TimeSeriesPerInstance'
-    :type type: str or ~azure.mgmt.web.models.RenderingType
+    :type type: str or ~azure.mgmt.web.v2018_02_01.models.RenderingType
     :param title: Title of data
     :type title: str
     :param description: Description of the data that will help it be
@@ -7899,7 +8030,7 @@ class ResourceMetric(Model):
     sending a request.
 
     :ivar name: Name of metric.
-    :vartype name: ~azure.mgmt.web.models.ResourceMetricName
+    :vartype name: ~azure.mgmt.web.v2018_02_01.models.ResourceMetricName
     :ivar unit: Metric unit.
     :vartype unit: str
     :ivar time_grain: Metric granularity. E.g PT1H, PT5M, P1D
@@ -7913,9 +8044,11 @@ class ResourceMetric(Model):
     :ivar id: Resource Id.
     :vartype id: str
     :ivar metric_values: Metric values.
-    :vartype metric_values: list[~azure.mgmt.web.models.ResourceMetricValue]
+    :vartype metric_values:
+     list[~azure.mgmt.web.v2018_02_01.models.ResourceMetricValue]
     :ivar properties: Resource metric properties collection.
-    :vartype properties: list[~azure.mgmt.web.models.ResourceMetricProperty]
+    :vartype properties:
+     list[~azure.mgmt.web.v2018_02_01.models.ResourceMetricProperty]
     """
 
     _validation = {
@@ -8004,7 +8137,7 @@ class ResourceMetricDefinition(ProxyOnlyResource):
     :ivar metric_availabilities: List of time grains supported for the metric
      together with retention period.
     :vartype metric_availabilities:
-     list[~azure.mgmt.web.models.ResourceMetricAvailability]
+     list[~azure.mgmt.web.v2018_02_01.models.ResourceMetricAvailability]
     :ivar resource_uri: Resource URI.
     :vartype resource_uri: str
     :ivar properties: Resource metric definition properties.
@@ -8110,7 +8243,8 @@ class ResourceMetricValue(Model):
     :ivar count: Value count.
     :vartype count: float
     :ivar properties: Resource metric properties collection.
-    :vartype properties: list[~azure.mgmt.web.models.ResourceMetricProperty]
+    :vartype properties:
+     list[~azure.mgmt.web.v2018_02_01.models.ResourceMetricProperty]
     """
 
     _validation = {
@@ -8155,7 +8289,8 @@ class ResourceNameAvailability(Model):
      match Azure App Service naming requirements. <code>AlreadyExists</code>
      indicates that the name is already in use and is therefore unavailable.
      Possible values include: 'Invalid', 'AlreadyExists'
-    :type reason: str or ~azure.mgmt.web.models.InAvailabilityReasonType
+    :type reason: str or
+     ~azure.mgmt.web.v2018_02_01.models.InAvailabilityReasonType
     :param message: If reason == invalid, provide the user with the reason why
      the given name is invalid, and provide the resource naming requirements so
      that the user can select a valid name. If reason == AlreadyExists, explain
@@ -8188,7 +8323,8 @@ class ResourceNameAvailabilityRequest(Model):
      values include: 'Site', 'Slot', 'HostingEnvironment', 'PublishingUser',
      'Microsoft.Web/sites', 'Microsoft.Web/sites/slots',
      'Microsoft.Web/hostingEnvironments', 'Microsoft.Web/publishingUsers'
-    :type type: str or ~azure.mgmt.web.models.CheckNameResourceTypes
+    :type type: str or
+     ~azure.mgmt.web.v2018_02_01.models.CheckNameResourceTypes
     :param is_fqdn: Is fully qualified domain name.
     :type is_fqdn: bool
     """
@@ -8215,7 +8351,7 @@ class ResponseMetaData(Model):
     """ResponseMetaData.
 
     :param data_source: Source of the Data
-    :type data_source: ~azure.mgmt.web.models.DataSource
+    :type data_source: ~azure.mgmt.web.v2018_02_01.models.DataSource
     """
 
     _attribute_map = {
@@ -8255,7 +8391,8 @@ class RestoreRequest(ProxyOnlyResource):
     :type site_name: str
     :param databases: Collection of databases which should be restored. This
      list has to match the list of databases included in the backup.
-    :type databases: list[~azure.mgmt.web.models.DatabaseBackupSetting]
+    :type databases:
+     list[~azure.mgmt.web.v2018_02_01.models.DatabaseBackupSetting]
     :param ignore_conflicting_host_names: Changes a logic when restoring an
      app with custom domains. <code>true</code> to remove custom domains
      automatically. If <code>false</code>, custom domains are added to
@@ -8271,7 +8408,7 @@ class RestoreRequest(ProxyOnlyResource):
     :param operation_type: Operation type. Possible values include: 'Default',
      'Clone', 'Relocation', 'Snapshot', 'CloudFS'. Default value: "Default" .
     :type operation_type: str or
-     ~azure.mgmt.web.models.BackupRestoreOperationType
+     ~azure.mgmt.web.v2018_02_01.models.BackupRestoreOperationType
     :param adjust_connection_strings: <code>true</code> if
      SiteConfig.ConnectionStrings should be set in new app; otherwise,
      <code>false</code>.
@@ -8327,9 +8464,10 @@ class ServiceSpecification(Model):
 
     :param metric_specifications:
     :type metric_specifications:
-     list[~azure.mgmt.web.models.MetricSpecification]
+     list[~azure.mgmt.web.v2018_02_01.models.MetricSpecification]
     :param log_specifications:
-    :type log_specifications: list[~azure.mgmt.web.models.LogSpecification]
+    :type log_specifications:
+     list[~azure.mgmt.web.v2018_02_01.models.LogSpecification]
     """
 
     _attribute_map = {
@@ -8371,7 +8509,7 @@ class Site(Resource):
     :vartype repository_site_name: str
     :ivar usage_state: State indicating whether the app has exceeded its quota
      usage. Read-only. Possible values include: 'Normal', 'Exceeded'
-    :vartype usage_state: str or ~azure.mgmt.web.models.UsageState
+    :vartype usage_state: str or ~azure.mgmt.web.v2018_02_01.models.UsageState
     :param enabled: <code>true</code> if the app is enabled; otherwise,
      <code>false</code>. Setting this value to false disables the app (takes
      the app offline).
@@ -8384,10 +8522,11 @@ class Site(Resource):
      the app. Possible values include: 'Normal', 'Limited',
      'DisasterRecoveryMode'
     :vartype availability_state: str or
-     ~azure.mgmt.web.models.SiteAvailabilityState
+     ~azure.mgmt.web.v2018_02_01.models.SiteAvailabilityState
     :param host_name_ssl_states: Hostname SSL states are used to manage the
      SSL bindings for app's hostnames.
-    :type host_name_ssl_states: list[~azure.mgmt.web.models.HostNameSslState]
+    :type host_name_ssl_states:
+     list[~azure.mgmt.web.v2018_02_01.models.HostNameSslState]
     :param server_farm_id: Resource ID of the associated App Service plan,
      formatted as:
      "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
@@ -8403,7 +8542,7 @@ class Site(Resource):
      Read-only.
     :vartype last_modified_time_utc: datetime
     :param site_config: Configuration of the app.
-    :type site_config: ~azure.mgmt.web.models.SiteConfig
+    :type site_config: ~azure.mgmt.web.v2018_02_01.models.SiteConfig
     :ivar traffic_manager_host_names: Azure Traffic Manager hostnames
      associated with the app. Read-only.
     :vartype traffic_manager_host_names: list[str]
@@ -8417,7 +8556,7 @@ class Site(Resource):
     :param hosting_environment_profile: App Service Environment to use for the
      app.
     :type hosting_environment_profile:
-     ~azure.mgmt.web.models.HostingEnvironmentProfile
+     ~azure.mgmt.web.v2018_02_01.models.HostingEnvironmentProfile
     :param client_affinity_enabled: <code>true</code> to enable client
      affinity; <code>false</code> to stop sending session affinity cookies,
      which route client requests in the same session to the same instance.
@@ -8456,7 +8595,7 @@ class Site(Resource):
     :vartype max_number_of_workers: int
     :param cloning_info: If specified during app creation, the app is cloned
      from a source app.
-    :type cloning_info: ~azure.mgmt.web.models.CloningInfo
+    :type cloning_info: ~azure.mgmt.web.v2018_02_01.models.CloningInfo
     :ivar resource_group: Name of the resource group the app belongs to.
      Read-only.
     :vartype resource_group: str
@@ -8466,21 +8605,24 @@ class Site(Resource):
     :ivar default_host_name: Default hostname of the app. Read-only.
     :vartype default_host_name: str
     :ivar slot_swap_status: Status of the last deployment slot swap operation.
-    :vartype slot_swap_status: ~azure.mgmt.web.models.SlotSwapStatus
+    :vartype slot_swap_status:
+     ~azure.mgmt.web.v2018_02_01.models.SlotSwapStatus
     :param https_only: HttpsOnly: configures a web site to accept only https
      requests. Issues redirect for
      http requests
     :type https_only: bool
     :param redundancy_mode: Site redundancy mode. Possible values include:
      'None', 'Manual', 'Failover', 'ActiveActive', 'GeoRedundant'
-    :type redundancy_mode: str or ~azure.mgmt.web.models.RedundancyMode
+    :type redundancy_mode: str or
+     ~azure.mgmt.web.v2018_02_01.models.RedundancyMode
     :ivar in_progress_operation_id: Specifies an operation id if this site has
      a pending operation.
     :vartype in_progress_operation_id: str
     :param geo_distributions: GeoDistributions for this site
-    :type geo_distributions: list[~azure.mgmt.web.models.GeoDistribution]
+    :type geo_distributions:
+     list[~azure.mgmt.web.v2018_02_01.models.GeoDistribution]
     :param identity:
-    :type identity: ~azure.mgmt.web.models.ManagedServiceIdentity
+    :type identity: ~azure.mgmt.web.v2018_02_01.models.ManagedServiceIdentity
     """
 
     _validation = {
@@ -8624,7 +8766,7 @@ class SiteAuthSettings(ProxyOnlyResource):
      unauthenticated client attempts to access the app. Possible values
      include: 'RedirectToLoginPage', 'AllowAnonymous'
     :type unauthenticated_client_action: str or
-     ~azure.mgmt.web.models.UnauthenticatedClientAction
+     ~azure.mgmt.web.v2018_02_01.models.UnauthenticatedClientAction
     :param token_store_enabled: <code>true</code> to durably store
      platform-specific security tokens that are obtained during login flows;
      otherwise, <code>false</code>.
@@ -8645,7 +8787,7 @@ class SiteAuthSettings(ProxyOnlyResource):
      'AzureActiveDirectory', 'Facebook', 'Google', 'MicrosoftAccount',
      'Twitter'
     :type default_provider: str or
-     ~azure.mgmt.web.models.BuiltInAuthenticationProvider
+     ~azure.mgmt.web.v2018_02_01.models.BuiltInAuthenticationProvider
     :param token_refresh_extension_hours: The number of hours after session
      token expiration that a session token can be used to
      call the token refresh API. The default is 72 hours.
@@ -8832,20 +8974,20 @@ class SiteCloneability(Model):
 
     :param result: Name of app. Possible values include: 'Cloneable',
      'PartiallyCloneable', 'NotCloneable'
-    :type result: str or ~azure.mgmt.web.models.CloneAbilityResult
+    :type result: str or ~azure.mgmt.web.v2018_02_01.models.CloneAbilityResult
     :param blocking_features: List of features enabled on app that prevent
      cloning.
     :type blocking_features:
-     list[~azure.mgmt.web.models.SiteCloneabilityCriterion]
+     list[~azure.mgmt.web.v2018_02_01.models.SiteCloneabilityCriterion]
     :param unsupported_features: List of features enabled on app that are
      non-blocking but cannot be cloned. The app can still be cloned
      but the features in this list will not be set up on cloned app.
     :type unsupported_features:
-     list[~azure.mgmt.web.models.SiteCloneabilityCriterion]
+     list[~azure.mgmt.web.v2018_02_01.models.SiteCloneabilityCriterion]
     :param blocking_characteristics: List of blocking application
      characteristics.
     :type blocking_characteristics:
-     list[~azure.mgmt.web.models.SiteCloneabilityCriterion]
+     list[~azure.mgmt.web.v2018_02_01.models.SiteCloneabilityCriterion]
     """
 
     _attribute_map = {
@@ -8927,22 +9069,24 @@ class SiteConfig(Model):
     :param publishing_username: Publishing user name.
     :type publishing_username: str
     :param app_settings: Application settings.
-    :type app_settings: list[~azure.mgmt.web.models.NameValuePair]
+    :type app_settings: list[~azure.mgmt.web.v2018_02_01.models.NameValuePair]
     :param azure_storage_accounts: User-provided Azure storage accounts.
     :type azure_storage_accounts: dict[str,
-     ~azure.mgmt.web.models.AzureStorageInfoValue]
+     ~azure.mgmt.web.v2018_02_01.models.AzureStorageInfoValue]
     :param connection_strings: Connection strings.
-    :type connection_strings: list[~azure.mgmt.web.models.ConnStringInfo]
+    :type connection_strings:
+     list[~azure.mgmt.web.v2018_02_01.models.ConnStringInfo]
     :ivar machine_key: Site MachineKey.
-    :vartype machine_key: ~azure.mgmt.web.models.SiteMachineKey
+    :vartype machine_key: ~azure.mgmt.web.v2018_02_01.models.SiteMachineKey
     :param handler_mappings: Handler mappings.
-    :type handler_mappings: list[~azure.mgmt.web.models.HandlerMapping]
+    :type handler_mappings:
+     list[~azure.mgmt.web.v2018_02_01.models.HandlerMapping]
     :param document_root: Document root.
     :type document_root: str
     :param scm_type: SCM type. Possible values include: 'None', 'Dropbox',
      'Tfs', 'LocalGit', 'GitHub', 'CodePlexGit', 'CodePlexHg', 'BitbucketGit',
      'BitbucketHg', 'ExternalGit', 'ExternalHg', 'OneDrive', 'VSO'
-    :type scm_type: str or ~azure.mgmt.web.models.ScmType
+    :type scm_type: str or ~azure.mgmt.web.v2018_02_01.models.ScmType
     :param use32_bit_worker_process: <code>true</code> to use 32-bit worker
      process; otherwise, <code>false</code>.
     :type use32_bit_worker_process: bool
@@ -8963,34 +9107,35 @@ class SiteConfig(Model):
     :param managed_pipeline_mode: Managed pipeline mode. Possible values
      include: 'Integrated', 'Classic'
     :type managed_pipeline_mode: str or
-     ~azure.mgmt.web.models.ManagedPipelineMode
+     ~azure.mgmt.web.v2018_02_01.models.ManagedPipelineMode
     :param virtual_applications: Virtual applications.
     :type virtual_applications:
-     list[~azure.mgmt.web.models.VirtualApplication]
+     list[~azure.mgmt.web.v2018_02_01.models.VirtualApplication]
     :param load_balancing: Site load balancing. Possible values include:
      'WeightedRoundRobin', 'LeastRequests', 'LeastResponseTime',
      'WeightedTotalTraffic', 'RequestHash'
-    :type load_balancing: str or ~azure.mgmt.web.models.SiteLoadBalancing
+    :type load_balancing: str or
+     ~azure.mgmt.web.v2018_02_01.models.SiteLoadBalancing
     :param experiments: This is work around for polymorphic types.
-    :type experiments: ~azure.mgmt.web.models.Experiments
+    :type experiments: ~azure.mgmt.web.v2018_02_01.models.Experiments
     :param limits: Site limits.
-    :type limits: ~azure.mgmt.web.models.SiteLimits
+    :type limits: ~azure.mgmt.web.v2018_02_01.models.SiteLimits
     :param auto_heal_enabled: <code>true</code> if Auto Heal is enabled;
      otherwise, <code>false</code>.
     :type auto_heal_enabled: bool
     :param auto_heal_rules: Auto Heal rules.
-    :type auto_heal_rules: ~azure.mgmt.web.models.AutoHealRules
+    :type auto_heal_rules: ~azure.mgmt.web.v2018_02_01.models.AutoHealRules
     :param tracing_options: Tracing options.
     :type tracing_options: str
     :param vnet_name: Virtual Network name.
     :type vnet_name: str
     :param cors: Cross-Origin Resource Sharing (CORS) settings.
-    :type cors: ~azure.mgmt.web.models.CorsSettings
+    :type cors: ~azure.mgmt.web.v2018_02_01.models.CorsSettings
     :param push: Push endpoint settings.
-    :type push: ~azure.mgmt.web.models.PushSettings
+    :type push: ~azure.mgmt.web.v2018_02_01.models.PushSettings
     :param api_definition: Information about the formal API definition for the
      app.
-    :type api_definition: ~azure.mgmt.web.models.ApiDefinitionInfo
+    :type api_definition: ~azure.mgmt.web.v2018_02_01.models.ApiDefinitionInfo
     :param auto_swap_slot_name: Auto-swap slot name.
     :type auto_swap_slot_name: str
     :param local_my_sql_enabled: <code>true</code> to enable local MySQL;
@@ -9002,10 +9147,10 @@ class SiteConfig(Model):
     :type x_managed_service_identity_id: int
     :param ip_security_restrictions: IP security restrictions for main.
     :type ip_security_restrictions:
-     list[~azure.mgmt.web.models.IpSecurityRestriction]
+     list[~azure.mgmt.web.v2018_02_01.models.IpSecurityRestriction]
     :param scm_ip_security_restrictions: IP security restrictions for scm.
     :type scm_ip_security_restrictions:
-     list[~azure.mgmt.web.models.IpSecurityRestriction]
+     list[~azure.mgmt.web.v2018_02_01.models.IpSecurityRestriction]
     :param scm_ip_security_restrictions_use_main: IP security restrictions for
      scm to use main.
     :type scm_ip_security_restrictions_use_main: bool
@@ -9015,10 +9160,11 @@ class SiteConfig(Model):
     :param min_tls_version: MinTlsVersion: configures the minimum version of
      TLS required for SSL requests. Possible values include: '1.0', '1.1',
      '1.2'
-    :type min_tls_version: str or ~azure.mgmt.web.models.SupportedTlsVersions
+    :type min_tls_version: str or
+     ~azure.mgmt.web.v2018_02_01.models.SupportedTlsVersions
     :param ftps_state: State of FTP / FTPS service. Possible values include:
      'AllAllowed', 'FtpsOnly', 'Disabled'
-    :type ftps_state: str or ~azure.mgmt.web.models.FtpsState
+    :type ftps_state: str or ~azure.mgmt.web.v2018_02_01.models.FtpsState
     :param reserved_instance_count: Number of reserved instances.
      This setting only applies to the Consumption Plan
     :type reserved_instance_count: int
@@ -9194,22 +9340,24 @@ class SiteConfigResource(ProxyOnlyResource):
     :param publishing_username: Publishing user name.
     :type publishing_username: str
     :param app_settings: Application settings.
-    :type app_settings: list[~azure.mgmt.web.models.NameValuePair]
+    :type app_settings: list[~azure.mgmt.web.v2018_02_01.models.NameValuePair]
     :param azure_storage_accounts: User-provided Azure storage accounts.
     :type azure_storage_accounts: dict[str,
-     ~azure.mgmt.web.models.AzureStorageInfoValue]
+     ~azure.mgmt.web.v2018_02_01.models.AzureStorageInfoValue]
     :param connection_strings: Connection strings.
-    :type connection_strings: list[~azure.mgmt.web.models.ConnStringInfo]
+    :type connection_strings:
+     list[~azure.mgmt.web.v2018_02_01.models.ConnStringInfo]
     :ivar machine_key: Site MachineKey.
-    :vartype machine_key: ~azure.mgmt.web.models.SiteMachineKey
+    :vartype machine_key: ~azure.mgmt.web.v2018_02_01.models.SiteMachineKey
     :param handler_mappings: Handler mappings.
-    :type handler_mappings: list[~azure.mgmt.web.models.HandlerMapping]
+    :type handler_mappings:
+     list[~azure.mgmt.web.v2018_02_01.models.HandlerMapping]
     :param document_root: Document root.
     :type document_root: str
     :param scm_type: SCM type. Possible values include: 'None', 'Dropbox',
      'Tfs', 'LocalGit', 'GitHub', 'CodePlexGit', 'CodePlexHg', 'BitbucketGit',
      'BitbucketHg', 'ExternalGit', 'ExternalHg', 'OneDrive', 'VSO'
-    :type scm_type: str or ~azure.mgmt.web.models.ScmType
+    :type scm_type: str or ~azure.mgmt.web.v2018_02_01.models.ScmType
     :param use32_bit_worker_process: <code>true</code> to use 32-bit worker
      process; otherwise, <code>false</code>.
     :type use32_bit_worker_process: bool
@@ -9230,34 +9378,35 @@ class SiteConfigResource(ProxyOnlyResource):
     :param managed_pipeline_mode: Managed pipeline mode. Possible values
      include: 'Integrated', 'Classic'
     :type managed_pipeline_mode: str or
-     ~azure.mgmt.web.models.ManagedPipelineMode
+     ~azure.mgmt.web.v2018_02_01.models.ManagedPipelineMode
     :param virtual_applications: Virtual applications.
     :type virtual_applications:
-     list[~azure.mgmt.web.models.VirtualApplication]
+     list[~azure.mgmt.web.v2018_02_01.models.VirtualApplication]
     :param load_balancing: Site load balancing. Possible values include:
      'WeightedRoundRobin', 'LeastRequests', 'LeastResponseTime',
      'WeightedTotalTraffic', 'RequestHash'
-    :type load_balancing: str or ~azure.mgmt.web.models.SiteLoadBalancing
+    :type load_balancing: str or
+     ~azure.mgmt.web.v2018_02_01.models.SiteLoadBalancing
     :param experiments: This is work around for polymorphic types.
-    :type experiments: ~azure.mgmt.web.models.Experiments
+    :type experiments: ~azure.mgmt.web.v2018_02_01.models.Experiments
     :param limits: Site limits.
-    :type limits: ~azure.mgmt.web.models.SiteLimits
+    :type limits: ~azure.mgmt.web.v2018_02_01.models.SiteLimits
     :param auto_heal_enabled: <code>true</code> if Auto Heal is enabled;
      otherwise, <code>false</code>.
     :type auto_heal_enabled: bool
     :param auto_heal_rules: Auto Heal rules.
-    :type auto_heal_rules: ~azure.mgmt.web.models.AutoHealRules
+    :type auto_heal_rules: ~azure.mgmt.web.v2018_02_01.models.AutoHealRules
     :param tracing_options: Tracing options.
     :type tracing_options: str
     :param vnet_name: Virtual Network name.
     :type vnet_name: str
     :param cors: Cross-Origin Resource Sharing (CORS) settings.
-    :type cors: ~azure.mgmt.web.models.CorsSettings
+    :type cors: ~azure.mgmt.web.v2018_02_01.models.CorsSettings
     :param push: Push endpoint settings.
-    :type push: ~azure.mgmt.web.models.PushSettings
+    :type push: ~azure.mgmt.web.v2018_02_01.models.PushSettings
     :param api_definition: Information about the formal API definition for the
      app.
-    :type api_definition: ~azure.mgmt.web.models.ApiDefinitionInfo
+    :type api_definition: ~azure.mgmt.web.v2018_02_01.models.ApiDefinitionInfo
     :param auto_swap_slot_name: Auto-swap slot name.
     :type auto_swap_slot_name: str
     :param local_my_sql_enabled: <code>true</code> to enable local MySQL;
@@ -9269,10 +9418,10 @@ class SiteConfigResource(ProxyOnlyResource):
     :type x_managed_service_identity_id: int
     :param ip_security_restrictions: IP security restrictions for main.
     :type ip_security_restrictions:
-     list[~azure.mgmt.web.models.IpSecurityRestriction]
+     list[~azure.mgmt.web.v2018_02_01.models.IpSecurityRestriction]
     :param scm_ip_security_restrictions: IP security restrictions for scm.
     :type scm_ip_security_restrictions:
-     list[~azure.mgmt.web.models.IpSecurityRestriction]
+     list[~azure.mgmt.web.v2018_02_01.models.IpSecurityRestriction]
     :param scm_ip_security_restrictions_use_main: IP security restrictions for
      scm to use main.
     :type scm_ip_security_restrictions_use_main: bool
@@ -9282,10 +9431,11 @@ class SiteConfigResource(ProxyOnlyResource):
     :param min_tls_version: MinTlsVersion: configures the minimum version of
      TLS required for SSL requests. Possible values include: '1.0', '1.1',
      '1.2'
-    :type min_tls_version: str or ~azure.mgmt.web.models.SupportedTlsVersions
+    :type min_tls_version: str or
+     ~azure.mgmt.web.v2018_02_01.models.SupportedTlsVersions
     :param ftps_state: State of FTP / FTPS service. Possible values include:
      'AllAllowed', 'FtpsOnly', 'Disabled'
-    :type ftps_state: str or ~azure.mgmt.web.models.FtpsState
+    :type ftps_state: str or ~azure.mgmt.web.v2018_02_01.models.FtpsState
     :param reserved_instance_count: Number of reserved instances.
      This setting only applies to the Consumption Plan
     :type reserved_instance_count: int
@@ -9479,7 +9629,8 @@ class SiteExtensionInfo(ProxyOnlyResource):
     :type title: str
     :param extension_type: Site extension type. Possible values include:
      'Gallery', 'WebRoot'
-    :type extension_type: str or ~azure.mgmt.web.models.SiteExtensionType
+    :type extension_type: str or
+     ~azure.mgmt.web.v2018_02_01.models.SiteExtensionType
     :param summary: Summary description.
     :type summary: str
     :param description: Detailed description.
@@ -9651,13 +9802,16 @@ class SiteLogsConfig(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param application_logs: Application logs configuration.
-    :type application_logs: ~azure.mgmt.web.models.ApplicationLogsConfig
+    :type application_logs:
+     ~azure.mgmt.web.v2018_02_01.models.ApplicationLogsConfig
     :param http_logs: HTTP logs configuration.
-    :type http_logs: ~azure.mgmt.web.models.HttpLogsConfig
+    :type http_logs: ~azure.mgmt.web.v2018_02_01.models.HttpLogsConfig
     :param failed_requests_tracing: Failed requests tracing configuration.
-    :type failed_requests_tracing: ~azure.mgmt.web.models.EnabledConfig
+    :type failed_requests_tracing:
+     ~azure.mgmt.web.v2018_02_01.models.EnabledConfig
     :param detailed_error_messages: Detailed error messages configuration.
-    :type detailed_error_messages: ~azure.mgmt.web.models.EnabledConfig
+    :type detailed_error_messages:
+     ~azure.mgmt.web.v2018_02_01.models.EnabledConfig
     """
 
     _validation = {
@@ -9735,7 +9889,7 @@ class SitePatchResource(ProxyOnlyResource):
     :vartype repository_site_name: str
     :ivar usage_state: State indicating whether the app has exceeded its quota
      usage. Read-only. Possible values include: 'Normal', 'Exceeded'
-    :vartype usage_state: str or ~azure.mgmt.web.models.UsageState
+    :vartype usage_state: str or ~azure.mgmt.web.v2018_02_01.models.UsageState
     :param enabled: <code>true</code> if the app is enabled; otherwise,
      <code>false</code>. Setting this value to false disables the app (takes
      the app offline).
@@ -9748,10 +9902,11 @@ class SitePatchResource(ProxyOnlyResource):
      the app. Possible values include: 'Normal', 'Limited',
      'DisasterRecoveryMode'
     :vartype availability_state: str or
-     ~azure.mgmt.web.models.SiteAvailabilityState
+     ~azure.mgmt.web.v2018_02_01.models.SiteAvailabilityState
     :param host_name_ssl_states: Hostname SSL states are used to manage the
      SSL bindings for app's hostnames.
-    :type host_name_ssl_states: list[~azure.mgmt.web.models.HostNameSslState]
+    :type host_name_ssl_states:
+     list[~azure.mgmt.web.v2018_02_01.models.HostNameSslState]
     :param server_farm_id: Resource ID of the associated App Service plan,
      formatted as:
      "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
@@ -9767,7 +9922,7 @@ class SitePatchResource(ProxyOnlyResource):
      Read-only.
     :vartype last_modified_time_utc: datetime
     :param site_config: Configuration of the app.
-    :type site_config: ~azure.mgmt.web.models.SiteConfig
+    :type site_config: ~azure.mgmt.web.v2018_02_01.models.SiteConfig
     :ivar traffic_manager_host_names: Azure Traffic Manager hostnames
      associated with the app. Read-only.
     :vartype traffic_manager_host_names: list[str]
@@ -9781,7 +9936,7 @@ class SitePatchResource(ProxyOnlyResource):
     :param hosting_environment_profile: App Service Environment to use for the
      app.
     :type hosting_environment_profile:
-     ~azure.mgmt.web.models.HostingEnvironmentProfile
+     ~azure.mgmt.web.v2018_02_01.models.HostingEnvironmentProfile
     :param client_affinity_enabled: <code>true</code> to enable client
      affinity; <code>false</code> to stop sending session affinity cookies,
      which route client requests in the same session to the same instance.
@@ -9820,7 +9975,7 @@ class SitePatchResource(ProxyOnlyResource):
     :vartype max_number_of_workers: int
     :param cloning_info: If specified during app creation, the app is cloned
      from a source app.
-    :type cloning_info: ~azure.mgmt.web.models.CloningInfo
+    :type cloning_info: ~azure.mgmt.web.v2018_02_01.models.CloningInfo
     :ivar resource_group: Name of the resource group the app belongs to.
      Read-only.
     :vartype resource_group: str
@@ -9830,21 +9985,24 @@ class SitePatchResource(ProxyOnlyResource):
     :ivar default_host_name: Default hostname of the app. Read-only.
     :vartype default_host_name: str
     :ivar slot_swap_status: Status of the last deployment slot swap operation.
-    :vartype slot_swap_status: ~azure.mgmt.web.models.SlotSwapStatus
+    :vartype slot_swap_status:
+     ~azure.mgmt.web.v2018_02_01.models.SlotSwapStatus
     :param https_only: HttpsOnly: configures a web site to accept only https
      requests. Issues redirect for
      http requests
     :type https_only: bool
     :param redundancy_mode: Site redundancy mode. Possible values include:
      'None', 'Manual', 'Failover', 'ActiveActive', 'GeoRedundant'
-    :type redundancy_mode: str or ~azure.mgmt.web.models.RedundancyMode
+    :type redundancy_mode: str or
+     ~azure.mgmt.web.v2018_02_01.models.RedundancyMode
     :ivar in_progress_operation_id: Specifies an operation id if this site has
      a pending operation.
     :vartype in_progress_operation_id: str
     :param geo_distributions: GeoDistributions for this site
-    :type geo_distributions: list[~azure.mgmt.web.models.GeoDistribution]
+    :type geo_distributions:
+     list[~azure.mgmt.web.v2018_02_01.models.GeoDistribution]
     :param identity:
-    :type identity: ~azure.mgmt.web.models.ManagedServiceIdentity
+    :type identity: ~azure.mgmt.web.v2018_02_01.models.ManagedServiceIdentity
     """
 
     _validation = {
@@ -10149,12 +10307,12 @@ class SkuDescription(Model):
     :param capacity: Current number of instances assigned to the resource.
     :type capacity: int
     :param sku_capacity: Min, max, and default scale values of the SKU.
-    :type sku_capacity: ~azure.mgmt.web.models.SkuCapacity
+    :type sku_capacity: ~azure.mgmt.web.v2018_02_01.models.SkuCapacity
     :param locations: Locations of the SKU.
     :type locations: list[str]
     :param capabilities: Capabilities of the SKU, e.g., is traffic manager
      enabled?
-    :type capabilities: list[~azure.mgmt.web.models.Capability]
+    :type capabilities: list[~azure.mgmt.web.v2018_02_01.models.Capability]
     """
 
     _attribute_map = {
@@ -10186,9 +10344,9 @@ class SkuInfo(Model):
     :param resource_type: Resource type that this SKU applies to.
     :type resource_type: str
     :param sku: Name and tier of the SKU.
-    :type sku: ~azure.mgmt.web.models.SkuDescription
+    :type sku: ~azure.mgmt.web.v2018_02_01.models.SkuDescription
     :param capacity: Min, max, and default scale values of the SKU.
-    :type capacity: ~azure.mgmt.web.models.SkuCapacity
+    :type capacity: ~azure.mgmt.web.v2018_02_01.models.SkuCapacity
     """
 
     _attribute_map = {
@@ -10210,7 +10368,8 @@ class SkuInfos(Model):
     :param resource_type: Resource type that this SKU applies to.
     :type resource_type: str
     :param skus: List of SKUs the subscription is able to use.
-    :type skus: list[~azure.mgmt.web.models.GlobalCsmSkuDescription]
+    :type skus:
+     list[~azure.mgmt.web.v2018_02_01.models.GlobalCsmSkuDescription]
     """
 
     _attribute_map = {
@@ -10483,7 +10642,8 @@ class SnapshotRestoreRequest(ProxyOnlyResource):
     :param recovery_source: Optional. Specifies the web app that snapshot
      contents will be retrieved from.
      If empty, the targeted web app will be used as the source.
-    :type recovery_source: ~azure.mgmt.web.models.SnapshotRecoverySource
+    :type recovery_source:
+     ~azure.mgmt.web.v2018_02_01.models.SnapshotRecoverySource
     :param overwrite: Required. If <code>true</code> the restore operation can
      overwrite source app; otherwise, <code>false</code>.
     :type overwrite: bool
@@ -10542,11 +10702,12 @@ class Solution(Model):
     :type description: str
     :param type: Type of Solution. Possible values include: 'QuickSolution',
      'DeepInvestigation', 'BestPractices'
-    :type type: str or ~azure.mgmt.web.models.SolutionType
+    :type type: str or ~azure.mgmt.web.v2018_02_01.models.SolutionType
     :param data: Solution Data.
-    :type data: list[list[~azure.mgmt.web.models.NameValuePair]]
+    :type data: list[list[~azure.mgmt.web.v2018_02_01.models.NameValuePair]]
     :param metadata: Solution Metadata.
-    :type metadata: list[list[~azure.mgmt.web.models.NameValuePair]]
+    :type metadata:
+     list[list[~azure.mgmt.web.v2018_02_01.models.NameValuePair]]
     """
 
     _attribute_map = {
@@ -10630,7 +10791,8 @@ class StackMajorVersion(Model):
      otherwise, <code>false</code>.
     :type is_default: bool
     :param minor_versions: Minor versions associated with the major version.
-    :type minor_versions: list[~azure.mgmt.web.models.StackMinorVersion]
+    :type minor_versions:
+     list[~azure.mgmt.web.v2018_02_01.models.StackMinorVersion]
     :param application_insights: <code>true</code> if this supports
      Application Insights; otherwise, <code>false</code>.
     :type application_insights: bool
@@ -10698,10 +10860,12 @@ class StampCapacity(Model):
     :type unit: str
     :param compute_mode: Shared/dedicated workers. Possible values include:
      'Shared', 'Dedicated', 'Dynamic'
-    :type compute_mode: str or ~azure.mgmt.web.models.ComputeModeOptions
+    :type compute_mode: str or
+     ~azure.mgmt.web.v2018_02_01.models.ComputeModeOptions
     :param worker_size: Size of the machines. Possible values include:
      'Small', 'Medium', 'Large', 'D1', 'D2', 'D3', 'Default'
-    :type worker_size: str or ~azure.mgmt.web.models.WorkerSizeOptions
+    :type worker_size: str or
+     ~azure.mgmt.web.v2018_02_01.models.WorkerSizeOptions
     :param worker_size_id: Size ID of machines:
      0 - Small
      1 - Medium
@@ -11073,7 +11237,7 @@ class TriggeredJobHistory(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param runs: List of triggered web job runs.
-    :type runs: list[~azure.mgmt.web.models.TriggeredJobRun]
+    :type runs: list[~azure.mgmt.web.v2018_02_01.models.TriggeredJobRun]
     """
 
     _validation = {
@@ -11115,7 +11279,8 @@ class TriggeredJobRun(ProxyOnlyResource):
     :type web_job_name: str
     :param status: Job status. Possible values include: 'Success', 'Failed',
      'Error'
-    :type status: str or ~azure.mgmt.web.models.TriggeredWebJobStatus
+    :type status: str or
+     ~azure.mgmt.web.v2018_02_01.models.TriggeredWebJobStatus
     :param start_time: Start time.
     :type start_time: datetime
     :param end_time: End time.
@@ -11188,7 +11353,7 @@ class TriggeredWebJob(ProxyOnlyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param latest_run: Latest job run information.
-    :type latest_run: ~azure.mgmt.web.models.TriggeredJobRun
+    :type latest_run: ~azure.mgmt.web.v2018_02_01.models.TriggeredJobRun
     :param history_url: History URL.
     :type history_url: str
     :param scheduler_logs_url: Scheduler Logs URL.
@@ -11201,7 +11366,7 @@ class TriggeredWebJob(ProxyOnlyResource):
     :type extra_info_url: str
     :param web_job_type: Job type. Possible values include: 'Continuous',
      'Triggered'
-    :type web_job_type: str or ~azure.mgmt.web.models.WebJobType
+    :type web_job_type: str or ~azure.mgmt.web.v2018_02_01.models.WebJobType
     :param error: Error information.
     :type error: str
     :param using_sdk: Using SDK?
@@ -11275,7 +11440,8 @@ class Usage(ProxyOnlyResource):
     :vartype next_reset_time: datetime
     :ivar compute_mode: Compute mode used for this usage. Possible values
      include: 'Shared', 'Dedicated', 'Dynamic'
-    :vartype compute_mode: str or ~azure.mgmt.web.models.ComputeModeOptions
+    :vartype compute_mode: str or
+     ~azure.mgmt.web.v2018_02_01.models.ComputeModeOptions
     :ivar site_mode: Site mode used for this usage.
     :vartype site_mode: str
     """
@@ -11423,7 +11589,8 @@ class ValidateRequest(Model):
     :type name: str
     :param type: Required. Resource type used for verification. Possible
      values include: 'ServerFarm', 'Site'
-    :type type: str or ~azure.mgmt.web.models.ValidateResourceTypes
+    :type type: str or
+     ~azure.mgmt.web.v2018_02_01.models.ValidateResourceTypes
     :param location: Required. Expected location of the resource.
     :type location: str
     :param server_farm_id: ARM resource ID of an App Service plan that would
@@ -11487,7 +11654,7 @@ class ValidateResponse(Model):
     :param status: Result of validation.
     :type status: str
     :param error: Error details for the case when validation fails.
-    :type error: ~azure.mgmt.web.models.ValidateResponseError
+    :type error: ~azure.mgmt.web.v2018_02_01.models.ValidateResponseError
     """
 
     _attribute_map = {
@@ -11532,7 +11699,8 @@ class VirtualApplication(Model):
      otherwise, <code>false</code>.
     :type preload_enabled: bool
     :param virtual_directories: Virtual directories for virtual application.
-    :type virtual_directories: list[~azure.mgmt.web.models.VirtualDirectory]
+    :type virtual_directories:
+     list[~azure.mgmt.web.v2018_02_01.models.VirtualDirectory]
     """
 
     _attribute_map = {
@@ -11703,7 +11871,7 @@ class VnetInfo(ProxyOnlyResource):
      Point-To-Site VPN connection.
     :type cert_blob: str
     :ivar routes: The routes that this Virtual Network connection uses.
-    :vartype routes: list[~azure.mgmt.web.models.VnetRoute]
+    :vartype routes: list[~azure.mgmt.web.v2018_02_01.models.VnetRoute]
     :ivar resync_required: <code>true</code> if a resync is required;
      otherwise, <code>false</code>.
     :vartype resync_required: bool
@@ -11822,7 +11990,7 @@ class VnetRoute(ProxyOnlyResource):
      STATIC - Static route set on the app only
      These values will be used for syncing an app's routes with those from a
      Virtual Network. Possible values include: 'DEFAULT', 'INHERITED', 'STATIC'
-    :type route_type: str or ~azure.mgmt.web.models.RouteType
+    :type route_type: str or ~azure.mgmt.web.v2018_02_01.models.RouteType
     """
 
     _validation = {
@@ -11865,7 +12033,8 @@ class VnetValidationFailureDetails(ProxyOnlyResource):
     :param failed: A flag describing whether or not validation failed.
     :type failed: bool
     :param failed_tests: A list of tests that failed in the validation.
-    :type failed_tests: list[~azure.mgmt.web.models.VnetValidationTestFailure]
+    :type failed_tests:
+     list[~azure.mgmt.web.v2018_02_01.models.VnetValidationTestFailure]
     """
 
     _validation = {
@@ -11940,7 +12109,7 @@ class WebAppCollection(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. Collection of resources.
-    :type value: list[~azure.mgmt.web.models.Site]
+    :type value: list[~azure.mgmt.web.v2018_02_01.models.Site]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
     """
@@ -11983,7 +12152,7 @@ class WebJob(ProxyOnlyResource):
     :type extra_info_url: str
     :param web_job_type: Job type. Possible values include: 'Continuous',
      'Triggered'
-    :type web_job_type: str or ~azure.mgmt.web.models.WebJobType
+    :type web_job_type: str or ~azure.mgmt.web.v2018_02_01.models.WebJobType
     :param error: Error information.
     :type error: str
     :param using_sdk: Using SDK?
@@ -12033,7 +12202,8 @@ class WorkerPool(Model):
     :type worker_size_id: int
     :param compute_mode: Shared or dedicated app hosting. Possible values
      include: 'Shared', 'Dedicated', 'Dynamic'
-    :type compute_mode: str or ~azure.mgmt.web.models.ComputeModeOptions
+    :type compute_mode: str or
+     ~azure.mgmt.web.v2018_02_01.models.ComputeModeOptions
     :param worker_size: VM size of the worker pool instances.
     :type worker_size: str
     :param worker_count: Number of instances in the worker pool.
@@ -12082,7 +12252,8 @@ class WorkerPoolResource(ProxyOnlyResource):
     :type worker_size_id: int
     :param compute_mode: Shared or dedicated app hosting. Possible values
      include: 'Shared', 'Dedicated', 'Dynamic'
-    :type compute_mode: str or ~azure.mgmt.web.models.ComputeModeOptions
+    :type compute_mode: str or
+     ~azure.mgmt.web.v2018_02_01.models.ComputeModeOptions
     :param worker_size: VM size of the worker pool instances.
     :type worker_size: str
     :param worker_count: Number of instances in the worker pool.
@@ -12091,7 +12262,7 @@ class WorkerPoolResource(ProxyOnlyResource):
      only).
     :vartype instance_names: list[str]
     :param sku:
-    :type sku: ~azure.mgmt.web.models.SkuDescription
+    :type sku: ~azure.mgmt.web.v2018_02_01.models.SkuDescription
     """
 
     _validation = {

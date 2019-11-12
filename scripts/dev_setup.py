@@ -63,7 +63,7 @@ parser.add_argument(
     action="store_false",
     help="Add this argument if you would prefer to install the package with a simple `pip install` versus `pip install -e`",
 )
-# this is a hack to support generating docs for the single package that doesn't support develop mode. It will be removed when we 
+# this is a hack to support generating docs for the single package that doesn't support develop mode. It will be removed when we
 # migrate to generating docs on a per-package cadence.
 parser.add_argument(
     "--exceptionlist",
@@ -97,7 +97,7 @@ nspkg_packages = [p for p in packages.keys() if "nspkg" in p]
 nspkg_packages.sort(key=lambda x: len([c for c in x if c == "-"]))
 
 # Manually push meta-packages at the end, in reverse dependency order
-meta_packages = ["azure-mgmt", "azure"]
+meta_packages = ["azure-keyvault", "azure-mgmt", "azure"]
 
 content_packages = sorted(
     [

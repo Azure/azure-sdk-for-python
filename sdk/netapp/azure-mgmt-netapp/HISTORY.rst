@@ -3,6 +3,34 @@
 Release History
 ===============
 
+0.7.0 (2019-11-12)
+++++++++++++++++++
+
+**Features**
+
+- Model MountTarget has a new parameter type
+- Model Volume has a new parameter data_protection
+- Model Volume has a new parameter volume_type
+- Added operation group NetAppResourceOperations
+
+**Breaking changes**
+
+- Removed operation group AzureNetAppFilesManagementClientOperationsMixin
+
+0.6.0 (2019-09-26)
+++++++++++++++++++
+
+**Features**
+
+- Model Snapshot has a new parameter created
+- Model ExportPolicyRule has a new parameter nfsv41
+- Added operation group AzureNetAppFilesManagementClientOperationsMixin
+
+**Breaking changes**
+
+- Model Snapshot no longer has parameter creation_date
+- Model ExportPolicyRule no longer has parameter nfsv4
+
 0.5.0 (2019-07-03)
 ++++++++++++++++++
 

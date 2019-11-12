@@ -11,12 +11,9 @@ import asyncio
 from typing import Any, List, Dict, Union, TYPE_CHECKING
 
 from uamqp import authentication, constants  # type: ignore
-from uamqp import (
-    Message,
-    AMQPClientAsync,
-)  # type: ignore
+from uamqp import Message, AMQPClientAsync  # type: ignore
 
-from azure.eventhub.common import parse_sas_token, EventPosition, \
+from ..common import parse_sas_token, EventPosition, \
     EventHubSharedKeyCredential, EventHubSASTokenCredential
 from ..client_abstract import EventHubClientAbstract
 
@@ -36,14 +33,6 @@ class EventHubClient(EventHubClientAbstract):
     The EventHubClient class defines a high level interface for asynchronously
     sending events to and receiving events from the Azure Event Hubs service.
 
-    Example:
-        .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-            :start-after: [START create_eventhub_client_async]
-            :end-before: [END create_eventhub_client_async]
-            :language: python
-            :dedent: 4
-            :caption: Create a new instance of the Event Hub client async.
-
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
@@ -58,23 +47,19 @@ class EventHubClient(EventHubClientAbstract):
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close()
 
-    def _create_auth(self, username=None, password=None):
+    def _create_auth(self):
         """
         Create an ~uamqp.authentication.cbs_auth_async.SASTokenAuthAsync instance to authenticate
         the session.
 
-        :param username: The name of the shared access policy.
-        :type username: str
-        :param password: The shared access key.
-        :type password: str
         """
         http_proxy = self._config.http_proxy
         transport_type = self._config.transport_type
         auth_timeout = self._config.auth_timeout
 
         if isinstance(self._credential, EventHubSharedKeyCredential):  # pylint:disable=no-else-return
-            username = username or self._auth_config['username']
-            password = password or self._auth_config['password']
+            username = self._credential.policy
+            password = self._credential.key
             if "@sas.root" in username:
                 return authentication.SASLPlain(
                     self._host, username, password, http_proxy=http_proxy, transport_type=transport_type)
@@ -117,14 +102,10 @@ class EventHubClient(EventHubClientAbstract):
             raise last_exception
 
     async def _management_request(self, mgmt_msg, op_type):
-        alt_creds = {
-            "username": self._auth_config.get("iot_username"),
-            "password": self._auth_config.get("iot_password")
-        }
-
         retried_times = 0
+        last_exception = None
         while retried_times <= self._config.max_retries:
-            mgmt_auth = self._create_auth(**alt_creds)
+            mgmt_auth = self._create_auth()
             mgmt_client = AMQPClientAsync(self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing)
             try:
                 conn = await self._conn_manager.get_connection(self._host, mgmt_auth)
@@ -142,18 +123,8 @@ class EventHubClient(EventHubClientAbstract):
                 retried_times += 1
             finally:
                 await mgmt_client.close_async()
-
-    async def _iothub_redirect(self):
-        async with self._lock:
-            if self._is_iothub and not self._iothub_redirect_info:
-                if not self._redirect_consumer:
-                    self._redirect_consumer = self.create_consumer(consumer_group='$default',
-                                                                   partition_id='0',
-                                                                   event_position=EventPosition('-1'),
-                                                                   operation='/messages/events')
-                async with self._redirect_consumer:
-                    await self._redirect_consumer._open_with_retry()  # pylint: disable=protected-access
-                self._redirect_consumer = None
+        log.info("%r returns an exception %r", self._container_id, last_exception)  # pylint:disable=specify-parameter-names-in-call
+        raise last_exception
 
     async def get_properties(self):
         # type:() -> Dict[str, Any]
@@ -161,15 +132,13 @@ class EventHubClient(EventHubClientAbstract):
         Get properties of the specified EventHub async.
         Keys in the details dictionary include:
 
-            -'path'
-            -'created_at'
-            -'partition_ids'
+            - path
+            - created_at
+            - partition_ids
 
         :rtype: dict
-        :raises: ~azure.eventhub.EventHubError
+        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
-        if self._is_iothub and not self._iothub_redirect_info:
-            await self._iothub_redirect()
         mgmt_msg = Message(application_properties={'name': self.eh_name})
         response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:eventhub')
         output = {}
@@ -186,7 +155,7 @@ class EventHubClient(EventHubClientAbstract):
         Get partition ids of the specified EventHub async.
 
         :rtype: list[str]
-        :raises: ~azure.eventhub.ConnectError
+        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
         return (await self.get_properties())['partition_ids']
 
@@ -196,21 +165,19 @@ class EventHubClient(EventHubClientAbstract):
         Get properties of the specified partition async.
         Keys in the details dictionary include:
 
-            -'event_hub_path'
-            -'id'
-            -'beginning_sequence_number'
-            -'last_enqueued_sequence_number'
-            -'last_enqueued_offset'
-            -'last_enqueued_time_utc'
-            -'is_empty'
+            - event_hub_path
+            - id
+            - beginning_sequence_number
+            - last_enqueued_sequence_number
+            - last_enqueued_offset
+            - last_enqueued_time_utc
+            - is_empty
 
         :param partition: The target partition id.
         :type partition: str
         :rtype: dict
-        :raises: ~azure.eventhub.EventHubError
+        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
-        if self._is_iothub and not self._iothub_redirect_info:
-            await self._iothub_redirect()
         mgmt_msg = Message(application_properties={'name': self.eh_name,
                                                    'partition': partition})
         response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:partition')
@@ -227,7 +194,7 @@ class EventHubClient(EventHubClientAbstract):
             output['is_empty'] = partition_info[b'is_partition_empty']
         return output
 
-    def create_consumer(
+    def _create_consumer(
             self,
             consumer_group: str,
             partition_id: str,
@@ -246,40 +213,35 @@ class EventHubClient(EventHubClientAbstract):
         :param owner_level: The priority of the exclusive consumer. The client will create an exclusive
          consumer if owner_level is set.
         :type owner_level: int
-        :param operation: An optional operation to be appended to the hostname in the source URL.
-         The value must start with `/` character.
-        :type operation: str
         :param prefetch: The message prefetch count of the consumer. Default is 300.
         :type prefetch: int
+        :param track_last_enqueued_event_properties: Indicates whether or not the consumer should request information
+         on the last enqueued event on its associated partition, and track that information as events are received.
+         When information about the partition's last enqueued event is being tracked, each event received from the
+         Event Hubs service will carry metadata about the partition. This results in a small amount of additional
+         network bandwidth consumption that is generally a favorable trade-off when considered against periodically
+         making requests for partition properties using the Event Hub client.
+         It is set to `False` by default.
+        :type track_last_enqueued_event_properties: bool
         :param loop: An event loop. If not specified the default event loop will be used.
         :rtype: ~azure.eventhub.aio.consumer_async.EventHubConsumer
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START create_eventhub_client_async_receiver]
-                :end-before: [END create_eventhub_client_async_receiver]
-                :language: python
-                :dedent: 4
-                :caption: Add an async consumer to the client for a particular consumer group and partition.
-
         """
         owner_level = kwargs.get("owner_level")
-        operation = kwargs.get("operation")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
+        track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
         loop = kwargs.get("loop")
 
-        path = self._address.path + operation if operation else self._address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            self._address.hostname, path, consumer_group, partition_id)
+            self._address.hostname, self._address.path, consumer_group, partition_id)
         handler = EventHubConsumer(
             self, source_url, event_position=event_position, owner_level=owner_level,
-            prefetch=prefetch, loop=loop)
+            prefetch=prefetch,
+            track_last_enqueued_event_properties=track_last_enqueued_event_properties, loop=loop)
         return handler
 
-    def create_producer(
+    def _create_producer(
             self, *,
             partition_id: str = None,
-            operation: str = None,
             send_timeout: float = None,
             loop: asyncio.AbstractEventLoop = None
     ) -> EventHubProducer:
@@ -290,28 +252,14 @@ class EventHubClient(EventHubClientAbstract):
          If omitted, the events will be distributed to available partitions via
          round-robin.
         :type partition_id: str
-        :param operation: An optional operation to be appended to the hostname in the target URL.
-         The value must start with `/` character.
-        :type operation: str
         :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: float
         :param loop: An event loop. If not specified the default event loop will be used.
         :rtype: ~azure.eventhub.aio.producer_async.EventHubProducer
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START create_eventhub_client_async_sender]
-                :end-before: [END create_eventhub_client_async_sender]
-                :language: python
-                :dedent: 4
-                :caption: Add an async producer to the client to send EventData.
-
         """
 
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
-        if operation:
-            target = target + operation
         send_timeout = self._config.send_timeout if send_timeout is None else send_timeout
 
         handler = EventHubProducer(

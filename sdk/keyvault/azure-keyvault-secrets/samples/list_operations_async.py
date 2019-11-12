@@ -19,14 +19,14 @@ from azure.core.exceptions import HttpResponseError
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic list operations on a vault(secret) resource for Azure Key Vault.
-# The vault has to be soft-delete enabled to perform one of the following operations. [Azure Key Vault soft delete]
-# (https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete)
+# The vault has to be soft-delete enabled to perform one of the following operations. See
+# https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
 #
 # 1. Create secret (set_secret)
 #
 # 2. List secrets from the Key Vault (list_secrets)
 #
-# 3. List secret versions from the Key Vault (list_secret_versions)
+# 3. List secret versions from the Key Vault (list_properties_of_secret_versions)
 #
 # 4. List deleted secrets from the Key Vault (list_deleted_secrets). The vault has to be soft-delete enabled to perform
 # this operation.
@@ -54,7 +54,7 @@ async def run_sample():
         # List operations don 't return the secrets with value information.
         # So, for each returned secret we call get_secret to get the secret with its value information.
         print("\n.. List secrets from the Key Vault")
-        secrets = client.list_secrets()
+        secrets = client.list_properties_of_secrets()
         async for secret in secrets:
             retrieved_secret = await client.get_secret(secret.name)
             print(
@@ -74,17 +74,14 @@ async def run_sample():
         # You need to check all the different values your bank account password secret had previously. Lets print all
         # the versions of this secret.
         print("\n.. List versions of the secret using its name")
-        secret_versions = client.list_secret_versions(bank_secret.name)
+        secret_versions = client.list_properties_of_secret_versions(bank_secret.name)
         async for secret in secret_versions:
-            print("Bank Secret with name '{0}' has version: '{1}'".format(secret.name, secret.properties.version))
+            print("Bank Secret with name '{0}' has version: '{1}'".format(secret.name, secret.version))
 
         # The bank account and storage accounts got closed. Let's delete bank and storage accounts secrets.
+        print("\n.. Deleting secrets...")
         await client.delete_secret(bank_secret.name)
         await client.delete_secret(storage_secret.name)
-
-        # To ensure secret is deleted on the server side.
-        print("\nDeleting secrets...")
-        await asyncio.sleep(20)
 
         # You can list all the deleted and non-purged secrets, assuming Key Vault is soft-delete enabled.
         print("\n.. List deleted secrets from the Key Vault")
@@ -96,7 +93,7 @@ async def run_sample():
 
     except HttpResponseError as e:
         if "(NotSupported)" in e.message:
-            print("\n{0} Please enable soft delete on Key Vault to perform this operation.".format(e.message))
+            print("\n{0} Please enable soft-delete on Key Vault to perform this operation.".format(e.message))
         else:
             print("\nrun_sample has caught an error. {0}".format(e.message))
 

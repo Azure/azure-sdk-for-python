@@ -1,3 +1,7 @@
+parameters:
+  BuildTargetingString: 'azure-*'
+  ServiceDirectory: ''
+
 steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
@@ -5,8 +9,8 @@ steps:
      versionSpec: '$(PythonVersion)'
 
   - script: |
-     pip install setuptools wheel Jinja2
-     pip install doc-warden==0.3.0
+     pip install setuptools wheel Jinja2 packaging
+     pip install doc-warden==0.3.1
      ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml
     displayName: 'Verify Readmes'
 
@@ -15,6 +19,12 @@ steps:
     inputs:
      scriptPath: 'scripts/analyze_deps.py'
      arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/dependencies.html"'
+
+  - task: PythonScript@0
+    displayName: 'Verify Change Log'
+    inputs:
+     scriptPath: 'scripts/devops_tasks/verify_change_log.py'
+     arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}}'
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR

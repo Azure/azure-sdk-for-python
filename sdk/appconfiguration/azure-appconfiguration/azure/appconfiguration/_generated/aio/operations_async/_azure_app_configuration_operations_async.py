@@ -31,6 +31,7 @@ class AzureAppConfigurationOperationsMixin:
         :raises:
          :class:`ErrorException<appconfiguration.models.ErrorException>`
         """
+        error_map = kwargs.pop('error_map', None)
         def prepare_request(next_link=None):
             query_parameters = {}
             if not next_link:
@@ -69,10 +70,9 @@ class AzureAppConfigurationOperationsMixin:
         async def get_next_async(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request)
+            pipeline_response = await self._client._pipeline.run(request, **kwargs)
             response = pipeline_response.http_response
 
-            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.ErrorException(response, self._deserialize)
@@ -99,7 +99,8 @@ class AzureAppConfigurationOperationsMixin:
          direct response
         :return: None or the result of cls(response)
         :rtype: None
-        :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
+        :raises:
+         :class:`HttpResponseError<azure.core.exceptions.HttpResponseError>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
@@ -161,6 +162,7 @@ class AzureAppConfigurationOperationsMixin:
         :raises:
          :class:`ErrorException<appconfiguration.models.ErrorException>`
         """
+        error_map = kwargs.pop('error_map', None)
         def prepare_request(next_link=None):
             query_parameters = {}
             if not next_link:
@@ -203,10 +205,9 @@ class AzureAppConfigurationOperationsMixin:
         async def get_next_async(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request)
+            pipeline_response = await self._client._pipeline.run(request, **kwargs)
             response = pipeline_response.http_response
 
-            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.ErrorException(response, self._deserialize)
@@ -238,7 +239,8 @@ class AzureAppConfigurationOperationsMixin:
          direct response
         :return: None or the result of cls(response)
         :rtype: None
-        :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
+        :raises:
+         :class:`HttpResponseError<azure.core.exceptions.HttpResponseError>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
@@ -529,7 +531,8 @@ class AzureAppConfigurationOperationsMixin:
          direct response
         :return: None or the result of cls(response)
         :rtype: None
-        :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
+        :raises:
+         :class:`HttpResponseError<azure.core.exceptions.HttpResponseError>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
@@ -599,6 +602,7 @@ class AzureAppConfigurationOperationsMixin:
         :raises:
          :class:`ErrorException<appconfiguration.models.ErrorException>`
         """
+        error_map = kwargs.pop('error_map', None)
         def prepare_request(next_link=None):
             query_parameters = {}
             if not next_link:
@@ -639,10 +643,9 @@ class AzureAppConfigurationOperationsMixin:
         async def get_next_async(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request)
+            pipeline_response = await self._client._pipeline.run(request, **kwargs)
             response = pipeline_response.http_response
 
-            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.ErrorException(response, self._deserialize)
@@ -672,7 +675,8 @@ class AzureAppConfigurationOperationsMixin:
          direct response
         :return: None or the result of cls(response)
         :rtype: None
-        :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
+        :raises:
+         :class:`HttpResponseError<azure.core.exceptions.HttpResponseError>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
@@ -876,6 +880,7 @@ class AzureAppConfigurationOperationsMixin:
         :raises:
          :class:`ErrorException<appconfiguration.models.ErrorException>`
         """
+        error_map = kwargs.pop('error_map', None)
         def prepare_request(next_link=None):
             query_parameters = {}
             if not next_link:
@@ -918,10 +923,9 @@ class AzureAppConfigurationOperationsMixin:
         async def get_next_async(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request)
+            pipeline_response = await self._client._pipeline.run(request, **kwargs)
             response = pipeline_response.http_response
 
-            error_map = kwargs.pop('error_map', None)
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise models.ErrorException(response, self._deserialize)
@@ -953,7 +957,8 @@ class AzureAppConfigurationOperationsMixin:
          direct response
         :return: None or the result of cls(response)
         :rtype: None
-        :raises: :class:`HttpResponseError<azure.core.HttpResponseError>`
+        :raises:
+         :class:`HttpResponseError<azure.core.exceptions.HttpResponseError>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL

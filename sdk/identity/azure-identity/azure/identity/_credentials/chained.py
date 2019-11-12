@@ -16,9 +16,10 @@ if TYPE_CHECKING:
 
 
 class ChainedTokenCredential(object):
-    """
-    A sequence of credentials that is itself a credential. Its ``get_token`` method calls ``get_token`` on each
-    credential in the sequence, in order, returning the first valid token received.
+    """A sequence of credentials that is itself a credential.
+
+    Its :func:`get_token` method calls ``get_token`` on each credential in the sequence, in order, returning the first
+    valid token received.
 
     :param credentials: credential instances to form the chain
     :type credentials: :class:`azure.core.credentials.TokenCredential`
@@ -32,13 +33,12 @@ class ChainedTokenCredential(object):
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
-        """
-        Request a token from each chained credential, in order, returning the first token received.
-        If none provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError` with an
-        error message from each credential.
+        """Request a token from each chained credential, in order, returning the first token received.
+
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
         :param str scopes: desired scopes for the token
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError: when no credential in the chain provides a token
         """
         history = []
         for credential in self.credentials:
@@ -59,4 +59,5 @@ class ChainedTokenCredential(object):
                 attempts.append("{}: {}".format(credential.__class__.__name__, error))
             else:
                 attempts.append(credential.__class__.__name__)
-        return "No valid token received. {}".format(". ".join(attempts))
+        return """No credential in this chain provided a token.
+Attempted credentials:\n\t{}""".format("\n\t".join(attempts))

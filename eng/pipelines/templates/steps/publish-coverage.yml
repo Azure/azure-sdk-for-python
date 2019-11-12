@@ -3,7 +3,7 @@ parameters:
 
 steps:
   - script: |
-      coverage xml -i
+      coverage xml -i --omit="*test*,*example*"
     displayName: 'Generate Coverage XML'
     continueOnError: true
     condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})

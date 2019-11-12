@@ -1,10 +1,47 @@
-# Change Log azure-cosmos
+# Release History
 
-## Version 4.0.0b3:
+## 4.0.0b6
+
+- Fixed bug in synchronized_request for media APIs.
+- Removed MediaReadMode and MediaRequestTimeout from ConnectionPolicy as media requests are not supported.
+
+
+## 4.0.0b5
+
+- azure.cosmos.errors module deprecated and replaced by azure.cosmos.exceptions
+- The access condition parameters (`access_condition`, `if_match`, `if_none_match`) have been deprecated in favor of separate `match_condition` and `etag` parameters.
+- Fixed bug in routing map provider.
+- Added query Distinct, Offset and Limit support.
+- Default document query execution context now used for
+    - ChangeFeed queries
+    - single partition queries (partitionkey, partitionKeyRangeId is present in options)
+    - Non document queries
+- Errors out for aggregates on multiple partitions, with enable cross partition query set to true, but no "value" keyword present
+- Hits query plan endpoint for other scenarios to fetch query plan
+- Added `__repr__` support for Cosmos entity objects.
+- Updated documentation.
+
+
+## 4.0.0b4
+
+- Added support for a `timeout` keyword argument to all operations to specify an absolute timeout in seconds
+  within which the operation must be completed. If the timeout value is exceeded, a `azure.cosmos.errors.CosmosClientTimeoutError` will be raised.
+- Added a new `ConnectionRetryPolicy` to manage retry behaviour during HTTP connection errors.
+- Added new constructor and per-operation configuration keyword arguments:
+    - `retry_total` - Maximum retry attempts.
+    - `retry_backoff_max` - Maximum retry wait time in seconds.
+    - `retry_fixed_interval` - Fixed retry interval in milliseconds.
+    - `retry_read` - Maximum number of socket read retry attempts.
+    - `retry_connect` - Maximum number of connection error retry attempts.
+    - `retry_status` - Maximum number of retry attempts on error status codes.
+    - `retry_on_status_codes` - A list of specific status codes to retry on.
+    - `retry_backoff_factor` - Factor to calculate wait time between retry attempts.
+
+## 4.0.0b3
 
 - Added `create_database_if_not_exists()` and `create_container_if_not_exists` functionalities to CosmosClient and Database respectively.
 
-## Version 4.0.0b2:
+## 4.0.0b2
 
 Version 4.0.0b2 is the second iteration in our efforts to build a more Pythonic client library.
 
@@ -45,7 +82,7 @@ Version 4.0.0b2 is the second iteration in our efforts to build a more Pythonic 
 - `CosmosClient` can now be run in a context manager to handle closing the client connection.
 - Iterable responses (e.g. query responses and list responses) are now of type `azure.core.paging.ItemPaged`. The method `fetch_next_block` has been replaced by a secondary iterator, accessed by the `by_page` method.
 
-## Version 4.0.0b1:
+## 4.0.0b1
 
 Version 4.0.0b1 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Cosmos. For more information about this, and preview releases of other Azure SDK libraries, please visit https://aka.ms/azure-sdk-preview1-python.
 
@@ -62,19 +99,19 @@ Version 4.0.0b1 is the first preview of our efforts to create a user-friendly an
 - No more need to import types and methods from individual modules. The public API surface area is available directly in the `azure.cosmos` package.
 - Individual request properties can be provided as keyword arguments rather than constructing a separate `RequestOptions` instance.
 
-## Changes in 3.0.2 : ##
+## 3.0.2
 
 - Added Support for MultiPolygon Datatype
 - Bug Fix in Session Read Retry Policy
 - Bug Fix for Incorrect padding issues while decoding base 64 strings
 
-## Changes in 3.0.1 : ##
+## 3.0.1
 
 - Bug fix in LocationCache
 - Bug fix endpoint retry logic
 - Fixed documentation
 
-## Changes in 3.0.0 : ##
+## 3.0.0
 
 - Multi-region write support added
 - Naming changes
@@ -84,7 +121,7 @@ Version 4.0.0b1 is the first preview of our efforts to create a user-friendly an
   - Package name updated to "azure-cosmos"
   - Namespace updated to "azure.cosmos"
 
-## Changes in 2.3.3 : ##
+## 2.3.3
 
 - Added support for proxy
 - Added support for reading change feed
@@ -93,30 +130,30 @@ Version 4.0.0b1 is the first preview of our efforts to create a user-friendly an
 - Bugfix for ReadMedia API
 - Bugfix in partition key range cache
 
-## Changes in 2.3.2 : ##
+## 2.3.2
 
 - Added support for default retries on connection issues.
 
-## Changes in 2.3.1 : ##
+## 2.3.1
 
 - Updated documentation to reference Azure Cosmos DB instead of Azure DocumentDB.
 
-## Changes in 2.3.0 : ##
+## 2.3.0
 
 - This SDK version requires the latest version of Azure Cosmos DB Emulator available for download from https://aka.ms/cosmosdb-emulator.
 
-## Changes in 2.2.1 : ##
+## 2.2.1
 
 - bugfix for aggregate dict
 - bugfix for trimming slashes in the resource link
 - tests for unicode encoding
 
-## Changes in 2.2.0 : ##
+## 2.2.0
 
 - Added support for Request Unit per Minute (RU/m) feature.
 - Added support for a new consistency level called ConsistentPrefix.
 
-## Changes in 2.1.0 : ##
+## 2.1.0
 
 - Added support for aggregation queries (COUNT, MIN, MAX, SUM, and AVG).
 - Added an option for disabling SSL verification when running against DocumentDB Emulator.
@@ -125,18 +162,18 @@ Version 4.0.0b1 is the first preview of our efforts to create a user-friendly an
 - Added support for enabling script logging during stored procedure execution.
 - REST API version bumped to '2017-01-19' with this release.
 
-## Changes in 2.0.1 : ##
+## 2.0.1
 
 - Made editorial changes to documentation comments.
 
-## Changes in 2.0.0 : ##
+## 2.0.0
 
 - Added support for Python 3.5.
 - Added support for connection pooling using the requests module.
 - Added support for session consistency.
 - Added support for TOP/ORDERBY queries for partitioned collections.
 
-## Changes in 1.9.0 : ##
+## 1.9.0
 
 - Added retry policy support for throttled requests. (Throttled requests receive a request rate too large exception, error code 429.)
   By default, DocumentDB retries nine times for each request when error code 429 is encountered, honoring the retryAfter time in the response header.
@@ -150,47 +187,47 @@ Version 4.0.0b1 is the first preview of our efforts to create a user-friendly an
 - Removed the RetryPolicy class and the corresponding property (retry_policy) exposed on the document_client class and instead introduced a RetryOptions class
   exposing the RetryOptions property on ConnectionPolicy class that can be used to override some of the default retry options.
 
-## Changes in 1.8.0 : ##
+## 1.8.0
 
 - Added the support for geo-replicated database accounts.
 - Test fixes to move the global host and masterKey into the individual test classes.
 
-## Changes in 1.7.0 : ##
+## 1.7.0
 
 - Added the support for Time To Live(TTL) feature for documents.
 
-## Changes in 1.6.1 : ##
+## 1.6.1
 
 - Bug fixes related to server side partitioning to allow special characters in partitionkey path.
 
-## Changes in 1.6.0 : ##
+## 1.6.0
 
 - Added the support for server side partitioned collections feature.
 
-## Changes in 1.5.0 : ##
+## 1.5.0
 
 - Added Client-side sharding framework to the SDK. Implemented HashPartionResolver and RangePartitionResolver classes.
 
-## Changes in 1.4.2 : ##
+## 1.4.2
 
 - Implement Upsert. New UpsertXXX methods added to support Upsert feature.
 - Implement ID Based Routing. No public API changes, all changes internal.
 
-## Changes in 1.3.0 : ##
+## 1.3.0
 
 - Release skipped to bring version number in alignment with other SDKs
 
-## Changes in 1.2.0 : ##
+## 1.2.0
 
 - Supports GeoSpatial index.
 - Validates id property for all resources. Ids for resources cannot contain ?, /, #, \\, characters or end with a space.
 - Adds new header "index transformation progress" to ResourceResponse.
 
-## Changes in 1.1.0 : ##
+## 1.1.0
 
 - Implements V2 indexing policy
 
-## Changes in 1.0.1 : ##
+## 1.0.1
 
 - Supports proxy connection
 

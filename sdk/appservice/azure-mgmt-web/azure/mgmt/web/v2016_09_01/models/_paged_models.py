@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class AppServiceEnvironmentResourcePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`AppServiceEnvironmentResource <azure.mgmt.web.models.AppServiceEnvironmentResource>` object
+    A paging container for iterating over a list of :class:`AppServiceEnvironmentResource <azure.mgmt.web.v2016_09_01.models.AppServiceEnvironmentResource>` object
     """
 
     _attribute_map = {
@@ -27,7 +27,7 @@ class AppServiceEnvironmentResourcePaged(Paged):
         super(AppServiceEnvironmentResourcePaged, self).__init__(*args, **kwargs)
 class StampCapacityPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`StampCapacity <azure.mgmt.web.models.StampCapacity>` object
+    A paging container for iterating over a list of :class:`StampCapacity <azure.mgmt.web.v2016_09_01.models.StampCapacity>` object
     """
 
     _attribute_map = {
@@ -40,7 +40,7 @@ class StampCapacityPaged(Paged):
         super(StampCapacityPaged, self).__init__(*args, **kwargs)
 class ResourceMetricPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ResourceMetric <azure.mgmt.web.models.ResourceMetric>` object
+    A paging container for iterating over a list of :class:`ResourceMetric <azure.mgmt.web.v2016_09_01.models.ResourceMetric>` object
     """
 
     _attribute_map = {
@@ -53,7 +53,7 @@ class ResourceMetricPaged(Paged):
         super(ResourceMetricPaged, self).__init__(*args, **kwargs)
 class WorkerPoolResourcePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`WorkerPoolResource <azure.mgmt.web.models.WorkerPoolResource>` object
+    A paging container for iterating over a list of :class:`WorkerPoolResource <azure.mgmt.web.v2016_09_01.models.WorkerPoolResource>` object
     """
 
     _attribute_map = {
@@ -66,7 +66,7 @@ class WorkerPoolResourcePaged(Paged):
         super(WorkerPoolResourcePaged, self).__init__(*args, **kwargs)
 class ResourceMetricDefinitionPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ResourceMetricDefinition <azure.mgmt.web.models.ResourceMetricDefinition>` object
+    A paging container for iterating over a list of :class:`ResourceMetricDefinition <azure.mgmt.web.v2016_09_01.models.ResourceMetricDefinition>` object
     """
 
     _attribute_map = {
@@ -79,7 +79,7 @@ class ResourceMetricDefinitionPaged(Paged):
         super(ResourceMetricDefinitionPaged, self).__init__(*args, **kwargs)
 class SkuInfoPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`SkuInfo <azure.mgmt.web.models.SkuInfo>` object
+    A paging container for iterating over a list of :class:`SkuInfo <azure.mgmt.web.v2016_09_01.models.SkuInfo>` object
     """
 
     _attribute_map = {
@@ -92,7 +92,7 @@ class SkuInfoPaged(Paged):
         super(SkuInfoPaged, self).__init__(*args, **kwargs)
 class UsagePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Usage <azure.mgmt.web.models.Usage>` object
+    A paging container for iterating over a list of :class:`Usage <azure.mgmt.web.v2016_09_01.models.Usage>` object
     """
 
     _attribute_map = {
@@ -105,7 +105,7 @@ class UsagePaged(Paged):
         super(UsagePaged, self).__init__(*args, **kwargs)
 class AppServicePlanPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`AppServicePlan <azure.mgmt.web.models.AppServicePlan>` object
+    A paging container for iterating over a list of :class:`AppServicePlan <azure.mgmt.web.v2016_09_01.models.AppServicePlan>` object
     """
 
     _attribute_map = {
@@ -118,7 +118,7 @@ class AppServicePlanPaged(Paged):
         super(AppServicePlanPaged, self).__init__(*args, **kwargs)
 class SitePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Site <azure.mgmt.web.models.Site>` object
+    A paging container for iterating over a list of :class:`Site <azure.mgmt.web.v2016_09_01.models.Site>` object
     """
 
     _attribute_map = {
@@ -131,7 +131,7 @@ class SitePaged(Paged):
         super(SitePaged, self).__init__(*args, **kwargs)
 class CsmUsageQuotaPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`CsmUsageQuota <azure.mgmt.web.models.CsmUsageQuota>` object
+    A paging container for iterating over a list of :class:`CsmUsageQuota <azure.mgmt.web.v2016_09_01.models.CsmUsageQuota>` object
     """
 
     _attribute_map = {
@@ -157,7 +157,7 @@ class StrPaged(Paged):
         super(StrPaged, self).__init__(*args, **kwargs)
 class HybridConnectionPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`HybridConnection <azure.mgmt.web.models.HybridConnection>` object
+    A paging container for iterating over a list of :class:`HybridConnection <azure.mgmt.web.v2016_09_01.models.HybridConnection>` object
     """
 
     _attribute_map = {

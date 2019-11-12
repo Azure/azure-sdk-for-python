@@ -35,11 +35,12 @@ from azure.core.pipeline.policies import (
     HeadersPolicy,
     SansIOHTTPPolicy,
     NetworkTraceLoggingPolicy,
-    HTTPPolicy)
-from azure.core.pipeline.policies.base import RequestHistory
+    HTTPPolicy,
+    RequestHistory
+)
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 
-from ..version import VERSION
+from .._version import VERSION
 from .models import LocationMode
 
 try:
@@ -119,6 +120,7 @@ class QueueMessagePolicy(SansIOHTTPPolicy):
 
 
 class StorageHeadersPolicy(HeadersPolicy):
+    request_id_header_name = 'x-ms-client-request-id'
 
     def on_request(self, request):
         # type: (PipelineRequest, Any) -> None
@@ -128,6 +130,21 @@ class StorageHeadersPolicy(HeadersPolicy):
 
         custom_id = request.context.options.pop('client_request_id', None)
         request.http_request.headers['x-ms-client-request-id'] = custom_id or str(uuid.uuid1())
+
+    # def on_response(self, request, response):
+    #     # raise exception if the echoed client request id from the service is not identical to the one we sent
+    #     if self.request_id_header_name in response.http_response.headers:
+
+    #         client_request_id = request.http_request.headers.get(self.request_id_header_name)
+
+    #         if response.http_response.headers[self.request_id_header_name] != client_request_id:
+    #             raise AzureError(
+    #                 "Echoed client request ID: {} does not match sent client request ID: {}.  "
+    #                 "Service request ID: {}".format(
+    #                     response.http_response.headers[self.request_id_header_name], client_request_id,
+    #                     response.http_response.headers['x-ms-request-id']),
+    #                 response=response.http_response
+    #             )
 
 
 class StorageHosts(SansIOHTTPPolicy):
@@ -528,15 +545,6 @@ class StorageRetryPolicy(HTTPPolicy):
             response.context['history'] = retry_settings['history']
         response.http_response.location_mode = retry_settings['mode']
         return response
-
-
-class NoRetry(StorageRetryPolicy):
-
-    def __init__(self):
-        super(NoRetry, self).__init__(retry_total=0)
-
-    def increment(self, *args, **kwargs):  # pylint: disable=unused-argument,arguments-differ
-        return False
 
 
 class ExponentialRetry(StorageRetryPolicy):

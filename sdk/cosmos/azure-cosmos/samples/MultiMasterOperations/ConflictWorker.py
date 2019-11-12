@@ -2,7 +2,7 @@ import uuid
 import time
 from multiprocessing.pool import ThreadPool
 import json
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes
 
 class ConflictWorker(object):
@@ -27,7 +27,7 @@ class ConflictWorker(object):
         database = None
         try:
             database = create_client.ReadDatabase("dbs/" + self.database_name)
-        except errors.CosmosResourceNotFoundError:
+        except exceptions.CosmosResourceNotFoundError:
             print("database not found, needs to be created.")
 
         if not database:
@@ -119,14 +119,14 @@ class ConflictWorker(object):
                 }
         try:
             lww_sproc = create_client.CreateStoredProcedure("dbs/" + self.database_name+ "/colls/" + self.udp_collection_name, lww_sproc)
-        except errors.CosmosResourceExistsError:
+        except exceptions.CosmosResourceExistsError:
             return
 
     def try_create_document_collection (self, client, database, collection):
         read_collection = None
         try:
             read_collection = client.ReadContainer("dbs/" + database['id'] + "/colls/" + collection['id'])
-        except errors.CosmosResourceNotFoundError:
+        except exceptions.CosmosResourceNotFoundError:
             print("collection not found, needs to be created.")
 
         if read_collection == None:
@@ -473,14 +473,14 @@ class ConflictWorker(object):
     def try_insert_document(self, client, collection_uri, document):
         try:
             return client.CreateItem(collection_uri, document)
-        except errors.CosmosResourceExistsError:
+        except exceptions.CosmosResourceExistsError:
             return None
 
     def try_update_document(self, client, collection_uri, document, options):
         try:
             options['partitionKey'] = document['id']
             return client.ReplaceItem(collection_uri + "/docs/" + document['id'], document, options);
-        except (errors.CosmosResourceNotFoundError, errors.CosmosAccessConditionFailedError):
+        except (exceptions.CosmosResourceNotFoundError, exceptions.CosmosAccessConditionFailedError):
             # Lost synchronously or no document yet. No conflict is induced.
             return None
 
@@ -489,7 +489,7 @@ class ConflictWorker(object):
             options['partitionKey'] = document['id']
             client.DeleteItem(collection_uri + "/docs/" + document['id'], options)
             return document
-        except (errors.CosmosResourceNotFoundError, errors.CosmosAccessConditionFailedError):
+        except (exceptions.CosmosResourceNotFoundError, exceptions.CosmosAccessConditionFailedError):
             #Lost synchronously. No conflict is induced.
             return None
 
@@ -591,10 +591,10 @@ class ConflictWorker(object):
                                      (conflict_document[0]['id'], client.ReadEndpoint))
 
                     time.sleep(0.5)
-                except errors.CosmosResourceNotFoundError:
+                except exceptions.CosmosResourceNotFoundError:
                     print("Delete conflict won @ %s" % client.ReadEndpoint)
                     return
-                except errors.CosmosHttpResponseError:
+                except exceptions.CosmosHttpResponseError:
                     self.trace_error("Delete conflict for document %s didnt win @ %s" %
                                     (conflict_document[0]['id'], client.ReadEndpoint))
 
@@ -622,7 +622,7 @@ class ConflictWorker(object):
                                      (int(winner_document["regionId"]), client.WriteEndpoint))
 
                     time.sleep(0.5)
-            except errors.AzureError as e:
+            except exceptions.AzureError as e:
                 self.trace_error("Winner document from region %d is not found @ %s, retrying..." % 
                                 (int(winner_document["regionId"]), client.WriteEndpoint))
                 
@@ -655,10 +655,10 @@ class ConflictWorker(object):
                                      (conflict_document[0]['id'], client.ReadEndpoint))
 
                     time.sleep(0.5)
-                except errors.CosmosResourceNotFoundError:
+                except exceptions.CosmosResourceNotFoundError:
                     print("Delete conflict won @ %s" % client.ReadEndpoint)
                     return
-                except errors.CosmosHttpResponseError:
+                except exceptions.CosmosHttpResponseError:
                     self.trace_error("Delete conflict for document %s didnt win @ %s" %
                                     (conflict_document[0]['id'], client.ReadEndpoint))
                     time.sleep(0.5)
@@ -685,7 +685,7 @@ class ConflictWorker(object):
                                      (int(winner_document['regionId']), client.WriteEndpoint))
 
                     time.sleep(0.5)
-            except errors.AzureError:
+            except exceptions.AzureError:
                 self.trace_error("Winner document from region %d is not found @ %s, retrying..." %
                                  (int(winner_document['regionId']), client.WriteEndpoint))
                 time.sleep(0.5)

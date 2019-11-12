@@ -28,6 +28,15 @@ class HanaInstanceSizeNamesEnum(str, Enum):
     s192m = "S192m"
     s192xm = "S192xm"
     s96 = "S96"
+    s112 = "S112"
+    s224m = "S224m"
+    s224o = "S224o"
+    s224om = "S224om"
+    s224oo = "S224oo"
+    s224oom = "S224oom"
+    s224ooo = "S224ooo"
+    s224oxm = "S224oxm"
+    s224oxxm = "S224oxxm"
     s384 = "S384"
     s384m = "S384m"
     s384xm = "S384xm"
@@ -38,11 +47,6 @@ class HanaInstanceSizeNamesEnum(str, Enum):
     s768m = "S768m"
     s768xm = "S768xm"
     s960m = "S960m"
-    s224o = "S224o"
-    s224m = "S224m"
-    s224om = "S224om"
-    s224oxm = "S224oxm"
-    s224oxxm = "S224oxxm"
 
 
 class HanaInstancePowerStateEnum(str, Enum):

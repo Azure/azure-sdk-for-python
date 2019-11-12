@@ -22,6 +22,7 @@ try:
     from ._models_py3 import AzureAccountInfoObject
     from ._models_py3 import BatchLabelExample
     from ._models_py3 import ChildEntity
+    from ._models_py3 import ChildEntityModelCreateObject
     from ._models_py3 import ClosedList
     from ._models_py3 import ClosedListEntityExtractor
     from ._models_py3 import ClosedListModelCreateObject
@@ -38,7 +39,9 @@ try:
     from ._models_py3 import EntityExtractor
     from ._models_py3 import EntityLabel
     from ._models_py3 import EntityLabelObject
+    from ._models_py3 import EntityModelCreateObject
     from ._models_py3 import EntityModelInfo
+    from ._models_py3 import EntityModelUpdateObject
     from ._models_py3 import EntityPrediction
     from ._models_py3 import EntityRole
     from ._models_py3 import EntityRoleCreateObject
@@ -51,16 +54,16 @@ try:
     from ._models_py3 import FeatureInfoObject
     from ._models_py3 import FeaturesResponseObject
     from ._models_py3 import HierarchicalChildEntity
-    from ._models_py3 import HierarchicalChildModelCreateObject
     from ._models_py3 import HierarchicalChildModelUpdateObject
     from ._models_py3 import HierarchicalEntityExtractor
-    from ._models_py3 import HierarchicalEntityModel
     from ._models_py3 import HierarchicalModel
     from ._models_py3 import IntentClassifier
     from ._models_py3 import IntentPrediction
     from ._models_py3 import IntentsSuggestionExample
+    from ._models_py3 import JsonChild
     from ._models_py3 import JSONEntity
     from ._models_py3 import JSONModelFeature
+    from ._models_py3 import JsonModelFeatureInformation
     from ._models_py3 import JSONRegexFeature
     from ._models_py3 import JSONUtterance
     from ._models_py3 import LabeledUtterance
@@ -68,24 +71,24 @@ try:
     from ._models_py3 import LabelTextObject
     from ._models_py3 import LuisApp
     from ._models_py3 import ModelCreateObject
+    from ._models_py3 import ModelFeatureInformation
     from ._models_py3 import ModelInfo
     from ._models_py3 import ModelInfoResponse
     from ._models_py3 import ModelTrainingDetails
     from ._models_py3 import ModelTrainingInfo
     from ._models_py3 import ModelUpdateObject
+    from ._models_py3 import NDepthEntityExtractor
     from ._models_py3 import OperationError
     from ._models_py3 import OperationStatus
     from ._models_py3 import PatternAny
     from ._models_py3 import PatternAnyEntityExtractor
     from ._models_py3 import PatternAnyModelCreateObject
     from ._models_py3 import PatternAnyModelUpdateObject
-    from ._models_py3 import PatternCreateObject
     from ._models_py3 import PatternFeatureInfo
     from ._models_py3 import PatternRule
     from ._models_py3 import PatternRuleCreateObject
     from ._models_py3 import PatternRuleInfo
     from ._models_py3 import PatternRuleUpdateObject
-    from ._models_py3 import PatternUpdateObject
     from ._models_py3 import PersonalAssistantsResponse
     from ._models_py3 import PhraselistCreateObject
     from ._models_py3 import PhraseListFeatureInfo
@@ -126,6 +129,7 @@ except (SyntaxError, ImportError):
     from ._models import AzureAccountInfoObject
     from ._models import BatchLabelExample
     from ._models import ChildEntity
+    from ._models import ChildEntityModelCreateObject
     from ._models import ClosedList
     from ._models import ClosedListEntityExtractor
     from ._models import ClosedListModelCreateObject
@@ -142,7 +146,9 @@ except (SyntaxError, ImportError):
     from ._models import EntityExtractor
     from ._models import EntityLabel
     from ._models import EntityLabelObject
+    from ._models import EntityModelCreateObject
     from ._models import EntityModelInfo
+    from ._models import EntityModelUpdateObject
     from ._models import EntityPrediction
     from ._models import EntityRole
     from ._models import EntityRoleCreateObject
@@ -155,16 +161,16 @@ except (SyntaxError, ImportError):
     from ._models import FeatureInfoObject
     from ._models import FeaturesResponseObject
     from ._models import HierarchicalChildEntity
-    from ._models import HierarchicalChildModelCreateObject
     from ._models import HierarchicalChildModelUpdateObject
     from ._models import HierarchicalEntityExtractor
-    from ._models import HierarchicalEntityModel
     from ._models import HierarchicalModel
     from ._models import IntentClassifier
     from ._models import IntentPrediction
     from ._models import IntentsSuggestionExample
+    from ._models import JsonChild
     from ._models import JSONEntity
     from ._models import JSONModelFeature
+    from ._models import JsonModelFeatureInformation
     from ._models import JSONRegexFeature
     from ._models import JSONUtterance
     from ._models import LabeledUtterance
@@ -172,24 +178,24 @@ except (SyntaxError, ImportError):
     from ._models import LabelTextObject
     from ._models import LuisApp
     from ._models import ModelCreateObject
+    from ._models import ModelFeatureInformation
     from ._models import ModelInfo
     from ._models import ModelInfoResponse
     from ._models import ModelTrainingDetails
     from ._models import ModelTrainingInfo
     from ._models import ModelUpdateObject
+    from ._models import NDepthEntityExtractor
     from ._models import OperationError
     from ._models import OperationStatus
     from ._models import PatternAny
     from ._models import PatternAnyEntityExtractor
     from ._models import PatternAnyModelCreateObject
     from ._models import PatternAnyModelUpdateObject
-    from ._models import PatternCreateObject
     from ._models import PatternFeatureInfo
     from ._models import PatternRule
     from ._models import PatternRuleCreateObject
     from ._models import PatternRuleInfo
     from ._models import PatternRuleUpdateObject
-    from ._models import PatternUpdateObject
     from ._models import PersonalAssistantsResponse
     from ._models import PhraselistCreateObject
     from ._models import PhraseListFeatureInfo
@@ -235,6 +241,7 @@ __all__ = [
     'AzureAccountInfoObject',
     'BatchLabelExample',
     'ChildEntity',
+    'ChildEntityModelCreateObject',
     'ClosedList',
     'ClosedListEntityExtractor',
     'ClosedListModelCreateObject',
@@ -251,7 +258,9 @@ __all__ = [
     'EntityExtractor',
     'EntityLabel',
     'EntityLabelObject',
+    'EntityModelCreateObject',
     'EntityModelInfo',
+    'EntityModelUpdateObject',
     'EntityPrediction',
     'EntityRole',
     'EntityRoleCreateObject',
@@ -264,16 +273,16 @@ __all__ = [
     'FeatureInfoObject',
     'FeaturesResponseObject',
     'HierarchicalChildEntity',
-    'HierarchicalChildModelCreateObject',
     'HierarchicalChildModelUpdateObject',
     'HierarchicalEntityExtractor',
-    'HierarchicalEntityModel',
     'HierarchicalModel',
     'IntentClassifier',
     'IntentPrediction',
     'IntentsSuggestionExample',
+    'JsonChild',
     'JSONEntity',
     'JSONModelFeature',
+    'JsonModelFeatureInformation',
     'JSONRegexFeature',
     'JSONUtterance',
     'LabeledUtterance',
@@ -281,24 +290,24 @@ __all__ = [
     'LabelTextObject',
     'LuisApp',
     'ModelCreateObject',
+    'ModelFeatureInformation',
     'ModelInfo',
     'ModelInfoResponse',
     'ModelTrainingDetails',
     'ModelTrainingInfo',
     'ModelUpdateObject',
+    'NDepthEntityExtractor',
     'OperationError',
     'OperationStatus',
     'PatternAny',
     'PatternAnyEntityExtractor',
     'PatternAnyModelCreateObject',
     'PatternAnyModelUpdateObject',
-    'PatternCreateObject',
     'PatternFeatureInfo',
     'PatternRule',
     'PatternRuleCreateObject',
     'PatternRuleInfo',
     'PatternRuleUpdateObject',
-    'PatternUpdateObject',
     'PersonalAssistantsResponse',
     'PhraselistCreateObject',
     'PhraseListFeatureInfo',

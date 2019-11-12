@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.7.4 (Windows-10-10.0.18362-SP0)
     method: PUT
-    uri: https://vaultf8b2142a.vault.azure.net/certificates/contacts?api-version=7.0
+    uri: https://vault458ad70cc7f8b2142a.vault.azure.net/certificates/contacts?api-version=7.0
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -20,7 +20,7 @@ interactions:
       cache-control: no-cache
       content-length: '87'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 20:48:12 GMT
+      date: Thu, 31 Oct 2019 23:07:44 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -29,9 +29,9 @@ interactions:
         resource="https://vault.azure.net"
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=131.107.174.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.878
+      x-ms-keyvault-service-version: 1.1.0.879
       x-powered-by: ASP.NET
     status:
       code: 401
@@ -40,7 +40,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - vaultf8b2142a.vault.azure.net
+        - vault458ad70cc7f8b2142a.vault.azure.net
         - /certificates/contacts
         - api-version=7.0
         - ''
@@ -56,27 +56,27 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.7.4 (Windows-10-10.0.18362-SP0)
     method: PUT
-    uri: https://vaultf8b2142a.vault.azure.net/certificates/contacts?api-version=7.0
+    uri: https://vault458ad70cc7f8b2142a.vault.azure.net/certificates/contacts?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vaultf8b2142a.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
+      string: '{"id":"https://vault458ad70cc7f8b2142a.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
         Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'
     headers:
       cache-control: no-cache
-      content-length: '221'
+      content-length: '231'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 20:48:13 GMT
+      date: Thu, 31 Oct 2019 23:07:44 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
       strict-transport-security: max-age=31536000;includeSubDomains
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=131.107.174.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.878
+      x-ms-keyvault-service-version: 1.1.0.879
       x-powered-by: ASP.NET
     status:
       code: 200
@@ -85,7 +85,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - vaultf8b2142a.vault.azure.net
+        - vault458ad70cc7f8b2142a.vault.azure.net
         - /certificates/contacts
         - api-version=7.0
         - ''
@@ -95,27 +95,27 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.7.4 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://vaultf8b2142a.vault.azure.net/certificates/contacts?api-version=7.0
+    uri: https://vault458ad70cc7f8b2142a.vault.azure.net/certificates/contacts?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vaultf8b2142a.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
+      string: '{"id":"https://vault458ad70cc7f8b2142a.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
         Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'
     headers:
       cache-control: no-cache
-      content-length: '221'
+      content-length: '231'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 20:48:13 GMT
+      date: Thu, 31 Oct 2019 23:07:44 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
       strict-transport-security: max-age=31536000;includeSubDomains
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=131.107.174.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.878
+      x-ms-keyvault-service-version: 1.1.0.879
       x-powered-by: ASP.NET
     status:
       code: 200
@@ -124,7 +124,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - vaultf8b2142a.vault.azure.net
+        - vault458ad70cc7f8b2142a.vault.azure.net
         - /certificates/contacts
         - api-version=7.0
         - ''
@@ -134,27 +134,27 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.7.4 (Windows-10-10.0.18362-SP0)
     method: DELETE
-    uri: https://vaultf8b2142a.vault.azure.net/certificates/contacts?api-version=7.0
+    uri: https://vault458ad70cc7f8b2142a.vault.azure.net/certificates/contacts?api-version=7.0
   response:
     body:
-      string: '{"id":"https://vaultf8b2142a.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
+      string: '{"id":"https://vault458ad70cc7f8b2142a.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
         Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'
     headers:
       cache-control: no-cache
-      content-length: '221'
+      content-length: '231'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 20:48:13 GMT
+      date: Thu, 31 Oct 2019 23:07:44 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
       strict-transport-security: max-age=31536000;includeSubDomains
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=131.107.174.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.878
+      x-ms-keyvault-service-version: 1.1.0.879
       x-powered-by: ASP.NET
     status:
       code: 200
@@ -163,7 +163,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - vaultf8b2142a.vault.azure.net
+        - vault458ad70cc7f8b2142a.vault.azure.net
         - /certificates/contacts
         - api-version=7.0
         - ''
@@ -173,9 +173,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.0.0b5 Python/3.7.4 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://vaultf8b2142a.vault.azure.net/certificates/contacts?api-version=7.0
+    uri: https://vault458ad70cc7f8b2142a.vault.azure.net/certificates/contacts?api-version=7.0
   response:
     body:
       string: '{"error":{"code":"ContactsNotFound","message":"Contacts not found"}}'
@@ -183,16 +183,16 @@ interactions:
       cache-control: no-cache
       content-length: '68'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 20:48:13 GMT
+      date: Thu, 31 Oct 2019 23:07:44 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
       strict-transport-security: max-age=31536000;includeSubDomains
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=131.107.174.72;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: addr=131.107.160.72;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.878
+      x-ms-keyvault-service-version: 1.1.0.879
       x-powered-by: ASP.NET
     status:
       code: 404
@@ -201,7 +201,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - vaultf8b2142a.vault.azure.net
+        - vault458ad70cc7f8b2142a.vault.azure.net
         - /certificates/contacts
         - api-version=7.0
         - ''

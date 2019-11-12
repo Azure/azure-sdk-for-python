@@ -13,6 +13,113 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class ARMProxyResource(Model):
+    """The resource model definition for a ARM proxy resource. It will have
+    everything other than required location and tags.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The unique resource identifier of the database account.
+    :vartype id: str
+    :ivar name: The name of the database account.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ARMProxyResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class Resource(Model):
+    """Resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class AzureEntityResource(Resource):
+    """The resource model definition for a Azure Resource Manager resource with an
+    etag.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(AzureEntityResource, self).__init__(**kwargs)
+        self.etag = None
+
+
 class Capability(Model):
     """Cosmos DB capability object.
 
@@ -31,7 +138,7 @@ class Capability(Model):
         self.name = name
 
 
-class Resource(Model):
+class DbResource(Model):
     """The core properties of ARM resources.
 
     Variables are only populated by the server, and will be ignored when
@@ -65,7 +172,7 @@ class Resource(Model):
     }
 
     def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
-        super(Resource, self).__init__(**kwargs)
+        super(DbResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -73,7 +180,7 @@ class Resource(Model):
         self.tags = tags
 
 
-class CassandraKeyspace(Resource):
+class CassandraKeyspace(DbResource):
     """An Azure Cosmos DB Cassandra keyspace.
 
     Variables are only populated by the server, and will be ignored when
@@ -210,7 +317,7 @@ class CassandraSchema(Model):
         self.cluster_keys = cluster_keys
 
 
-class CassandraTable(Resource):
+class CassandraTable(DbResource):
     """An Azure Cosmos DB Cassandra table.
 
     Variables are only populated by the server, and will be ignored when
@@ -461,7 +568,7 @@ class ContainerPartitionKey(Model):
         self.kind = kind
 
 
-class DatabaseAccount(Resource):
+class DatabaseAccount(DbResource):
     """An Azure Cosmos DB database account.
 
     Variables are only populated by the server, and will be ignored when
@@ -618,7 +725,7 @@ class DatabaseAccountConnectionString(Model):
         self.description = None
 
 
-class DatabaseAccountCreateUpdateParameters(Resource):
+class DatabaseAccountCreateUpdateParameters(DbResource):
     """Parameters to create and update Cosmos DB database accounts.
 
     Variables are only populated by the server, and will be ignored when
@@ -991,7 +1098,7 @@ class FailoverPolicy(Model):
         self.failover_priority = failover_priority
 
 
-class GremlinDatabase(Resource):
+class GremlinDatabase(DbResource):
     """An Azure Cosmos DB Gremlin database.
 
     Variables are only populated by the server, and will be ignored when
@@ -1100,7 +1207,7 @@ class GremlinDatabaseResource(Model):
         self.id = id
 
 
-class GremlinGraph(Resource):
+class GremlinGraph(DbResource):
     """An Azure Cosmos DB Gremlin graph.
 
     Variables are only populated by the server, and will be ignored when
@@ -1480,7 +1587,7 @@ class MetricDefinition(Model):
     :vartype metric_availabilities:
      list[~azure.mgmt.cosmosdb.models.MetricAvailability]
     :ivar primary_aggregation_type: The primary aggregation type of the
-     metric. Possible values include: 'None', 'Average', 'Total', 'Minimimum',
+     metric. Possible values include: 'None', 'Average', 'Total', 'Minimum',
      'Maximum', 'Last'
     :vartype primary_aggregation_type: str or
      ~azure.mgmt.cosmosdb.models.PrimaryAggregationType
@@ -1594,7 +1701,7 @@ class MetricValue(Model):
         self.total = None
 
 
-class MongoDBCollection(Resource):
+class MongoDBCollection(DbResource):
     """An Azure Cosmos DB MongoDB collection.
 
     Variables are only populated by the server, and will be ignored when
@@ -1708,7 +1815,7 @@ class MongoDBCollectionResource(Model):
         self.indexes = indexes
 
 
-class MongoDBDatabase(Resource):
+class MongoDBDatabase(DbResource):
     """An Azure Cosmos DB MongoDB database.
 
     Variables are only populated by the server, and will be ignored when
@@ -2189,6 +2296,170 @@ class PercentileMetricValue(MetricValue):
         self.p99 = None
 
 
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have
+    everything other than required location and tags.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class PrivateEndpointConnection(ProxyResource):
+    """A private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param private_endpoint: Private endpoint which the connection belongs to.
+    :type private_endpoint:
+     ~azure.mgmt.cosmosdb.models.PrivateEndpointProperty
+    :param private_link_service_connection_state: Connection State of the
+     Private Endpoint Connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.cosmosdb.models.PrivateLinkServiceConnectionStateProperty
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpointProperty'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
+    }
+
+    def __init__(self, *, private_endpoint=None, private_link_service_connection_state=None, **kwargs) -> None:
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+
+
+class PrivateEndpointProperty(Model):
+    """Private endpoint which the connection belongs to.
+
+    :param id: Resource id of the private endpoint.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(PrivateEndpointProperty, self).__init__(**kwargs)
+        self.id = id
+
+
+class PrivateLinkResource(ARMProxyResource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The unique resource identifier of the database account.
+    :vartype id: str
+    :ivar name: The name of the database account.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+
+
+class PrivateLinkServiceConnectionStateProperty(Model):
+    """Connection State of the Private Endpoint Connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param status: The private link service connection status.
+    :type status: str
+    :param description: The private link service connection description.
+    :type description: str
+    :ivar actions_required: Any action that is required beyond basic workflow
+     (approve/ reject/ disconnect)
+    :vartype actions_required: str
+    """
+
+    _validation = {
+        'actions_required': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, *, status: str=None, description: str=None, **kwargs) -> None:
+        super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = None
+
+
 class RegionForOnlineOffline(Model):
     """Cosmos DB region to online or offline.
 
@@ -2212,7 +2483,7 @@ class RegionForOnlineOffline(Model):
         self.region = region
 
 
-class SqlContainer(Resource):
+class SqlContainer(DbResource):
     """An Azure Cosmos DB container.
 
     Variables are only populated by the server, and will be ignored when
@@ -2374,7 +2645,7 @@ class SqlContainerResource(Model):
         self.conflict_resolution_policy = conflict_resolution_policy
 
 
-class SqlDatabase(Resource):
+class SqlDatabase(DbResource):
     """An Azure Cosmos DB SQL database.
 
     Variables are only populated by the server, and will be ignored when
@@ -2492,7 +2763,7 @@ class SqlDatabaseResource(Model):
         self.id = id
 
 
-class Table(Resource):
+class Table(DbResource):
     """An Azure Cosmos DB Table.
 
     Variables are only populated by the server, and will be ignored when
@@ -2586,7 +2857,7 @@ class TableResource(Model):
         self.id = id
 
 
-class Throughput(Resource):
+class Throughput(DbResource):
     """An Azure Cosmos DB resource throughput.
 
     Variables are only populated by the server, and will be ignored when
@@ -2673,6 +2944,49 @@ class ThroughputUpdateParameters(Model):
     def __init__(self, *, resource, **kwargs) -> None:
         super(ThroughputUpdateParameters, self).__init__(**kwargs)
         self.resource = resource
+
+
+class TrackedResource(Resource):
+    """The resource model definition for a ARM tracked top level resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives
+    :type location: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+        super(TrackedResource, self).__init__(**kwargs)
+        self.tags = tags
+        self.location = location
 
 
 class UniqueKey(Model):

@@ -31,19 +31,19 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, SDKClient)
     :vartype config: WebSiteManagementClientConfiguration
 
     :ivar certificates: Certificates operations
-    :vartype certificates: azure.mgmt.web.operations.CertificatesOperations
+    :vartype certificates: azure.mgmt.web.v2016_03_01.operations.CertificatesOperations
     :ivar deleted_web_apps: DeletedWebApps operations
-    :vartype deleted_web_apps: azure.mgmt.web.operations.DeletedWebAppsOperations
+    :vartype deleted_web_apps: azure.mgmt.web.v2016_03_01.operations.DeletedWebAppsOperations
     :ivar diagnostics: Diagnostics operations
-    :vartype diagnostics: azure.mgmt.web.operations.DiagnosticsOperations
+    :vartype diagnostics: azure.mgmt.web.v2016_03_01.operations.DiagnosticsOperations
     :ivar provider: Provider operations
-    :vartype provider: azure.mgmt.web.operations.ProviderOperations
+    :vartype provider: azure.mgmt.web.v2016_03_01.operations.ProviderOperations
     :ivar recommendations: Recommendations operations
-    :vartype recommendations: azure.mgmt.web.operations.RecommendationsOperations
+    :vartype recommendations: azure.mgmt.web.v2016_03_01.operations.RecommendationsOperations
     :ivar resource_health_metadata: ResourceHealthMetadata operations
-    :vartype resource_health_metadata: azure.mgmt.web.operations.ResourceHealthMetadataOperations
+    :vartype resource_health_metadata: azure.mgmt.web.v2016_03_01.operations.ResourceHealthMetadataOperations
     :ivar billing_meters: BillingMeters operations
-    :vartype billing_meters: azure.mgmt.web.operations.BillingMetersOperations
+    :vartype billing_meters: azure.mgmt.web.v2016_03_01.operations.BillingMetersOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

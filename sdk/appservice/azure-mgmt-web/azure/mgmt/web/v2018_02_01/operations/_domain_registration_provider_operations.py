@@ -53,9 +53,9 @@ class DomainRegistrationProviderOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of CsmOperationDescription
         :rtype:
-         ~azure.mgmt.web.models.CsmOperationDescriptionPaged[~azure.mgmt.web.models.CsmOperationDescription]
+         ~azure.mgmt.web.v2018_02_01.models.CsmOperationDescriptionPaged[~azure.mgmt.web.v2018_02_01.models.CsmOperationDescription]
         :raises:
-         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.v2018_02_01.models.DefaultErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:

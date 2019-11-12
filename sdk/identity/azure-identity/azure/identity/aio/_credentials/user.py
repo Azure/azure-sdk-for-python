@@ -5,7 +5,6 @@
 from typing import TYPE_CHECKING
 from azure.core.exceptions import ClientAuthenticationError
 
-from azure.identity._constants import Endpoints
 from ... import SharedTokenCacheCredential as SyncSharedTokenCacheCredential
 from .._authn_client import AsyncAuthnClient
 from .._internal.exception_wrapper import wrap_exceptions
@@ -18,8 +17,7 @@ if TYPE_CHECKING:
 
 
 class SharedTokenCacheCredential(SyncSharedTokenCacheCredential):
-    """
-    Authenticates using tokens in the local cache shared between Microsoft applications.
+    """Authenticates using tokens in the local cache shared between Microsoft applications.
 
     :param str username:
         Username (typically an email address) of the user to authenticate as. This is required because the local cache
@@ -28,26 +26,27 @@ class SharedTokenCacheCredential(SyncSharedTokenCacheCredential):
 
     @wrap_exceptions
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
-        """
-        Get an access token for `scopes` from the shared cache. If no access token is cached, attempt to acquire one
-        using a cached refresh token.
+        """Get an access token for `scopes` from the shared cache.
+
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
+        If no access token is cached, attempt to acquire one using a cached refresh token.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises:
-            :class:`azure.core.exceptions.ClientAuthenticationError` when the cache is unavailable or no access token
+        :raises ~azure.core.exceptions.ClientAuthenticationError: when the cache is unavailable or no access token
             can be acquired from it
+
+        :keyword str authority: Authority of an Azure Active Directory endpoint, for example
+              'login.microsoftonline.com', the authority for Azure Public Cloud (which is the default).
+              :class:`~azure.identity.KnownAuthorities` defines authorities for other clouds.
         """
 
         if not self._client:
             raise ClientAuthenticationError(message="Shared token cache unavailable")
 
-        token = await self._client.obtain_token_by_refresh_token(scopes, self._username)
-        if not token:
-            raise ClientAuthenticationError(message="No cached token found for '{}'".format(self._username))
-
-        return token
+        return await self._client.obtain_token_by_refresh_token(scopes, self._username)
 
     @staticmethod
     def _get_auth_client(cache: "msal_extensions.FileTokenCache") -> "AuthnClientBase":
-        return AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format("common"), cache=cache)
+        return AsyncAuthnClient(tenant="common", cache=cache)
