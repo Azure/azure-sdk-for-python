@@ -12,6 +12,12 @@
 from enum import Enum
 
 
+class ResourceDiscoveryMode(str, Enum):
+
+    existing_non_compliant = "ExistingNonCompliant"  #: Remediate resources that are already known to be non-compliant.
+    re_evaluate_compliance = "ReEvaluateCompliance"  #: Re-evaluate the compliance state of resources and then remediate the resources found to be non-compliant.
+
+
 class PolicyStatesResource(str, Enum):
 
     default = "default"
