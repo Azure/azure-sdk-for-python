@@ -27,9 +27,8 @@ from azure.cosmos.documents import _DistinctType
 
 
 class _PartitionedQueryExecutionInfo(object):
-    """
-    Represents a wrapper helper for partitioned query execution info dictionary
-    returned by the backend.
+    """Represents a wrapper helper for partitioned query execution info 
+    dictionary returned by the backend.
     """
 
     QueryInfoPath = "queryInfo"
@@ -45,48 +44,47 @@ class _PartitionedQueryExecutionInfo(object):
 
     def __init__(self, query_execution_info):
         """
-        Constructor
         :param dict query_execution_info:
         """
         self._query_execution_info = query_execution_info
 
     def get_top(self):
-        """Returns the top count (if any) or None
+        """Returns the top count (if any) or None.
         """
         return self._extract(_PartitionedQueryExecutionInfo.TopPath)
 
     def get_limit(self):
-        """Returns the limit count (if any) or None
+        """Returns the limit count (if any) or None.
         """
         return self._extract(_PartitionedQueryExecutionInfo.LimitPath)
 
     def get_offset(self):
-        """Returns the offset count (if any) or None
+        """Returns the offset count (if any) or None.
         """
         return self._extract(_PartitionedQueryExecutionInfo.OffsetPath)
 
     def get_distinct_type(self):
-        """Returns the offset count (if any) or None
+        """Returns the offset count (if any) or None.
         """
         return self._extract(_PartitionedQueryExecutionInfo.DistinctTypePath)
 
     def get_order_by(self):
-        """Returns order by items (if any) or None
+        """Returns order by items (if any) or None.
         """
         return self._extract(_PartitionedQueryExecutionInfo.OrderByPath)
 
     def get_aggregates(self):
-        """Returns aggregators (if any) or None
+        """Returns aggregators (if any) or None.
         """
         return self._extract(_PartitionedQueryExecutionInfo.AggregatesPath)
 
     def get_query_ranges(self):
-        """Returns query partition ranges (if any) or None
+        """Returns query partition ranges (if any) or None.
         """
         return self._extract(_PartitionedQueryExecutionInfo.QueryRangesPath)
 
     def get_rewritten_query(self):
-        """Returns rewritten query or None (if any)
+        """Returns rewritten query or None (if any).
         """
         rewrittenQuery = self._extract(_PartitionedQueryExecutionInfo.RewrittenQueryPath)
         if rewrittenQuery is not None:

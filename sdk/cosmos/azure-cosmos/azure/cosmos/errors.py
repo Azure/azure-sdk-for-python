@@ -19,7 +19,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""PyCosmos Exceptions in the Azure Cosmos database service. (Deprecated module)
+"""Service-specific Exceptions in the Azure Cosmos database service.
+
+.. warning::
+    This module is DEPRECATED. Use `azure.cosmos.exceptions` instead. 
 """
 import warnings
 

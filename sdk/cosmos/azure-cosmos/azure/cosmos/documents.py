@@ -19,14 +19,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""AzureDocument classes and enums for the Azure Cosmos database service.
+"""Classes and enums for documents in the Azure Cosmos database service.
 """
 
 from . import _retry_options
 
 
 class DatabaseAccount(object):  # pylint: disable=too-many-instance-attributes
-    """Database account. A DatabaseAccount is the container for databases.
+    """Database account. 
+    
+    A DatabaseAccount is the container for databases.
 
     :ivar str DatabaseLink:
         The self-link for Databases in the databaseAccount.
@@ -68,13 +70,13 @@ class DatabaseAccount(object):  # pylint: disable=too-many-instance-attributes
 
     @property
     def WritableLocations(self):
-        """Gets the list of writable locations for a geo-replicated database account.
+        """The list of writable locations for a geo-replicated database account.
         """
         return self._WritableLocations
 
     @property
     def ReadableLocations(self):
-        """Gets the list of readable locations for a geo-replicated database account.
+        """The list of readable locations for a geo-replicated database account.
         """
         return self._ReadableLocations
 
@@ -90,25 +92,24 @@ class ConsistencyLevel(object):
     Session, ConsistentPrefix and Eventual.
 
     :ivar str ConsistencyLevel.Strong:
-        Strong Consistency guarantees that read operations always
-        return the value that was last written.
+        Strong Consistency guarantees that read operations always return the 
+        value that was last written.
     :ivar str ConsistencyLevel.BoundedStaleness:
-        Bounded Staleness guarantees that reads are not
-        too out-of-date. This can be configured based on number of operations
-        (MaxStalenessPrefix) or time (MaxStalenessIntervalInSeconds).
+        Bounded Staleness guarantees that reads are not too out-of-date. This 
+        can be configured based on number of operations (MaxStalenessPrefix) 
+        or time (MaxStalenessIntervalInSeconds).
     :ivar str ConsistencyLevel.Session:
-        Session Consistency guarantees monotonic reads (you never
-        read old data, then new, then old again), monotonic writes (writes
-        are ordered) and read your writes (your writes are immediately
-        visible to your reads) within any single session.
+        Session Consistency guarantees monotonic reads (you never read old data,
+        then new, then old again), monotonic writes (writes are ordered) and 
+        read your writes (your writes are immediately visible to your reads) 
+        within any single session.
     :ivar str ConsistencyLevel.Eventual:
-        Eventual Consistency guarantees that reads will return
-        a subset of writes. All writes will be eventually be available for
-        reads.
+        Eventual Consistency guarantees that reads will return a subset of 
+        writes. All writes will be eventually be available for reads.
     :ivar str ConsistencyLevel.ConsistentPrefix:
-        ConsistentPrefix Consistency guarantees that
-        reads will return some prefix of all writes with no gaps. All writes
-        will be eventually be available for reads.
+        ConsistentPrefix Consistency guarantees that reads will return some 
+        prefix of all writes with no gaps. All writes will be eventually be 
+        available for reads.
     """
 
     Strong = "Strong"
@@ -122,15 +123,14 @@ class IndexingMode(object):
     """Specifies the supported indexing modes.
 
     :ivar str Consistent:
-        Index is updated synchronously with a create or
-        update operation. With consistent indexing, query behavior is the
-        same as the default consistency level for the collection.
+        Index is updated synchronously with a create or update operation. With 
+        consistent indexing, query behavior is the same as the default 
+        consistency level for the collection.
 
-        The index is
-        always kept up to date with the data.
+        The index is always kept up to date with the data.
     :ivar str Lazy:
-        Index is updated asynchronously with respect to a create
-        or update operation.
+        Index is updated asynchronously with respect to a create or update 
+        operation.
 
         With lazy indexing, queries are eventually consistent. The index is
         updated when the collection is idle.
@@ -220,15 +220,15 @@ class ConnectionMode(object):
     """Represents the connection mode to be used by the client.
 
     :ivar int Gateway:
-        Use the Azure Cosmos gateway to route all requests. The
-        gateway proxies requests to the right data partition.
+        Use the Azure Cosmos gateway to route all requests. The gateway proxies 
+        requests to the right data partition.
     """
 
     Gateway = 0
 
 
 class PermissionMode(object):
-    """Enumeration specifying applicability of permission.
+    """Enumeration specifying applicability of a permission.
 
     :ivar str PermissionMode.NoneMode:
         None.
@@ -244,7 +244,7 @@ class PermissionMode(object):
 
 
 class TriggerType(object):
-    """Specifies the type of the trigger.
+    """Specifies the type of a trigger.
 
     :ivar str TriggerType.Pre:
         Trigger should be executed before the associated operation(s).
@@ -279,9 +279,10 @@ class TriggerOperation(object):
 
 
 class SSLConfiguration(object):
-    """Configurations for SSL connections.
+    """Configuration for SSL connections.
 
-    Please refer to https://requests.readthedocs.io/en/master/user/advanced/#ssl-cert-verification for more detail.
+    See https://requests.readthedocs.io/en/master/user/advanced/#ssl-cert-verification 
+    for more information.
 
     :ivar str SSLKeyFIle:
         The path of the key file for ssl connection.
@@ -298,7 +299,7 @@ class SSLConfiguration(object):
 
 
 class ProxyConfiguration(object):
-    """Configurations for proxy.
+    """Configurations for a proxy.
 
     :ivar str Host:
         The host address of the proxy.
@@ -315,37 +316,42 @@ class ConnectionPolicy(object):  # pylint: disable=too-many-instance-attributes
     """Represents the Connection policy assocated with a CosmosClientConnection.
 
     :ivar int RequestTimeout:
-        Gets or sets the request timeout (time to wait
-        for response from network peer).
+        Gets or sets the request timeout (time to wait for a response from a
+        network peer).
     :ivar documents.ConnectionMode ConnectionMode:
-        Gets or sets the connection mode used in the client. Currently
-        only Gateway is supported.
+        Gets or sets the connection mode used in the client. (Currently only 
+        Gateway is supported.)
     :ivar documents.SSLConfiguration SSLConfiguration:
         Gets or sets the SSL configuration.
     :ivar documents.ProxyConfiguration ProxyConfiguration:
         Gets or sets the proxy configuration.
     :ivar boolean EnableEndpointDiscovery:
-        Gets or sets endpoint discovery flag for geo-replicated database accounts.
-        When EnableEndpointDiscovery is true, the client will automatically discover the
-        current write and read locations and direct the requests to the correct location
-        taking into consideration of the user's preference(if provided) as PreferredLocations.
+        Gets or sets endpoint discovery flag for geo-replicated database 
+        accounts. When EnableEndpointDiscovery is true, the client will 
+        automatically discover the current write and read locations and direct
+        the requests to the correct location taking into consideration of the 
+        user's preference(if provided) as PreferredLocations.
     :ivar list PreferredLocations:
-        Gets or sets the preferred locations for geo-replicated database accounts.
-        When EnableEndpointDiscovery is true and PreferredLocations is non-empty,
-        the client will use this list to evaluate the final location, taking into consideration
-        the order specified in PreferredLocations list. The locations in this list are specified
-        as the names of the azure Cosmos locations like, 'West US', 'East US', 'Central India'
-        and so on.
+        Gets or sets the preferred locations for geo-replicated database 
+        accounts. When EnableEndpointDiscovery is true and PreferredLocations is
+        non-empty, the client will use this list to evaluate the final location, 
+        taking into consideration the order specified in PreferredLocations. The
+        locations in this list are specified as the names of the azure Cosmos 
+        locations like, 'West US', 'East US', 'Central India' and so on.
     :ivar RetryOptions RetryOptions:
-        Gets or sets the retry options to be applied to all requests when retrying.
+        Gets or sets the retry options to be applied to all requests when 
+        retrying.
     :ivar boolean DisableSSLVerification:
-        Flag to disable SSL verification for the requests. SSL verification is enabled by default.
-        Don't set this when targeting production endpoints.
-        This is intended to be used only when targeting emulator endpoint to avoid failing your
-        requests with SSL related error.
+        Flag to disable SSL verification for the requests. SSL verification is 
+        enabled by default.
+
+        This is intended to be used only when targeting emulator endpoint to 
+        avoid failing your requests with SSL related error.
+
+        DO NOT set this when targeting production endpoints.
     :ivar boolean UseMultipleWriteLocations:
-        Flag to enable writes on any locations (regions) for geo-replicated database accounts
-        in the azure Cosmos service.
+        Flag to enable writes on any locations (regions) for geo-replicated 
+        database accounts in the Azure Cosmos database service.
     :ivar ConnectionRetryConfiguration:
         Retry Configuration to be used for connection retries.
     :vartype ConnectionRetryConfiguration:

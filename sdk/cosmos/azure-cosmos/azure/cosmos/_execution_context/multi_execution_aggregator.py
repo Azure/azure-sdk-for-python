@@ -37,11 +37,12 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
     This class maintains the execution context for each partition key range
     and aggregates the corresponding results from each execution context.
 
-    When handling an orderby query, _MultiExecutionContextAggregator instantiates one instance of
-    DocumentProducer per target partition key range and aggregates the result of each.
-
-    TODO improvement: this class needs to be parallelized
+    When handling an orderby query, _MultiExecutionContextAggregator 
+    instantiates one instance of DocumentProducer per target partition key range
+    and aggregates the result of each.
     """
+
+    # TODO improvement: this class needs to be parallelized
 
     class PriorityQueue:
         """Provides a Priority Queue abstraction data structure"""
@@ -62,10 +63,6 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
             return len(self._heap)
 
     def __init__(self, client, resource_link, query, options, partitioned_query_ex_info):
-
-        """
-        Constructor
-        """
         super(_MultiExecutionContextAggregator, self).__init__(client, options)
 
         # use the routing provider in the client
@@ -106,13 +103,11 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
                 continue
 
     def next(self):
-        """returns the next result
+        """Returns the next result
 
-        :return:
-            The next result.
+        :return: The next result.
         :rtype: dict
         :raises StopIteration: If no more result is left.
-
         """
         if self._orderByPQ.size() > 0:
 

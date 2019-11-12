@@ -42,20 +42,18 @@ __all__ = ("ContainerProxy",)
 
 
 class ContainerProxy(object):
-    """
-    An interface to interact with a specific DB Container.
-    This class should not be instantiated directly, use :func:`DatabaseProxy.get_container_client` method.
+    """An interface to interact with a specific DB Container.
 
-    A container in an Azure Cosmos DB SQL API database is a collection of documents,
-    each of which represented as an Item.
+    This class should not be instantiated directly. Instead, use the 
+    :func:`DatabaseProxy.get_container_client` method to get an existing 
+    container, or the :func:`Database.create_container` method to create a 
+    new container.
+
+    A container in an Azure Cosmos DB SQL API database is a collection of 
+    documents, each of which represented as an Item.
 
     :ivar str id: ID (name) of the container
     :ivar str session_token: The session token for the container.
-
-    .. note::
-
-        To create a new container in an existing database, use :func:`Database.create_container`.
-
     """
 
     def __init__(self, client_connection, database_link, id, properties=None):  # pylint: disable=redefined-builtin
@@ -210,7 +208,7 @@ class ContainerProxy(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
-        """List all items in the container.
+        """List all the items in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -295,9 +293,10 @@ class ContainerProxy(object):
         # type: (...) -> Iterable[Dict[str, Any]]
         """Return all results matching the given `query`.
 
-        You can use any value for the container name in the FROM clause, but typically the container name is used.
-        In the examples below, the container name is "products," and is aliased as "p" for easier referencing
-        in the WHERE clause.
+        You can use any value for the container name in the FROM clause, but 
+        often the container name is used. In the examples below, the container 
+        name is "products," and is aliased as "p" for easier referencing in 
+        the WHERE clause.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
@@ -374,6 +373,8 @@ class ContainerProxy(object):
         # type: (...) -> Dict[str, str]
         """Replaces the specified item if it exists in the container.
 
+        If the item does not already exist in the container, an exception is raised.
+
         :param item: The ID (name) or dict representing item to be replaced.
         :param body: A dict-like object representing the item to replace.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -420,7 +421,8 @@ class ContainerProxy(object):
         # type: (...) -> Dict[str, str]
         """Insert or update the specified item.
 
-        If the item already exists in the container, it is replaced. If it does not, it is inserted.
+        If the item already exists in the container, it is replaced. If the item
+        does not already exist, it is inserted.
 
         :param body: A dict-like object representing the item to update or insert.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -465,7 +467,8 @@ class ContainerProxy(object):
         # type: (...) -> Dict[str, str]
         """Create an item in the container.
 
-        To update or replace an existing item, use the :func:`ContainerProxy.upsert_item` method.
+        To update or replace an existing item, use the 
+        :func:`ContainerProxy.upsert_item` method.
 
         :param body: A dict-like object representing the item to create.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -515,6 +518,8 @@ class ContainerProxy(object):
         # type: (...) -> None
         """Delete the specified item from the container.
 
+        If the item does not already exist in the container, an exception is raised.
+
         :param item: The ID (name) or dict representing item to be deleted.
         :param partition_key: Specifies the partition key value for the item.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -551,6 +556,8 @@ class ContainerProxy(object):
         # type: (Any) -> Offer
         """Read the Offer object for this container.
 
+        If no Offer already exists for the container, an exception is raised.
+
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Offer for the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No offer exists for the container or
@@ -579,6 +586,8 @@ class ContainerProxy(object):
     def replace_throughput(self, throughput, **kwargs):
         # type: (int, Any) -> Offer
         """Replace the container's throughput.
+
+        If no Offer already exists for the container, an exception is raised.
 
         :param throughput: The throughput to be set (an integer).
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -611,7 +620,7 @@ class ContainerProxy(object):
     @distributed_trace
     def list_conflicts(self, max_item_count=None, **kwargs):
         # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
-        """List all conflicts in the container.
+        """List all the conflicts in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -641,7 +650,7 @@ class ContainerProxy(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
-        """Return all conflicts matching the given `query`.
+        """Return all conflicts matching a given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
@@ -700,7 +709,9 @@ class ContainerProxy(object):
     @distributed_trace
     def delete_conflict(self, conflict, partition_key, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any, Any) -> None
-        """Delete the specified conflict from the container.
+        """Delete a specified conflict from the container.
+
+        If the conflict does not already exist in the container, an exception is raised.
 
         :param conflict: The ID (name) or dict representing the conflict to be deleted.
         :param partition_key: Partition key for the conflict to delete.

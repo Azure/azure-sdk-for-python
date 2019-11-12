@@ -19,7 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for query execution context implementation in the Azure Cosmos database service.
+"""Internal class for query execution context implementation in the Azure Cosmos
+database service.
 """
 
 from collections import deque
@@ -36,12 +37,8 @@ class _QueryExecutionContextBase(object):
 
     def __init__(self, client, options):
         """
-        Constructor
-
         :param CosmosClient client:
-        :param dict options:
-            The request options for the request.
-
+        :param dict options: The request options for the request.
         """
         self._client = client
         self._options = options
@@ -59,11 +56,10 @@ class _QueryExecutionContextBase(object):
     def fetch_next_block(self):
         """Returns a block of results with respecting retry policy.
 
-        This method only exists for backward compatibility reasons. (Because QueryIterable
-        has exposed fetch_next_block api).
+        This method only exists for backward compatibility reasons. (Because 
+        QueryIterable has exposed fetch_next_block api).
 
-        :return:
-            List of results.
+        :return: List of results.
         :rtype: list
         """
         if not self._has_more_pages():
@@ -86,10 +82,9 @@ class _QueryExecutionContextBase(object):
         return self
 
     def next(self):
-        """Returns the next query result.
+        """Return the next query result.
 
-        :return:
-            The next query result.
+        :return: The next query result.
         :rtype: dict
         :raises StopIteration: If no more result is left.
         """
@@ -113,8 +108,7 @@ class _QueryExecutionContextBase(object):
     def _fetch_items_helper_no_retries(self, fetch_function):
         """Fetches more items and doesn't retry on failure
 
-        :return:
-            List of fetched items.
+        :return: List of fetched items.
         :rtype: list
         """
         fetched_items = []
@@ -152,14 +146,13 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
 
     def __init__(self, client, options, fetch_function):
         """
-        Constructor
-
         :param CosmosClient client:
-        :param dict options:
-            The request options for the request.
+        :param dict options: The request options for the request.
         :param method fetch_function:
             Will be invoked for retrieving each page
+            
             Example of `fetch_function`:
+
             >>> def result_fn(result):
             >>>     return result['Databases']
 

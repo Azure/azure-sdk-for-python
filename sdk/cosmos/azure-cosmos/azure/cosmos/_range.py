@@ -24,7 +24,8 @@
 
 
 class Range(object):
-    """Represents the Range class used to map the partition key of the document to their associated collection.
+    """Represents the Range class used to map the partition key of the document 
+    to its associated collection.
     """
 
     def __init__(self, low, high):
@@ -53,7 +54,7 @@ class Range(object):
         return self.low < other.low or self.high < other.high
 
     def Contains(self, other):
-        """Checks if the passed parameter is in the range of this object.
+        """Check if the passed parameter is in the range of this object.
         """
         if other is None:
             raise ValueError("other is None.")
@@ -63,7 +64,7 @@ class Range(object):
         return self.Contains(Range(other, other))
 
     def Intersect(self, other):
-        """Checks if the passed parameter intersects the range of this object.
+        """Check if the passed parameter intersects the range of this object.
         """
         if isinstance(other, Range):
             max_low = self.low if (self.low >= other.low) else other.low

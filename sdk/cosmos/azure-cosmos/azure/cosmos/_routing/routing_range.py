@@ -19,7 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for partition key range implementation in the Azure Cosmos database service.
+"""Internal class for partition key range implementation in the Azure Cosmos 
+database service.
 """
 
 

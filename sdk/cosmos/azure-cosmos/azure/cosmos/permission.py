@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Represents a Permission object in the Azure Cosmos DB SQL API service.
+"""Create permissions in the Azure Cosmos DB SQL API service.
 """
 from typing import Dict, Any, Union
 
@@ -27,6 +27,8 @@ from .documents import PermissionMode
 
 
 class Permission(object):
+    """Represents a Permission object in the Azure Cosmos DB SQL API service.
+    """
     def __init__(self, id, user_link, permission_mode, resource_link, properties):  # pylint: disable=redefined-builtin
         # type: (str, str, Union[str, PermissionMode], str, Dict[str, Any]) -> None
         self.id = id

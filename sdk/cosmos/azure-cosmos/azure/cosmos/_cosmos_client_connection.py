@@ -204,13 +204,14 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
     @property
     def Session(self):
-        """ Gets the session object from the client """
+        """Gets the session object from the client. """
         return self.session
 
     @Session.setter
     def Session(self, session):
-        """ Sets a session object on the document client
-            This will override the existing session
+        """Sets a session object on the document client.
+
+        This will override the existing session
         """
         self.session = session
 

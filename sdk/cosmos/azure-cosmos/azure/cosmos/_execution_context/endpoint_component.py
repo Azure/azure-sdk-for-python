@@ -19,7 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for query execution endpoint component implementation in the Azure Cosmos database service.
+"""Internal class for query execution endpoint component implementation in the 
+Azure Cosmos database service.
 """
 import numbers
 import copy
@@ -54,7 +55,7 @@ class _QueryExecutionEndpointComponent(object):
 class _QueryExecutionOrderByEndpointComponent(_QueryExecutionEndpointComponent):
     """Represents an endpoint in handling an order by query.
 
-    For each processed orderby result it returns 'payload' item of the result
+    For each processed orderby result it returns 'payload' item of the result.
     """
 
     def next(self):

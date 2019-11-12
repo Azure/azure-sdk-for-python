@@ -19,7 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for document producer implementation in the Azure Cosmos database service.
+"""Internal class for document producer implementation in the Azure Cosmos 
+database service.
 """
 
 import numbers
@@ -32,10 +33,12 @@ from azure.cosmos._execution_context.base_execution_context import _DefaultQuery
 
 
 class _DocumentProducer(object):
-    """This class takes care of handling of the results for one single partition key range.
+    """This class takes care of handling of the results for one single partition
+    key range.
 
-    When handling an orderby query, MultiExecutionContextAggregator instantiates one instance of this class
-    per target partition key range and aggregates the result of each.
+    When handling an orderby query, MultiExecutionContextAggregator instantiates
+    one instance of this class per target partition key range and aggregates the
+    result of each.
     """
 
     def __init__(self, partition_key_target_range, client, collection_link, query, document_producer_comp, options):
@@ -115,8 +118,8 @@ def _compare_helper(a, b):
 
 class _PartitionKeyRangeDocumentProduerComparator(object):
     """
-    Provides a Comparator for document producers using the min value of the corresponding target
-    partition.
+    Provides a Comparator for document producers using the min value of the 
+    corresponding target partition.
     """
 
     def __init__(self):
@@ -163,7 +166,6 @@ class _OrderByHelper(object):
         """Returns the string representation of the type
 
         :param dict orderby_item:
-
         :return: String representation of the type
         :rtype: str
         """
@@ -183,10 +185,10 @@ class _OrderByHelper(object):
 
     @staticmethod
     def compare(orderby_item1, orderby_item2):
-        """compares the two orderby item pairs.
+        """Compare two orderby item pairs.
+
         :param dict orderby_item1:
         :param dict orderby_item2:
-
         :return:
             Integer comparison result.
             The comparator acts such that
@@ -194,9 +196,7 @@ class _OrderByHelper(object):
                 Undefined value < Null < booleans < Numbers < Strings
             - if both arguments are of the same type:
                 it simply compares the values.
-
         :rtype: int
-
         """
 
         type1_ord = _OrderByHelper.getTypeOrd(orderby_item1)
@@ -219,9 +219,7 @@ def _peek_order_by_items(peek_result):
 
 
 class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerComparator):
-    """
-    Provides a Comparator for document producers which respects orderby sort order.
-
+    """Provide a Comparator for document producers which respects orderby sort order.
     """
 
     def __init__(self, sort_order):  # pylint: disable=super-init-not-called
@@ -239,19 +237,14 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
     def compare(self, doc_producer1, doc_producer2):
         """Compares the given two instances of DocumentProducers.
 
-        Based on the orderby query items and whether the sort order
-        is Ascending or Descending compares the peek result of
-        the two DocumentProducers.
+        Based on the orderby query items and whether the sort order is Ascending
+        or Descending compares the peek result of the two DocumentProducers.
 
-        If the peek results are equal based on the sort order, this
-        comparator compares the target partition key range of the
-        two DocumentProducers.
+        If the peek results are equal based on the sort order, this comparator 
+        compares the target partition key range of the two DocumentProducers.
 
-        :param _DocumentProducer doc_producers1:
-             first instance
-        :param _DocumentProducer doc_producers2:
-             first instance
-
+        :param _DocumentProducer doc_producers1: first instance
+        :param _DocumentProducer doc_producers2: first instance
         :return:
             Integer value of compare result.
                 positive integer if doc_producers1 > doc_producers2

@@ -19,14 +19,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for client side partition implementation in the Azure Cosmos database service.
+"""Internal class for client side partition implementation in the Azure Cosmos 
+database service.
 """
 
 from six.moves import xrange
 
 
 class Partition(object):
-    """Represents a class that holds the hash value and node name for each partition.
+    """A class that holds the hash value and node name for a partition.
     """
 
     def __init__(self, hash_value=None, node=None):
@@ -48,7 +49,7 @@ class Partition(object):
         return self.CompareTo(other.hash_value) < 0
 
     def CompareTo(self, other_hash_value):
-        """Compares the passed hash value with the hash value of this object
+        """Compare the passed hash value with the hash value of this object.
         """
         if len(self.hash_value) != len(other_hash_value):
             raise ValueError("Length of hashes doesn't match.")
