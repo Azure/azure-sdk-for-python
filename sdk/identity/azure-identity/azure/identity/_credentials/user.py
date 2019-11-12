@@ -117,18 +117,21 @@ class SharedTokenCacheCredential(object):
     """Authenticates using tokens in the local cache shared between Microsoft applications.
 
     :param str username:
-        Username (typically an email address) of the user to authenticate as. This is required because the local cache
-        may contain tokens for multiple identities.
+        Username (typically an email address) of the user to authenticate as. This is used when the local cache
+        contains tokens for multiple identities.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
-          defines authorities for other clouds.
+        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+        defines authorities for other clouds.
+    :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
+        tokens for multiple identities.
     """
 
     def __init__(self, username=None, **kwargs):  # pylint:disable=unused-argument
         # type: (Optional[str], **Any) -> None
 
         self._username = username
+        self._tenant_id = kwargs.pop("tenant_id", None)
 
         cache = kwargs.pop("_cache", None)  # for ease of testing
 
@@ -167,7 +170,7 @@ class SharedTokenCacheCredential(object):
         if not self._client:
             raise ClientAuthenticationError(message="Shared token cache unavailable")
 
-        return self._client.obtain_token_by_refresh_token(scopes, self._username)
+        return self._client.obtain_token_by_refresh_token(scopes, self._username, self._tenant_id)
 
     @staticmethod
     def supported():
