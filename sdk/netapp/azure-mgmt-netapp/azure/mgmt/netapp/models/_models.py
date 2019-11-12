@@ -24,8 +24,8 @@ class ActiveDirectory(Model):
     :type password: str
     :param domain: Name of the Active Directory domain
     :type domain: str
-    :param dns: Comma separated list of DNS server IP addresses for the Active
-     Directory domain
+    :param dns: Comma separated list of DNS server IP addresses (IPv4 only)
+     for the Active Directory domain
     :type dns: str
     :param status: Status of the Active Directory
     :type status: str
@@ -77,7 +77,7 @@ class CapacityPool(Model):
     :ivar type: Resource type
     :vartype type: str
     :param tags: Resource tags
-    :type tags: object
+    :type tags: dict[str, str]
     :ivar pool_id: poolId. UUID v4 used to identify the Pool
     :vartype pool_id: str
     :param size: Required. size. Provisioned size of the pool (in bytes).
@@ -108,7 +108,7 @@ class CapacityPool(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'object'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'pool_id': {'key': 'properties.poolId', 'type': 'str'},
         'size': {'key': 'properties.size', 'type': 'long'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
@@ -143,7 +143,7 @@ class CapacityPoolPatch(Model):
     :ivar type: Resource type
     :vartype type: str
     :param tags: Resource tags
-    :type tags: object
+    :type tags: dict[str, str]
     :param size: size. Provisioned size of the pool (in bytes). Allowed values
      are in 4TiB chunks (value must be multiply of 4398046511104). Default
      value: 4398046511104 .
@@ -166,7 +166,7 @@ class CapacityPoolPatch(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'object'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'size': {'key': 'properties.size', 'type': 'long'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
     }
@@ -316,8 +316,10 @@ class MountTarget(Model):
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param tags: Resource tags
-    :type tags: object
+    :type tags: dict[str, str]
     :ivar mount_target_id: mountTargetId. UUID v4 used to identify the
      MountTarget
     :vartype mount_target_id: str
@@ -351,6 +353,7 @@ class MountTarget(Model):
         'location': {'required': True},
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
         'mount_target_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'file_system_id': {'required': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'ip_address': {'readonly': True},
@@ -361,7 +364,8 @@ class MountTarget(Model):
         'location': {'key': 'location', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'mount_target_id': {'key': 'properties.mountTargetId', 'type': 'str'},
         'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
@@ -379,6 +383,7 @@ class MountTarget(Model):
         self.location = kwargs.get('location', None)
         self.id = None
         self.name = None
+        self.type = None
         self.tags = kwargs.get('tags', None)
         self.mount_target_id = None
         self.file_system_id = kwargs.get('file_system_id', None)
@@ -409,7 +414,7 @@ class NetAppAccount(Model):
     :ivar type: Resource type
     :vartype type: str
     :param tags: Resource tags
-    :type tags: object
+    :type tags: dict[str, str]
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
     :param active_directories: Active Directories
@@ -429,7 +434,7 @@ class NetAppAccount(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'object'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'active_directories': {'key': 'properties.activeDirectories', 'type': '[ActiveDirectory]'},
     }
@@ -460,7 +465,7 @@ class NetAppAccountPatch(Model):
     :ivar type: Resource type
     :vartype type: str
     :param tags: Resource tags
-    :type tags: object
+    :type tags: dict[str, str]
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
     :param active_directories: Active Directories
@@ -479,7 +484,7 @@ class NetAppAccountPatch(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'object'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'active_directories': {'key': 'properties.activeDirectories', 'type': '[ActiveDirectory]'},
     }
@@ -551,6 +556,44 @@ class OperationDisplay(Model):
         self.resource = kwargs.get('resource', None)
         self.operation = kwargs.get('operation', None)
         self.description = kwargs.get('description', None)
+
+
+class ReplicationObject(Model):
+    """Replication properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param replication_id: replicationId. Id
+    :type replication_id: str
+    :param endpoint_type: Required. endpointType. Indicates whether the local
+     volume is the source or destination for the Volume Replication
+    :type endpoint_type: str
+    :param replication_schedule: Required. replicationSchedule. Schedule
+    :type replication_schedule: str
+    :param remote_volume_resource_id: Required. remoteVolumeResourceId. The
+     resource ID of the remote volume.
+    :type remote_volume_resource_id: str
+    """
+
+    _validation = {
+        'endpoint_type': {'required': True},
+        'replication_schedule': {'required': True},
+        'remote_volume_resource_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'replication_id': {'key': 'replicationId', 'type': 'str'},
+        'endpoint_type': {'key': 'endpointType', 'type': 'str'},
+        'replication_schedule': {'key': 'replicationSchedule', 'type': 'str'},
+        'remote_volume_resource_id': {'key': 'remoteVolumeResourceId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReplicationObject, self).__init__(**kwargs)
+        self.replication_id = kwargs.get('replication_id', None)
+        self.endpoint_type = kwargs.get('endpoint_type', None)
+        self.replication_schedule = kwargs.get('replication_schedule', None)
+        self.remote_volume_resource_id = kwargs.get('remote_volume_resource_id', None)
 
 
 class ResourceNameAvailability(Model):
@@ -656,7 +699,7 @@ class Snapshot(Model):
     :ivar type: Resource type
     :vartype type: str
     :param tags: Resource tags
-    :type tags: object
+    :type tags: dict[str, str]
     :ivar snapshot_id: snapshotId. UUID v4 used to identify the Snapshot
     :vartype snapshot_id: str
     :param file_system_id: fileSystemId. UUID v4 used to identify the
@@ -684,7 +727,7 @@ class Snapshot(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'object'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'snapshot_id': {'key': 'properties.snapshotId', 'type': 'str'},
         'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
@@ -708,11 +751,11 @@ class SnapshotPatch(Model):
     """Snapshot patch.
 
     :param tags: Resource tags
-    :type tags: object
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': 'object'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
@@ -737,7 +780,7 @@ class Volume(Model):
     :ivar type: Resource type
     :vartype type: str
     :param tags: Resource tags
-    :type tags: object
+    :type tags: dict[str, str]
     :ivar file_system_id: FileSystem ID. Unique FileSystem Identifier.
     :vartype file_system_id: str
     :param creation_token: Required. Creation Token or File Path. A unique
@@ -770,6 +813,12 @@ class Volume(Model):
     :type subnet_id: str
     :param mount_targets: mountTargets. List of mount targets
     :type mount_targets: object
+    :param volume_type: What type of volume is this
+    :type volume_type: str
+    :param data_protection: DataProtection. DataProtection volume, can have a
+     replication object
+    :type data_protection:
+     ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
     """
 
     _validation = {
@@ -791,7 +840,7 @@ class Volume(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'object'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
         'creation_token': {'key': 'properties.creationToken', 'type': 'str'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
@@ -803,6 +852,8 @@ class Volume(Model):
         'baremetal_tenant_id': {'key': 'properties.baremetalTenantId', 'type': 'str'},
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
         'mount_targets': {'key': 'properties.mountTargets', 'type': 'object'},
+        'volume_type': {'key': 'properties.volumeType', 'type': 'str'},
+        'data_protection': {'key': 'properties.dataProtection', 'type': 'VolumePropertiesDataProtection'},
     }
 
     def __init__(self, **kwargs):
@@ -823,6 +874,8 @@ class Volume(Model):
         self.baremetal_tenant_id = None
         self.subnet_id = kwargs.get('subnet_id', None)
         self.mount_targets = kwargs.get('mount_targets', None)
+        self.volume_type = kwargs.get('volume_type', None)
+        self.data_protection = kwargs.get('data_protection', None)
 
 
 class VolumePatch(Model):
@@ -840,7 +893,7 @@ class VolumePatch(Model):
     :ivar type: Resource type
     :vartype type: str
     :param tags: Resource tags
-    :type tags: object
+    :type tags: dict[str, str]
     :param service_level: serviceLevel. The service level of the file system.
      Possible values include: 'Standard', 'Premium', 'Ultra'. Default value:
      "Premium" .
@@ -867,7 +920,7 @@ class VolumePatch(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'object'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
         'usage_threshold': {'key': 'properties.usageThreshold', 'type': 'long'},
         'export_policy': {'key': 'properties.exportPolicy', 'type': 'VolumePatchPropertiesExportPolicy'},
@@ -901,6 +954,24 @@ class VolumePatchPropertiesExportPolicy(Model):
     def __init__(self, **kwargs):
         super(VolumePatchPropertiesExportPolicy, self).__init__(**kwargs)
         self.rules = kwargs.get('rules', None)
+
+
+class VolumePropertiesDataProtection(Model):
+    """DataProtection.
+
+    DataProtection volume, can have a replication object.
+
+    :param replication: Replication. Replication properties
+    :type replication: ~azure.mgmt.netapp.models.ReplicationObject
+    """
+
+    _attribute_map = {
+        'replication': {'key': 'replication', 'type': 'ReplicationObject'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VolumePropertiesDataProtection, self).__init__(**kwargs)
+        self.replication = kwargs.get('replication', None)
 
 
 class VolumePropertiesExportPolicy(Model):
