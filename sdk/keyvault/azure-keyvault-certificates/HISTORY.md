@@ -2,6 +2,7 @@
 
 ### 4.0.0b6
 - Renamed `AdministratorDetails` to `AdministratorContact`
+- Added `WellKnownIssuerNames` enum class that holds popular issuer names
 - Renamed all `name` parameters to include the name of the object whose name we are referring to.
 For example, the `name` parameter of `get_certificate` is now `certificate_name`
 

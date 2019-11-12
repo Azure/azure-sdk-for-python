@@ -11,7 +11,7 @@ import json
 
 from azure_devtools.scenario_tests import RecordingProcessor, RequestUrlNormalizer
 
-from azure.keyvault.certificates import AdministratorContact, CertificateContact, CertificatePolicy
+from azure.keyvault.certificates import AdministratorContact, CertificateContact, CertificatePolicy, WellKnownIssuerNames
 from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer
 from certificates_preparer import VaultClientPreparer
@@ -622,7 +622,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertIsNotNone(vault_client)
         client = vault_client.certificates
         cert_name = "mergeCertificate"
-        issuer_name = "Unknown"
+        issuer_name = WellKnownIssuerNames.Unknown
         cert_policy = CertificatePolicyGenerated(
             issuer_parameters=IssuerParameters(name=issuer_name, certificate_transparency=False),
             x509_certificate_properties=X509CertificateProperties(subject="CN=MyCert"),

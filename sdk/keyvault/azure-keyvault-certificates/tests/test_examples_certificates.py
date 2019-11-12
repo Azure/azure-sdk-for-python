@@ -41,8 +41,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     def test_example_certificate_crud_operations(self, vault_client, **kwargs):
 
         certificate_client = vault_client.certificates
+
         # [START create_certificate]
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
@@ -51,7 +52,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
+            issuer_name=WellKnownIssuerNames.Self,
             subject_name="CN=*.microsoft.com",
             validity_in_months=24,
             san_dns_names=["sdk.azure-int.net"],
@@ -116,7 +117,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_list_operations(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
 
         certificate_client = vault_client.certificates
 
@@ -127,7 +128,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
+            issuer_name=WellKnownIssuerNames.Self,
             subject_name="CN=*.microsoft.com",
             validity_in_months=24,
             san_dns_names=["sdk.azure-int.net"],
@@ -183,7 +184,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_example_certificate_backup_restore(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
 
         certificate_client = vault_client.certificates
 
@@ -194,7 +195,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
+            issuer_name=WellKnownIssuerNames.Self,
             subject_name="CN=*.microsoft.com",
             validity_in_months=24,
             san_dns_names=["sdk.azure-int.net"],
@@ -233,7 +234,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_recover(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
         from azure.core.exceptions import HttpResponseError
 
         certificate_client = vault_client.certificates
@@ -245,7 +246,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
+            issuer_name=WellKnownIssuerNames.Self,
             subject_name="CN=*.microsoft.com",
             validity_in_months=24,
             san_dns_names=["sdk.azure-int.net"],
