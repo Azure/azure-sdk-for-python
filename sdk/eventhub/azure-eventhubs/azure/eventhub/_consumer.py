@@ -67,12 +67,15 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
          It is set to `False` by default.
         :type track_last_enqueued_event_properties: bool
         """
+
         event_position = kwargs.get("event_position", None)
         prefetch = kwargs.get("prefetch", 300)
         owner_level = kwargs.get("owner_level", None)
         keep_alive = kwargs.get("keep_alive", None)
         auto_reconnect = kwargs.get("auto_reconnect", True)
         track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
+
+        self._on_event_received = kwargs.get("on_event_received")
 
         super(EventHubConsumer, self).__init__()
         self._client = client
@@ -98,8 +101,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
         self._last_enqueued_event_properties = {}
         self._last_received_event = None
-        self._on_event_received = None
-        self.stop = False
+
+        self.stop = False  # used by event processor
 
     def __iter__(self):
         return self

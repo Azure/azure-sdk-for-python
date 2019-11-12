@@ -77,6 +77,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
         loop = kwargs.get("loop", None)
 
+        self._on_event_received = kwargs.get("on_event_received")
+
         super(EventHubConsumer, self).__init__()
         self._loop = loop or asyncio.get_event_loop()
         self._client = client
@@ -101,7 +103,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
         self._last_enqueued_event_properties = {}
 
-        self._on_event_received = None
         self._event_queue = queue.Queue()
         self._last_received_event = None
 
@@ -206,8 +207,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._last_received_event = event_data
         self._event_queue.put(event_data)
 
-    async def receive(self, on_event_received):
-        self._on_event_received = on_event_received
+    async def receive(self):
 
         retried_times = 0
         last_exception = None

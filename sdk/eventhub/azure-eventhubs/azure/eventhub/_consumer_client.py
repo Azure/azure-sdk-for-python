@@ -89,6 +89,7 @@ class EventHubConsumerClient(ClientBase):
         owner_level = kwargs.get("owner_level")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
         track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
+        on_event_received = kwargs.get("on_event_received")
 
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self._address.hostname, self._address.path, consumer_group, partition_id)
@@ -97,6 +98,7 @@ class EventHubConsumerClient(ClientBase):
             source_url,
             event_position=event_position,
             owner_level=owner_level,
+            on_event_received=on_event_received,
             prefetch=prefetch,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties)
         return handler
