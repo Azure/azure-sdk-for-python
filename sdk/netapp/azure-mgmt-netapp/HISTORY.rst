@@ -3,6 +3,20 @@
 Release History
 ===============
 
+0.7.0 (2019-11-12)
+++++++++++++++++++
+
+**Features**
+
+- Model MountTarget has a new parameter type
+- Model Volume has a new parameter data_protection
+- Model Volume has a new parameter volume_type
+- Added operation group NetAppResourceOperations
+
+**Breaking changes**
+
+- Removed operation group AzureNetAppFilesManagementClientOperationsMixin
+
 0.6.0 (2019-09-26)
 ++++++++++++++++++
 
