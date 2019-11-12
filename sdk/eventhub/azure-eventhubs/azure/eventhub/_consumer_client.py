@@ -85,7 +85,7 @@ class EventHubConsumerClient(ClientBase):
         self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
         self._closed = False
 
-    def _create_consumer(self, consumer_group, partition_id, event_position, on_event_received, **kwargs):
+    def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
         owner_level = kwargs.get("owner_level")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
         track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
@@ -95,7 +95,6 @@ class EventHubConsumerClient(ClientBase):
         handler = EventHubConsumer(
             self,
             source_url,
-            on_event_received=on_event_received,
             event_position=event_position,
             owner_level=owner_level,
             prefetch=prefetch,

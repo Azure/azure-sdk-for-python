@@ -226,7 +226,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         Close down the handler. If the handler has already closed,
         this will be a no op.
         """
-        print('I am closing')
         super(EventHubConsumer, self).close()
 
     next = __next__  # for python2.7
