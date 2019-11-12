@@ -46,7 +46,6 @@ class EventHubProducerClient(ClientBaseAsync):
     async def close(self) -> None:
 
 
-
 class EventHubConsumerClient(ClientBaseAsync):
 
     eh_name  # type: str
@@ -56,6 +55,15 @@ class EventHubConsumerClient(ClientBaseAsync):
             host: str,
             event_hub_path: str,
             credential: Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential],
+            *
+            partition_manager: PartitionManager,
+            load_balancing_interval: int = 10,
+            logging_enable: bool = False,
+            http_proxy: dict = None,
+            auth_timeout: float = 60,
+            user_agent: str = None,
+            retry_total: int = 3,
+            transport_type=None
             **kwargs
     ) -> None:
 
@@ -68,7 +76,7 @@ class EventHubConsumerClient(ClientBaseAsync):
 
     async def receive(
             self,
-            on_events: Callable[PartitionContext, EventData],
+            on_event: Callable[PartitionContext, EventData],
             consumer_group: str,
             *,
             partition_id: str = None,
