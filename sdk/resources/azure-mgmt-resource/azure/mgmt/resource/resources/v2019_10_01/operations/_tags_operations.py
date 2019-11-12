@@ -341,7 +341,7 @@ class TagsOperations(object):
 
     def resource_create(
             self, scope, api_version, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Creates multiple tags.
+        """Create or Replace existing tags with pass-in tags.
 
         :param scope: The scope of the resources.
         :type scope: str
@@ -391,7 +391,7 @@ class TagsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400]:
+        if response.status_code not in [200, 400, 404]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -464,7 +464,7 @@ class TagsOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400]:
+        if response.status_code not in [200, 400, 404]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -523,7 +523,7 @@ class TagsOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200, 400, 404]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -580,7 +580,7 @@ class TagsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 400, 404]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -589,246 +589,3 @@ class TagsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
     resource_delete.metadata = {'url': '/{scope}/providers/Microsoft.Resources/tags/default'}
-
-    def subscription_create(
-            self, api_version, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Creates multiple tags for subscription.
-
-        :param api_version: The API version to use for the operation.
-        :type api_version: str
-        :param properties: tags object passing in the request.
-        :type properties:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: TagResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagResponse
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        parameters = models.TagRequest(properties=properties)
-
-        # Construct URL
-        url = self.subscription_create.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'TagRequest')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 400, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('TagResponse', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    subscription_create.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/tags/default'}
-
-    def subscription_update(
-            self, api_version, operation=None, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Update multiple tags: if the tagKey exists, update tagValue with the
-        new value; if not, insert the new record.
-
-        :param api_version: The API version to use for the operation.
-        :type api_version: str
-        :param operation: The operation type for the patch api. Possible
-         values include: 'Replace', 'Merge', 'Delete'
-        :type operation: str or
-         ~azure.mgmt.resource.resources.v2019_10_01.models.enum
-        :param properties: tags object passing in the request.
-        :type properties:
-         ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: TagResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagResponse
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        parameters = models.TagPatchRequest(operation=operation, properties=properties)
-
-        # Construct URL
-        url = self.subscription_update.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'TagPatchRequest')
-
-        # Construct and send request
-        request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 400, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('TagResponse', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    subscription_update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/tags/default'}
-
-    def subscription_get(
-            self, api_version, custom_headers=None, raw=False, **operation_config):
-        """Gets all the tags for the subscription.
-
-        :param api_version: The API version to use for the operation.
-        :type api_version: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: TagResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagResponse
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.subscription_get.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 400]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('TagResponse', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    subscription_get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/tags/default'}
-
-    def subscription_delete(
-            self, api_version, custom_headers=None, raw=False, **operation_config):
-        """Deletes all the tags for the subscription.
-
-        :param api_version: The API version to use for the operation.
-        :type api_version: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.subscription_delete.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    subscription_delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/tags/default'}
