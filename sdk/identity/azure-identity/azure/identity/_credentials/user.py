@@ -130,9 +130,9 @@ class SharedTokenCacheCredential(object):
 
         self._username = username
 
-        cache = None
+        cache = kwargs.pop("_cache", None)  # for ease of testing
 
-        if sys.platform.startswith("win") and "LOCALAPPDATA" in os.environ:
+        if not cache and sys.platform.startswith("win") and "LOCALAPPDATA" in os.environ:
             from msal_extensions.token_cache import WindowsTokenCache
 
             cache = WindowsTokenCache(
