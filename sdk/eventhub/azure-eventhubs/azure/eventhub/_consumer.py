@@ -97,8 +97,9 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._handler = None
         self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
         self._last_enqueued_event_properties = {}
-        self._on_event_received = None
         self._last_received_event = None
+        self._on_event_received = None
+        self.stop = False
 
     def __iter__(self):
         return self
@@ -157,6 +158,9 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             **desired_capabilities)  # pylint:disable=protected-access
         self._messages_iter = None
 
+        self._handler._streaming_receive = True
+        self._handler._message_received_callback = self._message_received
+
     def _open_with_retry(self):
         return self._do_retryable_operation(self._open, operation_need_param=False)
 
@@ -166,19 +170,14 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._last_received_event = event_data
         self._on_event_received(event_data)
 
-    def receive(self, on_event_received):
-        self._on_event_received = on_event_received
-
+    def receive(self):
         retried_times = 0
         last_exception = None
 
         while retried_times < self._client._config.max_retries:  # pylint:disable=protected-access
             try:
                 self._open()
-                self._handler._streaming_receive = True
-                self._handler._message_received_callback = self._message_received
-                while self._running:
-                    self._handler.do_work()
+                self._handler.do_work()
                 return
             except Exception as exception:
                 if not self._running:  # exit by close
