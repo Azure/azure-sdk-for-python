@@ -58,7 +58,7 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def begin_create_certificate(
         self,
-        name,  # type: str
+        certificate_name,  # type: str
         policy,  # type: CertificatePolicy
         **kwargs  # type: Any
     ):
@@ -68,7 +68,7 @@ class CertificateClient(KeyVaultClientBase):
         If this is the first version, the certificate resource is created. This
         operation requires the certificates/create permission.
 
-        :param str name: The name of the certificate.
+        :param str certificate_name: The name of the certificate.
         :param policy: The management policy for the certificate.
         :type policy:
          ~azure.keyvault.certificates.models.CertificatePolicy
@@ -106,7 +106,7 @@ class CertificateClient(KeyVaultClientBase):
 
         cert_bundle = self._client.create_certificate(
             vault_base_url=self.vault_url,
-            certificate_name=name,
+            certificate_name=certificate_name,
             certificate_policy=policy._to_certificate_policy_bundle(),
             certificate_attributes=attributes,
             tags=tags,
@@ -115,9 +115,9 @@ class CertificateClient(KeyVaultClientBase):
 
         create_certificate_operation = CertificateOperation._from_certificate_operation_bundle(cert_bundle)
 
-        command = partial(self.get_certificate_operation, name=name, **kwargs)
+        command = partial(self.get_certificate_operation, certificate_name=certificate_name, **kwargs)
 
-        get_certificate_command = partial(self.get_certificate, name=name, **kwargs)
+        get_certificate_command = partial(self.get_certificate, certificate_name=certificate_name, **kwargs)
 
         create_certificate_polling = CreateCertificatePoller(
             get_certificate_command=get_certificate_command,
@@ -126,7 +126,7 @@ class CertificateClient(KeyVaultClientBase):
         return LROPoller(command, create_certificate_operation, None, create_certificate_polling)
 
     @distributed_trace
-    def get_certificate(self, name, **kwargs):
+    def get_certificate(self, certificate_name, **kwargs):
         # type: (str, **Any) -> KeyVaultCertificate
         """Gets a certificate with its management policy attached.
 
@@ -135,7 +135,7 @@ class CertificateClient(KeyVaultClientBase):
         version of the certificate as a parameter. If you wish to specify version, use
         the get_certificate_version function and specify the desired version.
 
-        :param str name: The name of the certificate in the given vault.
+        :param str certificate_name: The name of the certificate in the given vault.
         :returns: An instance of KeyVaultCertificate
         :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
         :raises:
@@ -152,7 +152,7 @@ class CertificateClient(KeyVaultClientBase):
         """
         bundle = self._client.get_certificate(
             vault_base_url=self.vault_url,
-            certificate_name=name,
+            certificate_name=certificate_name,
             certificate_version="",
             error_map=_error_map,
             **kwargs
@@ -160,14 +160,14 @@ class CertificateClient(KeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def get_certificate_version(self, name, version, **kwargs):
+    def get_certificate_version(self, certificate_name, version, **kwargs):
         # type: (str, str, **Any) -> KeyVaultCertificate
         """Gets a specific version of a certificate without returning its management policy.
 
         If you wish to get the latest version of your certificate, or to get the certificate's policy as well,
         use the get_certificate function.
 
-        :param str name: The name of the certificate in the given vault.
+        :param str certificate_name: The name of the certificate in the given vault.
         :param str version: The version of the certificate.
         :returns: An instance of KeyVaultCertificate
         :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
@@ -185,7 +185,7 @@ class CertificateClient(KeyVaultClientBase):
         """
         bundle = self._client.get_certificate(
             vault_base_url=self.vault_url,
-            certificate_name=name,
+            certificate_name=certificate_name,
             certificate_version=version,
             error_map=_error_map,
             **kwargs
@@ -193,7 +193,7 @@ class CertificateClient(KeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def begin_delete_certificate(self, name, **kwargs):
+    def begin_delete_certificate(self, certificate_name, **kwargs):
         # type: (str, **Any) -> DeletedCertificate
         """Delete all versions of a certificate. Requires certificates/delete permission.
 
@@ -201,7 +201,7 @@ class CertificateClient(KeyVaultClientBase):
         vault with soft-delete enabled. This method therefore returns a poller enabling you to wait for deletion to
         complete.
 
-        :param str name: The name of the certificate to delete.
+        :param str certificate_name: The name of the certificate to delete.
         :returns: A poller for the delete certificate operation. The poller's `result` method returns the
          :class:`~azure.keyvault.certificates.DeletedCertificate` without waiting for deletion to complete. If the vault
          has soft-delete enabled and you want to permanently delete the certificate with
@@ -224,11 +224,11 @@ class CertificateClient(KeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         deleted_cert_bundle = self._client.delete_certificate(
-            vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, error_map=_error_map, **kwargs
         )
         deleted_cert = DeletedCertificate._from_deleted_certificate_bundle(deleted_cert_bundle)
         sd_disabled = deleted_cert.recovery_id is None
-        command = partial(self.get_deleted_certificate, name=name, **kwargs)
+        command = partial(self.get_deleted_certificate, certificate_name=certificate_name, **kwargs)
         delete_cert_polling_method = DeletePollingMethod(
             command=command,
             final_resource=deleted_cert,
@@ -240,7 +240,7 @@ class CertificateClient(KeyVaultClientBase):
         return KeyVaultOperationPoller(delete_cert_polling_method)
 
     @distributed_trace
-    def get_deleted_certificate(self, name, **kwargs):
+    def get_deleted_certificate(self, certificate_name, **kwargs):
         # type: (str, **Any) -> DeletedCertificate
         """Retrieves information about the specified deleted certificate.
 
@@ -249,7 +249,7 @@ class CertificateClient(KeyVaultClientBase):
         current deletion recovery level. This operation requires the certificates/
         get permission.
 
-        :param str name: The name of the certificate.
+        :param str certificate_name: The name of the certificate.
         :return: The deleted certificate
         :rtype: ~azure.keyvault.certificates.models.DeletedCertificate
         :raises:
@@ -265,12 +265,12 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.get_deleted_certificate(
-            vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, error_map=_error_map, **kwargs
         )
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
     @distributed_trace
-    def purge_deleted_certificate(self, name, **kwargs):
+    def purge_deleted_certificate(self, certificate_name, **kwargs):
         # type: (str, **Any) -> None
         """Permanently deletes the specified deleted certificate.
 
@@ -279,15 +279,17 @@ class CertificateClient(KeyVaultClientBase):
         level does not specified 'Purgeable'. This operation requires the
         certificate/purge permission.
 
-        :param str name: The name of the certificate
+        :param str certificate_name: The name of the certificate
         :return: None
         :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        self._client.purge_deleted_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
+        self._client.purge_deleted_certificate(
+            vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
+        )
 
     @distributed_trace
-    def begin_recover_deleted_certificate(self, name, **kwargs):
+    def begin_recover_deleted_certificate(self, certificate_name, **kwargs):
         # type: (str, **Any) -> KeyVaultCertificate
         """Recover a deleted certificate to its latest version. Possible only in a vault with soft-delete enabled.
 
@@ -297,7 +299,7 @@ class CertificateClient(KeyVaultClientBase):
         method therefore returns a poller enabling you to wait for recovery to complete. Waiting is only necessary when
         you want to use the recovered certificate in another operation immediately.
 
-        :param str name: The name of the deleted certificate to recover
+        :param str certificate_name: The name of the deleted certificate to recover
         :returns: A poller for the recovery operation. The poller's `result` method returns the recovered
          :class:`~azure.keyvault.certificates.KeyVaultCertificate` without waiting for recovery to complete. If you want
          to use the recovered certificate immediately, call the poller's `wait` method, which blocks until the
@@ -317,10 +319,10 @@ class CertificateClient(KeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         recovered_cert_bundle = self._client.recover_deleted_certificate(
-            vault_base_url=self.vault_url, certificate_name=name, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
         )
         recovered_certificate = KeyVaultCertificate._from_certificate_bundle(recovered_cert_bundle)
-        command = partial(self.get_certificate, name=name, **kwargs)
+        command = partial(self.get_certificate, certificate_name=certificate_name, **kwargs)
         recover_cert_polling_method = RecoverDeletedPollingMethod(
             command=command,
             final_resource=recovered_certificate,
@@ -331,7 +333,7 @@ class CertificateClient(KeyVaultClientBase):
         return KeyVaultOperationPoller(recover_cert_polling_method)
 
     @distributed_trace
-    def import_certificate(self, name, certificate_bytes, **kwargs):
+    def import_certificate(self, certificate_name, certificate_bytes, **kwargs):
         # type: (str, bytes, Any) -> KeyVaultCertificate
         """Imports a certificate into a specified key vault.
 
@@ -341,7 +343,7 @@ class CertificateClient(KeyVaultClientBase):
         contain the key as well as x509 certificates. This operation requires
         the certificates/import permission.
 
-        :param str name: The name of the certificate.
+        :param str certificate_name: The name of the certificate.
         :param bytes certificate_bytes: Bytes of the certificate object to import. This certificate
             needs to contain the private key.
         :keyword bool enabled: Whether the certificate is enabled for use.
@@ -367,7 +369,7 @@ class CertificateClient(KeyVaultClientBase):
         base64_encoded_certificate = base64.b64encode(certificate_bytes).decode("utf-8")
         bundle = self._client.import_certificate(
             vault_base_url=self.vault_url,
-            certificate_name=name,
+            certificate_name=certificate_name,
             base64_encoded_certificate=base64_encoded_certificate,
             password=password,
             certificate_policy=policy._to_certificate_policy_bundle(),
@@ -420,7 +422,7 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def update_certificate_properties(
         self,
-        name,  # type: str
+        certificate_name,  # type: str
         version=None,  # type: Optional[str]
         **kwargs  # type: **Any
     ):
@@ -431,7 +433,7 @@ class CertificateClient(KeyVaultClientBase):
         given certificate; the only elements updated are the certificate's
         attributes. This operation requires the certificates/update permission.
 
-        :param str name: The name of the certificate in the given key
+        :param str certificate_name: The name of the certificate in the given key
             vault.
         :param str version: The version of the certificate.
         :keyword bool enabled: Whether the certificate is enabled for use.
@@ -459,7 +461,7 @@ class CertificateClient(KeyVaultClientBase):
 
         bundle = self._client.update_certificate(
             vault_base_url=self.vault_url,
-            certificate_name=name,
+            certificate_name=certificate_name,
             certificate_version=version or "",
             certificate_attributes=attributes,
             **kwargs
@@ -467,7 +469,7 @@ class CertificateClient(KeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def backup_certificate(self, name, **kwargs):
+    def backup_certificate(self, certificate_name, **kwargs):
         # type: (str, **Any) -> bytes
         """Backs up the specified certificate.
 
@@ -475,7 +477,7 @@ class CertificateClient(KeyVaultClientBase):
         to the client. All versions of the certificate will be downloaded.
         This operation requires the certificates/backup permission.
 
-        :param str name: The name of the certificate.
+        :param str certificate_name: The name of the certificate.
         :return: the backup blob containing the backed up certificate.
         :rtype: bytes
         :raises:
@@ -491,7 +493,7 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         backup_result = self._client.backup_certificate(
-            vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, error_map=_error_map, **kwargs
         )
         return backup_result.value
 
@@ -592,7 +594,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_properties_of_certificate_versions(self, name, **kwargs):
+    def list_properties_of_certificate_versions(self, certificate_name, **kwargs):
         # type: (str, **Any) -> Iterable[CertificateProperties]
         """List the versions of a certificate.
 
@@ -600,7 +602,7 @@ class CertificateClient(KeyVaultClientBase):
         certificate in the key vault. This operation requires the
         certificates/list permission.
 
-        :param str name: The name of the certificate.
+        :param str certificate_name: The name of the certificate.
         :returns: An iterator like instance of CertificateProperties
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateProperties]
@@ -617,7 +619,7 @@ class CertificateClient(KeyVaultClientBase):
         max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_certificate_versions(
             vault_base_url=self._vault_url,
-            certificate_name=name,
+            certificate_name=certificate_name,
             maxresults=max_page_size,
             cls=lambda objs: [CertificateProperties._from_certificate_item(certificate_item=x) for x in objs],
             **kwargs
@@ -700,14 +702,14 @@ class CertificateClient(KeyVaultClientBase):
         return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace
-    def get_certificate_operation(self, name, **kwargs):
+    def get_certificate_operation(self, certificate_name, **kwargs):
         # type: (str, **Any) -> CertificateOperation
         """Gets the creation operation of a certificate.
 
         Gets the creation operation associated with a specified certificate.
         This operation requires the certificates/get permission.
 
-        :param str name: The name of the certificate.
+        :param str certificate_name: The name of the certificate.
         :returns: The created CertificateOperation
         :rtype: ~azure.keyvault.certificates.models.CertificateOperation
         :raises:
@@ -716,12 +718,12 @@ class CertificateClient(KeyVaultClientBase):
         """
 
         bundle = self._client.get_certificate_operation(
-            vault_base_url=self.vault_url, certificate_name=name, error_map=_error_map, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, error_map=_error_map, **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace
-    def delete_certificate_operation(self, name, **kwargs):
+    def delete_certificate_operation(self, certificate_name, **kwargs):
         # type: (str, **Any) -> CertificateOperation
         """Deletes the creation operation for a specific certificate.
 
@@ -729,38 +731,38 @@ class CertificateClient(KeyVaultClientBase):
         the process of being created. The certificate is no longer created.
         This operation requires the certificates/update permission.
 
-        :param str name: The name of the certificate.
+        :param str certificate_name: The name of the certificate.
         :return: The deleted CertificateOperation
         :rtype: ~azure.keyvault.certificates.models.CertificateOperation
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         bundle = self._client.delete_certificate_operation(
-            vault_base_url=self.vault_url, certificate_name=name, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace
-    def cancel_certificate_operation(self, name, **kwargs):
+    def cancel_certificate_operation(self, certificate_name, **kwargs):
         # type: (str, **Any) -> CertificateOperation
         """Cancels a certificate operation.
 
         Cancels a certificate creation operation that is already in progress.
         This operation requires the certificates/update permission.
 
-        :param str name: The name of the certificate.
+        :param str certificate_name: The name of the certificate.
         :returns: The cancelled certificate operation
         :rtype: ~azure.keyvault.certificates.models.CertificateOperation
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         bundle = self._client.update_certificate_operation(
-            vault_base_url=self.vault_url, certificate_name=name, cancellation_requested=True, **kwargs
+            vault_base_url=self.vault_url, certificate_name=certificate_name, cancellation_requested=True, **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace
     def merge_certificate(
         self,
-        name,  # type: str
+        certificate_name,  # type: str
         x509_certificates,  # type: List[bytearray]
         **kwargs  # type: **Any
     ):
@@ -773,7 +775,7 @@ class CertificateClient(KeyVaultClientBase):
         its issuer to 'Unknown'. This way Key Vault knows that the certificate will not be signed
         by an issuer known to it.
 
-        :param str name: The name of the certificate
+        :param str certificate_name: The name of the certificate
         :param x509_certificates: The certificate or the certificate chain to merge.
         :type x509_certificates: list[bytearray]
         :keyword bool enabled: Whether the certificate is enabled for use.
@@ -792,7 +794,7 @@ class CertificateClient(KeyVaultClientBase):
             attributes = None
         bundle = self._client.merge_certificate(
             vault_base_url=self.vault_url,
-            certificate_name=name,
+            certificate_name=certificate_name,
             x509_certificates=x509_certificates,
             certificate_attributes=attributes,
             **kwargs
@@ -800,14 +802,14 @@ class CertificateClient(KeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def get_issuer(self, name, **kwargs):
+    def get_issuer(self, issuer_name, **kwargs):
         # type: (str, **Any) -> CertificateIssuer
         """Gets the specified certificate issuer.
 
         Returns the specified certificate issuer resources in the key vault.
         This operation requires the certificates/manageissuers/getissuers permission.
 
-        :param str name: The name of the issuer.
+        :param str issuer_name: The name of the issuer.
         :return: The specified certificate issuer.
         :rtype: ~azure.keyvault.certificates.models.CertificateIssuer
         :raises:
@@ -823,12 +825,12 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         issuer_bundle = self._client.get_certificate_issuer(
-            vault_base_url=self.vault_url, issuer_name=name, error_map=_error_map, **kwargs
+            vault_base_url=self.vault_url, issuer_name=issuer_name, error_map=_error_map, **kwargs
         )
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
-    def create_issuer(self, name, provider, **kwargs):
+    def create_issuer(self, issuer_name, provider, **kwargs):
         # type: (str, str, Any) -> CertificateIssuer
         """Sets the specified certificate issuer.
 
@@ -836,7 +838,7 @@ class CertificateClient(KeyVaultClientBase):
         certificate issuer. This operation requires the certificates/setissuers
         permission.
 
-        :param str name: The name of the issuer.
+        :param str issuer_name: The name of the issuer.
         :param str provider: The issuer provider.
         :keyword bool enabled: Whether the issuer is enabled for use.
         :keyword str account_id: The user name/account name/account id.
@@ -892,7 +894,7 @@ class CertificateClient(KeyVaultClientBase):
             issuer_attributes = None
         issuer_bundle = self._client.set_certificate_issuer(
             vault_base_url=self.vault_url,
-            issuer_name=name,
+            issuer_name=issuer_name,
             provider=provider,
             credentials=issuer_credentials,
             organization_details=organization_details,
@@ -902,14 +904,14 @@ class CertificateClient(KeyVaultClientBase):
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
-    def update_issuer(self, name, **kwargs):
+    def update_issuer(self, issuer_name, **kwargs):
         # type: (str, Any) -> CertificateIssuer
         """Updates the specified certificate issuer.
 
         Performs an update on the specified certificate issuer entity.
         This operation requires the certificates/setissuers permission.
 
-        :param str name: The name of the issuer.
+        :param str issuer_name: The name of the issuer.
         :keyword bool enabled: Whether the issuer is enabled for use.
         :keyword str provider: The issuer provider
         :keyword str account_id: The user name/account name/account id.
@@ -957,7 +959,7 @@ class CertificateClient(KeyVaultClientBase):
             issuer_attributes = None
         issuer_bundle = self._client.update_certificate_issuer(
             vault_base_url=self.vault_url,
-            issuer_name=name,
+            issuer_name=issuer_name,
             provider=provider,
             credentials=issuer_credentials,
             organization_details=organization_details,
@@ -967,14 +969,14 @@ class CertificateClient(KeyVaultClientBase):
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
-    def delete_issuer(self, name, **kwargs):
+    def delete_issuer(self, issuer_name, **kwargs):
         # type: (str, **Any) -> CertificateIssuer
         """Deletes the specified certificate issuer.
 
         Permanently removes the specified certificate issuer from the vault.
         This operation requires the certificates/manageissuers/deleteissuers permission.
 
-        :param str name: The name of the issuer.
+        :param str issuer_name: The name of the issuer.
         :return: CertificateIssuer
         :rtype: ~azure.keyvault.certificates.models.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
