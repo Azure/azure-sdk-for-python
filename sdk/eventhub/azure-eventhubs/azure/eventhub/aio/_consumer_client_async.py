@@ -161,7 +161,7 @@ class EventHubConsumerClient(ClientBaseAsync):
         )
 
     async def receive(
-            self, on_events, consumer_group: str,
+            self, on_event, consumer_group: str,
             *,
             partition_id: str = None,
             owner_level: int = None,
@@ -174,12 +174,12 @@ class EventHubConsumerClient(ClientBaseAsync):
     ) -> None:
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
-        :param on_events: The callback function for handling received events. The callback takes two
-         parameters: `partition_context` which contains partition context and `events` which are the received events.
-         Please define the callback like `on_event(partition_context, events)`.
+        :param on_event: The callback function for handling received event. The callback takes two
+         parameters: `partition_context` which contains partition context and `event` which is the received event.
+         Please define the callback like `on_event(partition_context, event)`.
          For detailed partition context information, please refer to
          :class:`PartitionContext<azure.eventhub.aio.PartitionContext>`.
-        :type on_events: Callable[~azure.eventhub.aio.PartitionContext, List[EventData]]
+        :type on_event: Callable[~azure.eventhub.aio.PartitionContext, EventData]
         :param consumer_group: Receive events from the event hub for this consumer group
         :type consumer_group: str
         :keyword str partition_id: Receive from this partition only if it's not None.
@@ -241,7 +241,7 @@ class EventHubConsumerClient(ClientBaseAsync):
                 raise error
 
             event_processor = EventProcessor(
-                self, consumer_group, on_events,
+                self, consumer_group, on_event,
                 partition_id=partition_id,
                 partition_manager=self._partition_manager,
                 error_handler=on_error,
