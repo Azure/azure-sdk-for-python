@@ -17,7 +17,6 @@ try:
     from ._models_py3 import CacheSku
     from ._models_py3 import CacheUpgradeStatus
     from ._models_py3 import ClfsTarget
-    from ._models_py3 import CloudError, CloudErrorException
     from ._models_py3 import CloudErrorBody
     from ._models_py3 import NamespaceJunction
     from ._models_py3 import Nfs3Target
@@ -37,7 +36,6 @@ except (SyntaxError, ImportError):
     from ._models import CacheSku
     from ._models import CacheUpgradeStatus
     from ._models import ClfsTarget
-    from ._models import CloudError, CloudErrorException
     from ._models import CloudErrorBody
     from ._models import NamespaceJunction
     from ._models import Nfs3Target
@@ -54,7 +52,7 @@ from ._paged_models import CachePaged
 from ._paged_models import ResourceSkuPaged
 from ._paged_models import StorageTargetPaged
 from ._paged_models import UsageModelPaged
-from ._storage_cache_mgmt_client_enums import (
+from ._storage_cache_management_client_enums import (
     HealthStateType,
     ProvisioningStateType,
     FirmwareStatusType,
@@ -70,7 +68,6 @@ __all__ = [
     'CacheSku',
     'CacheUpgradeStatus',
     'ClfsTarget',
-    'CloudError', 'CloudErrorException',
     'CloudErrorBody',
     'NamespaceJunction',
     'Nfs3Target',
