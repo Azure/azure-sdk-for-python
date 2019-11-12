@@ -50,6 +50,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.AzureNetAppFilesManagementClient)
 
     def test_create_delete_snapshot(self):
+        raise unittest.SkipTest("Skipping Snapshot test")
         snapshot = create_snapshot(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_1, LOCATION)
 
         snapshot_list = self.client.snapshots.list(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
@@ -64,6 +65,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_account(self.client, TEST_RG, TEST_ACC_1)
 
     def test_list_snapshots(self):
+        raise unittest.SkipTest("Skipping Snapshot test")
         snapshot = create_snapshot(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_1, LOCATION)
         snapshot = create_snapshot(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_2, LOCATION, snapshot_only=True)
 
@@ -81,6 +83,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_account(self.client, TEST_RG, TEST_ACC_1)
 
     def test_get_snapshot_by_name(self):
+        raise unittest.SkipTest("Skipping Snapshot test")
         snapshot = create_snapshot(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_1, LOCATION)
 
         snapshot = self.client.snapshots.get(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_1)

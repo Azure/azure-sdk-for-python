@@ -83,6 +83,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.AzureNetAppFilesManagementClient)
 
     def test_create_delete_list_volume(self):
+        raise unittest.SkipTest("Skipping Volume test")
         volume = create_volume(
             self.client,
             TEST_RG,
@@ -110,6 +111,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
     def test_list_volumes(self):
+        raise unittest.SkipTest("Skipping Volume test")
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, LOCATION, live=self.is_live)
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_2, LOCATION, volume_only=True, live=self.is_live)
 
@@ -128,6 +130,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
     def test_get_volume_by_name(self):
+        raise unittest.SkipTest("Skipping Volume test")
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, LOCATION, live=self.is_live)
 
         volume = self.client.volumes.get(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
@@ -139,6 +142,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
     def test_update_volume(self):
+        raise unittest.SkipTest("Skipping Volume test")
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         self.assertEqual("Premium", volume.service_level)
         self.assertEqual(100 * GIGABYTE, volume.usage_threshold)
@@ -166,6 +170,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
     def test_patch_volume(self):
+        raise unittest.SkipTest("Skipping Volume test")
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         self.assertEqual("Premium", volume.service_level);
         self.assertEqual(100 * GIGABYTE, volume.usage_threshold);
