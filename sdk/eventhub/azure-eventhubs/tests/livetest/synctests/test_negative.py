@@ -30,13 +30,13 @@ def test_send_with_invalid_hostname(invalid_hostname):
 
 @pytest.mark.liveTest
 def test_receive_with_invalid_hostname_sync(invalid_hostname):
-    def on_events(partition_context, events):
+    def on_event(partition_context, event):
         pass
 
     client = EventHubConsumerClient.from_connection_string(invalid_hostname)
     with client:
         thread = threading.Thread(target=client.receive,
-                                  args=(on_events, ),
+                                  args=(on_event, ),
                                   kwargs={"consumer_group": '$default'})
         thread.start()
         time.sleep(2)

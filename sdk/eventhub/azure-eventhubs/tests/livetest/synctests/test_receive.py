@@ -16,24 +16,24 @@ from azure.eventhub import EventHubConsumerClient
 
 @pytest.mark.liveTest
 def test_receive_end_of_stream(connstr_senders):
-    def on_events(partition_context, events):
+    def on_event(partition_context, event):
         if partition_context.partition_id == "0":
-            on_events.called = True
-            assert events[0].body_as_str() == "Receiving only a single event"
-            assert list(events[-1].body)[0] == b"Receiving only a single event"
-    on_events.called = False
+            assert event.body_as_str() == "Receiving only a single event"
+            assert list(event.body)[0] == b"Receiving only a single event"
+            on_event.called = True
+    on_event.called = False
     connection_str, senders = connstr_senders
     client = EventHubConsumerClient.from_connection_string(connection_str)
     with client:
-        thread = threading.Thread(target=client.receive, args=(on_events, "$default"),
+        thread = threading.Thread(target=client.receive, args=(on_event, "$default"),
                                   kwargs={"partition_id": "0", "initial_event_position": "@latest"})
         thread.daemon = True
         thread.start()
         time.sleep(5)
-        assert on_events.called is False
+        assert on_event.called is False
         senders[0].send(EventData(b"Receiving only a single event"))
         time.sleep(5)
-        assert on_events.called is True
+        assert on_event.called is True
     thread.join()
 
 
@@ -45,42 +45,43 @@ def test_receive_end_of_stream(connstr_senders):
                           ("enqueued_time", False, "Exclusive")])
 @pytest.mark.liveTest
 def test_receive_with_event_position_sync(connstr_senders, position, inclusive, expected_result):
-    def on_events(partition_context, events):
+    def on_event(partition_context, event):
+        assert event.last_enqueued_event_properties.get('sequence_number') == event.sequence_number
+        assert event.last_enqueued_event_properties.get('offset') == event.offset
+        assert event.last_enqueued_event_properties.get('enqueued_time') == event.enqueued_time
+        assert event.last_enqueued_event_properties.get('retrieval_time') is not None
+
         if position == "offset":
-            on_events.event_position = events[-1].offset
+            on_event.event_position = event.offset
         elif position == "sequence":
-            on_events.event_position = events[-1].sequence_number
+            on_event.event_position = event.sequence_number
         else:
-            on_events.event_position = events[-1].enqueued_time
-        on_events.event = events[0]
+            on_event.event_position = event.enqueued_time
+        on_event.event = event
 
-        assert events[0].last_enqueued_event_properties.get('sequence_number') == events[0].sequence_number
-        assert events[0].last_enqueued_event_properties.get('offset') == events[0].offset
-        assert events[0].last_enqueued_event_properties.get('enqueued_time') == events[0].enqueued_time
-        assert events[0].last_enqueued_event_properties.get('retrieval_time') is not None
-
-    on_events.event_position = None
+    on_event.event_position = None
     connection_str, senders = connstr_senders
     senders[0].send(EventData(b"Inclusive"))
     client = EventHubConsumerClient.from_connection_string(connection_str)
     with client:
-        thread = threading.Thread(target=client.receive, args=(on_events, "$default"),
-                                  kwargs={"initial_event_position": "-1"})
+        thread = threading.Thread(target=client.receive, args=(on_event, "$default"),
+                                  kwargs={"initial_event_position": "-1",
+                                  "track_last_enqueued_event_properties": True})
         thread.daemon = True
         thread.start()
         time.sleep(5)
-        assert on_events.event_position is not None
+        assert on_event.event_position is not None
     thread.join()
     senders[0].send(EventData(expected_result))
     client2 = EventHubConsumerClient.from_connection_string(connection_str)
     with client2:
-        thread = threading.Thread(target=client2.receive, args=(on_events, "$default"),
-                                  kwargs={"initial_event_position": EventPosition(on_events.event_position, inclusive),
+        thread = threading.Thread(target=client2.receive, args=(on_event, "$default"),
+                                  kwargs={"initial_event_position": EventPosition(on_event.event_position, inclusive),
                                           "track_last_enqueued_event_properties": True})
         thread.daemon = True
         thread.start()
         time.sleep(5)
-        assert on_events.event.body_as_str() == expected_result
+        assert on_event.event.body_as_str() == expected_result
     thread.join()
 
 '''
@@ -117,25 +118,27 @@ def test_receive_with_custom_datetime_sync(connstr_senders):
 def test_receive_over_websocket_sync(connstr_senders):
     app_prop = {"raw_prop": "raw_value"}
 
-    def on_events(partition_context, events):
-        on_events.received.extend(events)
-        on_events.app_prop = events[0].application_properties
+    def on_event(partition_context, event):
+        on_event.received.append(event)
+        on_event.app_prop = event[0].application_properties
 
-    on_events.received = []
-    on_events.app_prop = None
+    on_event.received = []
+    on_event.app_prop = None
     connection_str, senders = connstr_senders
     client = EventHubConsumerClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket)
 
     event_list = []
     for i in range(20):
         ed = EventData("Event Number {}".format(i))
-        ed.application_properties = on_events.app_prop
+        ed.application_properties = app_prop
         event_list.append(ed)
     senders[0].send(event_list)
 
     with client:
-        thread = threading.Thread(target=client.receive, args=(on_events, "$default"),
+        thread = threading.Thread(target=client.receive, args=(on_event, "$default"),
                                   kwargs={"partition_id": "0", "event_position": "-1"})
         thread.start()
         time.sleep(5)
-    assert len(on_events.received) == 20
+    assert len(on_event.received) == 20
+    for ed in on_event.received:
+        assert ed.application_properties[b"raw_prop"] == b"raw_value"

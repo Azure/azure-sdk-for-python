@@ -28,17 +28,19 @@ def test_client_secret_credential(aad_credential, live_eventhub):
     with producer_client:
         producer_client.send(EventData(body='A single message'), partition_id="0")
 
-    def on_events(partition_context, events):
-        on_events.called = True
-        assert partition_context.partition_id == '0'
-        assert len(events) == 1
-        assert list(events[0].body)[0] == 'A single message'.encode('utf-8')
+    def on_event(partition_context, event):
+        on_event.called = True
+        on_event.partition_id = partition_context.partition_id
+        on_event.event = event
+    on_event.called = False
     with consumer_client:
-        worker = threading.Thread(target=consumer_client.receive, args=(on_events,),
+        worker = threading.Thread(target=consumer_client.receive, args=(on_event,),
                                   kwargs={"consumer_group": '$default',
                                           "partition_id": '0'})
         worker.start()
-        time.sleep(2)
+        time.sleep(3)
 
     worker.join()
-    assert on_events.called is True
+    assert on_event.called is True
+    assert on_event.partition_id == "0"
+    assert list(on_event.event.body)[0] == 'A single message'.encode('utf-8')
