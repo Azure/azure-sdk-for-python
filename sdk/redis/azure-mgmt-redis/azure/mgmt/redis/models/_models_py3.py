@@ -560,9 +560,11 @@ class RedisInstanceDetails(Model):
 
     :ivar ssl_port: Redis instance SSL port.
     :vartype ssl_port: int
-    :ivar non_ssl_port: Redis instance Non-SSL port.
+    :ivar non_ssl_port: If enableNonSslPort is true, provides Redis instance
+     Non-SSL port.
     :vartype non_ssl_port: int
-    :ivar zone: Availability zone where instance is located.
+    :ivar zone: If the Cache uses availability zones, specifies availability
+     zone where this instance is located.
     :vartype zone: str
     :ivar shard_id: If clustering is enabled, the Shard ID of Redis Instance
     :vartype shard_id: int
