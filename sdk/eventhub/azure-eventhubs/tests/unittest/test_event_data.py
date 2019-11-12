@@ -33,6 +33,12 @@ def test_body_json():
     assert jo["a"] == "b"
 
 
+def test_body_wrong_json():
+    event_data = EventData('aaa')
+    with pytest.raises(TypeError):
+        event_data.body_as_json()
+
+
 def test_app_properties():
     app_props = {"a": "b"}
     event_data = EventData("")
