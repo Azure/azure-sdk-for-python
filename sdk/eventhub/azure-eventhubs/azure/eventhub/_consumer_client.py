@@ -93,7 +93,10 @@ class EventHubConsumerClient(ClientBase):
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self._address.hostname, self._address.path, consumer_group, partition_id)
         handler = EventHubConsumer(
-            self, source_url, event_position=event_position, owner_level=owner_level,
+            self,
+            source_url,
+            event_position=event_position,
+            owner_level=owner_level,
             prefetch=prefetch,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties)
         return handler
@@ -152,16 +155,16 @@ class EventHubConsumerClient(ClientBase):
         """
         return super(EventHubConsumerClient, cls).from_connection_string(conn_str, **kwargs)
 
-    def receive(self, on_events, consumer_group, **kwargs):
+    def receive(self, on_event, consumer_group, **kwargs):
         #  type: (Callable[[PartitionContext, List[EventData]], None], str, Any) -> None
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
-        :param on_events: The callback function for handling received events. The callback takes two
-         parameters: `partition_context` which contains partition context and `events` which are the received events.
-         Please define the callback like `on_event(partition_context, events)`.
+        :param on_event: The callback function for handling received event. The callback takes two
+         parameters: `partition_context` which contains partition context and `event` which is the received event.
+         Please define the callback like `on_event(partition_context, event)`.
          For detailed partition context information, please refer to
          :class:`PartitionContext<azure.eventhub.PartitionContext>`.
-        :type on_events: Callable[~azure.eventhub.PartitionContext, List[EventData]]
+        :type on_event: Callable[~azure.eventhub.PartitionContext, EventData]
         :param consumer_group: Receive events from the event hub for this consumer group
         :type consumer_group: str
         :keyword str partition_id: Receive from this partition only if it's not None.
@@ -225,7 +228,7 @@ class EventHubConsumerClient(ClientBase):
                 raise error
 
             event_processor = EventProcessor(
-                self, consumer_group, on_events,
+                self, consumer_group, on_event,
                 partition_manager=self._partition_manager,
                 polling_interval=self._load_balancing_interval,
                 **kwargs
