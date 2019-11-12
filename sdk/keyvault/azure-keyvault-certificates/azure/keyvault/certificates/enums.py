@@ -56,4 +56,9 @@ class WellKnownIssuerNames(str, Enum):
     """Collection of well-known issuer names"""
 
     Self = "Self"  #: Use this issuer for a self-signed certificate
-    Unknown = "Unknown"  #: Here you must get the cert yourself from your issuer and call :func:`merge_certificate`.
+    Unknown = "Unknown"  
+    """
+    If you use this issuer, you must manually get a x509 certificate from the issuer of your choice.
+    You must then call :func:`~azure.keyvault.certificates.CertificateClient.merge_certificate` to
+    merge the public x509 certificate with your key vault certificate pending object to complete creation.
+    """
