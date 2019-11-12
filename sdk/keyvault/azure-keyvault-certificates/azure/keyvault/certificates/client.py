@@ -989,7 +989,6 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Delete an issuer
                 :dedent: 8
         """
-        issuer_name = name
         issuer_bundle = self._client.delete_certificate_issuer(
             vault_base_url=self.vault_url, issuer_name=issuer_name, **kwargs
         )
