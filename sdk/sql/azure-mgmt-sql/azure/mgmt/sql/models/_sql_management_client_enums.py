@@ -710,3 +710,9 @@ class CapabilityGroup(str, Enum):
     supported_editions = "supportedEditions"
     supported_elastic_pool_editions = "supportedElasticPoolEditions"
     supported_managed_instance_versions = "supportedManagedInstanceVersions"
+
+
+class ReplicaType(str, Enum):
+
+    primary = "Primary"
+    readable_secondary = "ReadableSecondary"
