@@ -41,7 +41,7 @@ class ApiOperationDisplay(Model):
     :type operation: str
     :param provider: Service provider: Microsoft.StorageCache
     :type provider: str
-    :param resource: Resource on which the operation is performed: cache, etc.
+    :param resource: Resource on which the operation is performed: Cache, etc.
     :type resource: str
     """
 
@@ -59,7 +59,7 @@ class ApiOperationDisplay(Model):
 
 
 class Cache(Model):
-    """A cache instance.  Follows Azure Resource Manager standards:
+    """A Cache instance. Follows Azure Resource Manager standards:
     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md.
 
     Variables are only populated by the server, and will be ignored when
@@ -67,17 +67,17 @@ class Cache(Model):
 
     :param tags: ARM tags as name/value pairs.
     :type tags: object
-    :ivar id: Fully qualified URL of the cache.
+    :ivar id: Resource ID of the Cache.
     :vartype id: str
     :param location: Region name string.
     :type location: str
-    :ivar name: Name of cache.
+    :ivar name: Name of Cache.
     :vartype name: str
-    :ivar type: Type for the cache; Microsoft.StorageCache/Cache
+    :ivar type: Type of the Cache; Microsoft.StorageCache/Cache
     :vartype type: str
-    :param cache_size_gb: The size of this cache's cache, in GB.
+    :param cache_size_gb: The size of this Cache, in GB.
     :type cache_size_gb: int
-    :ivar health: Health of the cache.
+    :ivar health: Health of the Cache.
     :vartype health: ~azure.mgmt.storagecache.models.CacheHealth
     :ivar mount_addresses: Array of IP addresses that can be used by clients
      mounting this Cache.
@@ -88,11 +88,11 @@ class Cache(Model):
      'Deleting', 'Updating'
     :type provisioning_state: str or
      ~azure.mgmt.storagecache.models.ProvisioningStateType
-    :param subnet: Subnet used for the cache.
+    :param subnet: Subnet used for the Cache.
     :type subnet: str
-    :param upgrade_status: Upgrade status of the cache.
+    :param upgrade_status: Upgrade status of the Cache.
     :type upgrade_status: ~azure.mgmt.storagecache.models.CacheUpgradeStatus
-    :param sku: Sku for the cache.
+    :param sku: SKU for the Cache.
     :type sku: ~azure.mgmt.storagecache.models.CacheSku
     """
 
@@ -136,10 +136,10 @@ class Cache(Model):
 
 
 class CacheHealth(Model):
-    """An indication of cache health.  Gives more information about health than
+    """An indication of Cache health. Gives more information about health than
     just that related to provisioning.
 
-    :param state: List of cache health states. Possible values include:
+    :param state: List of Cache health states. Possible values include:
      'Unknown', 'Healthy', 'Degraded', 'Down', 'Transitioning', 'Stopping',
      'Stopped', 'Upgrading', 'Flushing'
     :type state: str or ~azure.mgmt.storagecache.models.HealthStateType
@@ -159,9 +159,9 @@ class CacheHealth(Model):
 
 
 class CacheSku(Model):
-    """Sku for the cache.
+    """SKU for the Cache.
 
-    :param name: Sku name for this cache.
+    :param name: SKU name for this Cache.
     :type name: str
     """
 
@@ -175,22 +175,22 @@ class CacheSku(Model):
 
 
 class CacheUpgradeStatus(Model):
-    """Properties describing the software upgrade state of the cache.
+    """Properties describing the software upgrade state of the Cache.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar current_firmware_version: Version string of the firmware currently
-     installed on this cache.
+     installed on this Cache.
     :vartype current_firmware_version: str
     :ivar firmware_update_status: True if there is a firmware update ready to
-     install on this cache.  The firmware will automatically be installed after
+     install on this Cache. The firmware will automatically be installed after
      firmwareUpdateDeadline if not triggered earlier via the upgrade operation.
      Possible values include: 'available', 'unavailable'
     :vartype firmware_update_status: str or
      ~azure.mgmt.storagecache.models.FirmwareStatusType
     :ivar firmware_update_deadline: Time at which the pending firmware update
-     will automatically be installed on the cache.
+     will automatically be installed on the Cache.
     :vartype firmware_update_deadline: datetime
     :ivar last_firmware_update: Time of the last successful firmware update.
     :vartype last_firmware_update: datetime
@@ -225,9 +225,9 @@ class CacheUpgradeStatus(Model):
 
 
 class ClfsTarget(Model):
-    """Storage container for use as a CLFS StorageTarget.
+    """Storage container for use as a CLFS Storage Target.
 
-    :param target: URL of storage container.
+    :param target: Resource ID of storage container.
     :type target: str
     """
 
@@ -302,9 +302,9 @@ class CloudErrorBody(Model):
 class NamespaceJunction(Model):
     """A namespace junction.
 
-    :param namespace_path: Namespace path on a cache for a storage target.
+    :param namespace_path: Namespace path on a Cache for a Storage Target.
     :type namespace_path: str
-    :param target_path: Path in storage target to which namespacePath points.
+    :param target_path: Path in Storage Target to which namespacePath points.
     :type target_path: str
     :param nfs_export: NFS export where targetPath exists.
     :type nfs_export: str
@@ -324,12 +324,13 @@ class NamespaceJunction(Model):
 
 
 class Nfs3Target(Model):
-    """An NFS mount point for use as a StorageTarget.
+    """An NFSv3 mount point for use as a Storage Target.
 
-    :param target: IP or name of an NFS Storage Target host, ie: 10.0.44.44
+    :param target: IP address or host name of an NFSv3 host (e.g.,
+     10.0.44.44).
     :type target: str
     :param usage_model: Identifies the primary usage model to be used for this
-     storage target.   GET choices from .../usageModels
+     Storage Target. Get choices from .../usageModels
     :type usage_model: str
     """
 
@@ -354,22 +355,22 @@ class ResourceSku(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar resource_type: The type of resource the sku applies to.
+    :ivar resource_type: The type of resource the SKU applies to.
     :vartype resource_type: str
     :param capabilities: A list of capabilities of this SKU, such as
-     throughput or ops/sec
+     throughput or ops/sec.
     :type capabilities:
      list[~azure.mgmt.storagecache.models.ResourceSkuCapabilities]
     :ivar locations: The set of locations that the SKU is available. This will
-     be supported and registered Azure Geo Regions (e.g. West US, East US,
+     be supported and registered Azure Geo Regions (e.g., West US, East US,
      Southeast Asia, etc.).
     :vartype locations: list[str]
     :param location_info: The set of locations that the SKU is available.
     :type location_info:
      list[~azure.mgmt.storagecache.models.ResourceSkuLocationInfo]
-    :param name: The name of this sku.
+    :param name: The name of this SKU.
     :type name: str
-    :param restrictions: The restrictions because of which SKU cannot be used.
+    :param restrictions: The restrictions preventing this SKU from being used.
      This is empty if there are no restrictions.
     :type restrictions: list[~azure.mgmt.storagecache.models.Restriction]
     """
@@ -401,9 +402,9 @@ class ResourceSku(Model):
 class ResourceSkuCapabilities(Model):
     """A resource SKU capability.
 
-    :param name: Name of a capability, such as ops/sec
+    :param name: Name of a capability, such as ops/sec.
     :type name: str
-    :param value: Quantity, if the capability is measured by quantity
+    :param value: Quantity, if the capability is measured by quantity.
     :type value: str
     """
 
@@ -421,7 +422,7 @@ class ResourceSkuCapabilities(Model):
 class ResourceSkuLocationInfo(Model):
     """Resource SKU location information.
 
-    :param location: Location where this Sku is available
+    :param location: Location where this SKU is available.
     :type location: str
     :param zones: Zones if any.
     :type zones: list[str]
@@ -439,22 +440,24 @@ class ResourceSkuLocationInfo(Model):
 
 
 class Restriction(Model):
-    """The restriction because of which SKU cannot be used.
+    """The restrictions preventing this SKU from being used.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar type: The type of restrictions. As of now only possible value for
-     this is location.
+    :ivar type: The type of restrictions. In this version, the only possible
+     value for this is location.
     :vartype type: str
     :ivar values: The value of restrictions. If the restriction type is set to
-     location. This would be different locations where the SKU is restricted.
+     location, then this would be the different locations where the SKU is
+     restricted.
     :vartype values: list[str]
     :param reason_code: The reason for the restriction. As of now this can be
-     "QuotaId" or "NotAvailableForSubscription". Quota Id is set when the SKU
+     "QuotaId" or "NotAvailableForSubscription". "QuotaId" is set when the SKU
      has requiredQuotas parameter as the subscription does not belong to that
-     quota. The "NotAvailableForSubscription" is related to capacity at DC.
-     Possible values include: 'QuotaId', 'NotAvailableForSubscription'
+     quota. "NotAvailableForSubscription" is related to capacity at the
+     datacenter. Possible values include: 'QuotaId',
+     'NotAvailableForSubscription'
     :type reason_code: str or ~azure.mgmt.storagecache.models.ReasonCode
     """
 
@@ -482,17 +485,17 @@ class StorageTarget(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: A fully qualified URL.
+    :ivar name: Name of the Storage Target.
     :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: Resource ID of the Storage Target.
     :vartype id: str
-    :ivar type: Type for the storage target;
+    :ivar type: Type of the Storage Target;
      Microsoft.StorageCache/Cache/StorageTarget
     :vartype type: str
-    :param junctions: List of cache namespace to target namespace
-     associations.
+    :param junctions: List of Cache namespace junctions to target for
+     namespace associations.
     :type junctions: list[~azure.mgmt.storagecache.models.NamespaceJunction]
-    :param target_type: Type for storage target. Possible values include:
+    :param target_type: Type of the Storage Target. Possible values include:
      'nfs3', 'clfs', 'unknown'
     :type target_type: str or
      ~azure.mgmt.storagecache.models.StorageTargetType
@@ -502,11 +505,11 @@ class StorageTarget(Model):
      'Deleting', 'Updating'
     :type provisioning_state: str or
      ~azure.mgmt.storagecache.models.ProvisioningStateType
-    :param nfs3: Properties when nfs3 target.
+    :param nfs3: Properties when targetType is nfs3.
     :type nfs3: ~azure.mgmt.storagecache.models.Nfs3Target
-    :param clfs: Properties when clfs target.
+    :param clfs: Properties when targetType is clfs.
     :type clfs: ~azure.mgmt.storagecache.models.ClfsTarget
-    :param unknown: Properties when unknown target.
+    :param unknown: Properties when targetType is unknown.
     :type unknown: ~azure.mgmt.storagecache.models.UnknownTarget
     """
 
@@ -542,10 +545,10 @@ class StorageTarget(Model):
 
 
 class UnknownTarget(Model):
-    """Storage container for use as a Unknown StorageTarget.
+    """Storage container for use as an Unknown Storage Target.
 
     :param unknown_map: Dictionary of string->string pairs containing
-     information about the StorageTarget.
+     information about the Storage Target.
     :type unknown_map: dict[str, str]
     """
 
@@ -563,10 +566,10 @@ class UsageModel(Model):
 
     :param display: Localized information describing this usage model.
     :type display: ~azure.mgmt.storagecache.models.UsageModelDisplay
-    :param model_name: Non localized keyword naming this usage model.
+    :param model_name: Non-localized keyword name for this usage model.
     :type model_name: str
     :param target_type: The type of Storage Target to which this model is
-     applicable (only nfs for now)
+     applicable (only nfs3 as of this version).
     :type target_type: str
     """
 

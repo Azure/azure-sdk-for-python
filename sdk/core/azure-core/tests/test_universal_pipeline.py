@@ -116,6 +116,19 @@ def test_no_log(mock_http_logger):
     mock_http_logger.debug.assert_not_called()
     mock_http_logger.reset_mock()
 
+    # Let's make this request a failure, retried twice
+    request.context.options['logging_enable'] = True
+    http_logger.on_request(request)
+    http_logger.on_response(request, response)
+
+    first_count = mock_http_logger.debug.call_count
+    assert first_count >= 1
+
+    http_logger.on_request(request)
+    http_logger.on_response(request, response)
+
+    second_count = mock_http_logger.debug.call_count
+    assert second_count == first_count * 2
 
 def test_raw_deserializer():
     raw_deserializer = ContentDecodePolicy()

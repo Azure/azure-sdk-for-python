@@ -26,6 +26,8 @@ from .operations import CollectionPartitionRegionOperations
 from .operations import CollectionPartitionOperations
 from .operations import PartitionKeyRangeIdOperations
 from .operations import PartitionKeyRangeIdRegionOperations
+from .operations import PrivateLinkResourcesOperations
+from .operations import PrivateEndpointConnectionsOperations
 from . import models
 
 
@@ -61,6 +63,10 @@ class CosmosDB(SDKClient):
     :vartype partition_key_range_id: azure.mgmt.cosmosdb.operations.PartitionKeyRangeIdOperations
     :ivar partition_key_range_id_region: PartitionKeyRangeIdRegion operations
     :vartype partition_key_range_id_region: azure.mgmt.cosmosdb.operations.PartitionKeyRangeIdRegionOperations
+    :ivar private_link_resources: PrivateLinkResources operations
+    :vartype private_link_resources: azure.mgmt.cosmosdb.operations.PrivateLinkResourcesOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnections operations
+    :vartype private_endpoint_connections: azure.mgmt.cosmosdb.operations.PrivateEndpointConnectionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -77,7 +83,6 @@ class CosmosDB(SDKClient):
         super(CosmosDB, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2015-04-08'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -106,4 +111,8 @@ class CosmosDB(SDKClient):
         self.partition_key_range_id = PartitionKeyRangeIdOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.partition_key_range_id_region = PartitionKeyRangeIdRegionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -119,7 +119,8 @@ def generate_doc(config_path, output_directory = "./ref/", project_pattern=None)
                 ))
 
         for multiapi_namespace in MULTIAPI_VERSION_NAMESPACE:
-            if namespace.split(".")[0:3] == multiapi_namespace.split(".")[0:3]:
+            length = len(multiapi_namespace.split("."))
+            if namespace.split(".")[0:length] == multiapi_namespace.split(".")[0:length]:
                 _LOGGER.info("MultiAPI namespace on %s", multiapi_namespace)
                 api_package = namespace.split(multiapi_namespace+".")[1]
                 multiapi_found_apiversion.setdefault(multiapi_namespace, []).append(api_package)

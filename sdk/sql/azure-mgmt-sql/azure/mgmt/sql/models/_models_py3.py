@@ -1372,9 +1372,9 @@ class DatabaseVulnerabilityAssessment(ProxyResource):
      is required if server level vulnerability assessment policy doesn't set
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
@@ -5490,9 +5490,9 @@ class ManagedInstanceVulnerabilityAssessment(ProxyResource):
      https://myStorage.blob.core.windows.net/VaScans/).
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
@@ -7765,9 +7765,9 @@ class ServerVulnerabilityAssessment(ProxyResource):
      https://myStorage.blob.core.windows.net/VaScans/).
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
