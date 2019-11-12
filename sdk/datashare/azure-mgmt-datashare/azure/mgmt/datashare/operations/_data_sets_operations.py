@@ -11,6 +11,8 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -24,7 +26,7 @@ class DataSetsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The api version to use. Constant value: "2018-11-01-preview".
+    :ivar api_version: The api version to use. Constant value: "2019-11-01".
     """
 
     models = models
@@ -34,7 +36,7 @@ class DataSetsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-11-01-preview"
+        self.api_version = "2019-11-01"
 
         self.config = config
 
@@ -182,30 +184,9 @@ class DataSetsOperations(object):
         return deserialized
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataShare/accounts/{accountName}/shares/{shareName}/dataSets/{dataSetName}'}
 
-    def delete(
+
+    def _delete_initial(
             self, resource_group_name, account_name, share_name, data_set_name, custom_headers=None, raw=False, **operation_config):
-        """Delete DataSet in a share.
-
-        Delete a DataSet in a share.
-
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
-        :param account_name: The name of the share account.
-        :type account_name: str
-        :param share_name: The name of the share.
-        :type share_name: str
-        :param data_set_name: The name of the dataSet.
-        :type data_set_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`DataShareErrorException<azure.mgmt.datashare.models.DataShareErrorException>`
-        """
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -234,12 +215,61 @@ class DataSetsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200, 202, 204]:
             raise models.DataShareErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def delete(
+            self, resource_group_name, account_name, share_name, data_set_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Delete DataSet in a share.
+
+        Delete a DataSet in a share.
+
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param account_name: The name of the share account.
+        :type account_name: str
+        :param share_name: The name of the share.
+        :type share_name: str
+        :param data_set_name: The name of the dataSet.
+        :type data_set_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises:
+         :class:`DataShareErrorException<azure.mgmt.datashare.models.DataShareErrorException>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            share_name=share_name,
+            data_set_name=data_set_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataShare/accounts/{accountName}/shares/{shareName}/dataSets/{dataSetName}'}
 
     def list_by_share(

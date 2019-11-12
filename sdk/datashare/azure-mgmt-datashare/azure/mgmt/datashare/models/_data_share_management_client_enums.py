@@ -47,6 +47,13 @@ class InvitationStatus(str, Enum):
 class ShareKind(str, Enum):
 
     copy_based = "CopyBased"
+    in_place = "InPlace"
+
+
+class SynchronizationMode(str, Enum):
+
+    incremental = "Incremental"
+    full_sync = "FullSync"
 
 
 class DataSetType(str, Enum):
@@ -59,6 +66,8 @@ class DataSetType(str, Enum):
     adls_gen2_file = "AdlsGen2File"
     adls_gen1_folder = "AdlsGen1Folder"
     adls_gen1_file = "AdlsGen1File"
+    kusto_cluster = "KustoCluster"
+    kusto_database = "KustoDatabase"
     sql_db_table = "SqlDBTable"
     sql_dw_table = "SqlDWTable"
 
@@ -69,12 +78,6 @@ class ShareSubscriptionStatus(str, Enum):
     revoked = "Revoked"
     source_deleted = "SourceDeleted"
     revoking = "Revoking"
-
-
-class SynchronizationMode(str, Enum):
-
-    incremental = "Incremental"
-    full_sync = "FullSync"
 
 
 class RecurrenceInterval(str, Enum):
