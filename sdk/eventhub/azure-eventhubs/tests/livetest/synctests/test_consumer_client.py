@@ -81,6 +81,6 @@ def test_receive_load_balancing(connstr_senders):
 
         worker1.start()
         worker2.start()
-        time.sleep(20)
-        assert len(client1._event_processors[("$default", "-1")]._working_threads) == 1
-        assert len(client2._event_processors[("$default", "-1")]._working_threads) == 1
+        time.sleep(10)
+        assert len(client1._event_processors[("$default", "-1")]._consumers) == 1
+        assert len(client2._event_processors[("$default", "-1")]._consumers) == 1
