@@ -288,8 +288,9 @@ class HardwareProfile(Model):
      ~azure.mgmt.hanaonazure.models.HanaHardwareTypeNamesEnum
     :ivar hana_instance_size: Specifies the HANA instance SKU. Possible values
      include: 'S72m', 'S144m', 'S72', 'S144', 'S192', 'S192m', 'S192xm', 'S96',
-     'S384', 'S384m', 'S384xm', 'S384xxm', 'S576m', 'S576xm', 'S768', 'S768m',
-     'S768xm', 'S960m', 'S224o', 'S224m', 'S224om', 'S224oxm', 'S224oxxm'
+     'S112', 'S224m', 'S224o', 'S224om', 'S224oo', 'S224oom', 'S224ooo',
+     'S224oxm', 'S224oxxm', 'S384', 'S384m', 'S384xm', 'S384xxm', 'S576m',
+     'S576xm', 'S768', 'S768m', 'S768xm', 'S960m'
     :vartype hana_instance_size: str or
      ~azure.mgmt.hanaonazure.models.HanaInstanceSizeNamesEnum
     """
@@ -495,6 +496,8 @@ class SapMonitor(Resource):
     :param hana_db_credentials_msi_id: MSI ID passed by customer which has
      access to customer's KeyVault and to be assigned to the Collector VM.
     :type hana_db_credentials_msi_id: str
+    :param key_vault_id: Key Vault ID containing customer's HANA credentials.
+    :type key_vault_id: str
     :ivar provisioning_state: State of provisioning of the HanaInstance.
      Possible values include: 'Accepted', 'Creating', 'Updating', 'Failed',
      'Succeeded', 'Deleting', 'Migrating'
@@ -532,12 +535,13 @@ class SapMonitor(Resource):
         'hana_db_password': {'key': 'properties.hanaDbPassword', 'type': 'str'},
         'hana_db_password_key_vault_url': {'key': 'properties.hanaDbPasswordKeyVaultUrl', 'type': 'str'},
         'hana_db_credentials_msi_id': {'key': 'properties.hanaDbCredentialsMsiId', 'type': 'str'},
+        'key_vault_id': {'key': 'properties.keyVaultId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_resource_group_name': {'key': 'properties.managedResourceGroupName', 'type': 'str'},
         'log_analytics_workspace_arm_id': {'key': 'properties.logAnalyticsWorkspaceArmId', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, hana_subnet: str=None, hana_hostname: str=None, hana_db_name: str=None, hana_db_sql_port: int=None, hana_db_username: str=None, hana_db_password: str=None, hana_db_password_key_vault_url: str=None, hana_db_credentials_msi_id: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, hana_subnet: str=None, hana_hostname: str=None, hana_db_name: str=None, hana_db_sql_port: int=None, hana_db_username: str=None, hana_db_password: str=None, hana_db_password_key_vault_url: str=None, hana_db_credentials_msi_id: str=None, key_vault_id: str=None, **kwargs) -> None:
         super(SapMonitor, self).__init__(location=location, **kwargs)
         self.hana_subnet = hana_subnet
         self.hana_hostname = hana_hostname
@@ -547,6 +551,7 @@ class SapMonitor(Resource):
         self.hana_db_password = hana_db_password
         self.hana_db_password_key_vault_url = hana_db_password_key_vault_url
         self.hana_db_credentials_msi_id = hana_db_credentials_msi_id
+        self.key_vault_id = key_vault_id
         self.provisioning_state = None
         self.managed_resource_group_name = None
         self.log_analytics_workspace_arm_id = None
