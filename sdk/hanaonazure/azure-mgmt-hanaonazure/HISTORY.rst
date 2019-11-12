@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.11.0 (2019-11-12)
++++++++++++++++++++
+
+**Features**
+
+- Model SapMonitor has a new parameter key_vault_id
+
 0.10.0 (2019-08-15)
 +++++++++++++++++++
 
