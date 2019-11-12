@@ -13,24 +13,34 @@ import json
 from azure_devtools.scenario_tests import RecordingProcessor
 from certificates_async_test_case import AsyncKeyVaultTestCase
 
-from azure.keyvault.certificates import AdministratorContact, CertificateContact, CertificatePolicy
+from azure.keyvault.certificates import (
+    AdministratorContact,
+    CertificateContact,
+    CertificatePolicyAction,
+    CertificatePolicy,
+    KeyType,
+    KeyCurveName,
+    KeyUsageType,
+    SecretContentType,
+    LifetimeAction
+)
 from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer
 from certificates_test_case import KeyVaultTestCase
 from azure.keyvault.certificates._shared._generated.v7_0.models import CertificatePolicy as CertificatePolicyGenerated
+from azure.keyvault.certificates._shared._generated.v7_0.models import LifetimeAction as LifetimeActionGenerated
 from azure.keyvault.certificates._shared._generated.v7_0.models import (
     SecretProperties,
     IssuerParameters,
     X509CertificateProperties,
     KeyProperties,
     SubjectAlternativeNames,
-    LifetimeAction,
     Trigger,
     Action,
     ActionType,
     IssuerAttributes,
 )
-from azure.keyvault.certificates.models import CertificateIssuer, IssuerProperties
+from azure.keyvault.certificates.models import CertificateIssuer, IssuerProperties, KeyCurveName
 from certificates_async_preparer import AsyncVaultClientPreparer
 
 
@@ -91,28 +101,32 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(pending_id.vault_url.strip("/"), vault.strip("/"))
         self.assertEqual(pending_id.name, cert_name)
 
-    def _validate_certificate_bundle(self, cert, vault, cert_name, cert_policy):
+    def _validate_certificate_bundle(self, cert, cert_name, cert_policy):
         self.assertIsNotNone(cert)
         self.assertEqual(cert_name, cert.name)
         self.assertIsNotNone(cert.cer)
         self.assertIsNotNone(cert.policy)
-        self.assertEqual(cert_policy.issuer_parameters.name, cert.policy.issuer_name)
-        self.assertEqual(cert_policy.secret_properties.content_type, cert.policy.content_type)
-        if cert_policy.x509_certificate_properties.ekus:
-            self.assertEqual(cert_policy.x509_certificate_properties.ekus, cert.policy.ekus)
-        if cert_policy.x509_certificate_properties.key_usage:
-            self.assertEqual(cert_policy.x509_certificate_properties.key_usage, cert.policy.key_usage)
-        if cert_policy.x509_certificate_properties:
+        self._validate_certificate_policy(cert.policy, cert_policy)
+        
+
+    def _validate_certificate_policy(self, policy, policy_generated):
+        self.assertEqual(policy_generated.issuer_parameters.name, policy.issuer_name)
+        self.assertEqual(policy_generated.secret_properties.content_type, policy.content_type)
+        if policy_generated.x509_certificate_properties.ekus:
+            self.assertEqual(policy_generated.x509_certificate_properties.ekus, policy.ekus)
+        if policy_generated.x509_certificate_properties.key_usage:
+            self.assertEqual(policy_generated.x509_certificate_properties.key_usage, policy.key_usage)
+        if policy_generated.x509_certificate_properties:
             self._validate_x509_properties(
-                cert_bundle_policy=cert.policy, cert_policy_x509_props=cert_policy.x509_certificate_properties
+                cert_bundle_policy=policy, cert_policy_x509_props=policy_generated.x509_certificate_properties
             )
         self._validate_key_properties(
-            cert_bundle_key_props=cert.policy, cert_policy_key_props=cert_policy.key_properties
+            cert_bundle_key_props=policy, cert_policy_key_props=policy_generated.key_properties
         )
-        if cert_policy.lifetime_actions:
+        if policy_generated.lifetime_actions:
             self._validate_lifetime_actions(
-                cert_bundle_lifetime_actions=cert.policy.lifetime_actions,
-                cert_policy_lifetime_actions=cert_policy.lifetime_actions,
+                cert_bundle_lifetime_actions=policy.lifetime_actions,
+                cert_policy_lifetime_actions=policy_generated.lifetime_actions,
             )
 
     def _validate_x509_properties(self, cert_bundle_policy, cert_policy_x509_props):
@@ -151,7 +165,7 @@ class CertificateClientTests(KeyVaultTestCase):
             policy_lifetime_actions = cert_policy_lifetime_actions
             for bundle_lifetime_action in cert_bundle_lifetime_actions:
                 for policy_lifetime_action in policy_lifetime_actions:
-                    if bundle_lifetime_action.action.value == policy_lifetime_action.action.action_type.value:
+                    if bundle_lifetime_action.action.value == policy_lifetime_action.action.action_type:
                         if policy_lifetime_action.trigger.lifetime_percentage:
                             self.assertEqual(
                                 bundle_lifetime_action.lifetime_percentage,
@@ -217,7 +231,7 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
         cert_name = self.get_resource_name("cert")
         lifetime_actions = [
-            LifetimeAction(trigger=Trigger(lifetime_percentage=80), action=Action(action_type=ActionType.auto_renew))
+            LifetimeActionGenerated(trigger=Trigger(lifetime_percentage=80), action=Action(action_type=ActionType.auto_renew))
         ]
         cert_policy = CertificatePolicyGenerated(
             key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
@@ -236,7 +250,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         self._validate_certificate_bundle(
-            cert=cert, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
+            cert=cert, cert_name=cert_name, cert_policy=cert_policy
         )
 
         self.assertEqual((await client.get_certificate_operation(name=cert_name)).status.lower(), "completed")
@@ -244,14 +258,14 @@ class CertificateClientTests(KeyVaultTestCase):
         # get certificate
         cert = await client.get_certificate(name=cert_name)
         self._validate_certificate_bundle(
-            cert=cert, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
+            cert=cert, cert_name=cert_name, cert_policy=cert_policy
         )
 
         # update certificate
         tags = {"tag1": "updated_value1"}
         cert_bundle = await client.update_certificate_properties(name=cert_name, tags=tags)
         self._validate_certificate_bundle(
-            cert=cert_bundle, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
+            cert=cert_bundle, cert_name=cert_name, cert_policy=cert_policy
         )
         self.assertEqual(tags, cert_bundle.properties.tags)
         self.assertEqual(cert.id, cert_bundle.id)
@@ -260,7 +274,7 @@ class CertificateClientTests(KeyVaultTestCase):
         # delete certificate
         deleted_cert_bundle = await client.delete_certificate(name=cert_name, _polling_interval=polling_interval)
         self._validate_certificate_bundle(
-            cert=deleted_cert_bundle, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
+            cert=deleted_cert_bundle, cert_name=cert_name, cert_policy=cert_policy
         )
 
         # get certificate returns not found
@@ -512,28 +526,74 @@ class CertificateClientTests(KeyVaultTestCase):
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_policy(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
         client = vault_client.certificates
 
         cert_name = "policyCertificate"
+        cert_policy = CertificatePolicy(
+            issuer_name="Self",
+            subject_name="CN=DefaultPolicy",
+            exportable=True,
+            key_type=KeyType.rsa,
+            key_size=2048,
+            reuse_key=True,
+            ekus=["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],
+            key_usage=[KeyUsageType.decipher_only],
+            content_type=SecretContentType.PKCS12,
+            validity_in_months=12,
+            lifetime_actions=[LifetimeAction(
+                action=CertificatePolicyAction.email_contacts,
+                lifetime_percentage=98
+            )],
+            certificate_transparency=False,
+            san_dns_names=["sdk.azure-int.net"]
+        )
+
+        cert_policy_generated = CertificatePolicyGenerated(
+            key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=True),
+            secret_properties=SecretProperties(content_type="application/x-pkcs12"),
+            issuer_parameters=IssuerParameters(
+                name="Self",
+                certificate_transparency=False
+            ),
+            x509_certificate_properties=X509CertificateProperties(
+                subject="CN=DefaultPolicy",
+                ekus=["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],
+                subject_alternative_names=SubjectAlternativeNames(
+                    dns_names=["sdk.azure-int.net"]
+                ),
+                key_usage=["decipherOnly"],
+                validity_in_months=12,
+            ),
+            lifetime_actions=[LifetimeActionGenerated(
+                action=Action(action_type="EmailContacts"),
+                trigger=Trigger(lifetime_percentage=98)
+            )]
+        )
+
+        polling_interval = 0 if self.is_playback() else None
 
         # get certificate policy
-        await self._import_common_certificate(client=client, cert_name=cert_name)
-        retrieved_policy = await client.get_policy(certificate_name=cert_name)
-        self.assertIsNotNone(retrieved_policy)
-
-        # update certificate policy
-        cert_policy = CertificatePolicyGenerated(
-            key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
-            secret_properties=SecretProperties(content_type="application/x-pkcs12"),
-            issuer_parameters=IssuerParameters(name="Self"),
+        await client.create_certificate(
+            name=cert_name,
+            policy=cert_policy,
+            _polling_interval=polling_interval
         )
 
-        await client.update_policy(
-            certificate_name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
+        policy_to_validate = await client.get_policy(certificate_name=cert_name)
+
+        self._validate_certificate_policy(policy_to_validate, cert_policy_generated)
+
+        cert_policy._key_type = KeyType.ec
+        cert_policy._key_size = 256
+        cert_policy._curve = KeyCurveName.p_256
+
+        cert_policy_generated.key_properties=KeyProperties(
+            exportable=True, key_type="EC", curve="P-256", reuse_key=True, key_size=256
         )
-        updated_cert_policy = await client.get_policy(certificate_name=cert_name)
-        self.assertIsNotNone(updated_cert_policy)
+
+        policy_to_validate = await client.update_policy(certificate_name=cert_name, policy=cert_policy)
+
+        self._validate_certificate_policy(policy_to_validate, cert_policy_generated)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
@@ -576,7 +636,7 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
         cert_name = self.get_resource_name("cert")
         lifetime_actions = [
-            LifetimeAction(trigger=Trigger(lifetime_percentage=2), action=Action(action_type=ActionType.email_contacts))
+            LifetimeActionGenerated(trigger=Trigger(lifetime_percentage=2), action=Action(action_type=ActionType.email_contacts))
         ]
         cert_policy = CertificatePolicyGenerated(
             key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
@@ -610,7 +670,7 @@ class CertificateClientTests(KeyVaultTestCase):
         # restore certificate
         restored_certificate = await client.restore_certificate_backup(backup=certificate_backup)
         self._validate_certificate_bundle(
-            cert=restored_certificate, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
+            cert=restored_certificate, cert_name=cert_name, cert_policy=cert_policy
         )
 
     @ResourceGroupPreparer(name_prefix=name_prefix)

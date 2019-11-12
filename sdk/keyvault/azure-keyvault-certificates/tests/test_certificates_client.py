@@ -39,7 +39,7 @@ from azure.keyvault.certificates._shared._generated.v7_0.models import (
     ActionType,
     IssuerAttributes,
 )
-from azure.keyvault.certificates.models import CertificateIssuer, IssuerProperties
+from azure.keyvault.certificates.models import CertificateIssuer, IssuerProperties, KeyCurveName
 
 
 
@@ -113,21 +113,25 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(cert_name, cert.name)
         self.assertIsNotNone(cert.cer)
         self.assertIsNotNone(cert.policy)
-        self.assertEqual(cert_policy.issuer_parameters.name, cert.policy.issuer_name)
-        self.assertEqual(cert_policy.secret_properties.content_type, cert.policy.content_type)
-        if cert_policy.x509_certificate_properties.ekus:
-            self.assertEqual(cert_policy.x509_certificate_properties.ekus, cert.policy.ekus)
-        if cert_policy.x509_certificate_properties.key_usage:
-            self.assertEqual(cert_policy.x509_certificate_properties.key_usage, cert.policy.key_usage)
-        if cert_policy.x509_certificate_properties:
+        self._validate_certificate_policy(cert.policy, cert_policy)
+        
+
+    def _validate_certificate_policy(self, policy, policy_generated):
+        self.assertEqual(policy_generated.issuer_parameters.name, policy.issuer_name)
+        self.assertEqual(policy_generated.secret_properties.content_type, policy.content_type)
+        if policy_generated.x509_certificate_properties.ekus:
+            self.assertEqual(policy_generated.x509_certificate_properties.ekus, policy.ekus)
+        if policy_generated.x509_certificate_properties.key_usage:
+            self.assertEqual(policy_generated.x509_certificate_properties.key_usage, policy.key_usage)
+        if policy_generated.x509_certificate_properties:
             self._validate_x509_properties(
-                policy=cert.policy, cert_policy_x509_props=cert_policy.x509_certificate_properties
+                policy=policy, cert_policy_x509_props=policy_generated.x509_certificate_properties
             )
-        self._validate_key_properties(policy=cert.policy, cert_policy_key_props=cert_policy.key_properties)
-        if cert_policy.lifetime_actions:
+        self._validate_key_properties(policy=policy, cert_policy_key_props=policy_generated.key_properties)
+        if policy_generated.lifetime_actions:
             self._validate_lifetime_actions(
-                cert_bundle_lifetime_actions=cert.policy.lifetime_actions,
-                cert_policy_lifetime_actions=cert_policy.lifetime_actions,
+                cert_bundle_lifetime_actions=policy.lifetime_actions,
+                cert_policy_lifetime_actions=policy_generated.lifetime_actions,
             )
 
     def _validate_x509_properties(self, policy, cert_policy_x509_props):
@@ -175,7 +179,7 @@ class CertificateClientTests(KeyVaultTestCase):
             policy_lifetime_actions = cert_policy_lifetime_actions
             for bundle_lifetime_action in cert_bundle_lifetime_actions:
                 for policy_lifetime_action in policy_lifetime_actions:
-                    if bundle_lifetime_action.action.value == policy_lifetime_action.action.action_type.value:
+                    if bundle_lifetime_action.action.value == policy_lifetime_action.action.action_type:
                         if policy_lifetime_action.trigger.lifetime_percentage:
                             self.assertEqual(
                                 bundle_lifetime_action.lifetime_percentage,
@@ -512,7 +516,6 @@ class CertificateClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_policy(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
         client = vault_client.certificates
 
         cert_name = "policyCertificate"
@@ -523,37 +526,64 @@ class CertificateClientTests(KeyVaultTestCase):
             key_type=KeyType.rsa,
             key_size=2048,
             reuse_key=True,
-            ekus=,
-            key_usage=KeyUsageType.decipher_only,
+            ekus=["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],
+            key_usage=[KeyUsageType.decipher_only],
             content_type=SecretContentType.PKCS12,
             validity_in_months=12,
-            lifetime_actions=LifetimeAction(
+            lifetime_actions=[LifetimeAction(
                 action=CertificatePolicyAction.email_contacts,
-                lifetime_percentage=98,
-                days_before_expiry=1
-            ),
-            certificate_type="self-signed",
+                lifetime_percentage=98
+            )],
             certificate_transparency=False,
             san_dns_names=["sdk.azure-int.net"]
         )
 
-        # get certificate policy
-        self._import_common_certificate(client=client, cert_name=cert_name)
-        retrieved_policy = client.get_policy(certificate_name=cert_name)
-        self.assertIsNotNone(retrieved_policy)
-
-        # update certificate policy
-        cert_policy = CertificatePolicyGenerated(
-            key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
+        cert_policy_generated = CertificatePolicyGenerated(
+            key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=True),
             secret_properties=SecretProperties(content_type="application/x-pkcs12"),
-            issuer_parameters=IssuerParameters(name="Self"),
+            issuer_parameters=IssuerParameters(
+                name="Self",
+                certificate_transparency=False
+            ),
+            x509_certificate_properties=X509CertificateProperties(
+                subject="CN=DefaultPolicy",
+                ekus=["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],
+                subject_alternative_names=SubjectAlternativeNames(
+                    dns_names=["sdk.azure-int.net"]
+                ),
+                key_usage=["decipherOnly"],
+                validity_in_months=12,
+            ),
+            lifetime_actions=[LifetimeActionGenerated(
+                action=Action(action_type="EmailContacts"),
+                trigger=Trigger(lifetime_percentage=98)
+            )]
         )
 
-        client.update_policy(
-            certificate_name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
+        polling_interval = 0 if self.is_playback() else None
+
+        # get certificate policy
+        client.begin_create_certificate(
+            name=cert_name,
+            policy=cert_policy,
+            _polling_interval=polling_interval
+        ).wait()
+
+        policy_to_validate = client.get_policy(certificate_name=cert_name)
+
+        self._validate_certificate_policy(policy_to_validate, cert_policy_generated)
+
+        cert_policy._key_type = KeyType.ec
+        cert_policy._key_size = 256
+        cert_policy._curve = KeyCurveName.p_256
+
+        cert_policy_generated.key_properties=KeyProperties(
+            exportable=True, key_type="EC", curve="P-256", reuse_key=True, key_size=256
         )
-        updated_cert_policy = client.get_policy(certificate_name=cert_name)
-        self.assertIsNotNone(updated_cert_policy)
+
+        policy_to_validate = client.update_policy(certificate_name=cert_name, policy=cert_policy)
+
+        self._validate_certificate_policy(policy_to_validate, cert_policy_generated)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
