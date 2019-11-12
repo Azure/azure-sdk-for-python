@@ -46,10 +46,10 @@ try:
     storage_cert_name = "ServerRecoverCertificate"
 
     bank_certificate_poller = client.begin_create_certificate(
-        name=bank_cert_name, policy=CertificatePolicy.get_default()
+        certificate_name=bank_cert_name, policy=CertificatePolicy.get_default()
     )
     storage_certificate_poller = client.begin_create_certificate(
-        name=storage_cert_name, policy=CertificatePolicy.get_default()
+        certificate_name=storage_cert_name, policy=CertificatePolicy.get_default()
     )
 
     bank_certificate = bank_certificate_poller.result()
@@ -59,7 +59,7 @@ try:
 
     # The storage account was closed, need to delete its credentials from the Key Vault.
     print("\n.. Delete a Certificate")
-    deleted_bank_poller = client.begin_delete_certificate(name=bank_cert_name)
+    deleted_bank_poller = client.begin_delete_certificate(bank_cert_name)
     deleted_bank_certificate = deleted_bank_poller.result()
     # To ensure certificate is deleted on the server side.
     deleted_bank_poller.wait()
@@ -73,17 +73,20 @@ try:
     # We accidentally deleted the bank account certificate. Let's recover it.
     # A deleted certificate can only be recovered if the Key Vault is soft-delete enabled.
     print("\n.. Recover Deleted Certificate")
-    recovered_bank_certificate = client.begin_recover_deleted_certificate(deleted_bank_certificate.name)
+    recovered_bank_poller = client.begin_recover_deleted_certificate(deleted_bank_certificate.name)
+    recovered_bank_certificate = recovered_bank_poller.result()
+    # To ensure certificate is recovered on the server side.
+    recovered_bank_poller.wait()
     print("Recovered Certificate with name '{0}'.".format(recovered_bank_certificate.name))
 
     # Let's delete the storage certificate now.
     # If the keyvault is soft-delete enabled, then for permanent deletion deleted certificate needs to be purged.
-    client.begin_delete_certificate(name=storage_cert_name).wait()
+    client.begin_delete_certificate(storage_cert_name).wait()
 
     # Certificates will still purge eventually on their scheduled purge date, but calling `purge_deleted_key` immediately
     # purges.
     print("\n.. Purge Deleted Certificate")
-    client.purge_deleted_certificate(name=storage_cert_name)
+    client.purge_deleted_certificate(storage_cert_name)
     print("Certificate has been permanently deleted.")
 
 except HttpResponseError as e:
