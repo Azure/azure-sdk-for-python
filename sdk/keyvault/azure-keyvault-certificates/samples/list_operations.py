@@ -82,9 +82,7 @@ try:
     # You need to check all the different tags your bank account certificate had previously. Let's print
     # all the versions of this certificate.
     print("\n.. List versions of the certificate using its name")
-    certificate_versions = client.list_properties_of_certificate_versions(
-        certificate_name=bank_cert_name
-    )
+    certificate_versions = client.list_properties_of_certificate_versions(bank_cert_name)
     for certificate_version in certificate_versions:
         print(
             "Bank Certificate with name '{0}' with version '{1}' has tags: '{2}'.".format(
@@ -93,8 +91,10 @@ try:
         )
 
     # The bank account and storage accounts got closed. Let's delete bank and storage accounts certificates.
-    client.begin_delete_certificate(certificate_name=bank_cert_name).wait()
-    client.begin_delete_certificate(certificate_name=storage_cert_name).wait()
+    # We call wait() to ensure the certificate is deleted server side because the following method requires
+    # server-side deletion to run properly. In most situations you will not have to call wait().
+    client.begin_delete_certificate(bank_cert_name).wait()
+    client.begin_delete_certificate(storage_cert_name).wait()
 
     # You can list all the deleted and non-purged certificates, assuming Key Vault is soft-delete enabled.
     print("\n.. List deleted certificates from the Key Vault")

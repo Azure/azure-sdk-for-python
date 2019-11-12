@@ -54,7 +54,7 @@ async def run_sample():
         )
 
         # Now we get this issuer by name
-        issuer1 = await client.get_issuer(issuer_name="issuer1")
+        issuer1 = await client.get_issuer("issuer1")
 
         print(issuer1.name)
         print(issuer1.properties.provider)
@@ -66,7 +66,7 @@ async def run_sample():
             print(admin_detail.email)
             print(admin_detail.phone)
 
-        # Now we update the admniistrator contact for this issuer
+        # Now we update the admnistrator contact for this issuer
         admin_details = [
             AdministratorContact(first_name="Jane", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
@@ -88,7 +88,7 @@ async def run_sample():
             print(issuer.provider)
 
         # Finally, we delete our first issuer by name.
-        await client.delete_issuer(issuer_name="issuer1")
+        await client.delete_issuer("issuer1")
 
     except HttpResponseError as e:
         print("\nrun_sample has caught an error. {0}".format(e.message))

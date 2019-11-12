@@ -766,7 +766,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         Returns the specified certificate issuer resources in the key vault.
         This operation requires the certificates/manageissuers/getissuers permission.
 
-        :param str name: The name of the issuer.
+        :param str issuer_name: The name of the issuer.
         :return: The specified certificate issuer.
         :rtype: ~azure.keyvault.certificates.models.CertificateIssuer
         :raises:

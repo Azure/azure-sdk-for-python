@@ -56,12 +56,12 @@ async def run_sample():
         # Backups are good to have, if in case certificates gets deleted accidentally.
         # For long term storage, it is ideal to write the backup to a file.
         print("\n.. Create a backup for an existing certificate")
-        certificate_backup = await client.backup_certificate(certificate_name=cert_name)
+        certificate_backup = await client.backup_certificate(cert_name)
         print("Backup created for certificate with name '{0}'.".format(cert_name))
 
         # The storage account certificate is no longer in use, so you can delete it.
         print("\n.. Delete the certificate")
-        await client.delete_certificate(certificate_name=cert_name)
+        await client.delete_certificate(cert_name)
         print("Deleted Certificate with name '{0}'".format(cert_name))
 
         # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.

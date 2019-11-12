@@ -26,7 +26,7 @@ def test_create_certificate_client():
 
     # Create a CertificateClient using default Azure credentials
     credential = DefaultAzureCredential()
-    certificate_client = CertificateClient(vault_url, credential)
+    certificate_client = CertificateClient(vault_url=vault_url, credential=credential)
 
     # [END create_certificate_client]
 
@@ -78,7 +78,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START get_certificate]
 
         # get the certificate
-        certificate = certificate_client.get_certificate(certificate_name=cert_name)
+        certificate = certificate_client.get_certificate(cert_name)
 
         print(certificate.id)
         print(certificate.name)
@@ -101,9 +101,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START delete_certificate]
 
         # delete a certificate
-        deleted_certificate = certificate_client.begin_delete_certificate(
-            certificate_name=certificate.name
-        ).result()
+        deleted_certificate = certificate_client.begin_delete_certificate(certificate.name).result()
 
         print(deleted_certificate.name)
 
@@ -160,9 +158,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START list_properties_of_certificate_versions]
 
         # get an iterator of a certificate's versions
-        certificate_versions = certificate_client.list_properties_of_certificate_versions(
-            certificate_name="certificate-name"
-        )
+        certificate_versions = certificate_client.list_properties_of_certificate_versions("certificate-name")
 
         for certificate in certificate_versions:
             print(certificate.id)
@@ -212,7 +208,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START backup_certificate]
 
         # backup certificate
-        certificate_backup = certificate_client.backup_certificate(certificate_name=cert_name)
+        certificate_backup = certificate_client.backup_certificate(cert_name)
 
         # returns the raw bytes of the backed up certificate
         print(certificate_backup)
@@ -226,7 +222,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START restore_certificate]
 
         # restore a certificate backup
-        restored_certificate = certificate_client.restore_certificate_backup(backup=certificate_backup)
+        restored_certificate = certificate_client.restore_certificate_backup(certificate_backup)
 
         print(restored_certificate.id)
         print(restored_certificate.name)
@@ -268,9 +264,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START get_deleted_certificate]
 
         # get a deleted certificate (requires soft-delete enabled for the vault)
-        deleted_certificate = certificate_client.get_deleted_certificate(
-            certificate_name=cert_name
-        )
+        deleted_certificate = certificate_client.get_deleted_certificate(cert_name)
         print(deleted_certificate.name)
 
         # if the vault has soft-delete enabled, the certificate's deleted date,
@@ -283,9 +277,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START recover_deleted_certificate]
 
         # recover a deleted certificate to its latest version (requires soft-delete enabled for the vault)
-        recovered_certificate = certificate_client.begin_recover_deleted_certificate(
-            certificate_name=cert_name
-        ).result()
+        recovered_certificate = certificate_client.begin_recover_deleted_certificate(cert_name).result()
 
         print(recovered_certificate.id)
         print(recovered_certificate.name)
@@ -307,7 +299,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
         ]
 
-        contacts = certificate_client.create_contacts(contacts=contact_list)
+        contacts = certificate_client.create_contacts(contact_list)
         for contact in contacts:
             print(contact.name)
             print(contact.email)
@@ -370,7 +362,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [START get_issuer]
 
-        issuer = certificate_client.get_issuer(issuer_name="issuer1")
+        issuer = certificate_client.get_issuer("issuer1")
 
         print(issuer.name)
         print(issuer.properties.provider)
@@ -398,7 +390,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [START delete_issuer]
 
-        deleted_issuer = certificate_client.delete_issuer(issuer_name="issuer1")
+        deleted_issuer = certificate_client.delete_issuer("issuer1")
 
         print(deleted_issuer.name)
         print(deleted_issuer.properties.provider)

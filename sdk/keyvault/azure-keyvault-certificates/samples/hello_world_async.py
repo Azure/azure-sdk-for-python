@@ -72,7 +72,7 @@ async def run_sample():
 
         # Let's get the bank certificate using its name
         print("\n.. Get a Certificate by name")
-        bank_certificate = await client.get_certificate(certificate_name=cert_name)
+        bank_certificate = await client.get_certificate(cert_name)
         print("Certificate with name '{0}' was found.".format(bank_certificate.name))
 
         # After one year, the bank account is still active, and we have decided to update the tags.
@@ -94,7 +94,7 @@ async def run_sample():
 
         # The bank account was closed, need to delete its credentials from the Key Vault.
         print("\n.. Delete Certificate")
-        deleted_certificate = await client.delete_certificate(certificate_name=bank_certificate.name)
+        deleted_certificate = await client.delete_certificate(bank_certificate.name)
         print("Deleting Certificate..")
         print("Certificate with name '{0}' was deleted.".format(deleted_certificate.name))
 

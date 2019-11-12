@@ -174,7 +174,7 @@ credential = DefaultAzureCredential()
 
 certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
-certificate = certificate_client.get_certificate(certificate_name="cert-name")
+certificate = certificate_client.get_certificate("cert-name")
 
 print(certificate.name)
 print(certificate.properties.version)
@@ -229,7 +229,7 @@ credential = DefaultAzureCredential()
 
 certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
-deleted_certificate = certificate_client.begin_delete_certificate(certificate_name="cert-name")
+deleted_certificate = certificate_client.begin_delete_certificate("cert-name")
 
 print(deleted_certificate.name)
 print(deleted_certificate.deleted_date)

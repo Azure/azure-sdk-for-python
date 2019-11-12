@@ -55,12 +55,12 @@ try:
     # Backups are good to have, if in case certificates gets deleted accidentally.
     # For long term storage, it is ideal to write the backup to a file.
     print("\n.. Create a backup for an existing certificate")
-    certificate_backup = client.backup_certificate(certificate_name=cert_name)
+    certificate_backup = client.backup_certificate(cert_name)
     print("Backup created for certificate with name '{0}'.".format(cert_name))
 
     # The storage account certificate is no longer in use, so you can delete it.
     print("\n.. Delete the certificate")
-    client.begin_delete_certificate(certificate_name=cert_name).wait()
+    client.begin_delete_certificate(cert_name).wait()
     print("Deleted certificate '{0}'".format(cert_name))
 
     # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.

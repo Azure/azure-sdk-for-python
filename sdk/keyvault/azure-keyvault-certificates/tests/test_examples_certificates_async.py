@@ -24,7 +24,7 @@ def test_create_certificate():
 
     # Create a KeyVaultCertificate using default Azure credentials
     credential = DefaultAzureCredential()
-    certificate_client = CertificateClient(vault_url, credential)
+    certificate_client = CertificateClient(vault_url=vault_url, credential=credential)
 
     # [END create_certificate_client]
 
@@ -72,7 +72,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START get_certificate]
 
         # get the latest version of a certificate
-        certificate = await certificate_client.get_certificate(certificate_name=cert_name)
+        certificate = await certificate_client.get_certificate(cert_name)
 
         print(certificate.id)
         print(certificate.name)
@@ -95,7 +95,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START delete_certificate]
 
         # delete a certificate
-        deleted_certificate = await certificate_client.delete_certificate(certificate_name=cert_name)
+        deleted_certificate = await certificate_client.delete_certificate(cert_name)
 
         print(deleted_certificate.name)
 
@@ -158,9 +158,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START list_properties_of_certificate_versions]
 
         # get an iterator of all versions of a certificate
-        certificate_versions = certificate_client.list_properties_of_certificate_versions(
-            certificate_name="cert-name"
-        )
+        certificate_versions = certificate_client.list_properties_of_certificate_versions("cert-name")
 
         async for certificate in certificate_versions:
             print(certificate.id)
@@ -217,7 +215,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START backup_certificate]
 
         # backup certificate
-        certificate_backup = await certificate_client.backup_certificate(certificate_name=cert_name)
+        certificate_backup = await certificate_client.backup_certificate(cert_name)
 
         # returns the raw bytes of the backed up certificate
         print(certificate_backup)
@@ -276,18 +274,14 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START get_deleted_certificate]
 
         # get a deleted certificate (requires soft-delete enabled for the vault)
-        deleted_certificate = await certificate_client.get_deleted_certificate(
-            certificate_name="cert-name"
-        )
+        deleted_certificate = await certificate_client.get_deleted_certificate("cert-name")
         print(deleted_certificate.name)
 
         # [END get_deleted_certificate]
         # [START recover_deleted_certificate]
 
         # recover deleted certificate to its latest version (requires soft-delete enabled for the vault)
-        recovered_certificate = await certificate_client.recover_deleted_certificate(
-            certificate_name="cert-name"
-        )
+        recovered_certificate = await certificate_client.recover_deleted_certificate("cert-name")
         print(recovered_certificate.id)
         print(recovered_certificate.name)
 
@@ -309,7 +303,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
         ]
 
-        contacts = await certificate_client.create_contacts(contacts=contact_list)
+        contacts = await certificate_client.create_contacts(contact_list)
         for contact in contacts:
             print(contact.name)
             print(contact.email)
@@ -373,7 +367,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [START get_issuer]
 
-        issuer = await certificate_client.get_issuer(issuer_name="issuer1")
+        issuer = await certificate_client.get_issuer("issuer1")
 
         print(issuer.name)
         print(issuer.properties.provider)
@@ -401,7 +395,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [START delete_issuer]
 
-        deleted_issuer = await certificate_client.delete_issuer(issuer_name="issuer1")
+        deleted_issuer = await certificate_client.delete_issuer("issuer1")
 
         print(deleted_issuer.name)
         print(deleted_issuer.properties.provider)

@@ -63,7 +63,7 @@ try:
         print(admin_detail.email)
         print(admin_detail.phone)
 
-    # Now we update the admniistrator contact for this issuer
+    # Now we update the admnistrator contact for this issuer
     admin_details = [
         AdministratorContact(first_name="Jane", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
     ]
@@ -85,7 +85,7 @@ try:
         print(issuer.provider)
 
     # Finally, we delete our first issuer by name.
-    client.delete_issuer(issuer_name="issuer1")
+    client.delete_issuer("issuer1")
 
 except HttpResponseError as e:
     print("\nrun_sample has caught an error. {0}".format(e.message))
