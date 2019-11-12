@@ -88,6 +88,7 @@ try:
     from ._models_py3 import RegulatoryComplianceStandard
     from ._models_py3 import Resource
     from ._models_py3 import ResourceDetails
+    from ._models_py3 import SecurityAssessmentMetadata
     from ._models_py3 import SecurityContact
     from ._models_py3 import SecuritySubAssessment
     from ._models_py3 import SecurityTask
@@ -192,6 +193,7 @@ except (SyntaxError, ImportError):
     from ._models import RegulatoryComplianceStandard
     from ._models import Resource
     from ._models import ResourceDetails
+    from ._models import SecurityAssessmentMetadata
     from ._models import SecurityContact
     from ._models import SecuritySubAssessment
     from ._models import SecurityTask
@@ -235,6 +237,7 @@ from ._paged_models import OperationPaged
 from ._paged_models import RegulatoryComplianceAssessmentPaged
 from ._paged_models import RegulatoryComplianceControlPaged
 from ._paged_models import RegulatoryComplianceStandardPaged
+from ._paged_models import SecurityAssessmentMetadataPaged
 from ._paged_models import SecurityContactPaged
 from ._paged_models import SecuritySubAssessmentPaged
 from ._paged_models import SecurityTaskPaged
@@ -265,6 +268,8 @@ from ._security_center_enums import (
     State,
     SubAssessmentStatusCode,
     Severity,
+    Category,
+    AssessmentType,
     ConnectionType,
 )
 
@@ -347,6 +352,7 @@ __all__ = [
     'RegulatoryComplianceStandard',
     'Resource',
     'ResourceDetails',
+    'SecurityAssessmentMetadata',
     'SecurityContact',
     'SecuritySubAssessment',
     'SecurityTask',
@@ -396,6 +402,7 @@ __all__ = [
     'RegulatoryComplianceControlPaged',
     'RegulatoryComplianceAssessmentPaged',
     'SecuritySubAssessmentPaged',
+    'SecurityAssessmentMetadataPaged',
     'ResourceStatus',
     'PricingTier',
     'ReportedSeverity',
@@ -419,5 +426,7 @@ __all__ = [
     'State',
     'SubAssessmentStatusCode',
     'Severity',
+    'Category',
+    'AssessmentType',
     'ConnectionType',
 ]

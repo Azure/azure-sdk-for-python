@@ -176,6 +176,22 @@ class Severity(str, Enum):
     high = "High"
 
 
+class Category(str, Enum):
+
+    compute = "Compute"
+    networking = "Networking"
+    data = "Data"
+    identity_and_access = "IdentityAndAccess"
+    io_t = "IoT"
+
+
+class AssessmentType(str, Enum):
+
+    built_in = "BuiltIn"  #: Azure Security Center managed assessments
+    custom_policy = "CustomPolicy"  #: User defined policies that are automatically ingested from Azure Policy to Azure Security Center
+    customer_managed = "CustomerManaged"  #: User assessments pushed directly by the user or other third party to Azure Security Center
+
+
 class ConnectionType(str, Enum):
 
     internal = "Internal"

@@ -3393,6 +3393,83 @@ class RegulatoryComplianceStandard(Resource):
         self.unsupported_controls = None
 
 
+class SecurityAssessmentMetadata(Resource):
+    """Security assessment metadata.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :ivar display_name: User friendly display name of the assessment
+    :vartype display_name: str
+    :ivar policy_definition_id: Azure resource ID of the policy definition
+     that turns this assessment calculation on
+    :vartype policy_definition_id: str
+    :ivar description: Human readable description of the assessment
+    :vartype description: str
+    :ivar remediation_description: Human readable description of what you
+     should do to mitigate this security issue
+    :vartype remediation_description: str
+    :ivar category:
+    :vartype category: list[str or ~azure.mgmt.security.models.Category]
+    :ivar severity: The severity level of the assessment. Possible values
+     include: 'Low', 'Medium', 'High'
+    :vartype severity: str or ~azure.mgmt.security.models.Severity
+    :ivar preview: True if this assessment is in preview release status
+    :vartype preview: bool
+    :ivar assessment_type: BuiltIn if the assessment based on built-in Azure
+     Policy definition, Custom if the assessment based on custom Azure Policy
+     definition. Possible values include: 'BuiltIn', 'CustomPolicy',
+     'CustomerManaged'
+    :vartype assessment_type: str or
+     ~azure.mgmt.security.models.AssessmentType
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'display_name': {'readonly': True},
+        'policy_definition_id': {'readonly': True},
+        'description': {'readonly': True},
+        'remediation_description': {'readonly': True},
+        'category': {'readonly': True},
+        'severity': {'readonly': True},
+        'preview': {'readonly': True},
+        'assessment_type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'policy_definition_id': {'key': 'properties.policyDefinitionId', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'remediation_description': {'key': 'properties.remediationDescription', 'type': 'str'},
+        'category': {'key': 'properties.category', 'type': '[str]'},
+        'severity': {'key': 'properties.severity', 'type': 'str'},
+        'preview': {'key': 'properties.preview', 'type': 'bool'},
+        'assessment_type': {'key': 'properties.assessmentType', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(SecurityAssessmentMetadata, self).__init__(**kwargs)
+        self.display_name = None
+        self.policy_definition_id = None
+        self.description = None
+        self.remediation_description = None
+        self.category = None
+        self.severity = None
+        self.preview = None
+        self.assessment_type = None
+
+
 class SecurityContact(Resource):
     """Contact details for security issues.
 
