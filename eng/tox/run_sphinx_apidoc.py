@@ -65,12 +65,12 @@ def sphinx_apidoc(working_directory):
         )
         exit(1)
 
-def mgmt_apidoc(working_directory, package_name):
+def mgmt_apidoc(working_directory, namespace):
     command_array = [
         sys.executable,
         generate_mgmt_script,
         "-p",
-        package_name.replace("-","."),
+        namespace,
         "-o",
         working_directory,
         "--verbose"
@@ -117,11 +117,11 @@ if __name__ == "__main__":
     package_dir = os.path.abspath(args.package_root)
     output_directory = os.path.join(target_dir, "unzipped/docgen")
 
-    pkg_name, pkg_version = get_package_details(os.path.join(package_dir, 'setup.py'))
+    pkg_name, namespace, pkg_version = get_package_details(os.path.join(package_dir, 'setup.py'))
 
     if should_build_docs(pkg_name):
         if is_mgmt_package(pkg_name):
-            mgmt_apidoc(output_directory, pkg_name)
+            mgmt_apidoc(output_directory, namespace)
         else:
             sphinx_apidoc(args.working_directory)
     else:
