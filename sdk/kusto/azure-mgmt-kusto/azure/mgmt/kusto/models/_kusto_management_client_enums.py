@@ -64,6 +64,20 @@ class AzureScaleType(str, Enum):
     none = "none"
 
 
+class DefaultPrincipalsModificationKind(str, Enum):
+
+    union = "Union"
+    replace = "Replace"
+    none = "None"
+
+
+class PrincipalsModificationKind(str, Enum):
+
+    union = "Union"
+    replace = "Replace"
+    none = "None"
+
+
 class DataFormat(str, Enum):
 
     multijson = "MULTIJSON"
@@ -77,6 +91,13 @@ class DataFormat(str, Enum):
     raw = "RAW"
     singlejson = "SINGLEJSON"
     avro = "AVRO"
+    tsve = "TSVE"
+
+
+class IdentityType(str, Enum):
+
+    none = "None"
+    system_assigned = "SystemAssigned"
 
 
 class DatabasePrincipalRole(str, Enum):
@@ -94,6 +115,12 @@ class DatabasePrincipalType(str, Enum):
     app = "App"
     group = "Group"
     user = "User"
+
+
+class Type(str, Enum):
+
+    microsoft_kustoclustersdatabases = "Microsoft.Kusto/clusters/databases"
+    microsoft_kustoclustersattached_database_configurations = "Microsoft.Kusto/clusters/attachedDatabaseConfigurations"
 
 
 class Reason(str, Enum):
