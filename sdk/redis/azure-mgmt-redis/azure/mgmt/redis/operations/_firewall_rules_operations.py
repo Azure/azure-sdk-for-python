@@ -16,15 +16,16 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class PatchSchedulesOperations(object):
-    """PatchSchedulesOperations operations.
+class FirewallRulesOperations(object):
+    """FirewallRulesOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2018-03-01".
-    :ivar default: Default string modeled as parameter for auto generation to work correctly. Constant value: "default".
+    :ivar api_version: Client Api Version. Constant value: "2019-07-01-preview".
     """
 
     models = models
@@ -34,15 +35,13 @@ class PatchSchedulesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01"
-        self.default = "default"
+        self.api_version = "2019-07-01-preview"
 
         self.config = config
 
     def list_by_redis_resource(
             self, resource_group_name, cache_name, custom_headers=None, raw=False, **operation_config):
-        """Gets all patch schedules in the specified redis cache (there is only
-        one).
+        """Gets all firewall rules in the specified redis cache.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -53,13 +52,12 @@ class PatchSchedulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of RedisPatchSchedule
+        :return: An iterator like instance of RedisFirewallRule
         :rtype:
-         ~azure.mgmt.redis.models.RedisPatchSchedulePaged[~azure.mgmt.redis.models.RedisPatchSchedule]
+         ~azure.mgmt.redis.models.RedisFirewallRulePaged[~azure.mgmt.redis.models.RedisFirewallRule]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_redis_resource.metadata['url']
@@ -90,6 +88,11 @@ class PatchSchedulesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -100,45 +103,46 @@ class PatchSchedulesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.RedisPatchSchedulePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.RedisPatchSchedulePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.RedisFirewallRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_redis_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/patchSchedules'}
+    list_by_redis_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules'}
 
     def create_or_update(
-            self, resource_group_name, name, schedule_entries, custom_headers=None, raw=False, **operation_config):
-        """Create or replace the patching schedule for Redis cache (requires
-        Premium SKU).
+            self, resource_group_name, cache_name, rule_name, start_ip, end_ip, custom_headers=None, raw=False, **operation_config):
+        """Create or update a redis cache firewall rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param name: The name of the Redis cache.
-        :type name: str
-        :param schedule_entries: List of patch schedules for a Redis cache.
-        :type schedule_entries: list[~azure.mgmt.redis.models.ScheduleEntry]
+        :param cache_name: The name of the Redis cache.
+        :type cache_name: str
+        :param rule_name: The name of the firewall rule.
+        :type rule_name: str
+        :param start_ip: lowest IP address included in the range
+        :type start_ip: str
+        :param end_ip: highest IP address included in the range
+        :type end_ip: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: RedisPatchSchedule or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.redis.models.RedisPatchSchedule or
+        :return: RedisFirewallRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.redis.models.RedisFirewallRule or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.RedisPatchSchedule(schedule_entries=schedule_entries)
+        parameters = models.RedisFirewallRuleCreateParameters(start_ip=start_ip, end_ip=end_ip)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'default': self._serialize.url("self.default", self.default, 'str'),
+            'cacheName': self._serialize.url("cache_name", cache_name, 'str'),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -159,7 +163,7 @@ class PatchSchedulesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'RedisPatchSchedule')
+        body_content = self._serialize.body(parameters, 'RedisFirewallRuleCreateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -171,27 +175,92 @@ class PatchSchedulesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('RedisPatchSchedule', response)
+            deserialized = self._deserialize('RedisFirewallRule', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('RedisPatchSchedule', response)
+            deserialized = self._deserialize('RedisFirewallRule', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/patchSchedules/{default}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules/{ruleName}'}
 
-    def delete(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the patching schedule of a redis cache (requires Premium SKU).
+    def get(
+            self, resource_group_name, cache_name, rule_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a single firewall rule in a specified redis cache.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param name: The name of the redis cache.
-        :type name: str
+        :param cache_name: The name of the Redis cache.
+        :type cache_name: str
+        :param rule_name: The name of the firewall rule.
+        :type rule_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: RedisFirewallRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.redis.models.RedisFirewallRule or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'cacheName': self._serialize.url("cache_name", cache_name, 'str'),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('RedisFirewallRule', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules/{ruleName}'}
+
+    def delete(
+            self, resource_group_name, cache_name, rule_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a single firewall rule in a specified redis cache.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param cache_name: The name of the Redis cache.
+        :type cache_name: str
+        :param rule_name: The name of the firewall rule.
+        :type rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -205,8 +274,8 @@ class PatchSchedulesOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'default': self._serialize.url("self.default", self.default, 'str'),
+            'cacheName': self._serialize.url("cache_name", cache_name, 'str'),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -236,67 +305,4 @@ class PatchSchedulesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/patchSchedules/{default}'}
-
-    def get(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Gets the patching schedule of a redis cache (requires Premium SKU).
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param name: The name of the redis cache.
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: RedisPatchSchedule or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.redis.models.RedisPatchSchedule or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'default': self._serialize.url("self.default", self.default, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('RedisPatchSchedule', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/patchSchedules/{default}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules/{ruleName}'}
