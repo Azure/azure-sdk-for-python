@@ -402,8 +402,10 @@ class Error(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Error code.
-    :type code: str
+    :param code: Required. Error code. Possible values include:
+     'invalidRequest', 'invalidArgument', 'internalServerError',
+     'serviceUnavailable'
+    :type code: str or ~textanalytics.models.enum
     :param message: Required. Error message.
     :type message: str
     :param target: Error target.
@@ -428,7 +430,7 @@ class Error(Model):
         'details': {'key': 'details', 'type': '[Error]'},
     }
 
-    def __init__(self, *, code: str, message: str, target: str=None, innererror=None, details=None, **kwargs) -> None:
+    def __init__(self, *, code, message: str, target: str=None, innererror=None, details=None, **kwargs) -> None:
         super(Error, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -442,8 +444,11 @@ class InnerError(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Error code.
-    :type code: str
+    :param code: Required. Error code. Possible values include:
+     'invalidParameterValue', 'invalidRequestBodyFormat', 'emptyRequest',
+     'missingInputRecords', 'invalidDocument', 'modelVersionIncorrect',
+     'invalidDocumentBatch', 'unsupportedLanguageCode', 'invalidCountryHint'
+    :type code: str or ~textanalytics.models.enum
     :param message: Required. Error message.
     :type message: str
     :param target: Error target.
@@ -464,7 +469,7 @@ class InnerError(Model):
         'innererror': {'key': 'innererror', 'type': 'InnerError'},
     }
 
-    def __init__(self, *, code: str, message: str, target: str=None, innererror=None, **kwargs) -> None:
+    def __init__(self, *, code, message: str, target: str=None, innererror=None, **kwargs) -> None:
         super(InnerError, self).__init__(**kwargs)
         self.code = code
         self.message = message
