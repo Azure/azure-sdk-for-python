@@ -231,7 +231,7 @@ class KeyClientTests(KeyVaultTestCase):
             expected[key.name] = key
 
         # list keys
-        result = client.list_properties_of_keys(max_page_size=max_keys)
+        result = client.list_properties_of_keys(max_page_size=max_keys - 1)
         for key in result:
             if key.name in expected.keys():
                 self._assert_key_attributes_equal(expected[key.name].properties, key)
@@ -247,7 +247,6 @@ class KeyClientTests(KeyVaultTestCase):
         key_name = self.get_resource_name("testKey")
 
         max_keys = self.list_test_size
-        max_page_size = 2
         expected = {}
 
         # create many key versions
@@ -255,7 +254,7 @@ class KeyClientTests(KeyVaultTestCase):
             key = client.create_key(key_name, "RSA")
             expected[key.id] = key
 
-        result = client.list_properties_of_key_versions(key_name, max_page_size=max_page_size)
+        result = client.list_properties_of_key_versions(key_name, max_page_size=max_keys - 1)
 
         # validate list key versions with attributes
         for key in result:

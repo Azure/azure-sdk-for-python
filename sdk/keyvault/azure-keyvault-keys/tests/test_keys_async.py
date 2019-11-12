@@ -234,7 +234,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             expected[key.name] = key
 
         # list keys
-        result = client.list_properties_of_keys(max_page_size=max_keys)
+        result = client.list_properties_of_keys(max_page_size=max_keys - 1)
         async for key in result:
             if key.name in expected.keys():
                 self._assert_key_attributes_equal(expected[key.name].properties, key)
@@ -257,7 +257,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             key = await client.create_key(key_name, "RSA")
             expected[key.id] = key
 
-        result = client.list_properties_of_key_versions(key_name)
+        result = client.list_properties_of_key_versions(key_name, max_page_size=max_keys - 1)
 
         # validate list key versions with attributes
         async for key in result:

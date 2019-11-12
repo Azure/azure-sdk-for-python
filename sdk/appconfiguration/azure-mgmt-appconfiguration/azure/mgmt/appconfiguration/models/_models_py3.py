@@ -169,6 +169,8 @@ class ConfigurationStore(Resource):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
+    :param identity: The managed identity information, if configured.
+    :type identity: ~azure.mgmt.appconfiguration.models.ResourceIdentity
     :ivar provisioning_state: The provisioning state of the configuration
      store. Possible values include: 'Creating', 'Updating', 'Deleting',
      'Succeeded', 'Failed', 'Canceled'
@@ -179,6 +181,8 @@ class ConfigurationStore(Resource):
     :ivar endpoint: The DNS endpoint where the configuration store API will be
      available.
     :vartype endpoint: str
+    :param sku: Required. The sku of the configuration store.
+    :type sku: ~azure.mgmt.appconfiguration.models.Sku
     """
 
     _validation = {
@@ -189,6 +193,7 @@ class ConfigurationStore(Resource):
         'provisioning_state': {'readonly': True},
         'creation_date': {'readonly': True},
         'endpoint': {'readonly': True},
+        'sku': {'required': True},
     }
 
     _attribute_map = {
@@ -197,16 +202,20 @@ class ConfigurationStore(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str, sku, tags=None, identity=None, **kwargs) -> None:
         super(ConfigurationStore, self).__init__(location=location, tags=tags, **kwargs)
+        self.identity = identity
         self.provisioning_state = None
         self.creation_date = None
         self.endpoint = None
+        self.sku = sku
 
 
 class ConfigurationStoreUpdateParameters(Model):
@@ -214,18 +223,27 @@ class ConfigurationStoreUpdateParameters(Model):
 
     :param properties: The properties for updating a configuration store.
     :type properties: object
+    :param identity: The managed identity information for the configuration
+     store.
+    :type identity: ~azure.mgmt.appconfiguration.models.ResourceIdentity
+    :param sku: The SKU of the configuration store.
+    :type sku: ~azure.mgmt.appconfiguration.models.Sku
     :param tags: The ARM resource tags.
     :type tags: dict[str, str]
     """
 
     _attribute_map = {
         'properties': {'key': 'properties', 'type': 'object'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, properties=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, properties=None, identity=None, sku=None, tags=None, **kwargs) -> None:
         super(ConfigurationStoreUpdateParameters, self).__init__(**kwargs)
         self.properties = properties
+        self.identity = identity
+        self.sku = sku
         self.tags = tags
 
 
@@ -259,6 +277,99 @@ class ErrorException(HttpOperationError):
     def __init__(self, deserialize, response, *args):
 
         super(ErrorException, self).__init__(deserialize, response, 'Error', *args)
+
+
+class KeyValue(Model):
+    """The result of a request to retrieve a key-value from the specified
+    configuration store.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar key: The primary identifier of a key-value.
+     The key is used in unison with the label to uniquely identify a key-value.
+    :vartype key: str
+    :ivar label: A value used to group key-values.
+     The label is used in unison with the key to uniquely identify a key-value.
+    :vartype label: str
+    :ivar value: The value of the key-value.
+    :vartype value: str
+    :ivar content_type: The content type of the key-value's value.
+     Providing a proper content-type can enable transformations of values when
+     they are retrieved by applications.
+    :vartype content_type: str
+    :ivar e_tag: An ETag indicating the state of a key-value within a
+     configuration store.
+    :vartype e_tag: str
+    :ivar last_modified: The last time a modifying operation was performed on
+     the given key-value.
+    :vartype last_modified: datetime
+    :ivar locked: A value indicating whether the key-value is locked.
+     A locked key-value may not be modified until it is unlocked.
+    :vartype locked: bool
+    :ivar tags: A dictionary of tags that can help identify what a key-value
+     may be applicable for.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        'key': {'readonly': True},
+        'label': {'readonly': True},
+        'value': {'readonly': True},
+        'content_type': {'readonly': True},
+        'e_tag': {'readonly': True},
+        'last_modified': {'readonly': True},
+        'locked': {'readonly': True},
+        'tags': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'key': {'key': 'key', 'type': 'str'},
+        'label': {'key': 'label', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+        'content_type': {'key': 'contentType', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
+        'locked': {'key': 'locked', 'type': 'bool'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(KeyValue, self).__init__(**kwargs)
+        self.key = None
+        self.label = None
+        self.value = None
+        self.content_type = None
+        self.e_tag = None
+        self.last_modified = None
+        self.locked = None
+        self.tags = None
+
+
+class ListKeyValueParameters(Model):
+    """The parameters used to list a configuration store key-value.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param key: Required. The key to retrieve.
+    :type key: str
+    :param label: The label of the key.
+    :type label: str
+    """
+
+    _validation = {
+        'key': {'required': True},
+    }
+
+    _attribute_map = {
+        'key': {'key': 'key', 'type': 'str'},
+        'label': {'key': 'label', 'type': 'str'},
+    }
+
+    def __init__(self, *, key: str, label: str=None, **kwargs) -> None:
+        super(ListKeyValueParameters, self).__init__(**kwargs)
+        self.key = key
+        self.label = label
 
 
 class NameAvailabilityStatus(Model):
@@ -367,3 +478,99 @@ class RegenerateKeyParameters(Model):
     def __init__(self, *, id: str=None, **kwargs) -> None:
         super(RegenerateKeyParameters, self).__init__(**kwargs)
         self.id = id
+
+
+class ResourceIdentity(Model):
+    """ResourceIdentity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param type: The type of managed identity used. The type 'SystemAssigned,
+     UserAssigned' includes both an implicitly created identity and a set of
+     user-assigned identities. The type 'None' will remove any identities.
+     Possible values include: 'None', 'SystemAssigned', 'UserAssigned',
+     'SystemAssigned, UserAssigned'
+    :type type: str or ~azure.mgmt.appconfiguration.models.IdentityType
+    :param user_assigned_identities: The list of user-assigned identities
+     associated with the resource. The user-assigned identity dictionary keys
+     will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.appconfiguration.models.UserIdentity]
+    :ivar principal_id: The principal id of the identity. This property will
+     only be provided for a system-assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant id associated with the resource's identity.
+     This property will only be provided for a system-assigned identity.
+    :vartype tenant_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserIdentity}'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(self, *, type=None, user_assigned_identities=None, **kwargs) -> None:
+        super(ResourceIdentity, self).__init__(**kwargs)
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
+        self.principal_id = None
+        self.tenant_id = None
+
+
+class Sku(Model):
+    """Describes a configuration store SKU.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The SKU name of the configuration store.
+    :type name: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str, **kwargs) -> None:
+        super(Sku, self).__init__(**kwargs)
+        self.name = name
+
+
+class UserIdentity(Model):
+    """UserIdentity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id: The principal ID of the user-assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the user-assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(UserIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None

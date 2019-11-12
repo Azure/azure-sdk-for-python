@@ -3,6 +3,28 @@
 Release History
 ===============
 
+0.5.0 (2019-11-11)
+++++++++++++++++++
+
+**Features**
+
+- Model ClusterUpdate has a new parameter key_vault_properties
+- Model ClusterUpdate has a new parameter identity
+- Model Cluster has a new parameter key_vault_properties
+- Model Cluster has a new parameter identity
+- Added operation ClustersOperations.detach_follower_databases
+- Added operation ClustersOperations.list_follower_databases
+- Added operation group AttachedDatabaseConfigurationsOperations
+
+**Breaking changes**
+
+- Operation DatabasesOperations.check_name_availability has a new signature
+- Model Database no longer has parameter soft_delete_period
+- Model Database no longer has parameter hot_cache_period
+- Model Database no longer has parameter statistics
+- Model Database no longer has parameter provisioning_state
+- Model Database has a new required parameter kind
+
 0.4.0 (2019-08-27)
 ++++++++++++++++++
 

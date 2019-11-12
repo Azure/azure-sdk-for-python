@@ -77,9 +77,7 @@ def _build_connection_policy(kwargs):
     policy.RequestTimeout = kwargs.pop('request_timeout', None) or \
         kwargs.pop('connection_timeout', None) or \
         policy.RequestTimeout
-    policy.MediaRequestTimeout = kwargs.pop('media_request_timeout', None) or policy.MediaRequestTimeout
     policy.ConnectionMode = kwargs.pop('connection_mode', None) or policy.ConnectionMode
-    policy.MediaReadMode = kwargs.pop('media_read_mode', None) or policy.MediaReadMode
     policy.ProxyConfiguration = kwargs.pop('proxy_config', None) or policy.ProxyConfiguration
     policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', None) or policy.EnableEndpointDiscovery
     policy.PreferredLocations = kwargs.pop('preferred_locations', None) or policy.PreferredLocations
@@ -131,9 +129,7 @@ class CosmosClient(object):
     :param str consistency_level: Consistency level to use for the session. The default value is "Session".
     :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
     :keyword int request_timeout: The HTTP request timeout in seconds.
-    :keyword int media_request_timeout: The media request timeout in seconds.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
-    :keyword str media_read_mode: The mode for use with downloading attachment content - default value is `Buffered`.
     :keyword proxy_config: Connection proxy configuration.
     :paramtype proxy_config: ~azure.cosmos.ProxyConfiguration
     :keyword ssl_config: Connection SSL configuration.

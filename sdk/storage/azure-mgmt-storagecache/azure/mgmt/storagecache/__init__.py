@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import StorageCacheMgmtClientConfiguration
-from ._storage_cache_mgmt_client import StorageCacheMgmtClient
-__all__ = ['StorageCacheMgmtClient', 'StorageCacheMgmtClientConfiguration']
+from ._configuration import StorageCacheManagementClientConfiguration
+from ._storage_cache_management_client import StorageCacheManagementClient
+__all__ = ['StorageCacheManagementClient', 'StorageCacheManagementClientConfiguration']
 
 from .version import VERSION
 
