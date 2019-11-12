@@ -212,7 +212,7 @@ class EventHubProducerClient(ClientBase):
                 :caption: Close down the client.
 
         """
-        for p in self._producers:
-            if p:
-                p.close()
+        for producer in self._producers:
+            if producer:
+                producer.close()
         self._conn_manager.close_connection()

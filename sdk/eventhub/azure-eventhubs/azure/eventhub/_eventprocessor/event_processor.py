@@ -92,8 +92,9 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     initial_event_position = self.get_init_event_position(partition_id, checkpoint)
                     event_received_callback = partial(self._on_event_received, partition_context)
 
-                    self._consumers[partition_id] = self.create_consumer(partition_id, initial_event_position)
-                    self._consumers[partition_id]._on_event_received = event_received_callback
+                    self._consumers[partition_id] = self.create_consumer(partition_id,
+                                                                         initial_event_position,
+                                                                         event_received_callback)
 
                     if self._partition_initialize_handler:
                         self._handle_callback(
@@ -107,8 +108,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             callback(*callback_and_args[1:])
         except Exception as exp:  # pylint:disable=broad-except
             partition_context = callback_and_args[1]
-            if callback != self._error_handler:
-                self._process_error(partition_context, exp)
+            if self._error_handler and callback != self._error_handler:
+                self._handle_callback([self._error_handler, partition_context, exp])
             else:
                 log.warning(
                     "EventProcessor instance %r of eventhub %r partition %r consumer group %r"

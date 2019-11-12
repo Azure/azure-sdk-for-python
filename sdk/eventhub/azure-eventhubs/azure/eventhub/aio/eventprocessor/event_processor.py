@@ -159,7 +159,10 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 )
                 self._partition_contexts[partition_id] = partition_context
 
-            self._consumers[partition_id] = self.create_consumer(partition_id, initial_event_position)
+            event_received_callback = partial(self._on_event_received, partition_context)
+            self._consumers[partition_id] = self.create_consumer(partition_id,
+                                                                 initial_event_position,
+                                                                 event_received_callback)
 
             if self._partition_initialize_handler:
                 try:
@@ -172,8 +175,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     )
 
             try:
-                event_received_callback = partial(self._on_event_received, partition_context)
-                await self._consumers[partition_id].receive(event_received_callback)
+
+                await self._consumers[partition_id].receive()
             except Exception as error:
                 await self._process_error(partition_context, error)
             finally:

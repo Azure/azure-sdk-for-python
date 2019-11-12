@@ -233,7 +233,7 @@ class EventHubProducerClient(ClientBaseAsync):
                 :caption: Close down the handler.
 
         """
-        for p in self._producers:
-            if p:
-                await p.close()
+        for producer in self._producers:
+            if producer:
+                await producer.close()
         await self._conn_manager.close_connection()
