@@ -52,6 +52,7 @@ class StorageAccountPreparer(AzureMgmtPreparer):
                     'sku': {'name': self.sku},
                     'location': self.location,
                     'kind': self.kind,
+                    'enable_https_traffic_only': True,
                 }
             )
             self.resource = storage_async_operation.result()
