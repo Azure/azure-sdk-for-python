@@ -1306,7 +1306,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self.Read(path, "triggers", trigger_id, None, options, **kwargs)
 
     def ReadUserDefinedFunctions(self, collection_link, options=None, **kwargs):
-        """Reads all user defined functions in a collection.
+        """Reads all user-defined functions in a collection.
 
         :param str collection_link:
             The link to the document collection.
@@ -1325,7 +1325,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self.QueryUserDefinedFunctions(collection_link, None, options, **kwargs)
 
     def QueryUserDefinedFunctions(self, collection_link, query, options=None, **kwargs):
-        """Queries user defined functions in a collection.
+        """Queries user-defined functions in a collection.
 
         :param str collection_link:
             The link to the collection.
@@ -1359,7 +1359,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         )
 
     def CreateUserDefinedFunction(self, collection_link, udf, options=None, **kwargs):
-        """Creates a user defined function in a collection.
+        """Creates a user-defined function in a collection.
 
         :param str collection_link:
             The link to the collection.
@@ -1380,7 +1380,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self.Create(udf, path, "udfs", collection_id, None, options, **kwargs)
 
     def UpsertUserDefinedFunction(self, collection_link, udf, options=None, **kwargs):
-        """Upserts a user defined function in a collection.
+        """Upserts a user-defined function in a collection.
 
         :param str collection_link:
             The link to the collection.
@@ -1413,10 +1413,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return collection_id, path, udf
 
     def ReadUserDefinedFunction(self, udf_link, options=None, **kwargs):
-        """Reads a user defined function.
+        """Reads a user-defined function.
 
         :param str udf_link:
-            The link to the user defined function.
+            The link to the user-defined function.
         :param dict options:
             The request options for the request.
 
@@ -1760,10 +1760,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self.DeleteResource(path, "triggers", trigger_id, None, options, **kwargs)
 
     def ReplaceUserDefinedFunction(self, udf_link, udf, options=None, **kwargs):
-        """Replaces a user defined function and returns it.
+        """Replaces a user-defined function and returns it.
 
         :param str udf_link:
-            The link to the user defined function.
+            The link to the user-defined function.
         :param dict udf:
         :param dict options:
             The request options for the request.
@@ -1789,10 +1789,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self.Replace(udf, path, "udfs", udf_id, None, options, **kwargs)
 
     def DeleteUserDefinedFunction(self, udf_link, options=None, **kwargs):
-        """Deletes a user defined function.
+        """Deletes a user-defined function.
 
         :param str udf_link:
-            The link to the user defined function.
+            The link to the user-defined function.
         :param dict options:
             The request options for the request.
 

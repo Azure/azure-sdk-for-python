@@ -320,7 +320,7 @@ class ScriptsProxy(object):
         """List all the user-defined functions in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :returns: An Iterable of user defined functions (dicts).
+        :returns: An Iterable of user-defined functions (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
@@ -338,7 +338,7 @@ class ScriptsProxy(object):
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :returns: An Iterable of user defined functions (dicts).
+        :returns: An Iterable of user-defined functions (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
@@ -357,8 +357,8 @@ class ScriptsProxy(object):
         """Get a user-defined functions identified by `id`.
 
         :param udf: The ID (name) or dict representing udf to retrieve.
-        :returns: A dict representing the retrieved user defined function.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user defined function couldn't be retrieved.
+        :returns: A dict representing the retrieved user-defined function.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user-defined function couldn't be retrieved.
         :rtype: Iterable[dict[str, Any]]
         """
         request_options = build_options(kwargs)
@@ -374,8 +374,8 @@ class ScriptsProxy(object):
         To replace an existing UDF, use the :func:`ContainerProxy.scripts.replace_user_defined_function` method.
 
         :param body: A dict-like object representing the udf to create.
-        :returns: A dict representing the new user defined function.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user defined function couldn't be created.
+        :returns: A dict representing the new user-defined function.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user-defined function couldn't be created.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -392,8 +392,8 @@ class ScriptsProxy(object):
 
         :param udf: The ID (name) or dict representing udf to be replaced.
         :param body: A dict-like object representing the udf to replace.
-        :returns: A dict representing the user defined function after replace went through.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the user defined function
+        :returns: A dict representing the user-defined function after replace went through.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the user-defined function
             with the given id does not exist.
         :rtype: dict[str, Any]
         """

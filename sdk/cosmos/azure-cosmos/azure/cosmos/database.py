@@ -52,7 +52,7 @@ class DatabaseProxy(object):
 
     A database can also have associated users, each of which configured with
     a set of permissions for accessing certain containers, stored procedures,
-    triggers, user defined functions, or items.
+    triggers, user-defined functions, or items.
 
     :ivar id: The ID (name) of the database.
 
