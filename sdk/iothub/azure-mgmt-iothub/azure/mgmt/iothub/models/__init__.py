@@ -33,7 +33,6 @@ try:
     from ._models_py3 import IotHubLocationDescription
     from ._models_py3 import IotHubNameAvailabilityInfo
     from ._models_py3 import IotHubProperties
-    from ._models_py3 import IotHubPropertiesDeviceStreams
     from ._models_py3 import IotHubQuotaMetricInfo
     from ._models_py3 import IotHubSkuDescription
     from ._models_py3 import IotHubSkuInfo
@@ -94,7 +93,6 @@ except (SyntaxError, ImportError):
     from ._models import IotHubLocationDescription
     from ._models import IotHubNameAvailabilityInfo
     from ._models import IotHubProperties
-    from ._models import IotHubPropertiesDeviceStreams
     from ._models import IotHubQuotaMetricInfo
     from ._models import IotHubSkuDescription
     from ._models import IotHubSkuInfo
@@ -180,7 +178,6 @@ __all__ = [
     'IotHubLocationDescription',
     'IotHubNameAvailabilityInfo',
     'IotHubProperties',
-    'IotHubPropertiesDeviceStreams',
     'IotHubQuotaMetricInfo',
     'IotHubSkuDescription',
     'IotHubSkuInfo',
