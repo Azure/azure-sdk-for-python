@@ -108,8 +108,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             callback(*callback_and_args[1:])
         except Exception as exp:  # pylint:disable=broad-except
             partition_context = callback_and_args[1]
-            if callback != self._error_handler:
-                self._process_error(partition_context, exp)
+            if self._error_handler and callback != self._error_handler:
+                self._handle_callback([self._error_handler, partition_context, exp])
             else:
                 log.warning(
                     "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
