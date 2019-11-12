@@ -231,6 +231,9 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                     if self._last_received_event:
                         self._offset = EventPosition(self._last_received_event.offset)
                     last_exception = await self._handle_exception(exception)
+                    await self._client._try_delay(retried_times=retried_times,
+                                                  last_exception=last_exception,
+                                                  entity_name=self._name)
                     retried_times += 1
 
             log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
