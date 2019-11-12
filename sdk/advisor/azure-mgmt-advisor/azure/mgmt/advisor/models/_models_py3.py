@@ -45,37 +45,6 @@ class CloudError(Model):
 class ConfigData(Model):
     """The Advisor configuration data structure.
 
-    :param id: The resource Id of the configuration resource.
-    :type id: str
-    :param type: The type of the configuration resource.
-    :type type: str
-    :param name: The name of the configuration resource.
-    :type name: str
-    :param properties: The list of property name/value pairs.
-    :type properties: ~azure.mgmt.advisor.models.ConfigDataProperties
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ConfigDataProperties'},
-    }
-
-    def __init__(self, *, id: str=None, type: str=None, name: str=None, properties=None, **kwargs) -> None:
-        super(ConfigData, self).__init__(**kwargs)
-        self.id = id
-        self.type = type
-        self.name = name
-        self.properties = properties
-
-
-class ConfigDataProperties(Model):
-    """The list of property name/value pairs.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
     :param exclude: Exclude the resource from Advisor evaluations. Valid
      values: False (default) or True.
     :type exclude: bool
@@ -83,19 +52,60 @@ class ConfigDataProperties(Model):
      utilization evaluation. Valid only for subscriptions. Valid values: 5
      (default), 10, 15 or 20.
     :type low_cpu_threshold: str
+    :param digests: Advisor digest configuration. Valid only for subscriptions
+    :type digests: list[~azure.mgmt.advisor.models.DigestConfig]
+    :param id: The resource Id of the configuration resource.
+    :type id: str
+    :param type: The type of the configuration resource.
+    :type type: str
+    :param name: The name of the configuration resource.
+    :type name: str
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'exclude': {'key': 'exclude', 'type': 'bool'},
-        'low_cpu_threshold': {'key': 'low_cpu_threshold', 'type': 'str'},
+        'exclude': {'key': 'properties.exclude', 'type': 'bool'},
+        'low_cpu_threshold': {'key': 'properties.low_cpu_threshold', 'type': 'str'},
+        'digests': {'key': 'properties.digests', 'type': '[DigestConfig]'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, additional_properties=None, exclude: bool=None, low_cpu_threshold: str=None, **kwargs) -> None:
-        super(ConfigDataProperties, self).__init__(**kwargs)
-        self.additional_properties = additional_properties
+    def __init__(self, *, exclude: bool=None, low_cpu_threshold: str=None, digests=None, id: str=None, type: str=None, name: str=None, **kwargs) -> None:
+        super(ConfigData, self).__init__(**kwargs)
         self.exclude = exclude
         self.low_cpu_threshold = low_cpu_threshold
+        self.digests = digests
+        self.id = id
+        self.type = type
+        self.name = name
+
+
+class DigestConfig(Model):
+    """Advisor Digest configuration entity.
+
+    :param action_group_resource_id: Action group resource id used by digest.
+    :type action_group_resource_id: str
+    :param frequency: Frequency that digest will be triggered. Value must
+     conform to ISO 8601 standard and must be greater than equal to 1 day and
+     less than or equal to 30 days.
+    :type frequency: str
+    :param categories: Categories to send digest for. If categories are not
+     provided, then digest will be sent for all categories.
+    :type categories: list[str]
+    """
+
+    _attribute_map = {
+        'action_group_resource_id': {'key': 'actionGroupResourceId', 'type': 'str'},
+        'frequency': {'key': 'frequency', 'type': 'str'},
+        'categories': {'key': 'categories', 'type': '[str]'},
+    }
+
+    def __init__(self, *, action_group_resource_id: str=None, frequency: str=None, categories=None, **kwargs) -> None:
+        super(DigestConfig, self).__init__(**kwargs)
+        self.action_group_resource_id = action_group_resource_id
+        self.frequency = frequency
+        self.categories = categories
 
 
 class MetadataEntity(Model):
