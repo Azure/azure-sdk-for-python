@@ -135,7 +135,9 @@ class SharedTokenCacheCredential(object):
         if sys.platform.startswith("win") and "LOCALAPPDATA" in os.environ:
             from msal_extensions.token_cache import WindowsTokenCache
 
-            cache = WindowsTokenCache(cache_location=os.environ["LOCALAPPDATA"] + "/.IdentityService/msal.cache")
+            cache = WindowsTokenCache(
+                cache_location=os.path.join(os.environ["LOCALAPPDATA"], ".IdentityService", "msal.cache")
+            )
 
             # prevent writing to the shared cache
             # TODO: seperating deserializing access tokens from caching them would make this cleaner
