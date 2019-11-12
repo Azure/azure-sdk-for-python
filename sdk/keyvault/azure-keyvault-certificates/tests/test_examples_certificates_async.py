@@ -24,7 +24,7 @@ def test_create_certificate():
 
     # Create a KeyVaultCertificate using default Azure credentials
     credential = DefaultAzureCredential()
-    certificate_client = CertificateClient(vault_url, credential)
+    certificate_client = CertificateClient(vault_url=vault_url, credential=credential)
 
     # [END create_certificate_client]
 
@@ -56,7 +56,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
         cert_name = "cert-name"
         # create a certificate with optional arguments, returns an async poller
-        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
+        create_certificate_poller = certificate_client.create_certificate(
+            certificate_name=cert_name, policy=cert_policy
+        )
 
         # awaiting the certificate poller gives us the result of the long running operation
         certificate = await create_certificate_poller
@@ -70,7 +72,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START get_certificate]
 
         # get the latest version of a certificate
-        certificate = await certificate_client.get_certificate(name=cert_name)
+        certificate = await certificate_client.get_certificate(cert_name)
 
         print(certificate.id)
         print(certificate.name)
@@ -81,7 +83,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # update attributes of an existing certificate
         tags = {"foo": "updated tag"}
-        updated_certificate = await certificate_client.update_certificate_properties(certificate.name, tags=tags)
+        updated_certificate = await certificate_client.update_certificate_properties(
+            certificate_name=certificate.name, tags=tags
+        )
 
         print(updated_certificate.properties.version)
         print(updated_certificate.properties.updated_on)
@@ -91,7 +95,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START delete_certificate]
 
         # delete a certificate
-        deleted_certificate = await certificate_client.delete_certificate(name=cert_name)
+        deleted_certificate = await certificate_client.delete_certificate(cert_name)
 
         print(deleted_certificate.name)
 
@@ -129,7 +133,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         create_certificate_pollers = []
         for i in range(4):
             create_certificate_pollers.append(
-                certificate_client.create_certificate(name="certificate{}".format(i), policy=cert_policy, _polling_interval=polling_interval)
+                certificate_client.create_certificate(
+                    certificate_name="certificate{}".format(i),
+                    policy=cert_policy,
+                    _polling_interval=polling_interval)
             )
 
         for poller in create_certificate_pollers:
@@ -151,7 +158,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START list_properties_of_certificate_versions]
 
         # get an iterator of all versions of a certificate
-        certificate_versions = certificate_client.list_properties_of_certificate_versions(name="cert-name")
+        certificate_versions = certificate_client.list_properties_of_certificate_versions("cert-name")
 
         async for certificate in certificate_versions:
             print(certificate.id)
@@ -197,21 +204,27 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         cert_name = "cert-name"
         polling_interval = 0 if self.is_playback() else None
-        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy, _polling_interval=polling_interval)
+        create_certificate_poller = certificate_client.create_certificate(
+            certificate_name=cert_name,
+            policy=cert_policy,
+            _polling_interval=polling_interval
+        )
 
         await create_certificate_poller
 
         # [START backup_certificate]
 
         # backup certificate
-        certificate_backup = await certificate_client.backup_certificate(name=cert_name)
+        certificate_backup = await certificate_client.backup_certificate(cert_name)
 
         # returns the raw bytes of the backed up certificate
         print(certificate_backup)
 
         # [END backup_certificate]
 
-        await certificate_client.delete_certificate(name=cert_name, _polling_interval=polling_interval)
+        await certificate_client.delete_certificate(
+            certificate_name=cert_name, _polling_interval=polling_interval
+        )
 
         # [START restore_certificate]
 
@@ -247,22 +260,28 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         cert_name = "cert-name"
         polling_interval = 0 if self.is_playback() else None
-        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy, _polling_interval=polling_interval)
+        create_certificate_poller = certificate_client.create_certificate(
+            certificate_name=cert_name,
+            policy=cert_policy,
+            _polling_interval=polling_interval
+        )
         await create_certificate_poller
 
-        await certificate_client.delete_certificate(name=cert_name, _polling_interval=polling_interval)
+        await certificate_client.delete_certificate(
+            certificate_name=cert_name, _polling_interval=polling_interval
+        )
 
         # [START get_deleted_certificate]
 
         # get a deleted certificate (requires soft-delete enabled for the vault)
-        deleted_certificate = await certificate_client.get_deleted_certificate(name="cert-name")
+        deleted_certificate = await certificate_client.get_deleted_certificate("cert-name")
         print(deleted_certificate.name)
 
         # [END get_deleted_certificate]
         # [START recover_deleted_certificate]
 
         # recover deleted certificate to its latest version (requires soft-delete enabled for the vault)
-        recovered_certificate = await certificate_client.recover_deleted_certificate(name="cert-name")
+        recovered_certificate = await certificate_client.recover_deleted_certificate("cert-name")
         print(recovered_certificate.id)
         print(recovered_certificate.name)
 
@@ -284,7 +303,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
         ]
 
-        contacts = await certificate_client.create_contacts(contacts=contact_list)
+        contacts = await certificate_client.create_contacts(contact_list)
         for contact in contacts:
             print(contact.name)
             print(contact.email)
@@ -331,7 +350,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         ]
 
         issuer = await certificate_client.create_issuer(
-            name="issuer1", provider="Test", account_id="keyvaultuser", admin_details=admin_details, enabled=True
+            issuer_name="issuer1", provider="Test", account_id="keyvaultuser", admin_details=admin_details, enabled=True
         )
 
         print(issuer.name)
@@ -348,7 +367,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [START get_issuer]
 
-        issuer = await certificate_client.get_issuer(name="issuer1")
+        issuer = await certificate_client.get_issuer("issuer1")
 
         print(issuer.name)
         print(issuer.properties.provider)
@@ -362,7 +381,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END get_issuer]
 
-        await certificate_client.create_issuer(name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)
+        await certificate_client.create_issuer(issuer_name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)
 
         # [START list_properties_of_issuers]
 
@@ -376,7 +395,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [START delete_issuer]
 
-        deleted_issuer = await certificate_client.delete_issuer(name="issuer1")
+        deleted_issuer = await certificate_client.delete_issuer("issuer1")
 
         print(deleted_issuer.name)
         print(deleted_issuer.properties.provider)

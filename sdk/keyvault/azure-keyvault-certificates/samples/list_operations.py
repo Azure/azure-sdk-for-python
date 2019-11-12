@@ -46,10 +46,10 @@ try:
     storage_cert_name = "StorageListCertificate"
 
     bank_certificate_poller = client.begin_create_certificate(
-        name=bank_cert_name, policy=CertificatePolicy.get_default()
+        certificate_name=bank_cert_name, policy=CertificatePolicy.get_default()
     )
     storage_certificate_poller = client.begin_create_certificate(
-        name=storage_cert_name, policy=CertificatePolicy.get_default()
+        certificate_name=storage_cert_name, policy=CertificatePolicy.get_default()
     )
 
     # await the creation of the bank and storage certificate
@@ -70,7 +70,7 @@ try:
 
     tags = {"a": "b"}
     bank_certificate_poller = client.begin_create_certificate(
-        name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags
+        certificate_name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags
     )
     bank_certificate = bank_certificate_poller.result()
     print(
@@ -91,8 +91,10 @@ try:
         )
 
     # The bank account and storage accounts got closed. Let's delete bank and storage accounts certificates.
-    client.begin_delete_certificate(name=bank_cert_name).wait()
-    client.begin_delete_certificate(name=storage_cert_name).wait()
+    # We call wait() to ensure the certificate is deleted server side because the following method requires
+    # server-side deletion to run properly. In most situations you will not have to call wait().
+    client.begin_delete_certificate(bank_cert_name).wait()
+    client.begin_delete_certificate(storage_cert_name).wait()
 
     # You can list all the deleted and non-purged certificates, assuming Key Vault is soft-delete enabled.
     print("\n.. List deleted certificates from the Key Vault")
