@@ -7,6 +7,7 @@ from test_pool import create_pool, delete_pool
 from test_account import delete_account
 from setup import *
 import azure.mgmt.netapp.models
+import unittest
 
 volumes = [TEST_VOL_1, TEST_VOL_2]
 

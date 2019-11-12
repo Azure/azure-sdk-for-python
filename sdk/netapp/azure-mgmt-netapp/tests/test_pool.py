@@ -6,6 +6,7 @@ from azure.mgmt.netapp.models import CapacityPool, CapacityPoolPatch
 from test_account import create_account, delete_account
 from setup import *
 import azure.mgmt.netapp.models
+import unittest
 
 pools = [TEST_POOL_1, TEST_POOL_2]
 

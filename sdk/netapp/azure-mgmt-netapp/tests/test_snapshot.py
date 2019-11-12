@@ -9,6 +9,7 @@ from test_account import delete_account
 from azure.mgmt.netapp.models import Snapshot
 from setup import *
 import azure.mgmt.netapp.models
+import unittest
 
 snapshots = [TEST_SNAPSHOT_1, TEST_SNAPSHOT_2]
 
