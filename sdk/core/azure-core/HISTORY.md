@@ -4,6 +4,9 @@
 -------------------
 ## 1.1.0b1 Unreleased
 
+### Features
+
+- New RequestIdPolicy   #8437
 
 ## Version 1.0.1
 
