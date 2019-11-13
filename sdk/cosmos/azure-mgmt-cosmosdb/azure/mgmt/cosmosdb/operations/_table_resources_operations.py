@@ -56,7 +56,7 @@ class TableResourcesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of TableGetResults
         :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.TableGetResultsPaged[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.TableGetResults]
+         ~azure.mgmt.cosmosdb.models.TableGetResultsPaged[~azure.mgmt.cosmosdb.models.TableGetResults]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -130,8 +130,7 @@ class TableResourcesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: TableGetResults or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.TableGetResults or
+        :rtype: ~azure.mgmt.cosmosdb.models.TableGetResults or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -243,7 +242,7 @@ class TableResourcesOperations(object):
         :param create_update_table_parameters: The parameters to provide for
          the current Table.
         :type create_update_table_parameters:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.TableCreateUpdateParameters
+         ~azure.mgmt.cosmosdb.models.TableCreateUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -252,9 +251,9 @@ class TableResourcesOperations(object):
         :return: An instance of LROPoller that returns TableGetResults or
          ClientRawResponse<TableGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.TableGetResults]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.TableGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.TableGetResults]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.TableGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_update_table_initial(
@@ -385,9 +384,8 @@ class TableResourcesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ThroughputSettingsGetResults or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ThroughputSettingsGetResults
-         or ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -498,7 +496,7 @@ class TableResourcesOperations(object):
         :param update_throughput_parameters: The parameters to provide for the
          RUs per second of the current Table.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ThroughputSettingsUpdateParameters
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -508,9 +506,9 @@ class TableResourcesOperations(object):
          ThroughputSettingsGetResults or
          ClientRawResponse<ThroughputSettingsGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ThroughputSettingsGetResults]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ThroughputSettingsGetResults]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_table_throughput_initial(

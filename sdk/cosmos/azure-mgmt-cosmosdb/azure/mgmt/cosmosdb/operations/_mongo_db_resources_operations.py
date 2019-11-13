@@ -18,8 +18,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class GremlinResourcesOperations(object):
-    """GremlinResourcesOperations operations.
+class MongoDBResourcesOperations(object):
+    """MongoDBResourcesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -41,9 +41,9 @@ class GremlinResourcesOperations(object):
 
         self.config = config
 
-    def list_gremlin_databases(
+    def list_mongo_db_databases(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the Gremlin databases under an existing Azure Cosmos DB database
+        """Lists the MongoDB databases under an existing Azure Cosmos DB database
         account.
 
         :param resource_group_name: Name of an Azure resource group.
@@ -55,15 +55,15 @@ class GremlinResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of GremlinDatabaseGetResults
+        :return: An iterator like instance of MongoDBDatabaseGetResults
         :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.GremlinDatabaseGetResultsPaged[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.GremlinDatabaseGetResults]
+         ~azure.mgmt.cosmosdb.models.MongoDBDatabaseGetResultsPaged[~azure.mgmt.cosmosdb.models.MongoDBDatabaseGetResults]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_gremlin_databases.metadata['url']
+                url = self.list_mongo_db_databases.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -109,14 +109,14 @@ class GremlinResourcesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.GremlinDatabaseGetResultsPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.MongoDBDatabaseGetResultsPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_gremlin_databases.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases'}
+    list_mongo_db_databases.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases'}
 
-    def get_gremlin_database(
+    def get_mongo_db_database(
             self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the Gremlin databases under an existing Azure Cosmos DB database
+        """Gets the MongoDB databases under an existing Azure Cosmos DB database
         account with the provided name.
 
         :param resource_group_name: Name of an Azure resource group.
@@ -130,14 +130,13 @@ class GremlinResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: GremlinDatabaseGetResults or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.GremlinDatabaseGetResults
-         or ~msrest.pipeline.ClientRawResponse
+        :return: MongoDBDatabaseGetResults or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.MongoDBDatabaseGetResults or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_gremlin_database.metadata['url']
+        url = self.get_mongo_db_database.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -171,20 +170,20 @@ class GremlinResourcesOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('GremlinDatabaseGetResults', response)
+            deserialized = self._deserialize('MongoDBDatabaseGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_gremlin_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}'}
+    get_mongo_db_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}'}
 
 
-    def _create_update_gremlin_database_initial(
-            self, resource_group_name, account_name, database_name, create_update_gremlin_database_parameters, custom_headers=None, raw=False, **operation_config):
+    def _create_update_mongo_db_database_initial(
+            self, resource_group_name, account_name, database_name, create_update_mongo_db_database_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.create_update_gremlin_database.metadata['url']
+        url = self.create_update_mongo_db_database.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -209,7 +208,7 @@ class GremlinResourcesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(create_update_gremlin_database_parameters, 'GremlinDatabaseCreateUpdateParameters')
+        body_content = self._serialize.body(create_update_mongo_db_database_parameters, 'MongoDBDatabaseCreateUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -223,7 +222,7 @@ class GremlinResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('GremlinDatabaseGetResults', response)
+            deserialized = self._deserialize('MongoDBDatabaseGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -231,9 +230,9 @@ class GremlinResourcesOperations(object):
 
         return deserialized
 
-    def create_update_gremlin_database(
-            self, resource_group_name, account_name, database_name, create_update_gremlin_database_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update an Azure Cosmos DB Gremlin database.
+    def create_update_mongo_db_database(
+            self, resource_group_name, account_name, database_name, create_update_mongo_db_database_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or updates Azure Cosmos DB MongoDB database.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -241,36 +240,36 @@ class GremlinResourcesOperations(object):
         :type account_name: str
         :param database_name: Cosmos DB database name.
         :type database_name: str
-        :param create_update_gremlin_database_parameters: The parameters to
-         provide for the current Gremlin database.
-        :type create_update_gremlin_database_parameters:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.GremlinDatabaseCreateUpdateParameters
+        :param create_update_mongo_db_database_parameters: The parameters to
+         provide for the current MongoDB database.
+        :type create_update_mongo_db_database_parameters:
+         ~azure.mgmt.cosmosdb.models.MongoDBDatabaseCreateUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :return: An instance of LROPoller that returns
-         GremlinDatabaseGetResults or
-         ClientRawResponse<GremlinDatabaseGetResults> if raw==True
+         MongoDBDatabaseGetResults or
+         ClientRawResponse<MongoDBDatabaseGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.GremlinDatabaseGetResults]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.MongoDBDatabaseGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.GremlinDatabaseGetResults]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.MongoDBDatabaseGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_update_gremlin_database_initial(
+        raw_result = self._create_update_mongo_db_database_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
             database_name=database_name,
-            create_update_gremlin_database_parameters=create_update_gremlin_database_parameters,
+            create_update_mongo_db_database_parameters=create_update_mongo_db_database_parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('GremlinDatabaseGetResults', response)
+            deserialized = self._deserialize('MongoDBDatabaseGetResults', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -285,13 +284,13 @@ class GremlinResourcesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_update_gremlin_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}'}
+    create_update_mongo_db_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}'}
 
 
-    def _delete_gremlin_database_initial(
+    def _delete_mongo_db_database_initial(
             self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.delete_gremlin_database.metadata['url']
+        url = self.delete_mongo_db_database.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -326,9 +325,9 @@ class GremlinResourcesOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def delete_gremlin_database(
+    def delete_mongo_db_database(
             self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes an existing Azure Cosmos DB Gremlin database.
+        """Deletes an existing Azure Cosmos DB MongoDB database.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -347,7 +346,7 @@ class GremlinResourcesOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._delete_gremlin_database_initial(
+        raw_result = self._delete_mongo_db_database_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
             database_name=database_name,
@@ -368,11 +367,11 @@ class GremlinResourcesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_gremlin_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}'}
+    delete_mongo_db_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}'}
 
-    def get_gremlin_database_throughput(
+    def get_mongo_db_database_throughput(
             self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the RUs per second of the Gremlin database under an existing Azure
+        """Gets the RUs per second of the MongoDB database under an existing Azure
         Cosmos DB database account with the provided name.
 
         :param resource_group_name: Name of an Azure resource group.
@@ -387,13 +386,12 @@ class GremlinResourcesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ThroughputSettingsGetResults or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ThroughputSettingsGetResults
-         or ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_gremlin_database_throughput.metadata['url']
+        url = self.get_mongo_db_database_throughput.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -434,13 +432,13 @@ class GremlinResourcesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_gremlin_database_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/throughputSettings/default'}
+    get_mongo_db_database_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/throughputSettings/default'}
 
 
-    def _update_gremlin_database_throughput_initial(
+    def _update_mongo_db_database_throughput_initial(
             self, resource_group_name, account_name, database_name, update_throughput_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.update_gremlin_database_throughput.metadata['url']
+        url = self.update_mongo_db_database_throughput.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -487,9 +485,9 @@ class GremlinResourcesOperations(object):
 
         return deserialized
 
-    def update_gremlin_database_throughput(
+    def update_mongo_db_database_throughput(
             self, resource_group_name, account_name, database_name, update_throughput_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Update RUs per second of an Azure Cosmos DB Gremlin database.
+        """Update RUs per second of the an Azure Cosmos DB MongoDB database.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -498,9 +496,9 @@ class GremlinResourcesOperations(object):
         :param database_name: Cosmos DB database name.
         :type database_name: str
         :param update_throughput_parameters: The RUs per second of the
-         parameters to provide for the current Gremlin database.
+         parameters to provide for the current MongoDB database.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ThroughputSettingsUpdateParameters
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -510,12 +508,12 @@ class GremlinResourcesOperations(object):
          ThroughputSettingsGetResults or
          ClientRawResponse<ThroughputSettingsGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ThroughputSettingsGetResults]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ThroughputSettingsGetResults]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._update_gremlin_database_throughput_initial(
+        raw_result = self._update_mongo_db_database_throughput_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
             database_name=database_name,
@@ -541,11 +539,11 @@ class GremlinResourcesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update_gremlin_database_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/throughputSettings/default'}
+    update_mongo_db_database_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/throughputSettings/default'}
 
-    def list_gremlin_graphs(
+    def list_mongo_db_collections(
             self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the Gremlin graph under an existing Azure Cosmos DB database
+        """Lists the MongoDB collection under an existing Azure Cosmos DB database
         account.
 
         :param resource_group_name: Name of an Azure resource group.
@@ -559,15 +557,15 @@ class GremlinResourcesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of GremlinGraphGetResults
+        :return: An iterator like instance of MongoDBCollectionGetResults
         :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.GremlinGraphGetResultsPaged[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.GremlinGraphGetResults]
+         ~azure.mgmt.cosmosdb.models.MongoDBCollectionGetResultsPaged[~azure.mgmt.cosmosdb.models.MongoDBCollectionGetResults]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_gremlin_graphs.metadata['url']
+                url = self.list_mongo_db_collections.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -614,14 +612,14 @@ class GremlinResourcesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.GremlinGraphGetResultsPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.MongoDBCollectionGetResultsPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_gremlin_graphs.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs'}
+    list_mongo_db_collections.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections'}
 
-    def get_gremlin_graph(
-            self, resource_group_name, account_name, database_name, graph_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the Gremlin graph under an existing Azure Cosmos DB database
+    def get_mongo_db_collection(
+            self, resource_group_name, account_name, database_name, collection_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the MongoDB collection under an existing Azure Cosmos DB database
         account.
 
         :param resource_group_name: Name of an Azure resource group.
@@ -630,27 +628,26 @@ class GremlinResourcesOperations(object):
         :type account_name: str
         :param database_name: Cosmos DB database name.
         :type database_name: str
-        :param graph_name: Cosmos DB graph name.
-        :type graph_name: str
+        :param collection_name: Cosmos DB collection name.
+        :type collection_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: GremlinGraphGetResults or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.GremlinGraphGetResults
-         or ~msrest.pipeline.ClientRawResponse
+        :return: MongoDBCollectionGetResults or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.MongoDBCollectionGetResults or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_gremlin_graph.metadata['url']
+        url = self.get_mongo_db_collection.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'graphName': self._serialize.url("graph_name", graph_name, 'str')
+            'collectionName': self._serialize.url("collection_name", collection_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -679,26 +676,26 @@ class GremlinResourcesOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('GremlinGraphGetResults', response)
+            deserialized = self._deserialize('MongoDBCollectionGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_gremlin_graph.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}'}
+    get_mongo_db_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}'}
 
 
-    def _create_update_gremlin_graph_initial(
-            self, resource_group_name, account_name, database_name, graph_name, create_update_gremlin_graph_parameters, custom_headers=None, raw=False, **operation_config):
+    def _create_update_mongo_db_collection_initial(
+            self, resource_group_name, account_name, database_name, collection_name, create_update_mongo_db_collection_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.create_update_gremlin_graph.metadata['url']
+        url = self.create_update_mongo_db_collection.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'graphName': self._serialize.url("graph_name", graph_name, 'str')
+            'collectionName': self._serialize.url("collection_name", collection_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -718,7 +715,7 @@ class GremlinResourcesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(create_update_gremlin_graph_parameters, 'GremlinGraphCreateUpdateParameters')
+        body_content = self._serialize.body(create_update_mongo_db_collection_parameters, 'MongoDBCollectionCreateUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -732,7 +729,7 @@ class GremlinResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('GremlinGraphGetResults', response)
+            deserialized = self._deserialize('MongoDBCollectionGetResults', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -740,9 +737,9 @@ class GremlinResourcesOperations(object):
 
         return deserialized
 
-    def create_update_gremlin_graph(
-            self, resource_group_name, account_name, database_name, graph_name, create_update_gremlin_graph_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update an Azure Cosmos DB Gremlin graph.
+    def create_update_mongo_db_collection(
+            self, resource_group_name, account_name, database_name, collection_name, create_update_mongo_db_collection_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or update an Azure Cosmos DB MongoDB Collection.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -750,38 +747,39 @@ class GremlinResourcesOperations(object):
         :type account_name: str
         :param database_name: Cosmos DB database name.
         :type database_name: str
-        :param graph_name: Cosmos DB graph name.
-        :type graph_name: str
-        :param create_update_gremlin_graph_parameters: The parameters to
-         provide for the current Gremlin graph.
-        :type create_update_gremlin_graph_parameters:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.GremlinGraphCreateUpdateParameters
+        :param collection_name: Cosmos DB collection name.
+        :type collection_name: str
+        :param create_update_mongo_db_collection_parameters: The parameters to
+         provide for the current MongoDB Collection.
+        :type create_update_mongo_db_collection_parameters:
+         ~azure.mgmt.cosmosdb.models.MongoDBCollectionCreateUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns GremlinGraphGetResults
-         or ClientRawResponse<GremlinGraphGetResults> if raw==True
+        :return: An instance of LROPoller that returns
+         MongoDBCollectionGetResults or
+         ClientRawResponse<MongoDBCollectionGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.GremlinGraphGetResults]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.MongoDBCollectionGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.GremlinGraphGetResults]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.MongoDBCollectionGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_update_gremlin_graph_initial(
+        raw_result = self._create_update_mongo_db_collection_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
             database_name=database_name,
-            graph_name=graph_name,
-            create_update_gremlin_graph_parameters=create_update_gremlin_graph_parameters,
+            collection_name=collection_name,
+            create_update_mongo_db_collection_parameters=create_update_mongo_db_collection_parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('GremlinGraphGetResults', response)
+            deserialized = self._deserialize('MongoDBCollectionGetResults', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -796,19 +794,19 @@ class GremlinResourcesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_update_gremlin_graph.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}'}
+    create_update_mongo_db_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}'}
 
 
-    def _delete_gremlin_graph_initial(
-            self, resource_group_name, account_name, database_name, graph_name, custom_headers=None, raw=False, **operation_config):
+    def _delete_mongo_db_collection_initial(
+            self, resource_group_name, account_name, database_name, collection_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.delete_gremlin_graph.metadata['url']
+        url = self.delete_mongo_db_collection.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'graphName': self._serialize.url("graph_name", graph_name, 'str')
+            'collectionName': self._serialize.url("collection_name", collection_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -838,9 +836,9 @@ class GremlinResourcesOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def delete_gremlin_graph(
-            self, resource_group_name, account_name, database_name, graph_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes an existing Azure Cosmos DB Gremlin graph.
+    def delete_mongo_db_collection(
+            self, resource_group_name, account_name, database_name, collection_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an existing Azure Cosmos DB MongoDB Collection.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -848,8 +846,8 @@ class GremlinResourcesOperations(object):
         :type account_name: str
         :param database_name: Cosmos DB database name.
         :type database_name: str
-        :param graph_name: Cosmos DB graph name.
-        :type graph_name: str
+        :param collection_name: Cosmos DB collection name.
+        :type collection_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -861,11 +859,11 @@ class GremlinResourcesOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._delete_gremlin_graph_initial(
+        raw_result = self._delete_mongo_db_collection_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
             database_name=database_name,
-            graph_name=graph_name,
+            collection_name=collection_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -883,12 +881,12 @@ class GremlinResourcesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_gremlin_graph.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}'}
+    delete_mongo_db_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}'}
 
-    def get_gremlin_graph_throughput(
-            self, resource_group_name, account_name, database_name, graph_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the Gremlin graph throughput under an existing Azure Cosmos DB
-        database account with the provided name.
+    def get_mongo_db_collection_throughput(
+            self, resource_group_name, account_name, database_name, collection_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the RUs per second of the MongoDB collection under an existing
+        Azure Cosmos DB database account with the provided name.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -896,27 +894,26 @@ class GremlinResourcesOperations(object):
         :type account_name: str
         :param database_name: Cosmos DB database name.
         :type database_name: str
-        :param graph_name: Cosmos DB graph name.
-        :type graph_name: str
+        :param collection_name: Cosmos DB collection name.
+        :type collection_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ThroughputSettingsGetResults or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ThroughputSettingsGetResults
-         or ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_gremlin_graph_throughput.metadata['url']
+        url = self.get_mongo_db_collection_throughput.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'graphName': self._serialize.url("graph_name", graph_name, 'str')
+            'collectionName': self._serialize.url("collection_name", collection_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -952,19 +949,19 @@ class GremlinResourcesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_gremlin_graph_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}/throughputSettings/default'}
+    get_mongo_db_collection_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}/throughputSettings/default'}
 
 
-    def _update_gremlin_graph_throughput_initial(
-            self, resource_group_name, account_name, database_name, graph_name, update_throughput_parameters, custom_headers=None, raw=False, **operation_config):
+    def _update_mongo_db_collection_throughput_initial(
+            self, resource_group_name, account_name, database_name, collection_name, update_throughput_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.update_gremlin_graph_throughput.metadata['url']
+        url = self.update_mongo_db_collection_throughput.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'graphName': self._serialize.url("graph_name", graph_name, 'str')
+            'collectionName': self._serialize.url("collection_name", collection_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1006,9 +1003,9 @@ class GremlinResourcesOperations(object):
 
         return deserialized
 
-    def update_gremlin_graph_throughput(
-            self, resource_group_name, account_name, database_name, graph_name, update_throughput_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Update RUs per second of an Azure Cosmos DB Gremlin graph.
+    def update_mongo_db_collection_throughput(
+            self, resource_group_name, account_name, database_name, collection_name, update_throughput_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Update the RUs per second of an Azure Cosmos DB MongoDB collection.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -1016,12 +1013,12 @@ class GremlinResourcesOperations(object):
         :type account_name: str
         :param database_name: Cosmos DB database name.
         :type database_name: str
-        :param graph_name: Cosmos DB graph name.
-        :type graph_name: str
+        :param collection_name: Cosmos DB collection name.
+        :type collection_name: str
         :param update_throughput_parameters: The RUs per second of the
-         parameters to provide for the current Gremlin graph.
+         parameters to provide for the current MongoDB collection.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ThroughputSettingsUpdateParameters
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1031,16 +1028,16 @@ class GremlinResourcesOperations(object):
          ThroughputSettingsGetResults or
          ClientRawResponse<ThroughputSettingsGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ThroughputSettingsGetResults]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.v2019_08_01_preview.models.ThroughputSettingsGetResults]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._update_gremlin_graph_throughput_initial(
+        raw_result = self._update_mongo_db_collection_throughput_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
             database_name=database_name,
-            graph_name=graph_name,
+            collection_name=collection_name,
             update_throughput_parameters=update_throughput_parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -1063,4 +1060,4 @@ class GremlinResourcesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update_gremlin_graph_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}/throughputSettings/default'}
+    update_mongo_db_collection_throughput.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}/throughputSettings/default'}

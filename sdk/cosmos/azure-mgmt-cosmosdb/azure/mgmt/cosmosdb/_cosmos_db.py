@@ -26,6 +26,11 @@ from .operations import CollectionPartitionRegionOperations
 from .operations import CollectionPartitionOperations
 from .operations import PartitionKeyRangeIdOperations
 from .operations import PartitionKeyRangeIdRegionOperations
+from .operations import SqlResourcesOperations
+from .operations import MongoDBResourcesOperations
+from .operations import TableResourcesOperations
+from .operations import CassandraResourcesOperations
+from .operations import GremlinResourcesOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from . import models
@@ -63,6 +68,16 @@ class CosmosDB(SDKClient):
     :vartype partition_key_range_id: azure.mgmt.cosmosdb.operations.PartitionKeyRangeIdOperations
     :ivar partition_key_range_id_region: PartitionKeyRangeIdRegion operations
     :vartype partition_key_range_id_region: azure.mgmt.cosmosdb.operations.PartitionKeyRangeIdRegionOperations
+    :ivar sql_resources: SqlResources operations
+    :vartype sql_resources: azure.mgmt.cosmosdb.operations.SqlResourcesOperations
+    :ivar mongo_db_resources: MongoDBResources operations
+    :vartype mongo_db_resources: azure.mgmt.cosmosdb.operations.MongoDBResourcesOperations
+    :ivar table_resources: TableResources operations
+    :vartype table_resources: azure.mgmt.cosmosdb.operations.TableResourcesOperations
+    :ivar cassandra_resources: CassandraResources operations
+    :vartype cassandra_resources: azure.mgmt.cosmosdb.operations.CassandraResourcesOperations
+    :ivar gremlin_resources: GremlinResources operations
+    :vartype gremlin_resources: azure.mgmt.cosmosdb.operations.GremlinResourcesOperations
     :ivar private_link_resources: PrivateLinkResources operations
     :vartype private_link_resources: azure.mgmt.cosmosdb.operations.PrivateLinkResourcesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnections operations
@@ -73,13 +88,15 @@ class CosmosDB(SDKClient):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure subscription ID.
     :type subscription_id: str
+    :param subscription_id1: The ID of the target subscription.
+    :type subscription_id1: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, subscription_id1, base_url=None):
 
-        self.config = CosmosDBConfiguration(credentials, subscription_id, base_url)
+        self.config = CosmosDBConfiguration(credentials, subscription_id, subscription_id1, base_url)
         super(CosmosDB, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -111,6 +128,16 @@ class CosmosDB(SDKClient):
         self.partition_key_range_id = PartitionKeyRangeIdOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.partition_key_range_id_region = PartitionKeyRangeIdRegionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sql_resources = SqlResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.mongo_db_resources = MongoDBResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.table_resources = TableResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.cassandra_resources = CassandraResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.gremlin_resources = GremlinResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
