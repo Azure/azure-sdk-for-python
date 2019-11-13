@@ -5,7 +5,6 @@
 from azure.core.credentials import AccessToken
 from azure.identity import (
     DefaultAzureCredential,
-    EnvironmentCredential,
     InteractiveBrowserCredential,
     KnownAuthorities,
     SharedTokenCacheCredential,
@@ -70,12 +69,12 @@ def test_default_credential_authority():
 
 
 def test_exclude_options():
-    def assert_credentials_not_present(chain, *credential_classes):
+    def assert_credentials_not_present(chain, *excluded_credential_classes):
         actual = {c.__class__ for c in chain.credentials}
         assert len(actual)
 
         # no unexpected credential is in the chain
-        excluded = set(credential_classes)
+        excluded = set(excluded_credential_classes)
         assert len(actual & excluded) == 0
 
         # only excluded credentials have been excluded from the default
