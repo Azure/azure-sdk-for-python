@@ -3,6 +3,22 @@
 Release History
 ===============
 
+3.0.0 (2019-10-24)
+++++++++++++++++++
+
+**Features**
+
+- Added operation group RecommendationMetadataOperations
+
+**General Breaking Changes**
+
+This version uses a next-generation code generator that might introduce breaking changes if from some import. In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+AdvisorManagementClient cannot be imported from azure.mgmt.advisor.advisor_management_client anymore (import from azure.mgmt.advisor works like before)
+AdvisorManagementClientConfiguration import has been moved from azure.mgmt.advisor.advisor_management_client to azure.mgmt.advisor
+A model MyClass from a "models" sub-module cannot be imported anymore using azure.mgmt.advisor.models.my_class (import from azure.mgmt.advisor.models works like before)
+An operation class MyClassOperations from an operations sub-module cannot be imported anymore using azure.mgmt.advisor.operations.my_class_operations (import from azure.mgmt.advisor.operations works like before)
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
 2.0.1 (2018-10-16)
 ++++++++++++++++++
 

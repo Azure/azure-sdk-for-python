@@ -18,7 +18,7 @@ def print(*args):
 
 
 def test_create_secret_client():
-    vault_endpoint = "vault_endpoint"
+    vault_url = "vault_url"
     # pylint:disable=unused-variable
     # [START create_secret_client]
 
@@ -27,7 +27,7 @@ def test_create_secret_client():
 
     # Create a SecretClient using default Azure credentials
     credentials = DefaultAzureCredential()
-    secret_client = SecretClient(vault_endpoint, credentials)
+    secret_client = SecretClient(vault_url, credentials)
 
     # [END create_secret_client]
 
@@ -66,7 +66,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(secret.id)
         print(secret.name)
         print(secret.properties.version)
-        print(secret.properties.vault_endpoint)
+        print(secret.properties.vault_url)
 
         # [END get_secret]
         # [START update_secret]
@@ -166,7 +166,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(secret_backup)
 
         # [END backup_secret]
-        secret_client.begin_delete_secret("secret-name").wait()
+        polling_interval = 0 if self.is_playback() else 2
+        secret_client.begin_delete_secret("secret-name", _polling_interval=polling_interval).wait()
         # [START restore_secret_backup]
 
         # restores a backed up secret
@@ -181,7 +182,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     def test_example_secrets_recover(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
         created_secret = secret_client.set_secret("secret-name", "secret-value")
-        secret_client.begin_delete_secret(created_secret.name).wait()
+        polling_interval = 0 if self.is_playback() else 2
+        secret_client.begin_delete_secret(created_secret.name, _polling_interval=polling_interval).wait()
 
         # [START get_deleted_secret]
         # gets a deleted secret (requires soft-delete enabled for the vault)
@@ -192,12 +194,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START recover_deleted_secret]
 
         # recover deleted secret to the latest version
-        recovered_secret_poller = secret_client.begin_recover_deleted_secret("secret-name")
-        recovered_secret = recovered_secret_poller.result()
+        recover_secret_poller = secret_client.begin_recover_deleted_secret("secret-name")
+        recovered_secret = recover_secret_poller.result()
         print(recovered_secret.id)
         print(recovered_secret.name)
 
         # if you want to block until secret is recovered server-side, call wait() on the poller
-        recovered_secret_poller.wait()
+        recover_secret_poller.wait()
 
         # [END recover_deleted_secret]

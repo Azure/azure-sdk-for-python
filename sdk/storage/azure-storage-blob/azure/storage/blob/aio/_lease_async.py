@@ -16,7 +16,7 @@ from .._generated.models import (
     StorageErrorException,
     LeaseAccessConditions)
 from .._serialize import get_modify_conditions
-from .._lease import LeaseClient as LeaseClientBase
+from .._lease import BlobLeaseClient as LeaseClientBase
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -25,8 +25,8 @@ if TYPE_CHECKING:
     ContainerClient = TypeVar("ContainerClient")
 
 
-class LeaseClient(LeaseClientBase):
-    """Creates a new LeaseClient.
+class BlobLeaseClient(LeaseClientBase):
+    """Creates a new BlobLeaseClient.
 
     This client provides lease operations on a BlobClient or ContainerClient.
 
@@ -36,7 +36,7 @@ class LeaseClient(LeaseClientBase):
     :ivar str etag:
         The ETag of the lease currently being maintained. This will be `None` if no
         lease has yet been acquired or modified.
-    :ivar datetime last_modified:
+    :ivar ~datetime.datetime last_modified:
         The last modified timestamp of the lease currently being maintained.
         This will be `None` if no lease has yet been acquired or modified.
 
@@ -89,7 +89,7 @@ class LeaseClient(LeaseClientBase):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword :class:`MatchConditions` match_condition:
+        :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -136,7 +136,7 @@ class LeaseClient(LeaseClientBase):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword :class:`MatchConditions` match_condition:
+        :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -180,7 +180,7 @@ class LeaseClient(LeaseClientBase):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword :class:`MatchConditions` match_condition:
+        :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -223,7 +223,7 @@ class LeaseClient(LeaseClientBase):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword :class:`MatchConditions` match_condition:
+        :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.

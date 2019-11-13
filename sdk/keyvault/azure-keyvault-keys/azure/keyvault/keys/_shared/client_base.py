@@ -55,17 +55,17 @@ class KeyVaultClientBase(object):
 
         return config
 
-    def __init__(self, vault_endpoint, credential, **kwargs):
+    def __init__(self, vault_url, credential, **kwargs):
         # type: (str, TokenCredential, **Any) -> None
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the TokenCredential protocol, "
                 "such as a credential from azure-identity"
             )
-        if not vault_endpoint:
-            raise ValueError("vault_endpoint must be the URL of an Azure Key Vault")
+        if not vault_url:
+            raise ValueError("vault_url must be the URL of an Azure Key Vault")
 
-        self._vault_endpoint = vault_endpoint.strip(" /")
+        self._vault_url = vault_url.strip(" /")
 
         client = kwargs.get("generated_client")
         if client:
@@ -76,7 +76,7 @@ class KeyVaultClientBase(object):
         config = self._create_config(credential, **kwargs)
         transport = kwargs.pop("transport", None)
         pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport=transport, **kwargs)
-        self._client = KeyVaultClient(credential, pipeline=pipeline, aio=False, **kwargs)
+        self._client = KeyVaultClient(credential, pipeline=pipeline, aio=False)
 
     # pylint:disable=no-self-use
     def _build_pipeline(self, config, transport, **kwargs):
@@ -101,6 +101,6 @@ class KeyVaultClientBase(object):
         return Pipeline(transport, policies=policies)
 
     @property
-    def vault_endpoint(self):
+    def vault_url(self):
         # type: () -> str
-        return self._vault_endpoint
+        return self._vault_url

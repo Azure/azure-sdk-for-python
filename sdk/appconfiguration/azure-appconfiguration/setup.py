@@ -72,7 +72,7 @@ setup(
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/appconfiguration/azure-appconfiguration',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -87,7 +87,7 @@ setup(
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
         "msrest>=0.6.10",
-        "azure-core<2.0.0,>=1.0.0b5",
+        "azure-core<2.0.0,>=1.0.0",
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],

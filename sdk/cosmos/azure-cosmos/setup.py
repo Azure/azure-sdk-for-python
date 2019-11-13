@@ -21,7 +21,7 @@ PACKAGE_FOLDER_PATH = PACKAGE_NAME.replace("-", "/")
 NAMESPACE_NAME = PACKAGE_NAME.replace("-", ".")
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(PACKAGE_FOLDER_PATH, 'version.py'), 'r') as fd:
+with open(os.path.join(PACKAGE_FOLDER_PATH, '_version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
@@ -61,8 +61,6 @@ setup(
     packages=find_packages(
         exclude=[
             "samples",
-            "samples.Shared",
-            "samples.Shared.config",
             "test",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
@@ -70,7 +68,7 @@ setup(
     ),
     install_requires=[
       'six >=1.6',
-      'azure-core<2.0.0,>=1.0.0b4'
+      'azure-core<2.0.0,>=1.0.0'
     ],
     extras_require={
       ":python_version<'3.4'": ['enum34>=1.0.4'],

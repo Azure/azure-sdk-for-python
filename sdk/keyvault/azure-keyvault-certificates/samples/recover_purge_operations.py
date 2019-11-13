@@ -14,7 +14,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -22,9 +22,9 @@ from azure.core.exceptions import HttpResponseError
 #
 # 1. Create a certificate (begin_create_certificate)
 #
-# 2. Delete a certificate (delete_certificate)
+# 2. Delete a certificate (begin_delete_certificate)
 #
-# 3. Recover a deleted certificate (recover_deleted_certificate)
+# 3. Recover a deleted certificate (begin_recover_deleted_certificate)
 #
 # 4. Purge a deleted certificate (purge_deleted_certificate)
 # ----------------------------------------------------------------------------------------------------------
@@ -34,9 +34,9 @@ from azure.core.exceptions import HttpResponseError
 # Notice that the client is using default Azure credentials.
 # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
 # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
+VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
-client = CertificateClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
+client = CertificateClient(vault_url=VAULT_URL, credential=credential)
 try:
     # Let's create certificates holding storage and bank accounts credentials. If the certificate
     # already exists in the Key Vault, then a new version of the certificate is created.
@@ -46,10 +46,10 @@ try:
     storage_cert_name = "ServerRecoverCertificate"
 
     bank_certificate_poller = client.begin_create_certificate(
-        name=bank_cert_name, policy=CertificatePolicy.get_default()
+        certificate_name=bank_cert_name, policy=CertificatePolicy.get_default()
     )
     storage_certificate_poller = client.begin_create_certificate(
-        name=storage_cert_name, policy=CertificatePolicy.get_default()
+        certificate_name=storage_cert_name, policy=CertificatePolicy.get_default()
     )
 
     bank_certificate = bank_certificate_poller.result()
@@ -59,9 +59,10 @@ try:
 
     # The storage account was closed, need to delete its credentials from the Key Vault.
     print("\n.. Delete a Certificate")
-    deleted_bank_certificate = client.delete_certificate(name=bank_cert_name)
+    deleted_bank_poller = client.begin_delete_certificate(bank_cert_name)
+    deleted_bank_certificate = deleted_bank_poller.result()
     # To ensure certificate is deleted on the server side.
-    time.sleep(30)
+    deleted_bank_poller.wait()
 
     print(
         "Certificate with name '{0}' was deleted on date {1}.".format(
@@ -72,18 +73,20 @@ try:
     # We accidentally deleted the bank account certificate. Let's recover it.
     # A deleted certificate can only be recovered if the Key Vault is soft-delete enabled.
     print("\n.. Recover Deleted Certificate")
-    recovered_bank_certificate = client.recover_deleted_certificate(deleted_bank_certificate.name)
+    recovered_bank_poller = client.begin_recover_deleted_certificate(deleted_bank_certificate.name)
+    recovered_bank_certificate = recovered_bank_poller.result()
+    # To ensure certificate is recovered on the server side.
+    recovered_bank_poller.wait()
     print("Recovered Certificate with name '{0}'.".format(recovered_bank_certificate.name))
 
     # Let's delete the storage certificate now.
     # If the keyvault is soft-delete enabled, then for permanent deletion deleted certificate needs to be purged.
-    client.delete_certificate(name=storage_cert_name)
-    # To ensure certificate is deleted on the server side.
-    time.sleep(30)
+    client.begin_delete_certificate(storage_cert_name).wait()
 
-    # To ensure permanent deletion, we might need to purge the secret.
+    # Certificates will still purge eventually on their scheduled purge date, but calling `purge_deleted_key` immediately
+    # purges.
     print("\n.. Purge Deleted Certificate")
-    client.purge_deleted_certificate(name=storage_cert_name)
+    client.purge_deleted_certificate(storage_cert_name)
     print("Certificate has been permanently deleted.")
 
 except HttpResponseError as e:

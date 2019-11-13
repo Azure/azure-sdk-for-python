@@ -1,6 +1,9 @@
 # Release History
 
-## 4.0.0b5
+## 4.1.0b1 Unreleased
+
+
+## 2019-10-31 4.0.0
 ### Breaking changes:
 - Moved optional parameters of two methods into kwargs (
 [docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.secrets.html)
@@ -15,6 +18,8 @@ detail the new keyword arguments):
 - Renamed `Secret` to `KeyVaultSecret`
 - `KeyVaultSecret`  properties `created`, `expires`, and `updated` renamed to `created_on`,
 `expires_on`, and `updated_on`
+- The `vault_endpoint` parameter of `SecretClient` has been renamed to `vault_url`
+- The property `vault_endpoint` has been renamed to `vault_url` in all models
 
 
 ## 4.0.0b4 (2019-10-08)

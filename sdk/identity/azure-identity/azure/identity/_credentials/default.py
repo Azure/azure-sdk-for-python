@@ -4,6 +4,8 @@
 # ------------------------------------
 import os
 
+from azure.core.exceptions import ClientAuthenticationError
+
 from .._constants import EnvironmentVariables
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
@@ -20,25 +22,35 @@ class DefaultAzureCredential(ChainedTokenCredential):
     1. A service principal configured by environment variables. See :class:`~azure.identity.EnvironmentCredential` for
        more details.
     2. An Azure managed identity. See :class:`~azure.identity.ManagedIdentityCredential` for more details.
-    3. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. This requires a
-       value for the environment variable ``AZURE_USERNAME``. See :class:`~azure.identity.SharedTokenCacheCredential`
-       for more details.
+    3. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
+       identities are in the cache, then the value of  the environment variable ``AZURE_USERNAME`` is used to select
+       which identity to use. See :class:`~azure.identity.SharedTokenCacheCredential` for more details.
+
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
     """
 
     def __init__(self, **kwargs):
-        credentials = [EnvironmentCredential(**kwargs), ManagedIdentityCredential(**kwargs)]
+        authority = kwargs.pop("authority", None)
+        credentials = [EnvironmentCredential(authority=authority, **kwargs), ManagedIdentityCredential(**kwargs)]
 
-        # SharedTokenCacheCredential is part of the default only on supported platforms, when $AZURE_USERNAME has a
-        # value (because the cache may contain tokens for multiple identities and we can only choose one arbitrarily
-        # without more information from the user), and when $AZURE_PASSWORD has no value (because when $AZURE_USERNAME
-        # and $AZURE_PASSWORD are set, EnvironmentCredential will be used instead)
-        if (
-            SharedTokenCacheCredential.supported()
-            and EnvironmentVariables.AZURE_USERNAME in os.environ
-            and EnvironmentVariables.AZURE_PASSWORD not in os.environ
-        ):
+        # SharedTokenCacheCredential is part of the default only on supported platforms.
+        if SharedTokenCacheCredential.supported():
             credentials.append(
-                SharedTokenCacheCredential(username=os.environ.get(EnvironmentVariables.AZURE_USERNAME), **kwargs)
+                SharedTokenCacheCredential(
+                    username=os.environ.get(EnvironmentVariables.AZURE_USERNAME), authority=authority, **kwargs
+                )
             )
 
         super(DefaultAzureCredential, self).__init__(*credentials)
+
+    def get_token(self, *scopes, **kwargs):
+        try:
+            return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
+        except ClientAuthenticationError as e:
+            raise ClientAuthenticationError(message="""
+{}\n\nPlease visit the Azure identity Python SDK docs at 
+https://aka.ms/python-sdk-identity#defaultazurecredential 
+to learn what options DefaultAzureCredential supports"""
+                .format(e.message))

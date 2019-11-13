@@ -15,7 +15,7 @@ from azure.core.exceptions import HttpResponseError
 # 2. Microsoft Azure Key Vault PyPI package -
 #    https://pypi.python.org/pypi/azure-keyvault-keys/
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -38,15 +38,15 @@ async def run_sample():
     # Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-    VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
+    VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
-    client = KeyClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
+    client = KeyClient(vault_url=VAULT_URL, credential=credential)
     try:
         # Let's create keys with RSA and EC type. If the key
         # already exists in the Key Vault, then a new version of the key is created.
         print("\n.. Create Key")
         rsa_key = await client.create_rsa_key("rsaKeyName")
-        ec_key = await client.create_ec_key("ecKey1Name")
+        ec_key = await client.create_ec_key("ecKeyName")
         print("Key with name '{0}' was created of type '{1}'.".format(rsa_key.name, rsa_key.key_type))
         print("Key with name '{0}' was created of type '{1}'.".format(ec_key.name, ec_key.key_type))
 

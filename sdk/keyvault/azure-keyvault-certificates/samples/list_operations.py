@@ -14,7 +14,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -23,9 +23,9 @@ from azure.core.exceptions import HttpResponseError
 #
 # 1. Create certificate (begin_create_certificate)
 #
-# 2. List certificates from the Key Vault (list_certificates)
+# 2. List certificates from the Key Vault (list_properties_of_certificates)
 #
-# 3. List certificate versions from the Key Vault (list_certificate_versions)
+# 3. List certificate versions from the Key Vault (list_properties_of_certificate_versions)
 #
 # 4. List deleted certificates from the Key Vault (list_deleted_certificates). The vault has to be soft-delete enabled
 # to perform this operation.
@@ -35,9 +35,9 @@ from azure.core.exceptions import HttpResponseError
 # Instantiate a certificate client that will be used to call the service. Notice that the client is using default
 # Azure credentials. To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
 # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
+VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
-client = CertificateClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
+client = CertificateClient(vault_url=VAULT_URL, credential=credential)
 try:
     # Let's create a certificate for holding storage and bank accounts credentials. If the certificate
     # already exists in the Key Vault, then a new version of the certificate is created.
@@ -46,10 +46,10 @@ try:
     storage_cert_name = "StorageListCertificate"
 
     bank_certificate_poller = client.begin_create_certificate(
-        name=bank_cert_name, policy=CertificatePolicy.get_default()
+        certificate_name=bank_cert_name, policy=CertificatePolicy.get_default()
     )
     storage_certificate_poller = client.begin_create_certificate(
-        name=storage_cert_name, policy=CertificatePolicy.get_default()
+        certificate_name=storage_cert_name, policy=CertificatePolicy.get_default()
     )
 
     # await the creation of the bank and storage certificate
@@ -61,7 +61,7 @@ try:
 
     # Let's list the certificates.
     print("\n.. List certificates from the Key Vault")
-    certificates = client.list_certificates()
+    certificates = client.list_properties_of_certificates()
     for certificate in certificates:
         print("Certificate with name '{0}' was found.".format(certificate.name))
 
@@ -70,7 +70,7 @@ try:
 
     tags = {"a": "b"}
     bank_certificate_poller = client.begin_create_certificate(
-        name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags
+        certificate_name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags
     )
     bank_certificate = bank_certificate_poller.result()
     print(
@@ -82,7 +82,7 @@ try:
     # You need to check all the different tags your bank account certificate had previously. Let's print
     # all the versions of this certificate.
     print("\n.. List versions of the certificate using its name")
-    certificate_versions = client.list_certificate_versions(bank_cert_name)
+    certificate_versions = client.list_properties_of_certificate_versions(bank_cert_name)
     for certificate_version in certificate_versions:
         print(
             "Bank Certificate with name '{0}' with version '{1}' has tags: '{2}'.".format(
@@ -91,8 +91,10 @@ try:
         )
 
     # The bank account and storage accounts got closed. Let's delete bank and storage accounts certificates.
-    client.delete_certificate(name=bank_cert_name)
-    client.delete_certificate(name=storage_cert_name)
+    # We call wait() to ensure the certificate is deleted server side because the following method requires
+    # server-side deletion to run properly. In most situations you will not have to call wait().
+    client.begin_delete_certificate(bank_cert_name).wait()
+    client.begin_delete_certificate(storage_cert_name).wait()
 
     # You can list all the deleted and non-purged certificates, assuming Key Vault is soft-delete enabled.
     print("\n.. List deleted certificates from the Key Vault")

@@ -78,10 +78,11 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
 
-        if service not in ["blob", "queue", "file"]:
+        if service not in ["blob", "queue", "file-share"]:
             raise ValueError("Invalid service: {}".format(service))
-        account = parsed_url.netloc.split(".{}.core.".format(service))
-        self.account_name = account[0]
+        service_name = service.split('-')[0]
+        account = parsed_url.netloc.split(".{}.core.".format(service_name))
+        self.account_name = account[0] if len(account) > 1 else None
         secondary_hostname = None
 
         self.credential = format_shared_key_credential(account, credential)
@@ -89,14 +90,16 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, "account_name"):
             self.account_name = self.credential.account_name
-            secondary_hostname = "{}-secondary.{}.{}".format(self.credential.account_name, service, SERVICE_HOST_BASE)
+            secondary_hostname = "{}-secondary.{}.{}".format(
+                self.credential.account_name, service_name, SERVICE_HOST_BASE)
 
         if not self._hosts:
             if len(account) > 1:
                 secondary_hostname = parsed_url.netloc.replace(account[0], account[0] + "-secondary")
             if kwargs.get("secondary_hostname"):
                 secondary_hostname = kwargs["secondary_hostname"]
-            self._hosts = {LocationMode.PRIMARY: parsed_url.netloc, LocationMode.SECONDARY: secondary_hostname}
+            primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip('/')
+            self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
         self.require_encryption = kwargs.get("require_encryption", False)
         self.key_encryption_key = kwargs.get("key_encryption_key")
@@ -112,28 +115,63 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
     @property
     def url(self):
+        """The full endpoint URL to this entity, including SAS token if used.
+
+        This could be either the primary endpoint,
+        or the secondary endpoint depending on the current :func:`location_mode`.
+        """
         return self._format_url(self._hosts[self._location_mode])
 
     @property
     def primary_endpoint(self):
+        """The full primary endpoint URL.
+
+        :type: str
+        """
         return self._format_url(self._hosts[LocationMode.PRIMARY])
 
     @property
     def primary_hostname(self):
+        """The hostname of the primary endpoint.
+
+        :type: str
+        """
         return self._hosts[LocationMode.PRIMARY]
 
     @property
     def secondary_endpoint(self):
+        """The full secondary endpoint URL if configured.
+
+        If not available a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+
+        :type: str
+        :raise ValueError:
+        """
         if not self._hosts[LocationMode.SECONDARY]:
             raise ValueError("No secondary host configured.")
         return self._format_url(self._hosts[LocationMode.SECONDARY])
 
     @property
     def secondary_hostname(self):
+        """The hostname of the secondary endpoint.
+
+        If not available this will be None. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+
+        :type: str or None
+        """
         return self._hosts[LocationMode.SECONDARY]
 
     @property
     def location_mode(self):
+        """The location mode that the client is currently using.
+
+        By default this will be "primary". Options include "primary" and "secondary".
+
+        :type: str
+        """
+
         return self._location_mode
 
     @location_mode.setter
@@ -279,9 +317,10 @@ def format_shared_key_credential(account, credential):
 
 def parse_connection_str(conn_str, credential, service):
     conn_str = conn_str.rstrip(";")
-    conn_settings = dict( # pylint: disable=consider-using-dict-comprehension
-        [s.split("=", 1) for s in conn_str.split(";")]
-    )
+    conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
+    if  any(len(tup) != 2 for tup in conn_settings):
+        raise ValueError("Connection string is either blank or malformed.")
+    conn_settings = dict(conn_settings)
     endpoints = _SERVICE_PARAMS[service]
     primary = None
     secondary = None
@@ -353,7 +392,7 @@ def create_configuration(**kwargs):
 def parse_query(query_str):
     sas_values = QueryStringConstants.to_list()
     parsed_query = {k: v[0] for k, v in parse_qs(query_str).items()}
-    sas_params = ["{}={}".format(k, quote(v)) for k, v in parsed_query.items() if k in sas_values]
+    sas_params = ["{}={}".format(k, quote(v, safe='')) for k, v in parsed_query.items() if k in sas_values]
     sas_token = None
     if sas_params:
         sas_token = "&".join(sas_params)

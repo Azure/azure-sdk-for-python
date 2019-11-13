@@ -13,12 +13,12 @@ from azure.storage.blob import (
     BlobClient,
     ExponentialRetry
 )
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import ResourceExistsError, HttpResponseError
-from testcase import (
+from _shared.testcase import (
     StorageTestCase,
     ResponseCallback,
-    record,
-    TestMode
+    GlobalStorageAccountPreparer
 )
 
 # test constants
@@ -26,33 +26,17 @@ PUT_BLOCK_SIZE = 4 * 1024
 
 
 class StorageBlobRetryTest(StorageTestCase):
-
+    # --Helpers-----------------------------------------------------------------
     def setUp(self):
-        super(StorageBlobRetryTest, self).setUp()
+        self.retry = ExponentialRetry(initial_backoff=1, increment_base=2, retry_total=3)
 
-        url = self._get_account_url()
-        credential = self._get_shared_key_credential()
-        retry = ExponentialRetry(initial_backoff=1, increment_base=2, retry_total=3)
-
-        self.bs = BlobServiceClient(url, credential=credential, retry_policy=retry)
+    def _setup(self, bsc):
         self.container_name = self.get_resource_name('utcontainer')
-
-        if not self.is_playback():
+        if self.is_live:
             try:
-                self.bs.create_container(self.container_name)
+                bsc.create_container(self.container_name)
             except ResourceExistsError:
                 pass
-
-    def tearDown(self):
-        if not self.is_playback():
-            try:
-                self.bs.delete_container(self.container_name)
-            except HttpResponseError:
-                pass
-
-        return super(StorageBlobRetryTest, self).tearDown()
-
-    # --Helpers-----------------------------------------------------------------
 
     class NonSeekableStream(object):
         def __init__(self, wrapped_stream):
@@ -70,21 +54,22 @@ class StorageBlobRetryTest(StorageTestCase):
         def tell(self):
             return self.wrapped_stream.tell()
 
-    @record
-    def test_retry_put_block_with_seekable_stream(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_retry_put_block_with_seekable_stream(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key,
+                                retry_policy=self.retry)
+        self._setup(bsc)
         blob_name = self.get_resource_name('blob')
         data = self.get_random_bytes(PUT_BLOCK_SIZE)
         data_stream = BytesIO(data)
 
         # rig the response so that it fails for a single time
         responder = ResponseCallback(status=201, new_status=408)
-        
+
         # Act
-        blob = self.bs.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
         blob.stage_block(1, data_stream, raw_response_hook=responder.override_first_status)
 
         # Assert
@@ -101,12 +86,14 @@ class StorageBlobRetryTest(StorageTestCase):
         content = blob.download_blob().readall()
         self.assertEqual(content, data)
 
-    @record
-    def test_retry_put_block_with_non_seekable_stream(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_retry_put_block_with_non_seekable_stream(self, resource_group, location, storage_account,
+                                                      storage_account_key):
         # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key,
+                                retry_policy=self.retry)
+        self._setup(bsc)
         blob_name = self.get_resource_name('blob')
         data = self.get_random_bytes(PUT_BLOCK_SIZE)
         data_stream = self.NonSeekableStream(BytesIO(data))
@@ -115,7 +102,7 @@ class StorageBlobRetryTest(StorageTestCase):
         responder = ResponseCallback(status=201, new_status=408)
 
         # Act
-        blob = self.bs.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
         # Note: put_block transforms non-seekable streams into byte arrays before handing it off to the executor
         blob.stage_block(1, data_stream, raw_response_hook=responder.override_first_status)
 
@@ -133,12 +120,14 @@ class StorageBlobRetryTest(StorageTestCase):
         content = blob.download_blob().readall()
         self.assertEqual(content, data)
 
-    @record
-    def test_retry_put_block_with_non_seekable_stream_fail(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_retry_put_block_with_non_seekable_stream_fail(self, resource_group, location, storage_account,
+                                                           storage_account_key):
         # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), credential=storage_account_key,
+                                retry_policy=self.retry)
+        self._setup(bsc)
         blob_name = self.get_resource_name('blob')
         data = self.get_random_bytes(PUT_BLOCK_SIZE)
         data_stream = self.NonSeekableStream(BytesIO(data))
@@ -147,10 +136,10 @@ class StorageBlobRetryTest(StorageTestCase):
         responder = ResponseCallback(status=201, new_status=408)
 
         # Act
-        blob = self.bs.get_blob_client(self.container_name, blob_name)
-        
+        blob = bsc.get_blob_client(self.container_name, blob_name)
+
         with self.assertRaises(HttpResponseError) as error:
             blob.stage_block(1, data_stream, length=PUT_BLOCK_SIZE, raw_response_hook=responder.override_first_status)
-    
+
         # Assert
         self.assertEqual(error.exception.response.status_code, 408)

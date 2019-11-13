@@ -1,6 +1,19 @@
 # Release History
 
-## 1.0.0b5
+### 1.1.0b1 Unreleased
+
+
+### 2019-11-05 1.0.1
+
+- `ClientCertificateCredential` uses application and tenant IDs correctly
+([8315](https://github.com/Azure/azure-sdk-for-python/pull/8315))
+- `InteractiveBrowserCredential` properly caches tokens
+([8352](https://github.com/Azure/azure-sdk-for-python/pull/8352))
+- Adopted msal 1.0.0 and msal-extensions 0.1.3
+([8359](https://github.com/Azure/azure-sdk-for-python/pull/8359))
+
+
+## 1.0.0 (2019-10-29)
 ### Breaking changes:
 - Async credentials now default to [`aiohttp`](https://pypi.org/project/aiohttp/)
 for transport but the library does not require it as a dependency because the
@@ -25,6 +38,19 @@ the Azure CLI's client ID will be used.
   - transport configuration is now done through keyword arguments as
   described in
   [`azure-core` documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/configuration.md)
+
+### Fixes and improvements:
+- Authenticating with a single sign-on shared with other Microsoft applications
+only requires a username when multiple users have signed in
+([#8095](https://github.com/Azure/azure-sdk-for-python/pull/8095))
+- `DefaultAzureCredential` accepts an `authority` keyword argument, enabling
+its use in national clouds
+([#8154](https://github.com/Azure/azure-sdk-for-python/pull/8154))
+
+### Dependency changes
+- Adopted [`msal_extensions`](https://pypi.org/project/msal-extensions/) 0.1.2
+- Constrained [`msal`](https://pypi.org/project/msal/) requirement to >=0.4.1,
+<1.0.0
 
 
 ## 1.0.0b4 (2019-10-07)

@@ -1,10 +1,12 @@
 # Change Log azure-storage-queue
 
-## Version 12.0.0b5:
+## 12.1.0b1 Unreleased
+
+## 2019-10-31 12.0.0
 
 **Breaking changes**
 
-- `QueueClient` now accepts only `account_url` with mandatory a string param `queue_name`. 
+- `QueueClient` now accepts only `account_url` with mandatory a string param `queue_name`.
 To use a queue_url, the method `from_queue_url` must be used.
 - `set_queue_access_policy` has required parameter `signed_identifiers`.
 - `NoRetry` policy has been removed. Use keyword argument `retry_total=0` for no retries.
@@ -17,22 +19,28 @@ should be imported from azure.storage.queue.aio
   - `validate_content`
   - `timeout` etc.
 - `QueueMessage` has had its parameters renamed from `insertion_time`, `time_next_visible`, `expiration_time`
-to `inserted_on`, `next_visible_on`, `expires_on`, respectively. 
+to `inserted_on`, `next_visible_on`, `expires_on`, respectively.
 - `Logging` has been renamed to `QueueAnalyticsLogging`.
 - `enqueue_message` is now called `send_message`.
 - Client and model files have been made internal. Users should import from the top level modules `azure.storage.queue` and `azure.storage.queue.aio` only.
 - The `generate_shared_access_signature` methods on both `QueueServiceClient` and `QueueClient` have been replaced by module level functions `generate_account_sas` and `generate_queue_sas`.
+- `get_service_stats` now returns a dict
+- `get_service_properties` now returns a dict with keys consistent to `set_service_properties`
 
  **New features**
- 
+
 - `ResourceTypes`, and `Services` now have method `from_string` which takes parameters as a string.
+
+**Fixes and improvements**
+
+- Fixed an issue where XML is being double encoded and double decoded.
 
 ## Version 12.0.0b4:
 
 **Breaking changes**
 
 - Permission models.
-  - `AccountPermissions`, `QueuePermissions` have been renamed to 
+  - `AccountPermissions`, `QueuePermissions` have been renamed to
   `AccountSasPermissions`, `QueueSasPermissions` respectively.
   - enum-like list parameters have been removed from both of them.
   - `__add__` and `__or__` methods are removed.

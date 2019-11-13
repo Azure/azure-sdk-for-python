@@ -1,6 +1,9 @@
 # Release History
 
-## 4.0.0b5
+## 4.1.0b1 Unreleased
+
+
+## 2019-10-31 4.0.0
 ### Breaking changes:
 - Removed `KeyClient.get_cryptography_client()` and `CryptographyClient.get_key()`
 - Moved the optional parameters of several methods into kwargs (
@@ -24,6 +27,8 @@ properties
 - Renamed `Key` to `KeyVaultKey`
 - `KeyVaultKey` properties `created`, `expires`, and `updated` renamed to `created_on`,
 `expires_on`, and `updated_on`
+- The `vault_endpoint` parameter of `KeyClient` has been renamed to `vault_url`
+- The property `vault_endpoint` has been renamed to `vault_url` in all models
 
 ### New features:
 - Now all `CryptographyClient` returns include `key_id` and `algorithm` properties

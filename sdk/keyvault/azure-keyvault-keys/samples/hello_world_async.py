@@ -15,7 +15,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-keys and azure-identity libraries (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -36,9 +36,9 @@ async def run_sample():
     # Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-    VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
+    VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
-    client = KeyClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
+    client = KeyClient(vault_url=VAULT_URL, credential=credential)
     try:
         # Let's create an RSA key with size 2048, hsm disabled and optional key_operations of encrypt, decrypt.
         # if the key already exists in the Key Vault, then a new version of the key is created.

@@ -1,11 +1,13 @@
 # Change Log azure-storage-blob
 
-## Version 12.0.0b5:
+## 12.1.0b1 Unreleased
+
+## 2019-10-31 12.0.0
 
 **Breaking changes**
 
 - `set_container_access_policy` has required parameter `signed_identifiers`.
-- `NoRetry` policy has been removed. Use keyword argument `retry_total=0` for no retries. 
+- `NoRetry` policy has been removed. Use keyword argument `retry_total=0` for no retries.
 - `StorageStreamDownloader` is no longer iterable. To iterate over the blob data stream, use `StorageStreamDownloader.chunks`.
 - The public attributes of `StorageStreamDownloader` have been limited to:
   - `name` (str): The name of the blob.
@@ -19,13 +21,16 @@
   - `overwrite`
   - `max_concurrency`
   - `encoding`
-- Removed types that were accidentally exposed from two modules. Only `BlobServiceClient`, `ContainerClient`, 
-`BlobClient` and `LeaseClient` should be imported from azure.storage.blob.aio
+- Removed types that were accidentally exposed from two modules. Only `BlobServiceClient`, `ContainerClient`,
+`BlobClient` and `BlobLeaseClient` should be imported from azure.storage.blob.aio
 - `Logging` has been renamed to `BlobAnalyticsLogging`.
 - Client and model files have been made internal. Users should import from the top level modules `azure.storage.blob` and `azure.storage.blob.aio` only.
 - All operations that take Etag conditional parameters (`if_match` and `if_none_match`) now take explicit `etag` and `match_condition` parameters, where `etag` is the Etag value, and `match_condition` is an instance of `azure.core.MatchConditions`.
 - The `generate_shared_access_signature` methods on each of `BlobServiceClient`, `ContainerClient` and `BlobClient` have been replaced by module level functions `generate_account_sas`, `generate_container_sas` and `generate_blob_sas`.
 - The batch APIs now have an additional keyword only argument `raise_on_any_failure` which defaults to True. This will raise an error even if there's a partial batch failure.
+- `LeaseClient` has been renamed to `BlobLeaseClient`.
+- `get_service_stats` now returns a dict
+- `get_service_properties` now returns a dict with keys consistent to `set_service_properties`
 
 **New features**
 
@@ -37,14 +42,14 @@
 **Breaking changes**
 
 - Permission models.
-  - `AccountPermissions`, `BlobPermissions` and `ContainerPermissions` have been renamed to 
+  - `AccountPermissions`, `BlobPermissions` and `ContainerPermissions` have been renamed to
   `AccountSasPermissions`, `BlobSasPermissions` and `ContainerSasPermissions` respectively.
   - enum-like list parameters have been removed from all three of them.
   - `__add__` and `__or__` methods are removed.
 - `max_connections` is now renamed to `max_concurrency`.
 - `ContainerClient` now accepts only `account_url` with a mandatory string param `container_name`.
 To use a container_url, the method `from_container_url` must be used.
-- `BlobClient` now accepts only `account_url` with mandatory string params `container_name` and 
+- `BlobClient` now accepts only `account_url` with mandatory string params `container_name` and
 `blob_name`. To use a blob_url, the method `from_blob_url` must be used.
 - Some parameters have become keyword only, rather than positional. Some examples include:
   - `loop`
@@ -52,7 +57,7 @@ To use a container_url, the method `from_container_url` must be used.
   - `validate_content`
   - `timeout` etc.
 - APIs now take in `offset` and `length` instead of `range_start` and `range_end` consistently.
-`length` is the number of bytes to take in starting from the `offset`. The APIs that have been 
+`length` is the number of bytes to take in starting from the `offset`. The APIs that have been
 changed include:
   - `get_page_ranges`
   - `upload_page`
@@ -68,7 +73,7 @@ changed include:
 - Add support for set_premium_page_blob_tier_blobs to ContainerClient (Python 3 only)
 - Added support to set rehydrate blob priority for Block Blob, including Set Standard Blob Tier/Copy Blob APIs
 - Added blob tier support for Block Blob, including Upload Blob/Commit Block List/Copy Blob APIs.
-- `AccountSasPermissions`, `BlobSasPermissions`, `ContainerSasPermissions` now have method `from_string` 
+- `AccountSasPermissions`, `BlobSasPermissions`, `ContainerSasPermissions` now have method `from_string`
 which takes parameters as a string.
 
 **Fixes and improvements**

@@ -18,10 +18,6 @@ from .._models import QueueMessage, QueueProperties
 class MessagesPaged(AsyncPageIterator):
     """An iterable of Queue Messages.
 
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.queue.QueueMessage)
-
     :param callable command: Function to retrieve the next page of items.
     :param int results_per_page: The maximum number of messages to retrieve per
         call.
@@ -55,20 +51,17 @@ class QueuePropertiesPaged(AsyncPageIterator):
 
     :ivar str service_endpoint: The service URL.
     :ivar str prefix: A queue name prefix being used to filter the list.
-    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
     :ivar str next_marker: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.queue.QueueProperties)
-
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only queues whose names
         begin with the specified prefix.
     :param int results_per_page: The maximum number of queue names to retrieve per
         call.
-    :param str marker: An opaque continuation token.
+    :param str continuation_token: An opaque continuation token.
     """
     def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
         super(QueuePropertiesPaged, self).__init__(

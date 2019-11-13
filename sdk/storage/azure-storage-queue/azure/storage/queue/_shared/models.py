@@ -250,6 +250,17 @@ class ResourceTypes(object):
 
     @classmethod
     def from_string(cls, string):
+        """Create a ResourceTypes from a string.
+
+        To specify service, container, or object you need only to
+        include the first letter of the word in the string. E.g. service and container,
+        you would provide a string "sc".
+
+        :param str string: Specify service, container, or object in
+            in the string with the first letter of the word.
+        :return: A ResourceTypes object
+        :rtype: ~azure.storage.queue.ResourceTypes
+        """
         res_service = 's' in string
         res_container = 'c' in string
         res_object = 'o' in string
@@ -267,6 +278,7 @@ class AccountSasPermissions(object):
     specific resource (resource-specific). Another is to grant access to the
     entire service for a specific account and allow certain operations based on
     perms found here.
+
     :param bool read:
         Valid for all signed resources types (Service, Container, and Object).
         Permits read permissions to the specified resource type.
@@ -312,6 +324,17 @@ class AccountSasPermissions(object):
 
     @classmethod
     def from_string(cls, permission):
+        """Create AccountSasPermissions from a string.
+
+        To specify read, write, delete, etc. permissions you need only to
+        include the first letter of the word in the string. E.g. for read and write
+        permissions you would provide a string "rw".
+
+        :param str permission: Specify permissions in
+            the string with the first letter of the word.
+        :return: A AccountSasPermissions object
+        :rtype: ~azure.storage.queue.AccountSasPermissions
+        """
         p_read = 'r' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
@@ -325,7 +348,6 @@ class AccountSasPermissions(object):
         parsed._str = permission # pylint: disable = protected-access
         return parsed
 
-
 class Services(object):
     """Specifies the services accessible with the account SAS.
 
@@ -333,23 +355,34 @@ class Services(object):
         Access for the `~azure.storage.blob.BlobServiceClient`
     :param bool queue:
         Access for the `~azure.storage.queue.QueueServiceClient`
-    :param bool file:
-        Access for the `~azure.storage.file.FileServiceClient`
+    :param bool fileshare:
+        Access for the `~azure.storage.fileshare.ShareServiceClient`
     """
 
-    def __init__(self, blob=False, queue=False, file=False):
+    def __init__(self, blob=False, queue=False, fileshare=False):
         self.blob = blob
         self.queue = queue
-        self.file = file
+        self.fileshare = fileshare
         self._str = (('b' if self.blob else '') +
                 ('q' if self.queue else '') +
-                ('f' if self.file else ''))
+                ('f' if self.fileshare else ''))
 
     def __str__(self):
         return self._str
 
     @classmethod
     def from_string(cls, string):
+        """Create Services from a string.
+
+        To specify blob, queue, or file you need only to
+        include the first letter of the word in the string. E.g. for blob and queue
+        you would provide a string "bq".
+
+        :param str string: Specify blob, queue, or file in
+            in the string with the first letter of the word.
+        :return: A Services object
+        :rtype: ~azure.storage.queue.Services
+        """
         res_blob = 'b' in string
         res_queue = 'q' in string
         res_file = 'f' in string

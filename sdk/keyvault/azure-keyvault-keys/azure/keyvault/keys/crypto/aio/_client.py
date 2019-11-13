@@ -6,8 +6,8 @@ from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase, parse_vault_id
 
-from .. import DecryptResult, EncryptResult, SignResult, VerifyResult, WrapResult, UnwrapResult
-from .._internal import EllipticCurveKey, RsaKey
+from .. import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
+from .._internal import EllipticCurveKey, RsaKey, SymmetricKey
 from ..._models import KeyVaultKey
 
 try:
@@ -63,12 +63,12 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         from azure.keyvault.keys.aio import KeyClient
 
         credential = DefaultAzureCredential()
-        key_client = KeyClient(vault_endpoint=<your vault url>, credential=credential)
+        key_client = KeyClient(vault_url=<your vault url>, credential=credential)
         crypto_client = key_client.get_cryptography_client("mykey")
 
     """
 
-    def __init__(self, key: "Union[KeyVaultKey, str]", credential: "TokenCredential", **kwargs: "**Any") -> None:
+    def __init__(self, key: "Union[KeyVaultKey, str]", credential: "TokenCredential", **kwargs: "Any") -> None:
         if isinstance(key, KeyVaultKey):
             self._key = key
             self._key_id = parse_vault_id(key.id)
@@ -89,7 +89,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         self._internal_key = None  # type: Optional[_Key]
 
         super(CryptographyClient, self).__init__(
-            vault_endpoint=self._key_id.vault_endpoint, credential=credential, **kwargs
+            vault_url=self._key_id.vault_url, credential=credential, **kwargs
         )
 
     @property
@@ -113,7 +113,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         if not (self._key or self._keys_get_forbidden):
             try:
                 self._key = await self._client.get_key(
-                    self._key_id.vault_endpoint, self._key_id.name, self._key_id.version, **kwargs
+                    self._key_id.vault_url, self._key_id.name, self._key_id.version, **kwargs
                 )
                 self._allowed_ops = frozenset(self._key.key_operations)
             except HttpResponseError as ex:
@@ -131,10 +131,15 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             if not key:
                 return None
 
-            if key.key_type.lower().startswith("ec"):
+            kty = key.key_type.lower()
+            if kty.startswith("ec"):
                 self._internal_key = EllipticCurveKey.from_jwk(key.key)
-            else:
+            elif kty.startswith("rsa"):
                 self._internal_key = RsaKey.from_jwk(key.key)
+            elif kty == "oct":
+                self._internal_key = SymmetricKey.from_jwk(key.key)
+            else:
+                raise ValueError("Unsupported key type '{}'".format(key.key_type))
 
         return self._internal_key
 
@@ -171,13 +176,14 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                 raise AzureError("This client doesn't have 'keys/encrypt' permission")
             result = local_key.encrypt(plaintext, algorithm=algorithm.value)
         else:
-            result = await self._client.encrypt(
-                self._key_id.vault_endpoint, self._key_id.name, self._key_id.version, algorithm, plaintext, **kwargs
-            ).result
+            operation = await self._client.encrypt(
+                self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, plaintext, **kwargs
+            )
+            result = operation.result
         return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result)
 
     @distributed_trace_async
-    async def decrypt(self, algorithm: "EncryptionAlgorithm", ciphertext: bytes, **kwargs: "**Any") -> DecryptResult:
+    async def decrypt(self, algorithm: "EncryptionAlgorithm", ciphertext: bytes, **kwargs: "Any") -> DecryptResult:
         """
         Decrypt a single block of encrypted data using the client's key. Requires the keys/decrypt permission.
 
@@ -199,7 +205,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
         """
         result = await self._client.decrypt(
-            vault_base_url=self._key_id.vault_endpoint,
+            vault_base_url=self._key_id.vault_url,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
             algorithm=algorithm,
@@ -238,14 +244,15 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                 raise AzureError("This client doesn't have 'keys/wrapKey' permission")
             result = local_key.wrap_key(key, algorithm=algorithm.value)
         else:
-            result = await self._client.wrap_key(
-                self._key_id.vault_endpoint,
+            operation = await self._client.wrap_key(
+                self._key_id.vault_url,
                 self._key_id.name,
                 self._key_id.version,
                 algorithm=algorithm,
                 value=key,
                 **kwargs
-            ).result
+            )
+            result = operation.result
         return WrapResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result)
 
     @distributed_trace_async
@@ -268,19 +275,25 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             key = result.key
 
         """
-
-        result = await self._client.unwrap_key(
-            self._key_id.vault_endpoint,
-            self._key_id.name,
-            self._key_id.version,
-            algorithm=algorithm,
-            value=encrypted_key,
-            **kwargs
-        )
-        return UnwrapResult(key_id=self.key_id, algorithm=algorithm, key=result.result)
+        local_key = await self._get_local_key(**kwargs)
+        if local_key and local_key.is_private_key():
+            if "unwrapKey" not in self._allowed_ops:
+                raise AzureError("This client doesn't have 'keys/unwrapKey' permission")
+            result = local_key.unwrap_key(encrypted_key, **kwargs)
+        else:
+            operation = await self._client.unwrap_key(
+                self._key_id.vault_url,
+                self._key_id.name,
+                self._key_id.version,
+                algorithm=algorithm,
+                value=encrypted_key,
+                **kwargs
+            )
+            result = operation.result
+        return UnwrapResult(key_id=self._key_id, algorithm=algorithm, key=result)
 
     @distributed_trace_async
-    async def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs: "**Any") -> SignResult:
+    async def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs: "Any") -> SignResult:
         """
         Create a signature from a digest using the client's key. Requires the keys/sign permission.
 
@@ -309,7 +322,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         """
 
         result = await self._client.sign(
-            vault_base_url=self._key_id.vault_endpoint,
+            vault_base_url=self._key_id.vault_url,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
             algorithm=algorithm,
@@ -320,7 +333,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def verify(
-        self, algorithm: "SignatureAlgorithm", digest: bytes, signature: bytes, **kwargs: "**Any"
+        self, algorithm: "SignatureAlgorithm", digest: bytes, signature: bytes, **kwargs: "Any"
     ) -> VerifyResult:
         """
         Verify a signature using the client's key. Requires the keys/verify permission.
@@ -349,7 +362,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             result = local_key.verify(digest, signature, algorithm=algorithm.value)
         else:
             result = await self._client.verify(
-                vault_base_url=self._key_id.vault_endpoint,
+                vault_base_url=self._key_id.vault_url,
                 key_name=self._key_id.name,
                 key_version=self._key_id.version,
                 algorithm=algorithm,

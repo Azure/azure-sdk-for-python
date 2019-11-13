@@ -31,7 +31,7 @@ from six.moves import xrange
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import test_config
-from azure.cosmos.errors import CosmosHttpResponseError
+from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 
 pytestmark = pytest.mark.cosmosEmulator
@@ -49,156 +49,156 @@ class _config:
     sum = 0
 
 
-class AggregateQueryTestSequenceMeta(type):
-    def __new__(mcs, name, bases, dict):
-        def _run_one(query, expected_result):
-            def test(self):
-                self._execute_query_and_validate_results(mcs.created_collection, query, expected_result)
-
-            return test
-
-        def _setup():
-            if (not _config.master_key or not _config.host):
-                raise Exception(
-                    "You must specify your Azure Cosmos account values for "
-                    "'masterKey' and 'host' at the top of this class to run the "
-                    "tests.")
-
-            mcs.client = cosmos_client.CosmosClient(
-                _config.host, _config.master_key, "Session", connection_policy=_config.connection_policy)
-            created_db = test_config._test_config.create_database_if_not_exist(mcs.client)
-            mcs.created_collection = _create_collection(created_db)
-
-            # test documents
-            document_definitions = []
-
-            values = [None, False, True, "abc", "cdfg", "opqrs", "ttttttt", "xyz", "oo", "ppp"]
-            for value in values:
-                d = {_config.PARTITION_KEY: value, 'id': str(uuid.uuid4())}
-                document_definitions.append(d)
-
-            for i in xrange(_config.DOCS_WITH_SAME_PARTITION_KEY):
-                d = {_config.PARTITION_KEY: _config.UNIQUE_PARTITION_KEY,
-                     'resourceId': i,
-                     _config.FIELD: i + 1,
-                     'id': str(uuid.uuid4())}
-                document_definitions.append(d)
-
-            _config.docs_with_numeric_id = \
-                _config.DOCUMENTS_COUNT - len(values) - _config.DOCS_WITH_SAME_PARTITION_KEY
-            for i in xrange(_config.docs_with_numeric_id):
-                d = {_config.PARTITION_KEY: i + 1, 'id': str(uuid.uuid4())}
-                document_definitions.append(d)
-
-            _config.sum = _config.docs_with_numeric_id \
-                          * (_config.docs_with_numeric_id + 1) / 2.0
-
-            _insert_doc(mcs.created_collection, document_definitions)
-
-        def _generate_test_configs():
-            aggregate_query_format = 'SELECT VALUE {}(r.{}) FROM r WHERE {}'
-            aggregate_orderby_query_format = 'SELECT VALUE {}(r.{}) FROM r WHERE {} ORDER BY r.{}'
-            aggregate_configs = [
-                ['AVG', _config.sum / _config.docs_with_numeric_id,
-                 'IS_NUMBER(r.{})'.format(_config.PARTITION_KEY)],
-                ['AVG', None, 'true'],
-                ['COUNT', _config.DOCUMENTS_COUNT, 'true'],
-                ['MAX', 'xyz', 'true'],
-                ['MIN', None, 'true'],
-                ['SUM', _config.sum, 'IS_NUMBER(r.{})'.format(_config.PARTITION_KEY)],
-                ['SUM', None, 'true']
-            ]
-            for operator, expected, condition in aggregate_configs:
-                _all_tests.append([
-                    '{} {}'.format(operator, condition),
-                    aggregate_query_format.format(operator, _config.PARTITION_KEY, condition),
-                    expected])
-                _all_tests.append([
-                    '{} {} OrderBy'.format(operator, condition),
-                    aggregate_orderby_query_format.format(operator, _config.PARTITION_KEY, condition,
-                                                          _config.PARTITION_KEY),
-                    expected])
-
-            aggregate_single_partition_format = 'SELECT VALUE {}(r.{}) FROM r WHERE r.{} = \'{}\''
-            aggregate_orderby_single_partition_format = 'SELECT {}(r.{}) FROM r WHERE r.{} = \'{}\''
-            same_partiton_sum = _config.DOCS_WITH_SAME_PARTITION_KEY * (_config.DOCS_WITH_SAME_PARTITION_KEY + 1) / 2.0
-            aggregate_single_partition_configs = [
-                ['AVG', same_partiton_sum / _config.DOCS_WITH_SAME_PARTITION_KEY],
-                ['COUNT', _config.DOCS_WITH_SAME_PARTITION_KEY],
-                ['MAX', _config.DOCS_WITH_SAME_PARTITION_KEY],
-                ['MIN', 1],
-                ['SUM', same_partiton_sum]
-            ]
-            for operator, expected in aggregate_single_partition_configs:
-                _all_tests.append([
-                    '{} SinglePartition {}'.format(operator, 'SELECT VALUE'),
-                    aggregate_single_partition_format.format(
-                        operator, _config.FIELD, _config.PARTITION_KEY, _config.UNIQUE_PARTITION_KEY), expected])
-                _all_tests.append([
-                    '{} SinglePartition {}'.format(operator, 'SELECT'),
-                    aggregate_orderby_single_partition_format.format(
-                        operator, _config.FIELD, _config.PARTITION_KEY, _config.UNIQUE_PARTITION_KEY),
-                    Exception()])
-
-        def _run_all():
-            for test_name, query, expected_result in _all_tests:
-                test_name = "test_%s" % test_name
-                dict[test_name] = _run_one(query, expected_result)
-
-        def _create_collection(created_db):
-            # type: (Database) -> Container
-            created_collection = created_db.create_container(
-                id='aggregate tests collection ' + str(uuid.uuid4()),
-                indexing_policy={
-                    'includedPaths': [
-                        {
-                            'path': '/',
-                            'indexes': [
-                                {
-                                    'kind': 'Range',
-                                    'dataType': 'Number'
-                                },
-                                {
-                                    'kind': 'Range',
-                                    'dataType': 'String'
-                                }
-                            ]
-                        }
-                    ]
-                },
-                partition_key=PartitionKey(
-                    path='/{}'.format(_config.PARTITION_KEY),
-                    kind=documents.PartitionKind.Hash,
-                ),
-                offer_throughput=10100
-            )
-
-            return created_collection
-
-        def _insert_doc(collection, document_definitions):
-            # type: (Container, Dict[str, Any]) -> [Dict[str, Any]]
-            created_docs = []
-            for d in document_definitions:
-                print(d)
-                created_doc = collection.create_item(body=d)
-                created_docs.append(created_doc)
-
-            return created_docs
-
-        _all_tests = []
-
-        return type.__new__(mcs, name, bases, dict)
-
-
 @pytest.mark.usefixtures("teardown")
-class AggregationQueryTest(with_metaclass(AggregateQueryTestSequenceMeta, unittest.TestCase)):
+class AggregationQueryTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls._all_tests = []
+        cls._setup()
+        cls._generate_test_configs()
+
+    @classmethod
+    def _setup(cls):
+        if (not _config.master_key or not _config.host):
+            raise Exception(
+                "You must specify your Azure Cosmos account values for "
+                "'masterKey' and 'host' at the top of this class to run the "
+                "tests.")
+
+        cls.client = cosmos_client.CosmosClient(
+            _config.host, {'masterKey': _config.master_key}, "Session", connection_policy=_config.connection_policy)
+        created_db = test_config._test_config.create_database_if_not_exist(cls.client)
+        cls.created_collection = cls._create_collection(created_db)
+
+        # test documents
+        document_definitions = []
+
+        values = [None, False, True, "abc", "cdfg", "opqrs", "ttttttt", "xyz", "oo", "ppp"]
+        for value in values:
+            d = {_config.PARTITION_KEY: value, 'id': str(uuid.uuid4())}
+            document_definitions.append(d)
+
+        for i in xrange(_config.DOCS_WITH_SAME_PARTITION_KEY):
+            d = {_config.PARTITION_KEY: _config.UNIQUE_PARTITION_KEY,
+                 'resourceId': i,
+                 _config.FIELD: i + 1,
+                 'id': str(uuid.uuid4())}
+            document_definitions.append(d)
+
+        _config.docs_with_numeric_id = \
+            _config.DOCUMENTS_COUNT - len(values) - _config.DOCS_WITH_SAME_PARTITION_KEY
+        for i in xrange(_config.docs_with_numeric_id):
+            d = {_config.PARTITION_KEY: i + 1, 'id': str(uuid.uuid4())}
+            document_definitions.append(d)
+
+        _config.sum = _config.docs_with_numeric_id \
+                      * (_config.docs_with_numeric_id + 1) / 2.0
+
+        cls._insert_doc(cls.created_collection, document_definitions)
+
+    @classmethod
+    def _generate_test_configs(cls):
+        aggregate_query_format = 'SELECT VALUE {}(r.{}) FROM r WHERE {}'
+        aggregate_orderby_query_format = 'SELECT VALUE {}(r.{}) FROM r WHERE {} ORDER BY r.{}'
+        aggregate_configs = [
+            ['AVG', _config.sum / _config.docs_with_numeric_id,
+             'IS_NUMBER(r.{})'.format(_config.PARTITION_KEY)],
+            ['AVG', None, 'true'],
+            ['COUNT', _config.DOCUMENTS_COUNT, 'true'],
+            ['MAX', 'xyz', 'true'],
+            ['MIN', None, 'true'],
+            ['SUM', _config.sum, 'IS_NUMBER(r.{})'.format(_config.PARTITION_KEY)],
+            ['SUM', None, 'true']
+        ]
+        for operator, expected, condition in aggregate_configs:
+            cls._all_tests.append([
+                '{} {}'.format(operator, condition),
+                aggregate_query_format.format(operator, _config.PARTITION_KEY, condition),
+                expected])
+            cls._all_tests.append([
+                '{} {} OrderBy'.format(operator, condition),
+                aggregate_orderby_query_format.format(operator, _config.PARTITION_KEY, condition,
+                                                      _config.PARTITION_KEY),
+                expected])
+
+        aggregate_single_partition_format = 'SELECT VALUE {}(r.{}) FROM r WHERE r.{} = \'{}\''
+        aggregate_orderby_single_partition_format = 'SELECT {}(r.{}) FROM r WHERE r.{} = \'{}\''
+        same_partiton_sum = _config.DOCS_WITH_SAME_PARTITION_KEY * (_config.DOCS_WITH_SAME_PARTITION_KEY + 1) / 2.0
+        aggregate_single_partition_configs = [
+            ['AVG', same_partiton_sum / _config.DOCS_WITH_SAME_PARTITION_KEY],
+            ['COUNT', _config.DOCS_WITH_SAME_PARTITION_KEY],
+            ['MAX', _config.DOCS_WITH_SAME_PARTITION_KEY],
+            ['MIN', 1],
+            ['SUM', same_partiton_sum]
+        ]
+        for operator, expected in aggregate_single_partition_configs:
+            cls._all_tests.append([
+                '{} SinglePartition {}'.format(operator, 'SELECT VALUE'),
+                aggregate_single_partition_format.format(
+                    operator, _config.FIELD, _config.PARTITION_KEY, _config.UNIQUE_PARTITION_KEY), expected])
+            cls._all_tests.append([
+                '{} SinglePartition {}'.format(operator, 'SELECT'),
+                aggregate_orderby_single_partition_format.format(
+                    operator, _config.FIELD, _config.PARTITION_KEY, _config.UNIQUE_PARTITION_KEY),
+                Exception()])
+
+    def test_run_all(self):
+        for test_name, query, expected_result in self._all_tests:
+            test_name = "test_%s" % test_name
+            try:
+                self._run_one(query, expected_result)
+                print(test_name + ': ' + query + " PASSED")
+            except Exception as e:
+                print(test_name + ': ' + query + " FAILED")
+                raise e
+
+    def _run_one(self, query, expected_result):
+        self._execute_query_and_validate_results(self.created_collection, query, expected_result)
+
+    @classmethod
+    def _create_collection(cls, created_db):
+        # type: (Database) -> Container
+        created_collection = created_db.create_container(
+            id='aggregate tests collection ' + str(uuid.uuid4()),
+            indexing_policy={
+                'includedPaths': [
+                    {
+                        'path': '/',
+                        'indexes': [
+                            {
+                                'kind': 'Range',
+                                'dataType': 'Number'
+                            },
+                            {
+                                'kind': 'Range',
+                                'dataType': 'String'
+                            }
+                        ]
+                    }
+                ]
+            },
+            partition_key=PartitionKey(
+                path='/{}'.format(_config.PARTITION_KEY),
+                kind=documents.PartitionKind.Hash,
+            ),
+            offer_throughput=10100
+        )
+        return created_collection
+
+    @classmethod
+    def _insert_doc(cls, collection, document_definitions):
+        # type: (Container, Dict[str, Any]) -> [Dict[str, Any]]
+        created_docs = []
+        for d in document_definitions:
+            created_doc = collection.create_item(body=d)
+            created_docs.append(created_doc)
+
+        return created_docs
+
     def _execute_query_and_validate_results(self, collection, query, expected):
         # type: (Container, str, [Dict[str, Any]]) -> None
-        print('Running test with query: ' + query)
 
         # executes the query and validates the results against the expected results
-        options = {'enableCrossPartitionQuery': 'true'}
-
         result_iterable = collection.query_items(
             query=query,
             enable_cross_partition_query=True
@@ -238,6 +238,7 @@ class AggregationQueryTest(with_metaclass(AggregateQueryTestSequenceMeta, unitte
             self.assertRaises(CosmosHttpResponseError, _verify_result)
         else:
             _verify_result()
+
 
 if __name__ == "__main__":
     unittest.main()

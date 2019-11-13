@@ -3,19 +3,19 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 16 Oct 2019 06:55:30 GMT
+      - Wed, 30 Oct 2019 19:51:55 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://pyacrstorage56ce1610.queue.core.windows.net/encryptionqueue56ce1610
+    uri: https://storagename.queue.core.windows.net/encryptionqueue56ce1610
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 16 Oct 2019 06:55:30 GMT
+      date: Wed, 30 Oct 2019 19:51:54 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -25,7 +25,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage56ce1610.queue.core.windows.net
+        - pyacrstoragekiq3q5uw4eso.queue.core.windows.net
         - /encryptionqueue56ce1610
         - ''
         - ''
@@ -41,22 +41,22 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 16 Oct 2019 06:55:30 GMT
+      - Wed, 30 Oct 2019 19:51:55 GMT
       x-ms-version:
       - '2018-03-28'
     method: POST
-    uri: https://pyacrstorage56ce1610.queue.core.windows.net/encryptionqueue56ce1610/messages
+    uri: https://storagename.queue.core.windows.net/encryptionqueue56ce1610/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>4c9697bf-efe6-4516-91fd-ed54b120c792</MessageId><InsertionTime>Wed,
-        16 Oct 2019 06:55:30 GMT</InsertionTime><ExpirationTime>Wed, 23 Oct 2019 06:55:30
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAz1XNsu6D1QE=</PopReceipt><TimeNextVisible>Wed,
-        16 Oct 2019 06:55:30 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>b2466ea0-6742-409a-9836-913af6bf35c5</MessageId><InsertionTime>Wed,
+        30 Oct 2019 19:51:54 GMT</InsertionTime><ExpirationTime>Wed, 06 Nov 2019 19:51:54
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA4/MSe1uP1QE=</PopReceipt><TimeNextVisible>Wed,
+        30 Oct 2019 19:51:54 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       content-type: application/xml
-      date: Wed, 16 Oct 2019 06:55:30 GMT
+      date: Wed, 30 Oct 2019 19:51:54 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2018-03-28'
@@ -67,7 +67,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage56ce1610.queue.core.windows.net
+        - pyacrstoragekiq3q5uw4eso.queue.core.windows.net
         - /encryptionqueue56ce1610/messages
         - ''
         - ''
@@ -77,23 +77,23 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b4 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-queue/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 16 Oct 2019 06:55:30 GMT
+      - Wed, 30 Oct 2019 19:51:55 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://pyacrstorage56ce1610.queue.core.windows.net/encryptionqueue56ce1610/messages
+    uri: https://storagename.queue.core.windows.net/encryptionqueue56ce1610/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>4c9697bf-efe6-4516-91fd-ed54b120c792</MessageId><InsertionTime>Wed,
-        16 Oct 2019 06:55:30 GMT</InsertionTime><ExpirationTime>Wed, 23 Oct 2019 06:55:30
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAHfu3xO6D1QE=</PopReceipt><TimeNextVisible>Wed,
-        16 Oct 2019 06:56:00 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message</MessageText></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>b2466ea0-6742-409a-9836-913af6bf35c5</MessageId><InsertionTime>Wed,
+        30 Oct 2019 19:51:54 GMT</InsertionTime><ExpirationTime>Wed, 06 Nov 2019 19:51:54
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAvSf7jFuP1QE=</PopReceipt><TimeNextVisible>Wed,
+        30 Oct 2019 19:52:24 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       cache-control: no-cache
       content-type: application/xml
-      date: Wed, 16 Oct 2019 06:55:30 GMT
+      date: Wed, 30 Oct 2019 19:51:54 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2018-03-28'
@@ -104,7 +104,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage56ce1610.queue.core.windows.net
+        - pyacrstoragekiq3q5uw4eso.queue.core.windows.net
         - /encryptionqueue56ce1610/messages
         - ''
         - ''

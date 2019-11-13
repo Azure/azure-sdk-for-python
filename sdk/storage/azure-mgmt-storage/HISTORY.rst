@@ -3,6 +3,20 @@
 Release History
 ===============
 
+6.0.0 (2019-10-25)
+++++++++++++++++++
+
+**Features**
+
+- Model StorageAccount has a new parameter private_endpoint_connections
+- Added operation group PrivateEndpointConnectionsOperations
+- Added operation group PrivateLinkResourcesOperations
+
+**Breaking changes**
+
+- Operation FileSharesOperations.list has a new signature
+- Operation BlobContainersOperations.list has a new signature
+
 5.0.0 (2019-10-21)
 ++++++++++++++++++
 

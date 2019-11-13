@@ -1708,301 +1708,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return self.DeleteResource(path, "docs", document_id, None, options, **kwargs)
 
-    def CreateAttachment(self, document_link, attachment, options=None, **kwargs):
-        """Creates an attachment in a document.
-
-        :param str document_link:
-            The link to the document.
-        :param dict attachment:
-            The Azure Cosmos attachment to create.
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The created Attachment.
-        :rtype:
-            dict
-
-        """
-        if options is None:
-            options = {}
-
-        document_id, path = self._GetItemIdWithPathForAttachment(attachment, document_link)
-        return self.Create(attachment, path, "attachments", document_id, None, options, **kwargs)
-
-    def UpsertAttachment(self, document_link, attachment, options=None, **kwargs):
-        """Upserts an attachment in a document.
-
-        :param str document_link:
-            The link to the document.
-        :param dict attachment:
-            The Azure Cosmos attachment to upsert.
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The upserted Attachment.
-        :rtype:
-            dict
-
-        """
-        if options is None:
-            options = {}
-
-        document_id, path = self._GetItemIdWithPathForAttachment(attachment, document_link)
-        return self.Upsert(attachment, path, "attachments", document_id, None, options, **kwargs)
-
-    def _GetItemIdWithPathForAttachment(self, attachment, document_link):  # pylint: disable=no-self-use
-        CosmosClientConnection.__ValidateResource(attachment)
-        path = base.GetPathFromLink(document_link, "attachments")
-        document_id = base.GetResourceIdOrFullNameFromLink(document_link)
-        return document_id, path
-
-    def CreateAttachmentAndUploadMedia(self, document_link, readable_stream, options=None, **kwargs):
-        """Creates an attachment and upload media.
-
-        :param str document_link:
-            The link to the document.
-        :param (file-like stream object) readable_stream:
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The created Attachment.
-        :rtype:
-            dict
-
-        """
-        if options is None:
-            options = {}
-
-        document_id, initial_headers, path = self._GetItemIdWithPathForAttachmentMedia(document_link, options)
-        return self.Create(readable_stream, path, "attachments", document_id, initial_headers, options, **kwargs)
-
-    def UpsertAttachmentAndUploadMedia(self, document_link, readable_stream, options=None, **kwargs):
-        """Upserts an attachment and upload media.
-
-        :param str document_link:
-            The link to the document.
-        :param (file-like stream object) readable_stream:
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The upserted Attachment.
-        :rtype:
-            dict
-
-        """
-        if options is None:
-            options = {}
-
-        document_id, initial_headers, path = self._GetItemIdWithPathForAttachmentMedia(document_link, options)
-        return self.Upsert(readable_stream, path, "attachments", document_id, initial_headers, options, **kwargs)
-
-    def _GetItemIdWithPathForAttachmentMedia(self, document_link, options):
-        initial_headers = dict(self.default_headers)
-
-        # Add required headers slug and content-type.
-        if options.get("slug"):
-            initial_headers[http_constants.HttpHeaders.Slug] = options["slug"]
-
-        if options.get("contentType"):
-            initial_headers[http_constants.HttpHeaders.ContentType] = options["contentType"]
-        else:
-            initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.OctetStream
-
-        path = base.GetPathFromLink(document_link, "attachments")
-        document_id = base.GetResourceIdOrFullNameFromLink(document_link)
-        return document_id, initial_headers, path
-
-    def ReadAttachment(self, attachment_link, options=None, **kwargs):
-        """Reads an attachment.
-
-        :param str attachment_link:
-            The link to the attachment.
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The read Attachment.
-        :rtype:
-            dict
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(attachment_link)
-        attachment_id = base.GetResourceIdOrFullNameFromLink(attachment_link)
-        return self.Read(path, "attachments", attachment_id, None, options, **kwargs)
-
-    def ReadAttachments(self, document_link, options=None, **kwargs):
-        """Reads all attachments in a document.
-
-        :param str document_link:
-            The link to the document.
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            Query Iterable of Attachments.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        return self.QueryAttachments(document_link, None, options, **kwargs)
-
-    def QueryAttachments(self, document_link, query, options=None, **kwargs):
-        """Queries attachments in a document.
-
-        :param str document_link:
-            The link to the document.
-        :param (str or dict) query:
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            Query Iterable of Attachments.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(document_link, "attachments")
-        document_id = base.GetResourceIdOrFullNameFromLink(document_link)
-
-        def fetch_fn(options):
-            return (
-                self.__QueryFeed(
-                    path, "attachments", document_id, lambda r: r["Attachments"],
-                    lambda _, b: b, query, options, **kwargs
-                ),
-                self.last_response_headers,
-            )
-
-        return ItemPaged(
-            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
-        )
-
-    def ReadMedia(self, media_link, **kwargs):
-        """Reads a media.
-
-        When self.connection_policy.MediaReadMode ==
-        documents.MediaReadMode.Streamed, returns a file-like stream object;
-        otherwise, returns a str.
-
-        :param str media_link:
-            The link to the media.
-
-        :return:
-            The read Media.
-        :rtype:
-            str or file-like stream object
-
-        """
-        default_headers = self.default_headers
-
-        path = base.GetPathFromLink(media_link)
-        media_id = base.GetResourceIdOrFullNameFromLink(media_link)
-        attachment_id = base.GetAttachmentIdFromMediaId(media_id)
-        headers = base.GetHeaders(self, default_headers, "get", path, attachment_id, "media", {})
-
-        # ReadMedia will always use WriteEndpoint since it's not replicated in readable Geo regions
-        request_params = _request_object.RequestObject("media", documents._OperationType.Read)
-        result, self.last_response_headers = self.__Get(path, request_params, headers, **kwargs)
-        return result
-
-    def UpdateMedia(self, media_link, readable_stream, options=None, **kwargs):
-        """Updates a media and returns it.
-
-        :param str media_link:
-            The link to the media.
-        :param (file-like stream object) readable_stream:
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The updated Media.
-        :rtype:
-            str or file-like stream object
-
-        """
-        if options is None:
-            options = {}
-
-        initial_headers = dict(self.default_headers)
-
-        # Add required headers slug and content-type in case the body is a stream
-        if options.get("slug"):
-            initial_headers[http_constants.HttpHeaders.Slug] = options["slug"]
-
-        if options.get("contentType"):
-            initial_headers[http_constants.HttpHeaders.ContentType] = options["contentType"]
-        else:
-            initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.OctetStream
-
-        path = base.GetPathFromLink(media_link)
-        media_id = base.GetResourceIdOrFullNameFromLink(media_link)
-        attachment_id = base.GetAttachmentIdFromMediaId(media_id)
-        headers = base.GetHeaders(self, initial_headers, "put", path, attachment_id, "media", options)
-
-        # UpdateMedia will use WriteEndpoint since it uses PUT operation
-        request_params = _request_object.RequestObject("media", documents._OperationType.Update)
-        result, self.last_response_headers = self.__Put(path, request_params, readable_stream, headers, **kwargs)
-
-        self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
-        return result
-
-    def ReplaceAttachment(self, attachment_link, attachment, options=None, **kwargs):
-        """Replaces an attachment and returns it.
-
-        :param str attachment_link:
-            The link to the attachment.
-        :param dict attachment:
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The replaced Attachment
-        :rtype:
-            dict
-
-        """
-        if options is None:
-            options = {}
-
-        CosmosClientConnection.__ValidateResource(attachment)
-        path = base.GetPathFromLink(attachment_link)
-        attachment_id = base.GetResourceIdOrFullNameFromLink(attachment_link)
-        return self.Replace(attachment, path, "attachments", attachment_id, None, options, **kwargs)
-
-    def DeleteAttachment(self, attachment_link, options=None, **kwargs):
-        """Deletes an attachment.
-
-        :param str attachment_link:
-            The link to the attachment.
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The deleted Attachment.
-        :rtype:
-            dict
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(attachment_link)
-        attachment_id = base.GetResourceIdOrFullNameFromLink(attachment_link)
-        return self.DeleteResource(path, "attachments", attachment_id, None, options, **kwargs)
-
     def ReplaceTrigger(self, trigger_link, trigger, options=None, **kwargs):
         """Replaces a trigger and returns it.
 
@@ -2625,6 +2330,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         options=None,
         partition_key_range_id=None,
         response_hook=None,
+        is_query_plan=False,
         **kwargs
     ):
         """Query for more than one Azure Cosmos resources.
@@ -2639,6 +2345,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The request options for the request.
         :param str partition_key_range_id:
             Specifies partition key range id.
+        :param function response_hook:
+        :param bool is_query_plan:
+            Specififes if the call is to fetch query plan
 
         :rtype:
             list
@@ -2664,7 +2373,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Copy to make sure that default_headers won't be changed.
         if query is None:
             # Query operations will use ReadEndpoint even though it uses GET(for feed requests)
-            request_params = _request_object.RequestObject(typ, documents._OperationType.ReadFeed)
+            request_params = _request_object.RequestObject(typ,
+                        documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed)
             headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
             result, self.last_response_headers = self.__Get(path, request_params, headers, **kwargs)
             if response_hook:
@@ -2674,6 +2384,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         query = self.__CheckAndUnifyQueryFormat(query)
 
         initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
+        if not is_query_plan:
+            initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
+
         if (
             self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
             or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
@@ -2693,6 +2406,36 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             response_hook(self.last_response_headers, result)
 
         return __GetBodiesFromQueryResult(result)
+
+    def _GetQueryPlanThroughGateway(self, query, resource_link, **kwargs):
+        supported_query_features = (documents._QueryFeature.Aggregate + "," +
+                                    documents._QueryFeature.CompositeAggregate + "," +
+                                    documents._QueryFeature.Distinct + "," +
+                                    documents._QueryFeature.MultipleOrderBy + "," +
+                                    documents._QueryFeature.OffsetAndLimit + "," +
+                                    documents._QueryFeature.OrderBy + "," +
+                                    documents._QueryFeature.Top)
+
+        options = {
+            "contentType": runtime_constants.MediaTypes.Json,
+            "isQueryPlanRequest": True,
+            "supportedQueryFeatures": supported_query_features,
+            "queryVersion": http_constants.Versions.QueryVersion
+            }
+
+        resource_link = base.TrimBeginningAndEndingSlashes(resource_link)
+        path = base.GetPathFromLink(resource_link, "docs")
+        resource_id = base.GetResourceIdOrFullNameFromLink(resource_link)
+
+        return self.__QueryFeed(path,
+                                "docs",
+                                resource_id,
+                                lambda r: r,
+                                None,
+                                query,
+                                options,
+                                is_query_plan=True,
+                                **kwargs)
 
     def __CheckAndUnifyQueryFormat(self, query_body):
         """Checks and unifies the format of the query body.

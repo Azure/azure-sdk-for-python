@@ -21,6 +21,7 @@ try:
     from ._models_py3 import NetAppAccountPatch
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
+    from ._models_py3 import ReplicationObject
     from ._models_py3 import ResourceNameAvailability
     from ._models_py3 import ResourceNameAvailabilityRequest
     from ._models_py3 import ServiceSpecification
@@ -29,6 +30,7 @@ try:
     from ._models_py3 import Volume
     from ._models_py3 import VolumePatch
     from ._models_py3 import VolumePatchPropertiesExportPolicy
+    from ._models_py3 import VolumePropertiesDataProtection
     from ._models_py3 import VolumePropertiesExportPolicy
 except (SyntaxError, ImportError):
     from ._models import ActiveDirectory
@@ -42,6 +44,7 @@ except (SyntaxError, ImportError):
     from ._models import NetAppAccountPatch
     from ._models import Operation
     from ._models import OperationDisplay
+    from ._models import ReplicationObject
     from ._models import ResourceNameAvailability
     from ._models import ResourceNameAvailabilityRequest
     from ._models import ServiceSpecification
@@ -50,6 +53,7 @@ except (SyntaxError, ImportError):
     from ._models import Volume
     from ._models import VolumePatch
     from ._models import VolumePatchPropertiesExportPolicy
+    from ._models import VolumePropertiesDataProtection
     from ._models import VolumePropertiesExportPolicy
 from ._paged_models import CapacityPoolPaged
 from ._paged_models import MountTargetPaged
@@ -75,6 +79,7 @@ __all__ = [
     'NetAppAccountPatch',
     'Operation',
     'OperationDisplay',
+    'ReplicationObject',
     'ResourceNameAvailability',
     'ResourceNameAvailabilityRequest',
     'ServiceSpecification',
@@ -83,6 +88,7 @@ __all__ = [
     'Volume',
     'VolumePatch',
     'VolumePatchPropertiesExportPolicy',
+    'VolumePropertiesDataProtection',
     'VolumePropertiesExportPolicy',
     'OperationPaged',
     'NetAppAccountPaged',

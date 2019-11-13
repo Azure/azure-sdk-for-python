@@ -29,8 +29,7 @@ from six.moves.urllib.parse import urlparse
 import six
 from azure.core.exceptions import DecodeError  # type: ignore
 
-from . import documents
-from . import errors
+from . import exceptions
 from . import http_constants
 from . import _retry_utility
 
@@ -90,10 +89,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     """
     # pylint: disable=protected-access
 
-    is_media = request.url.find("media") > -1
-    is_media_stream = is_media and connection_policy.MediaReadMode == documents.MediaReadMode.Streamed
-
-    connection_timeout = connection_policy.MediaRequestTimeout if is_media else connection_policy.RequestTimeout
+    connection_timeout = connection_policy.RequestTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout / 1000.0)
 
     # Every request tries to perform a refresh
@@ -103,7 +99,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     if client_timeout is not None:
         kwargs['timeout'] = client_timeout - (time.time() - start_time)
         if kwargs['timeout'] <= 0:
-            raise errors.CosmosClientTimeoutError()
+            raise exceptions.CosmosClientTimeoutError()
 
     if request_params.endpoint_override:
         base_url = request_params.endpoint_override
@@ -129,18 +125,18 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     if connection_policy.SSLConfiguration or "connection_cert" in kwargs:
         ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
         cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)
-        response = pipeline_client._pipeline.run(
+        response = _PipelineRunFunction(
+            pipeline_client,
             request,
-            stream=is_media_stream,
             connection_timeout=connection_timeout,
             connection_verify=kwargs.pop("connection_verify", ca_certs),
             connection_cert=kwargs.pop("connection_cert", cert_files),
             **kwargs
         )
     else:
-        response = pipeline_client._pipeline.run(
+        response = _PipelineRunFunction(
+            pipeline_client,
             request,
-            stream=is_media_stream,
             connection_timeout=connection_timeout,
             # If SSL is disabled, verify = false
             connection_verify=kwargs.pop("connection_verify", is_ssl_enabled),
@@ -150,40 +146,37 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     response = response.http_response
     headers = dict(response.headers)
 
-    # In case of media stream response, return the response to the user and the user
-    # will need to handle reading the response.
-    if is_media_stream:
-        return (response.stream_download(pipeline_client._pipeline), headers)
-
     data = response.body()
     if data and not six.PY2:
         # python 3 compatible: convert data from byte to unicode string
         data = data.decode("utf-8")
 
     if response.status_code == 404:
-        raise errors.CosmosResourceNotFoundError(message=data, response=response)
+        raise exceptions.CosmosResourceNotFoundError(message=data, response=response)
     if response.status_code == 409:
-        raise errors.CosmosResourceExistsError(message=data, response=response)
+        raise exceptions.CosmosResourceExistsError(message=data, response=response)
     if response.status_code == 412:
-        raise errors.CosmosAccessConditionFailedError(message=data, response=response)
+        raise exceptions.CosmosAccessConditionFailedError(message=data, response=response)
     if response.status_code >= 400:
-        raise errors.CosmosHttpResponseError(message=data, response=response)
+        raise exceptions.CosmosHttpResponseError(message=data, response=response)
 
     result = None
-    if is_media:
-        result = data
-    else:
-        if data:
-            try:
-                result = json.loads(data)
-            except Exception as e:
-                raise DecodeError(
-                    message="Failed to decode JSON data: {}".format(e),
-                    response=response,
-                    error=e)
+    if data:
+        try:
+            result = json.loads(data)
+        except Exception as e:
+            raise DecodeError(
+                message="Failed to decode JSON data: {}".format(e),
+                response=response,
+                error=e)
 
-    return (result, headers)
+    return result, headers
 
+
+def _PipelineRunFunction(pipeline_client, request, **kwargs):
+    # pylint: disable=protected-access
+
+    return pipeline_client._pipeline.run(request, **kwargs)
 
 def SynchronizedRequest(
     client,

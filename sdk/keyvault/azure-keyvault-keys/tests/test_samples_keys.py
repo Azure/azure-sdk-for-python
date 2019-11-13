@@ -18,7 +18,7 @@ def print(*args):
 
 
 def test_create_key_client():
-    vault_endpoint = "vault_endpoint"
+    vault_url = "vault_url"
     # pylint:disable=unused-variable
     # [START create_key_client]
 
@@ -27,7 +27,7 @@ def test_create_key_client():
 
     # Create a KeyClient using default Azure credentials
     credential = DefaultAzureCredential()
-    key_client = KeyClient(vault_endpoint, credential)
+    key_client = KeyClient(vault_url, credential)
 
     # [END create_key_client]
 
@@ -98,7 +98,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(key.name)
         print(key.properties.version)
         print(key.key_type)
-        print(key.properties.vault_endpoint)
+        print(key.properties.vault_url)
 
         # [END get_key]
         # [START update_key]
@@ -196,7 +196,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END backup_key]
 
-        key_client.begin_delete_key(key_name).wait()
+        polling_interval = 0 if self.is_playback() else 2
+
+        key_client.begin_delete_key(key_name, _polling_interval=polling_interval).wait()
 
         # [START restore_key_backup]
 
@@ -212,7 +214,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     def test_example_keys_recover(self, vault_client, **kwargs):
         key_client = vault_client.keys
         created_key = key_client.create_key("key-name", "RSA")
-        key_client.begin_delete_key(created_key.name).wait()
+        polling_interval = 0 if self.is_playback() else 2
+        key_client.begin_delete_key(created_key.name, _polling_interval=polling_interval).wait()
         # [START get_deleted_key]
 
         # get a deleted key (requires soft-delete enabled for the vault)
@@ -229,12 +232,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START recover_deleted_key]
 
         # recover a deleted key to its latest version (requires soft-delete enabled for the vault)
-        recovered_key_poller = key_client.begin_recover_deleted_key("key-name")
-        recovered_key = recovered_key_poller.result()
+        recover_key_poller = key_client.begin_recover_deleted_key("key-name")
+        recovered_key = recover_key_poller.result()
         print(recovered_key.id)
         print(recovered_key.name)
 
         # if you want to block until key is recovered server-side, call wait() on the poller
-        recovered_key_poller.wait()
+        recover_key_poller.wait()
 
         # [END recover_deleted_key]

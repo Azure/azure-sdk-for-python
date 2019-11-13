@@ -56,7 +56,7 @@ class PremiumPageBlobTier(str, Enum):
     Specifies the page blob tier to set the blob to. This is only applicable to page
     blobs on premium storage accounts. Please take a look at:
     https://docs.microsoft.com/en-us/azure/storage/storage-premium-storage#scalability-and-performance-targets
-    for detailed information on the corresponding IOPS and throughtput per PageBlobTier.
+    for detailed information on the corresponding IOPS and throughput per PageBlobTier.
     """
 
     P4 = 'P4'  #: P4 Tier
@@ -117,18 +117,17 @@ class PublicAccess(str, Enum):
 class BlobAnalyticsLogging(GeneratedLogging):
     """Azure Analytics Logging settings.
 
-    :param str version:
+    :keyword str version:
         The version of Storage Analytics to configure. The default value is 1.0.
-    :param bool delete:
+    :keyword bool delete:
         Indicates whether all delete requests should be logged. The default value is `False`.
-    :param bool read:
+    :keyword bool read:
         Indicates whether all read requests should be logged. The default value is `False`.
-    :param bool write:
+    :keyword bool write:
         Indicates whether all write requests should be logged. The default value is `False`.
-    :param retention_policy:
+    :keyword ~azure.storage.blob.RetentionPolicy retention_policy:
         Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default.
-    :type retention_policy: ~azure.storage.blob.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -138,22 +137,33 @@ class BlobAnalyticsLogging(GeneratedLogging):
         self.write = kwargs.get('write', False)
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            version=generated.version,
+            delete=generated.delete,
+            read=generated.read,
+            write=generated.write,
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+        )
+
 
 class Metrics(GeneratedMetrics):
     """A summary of request statistics grouped by API in hour or minute aggregates
     for blobs.
 
-    :param str version:
+    :keyword str version:
         The version of Storage Analytics to configure. The default value is 1.0.
-    :param bool enabled:
+    :keyword bool enabled:
         Indicates whether metrics are enabled for the Blob service.
         The default value is `False`.
-    :param bool include_apis:
+    :keyword bool include_apis:
         Indicates whether metrics should generate summary statistics for called API operations.
-    :param retention_policy:
+    :keyword ~azure.storage.blob.RetentionPolicy retention_policy:
         Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default.
-    :type retention_policy: ~azure.storage.blob.RetentionPolicy
     """
 
     def __init__(self, **kwargs):
@@ -161,6 +171,17 @@ class Metrics(GeneratedMetrics):
         self.enabled = kwargs.get('enabled', False)
         self.include_apis = kwargs.get('include_apis')
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            version=generated.version,
+            enabled=generated.enabled,
+            include_apis=generated.include_apis,
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+        )
 
 
 class RetentionPolicy(GeneratedRetentionPolicy):
@@ -182,16 +203,25 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            enabled=generated.enabled,
+            days=generated.days,
+        )
+
 
 class StaticWebsite(GeneratedStaticWebsite):
     """The properties that enable an account to host a static website.
 
-    :param bool enabled:
+    :keyword bool enabled:
         Indicates whether this account is hosting a static website.
         The default value is `False`.
-    :param str index_document:
+    :keyword str index_document:
         The default name of the index page under each directory.
-    :param str error_document404_path:
+    :keyword str error_document404_path:
         The absolute path of the custom 404 page.
     """
 
@@ -204,6 +234,15 @@ class StaticWebsite(GeneratedStaticWebsite):
             self.index_document = None
             self.error_document404_path = None
 
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            enabled=generated.enabled,
+            index_document=generated.index_document,
+            error_document404_path=generated.error_document404_path,
+        )
 
 class CorsRule(GeneratedCorsRule):
     """CORS is an HTTP feature that enables a web application running under one
@@ -220,15 +259,15 @@ class CorsRule(GeneratedCorsRule):
         A list of HTTP methods that are allowed to be executed by the origin.
         The list of must contain at least one entry. For Azure Storage,
         permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
-    :param list(str) allowed_headers:
+    :keyword list(str) allowed_headers:
         Defaults to an empty list. A list of headers allowed to be part of
         the cross-origin request. Limited to 64 defined headers and 2 prefixed
         headers. Each header can be up to 256 characters.
-    :param list(str) exposed_headers:
+    :keyword list(str) exposed_headers:
         Defaults to an empty list. A list of response headers to expose to CORS
         clients. Limited to 64 defined headers and two prefixed headers. Each
         header can be up to 256 characters.
-    :param int max_age_in_seconds:
+    :keyword int max_age_in_seconds:
         The number of seconds that the client/browser should cache a
         preflight response.
     """
@@ -240,29 +279,39 @@ class CorsRule(GeneratedCorsRule):
         self.exposed_headers = ','.join(kwargs.get('exposed_headers', []))
         self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
 
+    @classmethod
+    def _from_generated(cls, generated):
+        return cls(
+            [generated.allowed_origins],
+            [generated.allowed_methods],
+            allowed_headers=[generated.allowed_headers],
+            exposed_headers=[generated.exposed_headers],
+            max_age_in_seconds=generated.max_age_in_seconds,
+        )
+
 
 class ContainerProperties(DictMixin):
     """Blob container's properties class.
 
-    :param ~datetime.datetime last_modified:
-        A datetime object representing the last time the container was modified.
-    :param str etag:
-        The ETag contains a value that you can use to perform operations
-        conditionally.
-    :param ~azure.storage.blob.LeaseProperties lease:
-        Stores all the lease information for the container.
-    :param str public_access: Specifies whether data in the container may be accessed
-        publicly and the level of access.
-    :param bool has_immutability_policy:
-        Represents whether the container has an immutability policy.
-    :param bool has_legal_hold:
-        Represents whether the container has a legal hold.
-    :param dict metadata: A dict with name-value pairs to associate with the
-        container as metadata.
-
     Returned ``ContainerProperties`` instances expose these values through a
     dictionary interface, for example: ``container_props["last_modified"]``.
     Additionally, the container name is available as ``container_props["name"]``.
+
+    :ivar ~datetime.datetime last_modified:
+        A datetime object representing the last time the container was modified.
+    :ivar str etag:
+        The ETag contains a value that you can use to perform operations
+        conditionally.
+    :ivar ~azure.storage.blob.LeaseProperties lease:
+        Stores all the lease information for the container.
+    :ivar str public_access: Specifies whether data in the container may be accessed
+        publicly and the level of access.
+    :ivar bool has_immutability_policy:
+        Represents whether the container has an immutability policy.
+    :ivar bool has_legal_hold:
+        Represents whether the container has a legal hold.
+    :ivar dict metadata: A dict with name-value pairs to associate with the
+        container as metadata.
     """
 
     def __init__(self, **kwargs):
@@ -354,7 +403,7 @@ class BlobProperties(DictMixin):
 
     :ivar str name:
         The name of the blob.
-    :ivar container:
+    :ivar str container:
         The container in which the blob resides.
     :ivar str snapshot:
         Datetime value that uniquely identifies the blob snapshot.
@@ -483,6 +532,7 @@ class BlobPropertiesPaged(PageIterator):
     :ivar str delimiter: A delimiting character used for hierarchy listing.
 
     :param callable command: Function to retrieve the next page of items.
+    :param str container: The name of the container.
     :param str prefix: Filters the results to return only blobs whose names
         begin with the specified prefix.
     :param int results_per_page: The maximum number of blobs to retrieve per
@@ -593,6 +643,7 @@ class BlobPrefix(ItemPaged, DictMixin):
         self.delimiter = kwargs.get('delimiter')
         self.location_mode = kwargs.get('location_mode')
 
+
 class BlobPrefixPaged(BlobPropertiesPaged):
     def __init__(self, *args, **kwargs):
         super(BlobPrefixPaged, self).__init__(*args, **kwargs)
@@ -617,14 +668,15 @@ class BlobPrefixPaged(BlobPropertiesPaged):
                 location_mode=self.location_mode)
         return item
 
+
 class LeaseProperties(DictMixin):
     """Blob Lease Properties.
 
-    :param str status:
+    :ivar str status:
         The lease status of the blob. Possible values: locked|unlocked
-    :param str state:
+    :ivar str state:
         Lease state of the blob. Possible values: available|leased|expired|breaking|broken
-    :param str duration:
+    :ivar str duration:
         When a blob is leased, specifies whether the lease is of infinite or fixed duration.
     """
 
@@ -645,24 +697,24 @@ class LeaseProperties(DictMixin):
 class ContentSettings(DictMixin):
     """The content settings of a blob.
 
-    :ivar str content_type:
+    :param str content_type:
         The content type specified for the blob. If no content type was
         specified, the default content type is application/octet-stream.
-    :ivar str content_encoding:
+    :param str content_encoding:
         If the content_encoding has previously been set
         for the blob, that value is stored.
-    :ivar str content_language:
+    :param str content_language:
         If the content_language has previously been set
         for the blob, that value is stored.
-    :ivar str content_disposition:
+    :param str content_disposition:
         content_disposition conveys additional information about how to
         process the response payload, and also can be used to attach
         additional metadata. If content_disposition has previously been set
         for the blob, that value is stored.
-    :ivar str cache_control:
+    :param str cache_control:
         If the cache_control has previously been set for
         the blob, that value is stored.
-    :ivar str content_md5:
+    :param str content_md5:
         If the content_md5 has been set for the blob, this response
         header is stored so that the client can check for message content
         integrity.
@@ -699,13 +751,13 @@ class CopyProperties(DictMixin):
     in a Copy Blob operation, or if this blob has been modified after a concluded
     Copy Blob operation, for example, using Set Blob Properties, Upload Blob, or Commit Block List.
 
-    :param str id:
+    :ivar str id:
         String identifier for the last attempted Copy Blob operation where this blob
         was the destination blob.
-    :param str source:
+    :ivar str source:
         URL up to 2 KB in length that specifies the source blob used in the last attempted
         Copy Blob operation where this blob was the destination blob.
-    :param str status:
+    :ivar str status:
         State of the copy operation identified by Copy ID, with these values:
             success:
                 Copy completed successfully.
@@ -716,22 +768,22 @@ class CopyProperties(DictMixin):
                 Copy was ended by Abort Copy Blob.
             failed:
                 Copy failed. See copy_status_description for failure details.
-    :param str progress:
+    :ivar str progress:
         Contains the number of bytes copied and the total bytes in the source in the last
         attempted Copy Blob operation where this blob was the destination blob. Can show
         between 0 and Content-Length bytes copied.
-    :param ~datetime.datetime completion_time:
+    :ivar ~datetime.datetime completion_time:
         Conclusion time of the last attempted Copy Blob operation where this blob was the
         destination blob. This value can specify the time of a completed, aborted, or
         failed copy attempt.
-    :param str status_description:
+    :ivar str status_description:
         Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal
         or non-fatal copy operation failure.
-    :param bool incremental_copy:
+    :ivar bool incremental_copy:
         Copies the snapshot of the source page blob to a destination page blob.
         The snapshot is copied such that only the differential changes between
         the previously copied snapshot are transferred to the destination
-    :param ~datetime.datetime destination_snapshot:
+    :ivar ~datetime.datetime destination_snapshot:
         Included if the blob is incremental copy blob or incremental copy snapshot,
         if x-ms-copy-status is success. Snapshot time of the last successful
         incremental copy snapshot for this blob.
@@ -787,9 +839,9 @@ class BlobBlock(DictMixin):
 class PageRange(DictMixin):
     """Page Range for page blob.
 
-    :ivar int start:
+    :param int start:
         Start of page range in bytes.
-    :ivar int end:
+    :param int end:
         End of page range in bytes.
     """
 
@@ -799,7 +851,7 @@ class PageRange(DictMixin):
 
 
 class AccessPolicy(GenAccessPolicy):
-    """Access Policy class used by the set and get acl methods in each service.
+    """Access Policy class used by the set and get access policy methods in each service.
 
     A stored access policy can specify the start time, expiry time, and
     permissions for the Shared Access Signatures with which it's associated.
@@ -832,14 +884,14 @@ class AccessPolicy(GenAccessPolicy):
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: datetime or str
+    :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
-    :type start: datetime or str
+    :type start: ~datetime.datetime or str
     """
     def __init__(self, permission=None, expiry=None, start=None):
         self.start = start
@@ -884,6 +936,17 @@ class ContainerSasPermissions(object):
 
     @classmethod
     def from_string(cls, permission):
+        """Create a ContainerSasPermissions from a string.
+
+        To specify read, write, delete, or list permissions you need only to
+        include the first letter of the word in the string. E.g. For read and
+        write permissions, you would provide a string "rw".
+
+        :param str permission: The string which dictates the read, write, delete,
+            and list permissions.
+        :return: A ContainerSasPermissions object
+        :rtype: ~azure.storage.blob.ContainerSasPermissions
+        """
         p_read = 'r' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
@@ -929,6 +992,17 @@ class BlobSasPermissions(object):
 
     @classmethod
     def from_string(cls, permission):
+        """Create a BlobSasPermissions from a string.
+
+        To specify read, add, create, write, or delete permissions you need only to
+        include the first letter of the word in the string. E.g. For read and
+        write permissions, you would provide a string "rw".
+
+        :param str permission: The string which dictates the read, add, create,
+            write, or delete permissions.
+        :return: A BlobSasPermissions object
+        :rtype: ~azure.storage.blob.BlobSasPermissions
+        """
         p_read = 'r' in permission
         p_add = 'a' in permission
         p_create = 'c' in permission
@@ -955,9 +1029,9 @@ class CustomerProvidedEncryptionKey(object):
     In both cases, the provided encryption key is securely discarded
     as soon as the encryption or decryption process completes.
 
-    :ivar str key_value:
+    :param str key_value:
         Base64-encoded AES-256 encryption key value.
-    :ivar str key_hash:
+    :param str key_hash:
         Base64-encoded SHA256 of the encryption key.
     :ivar str algorithm:
         Specifies the algorithm to use when encrypting data using the given key. Must be AES256.
@@ -966,3 +1040,27 @@ class CustomerProvidedEncryptionKey(object):
         self.key_value = key_value
         self.key_hash = key_hash
         self.algorithm = 'AES256'
+
+
+def service_stats_deserialize(generated):
+    """Deserialize a ServiceStats objects into a dict.
+    """
+    return {
+        'geo_replication': {
+            'status': generated.geo_replication.status,
+            'last_sync_time': generated.geo_replication.last_sync_time,
+        }
+    }
+
+def service_properties_deserialize(generated):
+    """Deserialize a ServiceProperties objects into a dict.
+    """
+    return {
+        'analytics_logging': BlobAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
+        'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
+        'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
+        'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
+        'target_version': generated.default_service_version,  # pylint: disable=protected-access
+        'delete_retention_policy': RetentionPolicy._from_generated(generated.delete_retention_policy),  # pylint: disable=protected-access
+        'static_website': StaticWebsite._from_generated(generated.static_website),  # pylint: disable=protected-access
+    }

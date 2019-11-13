@@ -27,9 +27,9 @@ class JsonWebKey(object):
 
     :param str kid: Key identifier.
     :param kty: Key Type (kty), as defined in https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
-    :type kty: str or ~azure.keyvault.keys.KeyType
+    :type kty: ~azure.keyvault.keys.KeyType or str
     :param key_ops: Allowed operations for the key
-    :type key_ops: list(~azure.keyvault.keys.KeyOperation)
+    :type key_ops: list[str or ~azure.keyvault.keys.KeyOperation]
     :param bytes n: RSA modulus.
     :param bytes e: RSA public exponent.
     :param bytes d: RSA private exponent, or the D component of an EC private key.
@@ -41,22 +41,22 @@ class JsonWebKey(object):
     :param bytes k: Symmetric key.
     :param bytes t: HSM Token, used with 'Bring Your Own Key'.
     :param crv: Elliptic curve name.
-    :type crv: str or ~azure.keyvault.keys.KeyCurveName
+    :type crv: ~azure.keyvault.keys.KeyCurveName or str
     :param bytes x: X component of an EC public key.
     :param bytes y: Y component of an EC public key.
     """
 
-    FIELDS = ("kid", "kty", "key_ops", "n", "e", "d", "dp", "dq", "qi", "p", "q", "k", "t", "crv", "x", "y")
+    _FIELDS = ("kid", "kty", "key_ops", "n", "e", "d", "dp", "dq", "qi", "p", "q", "k", "t", "crv", "x", "y")
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        for field in self.FIELDS:
+        for field in self._FIELDS:
             setattr(self, field, kwargs.get(field))
 
     def _to_generated_model(self):
         # type: () -> _JsonWebKey
         jwk = _JsonWebKey()
-        for field in self.FIELDS:
+        for field in self._FIELDS:
             setattr(jwk, field, getattr(self, field))
         return jwk
 
@@ -64,11 +64,11 @@ class JsonWebKey(object):
 class KeyProperties(object):
     """A key's id and attributes."""
 
-    def __init__(self, attributes, vault_id, **kwargs):
-        # type: (_models.KeyAttributes, str, **Any) -> None
+    def __init__(self, key_id, attributes=None, **kwargs):
+        # type: (str, Optional[_models.KeyAttributes], **Any) -> None
         self._attributes = attributes
-        self._id = vault_id
-        self._vault_id = parse_vault_id(vault_id)
+        self._id = key_id
+        self._vault_id = parse_vault_id(key_id)
         self._managed = kwargs.get("managed", None)
         self._tags = kwargs.get("tags", None)
 
@@ -80,36 +80,50 @@ class KeyProperties(object):
     def _from_key_bundle(cls, key_bundle):
         # type: (_models.KeyBundle) -> KeyProperties
         """Construct a KeyProperties from an autorest-generated KeyBundle"""
-        return cls(key_bundle.attributes, key_bundle.key.kid, managed=key_bundle.managed, tags=key_bundle.tags)
+        return cls(
+            key_bundle.key.kid, attributes=key_bundle.attributes, managed=key_bundle.managed, tags=key_bundle.tags
+        )
 
     @classmethod
     def _from_key_item(cls, key_item):
         # type: (_models.KeyItem) -> KeyProperties
         """Construct a KeyProperties from an autorest-generated KeyItem"""
-        return cls(key_item.attributes, key_item.kid, managed=key_item.managed, tags=key_item.tags)
+        return cls(key_id=key_item.kid, attributes=key_item.attributes, managed=key_item.managed, tags=key_item.tags)
 
     @property
     def id(self):
         # type: () -> str
-        """:rtype: str"""
+        """The key's id
+
+        :rtype: str
+        """
         return self._id
 
     @property
     def name(self):
         # type: () -> str
-        """:rtype: str"""
+        """The key's name
+
+        :rtype: str
+        """
         return self._vault_id.name
 
     @property
     def version(self):
         # type: () -> str
-        """:rtype: str"""
+        """The key's version
+
+        :rtype: str
+        """
         return self._vault_id.version
 
     @property
     def enabled(self):
         # type: () -> bool
-        """:rtype: bool"""
+        """Whether the key is enabled for use
+
+        :rtype: bool
+        """
         return self._attributes.enabled
 
     @property
@@ -117,7 +131,7 @@ class KeyProperties(object):
         # type: () -> datetime
         """The time before which the key can not be used, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.not_before
 
@@ -126,7 +140,7 @@ class KeyProperties(object):
         # type: () -> datetime
         """When the key will expire, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.expires
 
@@ -135,7 +149,7 @@ class KeyProperties(object):
         # type: () -> datetime
         """When the key was created, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.created
 
@@ -144,18 +158,18 @@ class KeyProperties(object):
         # type: () -> datetime
         """When the key was last updated, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._attributes.updated
 
     @property
-    def vault_endpoint(self):
+    def vault_url(self):
         # type: () -> str
         """URL of the vault containing the key
 
         :rtype: str
         """
-        return self._vault_id.vault_endpoint
+        return self._vault_id.vault_url
 
     @property
     def recovery_level(self):
@@ -186,12 +200,48 @@ class KeyProperties(object):
 
 
 class KeyVaultKey(object):
-    """A key's attributes and cryptographic material"""
+    """A key's attributes and cryptographic material.
 
-    def __init__(self, properties, key_material):
-        # type: (KeyProperties, _models.JsonWebKey, **Any) -> None
-        self._properties = properties
-        self._key_material = key_material
+    :param str key_id:
+        Key Vault's identifier for the key. Typically a URI, e.g. https://myvault.vault.azure.net/keys/my-key/version
+    :param jwk:
+        The key's cryptographic material as a JSON Web Key (https://tools.ietf.org/html/rfc7517). This may be provided
+        as a dictionary or keyword arguments. See :class:`~azure.keyvault.keys.models.JsonWebKey` for field names.
+
+    Providing cryptographic material as keyword arguments:
+
+    .. code-block:: python
+
+        from azure.keyvault.keys.models import KeyVaultKey
+
+        key_id = 'https://myvault.vault.azure.net/keys/my-key/my-key-version'
+        key_bytes = os.urandom(32)
+        key = KeyVaultKey(key_id, k=key_bytes, kty='oct', key_ops=['unwrapKey', 'wrapKey'])
+
+    Providing cryptographic material as a dictionary:
+
+    .. code-block:: python
+
+        from azure.keyvault.keys.models import KeyVaultKey
+
+        key_id = 'https://myvault.vault.azure.net/keys/my-key/my-key-version'
+        key_bytes = os.urandom(32)
+        jwk = {'k': key_bytes, 'kty': 'oct', 'key_ops': ['unwrapKey', 'wrapKey']}
+        key = KeyVaultKey(key_id, jwk=jwk)
+
+    """
+
+    def __init__(self, key_id, jwk=None, **kwargs):
+        # type: (str, Optional[dict], **Any) -> None
+        self._properties = kwargs.pop("properties", None) or KeyProperties(key_id, **kwargs)
+        if isinstance(jwk, dict):
+            if any(field in kwargs for field in JsonWebKey._FIELDS):  # pylint:disable=protected-access
+                raise ValueError(
+                    "Individual keyword arguments for key material and the 'jwk' argument are mutually exclusive."
+                )
+            self._key_material = JsonWebKey(**jwk)
+        else:
+            self._key_material = JsonWebKey(**kwargs)
 
     def __repr__(self):
         # type () -> str
@@ -201,21 +251,29 @@ class KeyVaultKey(object):
     def _from_key_bundle(cls, key_bundle):
         # type: (_models.KeyBundle) -> KeyVaultKey
         """Construct a KeyVaultKey from an autorest-generated KeyBundle"""
+        # pylint:disable=protected-access
         return cls(
-            properties=KeyProperties._from_key_bundle(key_bundle),  # pylint: disable=protected-access
-            key_material=key_bundle.key,
+            key_id=key_bundle.key.kid,
+            jwk={field: getattr(key_bundle.key, field, None) for field in JsonWebKey._FIELDS},
+            properties=KeyProperties._from_key_bundle(key_bundle),
         )
 
     @property
     def id(self):
         # type: () -> str
-        """:rtype: str"""
+        """The key's id
+
+        :rtype: str
+        """
         return self._properties.id
 
     @property
     def name(self):
         # type: () -> str
-        """:rtype: str"""
+        """The key's name
+
+        :rtype: str
+        """
         return self._properties.name
 
     @property
@@ -229,7 +287,7 @@ class KeyVaultKey(object):
 
     @property
     def key(self):
-        # type: () -> _models.JsonWebKey
+        # type: () -> JsonWebKey
         """The JSON web key
 
         :rtype: ~azure.keyvault.keys.JsonWebKey
@@ -243,7 +301,7 @@ class KeyVaultKey(object):
 
         :rtype: ~azure.keyvault.keys.KeyType or str
         """
-        return self._key_material.kty
+        return self._key_material.kty  # pylint:disable=no-member
 
     @property
     def key_operations(self):
@@ -252,7 +310,7 @@ class KeyVaultKey(object):
 
         :rtype: list[~azure.keyvault.keys.KeyOperation or str]
         """
-        return self._key_material.key_ops
+        return self._key_material.key_ops  # pylint:disable=no-member
 
 
 class DeletedKey(KeyVaultKey):
@@ -262,13 +320,13 @@ class DeletedKey(KeyVaultKey):
     def __init__(
         self,
         properties,  # type: KeyProperties
-        key_material=None,  # type: _models.JsonWebKey
         deleted_date=None,  # type: Optional[datetime]
         recovery_id=None,  # type: Optional[str]
         scheduled_purge_date=None,  # type: Optional[datetime]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
-        super(DeletedKey, self).__init__(properties, key_material)
+        super(DeletedKey, self).__init__(properties=properties, **kwargs)
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
         self._scheduled_purge_date = scheduled_purge_date
@@ -281,9 +339,11 @@ class DeletedKey(KeyVaultKey):
     def _from_deleted_key_bundle(cls, deleted_key_bundle):
         # type: (_models.DeletedKeyBundle) -> DeletedKey
         """Construct a DeletedKey from an autorest-generated DeletedKeyBundle"""
+        # pylint:disable=protected-access
         return cls(
-            properties=KeyProperties._from_key_bundle(deleted_key_bundle),  # pylint: disable=protected-access
-            key_material=deleted_key_bundle.key,
+            properties=KeyProperties._from_key_bundle(deleted_key_bundle),
+            key_id=deleted_key_bundle.key.kid,
+            jwk={field: getattr(deleted_key_bundle.key, field, None) for field in JsonWebKey._FIELDS},
             deleted_date=deleted_key_bundle.deleted_date,
             recovery_id=deleted_key_bundle.recovery_id,
             scheduled_purge_date=deleted_key_bundle.scheduled_purge_date,
@@ -295,6 +355,7 @@ class DeletedKey(KeyVaultKey):
         """Construct a DeletedKey from an autorest-generated DeletedKeyItem"""
         return cls(
             properties=KeyProperties._from_key_item(deleted_key_item),  # pylint: disable=protected-access
+            key_id=deleted_key_item.kid,
             deleted_date=deleted_key_item.deleted_date,
             recovery_id=deleted_key_item.recovery_id,
             scheduled_purge_date=deleted_key_item.scheduled_purge_date,
@@ -305,14 +366,14 @@ class DeletedKey(KeyVaultKey):
         # type: () -> datetime
         """When the key was deleted, in UTC
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._deleted_date
 
     @property
     def recovery_id(self):
         # type: () -> str
-        """An identifier used to recover the deleted key. Returns None if soft-delete is disabled.
+        """An identifier used to recover the deleted key. Returns ``None`` if soft-delete is disabled.
 
         :rtype: str
         """
@@ -321,8 +382,8 @@ class DeletedKey(KeyVaultKey):
     @property
     def scheduled_purge_date(self):
         # type: () -> datetime
-        """When the key is scheduled to be purged, in UTC. Returns None if soft-delete is disabled.
+        """When the key is scheduled to be purged, in UTC. Returns ``None`` if soft-delete is disabled.
 
-        :rtype: datetime.datetime
+        :rtype: ~datetime.datetime
         """
         return self._scheduled_purge_date

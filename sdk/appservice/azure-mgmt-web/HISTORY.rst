@@ -3,94 +3,94 @@
 Release History
 ===============
 
-0.44.0 (2019-10-13)
-+++++++++++++++++++
+0.44.0 (2019-11-08)
 
 **Features**
 
+- Model EndpointDetail has a new parameter is_accessible
 - Model Identifier has a new parameter value
+- Model VirtualIPMapping has a new parameter service_name
 - Model SiteConfig has a new parameter health_check_path
 - Model SiteConfig has a new parameter pre_warmed_instance_count
 - Model SiteConfig has a new parameter api_management_config
-- Model AddressResponse has a new parameter type
-- Model AddressResponse has a new parameter name
-- Model AddressResponse has a new parameter id
-- Model AddressResponse has a new parameter kind
-- Model EndpointDetail has a new parameter is_accessible
 - Model CertificatePatchResource has a new parameter canonical_name
-- Model FunctionEnvelope has a new parameter test_data_href
-- Model FunctionEnvelope has a new parameter is_disabled
-- Model FunctionEnvelope has a new parameter invoke_url_template
-- Model FunctionEnvelope has a new parameter language
-- Model HostingEnvironmentDiagnostics has a new parameter diagnostics_output
-- Model ValidateRequest has a new parameter container_registry_base_url
-- Model ValidateRequest has a new parameter container_image_repository
 - Model ValidateRequest has a new parameter container_image_platform
 - Model ValidateRequest has a new parameter container_registry_password
-- Model ValidateRequest has a new parameter container_registry_username
+- Model ValidateRequest has a new parameter container_image_repository
 - Model ValidateRequest has a new parameter container_image_tag
-- Model VirtualIPMapping has a new parameter service_name
+- Model ValidateRequest has a new parameter container_registry_base_url
+- Model ValidateRequest has a new parameter container_registry_username
+- Model MetricSpecification has a new parameter supported_time_grain_types
+- Model FunctionEnvelope has a new parameter invoke_url_template
+- Model FunctionEnvelope has a new parameter is_disabled
+- Model FunctionEnvelope has a new parameter language
+- Model FunctionEnvelope has a new parameter test_data_href
 - Model GeoRegion has a new parameter org_domain
 - Model Certificate has a new parameter canonical_name
+- Model StackMajorVersion has a new parameter is_deprecated
+- Model StackMajorVersion has a new parameter is_hidden
+- Model StackMajorVersion has a new parameter is_preview
 - Model SiteConfigResource has a new parameter health_check_path
 - Model SiteConfigResource has a new parameter pre_warmed_instance_count
 - Model SiteConfigResource has a new parameter api_management_config
-- Model MetricSpecification has a new parameter supported_time_grain_types
-- Model StackMajorVersion has a new parameter is_deprecated
-- Model StackMajorVersion has a new parameter is_preview
-- Model StackMajorVersion has a new parameter is_hidden
+- Model HostingEnvironmentDiagnostics has a new parameter diagnostics_output
+- Model AddressResponse has a new parameter type
+- Model AddressResponse has a new parameter id
+- Model AddressResponse has a new parameter name
+- Model AddressResponse has a new parameter kind
 - Added operation AppServiceEnvironmentsOperations.get_vip_info
-- Added operation WebAppsOperations.get_app_setting_key_vault_reference
-- Added operation WebAppsOperations.list_site_backups
-- Added operation WebAppsOperations.copy_slot_slot
 - Added operation WebAppsOperations.copy_production_slot
-- Added operation WebAppsOperations.list_site_backups_slot
+- Added operation WebAppsOperations.list_site_backups
+- Added operation WebAppsOperations.get_app_setting_key_vault_reference
+- Added operation WebAppsOperations.get_app_settings_key_vault_references
+- Added operation WebAppsOperations.copy_slot_slot
 - Added operation WebAppsOperations.get_instance_info_slot
 - Added operation WebAppsOperations.get_instance_info
-- Added operation WebAppsOperations.get_app_settings_key_vault_references
+- Added operation WebAppsOperations.list_site_backups_slot
 
 **Breaking changes**
 
-- Operation WebAppsOperations.create_or_update_domain_ownership_identifier_slot has a new signature
-- Operation WebAppsOperations.update_domain_ownership_identifier has a new signature
-- Operation WebAppsOperations.update_domain_ownership_identifier_slot has a new signature
 - Operation WebAppsOperations.create_or_update_domain_ownership_identifier has a new signature
-- Model Identifier no longer has parameter identifier_id
-- Model SiteConfig no longer has parameter azure_storage_accounts
-- Model SiteConfig no longer has parameter reserved_instance_count
-- Model EndpointDetail no longer has parameter is_accessable
-- Model ProcessThreadInfo no longer has parameter priviledged_processor_time
-- Model HostingEnvironmentDiagnostics no longer has parameter diagnosics_output
+- Operation WebAppsOperations.create_or_update_domain_ownership_identifier_slot has a new signature
+- Operation WebAppsOperations.update_domain_ownership_identifier_slot has a new signature
+- Operation WebAppsOperations.update_domain_ownership_identifier has a new signature
 - Model SitePatchResource no longer has parameter geo_distributions
 - Model Site no longer has parameter geo_distributions
-- Model SiteConfigResource no longer has parameter azure_storage_accounts
+- Model EndpointDetail no longer has parameter is_accessable
+- Model ProcessThreadInfo no longer has parameter priviledged_processor_time
+- Model Identifier no longer has parameter identifier_id
+- Model SiteConfig no longer has parameter reserved_instance_count
+- Model SiteConfig no longer has parameter azure_storage_accounts
 - Model SiteConfigResource no longer has parameter reserved_instance_count
+- Model SiteConfigResource no longer has parameter azure_storage_accounts
+- Model HostingEnvironmentDiagnostics no longer has parameter diagnosics_output
+- Removed operation AppServicePlansOperations.list_metric_defintions
+- Removed operation AppServicePlansOperations.list_metrics
+- Removed operation WebSiteManagementClientOperationsMixin.validate_container_settings
 - Removed operation AppServiceEnvironmentsOperations.list_metrics
-- Removed operation AppServiceEnvironmentsOperations.list_vips
-- Removed operation AppServiceEnvironmentsOperations.list_multi_role_metrics
-- Removed operation AppServiceEnvironmentsOperations.list_metric_definitions
-- Removed operation AppServiceEnvironmentsOperations.list_web_worker_metrics
 - Removed operation AppServiceEnvironmentsOperations.list_worker_pool_instance_metrics
 - Removed operation AppServiceEnvironmentsOperations.list_multi_role_pool_instance_metrics
-- Removed operation WebSiteManagementClientOperationsMixin.validate_container_settings
+- Removed operation AppServiceEnvironmentsOperations.list_multi_role_metrics
+- Removed operation AppServiceEnvironmentsOperations.list_vips
+- Removed operation AppServiceEnvironmentsOperations.list_web_worker_metrics
+- Removed operation AppServiceEnvironmentsOperations.list_metric_definitions
+- Removed operation WebAppsOperations.get_instance_process_thread
 - Removed operation WebAppsOperations.list_metrics
-- Removed operation WebAppsOperations.list_hybrid_connection_keys_slot
 - Removed operation WebAppsOperations.get_process_thread
 - Removed operation WebAppsOperations.list_hybrid_connection_keys
-- Removed operation WebAppsOperations.list_metric_definitions
-- Removed operation WebAppsOperations.list_metrics_slot
-- Removed operation WebAppsOperations.get_instance_process_thread_slot
-- Removed operation WebAppsOperations.get_process_thread_slot
 - Removed operation WebAppsOperations.list_metric_definitions_slot
-- Removed operation WebAppsOperations.get_instance_process_thread
-- Removed operation AppServicePlansOperations.list_metrics
-- Removed operation AppServicePlansOperations.list_metric_defintions
+- Removed operation WebAppsOperations.list_metrics_slot
+- Removed operation WebAppsOperations.get_process_thread_slot
+- Removed operation WebAppsOperations.list_hybrid_connection_keys_slot
+- Removed operation WebAppsOperations.get_instance_process_thread_slot
+- Removed operation WebAppsOperations.list_metric_definitions
+
 0.43.1 (2019-10-17)
 +++++++++++++++++++
 
 **General**
 
-- Remove obsolete autogenerated file which brings bug for multiapi
+- Fixed incorrectly generated multi-api package structure
 
 0.43.0 (2019-10-01)
 +++++++++++++++++++

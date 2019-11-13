@@ -5,6 +5,8 @@
 import asyncio
 import hashlib
 import os
+import logging
+import json
 
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
@@ -15,6 +17,15 @@ from secrets_async_test_case import AsyncKeyVaultTestCase
 from dateutil import parser as date_parse
 
 
+# used for logging tests
+class MockHandler(logging.Handler):
+    def __init__(self):
+        super(MockHandler, self).__init__()
+        self.messages = []
+    def emit(self, record):
+        self.messages.append(record)
+
+
 class KeyVaultSecretTest(AsyncKeyVaultTestCase):
 
     # incorporate md5 hashing of run identifier into resource group name for uniqueness
@@ -22,7 +33,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
 
     def _assert_secret_attributes_equal(self, s1, s2):
         self.assertEqual(s1.name, s2.name)
-        self.assertEqual(s1.vault_endpoint, s2.vault_endpoint)
+        self.assertEqual(s1.vault_url, s2.vault_url)
         self.assertEqual(s1.content_type, s2.content_type)
         self.assertEqual(s1.enabled, s2.enabled)
         self.assertEqual(s1.not_before, s2.not_before)
@@ -66,14 +77,14 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
 
         # create secret
         created = await client.set_secret(secret_name, secret_value)
-        self._validate_secret_bundle(created, vault_client.vault_endpoint, secret_name, secret_value)
+        self._validate_secret_bundle(created, vault_client.vault_url, secret_name, secret_value)
 
         # set secret with optional arguments
         not_before = date_parse.parse("2015-02-02T08:00:00.000Z")
         enabled = True
         tags = {"foo": "created tag"}
         created = await client.set_secret(secret_name, secret_value, enabled=enabled, not_before=not_before, tags=tags)
-        self._validate_secret_bundle(created, vault_client.vault_endpoint, secret_name, secret_value)
+        self._validate_secret_bundle(created, vault_client.vault_url, secret_name, secret_value)
         self.assertEqual(enabled, created.properties.enabled)
         self.assertEqual(not_before, created.properties.not_before)
         self.assertEqual(tags, created.properties.tags)
@@ -117,10 +128,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         updated = await _update_secret(created)
 
         # delete secret
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         deleted = await client.delete_secret(updated.name, _polling_interval=polling_interval)
         self.assertIsNotNone(deleted)
 
@@ -144,7 +152,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 expected[secret_name] = secret
 
         # list secrets
-        result = client.list_properties_of_secrets(max_page_size=max_secrets)
+        result = client.list_properties_of_secrets(max_page_size=max_secrets - 1)
         await self._validate_secret_list(result, expected)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
@@ -161,10 +169,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secret_name = "secret{}".format(i)
             secret_value = "value{}".format(i)
             expected[secret_name] = await client.set_secret(secret_name, secret_value)
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         # delete them
         for secret_name in expected.keys():
             await client.delete_secret(secret_name, _polling_interval=polling_interval)
@@ -197,7 +202,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 expected[secret.id] = secret
 
         # list secret versions
-        result = client.list_properties_of_secret_versions(secret_name)
+        result = client.list_properties_of_secret_versions(secret_name, max_page_size=max_secrets - 1)
 
         # validate list secret versions with attributes
         async for secret in result:
@@ -224,10 +229,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         self.assertIsNotNone(secret_backup, "secret_backup")
 
         # delete secret
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         await client.delete_secret(created_bundle.name, _polling_interval=polling_interval)
 
         # restore secret
@@ -251,10 +253,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secrets[secret_name] = await client.set_secret(secret_name, secret_value)
 
         # delete all secrets
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         for secret_name in secrets.keys():
             await client.delete_secret(secret_name, _polling_interval=polling_interval)
 
@@ -287,10 +286,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secrets[secret_name] = await client.set_secret(secret_name, secret_value)
 
         # delete all secrets
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         for secret_name in secrets.keys():
             await client.delete_secret(secret_name, _polling_interval=polling_interval)
 
@@ -301,3 +297,50 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         # purge secrets
         for secret_name in secrets.keys():
             await client.purge_deleted_secret(secret_name)
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @AsyncVaultClientPreparer(client_kwargs={'logging_enable': True})
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_logging_enabled(self, vault_client, **kwargs):
+        client = vault_client.secrets
+        mock_handler = MockHandler()
+
+        logger = logging.getLogger('azure')
+        logger.addHandler(mock_handler)
+        logger.setLevel(logging.DEBUG)
+
+        await client.set_secret("secret-name", "secret-value")
+
+        for message in mock_handler.messages:
+            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+                try:
+                    body = json.loads(message.message)
+                    if body['value'] == 'secret-value':
+                        return
+                except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
+                    pass
+
+        assert False, "Expected request body wasn't logged"
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
+    @AsyncVaultClientPreparer()
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_logging_disabled(self, vault_client, **kwargs):
+        client = vault_client.secrets
+        mock_handler = MockHandler()
+
+        logger = logging.getLogger('azure')
+        logger.addHandler(mock_handler)
+        logger.setLevel(logging.DEBUG)
+
+        await client.set_secret("secret-name", "secret-value")
+
+        for message in mock_handler.messages:
+            if message.levelname == 'DEBUG' and message.funcName == 'on_request':
+                try:
+                    body = json.loads(message.message)
+                    assert body["value"] != "secret-value", "Client request body was logged"
+                except (ValueError, KeyError):
+                    # this means the message is not JSON or has no kty property
+                    pass

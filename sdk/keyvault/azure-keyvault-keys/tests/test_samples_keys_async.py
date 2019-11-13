@@ -16,7 +16,7 @@ def print(*args):
 
 
 def test_create_key_client():
-    vault_endpoint = "vault_endpoint"
+    vault_url = "vault_url"
     # pylint:disable=unused-variable
     # [START create_key_client]
 
@@ -25,7 +25,7 @@ def test_create_key_client():
 
     # Create a KeyClient using default Azure credentials
     credential = DefaultAzureCredential()
-    key_client = KeyClient(vault_endpoint, credential)
+    key_client = KeyClient(vault_url, credential)
 
     # [END create_key_client]
 
@@ -93,7 +93,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(key.name)
         print(key.properties.version)
         print(key.key_type)
-        print(key.properties.vault_endpoint)
+        print(key.properties.vault_url)
 
         # [END get_key]
         # [START update_key]
@@ -192,7 +192,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END backup_key]
 
-        await key_client.delete_key(key_name)
+        polling_interval = 0 if self.is_playback() else 2
+
+        await key_client.delete_key(key_name, _polling_interval=polling_interval)
 
         # [START restore_key_backup]
 
@@ -211,7 +213,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         key_client = vault_client.keys
         created_key = await key_client.create_key("key-name", "RSA")
 
-        await key_client.delete_key(created_key.name)
+        polling_interval = 0 if self.is_playback() else 2
+        await key_client.delete_key(created_key.name, _polling_interval=polling_interval)
 
         # [START get_deleted_key]
 

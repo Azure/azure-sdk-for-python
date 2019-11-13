@@ -5,39 +5,22 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - bac77482-b4d2-11e9-b7ee-b831b58100e8
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 02 Aug 2019 03:07:58 GMT
+      - Fri, 25 Oct 2019 18:46:02 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: GET
-    uri: https://storagename-secondary.blob.core.windows.net/?restype=service&comp=stats
+    uri: https://pyacrstoragestorname-secondary.blob.core.windows.net/?restype=service&comp=stats
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>live</Status><LastSyncTime>Fri,
-        02 Aug 2019 03:03:54 GMT</LastSyncTime></GeoReplication></StorageServiceStats>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication></StorageServiceStats>"
     headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Fri, 02 Aug 2019 03:07:58 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      ? !!python/object/new:multidict._istr.istr
-      - Transfer-Encoding
-      : chunked
-      ? !!python/object/new:multidict._istr.istr
-      - Vary
-      : Origin
-      x-ms-request-id: bbac047e-d01e-007a-69df-48ff8e000000
-      x-ms-version: '2018-03-28'
+      content-type: application/xml
+      date: Fri, 25 Oct 2019 18:46:02 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK
@@ -45,7 +28,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - amqptest-secondary.blob.core.windows.net
+        - pyacrstorageaxjsxydtp4nt-secondary.blob.core.windows.net
         - /
         - restype=service&comp=stats
         - ''
