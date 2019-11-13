@@ -30,6 +30,7 @@ from azure.core import PipelineClient
 from azure.core.pipeline.policies import RedirectPolicy
 from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.pipeline.policies import RequestIdPolicy
 
 
 def test_example_headers_policy():
@@ -53,6 +54,31 @@ def test_example_headers_policy():
     request = client.get(url)
     pipeline_response = client._pipeline.run(request, headers={'CustomValue': 'Bar'})
     # [END headers_policy]
+
+    response = pipeline_response.http_response
+    assert response.status_code == 200
+
+def test_example_request_id_policy():
+    url = "https://bing.com"
+    policies = [
+        UserAgentPolicy("myuseragent"),
+        RedirectPolicy()
+    ]
+
+    # [START request_id_policy]
+    from azure.core.pipeline.policies import HeadersPolicy
+
+    request_id_policy = RequestIdPolicy()
+    request_id_policy.set_request_id('azconfig-test')
+
+    # Or headers can be added per operation. These headers will supplement existing headers
+    # or those defined in the config headers policy. They will also overwrite existing
+    # identical headers.
+    policies.append(request_id_policy)
+    client = PipelineClient(base_url=url, policies=policies)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(request, request_id="azconfig-test")
+    # [END request_id_policy]
 
     response = pipeline_response.http_response
     assert response.status_code == 200
