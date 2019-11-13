@@ -284,7 +284,7 @@ class RetryPolicy(HTTPPolicy):
 
         return min(retry_counts) < 0
 
-    def increment(self, settings, response=None, error=None):
+    def increment(self, settings, response=None, error=None, stream=False):
         """Increment the retry counters.
 
         :param settings: The retry settings.
@@ -319,7 +319,7 @@ class RetryPolicy(HTTPPolicy):
                 settings['history'].append(RequestHistory(response.http_request, http_response=response.http_response))
 
         if not self.is_exhausted(settings):
-            if response.http_request.body and isinstance(response.http_request.body, bytes):
+            if response.http_request.body and stream:
                 # no position was saved, then retry would not work
                 if 'body_position' not in settings:
                     return False
@@ -356,11 +356,12 @@ class RetryPolicy(HTTPPolicy):
         retry_active = True
         response = None
         retry_settings = self.configure_retries(request.context.options)
+        stream = request.context.options.get('stream', False)
         while retry_active:
             try:
                 response = self.next.send(request)
                 if self.is_retry(retry_settings, response):
-                    retry_active = self.increment(retry_settings, response=response)
+                    retry_active = self.increment(retry_settings, response=response, stream=stream)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport, response=response)
                         continue

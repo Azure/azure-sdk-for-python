@@ -131,22 +131,18 @@ def test_no_log(mock_http_logger):
     second_count = mock_http_logger.debug.call_count
     assert second_count == first_count * 2
 
-@pytest.mark.skipif(sys.version_info < (3, 5), reason="bytes ctor does not take two parameters on 2.7")
 def test_retry_unseekable_body():
     def build_response(body, content_type=None):
-        class MockRequest(HttpRequest):
-            def __init__(self):
-                self.body = bytes('test', 'utf-8')
-
         class MockResponse(HttpResponse):
             def __init__(self):
                 super(MockResponse, self).__init__(None, None)
-                self._body = bytes('test', 'utf-8')
+                self._body = 'test'
 
             def body(self):
                 return self._body
 
-        return PipelineResponse(MockRequest(), MockResponse(), PipelineContext(None, stream=False))
+        universal_request = HttpRequest('GET', 'http://127.0.0.1/', data='test')
+        return PipelineResponse(universal_request, MockResponse(), PipelineContext(None, stream=True))
     
     response = build_response(b"<groot/>", content_type="application/xml")
     http_retry = RetryPolicy()
@@ -157,7 +153,7 @@ def test_retry_unseekable_body():
         'connect': 3,
         'read': 3,
     }
-    increment = http_retry.increment(setting, response)
+    increment = http_retry.increment(setting, response, stream=True)
     assert not increment
 
 def test_raw_deserializer():
