@@ -149,7 +149,10 @@ class RequestHistory(object):
 
     def __init__(self, http_request, http_response=None, error=None, context=None):
         # type: (PipelineRequest, Optional[PipelineResponse], Exception, Optional[Dict[str, Any]]) -> None
-        self.http_request = copy.deepcopy(http_request)
+        try:
+            self.http_request = copy.deepcopy(http_request)
+        except ValueError:
+            self.http_request = copy.copy(http_request)
         self.http_response = http_response
         self.error = error
         self.context = context
