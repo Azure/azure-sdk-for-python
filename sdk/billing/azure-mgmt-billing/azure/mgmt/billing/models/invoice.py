@@ -39,6 +39,8 @@ class Invoice(Resource):
     :vartype invoice_period_start_date: datetime
     :ivar invoice_period_end_date: The end date of the billing period.
     :vartype invoice_period_end_date: datetime
+    :ivar invoice_type: Invoice type.
+    :vartype invoice_type: object
     :ivar billing_profile_id: The billing profile id this invoice belongs to.
     :vartype billing_profile_id: str
     :ivar billing_profile_display_name: The billing profile display name this
@@ -64,6 +66,7 @@ class Invoice(Resource):
         'billed_amount': {'readonly': True},
         'invoice_period_start_date': {'readonly': True},
         'invoice_period_end_date': {'readonly': True},
+        'invoice_type': {'readonly': True},
         'billing_profile_id': {'readonly': True},
         'billing_profile_display_name': {'readonly': True},
         'purchase_order_number': {'readonly': True},
@@ -82,6 +85,7 @@ class Invoice(Resource):
         'billed_amount': {'key': 'properties.billedAmount', 'type': 'Amount'},
         'invoice_period_start_date': {'key': 'properties.invoicePeriodStartDate', 'type': 'iso-8601'},
         'invoice_period_end_date': {'key': 'properties.invoicePeriodEndDate', 'type': 'iso-8601'},
+        'invoice_type': {'key': 'properties.invoiceType', 'type': 'object'},
         'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
         'billing_profile_display_name': {'key': 'properties.billingProfileDisplayName', 'type': 'str'},
         'purchase_order_number': {'key': 'properties.purchaseOrderNumber', 'type': 'str'},
@@ -98,6 +102,7 @@ class Invoice(Resource):
         self.billed_amount = None
         self.invoice_period_start_date = None
         self.invoice_period_end_date = None
+        self.invoice_type = None
         self.billing_profile_id = None
         self.billing_profile_display_name = None
         self.purchase_order_number = None
