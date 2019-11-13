@@ -7,7 +7,7 @@ class EventHubProducerClient(ClientBaseAsync):
             self,
             host: str,
             event_hub_path: str,
-            credential: Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential],
+            credential: TokenCredential,
             **kwargs
     ) -> None:
 
@@ -35,7 +35,7 @@ class EventHubProducerClient(ClientBaseAsync):
         partition_id: str = None,
         timeout: float = None) -> None:
 
-    async def create_batch(self, max_size: int = None) -> EventDataBatch:
+    async def create_batch(self, events: Iterable[EventData] = None, max_size: int = None) -> EventDataBatch:
 
     async def get_properties(self) -> Dict[str, Any]:
 
@@ -54,7 +54,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             self,
             host: str,
             event_hub_path: str,
-            credential: Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential],
+            credential: TokenCredential,
             *
             partition_manager: PartitionManager,
             load_balancing_interval: int = 10,
@@ -201,17 +201,12 @@ class EventPosition(object):
 
     def __init__(self, value, inclusive=False):
 
-    
-class EventHubSASTokenCredential(object):    
-
-    def __init__(self, token: Union[Callable, dict[str, str]]):
-
-    def get_sas_token(self) -> dict[str, str]:
-
 
 class EventHubSharedKeyCredential(object):
 
     def __init__(self, policy: str, key: str):
+
+    def get_token(self, *scopes, **kwargs) -> AccessToken:
 
 
 class EventHubError(Exception):
