@@ -23,7 +23,8 @@ from common_tasks import (
     run_check_call,
     cleanup_folder,
     clean_coverage,
-    MANAGEMENT_PACKAGE_IDENTIFIERS,
+    is_error_code_5_allowed,
+    create_code_coverage_params,
 )
 from tox_harness import prep_and_run_tox
 
@@ -33,6 +34,23 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 coverage_dir = os.path.join(root_dir, "_coverage/")
 dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
 
+def combine_coverage_files(coverage_files):
+    # find tox.ini file. tox.ini is used to combine coverage paths to generate formatted report
+    tox_ini_file = os.path.join(root_dir, "eng", "tox", "tox.ini")
+    config_file_flag = "--rcfile={}".format(tox_ini_file)
+
+    if os.path.isfile(tox_ini_file):
+        # for every individual coverage file, run coverage combine to combine path
+        for coverage_file in coverage_files:
+            cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
+            # tox.ini file has coverage paths to combine
+            # Pas tox.ini as coverage config file
+            cov_cmd_array.extend([config_file_flag, coverage_file])
+            run_check_call(cov_cmd_array, root_dir)
+    else:
+        # not a hard error at this point
+        # this combine step is required only for modules if report has package name starts with .tox
+        logging.error("tox.ini is not found in path {}".format(root_dir))
 
 def collect_pytest_coverage_files(targeted_packages):
     coverage_files = []
@@ -59,11 +77,11 @@ def collect_pytest_coverage_files(targeted_packages):
         shutil.move(source, dest)
 
 
-def prep_tests(targeted_packages, python_version):
+def prep_tests(targeted_packages):
     logging.info("running test setup for {}".format(targeted_packages))
     run_check_call(
         [
-            python_version,
+            sys.executable,
             dev_setup_script_location,
             "--disabledevelop",
             "-p",
@@ -73,13 +91,13 @@ def prep_tests(targeted_packages, python_version):
     )
 
 
-def run_tests(targeted_packages, python_version, test_output_location, test_res):
+def run_tests(targeted_packages, test_output_location, test_res, parsed_args):
     err_results = []
 
     clean_coverage(coverage_dir)
 
     # base command array without a targeted package
-    command_array = [python_version, "-m", "pytest"]
+    command_array = [sys.executable, "-m", "pytest"]
     command_array.extend(test_res)
 
     # loop through the packages
@@ -100,17 +118,17 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
         target_package_options = []
         allowed_return_codes = []
 
+        local_command_array = command_array[:]
+
+        # Get code coverage params for current package
+        coverage_commands = create_code_coverage_params(parsed_args, package_name)
+        # Create local copy of params to pass to execute
+        local_command_array.extend(coverage_commands)
+
         # if we are targeting only packages that are management plane, it is a possibility
         # that no tests running is an acceptable situation
         # we explicitly handle this here.
-        if all(
-            map(
-                lambda x: any(
-                    [pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]
-                ),
-                [target_package],
-            )
-        ):
+        if is_error_code_5_allowed(target_package, package_name):
             allowed_return_codes.append(5)
 
         # format test result output location
@@ -126,7 +144,7 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
 
         target_package_options.append(target_package)
         err_result = run_check_call(
-            command_array + target_package_options,
+            local_command_array + target_package_options,
             root_dir,
             allowed_return_codes,
             True,
@@ -139,7 +157,8 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
         if os.path.isfile(source_coverage_file):
             shutil.move(source_coverage_file, target_coverage_file)
 
-    collect_pytest_coverage_files(targeted_packages)
+    if not parsed_args.disablecov:
+        collect_pytest_coverage_files(targeted_packages)
 
     # if any of the packages failed, we should get exit with errors
     if err_results:
@@ -149,31 +168,24 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
 def execute_global_install_and_test(
     parsed_args, targeted_packages, extended_pytest_args
 ):
-    if args.mark_arg:
-        extended_pytest_args.extend(["-m", '"{}"'.format(args.mark_arg)])
+    if parsed_args.mark_arg:
+        extended_pytest_args.extend(["-m", '"{}"'.format(parsed_args.mark_arg)])
 
-    if args.runtype == "setup" or args.runtype == "all":
-        prep_tests(targeted_packages, args.python_version)
+    if parsed_args.runtype == "setup" or parsed_args.runtype == "all":
+        prep_tests(targeted_packages)
 
-    if args.runtype == "execute" or args.runtype == "all":
+    if parsed_args.runtype == "execute" or parsed_args.runtype == "all":
         run_tests(
             targeted_packages,
-            args.python_version,
-            args.test_results,
+            parsed_args.test_results,
             extended_pytest_args,
+            parsed_args,
         )
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Install Dependencies, Install Packages, Test Azure Packages, Called from DevOps YAML Pipeline"
-    )
-    parser.add_argument(
-        "-p",
-        "--python-version",
-        dest="python_version",
-        default="python",
-        help='The name of the python that should run the build. This is for usage in special cases like the "Special_Python_Distro_Tests" Job in /.azure-pipelines/client.yml. Defaults to "python"',
     )
 
     parser.add_argument(
@@ -262,16 +274,10 @@ if __name__ == "__main__":
     extended_pytest_args = []
 
     if len(targeted_packages) == 0:
-        exit(0) 
-
-    # common argument handling
-    if args.disablecov:
-        extended_pytest_args.append("--no-cov")
-    else:
-        extended_pytest_args.extend(["--durations=10", "--cov", "--cov-report="])
+        exit(0)
 
     if args.xdist:
-        extended_pytest_args.extend(["-n", "8"])
+        extended_pytest_args.extend(["-n", "8", "--dist=loadscope"])
 
     if args.runtype != "none":
         execute_global_install_and_test(args, targeted_packages, extended_pytest_args)

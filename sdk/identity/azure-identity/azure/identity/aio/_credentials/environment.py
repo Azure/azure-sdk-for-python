@@ -12,8 +12,6 @@ from .client_credential import CertificateCredential, ClientSecretCredential
 if TYPE_CHECKING:
     from typing import Any, Optional, Union
     from azure.core.credentials import AccessToken
-    from azure.core.pipeline.policies import HTTPPolicy
-    from azure.core.pipeline.transport import AsyncHttpTransport
 
 
 class EnvironmentCredential:
@@ -23,14 +21,15 @@ class EnvironmentCredential:
     a user with a username and password. Configuration is attempted in this order, using these environment variables:
 
     Service principal with secret:
+      - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
       - **AZURE_CLIENT_ID**: the service principal's client ID
       - **AZURE_CLIENT_SECRET**: one of the service principal's client secrets
-      - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
 
     Service principal with certificate:
-      - **AZURE_CLIENT_ID**: the service principal's client ID
-      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM-encoded certificate file including the private key
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
+      - **AZURE_CLIENT_ID**: the service principal's client ID
+      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM-encoded certificate file including the private key The
+        certificate must not be password-protected.
     """
 
     def __init__(self, **kwargs: "Any") -> None:
@@ -39,7 +38,7 @@ class EnvironmentCredential:
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
             self._credential = ClientSecretCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
-                secret=os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET],
+                client_secret=os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 **kwargs
             )
@@ -51,12 +50,14 @@ class EnvironmentCredential:
                 **kwargs
             )
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Asynchronously request an access token for `scopes`.
+
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
         if not self._credential:
             raise ClientAuthenticationError(message="Incomplete environment configuration.")

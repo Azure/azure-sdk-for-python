@@ -11,8 +11,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-resource/6.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -31,16 +31,16 @@ interactions:
         Asia","East Asia","North Central US","South Central US","Central US","Japan
         West","Japan East","Korea Central","Australia East","Australia Southeast","Brazil
         South","Central India","West Central US","Canada Central","UK South","France
-        Central","South Africa North","UAE North"],"apiVersions":["2015-08-19"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2015-08-19","2015-02-28"],"capabilities":"None"}],"registrationState":"Unregistering","registrationPolicy":"RegistrationRequired"}'
+        Central","South Africa North","UAE North"],"apiVersions":["2015-08-19"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2019-10-01-Preview","2015-08-19","2015-02-28"],"capabilities":"None"}],"registrationState":"Unregistering","registrationPolicy":"RegistrationRequired"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1777'
+      - '1798'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 22 Sep 2019 15:32:37 GMT
+      - Tue, 05 Nov 2019 09:35:41 GMT
       expires:
       - '-1'
       pragma:
@@ -68,8 +68,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-resource/6.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -88,16 +88,16 @@ interactions:
         Asia","East Asia","North Central US","South Central US","Central US","Japan
         West","Japan East","Korea Central","Australia East","Australia Southeast","Brazil
         South","Central India","West Central US","Canada Central","UK South","France
-        Central","South Africa North","UAE North"],"apiVersions":["2015-08-19"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2015-08-19","2015-02-28"],"capabilities":"None"}],"registrationState":"Unregistering","registrationPolicy":"RegistrationRequired"}'
+        Central","South Africa North","UAE North"],"apiVersions":["2015-08-19"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2019-10-01-Preview","2015-08-19","2015-02-28"],"capabilities":"None"}],"registrationState":"Unregistering","registrationPolicy":"RegistrationRequired"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1777'
+      - '1798'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 22 Sep 2019 15:32:37 GMT
+      - Tue, 05 Nov 2019 09:35:41 GMT
       expires:
       - '-1'
       pragma:
@@ -123,8 +123,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-resource/6.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -143,16 +143,16 @@ interactions:
         Asia","East Asia","North Central US","South Central US","Central US","Japan
         West","Japan East","Korea Central","Australia East","Australia Southeast","Brazil
         South","Central India","West Central US","Canada Central","UK South","France
-        Central","South Africa North","UAE North"],"apiVersions":["2015-08-19"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2015-08-19","2015-02-28"],"capabilities":"None"}],"registrationState":"Registering","registrationPolicy":"RegistrationRequired"}'
+        Central","South Africa North","UAE North"],"apiVersions":["2015-08-19"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2019-10-01-Preview","2015-08-19","2015-02-28"],"capabilities":"None"}],"registrationState":"Registering","registrationPolicy":"RegistrationRequired"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1775'
+      - '1796'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 22 Sep 2019 15:32:37 GMT
+      - Tue, 05 Nov 2019 09:35:44 GMT
       expires:
       - '-1'
       pragma:

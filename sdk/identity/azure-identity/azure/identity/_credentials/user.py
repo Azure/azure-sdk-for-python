@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from datetime import datetime
 import os
 import sys
 import time
@@ -27,39 +28,38 @@ if TYPE_CHECKING:
 class DeviceCodeCredential(PublicClientCredential):
     """Authenticates users through the device code flow.
 
-    When ``get_token`` is called, this credential acquires a verification URL and code from Azure Active Directory. A
-    user must browse to the URL, enter the code, and authenticate with Azure Active Directory. If the user
+    When :func:`get_token` is called, this credential acquires a verification URL and code from Azure Active Directory.
+    A user must browse to the URL, enter the code, and authenticate with Azure Active Directory. If the user
     authenticates successfully, the credential receives an access token.
 
-    This credential doesn't cache tokens--each ``get_token`` call begins a new authentication flow.
+    This credential doesn't cache tokens--each :func:`get_token` call begins a new authentication flow.
 
     For more information about the device code flow, see Azure Active Directory documentation:
     https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-device-code
 
     :param str client_id: the application's ID
-    :param prompt_callback:
-        (optional) A callback enabling control of how authentication instructions are presented.
-        Must accept arguments (``verification_uri``, ``user_code``, ``expires_in``):
+
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          defines authorities for other clouds.
+    :keyword str tenant_id: an Azure Active Directory tenant ID. Defaults to the 'organizations' tenant, which can
+          authenticate work or school accounts. **Required for single-tenant applications.**
+    :keyword int timeout: seconds to wait for the user to authenticate. Defaults to the validity period of the
+          device code as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
+    :keyword prompt_callback: A callback enabling control of how authentication
+          instructions are presented. Must accept arguments (``verification_uri``, ``user_code``, ``expires_on``):
+
             - ``verification_uri`` (str) the URL the user must visit
             - ``user_code`` (str) the code the user must enter there
-            - ``expires_in`` (int) the number of seconds the code will be valid
-        If not provided, the credential will print instructions to stdout.
-
-    Keyword arguments
-        - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
-          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
-          authorities for other clouds.
-        - **tenant (str)** - tenant ID or a domain associated with a tenant. If not provided, defaults to the
-          'organizations' tenant, which supports only Azure Active Directory work or school accounts.
-        - **timeout (int)** - seconds to wait for the user to authenticate. Defaults to the validity period of the
-          device code as set by Azure Active Directory, which also prevails when ``timeout`` is longer.
-
+            - ``expires_on`` (datetime.datetime) the UTC time at which the code will expire
+          If this argument isn't provided, the credential will print instructions to stdout.
+    :paramtype prompt_callback: Callable[str, str, ~datetime.datetime]
     """
 
-    def __init__(self, client_id, prompt_callback=None, **kwargs):
-        # type: (str, Optional[Callable[[str, str, str], None]], Any) -> None
+    def __init__(self, client_id, **kwargs):
+        # type: (str, **Any) -> None
         self._timeout = kwargs.pop("timeout", None)  # type: Optional[int]
-        self._prompt_callback = prompt_callback
+        self._prompt_callback = kwargs.pop("prompt_callback", None)
         super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
@@ -69,9 +69,11 @@ class DeviceCodeCredential(PublicClientCredential):
 
         This credential won't cache the token. Each call begins a new authentication flow.
 
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
 
         # MSAL requires scopes be a list
@@ -86,14 +88,18 @@ class DeviceCodeCredential(PublicClientCredential):
             )
 
         if self._prompt_callback:
-            self._prompt_callback(flow["verification_uri"], flow["user_code"], flow["expires_in"])
+            self._prompt_callback(
+                flow["verification_uri"], flow["user_code"], datetime.utcfromtimestamp(flow["expires_at"])
+            )
         else:
             print(flow["message"])
 
         if self._timeout is not None and self._timeout < flow["expires_in"]:
+            # user specified an effective timeout we will observe
             deadline = now + self._timeout
             result = app.acquire_token_by_device_flow(flow, exit_condition=lambda flow: time.time() > deadline)
         else:
+            # MSAL will stop polling when the device code expires
             result = app.acquire_token_by_device_flow(flow)
 
         if "access_token" not in result:
@@ -114,14 +120,13 @@ class SharedTokenCacheCredential(object):
         Username (typically an email address) of the user to authenticate as. This is required because the local cache
         may contain tokens for multiple identities.
 
-    Keyword arguments
-        - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
-          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
-          authorities for other clouds.
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          defines authorities for other clouds.
     """
 
-    def __init__(self, username, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, **Any) -> None
+    def __init__(self, username=None, **kwargs):  # pylint:disable=unused-argument
+        # type: (Optional[str], **Any) -> None
 
         self._username = username
 
@@ -148,6 +153,8 @@ class SharedTokenCacheCredential(object):
 
         If no access token is cached, attempt to acquire one using a cached refresh token.
 
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises:
@@ -158,15 +165,15 @@ class SharedTokenCacheCredential(object):
         if not self._client:
             raise ClientAuthenticationError(message="Shared token cache unavailable")
 
-        token = self._client.obtain_token_by_refresh_token(scopes, self._username)
-        if not token:
-            raise ClientAuthenticationError(message="No cached token found for '{}'".format(self._username))
-
-        return token
+        return self._client.obtain_token_by_refresh_token(scopes, self._username)
 
     @staticmethod
     def supported():
         # type: () -> bool
+        """Whether the shared token cache is supported on the current platform.
+
+        :rtype: bool
+        """
         return sys.platform.startswith("win")
 
     @staticmethod
@@ -182,7 +189,8 @@ class UsernamePasswordCredential(PublicClientCredential):
     authentication flows.
 
     Authentication with this credential is not interactive, so it is **not compatible with any form of
-    multi-factor authentication or consent prompting**. The application must already have the user's consent.
+    multi-factor authentication or consent prompting**. The application must already have consent from the user or
+    a directory admin.
 
     This credential can only authenticate work and school accounts; Microsoft accounts are not supported.
     See this document for more information about account types:
@@ -192,13 +200,11 @@ class UsernamePasswordCredential(PublicClientCredential):
     :param str username: the user's username (usually an email address)
     :param str password: the user's password
 
-    Keyword arguments
-        - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
-          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
-          authorities for other clouds.
-        - **tenant (str)** - tenant ID or a domain associated with a tenant. If not provided, defaults to the
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          defines authorities for other clouds.
+    :keyword str tenant_id: tenant ID or a domain associated with a tenant. If not provided, defaults to the
           'organizations' tenant, which supports only Azure Active Directory work or school accounts.
-
     """
 
     def __init__(self, client_id, username, password, **kwargs):
@@ -212,9 +218,11 @@ class UsernamePasswordCredential(PublicClientCredential):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
 
         # MSAL requires scopes be a list

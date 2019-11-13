@@ -21,7 +21,7 @@ jobs:
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
 
   - job: 'Analyze'
-    condition: ne(variables['Skip.Analyze'], 'true')
+    condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
     variables:
     - template: ../variables/globals.yml
 
@@ -33,9 +33,12 @@ jobs:
 
     steps:
     - template: ../steps/analyze.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'Test'
-    condition: ne(variables['Skip.Test'], 'true')
+    condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     variables:
     - template: ../variables/globals.yml
@@ -100,3 +103,70 @@ jobs:
             inputs:
               artifactName: 'artifacts' 
               targetPath: $(Build.ArtifactStagingDirectory)
+
+  - job: 'Test_Linux_Python38'
+    condition: ne(variables['Skip.Test'], 'true')
+    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+       - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+    - template: ../steps/build-test-python38.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        OSName: 'Linux'
+        CoverageArg: ''
+        PythonVersion: '3.8'
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ToxTestEnv: 'whl,sdist'
+        BeforeTestSteps: 
+          - task: DownloadPipelineArtifact@0
+            inputs:
+              artifactName: 'artifacts' 
+              targetPath: $(Build.ArtifactStagingDirectory)
+
+  - job: 'RunMyPy'
+    condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'], 'true'))
+    displayName: 'Run MyPy'
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+    - template: ../steps/run_mypy.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+
+  - job: 'RunPyLint'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'], 'true'))
+    displayName: 'Run Pylint'
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+    - template: ../steps/run_pylint.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}

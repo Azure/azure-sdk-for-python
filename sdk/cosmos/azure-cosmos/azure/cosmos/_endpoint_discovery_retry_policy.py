@@ -61,7 +61,7 @@ class EndpointDiscoveryRetryPolicy(object):
     def ShouldRetry(self, exception):  # pylint: disable=unused-argument
         """Returns true if should retry based on the passed-in exception.
 
-        :param (errors.CosmosHttpResponseError instance) exception:
+        :param (exceptions.CosmosHttpResponseError instance) exception:
 
         :rtype:
             boolean

@@ -2,14 +2,22 @@
 # Release History
 
 -------------------
+## 1.1.0b1 Unreleased
 
-## 2019-XX-XX Version 1.0.0
+### Features
+
+- New RequestIdPolicy   #8437
+
+## Version 1.0.1
+
+## 2019-10-29 Version 1.0.0
 
 ### Features
 
 - Tracing: DistributedTracingPolicy now accepts kwargs network_span_namer to change network span name  #7773
 - Tracing: Implementation of AbstractSpan can now use the mixin HttpSpanMixin to get HTTP span update automatically  #7773
 - Tracing: AbstractSpan contract "change_context" introduced  #7773
+- Introduce new policy HttpLoggingPolicy  #7988
 
 ### Bug fixes
 

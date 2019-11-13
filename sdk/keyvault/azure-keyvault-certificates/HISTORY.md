@@ -1,11 +1,42 @@
 # Release History
 
-## 4.0.0b5
-### Breaking changes
-- Removed redundant method `get_pending_certificate_signing_request()`. A pending CSR can be retrieved via `get_certificate_operation()`.
+### 4.0.0b6
+- Renamed `AdministratorDetails` to `AdministratorContact`
+- Added `WellKnownIssuerNames` enum class that holds popular issuer names
+- Renamed all `name` parameters to include the name of the object whose name we are referring to.
+For example, the `name` parameter of `get_certificate` is now `certificate_name`
 
-## 4.0.0b4 (2019-10-08)
-### Breaking changes
+### 4.0.0b5
+- Removed redundant method `get_pending_certificate_signing_request()`. A pending CSR can be retrieved via `get_certificate_operation()`.
+- Renamed the sync method `create_certificate` to `begin_create_certificate`
+- Renamed `restore_certificate` to `restore_certificate_backup`
+- Renamed `get_certificate` to `get_certificate_version`
+- Renamed `get_certificate_with_policy` to `get_certificate`
+- Renamed `list_certificates` to `list_properties_of_certificates`
+- Renamed `list_properties_of_issuers` to `list_properties_of_issuers`
+- Renamed `list_certificate_versions` to `list_properties_of_certificate_versions`
+- `create_certificate` now has policy as a required parameter
+- All optional positional parameters besides `version` have been moved to kwargs
+- Renamed sync method `delete_certificate` to `begin_delete_certificate`
+- Renamed sync method `recover_certificate` to `begin_recover_deleted_certificate`
+- Renamed async method `recover_certificate` to `recover_deleted_certificate`
+- The sync method `begin_delete_certificate` and async `delete_certificate` now return pollers that return a `DeletedCertificate`
+- The sync method `begin_recover_deleted_certificate` and async `recover_deleted_certificate` now return pollers that return a `KeyVaultCertificate`
+
+- Renamed enum `ActionType` to `CertificatePolicyAction`
+- Renamed `Certificate` to `KeyVaultCertificate`
+- Renamed `Contact` to `CertificateContact`
+- Renamed `Issuer` to `CertificateIssuer`
+- Renamed `CertificateError` to `CertificateOperationError`
+- Renamed `expires` property of `CertificateProperties` and `CertificatePolicy` to `expires_on`
+- Renamed `created` property of `CertificateProperties`, `CertificatePolicy`, and `CertificateIssuer` to `created_on`
+- Renamed `updated` property of `CertificateProperties`, `CertificatePolicy`, and `CertificateIssuer` to `updated_on`
+- The `vault_endpoint` parameter of `CertificateClient` has been renamed to `vault_url`
+- The property `vault_endpoint` has been renamed to `vault_url` in all models
+- `CertificatePolicy` now has a public class method `get_default` allowing users to get the default `CertificatePolicy`
+- Logging can now be enabled properly on the client level
+
+### 4.0.0b4 (2019-10-08)
 - Enums `JsonWebKeyCurveName` and `JsonWebKeyType` have been renamed to `KeyCurveName` and `KeyType`, respectively.
 - Both async and sync versions of `create_certificate` now return pollers that return the created `Certificate` if creation is successful,
 and a `CertificateOperation` if not.
@@ -18,8 +49,7 @@ for details.
 - The `vault_url` parameter of `CertificateClient` has been renamed to `vault_endpoint`
 - The property `vault_url` has been renamed to `vault_endpoint` in all models
 
-
-## 4.0.0b3 (2019-09-11)
+### 4.0.0b3 (2019-09-11)
 Version 4.0.0b3 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Key Vault's certificates.
 
  This library is not a direct replacement for `azure-keyvault`. Applications

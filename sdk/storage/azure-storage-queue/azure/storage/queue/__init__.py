@@ -4,10 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from .version import VERSION
-from .queue_client import QueueClient
-from .queue_service_client import QueueServiceClient
-from ._shared.policies import ExponentialRetry, LinearRetry, NoRetry
+from ._version import VERSION
+from ._queue_client import QueueClient
+from ._queue_service_client import QueueServiceClient
+from ._shared_access_signature import generate_account_sas, generate_queue_sas
+from ._shared.policies import ExponentialRetry, LinearRetry
 from ._shared.models import(
     LocationMode,
     ResourceTypes,
@@ -19,22 +20,16 @@ from ._message_encoding import (
     TextBase64DecodePolicy,
     BinaryBase64EncodePolicy,
     BinaryBase64DecodePolicy,
-    TextXMLEncodePolicy,
-    TextXMLDecodePolicy,
-    NoEncodePolicy,
-    NoDecodePolicy
 )
-from .models import (
+from ._models import (
     QueueMessage,
     QueueProperties,
-    QueuePropertiesPaged,
     QueueSasPermissions,
     AccessPolicy,
-    Logging,
+    QueueAnalyticsLogging,
     Metrics,
     CorsRule,
     RetentionPolicy,
-    MessagesPaged,
 )
 
 __version__ = VERSION
@@ -44,27 +39,22 @@ __all__ = [
     'QueueServiceClient',
     'ExponentialRetry',
     'LinearRetry',
-    'NoRetry',
     'LocationMode',
     'ResourceTypes',
     'AccountSasPermissions',
     'StorageErrorCode',
     'QueueMessage',
     'QueueProperties',
-    'QueuePropertiesPaged',
     'QueueSasPermissions',
     'AccessPolicy',
     'TextBase64EncodePolicy',
     'TextBase64DecodePolicy',
     'BinaryBase64EncodePolicy',
     'BinaryBase64DecodePolicy',
-    'TextXMLEncodePolicy',
-    'TextXMLDecodePolicy',
-    'NoEncodePolicy',
-    'NoDecodePolicy',
-    'Logging',
+    'QueueAnalyticsLogging',
     'Metrics',
     'CorsRule',
     'RetentionPolicy',
-    'MessagesPaged',
+    'generate_account_sas',
+    'generate_queue_sas'
 ]

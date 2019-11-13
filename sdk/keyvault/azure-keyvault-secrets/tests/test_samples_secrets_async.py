@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # -------------------------------------
+import hashlib
+import os
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
 
@@ -14,7 +16,7 @@ def print(*args):
 
 
 def test_create_secret_client():
-    vault_endpoint = "vault_endpoint"
+    vault_url = "vault_url"
     # pylint:disable=unused-variable
     # [START create_secret_client]
 
@@ -23,13 +25,17 @@ def test_create_secret_client():
 
     # Create a SecretClient using default Azure credentials
     credentials = DefaultAzureCredential()
-    secret_client = SecretClient(vault_endpoint, credentials)
+    secret_client = SecretClient(vault_url, credentials)
 
     # [END create_secret_client]
 
 
 class TestExamplesKeyVault(AsyncKeyVaultTestCase):
-    @ResourceGroupPreparer()
+
+    # incorporate md5 hashing of run identifier into resource group name for uniqueness
+    name_prefix = "kv-test-" + hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-3:]
+
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_secret_crud_operations(self, vault_client, **kwargs):
@@ -38,15 +44,15 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START set_secret]
         from dateutil import parser as date_parse
 
-        expires = date_parse.parse("2050-02-02T08:00:00.000Z")
+        expires_on = date_parse.parse("2050-02-02T08:00:00.000Z")
 
         # create a secret, setting optional arguments
-        secret = await secret_client.set_secret("secret-name", "secret-value", enabled=True, expires=expires)
+        secret = await secret_client.set_secret("secret-name", "secret-value", enabled=True, expires_on=expires_on)
 
         print(secret.id)
         print(secret.name)
         print(secret.properties.enabled)
-        print(secret.properties.expires)
+        print(secret.properties.expires_on)
 
         # [END set_secret]
 
@@ -62,7 +68,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(secret.id)
         print(secret.name)
         print(secret.properties.version)
-        print(secret.properties.vault_endpoint)
+        print(secret.properties.vault_url)
 
         # [END get_secret]
         # [START update_secret]
@@ -75,7 +81,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
 
         print(updated_secret_properties.version)
-        print(updated_secret_properties.updated)
+        print(updated_secret_properties.updated_on)
         print(updated_secret_properties.content_type)
         print(updated_secret_properties.tags)
 
@@ -95,7 +101,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END delete_secret]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_secret_list_operations(self, vault_client, **kwargs):
@@ -107,7 +113,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START list_secrets]
 
         # gets a list of secrets in the vault
-        secrets = secret_client.list_secrets()
+        secrets = secret_client.list_properties_of_secrets()
 
         async for secret in secrets:
             # the list doesn't include values or versions of the secrets
@@ -116,18 +122,18 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(secret.enabled)
 
         # [END list_secrets]
-        # [START list_secret_versions]
+        # [START list_properties_of_secret_versions]
 
         # gets a list of all versions of a secret
-        secret_versions = secret_client.list_secret_versions("secret-name")
+        secret_versions = secret_client.list_properties_of_secret_versions("secret-name")
 
         async for secret in secret_versions:
             # the list doesn't include the versions' values
             print(secret.id)
             print(secret.enabled)
-            print(secret.updated)
+            print(secret.updated_on)
 
-        # [END list_secret_versions]
+        # [END list_properties_of_secret_versions]
         # [START list_deleted_secrets]
 
         # gets a list of deleted secrets (requires soft-delete enabled for the vault)
@@ -143,7 +149,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END list_deleted_secrets]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_secrets_backup_restore(self, vault_client, **kwargs):
@@ -160,31 +166,26 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END backup_secret]
 
-        await secret_client.delete_secret(created_secret.name)
-        await self._poll_until_exception(
-            secret_client.get_secret, created_secret.name, expected_exception=ResourceNotFoundError
-        )
+        polling_interval = 0 if self.is_playback() else 2
+        await secret_client.delete_secret(created_secret.name, _polling_interval=polling_interval)
 
-        # [START restore_secret]
+        # [START restore_secret_backup]
 
         # restores a backed up secret
-        restored_secret = await secret_client.restore_secret(secret_backup)
+        restored_secret = await secret_client.restore_secret_backup(secret_backup)
         print(restored_secret.id)
         print(restored_secret.version)
 
-        # [END restore_secret]
+        # [END restore_secret_backup]
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_secrets_recover(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
         created_secret = await secret_client.set_secret("secret-name", "secret-value")
-        await secret_client.delete_secret(created_secret.name)
-
-        await self._poll_until_no_exception(
-            secret_client.get_deleted_secret, created_secret.name, expected_exception=ResourceNotFoundError
-        )
+        polling_interval = 0 if self.is_playback() else 2
+        await secret_client.delete_secret(created_secret.name, _polling_interval=polling_interval)
 
         # [START get_deleted_secret]
         # gets a deleted secret (requires soft-delete enabled for the vault)

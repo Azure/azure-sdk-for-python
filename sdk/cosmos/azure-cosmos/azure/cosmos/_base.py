@@ -32,6 +32,8 @@ from typing import Dict, Any
 import six
 from six.moves.urllib.parse import quote as urllib_quote
 
+from azure.core import MatchConditions
+
 from . import auth
 from . import documents
 from . import partition_key
@@ -63,8 +65,37 @@ _COMMON_OPTIONS = {
     'continuation': 'continuation',
     'is_start_from_beginning': 'isStartFromBeginning',
     'populate_partition_key_range_statistics': 'populatePartitionKeyRangeStatistics',
-    'populate_quota_info': 'populateQuotaInfo'
+    'populate_quota_info': 'populateQuotaInfo',
+    'content_type': 'contentType',
+    'is_query_plan_request': 'isQueryPlanRequest',
+    'supported_query_features': 'supportedQueryFeatures',
+    'query_version': 'queryVersion'
 }
+
+def _get_match_headers(kwargs):
+    # type: (Dict[str, Any]) -> Tuple(Optional[str], Optional[str])
+    if_match = kwargs.pop('if_match', None)
+    if_none_match = kwargs.pop('if_none_match', None)
+    match_condition = kwargs.pop('match_condition', None)
+    if match_condition == MatchConditions.IfNotModified:
+        if_match = kwargs.pop('etag', None)
+        if not if_match:
+            raise ValueError("'match_condition' specified without 'etag'.")
+    elif match_condition == MatchConditions.IfPresent:
+        if_match = '*'
+    elif match_condition == MatchConditions.IfModified:
+        if_none_match = kwargs.pop('etag', None)
+        if not if_none_match:
+            raise ValueError("'match_condition' specified without 'etag'.")
+    elif match_condition == MatchConditions.IfMissing:
+        if_none_match = '*'
+    elif match_condition is None:
+        if 'etag' in kwargs:
+            raise ValueError("'etag' specified without 'match_condition'.")
+    else:
+        raise TypeError("Invalid match condition: {}".format(match_condition))
+    return if_match, if_none_match
+
 
 def build_options(kwargs):
     # type: (Dict[str, Any]) -> Dict[str, Any]
@@ -73,10 +104,11 @@ def build_options(kwargs):
         if key in kwargs:
             options[value] = kwargs.pop(key)
 
-    if 'if_match' in kwargs:
-        options['accessCondition'] = {'type': 'IfMatch', 'condition': kwargs.pop('if_match')}
-    if 'if_none_match' in kwargs:
-        options['accessCondition'] = {'type': 'IfNoneMatch', 'condition': kwargs.pop('if_none_match')}
+    if_match, if_none_match = _get_match_headers(kwargs)
+    if if_match:
+        options['accessCondition'] = {'type': 'IfMatch', 'condition': if_match}
+    if if_none_match:
+        options['accessCondition'] = {'type': 'IfNoneMatch', 'condition': if_none_match}
     return options
 
 
@@ -177,6 +209,18 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if options.get("offerThroughput"):
         headers[http_constants.HttpHeaders.OfferThroughput] = options["offerThroughput"]
+
+    if options.get("contentType"):
+        headers[http_constants.HttpHeaders.ContentType] = options['contentType']
+
+    if options.get("isQueryPlanRequest"):
+        headers[http_constants.HttpHeaders.IsQueryPlanRequest] = options['isQueryPlanRequest']
+
+    if options.get("supportedQueryFeatures"):
+        headers[http_constants.HttpHeaders.SupportedQueryFeatures] = options['supportedQueryFeatures']
+
+    if options.get("queryVersion"):
+        headers[http_constants.HttpHeaders.QueryVersion] = options['queryVersion']
 
     if "partitionKey" in options:
         # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
@@ -290,33 +334,6 @@ def GetResourceIdOrFullNameFromLink(resource_link):
         # /[resourceType]/[resourceId]/ .... /[resourceType]/[resourceId]/.
         return str(path_parts[-2])
     return None
-
-
-def GetAttachmentIdFromMediaId(media_id):
-    """Gets attachment id from media id.
-
-    :param str media_id:
-
-    :return:
-        The attachment id from the media id.
-    :rtype: str
-    """
-    altchars = "+-"
-    if not six.PY2:
-        altchars = altchars.encode("utf-8")
-    # altchars for '+' and '/'. We keep '+' but replace '/' with '-'
-    buffer = base64.b64decode(str(media_id), altchars)
-    resoure_id_length = 20
-    attachment_id = ""
-    if len(buffer) > resoure_id_length:
-        # We are cutting off the storage index.
-        attachment_id = base64.b64encode(buffer[0:resoure_id_length], altchars)
-        if not six.PY2:
-            attachment_id = attachment_id.decode("utf-8")
-    else:
-        attachment_id = media_id
-
-    return attachment_id
 
 
 def GenerateGuidId():

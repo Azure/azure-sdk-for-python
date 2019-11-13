@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class CertificatePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Certificate <azure.mgmt.web.models.Certificate>` object
+    A paging container for iterating over a list of :class:`Certificate <azure.mgmt.web.v2016_03_01.models.Certificate>` object
     """
 
     _attribute_map = {
@@ -27,7 +27,7 @@ class CertificatePaged(Paged):
         super(CertificatePaged, self).__init__(*args, **kwargs)
 class DeletedSitePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`DeletedSite <azure.mgmt.web.models.DeletedSite>` object
+    A paging container for iterating over a list of :class:`DeletedSite <azure.mgmt.web.v2016_03_01.models.DeletedSite>` object
     """
 
     _attribute_map = {
@@ -40,7 +40,7 @@ class DeletedSitePaged(Paged):
         super(DeletedSitePaged, self).__init__(*args, **kwargs)
 class DetectorResponsePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`DetectorResponse <azure.mgmt.web.models.DetectorResponse>` object
+    A paging container for iterating over a list of :class:`DetectorResponse <azure.mgmt.web.v2016_03_01.models.DetectorResponse>` object
     """
 
     _attribute_map = {
@@ -53,7 +53,7 @@ class DetectorResponsePaged(Paged):
         super(DetectorResponsePaged, self).__init__(*args, **kwargs)
 class DiagnosticCategoryPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`DiagnosticCategory <azure.mgmt.web.models.DiagnosticCategory>` object
+    A paging container for iterating over a list of :class:`DiagnosticCategory <azure.mgmt.web.v2016_03_01.models.DiagnosticCategory>` object
     """
 
     _attribute_map = {
@@ -66,7 +66,7 @@ class DiagnosticCategoryPaged(Paged):
         super(DiagnosticCategoryPaged, self).__init__(*args, **kwargs)
 class AnalysisDefinitionPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`AnalysisDefinition <azure.mgmt.web.models.AnalysisDefinition>` object
+    A paging container for iterating over a list of :class:`AnalysisDefinition <azure.mgmt.web.v2016_03_01.models.AnalysisDefinition>` object
     """
 
     _attribute_map = {
@@ -79,7 +79,7 @@ class AnalysisDefinitionPaged(Paged):
         super(AnalysisDefinitionPaged, self).__init__(*args, **kwargs)
 class DetectorDefinitionPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`DetectorDefinition <azure.mgmt.web.models.DetectorDefinition>` object
+    A paging container for iterating over a list of :class:`DetectorDefinition <azure.mgmt.web.v2016_03_01.models.DetectorDefinition>` object
     """
 
     _attribute_map = {
@@ -92,7 +92,7 @@ class DetectorDefinitionPaged(Paged):
         super(DetectorDefinitionPaged, self).__init__(*args, **kwargs)
 class ApplicationStackPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ApplicationStack <azure.mgmt.web.models.ApplicationStack>` object
+    A paging container for iterating over a list of :class:`ApplicationStack <azure.mgmt.web.v2016_03_01.models.ApplicationStack>` object
     """
 
     _attribute_map = {
@@ -105,7 +105,7 @@ class ApplicationStackPaged(Paged):
         super(ApplicationStackPaged, self).__init__(*args, **kwargs)
 class CsmOperationDescriptionPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`CsmOperationDescription <azure.mgmt.web.models.CsmOperationDescription>` object
+    A paging container for iterating over a list of :class:`CsmOperationDescription <azure.mgmt.web.v2016_03_01.models.CsmOperationDescription>` object
     """
 
     _attribute_map = {
@@ -118,7 +118,7 @@ class CsmOperationDescriptionPaged(Paged):
         super(CsmOperationDescriptionPaged, self).__init__(*args, **kwargs)
 class RecommendationPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Recommendation <azure.mgmt.web.models.Recommendation>` object
+    A paging container for iterating over a list of :class:`Recommendation <azure.mgmt.web.v2016_03_01.models.Recommendation>` object
     """
 
     _attribute_map = {
@@ -131,7 +131,7 @@ class RecommendationPaged(Paged):
         super(RecommendationPaged, self).__init__(*args, **kwargs)
 class ResourceHealthMetadataPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ResourceHealthMetadata <azure.mgmt.web.models.ResourceHealthMetadata>` object
+    A paging container for iterating over a list of :class:`ResourceHealthMetadata <azure.mgmt.web.v2016_03_01.models.ResourceHealthMetadata>` object
     """
 
     _attribute_map = {
@@ -144,7 +144,7 @@ class ResourceHealthMetadataPaged(Paged):
         super(ResourceHealthMetadataPaged, self).__init__(*args, **kwargs)
 class SourceControlPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`SourceControl <azure.mgmt.web.models.SourceControl>` object
+    A paging container for iterating over a list of :class:`SourceControl <azure.mgmt.web.v2016_03_01.models.SourceControl>` object
     """
 
     _attribute_map = {
@@ -157,7 +157,7 @@ class SourceControlPaged(Paged):
         super(SourceControlPaged, self).__init__(*args, **kwargs)
 class GeoRegionPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`GeoRegion <azure.mgmt.web.models.GeoRegion>` object
+    A paging container for iterating over a list of :class:`GeoRegion <azure.mgmt.web.v2016_03_01.models.GeoRegion>` object
     """
 
     _attribute_map = {
@@ -170,7 +170,7 @@ class GeoRegionPaged(Paged):
         super(GeoRegionPaged, self).__init__(*args, **kwargs)
 class IdentifierPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Identifier <azure.mgmt.web.models.Identifier>` object
+    A paging container for iterating over a list of :class:`Identifier <azure.mgmt.web.v2016_03_01.models.Identifier>` object
     """
 
     _attribute_map = {
@@ -183,7 +183,7 @@ class IdentifierPaged(Paged):
         super(IdentifierPaged, self).__init__(*args, **kwargs)
 class PremierAddOnOfferPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`PremierAddOnOffer <azure.mgmt.web.models.PremierAddOnOffer>` object
+    A paging container for iterating over a list of :class:`PremierAddOnOffer <azure.mgmt.web.v2016_03_01.models.PremierAddOnOffer>` object
     """
 
     _attribute_map = {
@@ -196,7 +196,7 @@ class PremierAddOnOfferPaged(Paged):
         super(PremierAddOnOfferPaged, self).__init__(*args, **kwargs)
 class BillingMeterPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`BillingMeter <azure.mgmt.web.models.BillingMeter>` object
+    A paging container for iterating over a list of :class:`BillingMeter <azure.mgmt.web.v2016_03_01.models.BillingMeter>` object
     """
 
     _attribute_map = {

@@ -13,8 +13,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-resource/6.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 22 Sep 2019 15:40:10 GMT
+      - Tue, 05 Nov 2019 08:11:05 GMT
       expires:
       - '-1'
       pragma:
@@ -50,15 +50,15 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;239,Microsoft.Compute/PutVM30Min;1191
+      - Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1196
       x-ms-ratelimit-remaining-subscription-writes:
       - '1198'
     status:
       code: 200
       message: OK
 - request:
-    body: 'b''b\''b\\\''b\\\\\\\''{"properties": {"targetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a",
-      "notes": "Testing links"}}\\\\\\\''\\\''\'''''
+    body: '{"properties": {"targetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_links_test_links7650e8a/providers/Microsoft.Compute/availabilitySets/pytestavset7650e8a",
+      "notes": "Testing links"}}'
     headers:
       Accept:
       - application/json
@@ -71,8 +71,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-resource/6.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -89,7 +89,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 22 Sep 2019 15:40:10 GMT
+      - Tue, 05 Nov 2019 08:11:06 GMT
       expires:
       - '-1'
       pragma:
@@ -99,7 +99,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1197'
     status:
       code: 201
       message: Created
@@ -113,8 +113,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-resource/6.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -131,7 +131,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 22 Sep 2019 15:40:20 GMT
+      - Tue, 05 Nov 2019 08:11:16 GMT
       expires:
       - '-1'
       pragma:
@@ -157,8 +157,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-resource/6.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -175,7 +175,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 22 Sep 2019 15:40:20 GMT
+      - Tue, 05 Nov 2019 08:11:16 GMT
       expires:
       - '-1'
       pragma:
@@ -201,8 +201,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-resource/6.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -219,7 +219,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 22 Sep 2019 15:40:20 GMT
+      - Tue, 05 Nov 2019 08:11:16 GMT
       expires:
       - '-1'
       pragma:
@@ -245,8 +245,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-resource/6.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -263,7 +263,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 22 Sep 2019 15:40:20 GMT
+      - Tue, 05 Nov 2019 08:11:16 GMT
       expires:
       - '-1'
       pragma:
@@ -291,8 +291,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-resource/6.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -306,7 +306,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sun, 22 Sep 2019 15:40:20 GMT
+      - Tue, 05 Nov 2019 08:11:17 GMT
       expires:
       - '-1'
       pragma:
@@ -316,7 +316,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14997'
     status:
       code: 200
       message: OK

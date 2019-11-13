@@ -81,6 +81,56 @@ class AccountSasParameters(Model):
         self.key_to_sign = kwargs.get('key_to_sign', None)
 
 
+class ActiveDirectoryProperties(Model):
+    """Settings properties for Active Directory (AD).
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param domain_name: Required. Specifies the primary domain that the AD DNS
+     server is authoritative for.
+    :type domain_name: str
+    :param net_bios_domain_name: Required. Specifies the NetBIOS domain name.
+    :type net_bios_domain_name: str
+    :param forest_name: Required. Specifies the Active Directory forest to
+     get.
+    :type forest_name: str
+    :param domain_guid: Required. Specifies the domain GUID.
+    :type domain_guid: str
+    :param domain_sid: Required. Specifies the security identifier (SID).
+    :type domain_sid: str
+    :param azure_storage_sid: Required. Specifies the security identifier
+     (SID) for Azure Storage.
+    :type azure_storage_sid: str
+    """
+
+    _validation = {
+        'domain_name': {'required': True},
+        'net_bios_domain_name': {'required': True},
+        'forest_name': {'required': True},
+        'domain_guid': {'required': True},
+        'domain_sid': {'required': True},
+        'azure_storage_sid': {'required': True},
+    }
+
+    _attribute_map = {
+        'domain_name': {'key': 'domainName', 'type': 'str'},
+        'net_bios_domain_name': {'key': 'netBiosDomainName', 'type': 'str'},
+        'forest_name': {'key': 'forestName', 'type': 'str'},
+        'domain_guid': {'key': 'domainGuid', 'type': 'str'},
+        'domain_sid': {'key': 'domainSid', 'type': 'str'},
+        'azure_storage_sid': {'key': 'azureStorageSid', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ActiveDirectoryProperties, self).__init__(**kwargs)
+        self.domain_name = kwargs.get('domain_name', None)
+        self.net_bios_domain_name = kwargs.get('net_bios_domain_name', None)
+        self.forest_name = kwargs.get('forest_name', None)
+        self.domain_guid = kwargs.get('domain_guid', None)
+        self.domain_sid = kwargs.get('domain_sid', None)
+        self.azure_storage_sid = kwargs.get('azure_storage_sid', None)
+
+
 class Resource(Model):
     """Resource.
 
@@ -160,9 +210,12 @@ class AzureFilesIdentityBasedAuthentication(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param directory_service_options: Required. Indicates the directory
-     service used. Possible values include: 'None', 'AADDS'
+     service used. Possible values include: 'None', 'AADDS', 'AD'
     :type directory_service_options: str or
      ~azure.mgmt.storage.v2019_04_01.models.DirectoryServiceOptions
+    :param active_directory_properties: Required if choose AD.
+    :type active_directory_properties:
+     ~azure.mgmt.storage.v2019_04_01.models.ActiveDirectoryProperties
     """
 
     _validation = {
@@ -171,11 +224,13 @@ class AzureFilesIdentityBasedAuthentication(Model):
 
     _attribute_map = {
         'directory_service_options': {'key': 'directoryServiceOptions', 'type': 'str'},
+        'active_directory_properties': {'key': 'activeDirectoryProperties', 'type': 'ActiveDirectoryProperties'},
     }
 
     def __init__(self, **kwargs):
         super(AzureFilesIdentityBasedAuthentication, self).__init__(**kwargs)
         self.directory_service_options = kwargs.get('directory_service_options', None)
+        self.active_directory_properties = kwargs.get('active_directory_properties', None)
 
 
 class BlobContainer(AzureEntityResource):
@@ -2610,7 +2665,7 @@ class StorageAccountRegenerateKeyParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param key_name: Required. The name of storage keys that want to be
-     regenerated, possible values are key1, key2.
+     regenerated, possible values are key1, key2, kerb1, kerb2.
     :type key_name: str
     """
 

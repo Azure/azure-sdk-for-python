@@ -28,28 +28,24 @@ class SharedTokenCacheCredential(SyncSharedTokenCacheCredential):
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """Get an access token for `scopes` from the shared cache.
 
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
         If no access token is cached, attempt to acquire one using a cached refresh token.
 
         :param str scopes: desired scopes for the token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises:
-            :class:`azure.core.exceptions.ClientAuthenticationError` when the cache is unavailable or no access token
+        :raises ~azure.core.exceptions.ClientAuthenticationError: when the cache is unavailable or no access token
             can be acquired from it
 
-        Keyword arguments
-            - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-              the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
-              defines authorities for other clouds.
+        :keyword str authority: Authority of an Azure Active Directory endpoint, for example
+              'login.microsoftonline.com', the authority for Azure Public Cloud (which is the default).
+              :class:`~azure.identity.KnownAuthorities` defines authorities for other clouds.
         """
 
         if not self._client:
             raise ClientAuthenticationError(message="Shared token cache unavailable")
 
-        token = await self._client.obtain_token_by_refresh_token(scopes, self._username)
-        if not token:
-            raise ClientAuthenticationError(message="No cached token found for '{}'".format(self._username))
-
-        return token
+        return await self._client.obtain_token_by_refresh_token(scopes, self._username)
 
     @staticmethod
     def _get_auth_client(cache: "msal_extensions.FileTokenCache") -> "AuthnClientBase":

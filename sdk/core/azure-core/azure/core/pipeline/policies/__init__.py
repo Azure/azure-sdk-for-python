@@ -24,18 +24,20 @@
 #
 # --------------------------------------------------------------------------
 
-from .base import HTTPPolicy, SansIOHTTPPolicy, RequestHistory
-from .authentication import BearerTokenCredentialPolicy
-from .custom_hook import CustomHookPolicy
-from .redirect import RedirectPolicy
-from .retry import RetryPolicy
-from .distributed_tracing import DistributedTracingPolicy
-from .universal import (
+from ._base import HTTPPolicy, SansIOHTTPPolicy, RequestHistory
+from ._authentication import BearerTokenCredentialPolicy
+from ._custom_hook import CustomHookPolicy
+from ._redirect import RedirectPolicy
+from ._retry import RetryPolicy
+from ._distributed_tracing import DistributedTracingPolicy
+from ._universal import (
     HeadersPolicy,
     UserAgentPolicy,
     NetworkTraceLoggingPolicy,
     ContentDecodePolicy,
-    ProxyPolicy
+    ProxyPolicy,
+    HttpLoggingPolicy,
+    RequestIdPolicy,
 )
 
 __all__ = [
@@ -52,15 +54,17 @@ __all__ = [
     'CustomHookPolicy',
     'DistributedTracingPolicy',
     'RequestHistory',
+    'HttpLoggingPolicy',
+    'RequestIdPolicy',
 ]
 
 #pylint: disable=unused-import
 
 try:
-    from .base_async import AsyncHTTPPolicy
-    from .authentication_async import AsyncBearerTokenCredentialPolicy
-    from .redirect_async import AsyncRedirectPolicy
-    from .retry_async import AsyncRetryPolicy
+    from ._base_async import AsyncHTTPPolicy
+    from ._authentication_async import AsyncBearerTokenCredentialPolicy
+    from ._redirect_async import AsyncRedirectPolicy
+    from ._retry_async import AsyncRetryPolicy
     __all__.extend([
         'AsyncHTTPPolicy',
         'AsyncBearerTokenCredentialPolicy',

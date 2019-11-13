@@ -19,57 +19,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""PyCosmos Exceptions in the Azure Cosmos database service.
+"""PyCosmos Exceptions in the Azure Cosmos database service. (Deprecated module)
 """
-from azure.core.exceptions import (  # type: ignore  # pylint: disable=unused-import
-    AzureError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError
+import warnings
+
+from .exceptions import * # pylint: disable=wildcard-import, unused-wildcard-import
+
+warnings.warn(
+    "azure.cosmos.errors module is deprecated, use azure.cosmos.exceptions instead",
+    DeprecationWarning
 )
-from . import http_constants
-
-
-class CosmosHttpResponseError(HttpResponseError):
-    """Raised when a HTTP request to the Azure Cosmos has failed."""
-
-    def __init__(self, status_code=None, message=None, response=None, **kwargs):
-        """
-        :param int status_code: HTTP response code.
-        :param str message: Error message.
-        """
-        self.headers = response.headers if response else {}
-        self.sub_status = None
-        self.http_error_message = message
-        status = status_code or (int(response.status_code) if response else 0)
-
-        if http_constants.HttpHeaders.SubStatus in self.headers:
-            self.sub_status = int(self.headers[http_constants.HttpHeaders.SubStatus])
-            formatted_message = "Status code: %d Sub-status: %d\n%s" % (status, self.sub_status, str(message))
-        else:
-            formatted_message = "Status code: %d\n%s" % (status, str(message))
-
-        super(CosmosHttpResponseError, self).__init__(message=formatted_message, response=response, **kwargs)
-        self.status_code = status
-
-
-class CosmosResourceNotFoundError(ResourceNotFoundError, CosmosHttpResponseError):
-    """An error response with status code 404."""
-
-
-class CosmosResourceExistsError(ResourceExistsError, CosmosHttpResponseError):
-    """An error response with status code 409."""
-
-
-class CosmosAccessConditionFailedError(CosmosHttpResponseError):
-    """An error response with status code 412."""
-
-
-class CosmosClientTimeoutError(AzureError):
-    """An operation failed to complete within the specified timeout."""
-
-    def __init__(self, **kwargs):
-        message = "Client operation failed to complete within specified timeout."
-        self.response = None
-        self.history = None
-        super(CosmosClientTimeoutError, self).__init__(message, **kwargs)

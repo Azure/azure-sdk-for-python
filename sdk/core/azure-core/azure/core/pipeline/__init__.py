@@ -144,12 +144,12 @@ class PipelineResponse(Generic[HTTPRequestType, HTTPResponseType]):
         self.context = context
 
 
-from .base import Pipeline  # pylint: disable=wrong-import-position
+from ._base import Pipeline  # pylint: disable=wrong-import-position
 
 __all__ = ["Pipeline", "PipelineRequest", "PipelineResponse", "PipelineContext"]
 
 try:
-    from .base_async import AsyncPipeline  # pylint: disable=unused-import
+    from ._base_async import AsyncPipeline  # pylint: disable=unused-import
 
     __all__.append("AsyncPipeline")
 except (SyntaxError, ImportError):

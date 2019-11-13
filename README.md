@@ -17,30 +17,30 @@ The client libraries are supported on Python 2.7 and 3.5.3 or later.
 
 ## Packages available
 Each service might have a number of libraries available from each of the following categories:
-* [Client - July 2019 Preview](#Client-July-2019-Preview)
-* [Client - Stable](#Client-Stable)
+* [Client - November 2019 Releases](#Client-November-2019-Releases)
+* [Client - Previous Versions](#Client-Previous-Versions)
 * [Management](#Management)
 
 
-### Client: July 2019 Preview
-New wave of packages that we are currently releasing in **Preview**. These libraries allow you to use and consume existing resources and interact with them, for example: upload a blob. These libraries share a number of core functionalities such as: retries, logging, transport protocols, authentication protocols, etc. that can be found in the [azure-core](./sdk/core/azure-core) library. You can learn more about these libraries by reading guidelines that they follow [here](https://azuresdkspecs.z5.web.core.windows.net/PythonSpec.html).
+### Client: November 2019 Releases
+New wave of packages that we are announcing as **GA** and several that are currently releasing in **preview**. These libraries allow you to use and consume existing resources and interact with them, for example: upload a blob. These libraries share a number of core functionalities such as: retries, logging, transport protocols, authentication protocols, etc. that can be found in the [azure-core](./sdk/core/azure-core) library. You can learn more about these libraries by reading guidelines that they follow [here](https://azure.github.io/azure-sdk/python_introduction.html).
 
-The libraries released in July preview:
-
-- [azure-cosmos](./sdk/cosmos/azure-cosmos)
-- [azure-eventhubs](./sdk/eventhub/azure-eventhubs)
+The libraries released in the November 2019 GA release:
 - [azure-keyvault-keys](./sdk/keyvault/azure-keyvault-keys)
 - [azure-keyvault-secrets](./sdk/keyvault/azure-keyvault-secrets)
 - [azure-identity](./sdk/identity/azure-identity)
 - [azure-storage-blob](./sdk/storage/azure-storage-blob)
-- [azure-storage-file](./sdk/storage/azure-storage-file)
 - [azure-storage-queue](./sdk/storage/azure-storage-queue)
 
->NOTE: If you need to ensure your code is ready for production use one of the stable libraries.
+The libraries released in the November 2019 preview:
+- [azure-cosmos](./sdk/cosmos/azure-cosmos)
+- [azure-eventhubs](./sdk/eventhub/azure-eventhubs)
+- [azure-storage-file-share](./sdk/storage/azure-storage-file-share)
 
+> NOTE: If you need to ensure your code is ready for production use one of the stable, non-preview libraries.
 
-### Client: Stable
-Last stable versions of packages that have been provided for usage with Azure and are production-ready. These libraries provide you with similar functionalities to the Preview ones as they allow you to use and consume existing resources and interact with them, for example: upload a blob.
+### Client: Previous Versions
+Last stable versions of packages that have been provided for usage with Azure and are production-ready. These libraries provide you with similar functionalities to the Preview ones as they allow you to use and consume existing resources and interact with them, for example: upload a blob. They might not implement the [guidelines](https://azure.github.io/azure-sdk/python_introduction.html) or have the same feature set as the Novemeber releases. They do however offer wider coverage of services. 
 
 ### Management
 Libraries which enable you to provision specific resources. They are responsible for directly mirroring and consuming Azure service's REST endpoints. The management libraries use the `azure-mgmt-<service name>` convention for their package names.

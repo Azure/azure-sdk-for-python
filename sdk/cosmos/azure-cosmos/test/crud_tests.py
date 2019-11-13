@@ -41,11 +41,12 @@ else:
     import urllib.parse as urllib
 import uuid
 import pytest
+from azure.core import MatchConditions
 from azure.core.exceptions import AzureError, ServiceResponseError
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 from azure.cosmos import _consistent_hash_ring
 import azure.cosmos.documents as documents
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import azure.cosmos._murmur_hash as _murmur_hash
 import test_config
@@ -110,7 +111,7 @@ class CRUDTests(unittest.TestCase):
         try:
             func(*args, **kwargs)
             self.assertFalse(True, 'function should fail.')
-        except errors.CosmosHttpResponseError as inst:
+        except exceptions.CosmosHttpResponseError as inst:
             self.assertEqual(inst.status_code, status_code)
 
     @classmethod
@@ -857,9 +858,40 @@ class CRUDTests(unittest.TestCase):
             if_match=old_etag,
         )
 
+        # should fail if only etag specified
+        with self.assertRaises(ValueError):
+            created_collection.replace_item(
+                etag=replaced_document['_etag'],
+                item=replaced_document['id'],
+                body=replaced_document
+            )
+
+        # should fail if only match condition specified
+        with self.assertRaises(ValueError):
+            created_collection.replace_item(
+                match_condition=MatchConditions.IfNotModified,
+                item=replaced_document['id'],
+                body=replaced_document
+            )
+        with self.assertRaises(ValueError):
+            created_collection.replace_item(
+                match_condition=MatchConditions.IfModified,
+                item=replaced_document['id'],
+                body=replaced_document
+            )
+
+        # should fail if invalid match condition specified
+        with self.assertRaises(TypeError):
+            created_collection.replace_item(
+                match_condition=replaced_document['_etag'],
+                item=replaced_document['id'],
+                body=replaced_document
+            )
+
         # should pass for most recent etag
         replaced_document_conditional = created_collection.replace_item(
-                access_condition={'type': 'IfMatch', 'condition': replaced_document['_etag']},
+                match_condition=MatchConditions.IfNotModified,
+                etag=replaced_document['_etag'],
                 item=replaced_document['id'],
                 body=replaced_document
             )
@@ -1908,78 +1940,17 @@ class CRUDTests(unittest.TestCase):
         )
         created_properties = created_container.read()
         read_indexing_policy = created_properties['indexingPolicy']
-        self.assertListEqual(indexing_policy['spatialIndexes'], read_indexing_policy['spatialIndexes'])
+
+        if 'localhost' in self.host or '127.0.0.1' in self.host:  # TODO: Differing result between live and emulator
+            self.assertListEqual(indexing_policy['spatialIndexes'], read_indexing_policy['spatialIndexes'])
+        else:
+            # All types are returned for spatial Indexes
+            indexing_policy['spatialIndexes'][0]['types'].append('MultiPolygon')
+            indexing_policy['spatialIndexes'][1]['types'].insert(0, 'Point')
+            self.assertListEqual(indexing_policy['spatialIndexes'], read_indexing_policy['spatialIndexes'])
+
         self.assertListEqual(indexing_policy['compositeIndexes'], read_indexing_policy['compositeIndexes'])
         db.delete_container(container=created_container)
-
-    def disabled_test_create_indexing_policy_with_composite_and_spatial_indexes_self_link(self):
-        self._test_create_indexing_policy_with_composite_and_spatial_indexes(False)
-
-    def disabled_test_create_indexing_policy_with_composite_and_spatial_indexes_name_based(self):
-        self._test_create_indexing_policy_with_composite_and_spatial_indexes(True)
-
-    def _test_create_indexing_policy_with_composite_and_spatial_indexes(self, is_name_based):
-        # create database
-        db = self.databaseForTest
-
-        indexing_policy = {
-            "spatialIndexes": [
-                {
-                    "path": "/path0/*",
-                    "types": [
-                        "Point",
-                        "LineString",
-                        "Polygon"
-                    ]
-                },
-                {
-                    "path": "/path1/*",
-                    "types": [
-                        "LineString",
-                        "Polygon",
-                        "MultiPolygon"
-                    ]
-                }
-            ],
-            "compositeIndexes": [
-                [
-                    {
-                        "path": "/path1",
-                        "order": "ascending"
-                    },
-                    {
-                        "path": "/path2",
-                        "order": "descending"
-                    },
-                    {
-                        "path": "/path3",
-                        "order": "ascending"
-                    }
-                ],
-                [
-                    {
-                        "path": "/path4",
-                        "order": "ascending"
-                    },
-                    {
-                        "path": "/path5",
-                        "order": "descending"
-                    },
-                    {
-                        "path": "/path6",
-                        "order": "ascending"
-                    }
-                ]
-            ]
-        }
-
-        container_id = 'composite_index_spatial_index' + str(uuid.uuid4())
-        container_definition = {'id': container_id, 'indexingPolicy': indexing_policy}
-        created_container = self.client.CreateContainer(self.GetDatabaseLink(db, is_name_based), container_definition)
-        read_indexing_policy = created_container['indexingPolicy']
-        self.assertListEqual(indexing_policy['spatialIndexes'], read_indexing_policy['spatialIndexes'])
-        self.assertListEqual(indexing_policy['compositeIndexes'], read_indexing_policy['compositeIndexes'])
-        self.client.DeleteContainer(created_container['_self'])
 
     def _check_default_indexing_policy_paths(self, indexing_policy):
         def __get_first(array):
@@ -2066,7 +2037,7 @@ class CRUDTests(unittest.TestCase):
             return end_time - start_time
 
     def test_absolute_client_timeout(self):
-        with self.assertRaises(errors.CosmosClientTimeoutError):
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
             cosmos_client.CosmosClient(
                 "https://localhost:9999",
                 CRUDTests.masterKey,
@@ -2079,31 +2050,30 @@ class CRUDTests(unittest.TestCase):
         client = cosmos_client.CosmosClient(
             self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
 
-        with self.assertRaises(errors.CosmosClientTimeoutError):
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
             client.create_database_if_not_exists("test", timeout=2)
 
         status_response = 500  # Users connection level retry
         timeout_transport = TimeoutTransport(status_response)
         client = cosmos_client.CosmosClient(
             self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
-        with self.assertRaises(errors.CosmosClientTimeoutError):
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
             client.create_database("test", timeout=2)
 
         databases = client.list_databases(timeout=2)
-        with self.assertRaises(errors.CosmosClientTimeoutError):
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
             list(databases)
 
         status_response = 429  # Uses Cosmos custom retry
         timeout_transport = TimeoutTransport(status_response)
         client = cosmos_client.CosmosClient(
             self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
-        with self.assertRaises(errors.CosmosClientTimeoutError):
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
             client.create_database_if_not_exists("test", timeout=2)
 
         databases = client.list_databases(timeout=2)
-        with self.assertRaises(errors.CosmosClientTimeoutError):
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
             list(databases)
-
 
     def test_query_iterable_functionality(self):
         def __create_resources(client):

@@ -44,14 +44,14 @@ import sys
 import requests
 import pytest
 
-from azure.core import Configuration
+from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,
     RedirectPolicy
 )
-from azure.core.pipeline.transport.base import PipelineClientBase
+from azure.core.pipeline.transport._base import PipelineClientBase
 from azure.core.pipeline.transport import (
     HttpRequest,
     HttpTransport,

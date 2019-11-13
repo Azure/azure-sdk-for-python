@@ -15,7 +15,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-keys and azure-identity libraries (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -23,11 +23,11 @@ from azure.core.exceptions import HttpResponseError
 #
 # 1. Create a new RSA Key (create_rsa_key)
 #
-# 2. Create a new EC Key (create_rsa_key)
+# 2. Create a new EC Key (create_ec_key)
 #
 # 3. Get an existing key (get_key)
 #
-# 4. Update an existing key (set_key)
+# 4. Update an existing key's properties (update_key_properties)
 #
 # 5. Delete a key (delete_key)
 # ----------------------------------------------------------------------------------------------------------
@@ -36,9 +36,9 @@ async def run_sample():
     # Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-    VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
+    VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
-    client = KeyClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
+    client = KeyClient(vault_url=VAULT_URL, credential=credential)
     try:
         # Let's create an RSA key with size 2048, hsm disabled and optional key_operations of encrypt, decrypt.
         # if the key already exists in the Key Vault, then a new version of the key is created.
@@ -46,16 +46,16 @@ async def run_sample():
         key_size = 2048
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         key_name = "rsaKeyName"
-        rsa_key = await client.create_rsa_key(key_name, size=key_size, hsm=False, key_operations=key_ops)
-        print("RSA Key with name '{0}' created of type '{1}'.".format(rsa_key.name, rsa_key.key_material.kty))
+        rsa_key = await client.create_rsa_key(key_name, size=key_size, key_operations=key_ops)
+        print("RSA Key with name '{0}' created of type '{1}'.".format(rsa_key.name, rsa_key.key_type))
 
         # Let's create an Elliptic Curve key with algorithm curve type P-256.
         # if the key already exists in the Key Vault, then a new version of the key is created.
         print("\n.. Create an EC Key")
         key_curve = "P-256"
         key_name = "ECKeyName"
-        ec_key = await client.create_ec_key(key_name, curve=key_curve, hsm=False)
-        print("EC Key with name '{0}' created of type {1}.".format(ec_key.name, ec_key.key_material.kty))
+        ec_key = await client.create_ec_key(key_name, curve=key_curve)
+        print("EC Key with name '{0}' created of type {1}.".format(ec_key.name, ec_key.key_type))
 
         # Let's get the rsa key details using its name
         print("\n.. Get a Key using it's name")
@@ -66,18 +66,18 @@ async def run_sample():
         # for cryptographic operations. The update method allows the user to modify the metadata (key attributes)
         # associated with a key previously stored within Key Vault.
         print("\n.. Update a Key by name")
-        expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
+        expires_on = datetime.datetime.utcnow() + datetime.timedelta(days=365)
         updated_ec_key = await client.update_key_properties(
-            ec_key.name, ec_key.properties.version, expires=expires, enabled=False
+            ec_key.name, version=ec_key.properties.version, expires_on=expires_on, enabled=False
         )
         print(
             "Key with name '{0}' was updated on date '{1}'".format(
-                updated_ec_key.name, updated_ec_key.properties.updated
+                updated_ec_key.name, updated_ec_key.properties.updated_on
             )
         )
         print(
             "Key with name '{0}' was updated to expire on '{1}'".format(
-                updated_ec_key.name, updated_ec_key.properties.expires
+                updated_ec_key.name, updated_ec_key.properties.expires_on
             )
         )
 

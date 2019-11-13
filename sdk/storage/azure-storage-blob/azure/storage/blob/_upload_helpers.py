@@ -28,11 +28,11 @@ from ._generated.models import (
     AppendPositionAccessConditions,
     ModifiedAccessConditions,
 )
-from .models import BlobProperties, ContainerProperties
+from ._models import BlobProperties, ContainerProperties
 
 if TYPE_CHECKING:
     from datetime import datetime # pylint: disable=unused-import
-    LeaseClient = TypeVar("LeaseClient")
+    BlobLeaseClient = TypeVar("BlobLeaseClient")
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
 _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = '{0} should be a seekable file-like/io.IOBase type stream object.'

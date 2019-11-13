@@ -4,6 +4,7 @@
 # ------------------------------------
 import time
 import os
+import hashlib
 
 try:
     from unittest.mock import Mock
@@ -61,6 +62,9 @@ class VaultClientPreparer(AzureMgmtPreparer):
         playback_fake_resource=None,
         client_kwargs=None,
     ):
+        # incorporate md5 hashing of run identifier into key vault name for uniqueness
+        name_prefix += hashlib.md5(os.environ["RUN_IDENTIFIER"].encode()).hexdigest()[-10:]
+
         super(VaultClientPreparer, self).__init__(
             name_prefix,
             24,
@@ -98,13 +102,13 @@ class VaultClientPreparer(AzureMgmtPreparer):
             group = self._get_resource_group(**kwargs).name
             access_policies = [
                 AccessPolicyEntry(
-                    tenant_id=self.test_class_instance.settings.TENANT_ID,
+                    tenant_id=self.test_class_instance.get_settings_value("TENANT_ID"),
                     object_id=self.client_oid,
                     permissions=self.permissions,
                 )
             ]
             properties = VaultProperties(
-                tenant_id=self.test_class_instance.settings.TENANT_ID,
+                tenant_id=self.test_class_instance.get_settings_value("TENANT_ID"),
                 sku=Sku(name=self.sku),
                 access_policies=access_policies,
                 vault_uri=None,
@@ -141,7 +145,7 @@ class VaultClientPreparer(AzureMgmtPreparer):
             credential = EnvironmentCredential()
         else:
             credential = Mock(get_token=lambda _: AccessToken("fake-token", 0))
-        return VaultClient(vault_uri, credential)
+        return VaultClient(vault_uri, credential, **self.client_kwargs)
 
     def remove_resource(self, name, **kwargs):
         if self.is_live:

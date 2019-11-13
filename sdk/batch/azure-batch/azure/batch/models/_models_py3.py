@@ -10630,7 +10630,7 @@ class VirtualMachineConfiguration(Model):
      empty. When the Compute Node is removed from the Pool, the disk and all
      data associated with it is also deleted. The disk is not formatted after
      being attached, it must be formatted before use - for more information see
-     https://docs.microsoft.com/en-us/azure/virtual-machines/linux/classic/attach-disk#initialize-a-new-data-disk-in-linux
+     https://docs.microsoft.com/en-us/azure/virtual-machines/linux/add-disk
      and
      https://docs.microsoft.com/en-us/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine.
     :type data_disks: list[~azure.batch.models.DataDisk]

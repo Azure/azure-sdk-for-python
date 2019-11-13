@@ -6,7 +6,7 @@ import asyncio
 import os
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
-from azure.keyvault.certificates import CertificatePolicy, SecretContentType
+from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -15,7 +15,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -37,9 +37,9 @@ async def run_sample():
     # Notice that the client is using default Azure credentials.
     # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
     # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-    VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
+    VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
-    client = CertificateClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
+    client = CertificateClient(vault_url=VAULT_URL, credential=credential)
     try:
         # Let's create a certificate for holding bank account credentials valid for 1 year.
         # if the certificate already exists in the Key Vault, then a new version of the certificate is created.
@@ -58,30 +58,32 @@ async def run_sample():
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
+            issuer_name=WellKnownIssuerNames.Self,
             subject_name="CN=*.microsoft.com",
             validity_in_months=24,
             san_dns_names=["sdk.azure-int.net"],
         )
         cert_name = "HelloWorldCertificate"
 
-        # create_certificate returns a poller. Awaiting the poller will return the certificate
+        # Awaiting create_certificate will return the certificate as a KeyVaultCertificate
         # if creation is successful, and the CertificateOperation if not.
-        certificate = await client.create_certificate(name=cert_name, policy=cert_policy)
+        certificate = await client.create_certificate(certificate_name=cert_name, policy=cert_policy)
         print("Certificate with name '{0}' created".format(certificate.name))
 
         # Let's get the bank certificate using its name
         print("\n.. Get a Certificate by name")
-        bank_certificate = await client.get_certificate_with_policy(name=cert_name)
+        bank_certificate = await client.get_certificate(cert_name)
         print("Certificate with name '{0}' was found.".format(bank_certificate.name))
 
         # After one year, the bank account is still active, and we have decided to update the tags.
         print("\n.. Update a Certificate by name")
         tags = {"a": "b"}
-        updated_certificate = await client.update_certificate_properties(name=bank_certificate.name, tags=tags)
+        updated_certificate = await client.update_certificate_properties(
+            certificate_name=bank_certificate.name, tags=tags
+        )
         print(
             "Certificate with name '{0}' was updated on date '{1}'".format(
-                bank_certificate.name, updated_certificate.properties.updated
+                bank_certificate.name, updated_certificate.properties.updated_on
             )
         )
         print(
@@ -92,7 +94,7 @@ async def run_sample():
 
         # The bank account was closed, need to delete its credentials from the Key Vault.
         print("\n.. Delete Certificate")
-        deleted_certificate = await client.delete_certificate(name=bank_certificate.name)
+        deleted_certificate = await client.delete_certificate(bank_certificate.name)
         print("Deleting Certificate..")
         print("Certificate with name '{0}' was deleted.".format(deleted_certificate.name))
 

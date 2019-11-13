@@ -23,7 +23,7 @@ __all__ = [
     "KeyVaultClientBase",
 ]
 
-_VaultId = namedtuple("VaultId", ["vault_endpoint", "collection", "name", "version"])
+_VaultId = namedtuple("VaultId", ["vault_url", "collection", "name", "version"])
 
 
 def parse_vault_id(url):
@@ -40,7 +40,7 @@ def parse_vault_id(url):
         raise ValueError("'{}' is not not a valid vault url".format(url))
 
     return _VaultId(
-        vault_endpoint="{}://{}".format(parsed_uri.scheme, parsed_uri.hostname),
+        vault_url="{}://{}".format(parsed_uri.scheme, parsed_uri.hostname),
         collection=path[0],
         name=path[1],
         version=path[2] if len(path) == 3 else None,

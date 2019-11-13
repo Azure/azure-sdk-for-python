@@ -18,6 +18,7 @@ try:
     from ._models_py3 import ApiErrorBase
     from ._models_py3 import AutomaticOSUpgradePolicy
     from ._models_py3 import AutomaticOSUpgradeProperties
+    from ._models_py3 import AutomaticRepairsPolicy
     from ._models_py3 import AvailabilitySet
     from ._models_py3 import AvailabilitySetUpdate
     from ._models_py3 import BillingProfile
@@ -208,6 +209,7 @@ except (SyntaxError, ImportError):
     from ._models import ApiErrorBase
     from ._models import AutomaticOSUpgradePolicy
     from ._models import AutomaticOSUpgradeProperties
+    from ._models import AutomaticRepairsPolicy
     from ._models import AvailabilitySet
     from ._models import AvailabilitySetUpdate
     from ._models import BillingProfile
@@ -465,6 +467,7 @@ __all__ = [
     'ApiErrorBase',
     'AutomaticOSUpgradePolicy',
     'AutomaticOSUpgradeProperties',
+    'AutomaticRepairsPolicy',
     'AvailabilitySet',
     'AvailabilitySetUpdate',
     'BillingProfile',

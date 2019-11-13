@@ -20,31 +20,29 @@ class AuthorizationCodeCredential(object):
     See https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow for more information
     about the authentication flow.
 
-    :param str client_id: the application's client ID
     :param str tenant_id: ID of the application's Azure Active Directory tenant. Also called its 'directory' ID.
+    :param str client_id: the application's client ID
     :param str authorization_code: the authorization code from the user's log-in
     :param str redirect_uri: The application's redirect URI. Must match the URI used to request the authorization code.
-    :param str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
 
-    Keyword arguments
-        - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
-          authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
-          authorities for other clouds.
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          defines authorities for other clouds.
+    :keyword str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
     """
 
     def __init__(
         self,
-        client_id: str,
         tenant_id: str,
+        client_id: str,
         authorization_code: str,
         redirect_uri: str,
-        client_secret: "Optional[str]" = None,
         **kwargs: "Any"
     ) -> None:
         self._authorization_code = authorization_code  # type: Optional[str]
         self._client_id = client_id
-        self._client_secret = client_secret
-        self._client = kwargs.pop("client", None) or AadClient(client_id, tenant_id, **kwargs)
+        self._client_secret = kwargs.pop("client_secret", None)
+        self._client = kwargs.pop("client", None) or AadClient(tenant_id, client_id, **kwargs)
         self._redirect_uri = redirect_uri
 
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
@@ -54,13 +52,14 @@ class AuthorizationCodeCredential(object):
         the credential will return a cached access token or redeem a refresh token, if it acquired a refresh token upon
         redeeming the authorization code.
 
+        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+
         :param str scopes: desired scopes for the access token
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
 
-        **Keyword arguments:**
-          - **executor** - (optional) a :class:`concurrent.futures.Executor` used to execute asynchronous calls
-          - **loop** - (optional) an event loop on which to schedule network I/O. If not provided, the currently running
+        :keyword ~concurrent.futures.Executor executor: An Executor instance used to execute asynchronous calls
+        :keyword loop: An event loop on which to schedule network I/O. If not provided, the currently running
             loop will be used.
         """
 

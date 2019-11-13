@@ -3,6 +3,11 @@
 Release History
 ===============
 
+0.3.0 (2019-10-11)
+++++++++++++++++++
+
+- Fixed new network experiment SDK structure
+
 0.2.0 (2019-10-09)
 ++++++++++++++++++
 

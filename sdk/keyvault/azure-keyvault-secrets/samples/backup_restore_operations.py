@@ -13,7 +13,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-secrets and azure-identity libraries (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_ENDPOINT
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -23,18 +23,18 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. Backup a secret (backup_secret)
 #
-# 3. Delete a secret (delete_secret)
+# 3. Delete a secret (begin_delete_secret)
 #
-# 4. Restore a secret (restore_secret)
+# 4. Restore a secret (restore_secret_backup)
 # ----------------------------------------------------------------------------------------------------------
 
 # Instantiate a secret client that will be used to call the service.
 # Notice that the client is using default Azure credentials.
 # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
 # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-VAULT_ENDPOINT = os.environ["VAULT_ENDPOINT"]
+VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
-client = SecretClient(vault_endpoint=VAULT_ENDPOINT, credential=credential)
+client = SecretClient(vault_url=VAULT_URL, credential=credential)
 try:
     # Let's create a secret holding storage account credentials.
     # if the secret already exists in the Key Vault, then a new version of the secret is created.
@@ -49,16 +49,14 @@ try:
     print("Backup created for secret with name '{0}'.".format(secret.name))
 
     # The storage account secret is no longer in use, so you delete it.
-    client.delete_secret(secret.name)
-    print("Deleted Secret with name '{0}'".format(secret.name))
+    print("\n.. Deleting secret...")
+    deleted_secret = client.begin_delete_secret(secret.name).result()
+    print("Deleted Secret with name '{0}'".format(deleted_secret.name))
 
     # In future, if the secret is required again, we can use the backup value to restore it in the Key Vault.
     print("\n.. Restore the secret using the backed up secret bytes")
-    secret = client.restore_secret(secret_backup)
+    secret = client.restore_secret_backup(secret_backup)
     print("Restored Secret with name '{0}'".format(secret.name))
 
 except HttpResponseError as e:
-    print("\nrun_sample has caught an error. {0}".format(e.message))
-
-finally:
-    print("\nrun_sample done")
+    print("\nThis sample has caught an error. {0}".format(e.message))

@@ -44,3 +44,6 @@ stages:
     Artifacts:
     - name: azure_cosmos
       safeName: azurecosmos
+    - name: azure_mgmt_cosmosdb
+      safeName: azuremgmtcosmosdb
+      

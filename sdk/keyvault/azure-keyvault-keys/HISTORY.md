@@ -1,6 +1,37 @@
 # Release History
 
-## 4.0.0b5
+## 4.1.0b1 Unreleased
+
+
+## 2019-10-31 4.0.0
+### Breaking changes:
+- Removed `KeyClient.get_cryptography_client()` and `CryptographyClient.get_key()`
+- Moved the optional parameters of several methods into kwargs (
+[docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.keys.html)
+detail the new keyword arguments):
+  - `create_key` now has positional parameters `name` and `key_type`
+  - `create_ec_key` and `create_rsa_key` now have one positional parameter, `name`
+  - `update_key_properties` now has two positional parameters, `name` and
+     (optional) `version`
+  - `import_key` now has positional parameters `name` and `key`
+- `CryptographyClient` operations return class instances instead of tuples and renamed the following
+properties
+    - Renamed the `decrypted_bytes` property of `DecryptResult` to `plaintext`
+    - Renamed the `unwrapped_bytes` property of `UnwrapResult` to `key`
+    - Renamed the `result` property of `VerifyResult` to `is_valid`
+- Renamed the `UnwrapKeyResult` and `WrapKeyResult` classes to `UnwrapResult` and `WrapResult`
+- Renamed `list_keys` to `list_properties_of_keys`
+- Renamed `list_key_versions` to `list_properties_of_key_versions`
+- Renamed sync method `delete_key` to `begin_delete_key`
+- The sync method `begin_delete_key` and async `delete_key` now return pollers that return a `DeletedKey`
+- Renamed `Key` to `KeyVaultKey`
+- `KeyVaultKey` properties `created`, `expires`, and `updated` renamed to `created_on`,
+`expires_on`, and `updated_on`
+- The `vault_endpoint` parameter of `KeyClient` has been renamed to `vault_url`
+- The property `vault_endpoint` has been renamed to `vault_url` in all models
+
+### New features:
+- Now all `CryptographyClient` returns include `key_id` and `algorithm` properties
 
 
 ## 4.0.0b4 (2019-10-08)

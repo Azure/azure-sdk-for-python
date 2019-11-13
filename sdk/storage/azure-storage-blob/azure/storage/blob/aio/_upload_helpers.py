@@ -31,7 +31,7 @@ from .._upload_helpers import _convert_mod_error, _any_conditions
 
 if TYPE_CHECKING:
     from datetime import datetime # pylint: disable=unused-import
-    LeaseClient = TypeVar("LeaseClient")
+    BlobLeaseClient = TypeVar("BlobLeaseClient")
 
 
 async def upload_block_blob(  # pylint: disable=too-many-locals
