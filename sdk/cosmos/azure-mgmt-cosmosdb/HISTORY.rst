@@ -19,8 +19,8 @@ Release History
 
 **Breaking changes**
 
-- CosmosDB has been renamed to CosmosDbManagementClient
-- CosmosDBConfiguration was renamed to CosmodDbManagementClientConfiguration
+- CosmosDB has been renamed to CosmosDBManagementClient
+- CosmosDBConfiguration was renamed to CosmodDBManagementClientConfiguration
 - Model MongoDBCollectionCreateUpdateParameters has a new signature
 - Model GremlinGraphCreateUpdateParameters has a new signature
 - Model CassandraKeyspaceCreateUpdateParameters has a new signature

@@ -17,7 +17,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtCosmosDBTest, self).setUp()
         self.client = self.create_mgmt_client(
-            azure.mgmt.cosmosdb.CosmosDbManagementClient
+            azure.mgmt.cosmosdb.CosmosDBManagementClient
         )
 
     @ResourceGroupPreparer()
