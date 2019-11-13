@@ -94,7 +94,9 @@ class InteractiveBrowserCredential(PublicClientCredential):
         scopes = list(scopes)  # type: ignore
         request_state = str(uuid.uuid4())
         app = self._get_app()
-        auth_url = app.get_authorization_request_url(scopes, redirect_uri=redirect_uri, state=request_state, **kwargs)
+        auth_url = app.get_authorization_request_url(
+            scopes, redirect_uri=redirect_uri, state=request_state, prompt="select_account", **kwargs
+        )
 
         # open browser to that url
         if not webbrowser.open(auth_url):
