@@ -140,7 +140,7 @@ class RequestHistory(object):
     This is used to document requests/responses that resulted in redirected/retried requests.
 
     :param http_request: The request.
-    :type http_request: ~azure.core.pipeline.PipelineRequest
+    :type http_request: ~azure.core.pipeline.transport.HttpRequest
     :param http_response: The HTTP response.
     :type http_response: ~azure.core.pipeline.transport.HttpResponse
     :param Exception error: An error encountered during the request, or None if the response was received successfully.
