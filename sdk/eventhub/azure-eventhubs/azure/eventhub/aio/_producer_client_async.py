@@ -10,6 +10,7 @@ from uamqp import constants  # type: ignore
 from azure.eventhub import EventData, EventHubSharedKeyCredential, EventHubSASTokenCredential, EventDataBatch
 from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
+from ..error import ConnectError
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
@@ -61,12 +62,14 @@ class EventHubProducerClient(ClientBaseAsync):
         self._client_lock = asyncio.Lock()  # sync the creation of self._producers
         self._producers_locks = []  # type: List[asyncio.Lock]
         self._max_message_size_on_link = 0
+        self._partition_ids = None
 
     async def _init_locks_for_producers(self):
         if not self._producers:
             async with self._client_lock:
                 if not self._producers:
-                    num_of_producers = len(await self.get_partition_ids()) + 1
+                    self._partition_ids = await self.get_partition_ids()
+                    num_of_producers = len(self._partition_ids) + 1
                     self._producers = [None] * num_of_producers
                     for _ in range(num_of_producers):
                         self._producers_locks.append(asyncio.Lock())
@@ -171,6 +174,9 @@ class EventHubProducerClient(ClientBaseAsync):
         """
 
         await self._init_locks_for_producers()
+
+        if partition_id not in self._partition_ids:
+            raise ConnectError("Invalid partition {} for the event hub {}".format(partition_id, self.eh_name))
 
         producer_index = int(partition_id) if partition_id is not None else -1
         if self._producers[producer_index] is None or self._producers[producer_index]._closed:  # pylint:disable=protected-access
