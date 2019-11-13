@@ -57,7 +57,7 @@ class SqlResourcesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SqlDatabaseGetResults
         :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlDatabaseGetResultsPaged[~azure.mgmt.cosmosdb.v2019_08_01.models.SqlDatabaseGetResults]
+         ~azure.mgmt.cosmosdb.models.SqlDatabaseGetResultsPaged[~azure.mgmt.cosmosdb.models.SqlDatabaseGetResults]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -131,8 +131,8 @@ class SqlResourcesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SqlDatabaseGetResults or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlDatabaseGetResults
-         or ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.cosmosdb.models.SqlDatabaseGetResults or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -243,7 +243,7 @@ class SqlResourcesOperations(object):
         :param create_update_sql_database_parameters: The parameters to
          provide for the current SQL database.
         :type create_update_sql_database_parameters:
-         ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlDatabaseCreateUpdateParameters
+         ~azure.mgmt.cosmosdb.models.SqlDatabaseCreateUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -252,9 +252,9 @@ class SqlResourcesOperations(object):
         :return: An instance of LROPoller that returns SqlDatabaseGetResults
          or ClientRawResponse<SqlDatabaseGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.v2019_08_01.models.SqlDatabaseGetResults]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.SqlDatabaseGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.v2019_08_01.models.SqlDatabaseGetResults]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.SqlDatabaseGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_update_sql_database_initial(
@@ -385,9 +385,8 @@ class SqlResourcesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ThroughputSettingsGetResults or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01.models.ThroughputSettingsGetResults
-         or ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -498,7 +497,7 @@ class SqlResourcesOperations(object):
         :param update_throughput_parameters: The parameters to provide for the
          RUs per second of the current SQL database.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.v2019_08_01.models.ThroughputSettingsUpdateParameters
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -508,9 +507,9 @@ class SqlResourcesOperations(object):
          ThroughputSettingsGetResults or
          ClientRawResponse<ThroughputSettingsGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.v2019_08_01.models.ThroughputSettingsGetResults]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.v2019_08_01.models.ThroughputSettingsGetResults]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_sql_database_throughput_initial(
@@ -559,7 +558,7 @@ class SqlResourcesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SqlContainerGetResults
         :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlContainerGetResultsPaged[~azure.mgmt.cosmosdb.v2019_08_01.models.SqlContainerGetResults]
+         ~azure.mgmt.cosmosdb.models.SqlContainerGetResultsPaged[~azure.mgmt.cosmosdb.models.SqlContainerGetResults]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -636,8 +635,8 @@ class SqlResourcesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SqlContainerGetResults or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlContainerGetResults
-         or ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.cosmosdb.models.SqlContainerGetResults or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -752,7 +751,7 @@ class SqlResourcesOperations(object):
         :param create_update_sql_container_parameters: The parameters to
          provide for the current SQL container.
         :type create_update_sql_container_parameters:
-         ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlContainerCreateUpdateParameters
+         ~azure.mgmt.cosmosdb.models.SqlContainerCreateUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -761,9 +760,9 @@ class SqlResourcesOperations(object):
         :return: An instance of LROPoller that returns SqlContainerGetResults
          or ClientRawResponse<SqlContainerGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.v2019_08_01.models.SqlContainerGetResults]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.SqlContainerGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.v2019_08_01.models.SqlContainerGetResults]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.SqlContainerGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_update_sql_container_initial(
@@ -901,9 +900,8 @@ class SqlResourcesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ThroughputSettingsGetResults or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01.models.ThroughputSettingsGetResults
-         or ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1018,7 +1016,7 @@ class SqlResourcesOperations(object):
         :param update_throughput_parameters: The parameters to provide for the
          RUs per second of the current SQL container.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.v2019_08_01.models.ThroughputSettingsUpdateParameters
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1028,9 +1026,9 @@ class SqlResourcesOperations(object):
          ThroughputSettingsGetResults or
          ClientRawResponse<ThroughputSettingsGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.v2019_08_01.models.ThroughputSettingsGetResults]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.v2019_08_01.models.ThroughputSettingsGetResults]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.ThroughputSettingsGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_sql_container_throughput_initial(
@@ -1082,7 +1080,7 @@ class SqlResourcesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SqlStoredProcedureGetResults
         :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlStoredProcedureGetResultsPaged[~azure.mgmt.cosmosdb.v2019_08_01.models.SqlStoredProcedureGetResults]
+         ~azure.mgmt.cosmosdb.models.SqlStoredProcedureGetResultsPaged[~azure.mgmt.cosmosdb.models.SqlStoredProcedureGetResults]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -1162,9 +1160,8 @@ class SqlResourcesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SqlStoredProcedureGetResults or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlStoredProcedureGetResults
-         or ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.cosmosdb.models.SqlStoredProcedureGetResults or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1283,7 +1280,7 @@ class SqlResourcesOperations(object):
         :param create_update_sql_stored_procedure_parameters: The parameters
          to provide for the current SQL storedProcedure.
         :type create_update_sql_stored_procedure_parameters:
-         ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlStoredProcedureCreateUpdateParameters
+         ~azure.mgmt.cosmosdb.models.SqlStoredProcedureCreateUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1293,9 +1290,9 @@ class SqlResourcesOperations(object):
          SqlStoredProcedureGetResults or
          ClientRawResponse<SqlStoredProcedureGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.v2019_08_01.models.SqlStoredProcedureGetResults]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.SqlStoredProcedureGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.v2019_08_01.models.SqlStoredProcedureGetResults]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.SqlStoredProcedureGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_update_sql_stored_procedure_initial(
@@ -1439,7 +1436,7 @@ class SqlResourcesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SqlUserDefinedFunctionGetResults
         :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlUserDefinedFunctionGetResultsPaged[~azure.mgmt.cosmosdb.v2019_08_01.models.SqlUserDefinedFunctionGetResults]
+         ~azure.mgmt.cosmosdb.models.SqlUserDefinedFunctionGetResultsPaged[~azure.mgmt.cosmosdb.models.SqlUserDefinedFunctionGetResults]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -1520,8 +1517,7 @@ class SqlResourcesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: SqlUserDefinedFunctionGetResults or ClientRawResponse if
          raw=true
-        :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlUserDefinedFunctionGetResults
+        :rtype: ~azure.mgmt.cosmosdb.models.SqlUserDefinedFunctionGetResults
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1641,7 +1637,7 @@ class SqlResourcesOperations(object):
         :param create_update_sql_user_defined_function_parameters: The
          parameters to provide for the current SQL userDefinedFunction.
         :type create_update_sql_user_defined_function_parameters:
-         ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlUserDefinedFunctionCreateUpdateParameters
+         ~azure.mgmt.cosmosdb.models.SqlUserDefinedFunctionCreateUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1651,9 +1647,9 @@ class SqlResourcesOperations(object):
          SqlUserDefinedFunctionGetResults or
          ClientRawResponse<SqlUserDefinedFunctionGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.v2019_08_01.models.SqlUserDefinedFunctionGetResults]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.SqlUserDefinedFunctionGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.v2019_08_01.models.SqlUserDefinedFunctionGetResults]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.SqlUserDefinedFunctionGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_update_sql_user_defined_function_initial(
@@ -1797,7 +1793,7 @@ class SqlResourcesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of SqlTriggerGetResults
         :rtype:
-         ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlTriggerGetResultsPaged[~azure.mgmt.cosmosdb.v2019_08_01.models.SqlTriggerGetResults]
+         ~azure.mgmt.cosmosdb.models.SqlTriggerGetResultsPaged[~azure.mgmt.cosmosdb.models.SqlTriggerGetResults]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -1877,8 +1873,8 @@ class SqlResourcesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: SqlTriggerGetResults or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlTriggerGetResults
-         or ~msrest.pipeline.ClientRawResponse
+        :rtype: ~azure.mgmt.cosmosdb.models.SqlTriggerGetResults or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -1997,7 +1993,7 @@ class SqlResourcesOperations(object):
         :param create_update_sql_trigger_parameters: The parameters to provide
          for the current SQL trigger.
         :type create_update_sql_trigger_parameters:
-         ~azure.mgmt.cosmosdb.v2019_08_01.models.SqlTriggerCreateUpdateParameters
+         ~azure.mgmt.cosmosdb.models.SqlTriggerCreateUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -2006,9 +2002,9 @@ class SqlResourcesOperations(object):
         :return: An instance of LROPoller that returns SqlTriggerGetResults or
          ClientRawResponse<SqlTriggerGetResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.v2019_08_01.models.SqlTriggerGetResults]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.SqlTriggerGetResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.v2019_08_01.models.SqlTriggerGetResults]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.SqlTriggerGetResults]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_update_sql_trigger_initial(
