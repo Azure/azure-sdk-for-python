@@ -92,7 +92,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
     def fetch_next_block(self):
         """Returns a block of results.
 
-        This method only exists for backward compatibility reasons. (Because 
+        This method only exists for backward compatibility reasons. (Because
         QueryIterable has exposed fetch_next_block api).
 
         :return: List of results.
@@ -183,10 +183,10 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=
     def fetch_next_block(self):
         """Returns a block of results.
 
-        This method only exists for backward compatibility reasons. (Because 
+        This method only exists for backward compatibility reasons. (Because
         QueryIterable has exposed fetch_next_block api).
 
-        This method internally invokes next() as many times required to collect 
+        This method internally invokes next() as many times required to collect
         the requested fetch size.
 
         :return: List of results.

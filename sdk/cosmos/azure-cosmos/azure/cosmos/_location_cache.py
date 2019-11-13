@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Implements the abstraction to resolve target location for geo-replicated 
+"""Implements the abstraction to resolve target location for geo-replicated
 DatabaseAccount with multiple writable and readable locations.
 """
 import collections

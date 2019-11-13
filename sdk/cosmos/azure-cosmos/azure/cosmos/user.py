@@ -37,7 +37,7 @@ from .permission import Permission
 class UserProxy(object):
     """An interface to interact with a specific user.
 
-    This class should not be instantiated directly. Instead, use the 
+    This class should not be instantiated directly. Instead, use the
     :func:`DatabaseProxy.get_user_client` method.
     """
 
@@ -211,7 +211,7 @@ class UserProxy(object):
         # type: (Dict[str, Any], Any) -> Permission
         """Insert or update the specified permission.
 
-        If the permission already exists in the container, it is replaced. If 
+        If the permission already exists in the container, it is replaced. If
         the permission does not exist, it is inserted.
 
         :param body: A dict-like object representing the permission to update or insert.
@@ -243,7 +243,7 @@ class UserProxy(object):
         # type: (str, Dict[str, Any], Any) -> Permission
         """Replaces the specified permission if it exists for the user.
 
-        If the permission does not already exist, an exception is raised. 
+        If the permission does not already exist, an exception is raised.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be replaced.
@@ -277,7 +277,7 @@ class UserProxy(object):
         # type: (str, Any) -> None
         """Delete the specified permission from the user.
 
-        If the permission does not already exist, an exception is raised. 
+        If the permission does not already exist, an exception is raised.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be replaced.

@@ -46,7 +46,7 @@ class QueryIterable(PageIterator):
     ):
         """Instantiates a QueryIterable for non-client side partitioning queries.
 
-        _ProxyQueryExecutionContext will be used as the internal query execution 
+        _ProxyQueryExecutionContext will be used as the internal query execution
         context.
 
         :param CosmosClient client: Instance of document client.
@@ -89,7 +89,7 @@ class QueryIterable(PageIterator):
     def _fetch_next(self, *args):  # pylint: disable=unused-argument
         """Return a block of results with respecting retry policy.
 
-        This method only exists for backward compatibility reasons. (Because 
+        This method only exists for backward compatibility reasons. (Because
         QueryIterable has exposed fetch_next_block api).
 
         :return: List of results.

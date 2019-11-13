@@ -26,7 +26,7 @@
 class MediaTypes(object):
     """Constants of media types.
 
-    See http://www.iana.org/assignments/media-types/media-types.xhtml for 
+    See http://www.iana.org/assignments/media-types/media-types.xhtml for
     more information.
     """
 

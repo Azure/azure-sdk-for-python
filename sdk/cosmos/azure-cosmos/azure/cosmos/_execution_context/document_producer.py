@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for document producer implementation in the Azure Cosmos 
+"""Internal class for document producer implementation in the Azure Cosmos
 database service.
 """
 
@@ -118,7 +118,7 @@ def _compare_helper(a, b):
 
 class _PartitionKeyRangeDocumentProduerComparator(object):
     """
-    Provides a Comparator for document producers using the min value of the 
+    Provides a Comparator for document producers using the min value of the
     corresponding target partition.
     """
 
@@ -240,7 +240,7 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
         Based on the orderby query items and whether the sort order is Ascending
         or Descending compares the peek result of the two DocumentProducers.
 
-        If the peek results are equal based on the sort order, this comparator 
+        If the peek results are equal based on the sort order, this comparator
         compares the target partition key range of the two DocumentProducers.
 
         :param _DocumentProducer doc_producers1: first instance

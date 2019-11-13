@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for global endpoint manager implementation in the Azure Cosmos 
+"""Internal class for global endpoint manager implementation in the Azure Cosmos
 database service.
 """
 
@@ -36,7 +36,7 @@ from ._location_cache import LocationCache
 
 class _GlobalEndpointManager(object):
     """
-    This internal class implements the logic for endpoint management for 
+    This internal class implements the logic for endpoint management for
     geo-replicated database accounts.
     """
 
@@ -114,10 +114,10 @@ class _GlobalEndpointManager(object):
                 self.refresh_needed = False
 
     def _GetDatabaseAccount(self, **kwargs):
-        """Gets the database account. 
-        
+        """Gets the database account.
+
         First tries by using the default endpoint, and if that doesn't work,
-        use the endpoints for the preferred locations in the order they are 
+        use the endpoints for the preferred locations in the order they are
         specified, to get the database account.
         """
         try:

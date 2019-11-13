@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for endpoint discovery retry policy implementation in the 
+"""Internal class for endpoint discovery retry policy implementation in the
 Azure Cosmos database service.
 """
 

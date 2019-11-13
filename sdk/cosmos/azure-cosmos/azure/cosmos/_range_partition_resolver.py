@@ -26,7 +26,7 @@ from . import _range as prange
 
 
 class RangePartitionResolver(object):
-    """RangePartitionResolver implements partitioning based on the ranges, 
+    """RangePartitionResolver implements partitioning based on the ranges,
     allowing you to distribute requests and data across a number of partitions.
     """
 

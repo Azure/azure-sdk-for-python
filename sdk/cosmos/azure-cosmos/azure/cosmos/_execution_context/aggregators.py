@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for aggregation queries implementation in the Azure Cosmos 
+"""Internal class for aggregation queries implementation in the Azure Cosmos
 database service.
 """
 from abc import abstractmethod, ABCMeta

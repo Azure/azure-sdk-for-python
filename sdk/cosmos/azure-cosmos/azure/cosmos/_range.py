@@ -24,7 +24,7 @@
 
 
 class Range(object):
-    """Represents the Range class used to map the partition key of the document 
+    """Represents the Range class used to map the partition key of the document
     to its associated collection.
     """
 

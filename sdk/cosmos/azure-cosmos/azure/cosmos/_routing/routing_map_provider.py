@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for partition key range cache implementation in the Azure 
+"""Internal class for partition key range cache implementation in the Azure
 Cosmos database service.
 """
 
@@ -36,7 +36,7 @@ class PartitionKeyRangeCache(object):
     PartitionKeyRangeCache provides list of effective partition key ranges for a
     collection.
 
-    This implementation loads and caches the collection routing map per 
+    This implementation loads and caches the collection routing map per
     collection on demand.
     """
 
@@ -51,7 +51,7 @@ class PartitionKeyRangeCache(object):
         self._collection_routing_map_by_item = {}
 
     def get_overlapping_ranges(self, collection_link, partition_key_ranges):
-        """Given a partition key range and a collection, return the list of 
+        """Given a partition key range and a collection, return the list of
         overlapping partition key ranges.
 
         :param str collection_link: The name of the collection.
@@ -128,7 +128,7 @@ def _subtract_range(r, partition_key_range):
 
 class SmartRoutingMapProvider(PartitionKeyRangeCache):
     """
-    Efficiently uses PartitionKeyRangeCach and minimizes the unnecessary 
+    Efficiently uses PartitionKeyRangeCach and minimizes the unnecessary
     invocation of CollectionRoutingMap.get_overlapping_ranges()
     """
 
@@ -138,11 +138,11 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
         Returns the list of overlapping partition key ranges
 
         :param str collection_link: The collection link.
-        :param (list of routing_range.Range) partition_key_ranges: 
+        :param (list of routing_range.Range) partition_key_ranges:
             The sorted list of non-overlapping ranges.
         :return: List of partition key ranges.
         :rtype: list of dict
-        :raises ValueError: 
+        :raises ValueError:
             If two ranges in partition_key_ranges overlap or if the list is not sorted
         """
 

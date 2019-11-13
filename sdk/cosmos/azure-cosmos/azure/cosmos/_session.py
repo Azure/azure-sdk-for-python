@@ -73,7 +73,7 @@ class SessionContainer(object):
                 return ""
 
     def set_session_token(self, response_result, response_headers):
-        """Session token must only be updated from response of requests that 
+        """Session token must only be updated from response of requests that
         successfully mutate resource on the server side (write, replace, delete etc)
 
         :param dict response_result:
@@ -195,8 +195,8 @@ class SessionContainer(object):
 
 
 class Session(object):
-    """State of a Azure Cosmos session. 
-    
+    """State of a Azure Cosmos session.
+
     This session object can be shared across clients within the same process
 
     :param url_connection:

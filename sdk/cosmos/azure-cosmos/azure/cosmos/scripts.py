@@ -43,7 +43,7 @@ class ScriptType(object):
 class ScriptsProxy(object):
     """An interface to interact with stored procedures.
 
-    This class should not be instantiated directly. Instead, use the 
+    This class should not be instantiated directly. Instead, use the
     :func:`ContainerProxy.scripts` attribute.
     """
 
@@ -132,7 +132,7 @@ class ScriptsProxy(object):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
         """Replace a specified stored procedure in the container.
 
-        If the stored procedure does not already exist in the container, an exception is raised. 
+        If the stored procedure does not already exist in the container, an exception is raised.
 
         :param sproc: The ID (name) or dict representing stored procedure to be replaced.
         :param body: A dict-like object representing the sproc to replace.
@@ -154,7 +154,7 @@ class ScriptsProxy(object):
         # type: (Union[str, Dict[str, Any]], Any) -> None
         """Delete a specified stored procedure from the container.
 
-        If the stored procedure does not already exist in the container, an exception is raised. 
+        If the stored procedure does not already exist in the container, an exception is raised.
 
         :param sproc: The ID (name) or dict representing stored procedure to be deleted.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The sproc wasn't deleted successfully.
@@ -178,7 +178,7 @@ class ScriptsProxy(object):
         # type: (...) -> Any
         """Execute a specified stored procedure.
 
-        If the stored procedure does not already exist in the container, an exception is raised. 
+        If the stored procedure does not already exist in the container, an exception is raised.
 
         :param sproc: The ID (name) or dict representing stored procedure to be executed.
         :param partition_key: Specifies the partition key to indicate which partition the sproc should execute on.
@@ -280,7 +280,7 @@ class ScriptsProxy(object):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
         """Replace a specified tigger in the container.
 
-        If the trigger does not already exist in the container, an exception is raised. 
+        If the trigger does not already exist in the container, an exception is raised.
 
         :param trigger: The ID (name) or dict representing trigger to be replaced.
         :param body: A dict-like object representing the trigger to replace.
@@ -302,7 +302,7 @@ class ScriptsProxy(object):
         # type: (Union[str, Dict[str, Any]], Any) -> None
         """Delete a specified trigger from the container.
 
-        If the trigger does not already exist in the container, an exception is raised. 
+        If the trigger does not already exist in the container, an exception is raised.
 
         :param trigger: The ID (name) or dict representing trigger to be deleted.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The trigger wasn't deleted successfully.
@@ -388,7 +388,7 @@ class ScriptsProxy(object):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
         """Replace a specified user-defined function in the container.
 
-        If the UDF does not already exist in the container, an exception is raised. 
+        If the UDF does not already exist in the container, an exception is raised.
 
         :param udf: The ID (name) or dict representing udf to be replaced.
         :param body: A dict-like object representing the udf to replace.
@@ -410,7 +410,7 @@ class ScriptsProxy(object):
         # type: (Union[str, Dict[str, Any]], Any) -> None
         """Delete a specified user-defined function from the container.
 
-        If the UDF does not already exist in the container, an exception is raised. 
+        If the UDF does not already exist in the container, an exception is raised.
 
         :param udf: The ID (name) or dict representing udf to be deleted.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The udf wasn't deleted successfully.

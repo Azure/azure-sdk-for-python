@@ -27,7 +27,7 @@ from azure.cosmos.documents import _DistinctType
 
 
 class _PartitionedQueryExecutionInfo(object):
-    """Represents a wrapper helper for partitioned query execution info 
+    """Represents a wrapper helper for partitioned query execution info
     dictionary returned by the backend.
     """
 

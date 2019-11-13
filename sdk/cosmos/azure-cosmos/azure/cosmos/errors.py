@@ -22,7 +22,7 @@
 """Service-specific Exceptions in the Azure Cosmos database service.
 
 .. warning::
-    This module is DEPRECATED. Use `azure.cosmos.exceptions` instead. 
+    This module is DEPRECATED. Use `azure.cosmos.exceptions` instead.
 """
 import warnings
 

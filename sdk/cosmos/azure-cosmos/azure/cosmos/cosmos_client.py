@@ -144,7 +144,7 @@ class CosmosClient(object):
     :keyword int retry_status: Maximum number of retry attempts on error status codes.
     :keyword list[int] retry_on_status_codes: A list of specific status codes to retry on.
     :keyword float retry_backoff_factor: Factor to calculate wait time between retry attempts.
-    :keyword bool enable_endpoint_discovery: Enable endpoint discovery for 
+    :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
         geo-replicated database accounts. (Default: True)
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
 
@@ -184,14 +184,14 @@ class CosmosClient(object):
         # type: (str, Optional[Any], str, Any) -> CosmosClient
         """Create a CosmosClient instance from a connection string.
 
-        This can be retrieved from the Azure portal.For full list of optional 
+        This can be retrieved from the Azure portal.For full list of optional
         keyword arguments, see the CosmosClient constructor.
 
         :param str conn_str: The connection string.
-        :param credential: Alternative credentials to use instead of the key 
+        :param credential: Alternative credentials to use instead of the key
             provided in the connection string.
         :type credential: str or dict(str, str)
-        :param str consistency_level: 
+        :param str consistency_level:
             Consistency level to use for the session. The default value is "Session".
         """
         settings = _parse_connection_str(conn_str, credential)
@@ -275,8 +275,8 @@ class CosmosClient(object):
         Create the database if it does not exist already.
 
         If the database already exists, the existing settings are returned.
-        
-        ..note:: 
+
+        ..note::
             This function does not check or update existing database settings or
             offer throughput if they differ from what is passed in.
 
@@ -312,7 +312,7 @@ class CosmosClient(object):
         # type: (Union[str, DatabaseProxy, Dict[str, Any]]) -> DatabaseProxy
         """Retrieve an existing database with the ID (name) `id`.
 
-        :param database: The ID (name), dict representing the properties or 
+        :param database: The ID (name), dict representing the properties or
             `DatabaseProxy` instance of the database to read.
         :type database: str or dict(str, str) or ~azure.cosmos.DatabaseProxy
         :returns: A `DatabaseProxy` instance representing the retrieved database.

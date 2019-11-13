@@ -58,11 +58,11 @@ class ConsistentHashRing(object):
         self.partitions = self._ConstructPartitions(self.collection_links, partitions_per_node)
 
     def GetCollectionNode(self, partition_key):
-        """Gets the SelfLink/ID based link of the collection node that maps to 
-        the partition key based on the hashing algorithm used for finding the 
+        """Gets the SelfLink/ID based link of the collection node that maps to
+        the partition key based on the hashing algorithm used for finding the
         node in the ring.
 
-        :param str partition_key: 
+        :param str partition_key:
             The partition key to be used for finding the node in the ring.
         :return: The name of the collection mapped to that partition.
         :rtype: str
@@ -75,7 +75,7 @@ class ConsistentHashRing(object):
 
     def _ConstructPartitions(self, collection_links, partitions_per_node):
         """Constructs the partitions in the consistent ring by assigning them to
-        collection nodes using the hashing algorithm and then finally sorting 
+        collection nodes using the hashing algorithm and then finally sorting
         the partitions based on the hash value.
         """
         collections_node_count = len(collection_links)

@@ -44,7 +44,7 @@ __all__ = ("DatabaseProxy",)
 class DatabaseProxy(object):
     """An interface to interact with a specific database.
 
-    This class should not be instantiated directly. Instead use the 
+    This class should not be instantiated directly. Instead use the
     :func:`CosmosClient.get_database_client` method.
 
     A database contains one or more containers, each of which can contain items,
@@ -56,7 +56,7 @@ class DatabaseProxy(object):
 
     :ivar id: The ID (name) of the database.
 
-    An Azure Cosmos DB SQL API database has the following system-generated 
+    An Azure Cosmos DB SQL API database has the following system-generated
     properties. These properties are read-only:
 
     * `_rid`:   The resource ID.
@@ -568,7 +568,7 @@ class DatabaseProxy(object):
         # type: (Dict[str, Any], Any) -> UserProxy
         """Create a new user in the container.
 
-        To update or replace an existing user, use the 
+        To update or replace an existing user, use the
         :func:`ContainerProxy.upsert_user` method.
 
         :param body: A dict-like object with an `id` key and value representing the user to be created.
@@ -644,7 +644,7 @@ class DatabaseProxy(object):
         :param body: A dict-like object representing the user to replace.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `UserProxy` instance representing the user after replace went through.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: 
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
             If the replace failed or the user with given ID does not exist.
         :rtype: ~azure.cosmos.UserProxy
         """
@@ -693,7 +693,7 @@ class DatabaseProxy(object):
 
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Offer for the database.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: 
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
             If no offer exists for the database or if the offer could not be retrieved.
         :rtype: ~azure.cosmos.Offer
         """
@@ -723,7 +723,7 @@ class DatabaseProxy(object):
         :param throughput: The throughput to be set (an integer).
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Offer for the database, updated with new throughput.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: 
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
             If no offer exists for the database or if the offer could not be updated.
         :rtype: ~azure.cosmos.Offer
         """

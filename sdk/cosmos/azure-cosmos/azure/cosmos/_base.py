@@ -487,11 +487,11 @@ def IsItemContainerLink(link):  # pylint: disable=too-many-return-statements
 
 
 def GetItemContainerInfo(self_link, alt_content_path, id_from_response):
-    """Given the self link and alt_content_path from the reponse header and 
+    """Given the self link and alt_content_path from the reponse header and
     result extract the collection name and collection id.
 
-    Every response header has an alt-content-path that is the owner's path in 
-    ASCII. For document create / update requests, this can be used to get the 
+    Every response header has an alt-content-path that is the owner's path in
+    ASCII. For document create / update requests, this can be used to get the
     collection name, but for collection create response, we can't use it.
 
     :param str self_link:
@@ -499,7 +499,7 @@ def GetItemContainerInfo(self_link, alt_content_path, id_from_response):
     :param str alt_content_path:
         Owner path of the resource, as obtained from response header.
     :param str resource_id:
-        'id' as returned from the response result. This is only used if it is 
+        'id' as returned from the response result. This is only used if it is
         deduced that the request was to create a collection.
     :return: tuple of (collection rid, collection name)
     :rtype: tuple
@@ -564,7 +564,7 @@ def IndexOfNth(s, value, n):
 
 
 def IsValidBase64String(string_to_validate):
-    """Verifies if a string is a valid Base64 encoded string, after 
+    """Verifies if a string is a valid Base64 encoded string, after
     replacing '-' with '/'
 
     :param string string_to_validate: String to validate.

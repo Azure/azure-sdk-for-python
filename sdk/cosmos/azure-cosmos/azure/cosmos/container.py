@@ -44,12 +44,12 @@ __all__ = ("ContainerProxy",)
 class ContainerProxy(object):
     """An interface to interact with a specific DB Container.
 
-    This class should not be instantiated directly. Instead, use the 
-    :func:`DatabaseProxy.get_container_client` method to get an existing 
-    container, or the :func:`Database.create_container` method to create a 
+    This class should not be instantiated directly. Instead, use the
+    :func:`DatabaseProxy.get_container_client` method to get an existing
+    container, or the :func:`Database.create_container` method to create a
     new container.
 
-    A container in an Azure Cosmos DB SQL API database is a collection of 
+    A container in an Azure Cosmos DB SQL API database is a collection of
     documents, each of which represented as an Item.
 
     :ivar str id: ID (name) of the container
@@ -293,9 +293,9 @@ class ContainerProxy(object):
         # type: (...) -> Iterable[Dict[str, Any]]
         """Return all results matching the given `query`.
 
-        You can use any value for the container name in the FROM clause, but 
-        often the container name is used. In the examples below, the container 
-        name is "products," and is aliased as "p" for easier referencing in 
+        You can use any value for the container name in the FROM clause, but
+        often the container name is used. In the examples below, the container
+        name is "products," and is aliased as "p" for easier referencing in
         the WHERE clause.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -467,7 +467,7 @@ class ContainerProxy(object):
         # type: (...) -> Dict[str, str]
         """Create an item in the container.
 
-        To update or replace an existing item, use the 
+        To update or replace an existing item, use the
         :func:`ContainerProxy.upsert_item` method.
 
         :param body: A dict-like object representing the item to create.
