@@ -58,7 +58,7 @@ setup(
     install_requires=[
         'opentelemetry-api',
         'opentelemetry-ext-azure-monitor',
-        'azure-core<2.0.0,>=1.0.0b4',
+        'azure-core<2.0.0,>=1.0.0',
     ],
     extras_require={
         ":python_version<'3.5'": ['typing'],
