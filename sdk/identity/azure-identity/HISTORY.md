@@ -1,6 +1,8 @@
 # Release History
 
 ### 1.1.0b1 Unreleased
+- Constructing `DefaultAzureCredential` no longer raises `ImportError` on Python
+3.8 on Windows ([8294](https://github.com/Azure/azure-sdk-for-python/pull/8294))
 
 
 ### 2019-11-05 1.0.1

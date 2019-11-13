@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import logging
 import os
 
 from azure.core.exceptions import ClientAuthenticationError
@@ -11,6 +12,8 @@ from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .user import SharedTokenCacheCredential
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class DefaultAzureCredential(ChainedTokenCredential):
@@ -37,11 +40,14 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         # SharedTokenCacheCredential is part of the default only on supported platforms.
         if SharedTokenCacheCredential.supported():
-            credentials.append(
-                SharedTokenCacheCredential(
-                    username=os.environ.get(EnvironmentVariables.AZURE_USERNAME), authority=authority, **kwargs
-                )
-            )
+            try:
+                # username is only required to disambiguate, when the cache contains tokens for multiple identities
+                username = os.environ.get(EnvironmentVariables.AZURE_USERNAME)
+                shared_cache = SharedTokenCacheCredential(username=username, authority=authority, **kwargs)
+                credentials.append(shared_cache)
+            except Exception as ex:  # pylint:disable=broad-except
+                # transitive dependency pywin32 doesn't support 3.8 (https://github.com/mhammond/pywin32/issues/1431)
+                _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
 
         super(DefaultAzureCredential, self).__init__(*credentials)
 
