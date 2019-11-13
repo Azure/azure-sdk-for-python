@@ -336,33 +336,6 @@ def GetResourceIdOrFullNameFromLink(resource_link):
     return None
 
 
-def GetAttachmentIdFromMediaId(media_id):
-    """Gets attachment id from media id.
-
-    :param str media_id:
-
-    :return:
-        The attachment id from the media id.
-    :rtype: str
-    """
-    altchars = "+-"
-    if not six.PY2:
-        altchars = altchars.encode("utf-8")
-    # altchars for '+' and '/'. We keep '+' but replace '/' with '-'
-    buffer = base64.b64decode(str(media_id), altchars)
-    resoure_id_length = 20
-    attachment_id = ""
-    if len(buffer) > resoure_id_length:
-        # We are cutting off the storage index.
-        attachment_id = base64.b64encode(buffer[0:resoure_id_length], altchars)
-        if not six.PY2:
-            attachment_id = attachment_id.decode("utf-8")
-    else:
-        attachment_id = media_id
-
-    return attachment_id
-
-
 def GenerateGuidId():
     """Gets a random GUID.
 

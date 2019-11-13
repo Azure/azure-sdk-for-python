@@ -3,6 +3,50 @@
 Release History
 ===============
 
+0.5.0 (2019-11-08)
+++++++++++++++++++
+
+*Authoring*
+
+**Features**
+
+- Model HierarchicalChildEntity has a new parameter children
+- Model HierarchicalChildEntity has a new parameter instance_of
+- Model PatternFeatureInfo has a new parameter enabled_for_all_models
+- Model PhraseListFeatureInfo has a new parameter enabled_for_all_models
+- Model PhraselistCreateObject has a new parameter enabled_for_all_models
+- Model PhraselistUpdateObject has a new parameter enabled_for_all_models
+- Model JSONModelFeature has a new parameter enabled_for_all_models
+- Model ChildEntity has a new parameter children
+- Model ChildEntity has a new parameter instance_of
+- Model ChildEntity has a new parameter type_id
+- Model ChildEntity has a new parameter readable_type
+- Model FeatureInfoObject has a new parameter enabled_for_all_models
+- Model LuisApp has a new parameter phraselists
+- Model LuisApp has a new parameter hierarchicals
+- Model HierarchicalModel has a new parameter features
+- Added operation ModelOperations.get_intent_features
+- Added operation ModelOperations.replace_intent_features
+- Added operation ModelOperations.update_entity_child
+- Added operation ModelOperations.add_entity_child
+- Added operation ModelOperations.delete_entity_feature
+- Added operation ModelOperations.delete_intent_feature
+- Added operation ModelOperations.replace_entity_features
+- Added operation ModelOperations.get_entity_features
+- Added operation FeaturesOperations.add_intent_feature
+- Added operation FeaturesOperations.add_entity_feature
+
+**Breaking changes**
+
+- Operation ModelOperations.update_hierarchical_entity has a new signature
+- Operation ModelOperations.add_entity has a new signature
+- Model LuisApp no longer has parameter model_features
+- Removed operation ModelOperations.add_hierarchical_entity
+- Removed operation ModelOperations.add_composite_entity
+- Removed operation ModelOperations.add_hierarchical_entity_child
+- Removed operation ModelOperations.update_entity
+- Removed operation FeaturesOperations.list_application_version_pattern_features
+
 0.4.0 (2019-10-25)
 ++++++++++++++++++
 

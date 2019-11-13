@@ -348,7 +348,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         kv = self.test_config_setting_no_label
         read_only_kv = self.get_config_client().set_read_only(kv)
         assert read_only_kv.read_only
-        readable_kv = self.get_config_client().clear_read_only(read_only_kv)
+        readable_kv = self.get_config_client().set_read_only(read_only_kv, False)
         assert not readable_kv.read_only
 
     def test_delete_read_only(self):
@@ -356,7 +356,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         read_only_kv = self.get_config_client().set_read_only(to_delete_kv)
         with pytest.raises(ResourceReadOnlyError):
             self.get_config_client().delete_configuration_setting(to_delete_kv.key)
-        self.get_config_client().clear_read_only(read_only_kv)
+        self.get_config_client().set_read_only(read_only_kv, False)
         self.get_config_client().delete_configuration_setting(to_delete_kv.key)
         self.to_delete.remove(to_delete_kv)
         with pytest.raises(ResourceNotFoundError):
@@ -369,7 +369,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         read_only_kv = self.get_config_client().set_read_only(to_set_kv)
         with pytest.raises(ResourceReadOnlyError):
             self.get_config_client().set_configuration_setting(read_only_kv)
-        readable_kv = self.get_config_client().clear_read_only(read_only_kv)
+        readable_kv = self.get_config_client().set_read_only(read_only_kv, False)
         readable_kv.value = to_set_kv.value
         readable_kv.tags = to_set_kv.tags
         set_kv = self.get_config_client().set_configuration_setting(readable_kv)

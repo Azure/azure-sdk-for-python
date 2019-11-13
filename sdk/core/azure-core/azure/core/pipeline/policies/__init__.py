@@ -37,6 +37,7 @@ from ._universal import (
     ContentDecodePolicy,
     ProxyPolicy,
     HttpLoggingPolicy,
+    RequestIdPolicy,
 )
 
 __all__ = [
@@ -54,6 +55,7 @@ __all__ = [
     'DistributedTracingPolicy',
     'RequestHistory',
     'HttpLoggingPolicy',
+    'RequestIdPolicy',
 ]
 
 #pylint: disable=unused-import

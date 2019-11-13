@@ -9,7 +9,7 @@
 """
 FILE: read_only_sample.py
 DESCRIPTION:
-    This sample demos set_read_only/clear_read_only operations for app configuration
+    This sample demos set_read_only operations for app configuration
 USAGE: python read_only_sample.py
 """
 
@@ -42,8 +42,8 @@ def main():
     print("")
 
     print("Clear read only configuration setting:")
-    read_write_config_setting = client.clear_read_only(
-        returned_config_setting
+    read_write_config_setting = client.set_read_only(
+        returned_config_setting, False
     )
     print_configuration_setting(read_write_config_setting)
     print("")

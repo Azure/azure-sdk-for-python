@@ -9965,9 +9965,9 @@ class P2SVpnGateway(Resource):
     :type tags: dict[str, str]
     :param virtual_hub: The VirtualHub to which the gateway belongs.
     :type virtual_hub: ~azure.mgmt.network.v2019_08_01.models.SubResource
-    :param p2s_connection_configurations: List of all p2s connection
+    :param p2_sconnection_configurations: List of all p2s connection
      configurations of the gateway.
-    :type p2s_connection_configurations:
+    :type p2_sconnection_configurations:
      list[~azure.mgmt.network.v2019_08_01.models.P2SConnectionConfiguration]
     :param provisioning_state: The provisioning state of the P2S VPN gateway
      resource. Possible values include: 'Succeeded', 'Updating', 'Deleting',
@@ -9979,7 +9979,7 @@ class P2SVpnGateway(Resource):
     :param vpn_server_configuration: The VpnServerConfiguration to which the
      p2sVpnGateway is attached to.
     :type vpn_server_configuration:
-     ~azure.mgmt.network.v2019_08_01.models.VpnServerConfiguration
+     ~azure.mgmt.network.v2019_08_01.models.SubResource
     :ivar vpn_client_connection_health: All P2S VPN clients' connection health
      status.
     :vartype vpn_client_connection_health:
@@ -10003,10 +10003,10 @@ class P2SVpnGateway(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'virtual_hub': {'key': 'properties.virtualHub', 'type': 'SubResource'},
-        'p2s_connection_configurations': {'key': 'properties.p2sConnectionConfigurations', 'type': '[P2SConnectionConfiguration]'},
+        'p2_sconnection_configurations': {'key': 'properties.p2SConnectionConfigurations', 'type': '[P2SConnectionConfiguration]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'vpn_gateway_scale_unit': {'key': 'properties.vpnGatewayScaleUnit', 'type': 'int'},
-        'vpn_server_configuration': {'key': 'properties.vpnServerConfiguration', 'type': 'VpnServerConfiguration'},
+        'vpn_server_configuration': {'key': 'properties.vpnServerConfiguration', 'type': 'SubResource'},
         'vpn_client_connection_health': {'key': 'properties.vpnClientConnectionHealth', 'type': 'VpnClientConnectionHealth'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
@@ -10014,7 +10014,7 @@ class P2SVpnGateway(Resource):
     def __init__(self, **kwargs):
         super(P2SVpnGateway, self).__init__(**kwargs)
         self.virtual_hub = kwargs.get('virtual_hub', None)
-        self.p2s_connection_configurations = kwargs.get('p2s_connection_configurations', None)
+        self.p2_sconnection_configurations = kwargs.get('p2_sconnection_configurations', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.vpn_gateway_scale_unit = kwargs.get('vpn_gateway_scale_unit', None)
         self.vpn_server_configuration = kwargs.get('vpn_server_configuration', None)
@@ -10899,22 +10899,22 @@ class PrivateLinkServiceConnectionState(Model):
     :type status: str
     :param description: The reason for approval/rejection of the connection.
     :type description: str
-    :param action_required: A message indicating if changes on the service
+    :param actions_required: A message indicating if changes on the service
      provider require any updates on the consumer.
-    :type action_required: str
+    :type actions_required: str
     """
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
-        'action_required': {'key': 'actionRequired', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
         self.status = kwargs.get('status', None)
         self.description = kwargs.get('description', None)
-        self.action_required = kwargs.get('action_required', None)
+        self.actions_required = kwargs.get('actions_required', None)
 
 
 class PrivateLinkServiceIpConfiguration(SubResource):
@@ -15219,21 +15219,21 @@ class VpnServerConfiguration(Resource):
      VpnServerConfiguration.
     :type vpn_authentication_types: list[str or
      ~azure.mgmt.network.v2019_08_01.models.VpnAuthenticationType]
-    :param vpn_server_config_vpn_client_root_certificates: VPN client root
-     certificate of VpnServerConfiguration.
-    :type vpn_server_config_vpn_client_root_certificates:
+    :param vpn_client_root_certificates: VPN client root certificate of
+     VpnServerConfiguration.
+    :type vpn_client_root_certificates:
      list[~azure.mgmt.network.v2019_08_01.models.VpnServerConfigVpnClientRootCertificate]
-    :param vpn_server_config_vpn_client_revoked_certificates: VPN client
-     revoked certificate of VpnServerConfiguration.
-    :type vpn_server_config_vpn_client_revoked_certificates:
+    :param vpn_client_revoked_certificates: VPN client revoked certificate of
+     VpnServerConfiguration.
+    :type vpn_client_revoked_certificates:
      list[~azure.mgmt.network.v2019_08_01.models.VpnServerConfigVpnClientRevokedCertificate]
-    :param vpn_server_config_radius_server_root_certificates: Radius Server
-     root certificate of VpnServerConfiguration.
-    :type vpn_server_config_radius_server_root_certificates:
+    :param radius_server_root_certificates: Radius Server root certificate of
+     VpnServerConfiguration.
+    :type radius_server_root_certificates:
      list[~azure.mgmt.network.v2019_08_01.models.VpnServerConfigRadiusServerRootCertificate]
-    :param vpn_server_config_radius_client_root_certificates: Radius client
-     root certificate of VpnServerConfiguration.
-    :type vpn_server_config_radius_client_root_certificates:
+    :param radius_client_root_certificates: Radius client root certificate of
+     VpnServerConfiguration.
+    :type radius_client_root_certificates:
      list[~azure.mgmt.network.v2019_08_01.models.VpnServerConfigRadiusClientRootCertificate]
     :param vpn_client_ipsec_policies: VpnClientIpsecPolicies for
      VpnServerConfiguration.
@@ -15281,10 +15281,10 @@ class VpnServerConfiguration(Resource):
         'vpn_server_configuration_name': {'key': 'properties.name', 'type': 'str'},
         'vpn_protocols': {'key': 'properties.vpnProtocols', 'type': '[str]'},
         'vpn_authentication_types': {'key': 'properties.vpnAuthenticationTypes', 'type': '[str]'},
-        'vpn_server_config_vpn_client_root_certificates': {'key': 'properties.vpnServerConfigVpnClientRootCertificates', 'type': '[VpnServerConfigVpnClientRootCertificate]'},
-        'vpn_server_config_vpn_client_revoked_certificates': {'key': 'properties.vpnServerConfigVpnClientRevokedCertificates', 'type': '[VpnServerConfigVpnClientRevokedCertificate]'},
-        'vpn_server_config_radius_server_root_certificates': {'key': 'properties.vpnServerConfigRadiusServerRootCertificates', 'type': '[VpnServerConfigRadiusServerRootCertificate]'},
-        'vpn_server_config_radius_client_root_certificates': {'key': 'properties.vpnServerConfigRadiusClientRootCertificates', 'type': '[VpnServerConfigRadiusClientRootCertificate]'},
+        'vpn_client_root_certificates': {'key': 'properties.vpnClientRootCertificates', 'type': '[VpnServerConfigVpnClientRootCertificate]'},
+        'vpn_client_revoked_certificates': {'key': 'properties.vpnClientRevokedCertificates', 'type': '[VpnServerConfigVpnClientRevokedCertificate]'},
+        'radius_server_root_certificates': {'key': 'properties.radiusServerRootCertificates', 'type': '[VpnServerConfigRadiusServerRootCertificate]'},
+        'radius_client_root_certificates': {'key': 'properties.radiusClientRootCertificates', 'type': '[VpnServerConfigRadiusClientRootCertificate]'},
         'vpn_client_ipsec_policies': {'key': 'properties.vpnClientIpsecPolicies', 'type': '[IpsecPolicy]'},
         'radius_server_address': {'key': 'properties.radiusServerAddress', 'type': 'str'},
         'radius_server_secret': {'key': 'properties.radiusServerSecret', 'type': 'str'},
@@ -15300,10 +15300,10 @@ class VpnServerConfiguration(Resource):
         self.vpn_server_configuration_name = kwargs.get('vpn_server_configuration_name', None)
         self.vpn_protocols = kwargs.get('vpn_protocols', None)
         self.vpn_authentication_types = kwargs.get('vpn_authentication_types', None)
-        self.vpn_server_config_vpn_client_root_certificates = kwargs.get('vpn_server_config_vpn_client_root_certificates', None)
-        self.vpn_server_config_vpn_client_revoked_certificates = kwargs.get('vpn_server_config_vpn_client_revoked_certificates', None)
-        self.vpn_server_config_radius_server_root_certificates = kwargs.get('vpn_server_config_radius_server_root_certificates', None)
-        self.vpn_server_config_radius_client_root_certificates = kwargs.get('vpn_server_config_radius_client_root_certificates', None)
+        self.vpn_client_root_certificates = kwargs.get('vpn_client_root_certificates', None)
+        self.vpn_client_revoked_certificates = kwargs.get('vpn_client_revoked_certificates', None)
+        self.radius_server_root_certificates = kwargs.get('radius_server_root_certificates', None)
+        self.radius_client_root_certificates = kwargs.get('radius_client_root_certificates', None)
         self.vpn_client_ipsec_policies = kwargs.get('vpn_client_ipsec_policies', None)
         self.radius_server_address = kwargs.get('radius_server_address', None)
         self.radius_server_secret = kwargs.get('radius_server_secret', None)

@@ -192,7 +192,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END backup_key]
 
-        await key_client.delete_key(key_name)
+        polling_interval = 0 if self.is_playback() else 2
+
+        await key_client.delete_key(key_name, _polling_interval=polling_interval)
 
         # [START restore_key_backup]
 
@@ -211,7 +213,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         key_client = vault_client.keys
         created_key = await key_client.create_key("key-name", "RSA")
 
-        await key_client.delete_key(created_key.name)
+        polling_interval = 0 if self.is_playback() else 2
+        await key_client.delete_key(created_key.name, _polling_interval=polling_interval)
 
         # [START get_deleted_key]
 

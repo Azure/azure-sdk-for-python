@@ -44,7 +44,7 @@ async def run_sample():
         ]
 
         # Creates and sets the certificate contacts for this key vault.
-        await client.create_contacts(contacts=contact_list)
+        await client.create_contacts(contact_list)
 
         # Gets the certificate contacts for this key vault.
         contacts = await client.get_contacts()

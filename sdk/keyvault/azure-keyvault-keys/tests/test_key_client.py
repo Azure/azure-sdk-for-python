@@ -173,10 +173,7 @@ class KeyClientTests(KeyVaultTestCase):
         self._update_key_properties(client, created_rsa_key)
 
         # delete the new key
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         deleted_key_poller = client.begin_delete_key(created_rsa_key.name, _polling_interval=polling_interval)
         deleted_key = deleted_key_poller.result()
         self.assertIsNotNone(deleted_key)
@@ -210,10 +207,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertIsNotNone(key_backup, "key_backup")
 
         # delete key
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         client.begin_delete_key(created_bundle.name, _polling_interval=polling_interval).wait()
 
         # restore key
@@ -237,7 +231,7 @@ class KeyClientTests(KeyVaultTestCase):
             expected[key.name] = key
 
         # list keys
-        result = client.list_properties_of_keys(max_page_size=max_keys)
+        result = client.list_properties_of_keys(max_page_size=max_keys - 1)
         for key in result:
             if key.name in expected.keys():
                 self._assert_key_attributes_equal(expected[key.name].properties, key)
@@ -253,7 +247,6 @@ class KeyClientTests(KeyVaultTestCase):
         key_name = self.get_resource_name("testKey")
 
         max_keys = self.list_test_size
-        max_page_size = 2
         expected = {}
 
         # create many key versions
@@ -261,7 +254,7 @@ class KeyClientTests(KeyVaultTestCase):
             key = client.create_key(key_name, "RSA")
             expected[key.id] = key
 
-        result = client.list_properties_of_key_versions(key_name, max_page_size=max_page_size)
+        result = client.list_properties_of_key_versions(key_name, max_page_size=max_keys - 1)
 
         # validate list key versions with attributes
         for key in result:
@@ -286,10 +279,7 @@ class KeyClientTests(KeyVaultTestCase):
             expected[key_name] = client.create_key(key_name, "RSA")
 
         # delete them
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         for key_name in expected.keys():
             client.begin_delete_key(key_name, _polling_interval=polling_interval).wait()
 
@@ -319,10 +309,7 @@ class KeyClientTests(KeyVaultTestCase):
             keys[key_name] = client.create_key(key_name, "RSA")
 
         # delete them
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         for key_name in keys.keys():
             client.begin_delete_key(key_name, _polling_interval=polling_interval).wait()
 
@@ -348,10 +335,7 @@ class KeyClientTests(KeyVaultTestCase):
             client.create_key(name, "RSA")
 
         # delete them
-        if self.is_playback:
-            polling_interval = 0
-        else:
-            polling_interval = None
+        polling_interval = 0 if self.is_playback() else 2
         for key_name in key_names:
             client.begin_delete_key(key_name, _polling_interval=polling_interval).wait()
 

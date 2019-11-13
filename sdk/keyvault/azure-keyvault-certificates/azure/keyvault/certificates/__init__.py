@@ -3,12 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from .client import CertificateClient
-from .enums import CertificatePolicyAction, KeyCurveName, KeyType, SecretContentType, KeyUsageType
-from .models import AdministratorDetails, CertificatePolicy, CertificateContact, LifetimeAction
+from .enums import CertificatePolicyAction, KeyCurveName, KeyType, SecretContentType, KeyUsageType, WellKnownIssuerNames
+from .models import AdministratorContact, CertificatePolicy, CertificateContact, LifetimeAction
 
 __all__ = [
     "CertificatePolicyAction",
-    "AdministratorDetails",
+    "AdministratorContact",
     "CertificateClient",
     "CertificatePolicy",
     "CertificateContact",
@@ -17,4 +17,5 @@ __all__ = [
     "KeyUsageType",
     "LifetimeAction",
     "SecretContentType",
+    "WellKnownIssuerNames",
 ]

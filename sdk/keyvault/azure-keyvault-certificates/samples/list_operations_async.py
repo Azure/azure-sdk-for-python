@@ -24,9 +24,9 @@ from azure.core.exceptions import HttpResponseError
 #
 # 1. Create certificate (create_certificate)
 #
-# 2. List certificates from the Key Vault (list_certificates)
+# 2. List certificates from the Key Vault (list_properties_of_certificates)
 #
-# 3. List certificate versions from the Key Vault (list_certificate_versions)
+# 3. List certificate versions from the Key Vault (list_properties_of_certificate_versions)
 #
 # 4. List deleted certificates from the Key Vault (list_deleted_certificates). The vault has to be soft-delete enabled to perform this operation.
 #
@@ -48,10 +48,10 @@ async def run_sample():
         storage_cert_name = "StorageListCertificate"
 
         bank_certificate = await client.create_certificate(
-            name=bank_cert_name, policy=CertificatePolicy.get_default()
+            certificate_name=bank_cert_name, policy=CertificatePolicy.get_default()
         )
         storage_certificate = await client.create_certificate(
-            name=storage_cert_name, policy=CertificatePolicy.get_default()
+            certificate_name=storage_cert_name, policy=CertificatePolicy.get_default()
         )
 
         print("Certificate with name '{0}' was created.".format(bank_certificate.name))
@@ -59,7 +59,7 @@ async def run_sample():
 
         # Let's list the certificates.
         print("\n.. List certificates from the Key Vault")
-        certificates = client.list_certificates()
+        certificates = client.list_properties_of_certificates()
         async for certificate in certificates:
             print("Certificate with name '{0}' was found.".format(certificate.name))
 
@@ -69,7 +69,7 @@ async def run_sample():
         tags = {"a": "b"}
 
         updated_bank_certificate_poller = await client.create_certificate(
-            name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags
+            certificate_name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags
         )
         bank_certificate = await updated_bank_certificate_poller
         print(
@@ -80,7 +80,7 @@ async def run_sample():
 
         # You need to check all the different tags your bank account certificate had previously. Lets print all the versions of this certificate.
         print("\n.. List versions of the certificate using its name")
-        certificate_versions = client.list_certificate_versions(bank_cert_name)
+        certificate_versions = client.list_properties_of_certificate_versions(bank_cert_name)
         async for certificate_version in certificate_versions:
             print(
                 "Bank Certificate with name '{0}' with version '{1}' has tags: '{2}'.".format(
@@ -89,8 +89,8 @@ async def run_sample():
             )
 
         # The bank account and storage accounts got closed. Let's delete bank and storage accounts certificates.
-        await client.delete_certificate(name=bank_cert_name)
-        await client.delete_certificate(name=storage_cert_name)
+        await client.delete_certificate(bank_cert_name)
+        await client.delete_certificate(storage_cert_name)
 
         # You can list all the deleted and non-purged certificates, assuming Key Vault is soft-delete enabled.
         print("\n.. List deleted certificates from the Key Vault")

@@ -511,6 +511,20 @@
     ],
     "service_name": "Machine Learning Compute"
   },
+  "azure-mgmt-machinelearningservices": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.machinelearningservices"
+    ],
+    "service_name": "Machine Learning Compute"
+  },
+  "azure-mgmt-managedservices": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.managedservices"
+    ],
+    "service_name": "Managed Services"
+  },
   "azure-mgmt-managementgroups": {
     "category": "Management",
     "namespaces": [
@@ -640,6 +654,20 @@
       "azure.mgmt.rdbms.postgresql"
     ],
     "service_name": "PostgreSQL"
+  },
+  "azure-mgmt-rdbms": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.rdbms"
+    ],
+    "service_name": "OSS RDBMS"
+  },
+  "azure-mgmt-reservations": {
+    "category": "Management",
+    "namespaces": [
+      "azure.mgmt.reservations"
+    ],
+    "service_name": "Reservations"
   },
   "azure-mgmt-recoveryservices": {
     "category": "Management",
@@ -855,6 +883,11 @@
     "service_name": "Storage",
     "manually_generated": true
   },
+  "azure-storage-file-datalake": {
+    "category": "Client",
+    "service_name": "Storage",
+    "manually_generated": true
+  },
   "azure-storage-queue": {
     "category": "Client",
     "service_name": "Storage",
@@ -868,7 +901,121 @@
   "azure-mgmt-appconfiguration": {
     "category": "Management",
     "service_name": "App Configuration",
-    "manually_generated": true
+    "namespaces": [
+      "azure.mgmt.appconfiguration"
+    ]
+  },
+  "azure-mgmt-privatedns": {
+    "category": "Management",
+    "service_name": "Private DNS",
+    "namespaces": [
+      "azure.mgmt.privatedns"
+    ]
+  },
+  "azure-mgmt-frontdoor": {
+    "category": "Management",
+    "service_name": "Front Door",
+    "namespaces": [
+      "azure.mgmt.frontdoor"
+    ]
+  },
+  "azure-mgmt-hybridcompute": {
+    "category": "Management",
+    "service_name": "Hybrid Cloud",
+    "namespaces": [
+      "azure.mgmt.hybridcompute"
+    ]
+  },
+  "azure-mgmt-healthcareapis": {
+    "category": "Management",
+    "service_name": "Healthcare APIs",
+    "namespaces": [
+      "azure.mgmt.healthcareapis"
+    ]
+  },
+  "azure-mgmt-edgegateway": {
+    "category": "Management",
+    "service_name": "Edge Gateway",
+    "namespaces": [
+      "azure.mgmt.edgegateway"
+    ]
+  },
+  "azure-mgmt-deploymentmanager": {
+    "category": "Management",
+    "service_name": "Deployment Manager",
+    "namespaces": [
+      "azure.mgmt.deploymentmanager"
+    ]
+  },
+  "azure-mgmt-peering": {
+    "category": "Management",
+    "service_name": "Peering",
+    "namespaces": [
+      "azure.mgmt.peering"
+    ]
+  },
+  "azure-mgmt-appplatform": {
+    "category": "Management",
+    "service_name": "App Service",
+    "namespaces": [
+      "azure.mgmt.appplatform"
+    ]
+  },
+  "azure-mgmt-botservice": {
+    "category": "Management",
+    "service_name": "Bot Service",
+    "namespaces": [
+      "azure.mgmt.botservice"
+    ]
+  },
+  "azure-mgmt-costmanagement": {
+    "category": "Management",
+    "service_name": "Cost Management",
+    "namespaces": [
+      "azure.mgmt.costmanagement"
+    ]
+  },
+  "azure-mgmt-attestation": {
+    "category": "Management",
+    "service_name": "Attestation",
+    "namespaces": [
+      "azure.mgmt.attestation"
+    ]
+  },
+  "azure-mgmt-datashare": {
+    "category": "Management",
+    "service_name": "Data Share",
+    "namespaces": [
+      "azure.mgmt.datashare"
+    ]
+  },
+  "azure-mgmt-serialconsole": {
+    "category": "Management",
+    "service_name": "Serial Console",
+    "namespaces": [
+      "azure.mgmt.serialconsole"
+    ]
+  },
+  "azure-mgmt-storagesync": {
+    "category": "Management",
+    "service_name": "Storage",
+    "namespaces": [
+      "azure.mgmt.storagesync"
+    ]
+  },
+  "azure-mgmt-storagecache": {
+    "category": "Management",
+    "service_name": "Storage",
+    "namespaces": [
+      "azure.mgmt.storagecache"
+    ]
+  },
+  "azure-mgmt-vmwarecloudsimple": {
+    "category": "Management",
+    "service_name": "VMWare by CloudSimple",
+    "namespaces": [
+      "azure.mgmt.vmwarecloudsimple"
+    ]
   },
   "azure-servicefabric": {
     "category": "Client",
@@ -878,7 +1025,7 @@
     "service_name": "Service Fabric"
   },
   "azure-servicemanagement-legacy": {
-    "category": "Other",
+    "category": "Client",
     "service_name": "Other"
   }
 }
