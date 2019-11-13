@@ -11,6 +11,7 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -57,8 +58,7 @@ class TasksOperations(object):
         :return: An iterator like instance of Task
         :rtype:
          ~azure.mgmt.containerregistry.v2019_04_01.models.TaskPaged[~azure.mgmt.containerregistry.v2019_04_01.models.Task]
-        :raises:
-         :class:`ErrorException<azure.mgmt.containerregistry.v2019_04_01.models.ErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -99,7 +99,9 @@ class TasksOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorException(self._deserialize, response)
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
 
             return response
 
@@ -131,8 +133,7 @@ class TasksOperations(object):
         :return: Task or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.containerregistry.v2019_04_01.models.Task or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorException<azure.mgmt.containerregistry.v2019_04_01.models.ErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -163,7 +164,9 @@ class TasksOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
         if response.status_code == 200:
@@ -212,7 +215,9 @@ class TasksOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            raise models.ErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
@@ -252,8 +257,7 @@ class TasksOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerregistry.v2019_04_01.models.Task]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerregistry.v2019_04_01.models.Task]]
-        :raises:
-         :class:`ErrorException<azure.mgmt.containerregistry.v2019_04_01.models.ErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_initial(
             resource_group_name=resource_group_name,
@@ -314,7 +318,9 @@ class TasksOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
-            raise models.ErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -340,8 +346,7 @@ class TasksOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises:
-         :class:`ErrorException<azure.mgmt.containerregistry.v2019_04_01.models.ErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -402,7 +407,9 @@ class TasksOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            raise models.ErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
@@ -442,8 +449,7 @@ class TasksOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerregistry.v2019_04_01.models.Task]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerregistry.v2019_04_01.models.Task]]
-        :raises:
-         :class:`ErrorException<azure.mgmt.containerregistry.v2019_04_01.models.ErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
@@ -492,8 +498,7 @@ class TasksOperations(object):
         :return: Task or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.containerregistry.v2019_04_01.models.Task or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorException<azure.mgmt.containerregistry.v2019_04_01.models.ErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.get_details.metadata['url']
@@ -524,7 +529,9 @@ class TasksOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
         if response.status_code == 200:
