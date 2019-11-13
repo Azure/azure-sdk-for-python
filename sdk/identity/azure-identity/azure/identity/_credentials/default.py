@@ -43,7 +43,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 username = os.environ.get(EnvironmentVariables.AZURE_USERNAME)
                 shared_cache = SharedTokenCacheCredential(username=username, authority=authority, **kwargs)
                 credentials.append(shared_cache)
-            except ImportError as ex:
+            except Exception as ex:  # pylint:disable=broad-except
                 # transitive dependency pywin32 doesn't support 3.8 (https://github.com/mhammond/pywin32/issues/1431)
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
 
