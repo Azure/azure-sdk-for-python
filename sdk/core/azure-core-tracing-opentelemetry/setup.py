@@ -57,7 +57,7 @@ setup(
         'azure.core.tracing.ext.opentelemetry_span',
     ],
     install_requires=[
-        'opentelemetry-api',
+        'opentelemetry-api>0.2a0',
         'opentelemetry-ext-azure-monitor',
         'azure-core<2.0.0,>=1.0.0',
     ],
