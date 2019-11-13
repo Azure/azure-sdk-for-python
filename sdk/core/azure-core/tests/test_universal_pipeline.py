@@ -31,7 +31,7 @@ except ImportError:
     import mock
 
 import requests
-
+import sys
 import pytest
 
 from azure.core.exceptions import DecodeError
@@ -131,6 +131,7 @@ def test_no_log(mock_http_logger):
     second_count = mock_http_logger.debug.call_count
     assert second_count == first_count * 2
 
+@pytest.mark.skipif(sys.version_info < (3, 5), reason="bytes ctor does not take two parameters on 2.7")
 def test_retry_unseekable_body():
     def build_response(body, content_type=None):
         class MockRequest(HttpRequest):
