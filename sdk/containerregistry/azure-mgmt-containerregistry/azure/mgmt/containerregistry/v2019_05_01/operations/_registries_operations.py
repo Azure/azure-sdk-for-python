@@ -944,9 +944,7 @@ class RegistriesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -983,7 +981,8 @@ class RegistriesOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerregistry.v2019_05_01.models.Run]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.containerregistry.v2019_05_01.models.Run]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.containerregistry.v2019_05_01.models.ErrorException>`
         """
         raw_result = self._schedule_run_initial(
             resource_group_name=resource_group_name,
@@ -1030,7 +1029,8 @@ class RegistriesOperations(object):
         :rtype:
          ~azure.mgmt.containerregistry.v2019_05_01.models.SourceUploadDefinition
          or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.containerregistry.v2019_05_01.models.ErrorException>`
         """
         api_version = "2019-04-01"
 
@@ -1062,9 +1062,7 @@ class RegistriesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:

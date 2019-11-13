@@ -27,6 +27,7 @@ try:
     from ._models_py3 import EncodedTaskRunRequest
     from ._models_py3 import EncodedTaskStep
     from ._models_py3 import EncodedTaskStepUpdateParameters
+    from ._models_py3 import Error, ErrorException
     from ._models_py3 import Event
     from ._models_py3 import EventContent
     from ._models_py3 import EventInfo
@@ -131,6 +132,7 @@ except (SyntaxError, ImportError):
     from ._models import EncodedTaskRunRequest
     from ._models import EncodedTaskStep
     from ._models import EncodedTaskStepUpdateParameters
+    from ._models import Error, ErrorException
     from ._models import Event
     from ._models import EventContent
     from ._models import EventInfo
@@ -279,6 +281,7 @@ __all__ = [
     'EncodedTaskRunRequest',
     'EncodedTaskStep',
     'EncodedTaskStepUpdateParameters',
+    'Error', 'ErrorException',
     'Event',
     'EventContent',
     'EventInfo',

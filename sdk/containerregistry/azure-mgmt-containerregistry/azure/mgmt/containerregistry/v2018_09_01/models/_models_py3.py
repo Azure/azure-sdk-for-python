@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
 
 
 class Actor(Model):
@@ -859,6 +860,52 @@ class EncodedTaskStepUpdateParameters(TaskStepUpdateParameters):
         self.encoded_values_content = encoded_values_content
         self.values = values
         self.type = 'EncodedTask'
+
+
+class Error(Model):
+    """The resource model definition for a ARM proxy resource. It will have
+    everything other than required location and tags.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(Error, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class ErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'Error'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorException, self).__init__(deserialize, response, 'Error', *args)
 
 
 class EventInfo(Model):
