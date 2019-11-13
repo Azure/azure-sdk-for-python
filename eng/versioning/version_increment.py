@@ -13,7 +13,7 @@ def increment_version(old_version):
         prerelease_version = parsed_version.pre[1]
         return f'{release[0]}.{release[1]}.{release[2]}b{prerelease_version + 1}'
 
-    return f'{release[0]}.{release[1] + 1}.0b1'
+    return f'{release[0]}.{release[1]}.{release[2] + 1}'
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Increments version for a given package name based on the released version')

@@ -9,7 +9,7 @@ DEFAULT_SDK_PATH = "../../sdk/"
 def get_dev_version(current_version, build_id):
     parsed_version = parse(current_version)
     release = parsed_version.release
-    return f"{release[0]}.{release[1]}.{release[2]}dev{build_id}"
+    return f"{release[0]}.{release[1]}.{release[2]}.dev{build_id}"
 
 def is_in_service(sdk_path, setup_py_location, service_name):
     sdk_prefix = path.normpath(sdk_path)
