@@ -29,7 +29,7 @@ class TrainResult(Model):
     :type average_model_accuracy: float
     :param errors: Errors returned during the training operation.
     :type errors:
-     list[~azure.cognitiveservices.formrecognizer.models.FormOperationError]
+     list[~azure.cognitiveservices.formrecognizer.models.ErrorInformation]
     """
 
     _validation = {
@@ -40,7 +40,7 @@ class TrainResult(Model):
         'training_documents': {'key': 'trainingDocuments', 'type': '[TrainingDocumentInfo]'},
         'fields': {'key': 'fields', 'type': '[FormFieldsReport]'},
         'average_model_accuracy': {'key': 'averageModelAccuracy', 'type': 'float'},
-        'errors': {'key': 'errors', 'type': '[FormOperationError]'},
+        'errors': {'key': 'errors', 'type': '[ErrorInformation]'},
     }
 
     def __init__(self, *, training_documents, fields=None, average_model_accuracy: float=None, errors=None, **kwargs) -> None:

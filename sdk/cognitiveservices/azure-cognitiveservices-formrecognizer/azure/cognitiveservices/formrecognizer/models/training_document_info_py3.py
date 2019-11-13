@@ -22,7 +22,8 @@ class TrainingDocumentInfo(Model):
     :param pages: Required. Total number of pages trained.
     :type pages: int
     :param errors: Required. List of errors.
-    :type errors: list[str]
+    :type errors:
+     list[~azure.cognitiveservices.formrecognizer.models.ErrorInformation]
     :param status: Required. Status of the training operation. Possible values
      include: 'succeeded', 'partiallySucceeded', 'failed'
     :type status: str or
@@ -39,7 +40,7 @@ class TrainingDocumentInfo(Model):
     _attribute_map = {
         'document_name': {'key': 'documentName', 'type': 'str'},
         'pages': {'key': 'pages', 'type': 'int'},
-        'errors': {'key': 'errors', 'type': '[str]'},
+        'errors': {'key': 'errors', 'type': '[ErrorInformation]'},
         'status': {'key': 'status', 'type': 'TrainStatus'},
     }
 

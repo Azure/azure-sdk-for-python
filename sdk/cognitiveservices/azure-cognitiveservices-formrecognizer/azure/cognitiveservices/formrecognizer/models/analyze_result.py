@@ -31,7 +31,7 @@ class AnalyzeResult(Model):
      list[~azure.cognitiveservices.formrecognizer.models.DocumentResult]
     :param errors: List of errors reported during the analyze operation.
     :type errors:
-     list[~azure.cognitiveservices.formrecognizer.models.FormOperationError]
+     list[~azure.cognitiveservices.formrecognizer.models.ErrorInformation]
     """
 
     _validation = {
@@ -44,7 +44,7 @@ class AnalyzeResult(Model):
         'read_results': {'key': 'readResults', 'type': '[ReadResult]'},
         'page_results': {'key': 'pageResults', 'type': '[PageResult]'},
         'document_results': {'key': 'documentResults', 'type': '[DocumentResult]'},
-        'errors': {'key': 'errors', 'type': '[FormOperationError]'},
+        'errors': {'key': 'errors', 'type': '[ErrorInformation]'},
     }
 
     def __init__(self, **kwargs):

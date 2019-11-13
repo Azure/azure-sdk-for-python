@@ -17,11 +17,11 @@ class Model(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param model_info: Required. Basic custom model information.
+    :param model_info: Required.
     :type model_info: ~azure.cognitiveservices.formrecognizer.models.ModelInfo
-    :param keys: Keys extracted by the custom model.
+    :param keys:
     :type keys: ~azure.cognitiveservices.formrecognizer.models.KeysResult
-    :param train_result: Custom model training result.
+    :param train_result:
     :type train_result:
      ~azure.cognitiveservices.formrecognizer.models.TrainResult
     """

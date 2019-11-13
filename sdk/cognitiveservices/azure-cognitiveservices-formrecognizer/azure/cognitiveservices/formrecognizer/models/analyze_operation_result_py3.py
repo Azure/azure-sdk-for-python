@@ -21,11 +21,11 @@ class AnalyzeOperationResult(Model):
      'notStarted', 'running', 'succeeded', 'failed'
     :type status: str or
      ~azure.cognitiveservices.formrecognizer.models.OperationStatus
-    :param created_date_time: Required. Date and time (UTC) the analyze
+    :param created_date_time: Required. Date and time (UTC) when the analyze
      operation was submitted.
     :type created_date_time: datetime
     :param last_updated_date_time: Required. Date and time (UTC) when the
-     status is last updated.
+     status was last updated.
     :type last_updated_date_time: datetime
     :param analyze_result: Results of the analyze operation.
     :type analyze_result:

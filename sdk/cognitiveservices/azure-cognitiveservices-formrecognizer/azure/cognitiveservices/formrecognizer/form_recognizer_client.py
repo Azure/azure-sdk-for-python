@@ -292,7 +292,7 @@ class FormRecognizerClient(SDKClient):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
@@ -427,7 +427,7 @@ class FormRecognizerClient(SDKClient):
     get_analyze_form_result.metadata = {'url': '/custom/models/{modelId}/analyzeResults/{resultId}'}
 
     def analyze_receipt_async(
-            self, file_stream=None, custom_headers=None, raw=False, **operation_config):
+            self, include_text_details=False, file_stream=None, custom_headers=None, raw=False, **operation_config):
         """Analyze Receipt.
 
         Extract field text and semantic values from a given receipt document.
@@ -436,6 +436,9 @@ class FormRecognizerClient(SDKClient):
         Alternatively, use 'application/json' type to specify the location (Uri
         or local path) of the document to be analyzed.
 
+        :param include_text_details: Include text lines and element references
+         in the result.
+        :type include_text_details: bool
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: object
         :param dict custom_headers: headers that will be added to the request
@@ -457,6 +460,8 @@ class FormRecognizerClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
+        if include_text_details is not None:
+            query_parameters['includeTextDetails'] = self._serialize.query("include_text_details", include_text_details, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -541,3 +546,119 @@ class FormRecognizerClient(SDKClient):
 
         return deserialized
     get_analyze_receipt_result.metadata = {'url': '/prebuilt/receipt/analyzeResults/{resultId}'}
+
+    def analyze_layout_async(
+            self, file_stream=None, custom_headers=None, raw=False, **operation_config):
+        """Analyze Layout.
+
+        Extract text and layout information from a given document. The input
+        document must be of one of the supported content types -
+        'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'.
+        Alternatively, use 'application/json' type to specify the location (Uri
+        or local path) of the document to be analyzed.
+
+        :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
+        :type file_stream: object
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.analyze_layout_async.metadata['url']
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        if file_stream is not None:
+            body_content = self._serialize.body(file_stream, 'object')
+        else:
+            body_content = None
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response.add_headers({
+                'Operation-Location': 'str',
+            })
+            return client_raw_response
+    analyze_layout_async.metadata = {'url': '/layout/analyze'}
+
+    def get_analyze_layout_result(
+            self, result_id, custom_headers=None, raw=False, **operation_config):
+        """Get Analyze Layout Result.
+
+        Track the progress and obtain the result of the analyze layout
+        operation.
+
+        :param result_id: Analyze operation result identifier.
+        :type result_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: AnalyzeOperationResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.formrecognizer.models.AnalyzeOperationResult
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.get_analyze_layout_result.metadata['url']
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'resultId': self._serialize.url("result_id", result_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('AnalyzeOperationResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_analyze_layout_result.metadata = {'url': '/layout/analyzeResults/{resultId}'}
