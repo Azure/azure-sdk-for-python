@@ -219,7 +219,7 @@ from ._paged_models import SqlTriggerGetResultsPaged
 from ._paged_models import SqlUserDefinedFunctionGetResultsPaged
 from ._paged_models import TableGetResultsPaged
 from ._paged_models import UsagePaged
-from ._cosmos_db_enums import (
+from ._cosmos_db_management_client_enums import (
     DatabaseAccountKind,
     DatabaseAccountOfferType,
     DefaultConsistencyLevel,
