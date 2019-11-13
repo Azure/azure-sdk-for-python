@@ -125,7 +125,7 @@ def _validate_batch_input(documents):
         if isinstance(doc, six.text_type):
             documents[idx] = {"id": str(idx), "text": doc}
             string_input = True
-        if type(doc) == dict or isinstance(doc, MultiLanguageInput) or isinstance(doc, LanguageInput):
+        if isinstance(doc, (dict, MultiLanguageInput, LanguageInput)):
             if string_input:
                 raise TypeError("Mixing string and dictionary input unsupported.")
     return documents
@@ -154,7 +154,7 @@ def language_result(response, obj, response_headers):
         return whole_batch_error(obj)
 
     if obj.errors:
-        combined = [*obj.documents, *obj.errors]
+        combined = obj.documents + obj.errors
         results = order_results(response, combined)
     else:
         results = obj.documents
@@ -176,7 +176,7 @@ def entities_result(response, obj, response_headers):
         return whole_batch_error(obj)
 
     if obj.errors:
-        combined = [*obj.documents, *obj.errors]
+        combined = obj.documents + obj.errors
         results = order_results(response, combined)
     else:
         results = obj.documents
@@ -198,7 +198,7 @@ def linked_entities_result(response, obj, response_headers):
         return whole_batch_error(obj)
 
     if obj.errors:
-        combined = [*obj.documents, *obj.errors]
+        combined = obj.documents + obj.errors
         results = order_results(response, combined)
     else:
         results = obj.documents
@@ -220,7 +220,7 @@ def key_phrases_result(response, obj, response_headers):
         return whole_batch_error(obj)
 
     if obj.errors:
-        combined = [*obj.documents, *obj.errors]
+        combined = obj.documents + obj.errors
         results = order_results(response, combined)
     else:
         results = obj.documents
@@ -242,7 +242,7 @@ def sentiment_result(response, obj, response_headers):
         return whole_batch_error(obj)
 
     if obj.errors:
-        combined = [*obj.documents, *obj.errors]
+        combined = obj.documents + obj.errors
         results = order_results(response, combined)
     else:
         results = obj.documents

@@ -48,7 +48,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     No training data is needed to use this API; just bring your text data.
     This API uses advanced natural language processing techniques to deliver best in class predictions.
     Further documentation can be found in
-    https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview
+    https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview
 
     This API is currently available in:
     * Australia East - australiaeast.api.cognitive.microsoft.com
@@ -79,7 +79,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
-    :type credentials: str or token credential
+    :type credential: str or token credential
     """
 
     def __init__(self, endpoint, credential, **kwargs):
@@ -115,13 +115,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentLanguage, DocumentError]]
-        """Detect Language.
+        """Detect Language for a batch of documents.
 
         The API returns the detected language and a numeric score between 0 and
         1. Scores close to 1 indicate 100% certainty that the identified
-        language is true. See the &lt;a
-        href="https://aka.ms/talangs"&gt;Supported languages in Text Analytics
-        API&lt;/a&gt; for the list of enabled languages.
+        language is true. See https://aka.ms/talangs for the list of enabled languages.
 
         :param documents: The set of documents to process as part of this
             batch.
@@ -180,14 +178,13 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentEntities, DocumentError]]
-        """Named Entity Recognition.
+        """Named Entity Recognition for a batch of documents.
 
         The API returns a list of general named entities in a given document.
-        For the list of supported entity types, check <a
-        href="https://aka.ms/taner">Supported Entity Types in Text Analytics
-        API</a>. For the list of enabled languages, check <a
-        href="https://aka.ms/talangs">Supported languages in Text Analytics
-        API</a>.
+        For the list of supported entity types, check:
+        https://aka.ms/taner
+        For the list of enabled languages, check:
+        https://aka.ms/talangs
 
         :param documents: The set of documents to process as part of this
             batch.
@@ -246,12 +243,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentEntities, DocumentError]]
-        """Entities containing personal information.
+        """Recognize entities containing personal information for a batch of documents.
 
-        The API returns a list of personal information entities (\"SSN\",
-        \"Bank Account\" etc) in the document. See the &lt;a
-        href="https://aka.ms/talangs"&gt;Supported languages in Text Analytics
-        API&lt;/a&gt; for the list of enabled languages.
+        The API returns a list of personal information entities ("SSN",
+        "Bank Account", etc) in the document. See https://aka.ms/talangs
+        for the list of enabled languages.
 
         :param documents: The set of documents to process as part of this
             batch.
@@ -310,12 +306,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentLinkedEntities, DocumentError]]
-        """Linked entities from a well-known knowledge base.
+        """Recognize linked entities from a well-known knowledge base for a batch of documents.
 
         The API returns a list of recognized entities with links to a
-        well-known knowledge base. See the &lt;a
-        href="https://aka.ms/talangs"&gt;Supported languages in Text Analytics
-        API.
+        well-known knowledge base. See https://aka.ms/talangs for
+        supported languages in Text Analytics API.
 
         :param documents: The set of documents to process as part of this
             batch.
@@ -374,11 +369,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentKeyPhrases, DocumentError]]
-        """Key Phrases.
+        """Extract Key Phrases from a batch of documents.
 
         The API returns a list of strings denoting the key phrases in the input
-        text. See the &lt;a href="https://aka.ms/talangs"&gt;Supported
-        languages in Text Analytics API&lt;/a&gt; for the list of enabled
+        text. See https://aka.ms/talangs for the list of enabled
         languages.
 
         :param documents: The set of documents to process as part of this
@@ -438,13 +432,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentSentiment, DocumentError]]
-        """Sentiment.
+        """Analyze sentiment for a batch of documents.
 
         The API returns a sentiment prediction, as well as sentiment scores for
         each sentiment class (Positive, Negative, and Neutral) for the document
-        and each sentence within it. See the &lt;a
-        href="https://aka.ms/talangs"&gt;Supported languages in Text Analytics
-        API&lt;/a&gt; for the list of enabled languages.
+        and each sentence within it. See https://aka.ms/talangs for the list
+        of enabled languages.
 
         :param documents: The set of documents to process as part of this
             batch.
