@@ -164,7 +164,9 @@ class GalleryApplicationVersionsOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, gallery_name, gallery_application_name, gallery_application_version_name, gallery_application_version, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, gallery_name, gallery_application_name, gallery_application_version_name, publishing_profile, tags=None, custom_headers=None, raw=False, **operation_config):
+        gallery_application_version = models.GalleryApplicationVersionUpdate(tags=tags, publishing_profile=publishing_profile)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -192,7 +194,7 @@ class GalleryApplicationVersionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(gallery_application_version, 'GalleryApplicationVersion')
+        body_content = self._serialize.body(gallery_application_version, 'GalleryApplicationVersionUpdate')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -215,7 +217,7 @@ class GalleryApplicationVersionsOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, gallery_name, gallery_application_name, gallery_application_version_name, gallery_application_version, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, gallery_name, gallery_application_name, gallery_application_version_name, publishing_profile, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update a gallery Application Version.
 
         :param resource_group_name: The name of the resource group.
@@ -232,10 +234,11 @@ class GalleryApplicationVersionsOperations(object):
          be within the range of a 32-bit integer. Format:
          <MajorVersion>.<MinorVersion>.<Patch>
         :type gallery_application_version_name: str
-        :param gallery_application_version: Parameters supplied to the update
-         gallery Application Version operation.
-        :type gallery_application_version:
-         ~azure.mgmt.compute.v2019_07_01.models.GalleryApplicationVersion
+        :param publishing_profile:
+        :type publishing_profile:
+         ~azure.mgmt.compute.v2019_07_01.models.GalleryApplicationVersionPublishingProfile
+        :param tags: Resource tags
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -255,7 +258,8 @@ class GalleryApplicationVersionsOperations(object):
             gallery_name=gallery_name,
             gallery_application_name=gallery_application_name,
             gallery_application_version_name=gallery_application_version_name,
-            gallery_application_version=gallery_application_version,
+            publishing_profile=publishing_profile,
+            tags=tags,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

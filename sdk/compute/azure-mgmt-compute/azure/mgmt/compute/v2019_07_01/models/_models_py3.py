@@ -1861,6 +1861,59 @@ class GalleryApplication(Resource):
         self.supported_os_type = supported_os_type
 
 
+class GalleryApplicationUpdate(UpdateResource):
+    """Specifies information about the gallery Application Definition that you
+    want to update.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param description: The description of this gallery Application Definition
+     resource. This property is updatable.
+    :type description: str
+    :param eula: The Eula agreement for the gallery Application Definition.
+    :type eula: str
+    :param privacy_statement_uri: The privacy statement uri.
+    :type privacy_statement_uri: str
+    :param release_note_uri: The release note uri.
+    :type release_note_uri: str
+    :param end_of_life_date: The end of life date of the gallery Application
+     Definition. This property can be used for decommissioning purposes. This
+     property is updatable.
+    :type end_of_life_date: datetime
+    :param supported_os_type: Required. This property allows you to specify
+     the supported type of the OS that application is built for. <br><br>
+     Possible values are: <br><br> **Windows** <br><br> **Linux**. Possible
+     values include: 'Windows', 'Linux'
+    :type supported_os_type: str or
+     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
+    """
+
+    _validation = {
+        'supported_os_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'eula': {'key': 'properties.eula', 'type': 'str'},
+        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
+        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
+        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
+        'supported_os_type': {'key': 'properties.supportedOSType', 'type': 'OperatingSystemTypes'},
+    }
+
+    def __init__(self, *, supported_os_type, tags=None, description: str=None, eula: str=None, privacy_statement_uri: str=None, release_note_uri: str=None, end_of_life_date=None, **kwargs) -> None:
+        super(GalleryApplicationUpdate, self).__init__(tags=tags, **kwargs)
+        self.description = description
+        self.eula = eula
+        self.privacy_statement_uri = privacy_statement_uri
+        self.release_note_uri = release_note_uri
+        self.end_of_life_date = end_of_life_date
+        self.supported_os_type = supported_os_type
+
+
 class GalleryApplicationVersion(Resource):
     """Specifies information about the gallery Application Version that you want
     to create or update.
@@ -2039,6 +2092,51 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
         self.source = source
         self.content_type = content_type
         self.enable_health_check = enable_health_check
+
+
+class GalleryApplicationVersionUpdate(UpdateResource):
+    """Specifies information about the gallery Application Version that you want
+    to update.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param publishing_profile: Required.
+    :type publishing_profile:
+     ~azure.mgmt.compute.v2019_07_01.models.GalleryApplicationVersionPublishingProfile
+    :ivar provisioning_state: The current state of the gallery Application
+     Version. The provisioning state, which only appears in the response.
+     Possible values include: 'Creating', 'Updating', 'Failed', 'Succeeded',
+     'Deleting', 'Migrating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.compute.v2019_07_01.models.enum
+    :ivar replication_status:
+    :vartype replication_status:
+     ~azure.mgmt.compute.v2019_07_01.models.ReplicationStatus
+    """
+
+    _validation = {
+        'publishing_profile': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'replication_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryApplicationVersionPublishingProfile'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
+    }
+
+    def __init__(self, *, publishing_profile, tags=None, **kwargs) -> None:
+        super(GalleryApplicationVersionUpdate, self).__init__(tags=tags, **kwargs)
+        self.publishing_profile = publishing_profile
+        self.provisioning_state = None
+        self.replication_status = None
 
 
 class GalleryArtifactSource(Model):
@@ -2338,6 +2436,105 @@ class GalleryImageIdentifier(Model):
         self.sku = sku
 
 
+class GalleryImageUpdate(UpdateResource):
+    """Specifies information about the gallery Image Definition that you want to
+    update.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param description: The description of this gallery Image Definition
+     resource. This property is updatable.
+    :type description: str
+    :param eula: The Eula agreement for the gallery Image Definition.
+    :type eula: str
+    :param privacy_statement_uri: The privacy statement uri.
+    :type privacy_statement_uri: str
+    :param release_note_uri: The release note uri.
+    :type release_note_uri: str
+    :param os_type: Required. This property allows you to specify the type of
+     the OS that is included in the disk when creating a VM from a managed
+     image. <br><br> Possible values are: <br><br> **Windows** <br><br>
+     **Linux**. Possible values include: 'Windows', 'Linux'
+    :type os_type: str or
+     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
+    :param os_state: Required. This property allows the user to specify
+     whether the virtual machines created under this image are 'Generalized' or
+     'Specialized'. Possible values include: 'Generalized', 'Specialized'
+    :type os_state: str or
+     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemStateTypes
+    :param hyper_vgeneration: The hypervisor generation of the Virtual
+     Machine. Applicable to OS disks only. Possible values include: 'V1', 'V2'
+    :type hyper_vgeneration: str or
+     ~azure.mgmt.compute.v2019_07_01.models.HyperVGeneration
+    :param end_of_life_date: The end of life date of the gallery Image
+     Definition. This property can be used for decommissioning purposes. This
+     property is updatable.
+    :type end_of_life_date: datetime
+    :param identifier: Required.
+    :type identifier:
+     ~azure.mgmt.compute.v2019_07_01.models.GalleryImageIdentifier
+    :param recommended:
+    :type recommended:
+     ~azure.mgmt.compute.v2019_07_01.models.RecommendedMachineConfiguration
+    :param disallowed:
+    :type disallowed: ~azure.mgmt.compute.v2019_07_01.models.Disallowed
+    :param purchase_plan:
+    :type purchase_plan:
+     ~azure.mgmt.compute.v2019_07_01.models.ImagePurchasePlan
+    :ivar provisioning_state: The current state of the gallery Image
+     Definition. The provisioning state, which only appears in the response.
+     Possible values include: 'Creating', 'Updating', 'Failed', 'Succeeded',
+     'Deleting', 'Migrating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.compute.v2019_07_01.models.enum
+    """
+
+    _validation = {
+        'os_type': {'required': True},
+        'os_state': {'required': True},
+        'identifier': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'eula': {'key': 'properties.eula', 'type': 'str'},
+        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
+        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
+        'os_type': {'key': 'properties.osType', 'type': 'OperatingSystemTypes'},
+        'os_state': {'key': 'properties.osState', 'type': 'OperatingSystemStateTypes'},
+        'hyper_vgeneration': {'key': 'properties.hyperVGeneration', 'type': 'str'},
+        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
+        'identifier': {'key': 'properties.identifier', 'type': 'GalleryImageIdentifier'},
+        'recommended': {'key': 'properties.recommended', 'type': 'RecommendedMachineConfiguration'},
+        'disallowed': {'key': 'properties.disallowed', 'type': 'Disallowed'},
+        'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'ImagePurchasePlan'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, os_type, os_state, identifier, tags=None, description: str=None, eula: str=None, privacy_statement_uri: str=None, release_note_uri: str=None, hyper_vgeneration=None, end_of_life_date=None, recommended=None, disallowed=None, purchase_plan=None, **kwargs) -> None:
+        super(GalleryImageUpdate, self).__init__(tags=tags, **kwargs)
+        self.description = description
+        self.eula = eula
+        self.privacy_statement_uri = privacy_statement_uri
+        self.release_note_uri = release_note_uri
+        self.os_type = os_type
+        self.os_state = os_state
+        self.hyper_vgeneration = hyper_vgeneration
+        self.end_of_life_date = end_of_life_date
+        self.identifier = identifier
+        self.recommended = recommended
+        self.disallowed = disallowed
+        self.purchase_plan = purchase_plan
+        self.provisioning_state = None
+
+
 class GalleryImageVersion(Resource):
     """Specifies information about the gallery Image Version that you want to
     create or update.
@@ -2479,6 +2676,56 @@ class GalleryImageVersionStorageProfile(Model):
         self.data_disk_images = data_disk_images
 
 
+class GalleryImageVersionUpdate(UpdateResource):
+    """Specifies information about the gallery Image Version that you want to
+    update.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param publishing_profile:
+    :type publishing_profile:
+     ~azure.mgmt.compute.v2019_07_01.models.GalleryImageVersionPublishingProfile
+    :ivar provisioning_state: The current state of the gallery Image Version.
+     The provisioning state, which only appears in the response. Possible
+     values include: 'Creating', 'Updating', 'Failed', 'Succeeded', 'Deleting',
+     'Migrating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.compute.v2019_07_01.models.enum
+    :param storage_profile: Required.
+    :type storage_profile:
+     ~azure.mgmt.compute.v2019_07_01.models.GalleryImageVersionStorageProfile
+    :ivar replication_status:
+    :vartype replication_status:
+     ~azure.mgmt.compute.v2019_07_01.models.ReplicationStatus
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'storage_profile': {'required': True},
+        'replication_status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryImageVersionPublishingProfile'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'storage_profile': {'key': 'properties.storageProfile', 'type': 'GalleryImageVersionStorageProfile'},
+        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
+    }
+
+    def __init__(self, *, storage_profile, tags=None, publishing_profile=None, **kwargs) -> None:
+        super(GalleryImageVersionUpdate, self).__init__(tags=tags, **kwargs)
+        self.publishing_profile = publishing_profile
+        self.provisioning_state = None
+        self.storage_profile = storage_profile
+        self.replication_status = None
+
+
 class GalleryOSDiskImage(GalleryDiskImage):
     """This is the OS disk image.
 
@@ -2510,6 +2757,46 @@ class GalleryOSDiskImage(GalleryDiskImage):
 
     def __init__(self, *, host_caching=None, source=None, **kwargs) -> None:
         super(GalleryOSDiskImage, self).__init__(host_caching=host_caching, source=source, **kwargs)
+
+
+class GalleryUpdate(UpdateResource):
+    """Specifies information about the Shared Image Gallery that you want to
+    update.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param description: The description of this Shared Image Gallery resource.
+     This property is updatable.
+    :type description: str
+    :param identifier:
+    :type identifier: ~azure.mgmt.compute.v2019_07_01.models.GalleryIdentifier
+    :ivar provisioning_state: The current state of the gallery. The
+     provisioning state, which only appears in the response. Possible values
+     include: 'Creating', 'Updating', 'Failed', 'Succeeded', 'Deleting',
+     'Migrating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.compute.v2019_07_01.models.enum
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'identifier': {'key': 'properties.identifier', 'type': 'GalleryIdentifier'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, tags=None, description: str=None, identifier=None, **kwargs) -> None:
+        super(GalleryUpdate, self).__init__(tags=tags, **kwargs)
+        self.description = description
+        self.identifier = identifier
+        self.provisioning_state = None
 
 
 class GrantAccessData(Model):

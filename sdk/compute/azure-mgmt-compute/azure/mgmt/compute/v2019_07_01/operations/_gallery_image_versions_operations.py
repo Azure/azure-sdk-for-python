@@ -191,7 +191,7 @@ class GalleryImageVersionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(gallery_image_version, 'GalleryImageVersion')
+        body_content = self._serialize.body(gallery_image_version, 'GalleryImageVersionUpdate')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -234,7 +234,7 @@ class GalleryImageVersionsOperations(object):
         :param gallery_image_version: Parameters supplied to the update
          gallery Image Version operation.
         :type gallery_image_version:
-         ~azure.mgmt.compute.v2019_07_01.models.GalleryImageVersion
+         ~azure.mgmt.compute.v2019_07_01.models.GalleryImageVersionUpdate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
