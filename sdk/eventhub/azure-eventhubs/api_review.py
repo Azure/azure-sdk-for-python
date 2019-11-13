@@ -202,6 +202,11 @@ class EventPosition(object):
     def __init__(self, value, inclusive=False):
 
 
+class CloseReason(Enum):
+    SHUTDOWN = 0
+    OWNERSHIP_LOST = 1
+
+
 class EventHubSharedKeyCredential(object):
 
     def __init__(self, policy: str, key: str):
