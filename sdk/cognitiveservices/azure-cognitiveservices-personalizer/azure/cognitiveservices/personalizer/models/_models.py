@@ -308,13 +308,13 @@ class PersonalizerError(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param code: Required. High level error code. Possible values include:
-     'BadRequest', 'ResourceNotFound', 'InvalidServiceConfiguration',
-     'InvalidPolicyConfiguration', 'InvalidPolicyContract',
-     'InvalidEvaluationContract', 'InvalidRewardRequest',
-     'InvalidEventIdToActivate', 'ModelResetFailed', 'InvalidRankRequest',
-     'InvalidExportLogsRequest', 'InvalidContainer', 'MissingContainer',
-     'FrontEndNotFound', 'EvaluationNotFound', 'LogsPropertiesNotFound',
-     'InternalServerError', 'RankNullResponse', 'UpdateConfigurationFailed'
+     'BadRequest', 'ResourceNotFound', 'InternalServerError',
+     'InvalidServiceConfiguration', 'InvalidPolicyConfiguration',
+     'InvalidPolicyContract', 'InvalidEvaluationContract',
+     'InvalidRewardRequest', 'InvalidEventIdToActivate', 'InvalidRankRequest',
+     'InvalidExportLogsRequest', 'InvalidContainer', 'FrontEndNotFound',
+     'EvaluationNotFound', 'LogsPropertiesNotFound', 'RankNullResponse',
+     'UpdateConfigurationFailed', 'ModelResetFailed'
     :type code: str or
      ~azure.cognitiveservices.personalizer.models.PersonalizerErrorCode
     :param message: Required. A message explaining the error reported by the

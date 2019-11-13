@@ -149,7 +149,7 @@ class PolicyOperations(object):
         return deserialized
     update.metadata = {'url': '/configurations/policy'}
 
-    def delete(
+    def reset(
             self, custom_headers=None, raw=False, **operation_config):
         """Reset Policy.
 
@@ -167,7 +167,7 @@ class PolicyOperations(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = self.delete.metadata['url']
+        url = self.reset.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
@@ -198,4 +198,4 @@ class PolicyOperations(object):
             return client_raw_response
 
         return deserialized
-    delete.metadata = {'url': '/configurations/policy'}
+    reset.metadata = {'url': '/configurations/policy'}

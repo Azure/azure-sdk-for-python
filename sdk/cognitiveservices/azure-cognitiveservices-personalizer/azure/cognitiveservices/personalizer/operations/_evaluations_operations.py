@@ -59,7 +59,7 @@ class EvaluationsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'evaluationId': self._serialize.url("evaluation_id", evaluation_id, 'str')
+            'evaluationId': self._serialize.url("evaluation_id", evaluation_id, 'str', max_length=256)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -88,7 +88,7 @@ class EvaluationsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/evaluations/{evaluationId}:maxlength(256)'}
+    get.metadata = {'url': '/evaluations/{evaluationId}'}
 
     def delete(
             self, evaluation_id, custom_headers=None, raw=False, **operation_config):
@@ -112,7 +112,7 @@ class EvaluationsOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'evaluationId': self._serialize.url("evaluation_id", evaluation_id, 'str')
+            'evaluationId': self._serialize.url("evaluation_id", evaluation_id, 'str', max_length=256)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -134,7 +134,7 @@ class EvaluationsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/evaluations/{evaluationId}:maxlength(256)'}
+    delete.metadata = {'url': '/evaluations/{evaluationId}'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):

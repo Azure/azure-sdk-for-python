@@ -89,7 +89,7 @@ class ModelOperations(object):
         return deserialized
     get.metadata = {'url': '/model'}
 
-    def delete(
+    def reset(
             self, custom_headers=None, raw=False, **operation_config):
         """Reset Model.
 
@@ -106,7 +106,7 @@ class ModelOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.personalizer.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.delete.metadata['url']
+        url = self.reset.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
@@ -130,7 +130,7 @@ class ModelOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/model'}
+    reset.metadata = {'url': '/model'}
 
     def get_properties(
             self, custom_headers=None, raw=False, **operation_config):
