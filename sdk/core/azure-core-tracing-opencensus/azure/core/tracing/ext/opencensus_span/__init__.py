@@ -23,7 +23,9 @@ if TYPE_CHECKING:
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-__version__ = "1.0.0b4"
+from ._version import VERSION
+
+__version__ = VERSION
 
 class OpenCensusSpan(HttpSpanMixin, object):
     """Wraps a given OpenCensus Span so that it implements azure.core.tracing.AbstractSpan"""
