@@ -133,18 +133,14 @@ def test_no_log(mock_http_logger):
 
 def test_retry_unseekable_body():
     def build_response(body, content_type=None):
-        class MockBody():
-            def __init__(self):
-                self.read = True
-
         class MockRequest(HttpRequest):
             def __init__(self):
-                self.body = MockBody()
+                self.body = bytes('test', 'utf-8')
 
         class MockResponse(HttpResponse):
             def __init__(self):
                 super(MockResponse, self).__init__(None, None)
-                self._body = MockBody()
+                self._body = bytes('test', 'utf-8')
 
             def body(self):
                 return self._body

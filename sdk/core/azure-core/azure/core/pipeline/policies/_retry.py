@@ -319,7 +319,7 @@ class RetryPolicy(HTTPPolicy):
                 settings['history'].append(RequestHistory(response.http_request, http_response=response.http_response))
 
         if not self.is_exhausted(settings):
-            if response.http_request.body and hasattr(response.http_request.body, 'read'):
+            if response.http_request.body:
                 # no position was saved, then retry would not work
                 if 'body_position' not in settings:
                     return False
