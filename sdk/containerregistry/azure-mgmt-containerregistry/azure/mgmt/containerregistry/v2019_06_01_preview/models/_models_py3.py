@@ -897,41 +897,51 @@ class EncodedTaskStepUpdateParameters(TaskStepUpdateParameters):
 
 
 class Error(Model):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+    """Azure container registry build API error body.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
+    :param code: Required. error code.
+    :type code: str
+    :param message: Required. error message.
+    :type message: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        'code': {'required': True},
+        'message': {'required': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, code: str, message: str, **kwargs) -> None:
         super(Error, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.code = code
+        self.message = message
 
 
-class ErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'Error'.
+class ErrorSchema(Model):
+    """Azure container registry build API error object.
+
+    :param error: Azure container registry build API error body.
+    :type error:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Error
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'Error'},
+    }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(ErrorSchema, self).__init__(**kwargs)
+        self.error = error
+
+
+class ErrorSchemaException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorSchema'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.
@@ -939,7 +949,7 @@ class ErrorException(HttpOperationError):
 
     def __init__(self, deserialize, response, *args):
 
-        super(ErrorException, self).__init__(deserialize, response, 'Error', *args)
+        super(ErrorSchemaException, self).__init__(deserialize, response, 'ErrorSchema', *args)
 
 
 class EventInfo(Model):
