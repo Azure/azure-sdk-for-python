@@ -9,7 +9,6 @@ import re
 import sys
 import shutil
 from pathlib import Path
-from itertools import chain
 
 from typing import List, Tuple, Any, Union
 
@@ -374,7 +373,7 @@ def find_module_folder(package_name, module_name):
 
 def find_client_file(package_name, module_name):
     module_path = find_module_folder(package_name, module_name)
-    return next(chain(module_path.glob("*_client.py"), module_path.glob("*cosmos_db.py")))
+    return next(module_path.glob("*_client.py"))
 
 
 def patch_import(file_path: Union[str, Path]) -> None:
@@ -456,7 +455,7 @@ def main(input_str, default_api=None):
     mixin_operations = build_operation_mixin_meta(versioned_modules)
 
     # If we get a StopIteration here, means the API version folder is broken
-    client_file_name = next(chain(last_api_path.glob("*_client.py"), last_api_path.glob("*cosmos_db.py"))).name
+    client_file_name = next(last_api_path.glob("*_client.py")).name
 
     # versioned_operations_dict => {
     #     'application_gateways': [
