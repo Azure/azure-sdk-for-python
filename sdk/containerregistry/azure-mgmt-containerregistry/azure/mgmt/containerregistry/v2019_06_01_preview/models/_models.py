@@ -897,7 +897,7 @@ class EncodedTaskStepUpdateParameters(TaskStepUpdateParameters):
 
 
 class Error(Model):
-    """Azure container registry build API error body.
+    """An error response from the Azure Container Registry service.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -924,7 +924,7 @@ class Error(Model):
 
 
 class ErrorSchema(Model):
-    """Azure container registry build API error object.
+    """An error response from the Azure Container Registry service.
 
     :param error: Azure container registry build API error body.
     :type error:
