@@ -97,7 +97,8 @@ class InteractiveBrowserCredential(PublicClientCredential):
         auth_url = app.get_authorization_request_url(scopes, redirect_uri=redirect_uri, state=request_state, **kwargs)
 
         # open browser to that url
-        webbrowser.open(auth_url)
+        if not webbrowser.open(auth_url):
+            raise ClientAuthenticationError(message="Failed to open a browser")
 
         # block until the server times out or receives the post-authentication redirect
         response = server.wait_for_redirect()
