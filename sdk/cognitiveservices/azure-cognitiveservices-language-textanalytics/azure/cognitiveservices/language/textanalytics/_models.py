@@ -129,8 +129,10 @@ class Error(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Error code.
-    :type code: str
+    :param code: Required. Error code. Possible values include:
+     'invalidRequest', 'invalidArgument', 'internalServerError',
+     'serviceUnavailable'
+    :type code: str or ~textanalytics.models.enum
     :param message: Required. Error message.
     :type message: str
     :param target: Error target.

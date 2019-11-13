@@ -59,28 +59,31 @@ def process_single_error(error):
 def process_batch_error(error):
     """Raise and return detailed error message for HttpResponseErrors
     """
-    raise_error = HttpResponseError
-    if error.status_code == 401:
-        raise_error = ClientAuthenticationError
-    error_message = error.message
-
     try:
-        error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
-        if error_body is None:
-            error = raise_error(message=error_message, response=error.response)
-            error.error_code = error.status_code
-            raise error
-        try:
-            error_message = error_body["error"]["message"]
-        except KeyError:
-            error_message = error_body["innerError"]["message"]
-        error_message += "\nErrorCode:{}".format(error.status_code)
-    except DecodeError:
-        pass
+        raise_error = HttpResponseError
+        if error.status_code == 401:
+            raise_error = ClientAuthenticationError
+        error_message = error.message
 
-    error = raise_error(message=error_message, response=error.response)
-    error.error_code = error.status_code
-    raise error
+        try:
+            error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
+            if error_body is None:
+                error = raise_error(message=error_message, response=error.response)
+                error.error_code = error.status_code
+                raise error
+            try:
+                error_message = error_body["error"]["message"]
+            except KeyError:
+                error_message = error_body["innerError"]["message"]
+            error_message += "\nErrorCode:{}".format(error.status_code)
+        except DecodeError:
+            pass
+
+        error = raise_error(message=error_message, response=error.response)
+        error.error_code = error.status_code
+        raise error
+    except Exception:
+        raise error
 
 
 def whole_batch_error(err):
