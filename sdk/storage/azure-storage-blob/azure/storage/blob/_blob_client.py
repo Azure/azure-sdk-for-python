@@ -1564,6 +1564,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
             'validate_content': validate_content,
+            'cls': return_response_headers,
             'cpk_info': cpk_info
         }
         options.update(kwargs)
@@ -1615,7 +1616,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             length=length,
             **kwargs)
         try:
-            self._client.block_blob.stage_block(**options)
+            return self._client.block_blob.stage_block(**options)
         except StorageErrorException as error:
             process_storage_error(error)
 
