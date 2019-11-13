@@ -12,7 +12,7 @@
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
-from ._configuration import CosmosDbManagementClientConfiguration
+from ._configuration import CosmosDBManagementClientConfiguration
 from .operations import DatabaseAccountsOperations
 from .operations import Operations
 from .operations import DatabaseOperations
@@ -36,11 +36,11 @@ from .operations import PrivateEndpointConnectionsOperations
 from . import models
 
 
-class CosmosDbManagementClient(SDKClient):
+class CosmosDBManagementClient(SDKClient):
     """Azure Cosmos DB Database Service Resource Provider REST API
 
     :ivar config: Configuration for client.
-    :vartype config: CosmosDbManagementClientConfiguration
+    :vartype config: CosmosDBManagementClientConfiguration
 
     :ivar database_accounts: DatabaseAccounts operations
     :vartype database_accounts: azure.mgmt.cosmosdb.operations.DatabaseAccountsOperations
@@ -96,8 +96,8 @@ class CosmosDbManagementClient(SDKClient):
     def __init__(
             self, credentials, subscription_id, subscription_id1, base_url=None):
 
-        self.config = CosmosDbManagementClientConfiguration(credentials, subscription_id, subscription_id1, base_url)
-        super(CosmosDbManagementClient, self).__init__(self.config.credentials, self.config)
+        self.config = CosmosDBManagementClientConfiguration(credentials, subscription_id, subscription_id1, base_url)
+        super(CosmosDBManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)

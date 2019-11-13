@@ -13,8 +13,8 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 
 
-class CosmosDbManagementClientConfiguration(AzureConfiguration):
-    """Configuration for CosmosDbManagementClient
+class CosmosDBManagementClientConfiguration(AzureConfiguration):
+    """Configuration for CosmosDBManagementClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -40,7 +40,7 @@ class CosmosDbManagementClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(CosmosDbManagementClientConfiguration, self).__init__(base_url)
+        super(CosmosDBManagementClientConfiguration, self).__init__(base_url)
 
         # Starting Autorest.Python 4.0.64, make connection pool activated by default
         self.keep_alive = True
