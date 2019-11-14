@@ -50,7 +50,7 @@ class ContainerProxy(object):
     new container.
 
     A container in an Azure Cosmos DB SQL API database is a collection of
-    documents, each of which represented as an Item.
+    documents, each of which is represented as an Item.
 
     :ivar str id: ID (name) of the container
     :ivar str session_token: The session token for the container.

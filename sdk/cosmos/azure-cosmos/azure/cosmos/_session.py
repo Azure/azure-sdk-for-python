@@ -39,7 +39,7 @@ class SessionContainer(object):
         self.session_lock = threading.RLock()
 
     def get_session_token(self, resource_path):
-        """Get Session Token for collection_link
+        """Get Session Token for collection_link.
 
         :param str resource_path: Self link / path to the resource
         :return: Session Token dictionary for the collection_id
@@ -74,7 +74,7 @@ class SessionContainer(object):
 
     def set_session_token(self, response_result, response_headers):
         """Session token must only be updated from response of requests that
-        successfully mutate resource on the server side (write, replace, delete etc)
+        successfully mutate resource on the server side (write, replace, delete etc).
 
         :param dict response_result:
         :param dict response_headers:
@@ -162,11 +162,10 @@ class SessionContainer(object):
 
     @staticmethod
     def parse_session_token(response_headers):
-        """Extracts session token from response headers and parses
+        """Extracts session token from response headers and parses.
 
         :param dict response_headers:
-        :return:
-            A dictionary of partition id to session lsn for given collection
+        :return: A dictionary of partition id to session lsn for given collection
         :rtype: dict
         """
 
@@ -197,7 +196,7 @@ class SessionContainer(object):
 class Session(object):
     """State of a Azure Cosmos session.
 
-    This session object can be shared across clients within the same process
+    This session object can be shared across clients within the same process.
 
     :param url_connection:
     """

@@ -50,7 +50,7 @@ class DatabaseProxy(object):
     A database contains one or more containers, each of which can contain items,
     stored procedures, triggers, and user-defined functions.
 
-    A database can also have associated users, each of which configured with
+    A database can also have associated users, each of which is configured with
     a set of permissions for accessing certain containers, stored procedures,
     triggers, user-defined functions, or items.
 

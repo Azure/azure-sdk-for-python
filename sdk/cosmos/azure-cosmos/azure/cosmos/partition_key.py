@@ -23,7 +23,7 @@
 """
 
 class NonePartitionKeyValue(object):
-    """Represents None value for partitionKey when it's missing in a containers.
+    """Represents None value for partitionKey when it's missing in a container.
     """
 
 
@@ -47,7 +47,7 @@ class PartitionKey(dict):
 
     :ivar path: The path of the partition key
     :ivar kind: What kind of partition key is being defined (default: "Hash")
-    :ivar version: The version of the partition key (defatul: 2)
+    :ivar version: The version of the partition key (default: 2)
     """
 
     def __init__(self, path, kind="Hash", version=2):  # pylint: disable=super-init-not-called

@@ -116,7 +116,7 @@ class CollectionRoutingMap(object):
     def get_overlapping_ranges(self, provided_partition_key_ranges):
         """Gets the partition key ranges overlapping the provided ranges
 
-        :param list provided_partition_key_ranges:cList of partition key ranges.
+        :param list provided_partition_key_ranges: List of partition key ranges.
         :return: List of partition key ranges, where each is a dict.
         :rtype: list
         """

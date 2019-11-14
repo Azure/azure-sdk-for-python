@@ -299,7 +299,7 @@ class SSLConfiguration(object):
 
 
 class ProxyConfiguration(object):
-    """Configurations for a proxy.
+    """Configuration for a proxy.
 
     :ivar str Host:
         The host address of the proxy.
