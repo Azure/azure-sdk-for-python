@@ -38,19 +38,6 @@ class RestorableDroppedDatabasePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(RestorableDroppedDatabasePaged, self).__init__(*args, **kwargs)
-class ServerPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Server <azure.mgmt.sql.models.Server>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Server]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ServerPaged, self).__init__(*args, **kwargs)
 class DataMaskingRulePaged(Paged):
     """
     A paging container for iterating over a list of :class:`DataMaskingRule <azure.mgmt.sql.models.DataMaskingRule>` object
@@ -948,3 +935,16 @@ class PrivateLinkResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PrivateLinkResourcePaged, self).__init__(*args, **kwargs)
+class ServerPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Server <azure.mgmt.sql.models.Server>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Server]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServerPaged, self).__init__(*args, **kwargs)

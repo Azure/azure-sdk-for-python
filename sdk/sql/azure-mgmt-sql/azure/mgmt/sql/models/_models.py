@@ -257,10 +257,9 @@ class CheckNameAvailabilityRequest(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name whose availability is to be checked.
+    :param name: Required.
     :type name: str
-    :ivar type: Required. The type of resource that is used as the scope of
-     the availability check. Default value: "Microsoft.Sql/servers" .
+    :ivar type: Required.  Default value: "Microsoft.Sql/servers" .
     :vartype type: str
     """
 
@@ -282,45 +281,44 @@ class CheckNameAvailabilityRequest(Model):
 
 
 class CheckNameAvailabilityResponse(Model):
-    """A response indicating whether the specified name for a resource is
-    available.
+    """The result of a name availability check.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar available: True if the name is available, otherwise false.
-    :vartype available: bool
-    :ivar message: A message explaining why the name is unavailable. Will be
-     null if the name is available.
-    :vartype message: str
     :ivar name: The name whose availability was checked.
     :vartype name: str
+    :ivar available: True if the name is available, otherwise false.
+    :vartype available: bool
     :ivar reason: The reason code explaining why the name is unavailable. Will
-     be null if the name is available. Possible values include: 'Invalid',
+     be undefined if the name is available. Possible values include: 'Invalid',
      'AlreadyExists'
     :vartype reason: str or ~azure.mgmt.sql.models.CheckNameAvailabilityReason
+    :ivar message: A message explaining why the name is unavailable. Will be
+     undefined if the name is available.
+    :vartype message: str
     """
 
     _validation = {
-        'available': {'readonly': True},
-        'message': {'readonly': True},
         'name': {'readonly': True},
+        'available': {'readonly': True},
         'reason': {'readonly': True},
+        'message': {'readonly': True},
     }
 
     _attribute_map = {
-        'available': {'key': 'available', 'type': 'bool'},
-        'message': {'key': 'message', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'available': {'key': 'available', 'type': 'bool'},
         'reason': {'key': 'reason', 'type': 'CheckNameAvailabilityReason'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(CheckNameAvailabilityResponse, self).__init__(**kwargs)
-        self.available = None
-        self.message = None
         self.name = None
+        self.available = None
         self.reason = None
+        self.message = None
 
 
 class CloudError(Model):
@@ -750,7 +748,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint is required.
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
      auditing storage account. If state is Enabled and storageEndpoint is
@@ -843,6 +841,11 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
      or [Diagnostic Settings
      PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
     :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
     """
 
     _validation = {
@@ -866,6 +869,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -879,6 +883,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
         self.is_storage_secondary_key_in_use = kwargs.get('is_storage_secondary_key_in_use', None)
         self.is_azure_monitor_target_enabled = kwargs.get('is_azure_monitor_target_enabled', None)
+        self.queue_delay_ms = kwargs.get('queue_delay_ms', None)
 
 
 class DatabaseOperation(ProxyResource):
@@ -1372,9 +1377,9 @@ class DatabaseVulnerabilityAssessment(ProxyResource):
      is required if server level vulnerability assessment policy doesn't set
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
@@ -2594,7 +2599,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint is required.
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
      auditing storage account. If state is Enabled and storageEndpoint is
@@ -2687,6 +2692,11 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
      or [Diagnostic Settings
      PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
     :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
     """
 
     _validation = {
@@ -2709,6 +2719,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
         'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -2722,6 +2733,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
         self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
         self.is_storage_secondary_key_in_use = kwargs.get('is_storage_secondary_key_in_use', None)
         self.is_azure_monitor_target_enabled = kwargs.get('is_azure_monitor_target_enabled', None)
+        self.queue_delay_ms = kwargs.get('queue_delay_ms', None)
 
 
 class ExtendedServerBlobAuditingPolicy(ProxyResource):
@@ -2747,7 +2759,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint is required.
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
      auditing storage account. If state is Enabled and storageEndpoint is
@@ -2840,6 +2852,11 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      or [Diagnostic Settings
      PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
     :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
     """
 
     _validation = {
@@ -2862,6 +2879,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
         'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -2875,6 +2893,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
         self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
         self.is_storage_secondary_key_in_use = kwargs.get('is_storage_secondary_key_in_use', None)
         self.is_azure_monitor_target_enabled = kwargs.get('is_azure_monitor_target_enabled', None)
+        self.queue_delay_ms = kwargs.get('queue_delay_ms', None)
 
 
 class FailoverGroup(ProxyResource):
@@ -5490,9 +5509,9 @@ class ManagedInstanceVulnerabilityAssessment(ProxyResource):
      https://myStorage.blob.core.windows.net/VaScans/).
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
@@ -6160,6 +6179,39 @@ class PrivateEndpointConnection(ProxyResource):
 
     def __init__(self, **kwargs):
         super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.provisioning_state = None
+
+
+class PrivateEndpointConnectionProperties(Model):
+    """Properties of a private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param private_endpoint: Private endpoint which the connection belongs to.
+    :type private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
+    :param private_link_service_connection_state: Connection state of the
+     private endpoint connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateProperty
+    :ivar provisioning_state: State of the private endpoint connection.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'private_endpoint': {'key': 'privateEndpoint', 'type': 'PrivateEndpointProperty'},
+        'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnectionProperties, self).__init__(**kwargs)
         self.private_endpoint = kwargs.get('private_endpoint', None)
         self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
         self.provisioning_state = None
@@ -7015,6 +7067,10 @@ class Server(TrackedResource):
     :ivar fully_qualified_domain_name: The fully qualified domain name of the
      server.
     :vartype fully_qualified_domain_name: str
+    :ivar private_endpoint_connections: List of private endpoint connections
+     on a server
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.sql.models.ServerPrivateEndpointConnection]
     """
 
     _validation = {
@@ -7025,6 +7081,7 @@ class Server(TrackedResource):
         'kind': {'readonly': True},
         'state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -7040,6 +7097,7 @@ class Server(TrackedResource):
         'version': {'key': 'properties.version', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ServerPrivateEndpointConnection]'},
     }
 
     def __init__(self, **kwargs):
@@ -7051,6 +7109,7 @@ class Server(TrackedResource):
         self.version = kwargs.get('version', None)
         self.state = None
         self.fully_qualified_domain_name = None
+        self.private_endpoint_connections = None
 
 
 class ServerAutomaticTuning(ProxyResource):
@@ -7176,7 +7235,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint is required.
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
      auditing storage account. If state is Enabled and storageEndpoint is
@@ -7269,6 +7328,11 @@ class ServerBlobAuditingPolicy(ProxyResource):
      or [Diagnostic Settings
      PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
     :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
     """
 
     _validation = {
@@ -7290,6 +7354,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
         'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -7302,6 +7367,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
         self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
         self.is_storage_secondary_key_in_use = kwargs.get('is_storage_secondary_key_in_use', None)
         self.is_azure_monitor_target_enabled = kwargs.get('is_azure_monitor_target_enabled', None)
+        self.queue_delay_ms = kwargs.get('queue_delay_ms', None)
 
 
 class ServerCommunicationLink(ProxyResource):
@@ -7523,6 +7589,35 @@ class ServerKey(ProxyResource):
         self.creation_date = kwargs.get('creation_date', None)
 
 
+class ServerPrivateEndpointConnection(Model):
+    """A private endpoint connection under a server.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar properties: Private endpoint connection properties
+    :vartype properties:
+     ~azure.mgmt.sql.models.PrivateEndpointConnectionProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'properties': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'PrivateEndpointConnectionProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServerPrivateEndpointConnection, self).__init__(**kwargs)
+        self.id = None
+        self.properties = None
+
+
 class ServerSecurityAlertPolicy(ProxyResource):
     """A server security alert policy.
 
@@ -7618,6 +7713,10 @@ class ServerUpdate(Model):
     :ivar fully_qualified_domain_name: The fully qualified domain name of the
      server.
     :vartype fully_qualified_domain_name: str
+    :ivar private_endpoint_connections: List of private endpoint connections
+     on a server
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.sql.models.ServerPrivateEndpointConnection]
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -7625,6 +7724,7 @@ class ServerUpdate(Model):
     _validation = {
         'state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -7633,6 +7733,7 @@ class ServerUpdate(Model):
         'version': {'key': 'properties.version', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ServerPrivateEndpointConnection]'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -7643,6 +7744,7 @@ class ServerUpdate(Model):
         self.version = kwargs.get('version', None)
         self.state = None
         self.fully_qualified_domain_name = None
+        self.private_endpoint_connections = None
         self.tags = kwargs.get('tags', None)
 
 
@@ -7765,9 +7867,9 @@ class ServerVulnerabilityAssessment(ProxyResource):
      https://myStorage.blob.core.windows.net/VaScans/).
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
