@@ -629,10 +629,10 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertIsNotNone(vault_client)
         client = vault_client.certificates
         cert_name = "mergeCertificate"
-        issuer_name = WellKnownIssuerNames.Unknown
-        cert_policy = CertificatePolicyGenerated(
-            issuer_parameters=IssuerParameters(name=issuer_name, certificate_transparency=False),
-            x509_certificate_properties=X509CertificateProperties(subject="CN=MyCert"),
+        cert_policy = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.Unknown,
+            subject_name="CN=MyCert",
+            certificate_transparency=False
         )
 
         dirname = os.path.dirname(os.path.abspath(__file__))
@@ -647,7 +647,7 @@ class CertificateClientTests(KeyVaultTestCase):
         # the poller will stop immediately because the issuer is `Unknown`
         await client.create_certificate(
             certificate_name=cert_name,
-            policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy),
+            policy=cert_policy,
             _polling_interval=polling_interval
         )
 
