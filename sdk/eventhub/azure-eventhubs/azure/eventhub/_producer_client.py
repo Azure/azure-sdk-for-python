@@ -11,6 +11,7 @@ from ._client_base import ClientBase
 from ._producer import EventHubProducer
 from .common import EventData, \
     EventHubSharedKeyCredential, EventHubSASTokenCredential, EventDataBatch
+from .error import ConnectError
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
@@ -62,12 +63,14 @@ class EventHubProducerClient(ClientBase):
         self._client_lock = threading.Lock()
         self._producers_locks = []  # type: List[threading.Lock]
         self._max_message_size_on_link = 0
+        self._partition_ids = None
 
     def _init_locks_for_producers(self):
         if not self._producers:
             with self._client_lock:
                 if not self._producers:
-                    num_of_producers = len(self.get_partition_ids()) + 1
+                    self._partition_ids = self.get_partition_ids()
+                    num_of_producers = len(self._partition_ids) + 1
                     self._producers = [None] * num_of_producers
                     for _ in range(num_of_producers):
                         self._producers_locks.append(threading.Lock())
@@ -147,6 +150,9 @@ class EventHubProducerClient(ClientBase):
         partition_id = kwargs.pop("partition_id", None)
 
         self._init_locks_for_producers()
+
+        if partition_id not in self._partition_ids:
+            raise ConnectError("Invalid partition {} for the event hub {}".format(partition_id, self.eh_name))
 
         producer_index = int(partition_id) if partition_id is not None else -1
         if self._producers[producer_index] is None or\
