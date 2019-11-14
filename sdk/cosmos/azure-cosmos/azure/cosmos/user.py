@@ -21,7 +21,7 @@
 
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
-"""Create, read, update and delete permissions in the Azure Cosmos DB SQL API service.
+"""Create, read, update and delete users in the Azure Cosmos DB SQL API service.
 """
 
 from typing import Any, List, Dict, Union, cast, Iterable, Optional
@@ -35,9 +35,10 @@ from .permission import Permission
 
 
 class UserProxy(object):
-    """
-    An interface to interact with a specific user.
-    This class should not be instantiated directly, use :func:`DatabaseProxy.get_user_client` method.
+    """An interface to interact with a specific user.
+
+    This class should not be instantiated directly. Instead, use the
+    :func:`DatabaseProxy.get_user_client` method.
     """
 
     def __init__(self, client_connection, id, database_link, properties=None):  # pylint: disable=redefined-builtin
@@ -210,7 +211,8 @@ class UserProxy(object):
         # type: (Dict[str, Any], Any) -> Permission
         """Insert or update the specified permission.
 
-        If the permission already exists in the container, it is replaced. If it does not, it is inserted.
+        If the permission already exists in the container, it is replaced. If
+        the permission does not exist, it is inserted.
 
         :param body: A dict-like object representing the permission to update or insert.
         :param Callable response_hook: A callable invoked with the response metadata.
@@ -240,6 +242,8 @@ class UserProxy(object):
     def replace_permission(self, permission, body, **kwargs):
         # type: (str, Dict[str, Any], Any) -> Permission
         """Replaces the specified permission if it exists for the user.
+
+        If the permission does not already exist, an exception is raised.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be replaced.
@@ -272,6 +276,8 @@ class UserProxy(object):
     def delete_permission(self, permission, **kwargs):
         # type: (str, Any) -> None
         """Delete the specified permission from the user.
+
+        If the permission does not already exist, an exception is raised.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be replaced.

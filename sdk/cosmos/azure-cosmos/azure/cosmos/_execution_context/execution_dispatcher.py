@@ -19,7 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for proxy query execution context implementation in the Azure Cosmos database service.
+"""Internal class for proxy query execution context implementation in the Azure
+Cosmos database service.
 """
 
 import json
@@ -48,11 +49,12 @@ def _get_partitioned_execution_info(e):
 
 
 class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disable=abstract-method
-    """
-    This class represents a proxy execution context wrapper:
-        - By default uses _DefaultQueryExecutionContext
-        - if backend responds a 400 error code with a Query Execution Info
-            it switches to _MultiExecutionContextAggregator
+    """Represents a proxy execution context wrapper.
+
+    By default, uses _DefaultQueryExecutionContext.
+
+    If backend responds a 400 error code with a Query Execution Info, switches
+    to _MultiExecutionContextAggregator
     """
 
     def __init__(self, client, resource_link, query, options, fetch_function):
@@ -69,8 +71,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
     def next(self):
         """Returns the next query result.
 
-        :return:
-            The next query result.
+        :return: The next query result.
         :rtype: dict
         :raises StopIteration: If no more result is left.
 
@@ -91,11 +92,10 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
     def fetch_next_block(self):
         """Returns a block of results.
 
-        This method only exists for backward compatibility reasons. (Because QueryIterable
-        has exposed fetch_next_block api).
+        This method only exists for backward compatibility reasons. (Because
+        QueryIterable has exposed fetch_next_block api).
 
-        :return:
-            List of results.
+        :return: List of results.
         :rtype: list
         """
         try:
@@ -133,9 +133,6 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=
     DEFAULT_PAGE_SIZE = 1000
 
     def __init__(self, client, options, execution_context, query_execution_info):
-        """
-        Constructor
-        """
         super(_PipelineExecutionContext, self).__init__(client, options)
 
         if options.get("maxItemCount"):
@@ -177,25 +174,22 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=
     def next(self):
         """Returns the next query result.
 
-        :return:
-            The next query result.
+        :return: The next query result.
         :rtype: dict
         :raises StopIteration: If no more result is left.
-
         """
         return next(self._endpoint)
 
     def fetch_next_block(self):
         """Returns a block of results.
 
-        This method only exists for backward compatibility reasons. (Because QueryIterable
-        has exposed fetch_next_block api).
+        This method only exists for backward compatibility reasons. (Because
+        QueryIterable has exposed fetch_next_block api).
 
-        This method internally invokes next() as many times required to collect the
-        requested fetch size.
+        This method internally invokes next() as many times required to collect
+        the requested fetch size.
 
-        :return:
-            List of results.
+        :return: List of results.
         :rtype: list
         """
 

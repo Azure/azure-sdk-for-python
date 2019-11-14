@@ -3,6 +3,18 @@
 Release History
 ===============
 
+8.0.0 (2019-11-12)
+++++++++++++++++++
+
+**Features**
+
+- Model PrivateLinkServiceConnectionState has a new parameter actions_required
+- Model ConnectivityParameters has a new parameter preferred_ip_version
+
+**Breaking changes**
+
+- Model PrivateLinkServiceConnectionState no longer has parameter action_required
+
 7.0.0 (2019-10-22)
 ++++++++++++++++++
 

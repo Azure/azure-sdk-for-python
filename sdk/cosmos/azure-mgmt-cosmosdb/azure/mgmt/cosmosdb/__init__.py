@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import CosmosDBConfiguration
-from ._cosmos_db import CosmosDB
-__all__ = ['CosmosDB', 'CosmosDBConfiguration']
+from ._configuration import CosmosDBManagementClientConfiguration
+from ._cosmos_db_management_client import CosmosDBManagementClient
+__all__ = ['CosmosDBManagementClient', 'CosmosDBManagementClientConfiguration']
 
 from .version import VERSION
 
