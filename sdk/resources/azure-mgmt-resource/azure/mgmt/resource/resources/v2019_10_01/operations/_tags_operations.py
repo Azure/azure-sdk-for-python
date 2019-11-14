@@ -406,7 +406,7 @@ class TagsOperations(object):
     resource_create.metadata = {'url': '/{scope}/providers/Microsoft.Resources/tags/default'}
 
     def resource_update(
-            self, scope, operation, properties, custom_headers=None, raw=False, **operation_config):
+            self, scope, operation=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """Update multiple tags: if the tagKey exists, update tagValue with the
         new value; if not, insert the new record.
 
