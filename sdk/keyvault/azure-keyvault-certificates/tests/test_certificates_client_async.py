@@ -86,13 +86,12 @@ class CertificateClientTests(KeyVaultTestCase):
         #     key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
         #     secret_properties=SecretProperties(content_type="application/x-pkcs12"),
         # )
-        imported_certificate = await client.import_certificate(
+        return await client.import_certificate(
             certificate_name=cert_name,
             certificate_bytes=cert_content,
             policy=CertificatePolicy.get_default(),
             password=cert_password,
         )
-        return (imported_certificate, None)
 
     def _validate_certificate_operation(self, pending_cert_operation, vault, cert_name, cert_policy):
         self.assertIsNotNone(pending_cert_operation)
@@ -278,7 +277,7 @@ class CertificateClientTests(KeyVaultTestCase):
             cert_name = self.get_resource_name("cert{}".format(x))
             error_count = 0
             try:
-                cert_bundle = (await self._import_common_certificate(client=client, cert_name=cert_name))[0]
+                cert_bundle = await self._import_common_certificate(client=client, cert_name=cert_name)
                 parsed_id = parse_vault_id(url=cert_bundle.id)
                 cid = parsed_id.vault_url + "/" + parsed_id.collection + "/" + parsed_id.name
                 expected[cid.strip("/")] = cert_bundle
@@ -309,7 +308,7 @@ class CertificateClientTests(KeyVaultTestCase):
         for x in range(max_certificates):
             error_count = 0
             try:
-                cert_bundle = (await self._import_common_certificate(client=client, cert_name=cert_name))[0]
+                cert_bundle = await self._import_common_certificate(client=client, cert_name=cert_name)
                 parsed_id = parse_vault_id(url=cert_bundle.id)
                 cid = (
                     parsed_id.vault_url
