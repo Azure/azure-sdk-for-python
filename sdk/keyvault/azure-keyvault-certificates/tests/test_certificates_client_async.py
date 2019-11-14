@@ -592,34 +592,17 @@ class CertificateClientTests(KeyVaultTestCase):
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_backup_restore(self, vault_client, **kwargs):
+        # TODO: server side issue with not restoring san names
         self.assertIsNotNone(vault_client)
         client = vault_client.certificates
         cert_name = self.get_resource_name("cert")
-        lifetime_actions = [
-            LifetimeActionGenerated(trigger=Trigger(lifetime_percentage=2), action=Action(action_type=ActionType.email_contacts))
-        ]
-        cert_policy = CertificatePolicyGenerated(
-            key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
-            secret_properties=SecretProperties(content_type="application/x-pkcs12"),
-            issuer_parameters=IssuerParameters(name="Self"),
-            lifetime_actions=lifetime_actions,
-            x509_certificate_properties=X509CertificateProperties(
-                subject="CN=*.microsoft.com",
-                # commented out for now because of server side bug not
-                # restoring san dns names
-                # subject_alternative_names=SubjectAlternativeNames(
-                #     dns_names=['sdk.azure-int.net']
-                # ),
-                validity_in_months=24,
-            ),
-        )
 
         polling_interval = 0 if self.is_playback() else None
 
         # create certificate
         await client.create_certificate(
             certificate_name=cert_name,
-            policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy),
+            policy=CertificatePolicy.get_default(),
             _polling_interval=polling_interval
         )
 
@@ -632,7 +615,7 @@ class CertificateClientTests(KeyVaultTestCase):
         # restore certificate
         restored_certificate = await client.restore_certificate_backup(backup=certificate_backup)
         self._validate_certificate_bundle(
-            cert=restored_certificate, cert_name=cert_name, cert_policy=cert_policy
+            cert=restored_certificate, cert_name=cert_name, cert_policy=CertificatePolicy.get_default()
         )
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
