@@ -15,7 +15,7 @@ from uamqp import ReceiveClientAsync, Source  # type: ignore
 from uamqp.compat import queue
 
 from ..common import EventData, EventPosition
-from ..error import _error_handler
+from ..error import _error_handler, EventHubError
 from ._consumer_producer_mixin_async import ConsumerProducerMixin
 
 log = logging.getLogger(__name__)
@@ -200,13 +200,13 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 return
             except asyncio.CancelledError:
                 raise
+            except uamqp.errors.LinkDetach as ld_error:
+                if ld_error.condition == uamqp.constants.ErrorCodes.LinkStolen:
+                    raise await self._handle_exception(ld_error)
             except Exception as exception:
                 if self._last_received_event:
                     self._offset = EventPosition(self._last_received_event.offset)
                 last_exception = await self._handle_exception(exception)
-                await self._client._try_delay(retried_times=retried_times,
-                                              last_exception=last_exception,
-                                              entity_name=self._name)
                 retried_times += 1
 
         log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
