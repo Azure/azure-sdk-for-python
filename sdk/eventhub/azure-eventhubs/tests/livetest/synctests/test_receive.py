@@ -136,7 +136,7 @@ def test_receive_over_websocket_sync(connstr_senders):
 
     with client:
         thread = threading.Thread(target=client.receive, args=(on_event, "$default"),
-                                  kwargs={"partition_id": "0", "event_position": "-1"})
+                                  kwargs={"partition_id": "0", "initial_event_position": "-1"})
         thread.start()
         time.sleep(5)
     assert len(on_event.received) == 20
