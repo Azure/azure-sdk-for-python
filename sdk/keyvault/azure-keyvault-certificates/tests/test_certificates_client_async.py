@@ -575,33 +575,18 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertIsNotNone(vault_client)
         client = vault_client.certificates
         cert_name = "unknownIssuerCert"
-        cert_policy = CertificatePolicyGenerated(
-            key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
-            secret_properties=SecretProperties(content_type="application/x-pkcs12"),
-            issuer_parameters=IssuerParameters(name="Self"),
-            x509_certificate_properties=X509CertificateProperties(
-                subject="CN=*.microsoft.com",
-                subject_alternative_names=SubjectAlternativeNames(dns_names=["sdk.azure-int.net"]),
-                validity_in_months=24,
-            ),
-        )
 
         polling_interval = 0 if self.is_playback() else None
 
         # get pending certificate signing request
         await client.create_certificate(
             certificate_name=cert_name,
-            policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy),
+            policy=CertificatePolicy.get_default(),
             _polling_interval=polling_interval
         )
         operation = await client.get_certificate_operation(certificate_name=cert_name)
         pending_version_csr = operation.csr
-        try:
-            self.assertEqual((await client.get_certificate_operation(certificate_name=cert_name)).csr, pending_version_csr)
-        except Exception as ex:
-            pass
-        finally:
-            await client.delete_certificate(certificate_name=cert_name, _polling_interval=polling_interval)
+        self.assertEqual((await client.get_certificate_operation(certificate_name=cert_name)).csr, pending_version_csr)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
