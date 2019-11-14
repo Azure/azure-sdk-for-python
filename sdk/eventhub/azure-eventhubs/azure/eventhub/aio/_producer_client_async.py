@@ -175,7 +175,7 @@ class EventHubProducerClient(ClientBaseAsync):
 
         await self._init_locks_for_producers()
 
-        if partition_id not in self._partition_ids:
+        if partition_id is not None and partition_id not in self._partition_ids:
             raise ConnectError("Invalid partition {} for the event hub {}".format(partition_id, self.eh_name))
 
         producer_index = int(partition_id) if partition_id is not None else -1
