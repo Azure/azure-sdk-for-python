@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""PyCosmos Exceptions in the Azure Cosmos database service.
+"""Service-specific Exceptions in the Azure Cosmos database service.
 """
 from azure.core.exceptions import (  # type: ignore  # pylint: disable=unused-import
     AzureError,
@@ -31,7 +31,7 @@ from . import http_constants
 
 
 class CosmosHttpResponseError(HttpResponseError):
-    """Raised when a HTTP request to the Azure Cosmos has failed."""
+    """An HTTP request to the Azure Cosmos database service has failed."""
 
     def __init__(self, status_code=None, message=None, response=None, **kwargs):
         """
@@ -54,15 +54,15 @@ class CosmosHttpResponseError(HttpResponseError):
 
 
 class CosmosResourceNotFoundError(ResourceNotFoundError, CosmosHttpResponseError):
-    """An error response with status code 404."""
+    """An HTTP error response with status code 404."""
 
 
 class CosmosResourceExistsError(ResourceExistsError, CosmosHttpResponseError):
-    """An error response with status code 409."""
+    """An HTTP error response with status code 409."""
 
 
 class CosmosAccessConditionFailedError(CosmosHttpResponseError):
-    """An error response with status code 412."""
+    """An HTTP error response with status code 412."""
 
 
 class CosmosClientTimeoutError(AzureError):

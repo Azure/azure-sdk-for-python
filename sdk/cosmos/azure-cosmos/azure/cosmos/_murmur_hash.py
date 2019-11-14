@@ -44,7 +44,7 @@ from six.moves import xrange
 
 
 class MurmurHash(object):
-    """ The 32 bit x86 version of MurmurHash3 implementation.
+    """The 32 bit x86 version of MurmurHash3 implementation.
     """
 
     def ComputeHash(self, key):
