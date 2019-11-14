@@ -159,11 +159,11 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(len(original_certificates), 0)
 
     def _validate_certificate_contacts(self, original_contacts, returned_contacts):
-        self.assertEqual(len(contacts), len(expected))
+        self.assertEqual(len(original_contacts), len(returned_contacts))
         for original_contact in original_contacts:
             returned_contact = next(x for x in returned_contacts if x.email == original_contact.email)
             self.assertEqual(original_contact.name, returned_contact.name)
-            self.assertEqual(original_contact.phone, returned_contacts.phone)
+            self.assertEqual(original_contact.phone, returned_contact.phone)
 
     def _admin_detail_equal(self, admin_detail, exp_admin_detail):
         return (
@@ -350,15 +350,15 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # create certificate contacts
         contacts = await client.create_contacts(contacts=contact_list)
-        self._validate_certificate_contacts(contacts=contacts, expected=contact_list)
+        self._validate_certificate_contacts(original_contacts=contact_list, returned_contacts=contacts)
 
         # get certificate contacts
         contacts = await client.get_contacts()
-        self._validate_certificate_contacts(contacts=contacts, expected=contact_list)
+        self._validate_certificate_contacts(original_contacts=contact_list, returned_contacts=contacts)
 
         # delete certificate contacts
         contacts = await client.delete_contacts()
-        self._validate_certificate_contacts(contacts=contacts, expected=contact_list)
+        self._validate_certificate_contacts(original_contacts=contact_list, returned_contacts=contacts)
 
         # get certificate contacts returns not found
         try:
