@@ -51,7 +51,7 @@ async def test_send_and_receive_small_body_async(connstr_receivers, payload):
         await client.send(EventData(payload))
     received = []
     for r in receivers:
-        received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=1000)])
+        received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=3000)])
 
     assert len(received) == 1
     assert list(received[0].body)[0] == payload
