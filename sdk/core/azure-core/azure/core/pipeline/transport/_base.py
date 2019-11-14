@@ -36,6 +36,7 @@ import json
 import logging
 import os
 import time
+import copy
 
 try:
     binary_type = str
@@ -219,6 +220,14 @@ class HttpRequest(object):
 
     def __repr__(self):
         return "<HttpRequest [%s]>" % (self.method)
+
+    def __deepcopy__(self, memo=None):
+        try:
+            data = copy.deepcopy(self.body)
+            files = copy.deepcopy((self.files))
+            return HttpRequest(self.method, self.url, self.headers, files, data)
+        except ValueError:
+            return copy.copy(self)
 
     @property
     def query(self):
