@@ -186,7 +186,7 @@ class VirtualMachineScaleSetExtensionsOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -194,6 +194,8 @@ class VirtualMachineScaleSetExtensionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
+            deserialized = self._deserialize('VirtualMachineScaleSetExtension', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('VirtualMachineScaleSetExtension', response)
 
         if raw:
