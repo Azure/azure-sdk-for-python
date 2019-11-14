@@ -173,28 +173,27 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                         self._id, self._eventhub_name, partition_id, self._consumer_group_name, err
                     )
 
-            try:
-
-                await self._consumers[partition_id].receive()
-            except asyncio.CancelledError:
-                log.info(
-                    "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
-                    " is cancelled",
-                    self._id,
-                    self._eventhub_name,
-                    partition_id,
-                    self._consumer_group_name
-                )
-                raise
-            except Exception as error:
-                await self._process_error(partition_context, error)
-            finally:
-                await self._consumers[partition_id].close()
-                await self._close_partition(
-                    partition_context,
-                    CloseReason.OWNERSHIP_LOST if self._running else CloseReason.SHUTDOWN
-                )
+            while self._running:
+                try:
+                    await self._consumers[partition_id].receive()
+                except asyncio.CancelledError:
+                    log.info(
+                        "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+                        " is cancelled",
+                        self._id,
+                        self._eventhub_name,
+                        partition_id,
+                        self._consumer_group_name
+                    )
+                    raise
+                except Exception as error:
+                    await self._process_error(partition_context, error)
         finally:
+            await self._consumers[partition_id].close()
+            await self._close_partition(
+                partition_context,
+                CloseReason.OWNERSHIP_LOST if self._running else CloseReason.SHUTDOWN
+            )
             if partition_id in self._tasks:
                 del self._tasks[partition_id]
 
