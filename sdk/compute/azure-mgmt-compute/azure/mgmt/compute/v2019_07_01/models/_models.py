@@ -388,18 +388,22 @@ class UpdateResource(Model):
     :type tags: dict[str, str]
     :ivar id: Resource Id
     :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
     """
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
     }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -407,6 +411,7 @@ class UpdateResource(Model):
         super(UpdateResource, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
         self.id = None
+        self.name = None
         self.type = None
 
 
@@ -421,6 +426,8 @@ class AvailabilitySetUpdate(UpdateResource):
     :type tags: dict[str, str]
     :ivar id: Resource Id
     :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
     :param platform_update_domain_count: Update Domain count.
@@ -445,6 +452,7 @@ class AvailabilitySetUpdate(UpdateResource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'statuses': {'readonly': True},
     }
@@ -452,6 +460,7 @@ class AvailabilitySetUpdate(UpdateResource):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'platform_update_domain_count': {'key': 'properties.platformUpdateDomainCount', 'type': 'int'},
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
@@ -1037,6 +1046,8 @@ class DedicatedHostGroupUpdate(UpdateResource):
     :type tags: dict[str, str]
     :ivar id: Resource Id
     :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
     :param platform_fault_domain_count: Required. Number of fault domains that
@@ -1055,6 +1066,7 @@ class DedicatedHostGroupUpdate(UpdateResource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'platform_fault_domain_count': {'required': True, 'maximum': 3, 'minimum': 1},
         'hosts': {'readonly': True},
@@ -1063,6 +1075,7 @@ class DedicatedHostGroupUpdate(UpdateResource):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
         'hosts': {'key': 'properties.hosts', 'type': '[SubResourceReadOnly]'},
@@ -1121,6 +1134,8 @@ class DedicatedHostUpdate(UpdateResource):
     :type tags: dict[str, str]
     :ivar id: Resource Id
     :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
     :param platform_fault_domain: Fault domain of the dedicated host within a
@@ -1157,6 +1172,7 @@ class DedicatedHostUpdate(UpdateResource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'platform_fault_domain': {'maximum': 2, 'minimum': 0},
         'host_id': {'readonly': True},
@@ -1169,6 +1185,7 @@ class DedicatedHostUpdate(UpdateResource):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'platform_fault_domain': {'key': 'properties.platformFaultDomain', 'type': 'int'},
         'auto_replace_on_failure': {'key': 'properties.autoReplaceOnFailure', 'type': 'bool'},
@@ -1914,6 +1931,8 @@ class GalleryApplicationUpdate(UpdateResource):
     :type tags: dict[str, str]
     :ivar id: Resource Id
     :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
     :param description: The description of this gallery Application Definition
@@ -1939,6 +1958,7 @@ class GalleryApplicationUpdate(UpdateResource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'supported_os_type': {'required': True},
     }
@@ -1946,6 +1966,7 @@ class GalleryApplicationUpdate(UpdateResource):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'eula': {'key': 'properties.eula', 'type': 'str'},
@@ -2158,6 +2179,8 @@ class GalleryApplicationVersionUpdate(UpdateResource):
     :type tags: dict[str, str]
     :ivar id: Resource Id
     :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
     :param publishing_profile: Required.
@@ -2176,6 +2199,7 @@ class GalleryApplicationVersionUpdate(UpdateResource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'publishing_profile': {'required': True},
         'provisioning_state': {'readonly': True},
@@ -2185,6 +2209,7 @@ class GalleryApplicationVersionUpdate(UpdateResource):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryApplicationVersionPublishingProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -2508,6 +2533,8 @@ class GalleryImageUpdate(UpdateResource):
     :type tags: dict[str, str]
     :ivar id: Resource Id
     :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
     :param description: The description of this gallery Image Definition
@@ -2559,6 +2586,7 @@ class GalleryImageUpdate(UpdateResource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'os_type': {'required': True},
         'os_state': {'required': True},
@@ -2569,6 +2597,7 @@ class GalleryImageUpdate(UpdateResource):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'eula': {'key': 'properties.eula', 'type': 'str'},
@@ -2756,6 +2785,8 @@ class GalleryImageVersionUpdate(UpdateResource):
     :type tags: dict[str, str]
     :ivar id: Resource Id
     :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
     :param publishing_profile:
@@ -2777,6 +2808,7 @@ class GalleryImageVersionUpdate(UpdateResource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'storage_profile': {'required': True},
@@ -2786,6 +2818,7 @@ class GalleryImageVersionUpdate(UpdateResource):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryImageVersionPublishingProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -2845,6 +2878,8 @@ class GalleryUpdate(UpdateResource):
     :type tags: dict[str, str]
     :ivar id: Resource Id
     :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
     :param description: The description of this Shared Image Gallery resource.
@@ -2862,6 +2897,7 @@ class GalleryUpdate(UpdateResource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
@@ -2869,6 +2905,7 @@ class GalleryUpdate(UpdateResource):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'identifier': {'key': 'properties.identifier', 'type': 'GalleryIdentifier'},
@@ -3358,6 +3395,8 @@ class ImageUpdate(UpdateResource):
     :type tags: dict[str, str]
     :ivar id: Resource Id
     :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
     :param source_virtual_machine: The source virtual machine from which Image
@@ -3378,6 +3417,7 @@ class ImageUpdate(UpdateResource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
@@ -3385,6 +3425,7 @@ class ImageUpdate(UpdateResource):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'source_virtual_machine': {'key': 'properties.sourceVirtualMachine', 'type': 'SubResource'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'ImageStorageProfile'},
@@ -4160,18 +4201,22 @@ class ProximityPlacementGroupUpdate(UpdateResource):
     :type tags: dict[str, str]
     :ivar id: Resource Id
     :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
     """
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
     }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -6179,6 +6224,8 @@ class VirtualMachineExtensionUpdate(UpdateResource):
     :type tags: dict[str, str]
     :ivar id: Resource Id
     :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
     :param force_update_tag: How the extension handler should be forced to
@@ -6206,12 +6253,14 @@ class VirtualMachineExtensionUpdate(UpdateResource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
     }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
         'publisher': {'key': 'properties.publisher', 'type': 'str'},
@@ -7587,6 +7636,8 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     :type tags: dict[str, str]
     :ivar id: Resource Id
     :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
     :param sku: The virtual machine scale set sku.
@@ -7632,12 +7683,14 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
     }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'plan': {'key': 'plan', 'type': 'Plan'},
@@ -8510,6 +8563,8 @@ class VirtualMachineUpdate(UpdateResource):
     :type tags: dict[str, str]
     :ivar id: Resource Id
     :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
     :param plan: Specifies information about the marketplace image used to
@@ -8618,6 +8673,7 @@ class VirtualMachineUpdate(UpdateResource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'instance_view': {'readonly': True},
@@ -8627,6 +8683,7 @@ class VirtualMachineUpdate(UpdateResource):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'plan': {'key': 'plan', 'type': 'Plan'},
         'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
