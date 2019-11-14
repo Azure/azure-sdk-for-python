@@ -72,6 +72,9 @@ def test_request_history():
 
     body = Non_deep_copiable()
     request = HttpRequest('GET', 'http://127.0.0.1/')
+    request.headers = {
+        'user-agent': 'test_request_history'
+    }
     request.body = body
     request_history = RequestHistory(request)
     assert request_history.http_request.headers == request.headers
