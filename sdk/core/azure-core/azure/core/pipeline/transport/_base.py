@@ -224,7 +224,7 @@ class HttpRequest(object):
     def __deepcopy__(self, memo=None):
         try:
             data = copy.deepcopy(self.body)
-            files = copy.deepcopy((self.files))
+            files = copy.deepcopy(self.files)
             return HttpRequest(self.method, self.url, self.headers, files, data)
         except ValueError:
             return copy.copy(self)
