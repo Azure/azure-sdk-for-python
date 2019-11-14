@@ -148,6 +148,9 @@ class PartitionPump():
                     await self.processor.process_events_async(self.partition_context, events)
             except Exception as err:  # pylint: disable=broad-except
                 await self.process_error_async(err)
+                if self.host.eph_options.release_partition_on_checkpoint_failure and str(err) == "failed to persist checkpoint":
+                    log.error("Unable to persist checkpoint. This often means we lost the lease. Proactively closing to avoid churn.")
+                    self.set_pump_status("Errored")
 
     async def process_error_async(self, error):
         """
