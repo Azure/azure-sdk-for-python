@@ -50,6 +50,11 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
 
+def safe_deep_copy(x):
+    try:
+        return copy.deepcopy(x)
+    except ValueError:
+        return copy.copy(x)
 
 class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):  # type: ignore
     """An HTTP policy ABC.
@@ -148,11 +153,8 @@ class RequestHistory(object):
     """
 
     def __init__(self, http_request, http_response=None, error=None, context=None):
-        # type: (PipelineRequest, Optional[PipelineResponse], Exception, Optional[Dict[str, Any]]) -> None
-        try:
-            self.http_request = copy.deepcopy(http_request)
-        except ValueError:
-            self.http_request = copy.copy(http_request)
+        # type: (HttpRequest, Optional[PipelineResponse], Exception, Optional[Dict[str, Any]]) -> None
+        self.http_request = safe_deep_copy(http_request)
         self.http_response = http_response
         self.error = error
         self.context = context
