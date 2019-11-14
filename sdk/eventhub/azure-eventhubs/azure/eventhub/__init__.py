@@ -30,6 +30,9 @@ from .exceptions import (
 
 
 
+from ._version import VERSION
+__version__ = VERSION
+
 TransportType = constants.TransportType
 
 __all__ = [
