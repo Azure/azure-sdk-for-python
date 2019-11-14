@@ -330,10 +330,10 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # list certificate versions
         await self._validate_certificate_list(
-            certificates=(client.list_properties_of_certificate_versions(
+            original_certificates=expected,
+            returned_certificates=(client.list_properties_of_certificate_versions(
                 certificate_name=cert_name, max_page_size=max_certificates - 1
-            )),
-            expected=expected
+            ))
         )
 
     @ResourceGroupPreparer()
