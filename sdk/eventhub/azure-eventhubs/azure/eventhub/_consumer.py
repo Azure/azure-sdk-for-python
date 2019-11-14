@@ -104,33 +104,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
         self.stop = False  # used by event processor
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        retried_times = 0
-        last_exception = None
-        while retried_times < self._client._config.max_retries:  # pylint:disable=protected-access
-            try:
-                self._open()
-                if not self._messages_iter:
-                    self._messages_iter = self._handler.receive_messages_iter()
-                message = next(self._messages_iter)
-                event_data = EventData._from_message(message)  # pylint:disable=protected-access
-                event_data._trace_link_message()  # pylint:disable=protected-access
-                self._offset = EventPosition(event_data.offset, inclusive=False)
-                retried_times = 0
-                if self._track_last_enqueued_event_properties:
-                    self._last_enqueued_event_properties = event_data._get_last_enqueued_event_properties()  # pylint:disable=protected-access
-                return event_data
-            except Exception as exception:  # pylint:disable=broad-except
-                last_exception = self._handle_exception(exception)
-                self._client._try_delay(retried_times=retried_times, last_exception=last_exception,  # pylint:disable=protected-access
-                                        entity_name=self._name)
-                retried_times += 1
-        log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
-        raise last_exception
-
     def _create_handler(self):
         source = Source(self._source)
         if self._offset is not None:
