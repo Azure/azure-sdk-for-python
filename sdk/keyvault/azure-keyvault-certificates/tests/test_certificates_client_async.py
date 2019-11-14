@@ -28,19 +28,19 @@ from azure.keyvault.certificates import (
 from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer
 from certificates_test_case import KeyVaultTestCase
-from azure.keyvault.certificates._shared._generated.v7_0.models import CertificatePolicy as CertificatePolicyGenerated
-from azure.keyvault.certificates._shared._generated.v7_0.models import LifetimeAction as LifetimeActionGenerated
-from azure.keyvault.certificates._shared._generated.v7_0.models import (
-    SecretProperties,
-    IssuerParameters,
-    X509CertificateProperties,
-    KeyProperties,
-    SubjectAlternativeNames,
-    Trigger,
-    Action,
-    ActionType,
-    IssuerAttributes,
-)
+# from azure.keyvault.certificates._shared._generated.v7_0.models import CertificatePolicy as CertificatePolicyGenerated
+# from azure.keyvault.certificates._shared._generated.v7_0.models import LifetimeAction as LifetimeActionGenerated
+# from azure.keyvault.certificates._shared._generated.v7_0.models import (
+#     SecretProperties,
+#     IssuerParameters,
+#     X509CertificateProperties,
+#     KeyProperties,
+#     SubjectAlternativeNames,
+#     Trigger,
+#     Action,
+#     ActionType,
+#     IssuerAttributes,
+# )
 from azure.keyvault.certificates.models import CertificateIssuer, IssuerProperties, KeyCurveName
 from certificates_async_preparer import AsyncVaultClientPreparer
 
@@ -107,96 +107,64 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(cert_name, cert.name)
         self.assertIsNotNone(cert.cer)
         self.assertIsNotNone(cert.policy)
-        self._validate_certificate_policy(cert.policy, cert_policy)
+        self._validate_certificate_policy(original_policy=cert_policy, returned_policy=cert_policy)
 
 
-    def _validate_certificate_policy(self, policy, policy_generated):
-        self.assertEqual(policy_generated.issuer_parameters.name, policy.issuer_name)
-        self.assertEqual(policy_generated.secret_properties.content_type, policy.content_type)
-        if policy_generated.x509_certificate_properties.ekus:
-            self.assertEqual(policy_generated.x509_certificate_properties.ekus, policy.ekus)
-        if policy_generated.x509_certificate_properties.key_usage:
-            self.assertEqual(policy_generated.x509_certificate_properties.key_usage, policy.key_usage)
-        if policy_generated.x509_certificate_properties:
-            self._validate_x509_properties(
-                cert_bundle_policy=policy, cert_policy_x509_props=policy_generated.x509_certificate_properties
-            )
-        self._validate_key_properties(
-            cert_bundle_key_props=policy, cert_policy_key_props=policy_generated.key_properties
+    def _validate_certificate_policy(self, original_policy, returned_policy):
+        self.assertEqual(original_policy.issuer_name, returned_policy.issuer_name)
+        self.assertEqual(original_policy.subject_name, returned_policy.subject_name)
+        self.assertEqual(original_policy.exportable, returned_policy.exportable)
+        self.assertEqual(original_policy.key_type, returned_policy.key_type)
+        self.assertEqual(original_policy.key_size, returned_policy.key_size)
+        self.assertEqual(original_policy.reuse_key, returned_policy.reuse_key)
+        self.assertEqual(original_policy.curve, returned_policy.curve)
+        if original_policy.ekus:
+            self.assertEqual(set(original_policy.ekus), set(returned_policy.ekus))
+        if original_policy.key_usage:
+            self.assertEqual(set(original_policy.key_usage), set(returned_policy.key_usage))
+        self.assertEqual(original_policy.content_type, returned_policy.content_type)
+        self.assertEqual(original_policy.validity_in_months, returned_policy.validity_in_months)
+        self.assertEqual(original_policy.certificate_type, returned_policy.certificate_type)
+        self.assertEqual(original_policy.certificate_transparency, returned_policy.certificate_transparency)
+        self._validate_sans(
+            original_policy=original_policy,
+            returned_policy=returned_policy
         )
-        if policy_generated.lifetime_actions:
+        if original_policy.lifetime_actions:
             self._validate_lifetime_actions(
-                cert_bundle_lifetime_actions=policy.lifetime_actions,
-                cert_policy_lifetime_actions=policy_generated.lifetime_actions,
+                original_lifetime_actions=original_policy.lifetime_actions,
+                returned_lifetime_actions=returned_policy.lifetime_actions,
             )
 
-    def _validate_x509_properties(self, cert_bundle_policy, cert_policy_x509_props):
-        self.assertIsNotNone(cert_bundle_policy)
-        self.assertEqual(cert_policy_x509_props.subject, cert_bundle_policy.subject_name)
-        if not cert_policy_x509_props.subject_alternative_names:
-            return
-        if cert_policy_x509_props.subject_alternative_names.emails:
-            for (san_email, policy_email) in itertools.zip_longest(
-                cert_policy_x509_props.subject_alternative_names.emails, cert_bundle_policy.san_emails
-            ):
-                self.assertEqual(san_email, policy_email)
-        if cert_policy_x509_props.subject_alternative_names.upns:
-            for (san_upns, policy_upns) in itertools.zip_longest(
-                cert_policy_x509_props.subject_alternative_names.upns, cert_bundle_policy.san_upns
-            ):
-                self.assertEqual(san_upns, policy_upns)
-        if cert_policy_x509_props.subject_alternative_names.dns_names:
-            for (san_dns_name, policy_dns_name) in itertools.zip_longest(
-                cert_policy_x509_props.subject_alternative_names.dns_names, cert_bundle_policy.san_dns_names
-            ):
-                self.assertEqual(san_dns_name, policy_dns_name)
+    def _validate_sans(self, original_policy, returned_policy):
+        if original_policy.san_dns_names:
+            self.assertEqual(set(original_policy.san_dns_names), set(returned_policy.san_dns_names))
+        if original_policy.san_emails:
+            self.assertEqual(set(original_policy.san_emails), set(returned_policy.san_emails))
+        if original_policy.san_upns:
+            self.assertEqual(set(original_policy.san_upns), set(returned_policy.san_upns))
 
-    def _validate_key_properties(self, cert_bundle_key_props, cert_policy_key_props):
-        self.assertIsNotNone(cert_bundle_key_props)
-        if cert_policy_key_props:
-            self.assertEqual(cert_policy_key_props.exportable, cert_bundle_key_props.exportable)
-            self.assertEqual(cert_policy_key_props.key_type, cert_bundle_key_props.key_type)
-            self.assertEqual(cert_policy_key_props.key_size, cert_bundle_key_props.key_size)
-            self.assertEqual(cert_policy_key_props.reuse_key, cert_bundle_key_props.reuse_key)
-            self.assertEqual(cert_policy_key_props.curve, cert_bundle_key_props.curve)
+    def _validate_lifetime_actions(self, original_lifetime_actions, returned_lifetime_actions):
+        self.assertEqual(len(original_lifetime_actions), len(returned_lifetime_actions))
+        for original_lifetime_action in original_lifetime_actions:
+            returned_lifetime_action = next(x for x in returned_lifetime_actions if x.action == original_lifetime_action.action)
+            self.assertEqual(original_lifetime_action.lifetime_percentage, returned_lifetime_action.lifetime_percentage)
+            self.assertEqual(original_lifetime_action.days_before_expiry, returned_lifetime_action.days_before_expiry)
 
-    def _validate_lifetime_actions(self, cert_bundle_lifetime_actions, cert_policy_lifetime_actions):
-        self.assertIsNotNone(cert_bundle_lifetime_actions)
-        if cert_policy_lifetime_actions:
-            policy_lifetime_actions = cert_policy_lifetime_actions
-            for bundle_lifetime_action in cert_bundle_lifetime_actions:
-                for policy_lifetime_action in policy_lifetime_actions:
-                    if bundle_lifetime_action.action.value == policy_lifetime_action.action.action_type:
-                        if policy_lifetime_action.trigger.lifetime_percentage:
-                            self.assertEqual(
-                                bundle_lifetime_action.lifetime_percentage,
-                                policy_lifetime_action.trigger.lifetime_percentage,
-                            )
-                        if policy_lifetime_action.trigger.days_before_expiry:
-                            self.assertEqual(
-                                bundle_lifetime_action.days_before_expiry,
-                                policy_lifetime_action.trigger.days_before_expiry,
-                            )
-                        policy_lifetime_actions.remove(policy_lifetime_action)
-                        break
-            self.assertFalse(policy_lifetime_actions)
-
-    async def _validate_certificate_list(self, certificates, expected):
-        async for cert in certificates:
-            if cert.id in expected.keys():
-                del expected[cert.id]
+    async def _validate_certificate_list(self, original_certificates, returned_certificates):
+        async for cert in returned_certificates:
+            if cert.id in original_certificates.keys():
+                del original_certificates[cert.id]
             else:
-                self.assertTrue(False)
-        self.assertEqual(len(expected), 0)
+                assert False, "Returned certificate with id {} not found in list of original certificates".format(cert.id)
+        self.assertEqual(len(original_certificates), 0)
 
-    def _validate_certificate_contacts(self, contacts, expected):
-        self.assertEqual(len(list(contacts)), len(expected))
-        for contact in contacts:
-            for x in expected:
-                if x.email == contact.email:
-                    exp_contact = x
-            self.assertEqual(contact.name, exp_contact.name)
-            self.assertEqual(contact.phone, exp_contact.phone)
+    def _validate_certificate_contacts(self, original_contacts, returned_contacts):
+        self.assertEqual(len(contacts), len(expected))
+        for original_contact in original_contacts:
+            returned_contact = next(x for x in returned_contacts if x.email == original_contact.email)
+            self.assertEqual(original_contact.name, returned_contact.name)
+            self.assertEqual(original_contact.phone, returned_contacts.phone)
 
     def _admin_detail_equal(self, admin_detail, exp_admin_detail):
         return (
@@ -206,17 +174,17 @@ class CertificateClientTests(KeyVaultTestCase):
             and admin_detail.phone == exp_admin_detail.phone
         )
 
-    def _validate_certificate_issuer(self, issuer, expected):
-        self._validate_certificate_issuer_properties(issuer.properties, expected.properties)
-        self.assertEqual(issuer.account_id, expected.account_id)
-        self.assertEqual(len(issuer.admin_details), len(expected.admin_details))
-        for admin_detail in issuer.admin_details:
-            exp_admin_detail = next(
-                (ad for ad in expected.admin_details if self._admin_detail_equal(admin_detail, ad)), None
+    def _validate_certificate_issuer(self, original_issuer, returned_issuer):
+        self._validate_certificate_issuer_properties(original_issuer.properties, returned_issuer.properties)
+        self.assertEqual(original_issuer.account_id, returned_issuer.account_id)
+        self.assertEqual(len(original_issuer.admin_details), len(returned_issuer.admin_details))
+        for original_admin_detail in original_issuer.admin_details:
+            returned_admin_detail = next(
+                (ad for ad in returned_issuer.admin_details if self._admin_detail_equal(original_admin_detail, ad)), None
             )
-            self.assertIsNotNone(exp_admin_detail)
-        self.assertEqual(issuer.password, expected.password)
-        self.assertEqual(issuer.organization_id, expected.organization_id)
+            self.assertIsNotNone(returned_admin_detail)
+        self.assertEqual(original_issuer.password, returned_issuer.password)
+        self.assertEqual(original_issuer.organization_id, returned_issuer.organization_id)
 
     def _validate_certificate_issuer_properties(self, issuer, expected):
         self.assertEqual(issuer.id, expected.id)
@@ -232,16 +200,19 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
         cert_name = self.get_resource_name("cert")
         lifetime_actions = [
-            LifetimeActionGenerated(trigger=Trigger(lifetime_percentage=80), action=Action(action_type=ActionType.auto_renew))
+            LifetimeAction(lifetime_percentage=80, action=CertificatePolicyAction.auto_renew)
         ]
-        cert_policy = CertificatePolicyGenerated(
-            key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
-            secret_properties=SecretProperties(content_type="application/x-pkcs12"),
-            issuer_parameters=IssuerParameters(name="Self"),
+        cert_policy = CertificatePolicy(
+            issuer_name="Self",
+            subject_name="CN=DefaultPolicy",
+            exportable=True,
+            key_type=KeyType.rsa,
+            key_size=2048,
+            reuse_key=False,
+            content_type=SecretContentType.PKCS12,
             lifetime_actions=lifetime_actions,
-            x509_certificate_properties=X509CertificateProperties(
-                subject="CN=DefaultPolicy", validity_in_months=12, key_usage=["digitalSignature", "keyEncipherment"]
-            ),
+            validity_in_months=12,
+            key_usage=[KeyUsageType.digital_signature, KeyUsageType.key_encipherment]
         )
 
         polling_interval = 0 if self.is_playback() else None
