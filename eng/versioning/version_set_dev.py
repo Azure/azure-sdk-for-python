@@ -6,6 +6,12 @@ from version_shared import get_packages, set_version_py, set_dev_classifier
 
 DEFAULT_SDK_PATH = "../../sdk/"
 
+def format_build_id(build_id):
+    split_build_id = build_id.split('.', 1)
+    if len(split_build_id[1]) > 2:
+        raise ValueError("Build number suffix is out of acceptable range for package sorting (0 < r < 100)")
+    return ''.join([split_build_id[0], split_build_id[1].zfill(2)])
+
 def get_dev_version(current_version, build_id):
     parsed_version = parse(current_version)
     release = parsed_version.release
@@ -26,13 +32,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     service_name = args.service_name.replace('_', '-')
-    build_id = args.build_id.replace('.', '')
+    build_id = format_build_id(args.build_id)
     sdk_path = args.sdk_path
 
     packages = get_packages(sdk_path)
-
-    # TODO: Loop through packages, replace those with services
-
     target_packages = [pkg for pkg in packages if is_in_service(sdk_path, pkg[0], service_name)]
 
     if not target_packages:
