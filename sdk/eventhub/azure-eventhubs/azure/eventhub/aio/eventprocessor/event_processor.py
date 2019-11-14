@@ -14,7 +14,7 @@ from functools import partial
 from azure.core.tracing import SpanKind  # type: ignore
 from azure.core.settings import settings  # type: ignore
 
-from azure.eventhub import EventPosition, EventData
+from azure.eventhub import EventPosition, EventData, EventHubError
 from ..._eventprocessor.common import CloseReason
 from ..._eventprocessor._eventprocessor_mixin import EventProcessorMixin
 from .partition_context import PartitionContext
@@ -139,7 +139,12 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
 
     async def _on_event_received(self, partition_context, event):
         with self._context(event):
-            await self._event_handler(partition_context, event)
+            try:
+                await self._event_handler(partition_context, event)
+            except asyncio.CancelledError:
+                raise
+            except Exception as error:
+                await self._process_error(partition_context, error)
 
     async def _receive(self, partition_id, checkpoint=None):  # pylint: disable=too-many-statements
         try:  # pylint:disable=too-many-nested-blocks
@@ -186,6 +191,9 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                         self._consumer_group_name
                     )
                     raise
+                except EventHubError as eh_error:
+                    await self._process_error(partition_context, eh_error)
+                    break
                 except Exception as error:
                     await self._process_error(partition_context, error)
         finally:

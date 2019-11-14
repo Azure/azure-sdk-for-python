@@ -209,8 +209,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                                               entity_name=self._name)
                 retried_times += 1
 
-            log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
-            raise last_exception
+        log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
+        raise last_exception
 
     @property
     def last_enqueued_event_properties(self):
