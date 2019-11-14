@@ -9,24 +9,28 @@ import pytest
 import time
 
 from azure.eventhub import EventData, EventPosition, TransportType, ConnectionLostError
-from azure.eventhub.aio.client_async import EventHubClient
+from azure.eventhub.aio import EventHubConsumerClient
 
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_end_of_stream_async(connstr_senders):
+    async def on_event(partition_context, event):
+        if partition_context.partition_id == "0":
+            assert event.body_as_str() == "Receiving only a single event"
+            assert list(event.body)[0] == b"Receiving only a single event"
+            on_event.called = True
+    on_event.called = False
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str)
-    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
-    async with receiver:
-        received = await receiver.receive(timeout=5)
-        assert len(received) == 0
+    client = EventHubConsumerClient.from_connection_string(connection_str)
+    async with client:
+        task = asyncio.ensure_future(client.receive(on_event, "$default", partition_id="0", initial_event_position="-1"))
+        await asyncio.sleep(10)
+        assert on_event.called is False
         senders[0].send(EventData(b"Receiving only a single event"))
-        received = await receiver.receive(timeout=5)
-        assert len(received) == 1
-
-        assert list(received[-1].body)[0] == b"Receiving only a single event"
-    await client.close()
+        time.sleep(10)
+        assert on_event.called is True
+    task.cancel()
 
 
 @pytest.mark.liveTest

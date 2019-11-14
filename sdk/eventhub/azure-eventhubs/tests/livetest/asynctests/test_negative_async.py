@@ -16,71 +16,73 @@ from azure.eventhub import (
     AuthenticationError,
     EventDataSendError,
 )
-from azure.eventhub.aio.client_async import EventHubClient
+from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient
 
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receivers):
     _, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(invalid_hostname)
-    sender = client._create_producer()
-    with pytest.raises(AuthenticationError):
-        await sender.send(EventData("test data"))
-    await sender.close()
-    await client.close()
+    client = EventHubProducerClient.from_connection_string(invalid_hostname)
+    async with client:
+        with pytest.raises(ConnectError):
+            await client.send(EventData("test data"))
 
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_with_invalid_hostname_async(invalid_hostname):
-    client = EventHubClient.from_connection_string(invalid_hostname)
-    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
-    with pytest.raises(AuthenticationError):
-        await receiver.receive(timeout=3)
-    await receiver.close()
-    await client.close()
+    client = EventHubConsumerClient.from_connection_string(invalid_hostname, retry_total=0)
+    async def on_event(partition_context, event):
+        pass
 
+    async def on_error(partition_context, error):
+        on_error.error = error
+
+    on_error.error = None
+    async with client:
+        task = asyncio.ensure_future(client.receive(on_event, "$default", partition_id="0",
+                                     initial_event_position=EventPosition("-1"), on_error=on_error))
+        await asyncio.sleep(20)
+    task.cancel()
+    assert isinstance(on_error.error, ConnectError)
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_with_invalid_key_async(invalid_key, connstr_receivers):
-    _, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(invalid_key)
-    sender = client._create_producer()
-    with pytest.raises(AuthenticationError):
-        await sender.send(EventData("test data"))
-    await sender.close()
-    await client.close()
+async def test_send_with_invalid_key_async(invalid_key):
+    client = EventHubProducerClient.from_connection_string(invalid_key)
+    async with client:
+        with pytest.raises(AuthenticationError):
+            await client.send(EventData("test data"))
 
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_with_invalid_key_async(invalid_key):
-    client = EventHubClient.from_connection_string(invalid_key)
-    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
-    with pytest.raises(AuthenticationError):
-        await receiver.receive(timeout=3)
-    await receiver.close()
-    await client.close()
+    async def on_event(partition_context, event):
+        pass
+
+    client = EventHubConsumerClient.from_connection_string(invalid_key)
+    async with client:
+        task = asyncio.ensure_future(client.receive(on_event, consumer_group='$default'))
+        await asyncio.sleep(2)
+        assert len(client._event_processors) == 1
+    task.cancel()
 
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_with_invalid_policy_async(invalid_policy, connstr_receivers):
-    _, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(invalid_policy)
-    sender = client._create_producer()
-    with pytest.raises(AuthenticationError):
-        await sender.send(EventData("test data"))
-    await sender.close()
-    await client.close()
+async def test_send_with_invalid_policy_async(invalid_policy):
+    client = EventHubProducerClient.from_connection_string(invalid_policy)
+    async with client:
+        with pytest.raises(AuthenticationError):
+            await client.send(EventData("test data"))
 
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_with_invalid_policy_async(invalid_policy):
-    client = EventHubClient.from_connection_string(invalid_policy)
+    client = EventHubProducerClient.from_connection_string(invalid_policy)
     receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"))
     with pytest.raises(AuthenticationError):
         await receiver.receive(timeout=3)

@@ -59,7 +59,7 @@ def test_send_to_invalid_partitions(connection_str):
         client = EventHubProducerClient.from_connection_string(connection_str)
         try:
             with pytest.raises(ConnectError):
-                client.send(EventData("test data"))
+                client.send(EventData("test data"), partition_id=p)
         finally:
             client.close()
 
