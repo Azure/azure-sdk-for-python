@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
+import copy
 import functools
 import time
 
@@ -31,7 +32,7 @@ if TYPE_CHECKING:
 class AadClientBase(ABC):
     """Sans I/O methods for AAD clients wrapping MSAL's OAuth client"""
 
-    def __init__(self, tenant_id, client_id, **kwargs):
+    def __init__(self, tenant_id, client_id, cache=None, **kwargs):
         # type: (str, str, **Any) -> None
         authority = kwargs.pop("authority", KnownAuthorities.AZURE_PUBLIC_CLOUD)
         if authority[-1] == "/":
@@ -39,10 +40,11 @@ class AadClientBase(ABC):
         token_endpoint = "https://" + "/".join((authority, tenant_id, "oauth2/v2.0/token"))
         config = {"token_endpoint": token_endpoint}
 
+        self._cache = cache or TokenCache()
+
         self._client = Client(server_configuration=config, client_id=client_id)
         self._client.session.close()
         self._client.session = self._get_client_session(**kwargs)
-        self._cache = TokenCache()
 
     def get_cached_access_token(self, scopes):
         # type: (Iterable[str]) -> Optional[AccessToken]
@@ -78,17 +80,21 @@ class AadClientBase(ABC):
     def _process_response(self, response, scopes, now):
         # type: (dict, Iterable[str], int) -> AccessToken
         _raise_for_error(response)
+
+        # TokenCache.add mutates the response. In particular, it removes tokens.
+        original_response = copy.deepcopy(response)
+
         self._cache.add(event={"response": response, "scope": scopes}, now=now)
-        if "expires_on" in response:
-            expires_on = int(response["expires_on"])
-        elif "expires_in" in response:
-            expires_on = now + int(response["expires_in"])
+        if "expires_on" in original_response:
+            expires_on = int(original_response["expires_on"])
+        elif "expires_in" in original_response:
+            expires_on = now + int(original_response["expires_in"])
         else:
-            _scrub_secrets(response)
+            _scrub_secrets(original_response)
             raise ClientAuthenticationError(
-                message="Unexpected response from Azure Active Directory: {}".format(response)
+                message="Unexpected response from Azure Active Directory: {}".format(original_response)
             )
-        return AccessToken(response["access_token"], expires_on)
+        return AccessToken(original_response["access_token"], expires_on)
 
     @abc.abstractmethod
     def _get_client_session(self, **kwargs):

@@ -42,30 +42,6 @@ if TYPE_CHECKING:
     from azure.core.pipeline.policies import HTTPPolicy
 
 
-MULTIPLE_ACCOUNTS = """Multiple users were discovered in the shared token cache. If using DefaultAzureCredential, set
-the AZURE_USERNAME environment variable to the preferred username. Otherwise,
-specify it when constructing SharedTokenCacheCredential.\nDiscovered accounts: {}"""
-
-MULTIPLE_MATCHING_ACCOUNTS = """Found multiple accounts matching{}{}. If using DefaultAzureCredential, set environment
-variables AZURE_USERNAME and AZURE_TENANT_ID with the preferred username and tenant.
-Otherwise, specify them when constructing SharedTokenCacheCredential.\nDiscovered accounts: {}"""
-
-NO_ACCOUNTS = """The shared cache contains no accounts. To authenticate with SharedTokenCacheCredential, login through
-developer tooling supporting Azure single sign on"""
-
-NO_MATCHING_ACCOUNTS = """The cache contains no account matching the specified{}{}. To authenticate with
-SharedTokenCacheCredential, login through developer tooling supporting Azure single sign on.\nDiscovered accounts: {}"""
-
-NO_TOKEN = """Token acquisition failed for user '{}'. To fix, re-authenticate
-through developer tooling supporting Azure single sign on"""
-
-
-def _account_to_string(account):
-    username = account.get("username")
-    home_account_id = account.get("home_account_id", "").split(".")
-    tenant_id = home_account_id[-1] if len(home_account_id) == 2 else ""
-    return "(username: {}, tenant: {})".format(username, tenant_id)
-
 
 class AuthnClientBase(ABC):
     """Sans I/O authentication client methods"""
@@ -101,17 +77,6 @@ class AuthnClientBase(ABC):
                 return AccessToken(token["secret"], expires_on)
         return None
 
-    def get_refresh_tokens(self, scopes, account):
-        """Yields all an account's cached refresh tokens except those which have a scope (which is unexpected) that
-        isn't a superset of ``scopes``."""
-
-        for token in self._cache.find(
-            TokenCache.CredentialType.REFRESH_TOKEN, query={"home_account_id": account.get("home_account_id")}
-        ):
-            if "target" in token and not all((scope in token["target"] for scope in scopes)):
-                continue
-            yield token
-
     def get_refresh_token_grant_request(self, refresh_token, scopes):
         data = {
             "grant_type": "refresh_token",
@@ -123,11 +88,6 @@ class AuthnClientBase(ABC):
 
     @abc.abstractmethod
     def request_token(self, scopes, method, headers, form_data, params, **kwargs):
-        pass
-
-    @abc.abstractmethod
-    def obtain_token_by_refresh_token(self, scopes, username, tenant_id):
-        # type: (Iterable[str], Optional[str], Optional[str]) -> AccessToken
         pass
 
     def _deserialize_and_cache_token(self, response, scopes, request_time):
@@ -243,58 +203,6 @@ class AuthnClient(AuthnClientBase):
         response = self._pipeline.run(request, stream=False, **kwargs)
         token = self._deserialize_and_cache_token(response=response, scopes=scopes, request_time=request_time)
         return token
-
-    def get_account(self, username=None, tenant_id=None):
-        # type: (Optional[str], Optional[str]) -> Mapping[str, str]
-        accounts = self._cache.find(TokenCache.CredentialType.ACCOUNT)
-        if not accounts:
-            raise ClientAuthenticationError(message=NO_ACCOUNTS)
-
-        # filter according to arguments
-        query = {"username": username} if username else {}
-        filtered_accounts = self._cache.find(TokenCache.CredentialType.ACCOUNT, query=query)
-        if tenant_id:
-            filtered_accounts = [a for a in filtered_accounts if a.get("home_account_id", "").endswith(tenant_id)]
-
-        if len(filtered_accounts) == 1:
-            return filtered_accounts[0]
-
-        cached_accounts = ", ".join(_account_to_string(account) for account in accounts)
-
-        if username or tenant_id:
-            # no, or multiple, matching accounts for the given username and/or tenant id
-            username_string = " username: {}".format(username) if username else ""
-            tenant_string = " tenant: {}".format(tenant_id) if tenant_id else ""
-            if not filtered_accounts:
-                message = NO_MATCHING_ACCOUNTS.format(username_string, tenant_string, cached_accounts)
-            else:
-                message = MULTIPLE_MATCHING_ACCOUNTS.format(username_string, tenant_string, cached_accounts)
-            raise ClientAuthenticationError(message=message)
-
-        # multiple cached accounts and no basis for selection
-        raise ClientAuthenticationError(message=MULTIPLE_ACCOUNTS.format(cached_accounts))
-
-    def obtain_token_by_refresh_token(self, scopes, username=None, tenant_id=None):
-        # type: (Iterable[str], Optional[str], Optional[str]) -> AccessToken
-        """Acquire an access token using a cached refresh token. Raises ClientAuthenticationError if that fails.
-        This is only used by SharedTokenCacheCredential and isn't robust enough for anything else."""
-
-        account = self.get_account(username, tenant_id)
-        environment = account.get("environment")
-        if not environment or environment not in self._auth_url:
-            # doubtful this account can get the access token we want but public cloud's a special case
-            # because its authority has an alias: for our purposes login.windows.net = login.microsoftonline.com
-            if not (environment == "login.windows.net" and KnownAuthorities.AZURE_PUBLIC_CLOUD in self._auth_url):
-                return None
-
-        # try each refresh token, returning the first access token acquired
-        for token in self.get_refresh_tokens(scopes, account):
-            request = self.get_refresh_token_grant_request(token, scopes)
-            request_time = int(time.time())
-            response = self._pipeline.run(request, stream=False)
-            return self._deserialize_and_cache_token(response=response, scopes=scopes, request_time=request_time)
-
-        raise ClientAuthenticationError(message=NO_TOKEN.format(account.get("username")))
 
     @staticmethod
     def _create_config(**kwargs):

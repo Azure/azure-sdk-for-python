@@ -4,7 +4,7 @@
 # ------------------------------------
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import KnownAuthorities, SharedTokenCacheCredential
-from azure.identity._authn_client import (
+from azure.identity._credentials.shared_cache import (
     MULTIPLE_ACCOUNTS,
     MULTIPLE_MATCHING_ACCOUNTS,
     NO_ACCOUNTS,
@@ -203,3 +203,6 @@ def populated_cache(*accounts):
     for account in accounts:
         cache.add(account)
     return cache
+
+if __name__ == "__main__":
+    test_single_account()
