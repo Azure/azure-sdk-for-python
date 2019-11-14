@@ -1545,68 +1545,6 @@ class TagPatchRequest(Model):
         self.properties = properties
 
 
-class TagRequest(Model):
-    """Tag Request for Put, Get, Delete operations.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param properties: Required. tags object passing in the request.
-    :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
-    """
-
-    _validation = {
-        'properties': {'required': True},
-    }
-
-    _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'Tags'},
-    }
-
-    def __init__(self, *, properties, **kwargs) -> None:
-        super(TagRequest, self).__init__(**kwargs)
-        self.properties = properties
-
-
-class TagResponse(Model):
-    """Tag Response for Patch, Put, Get, Delete operations.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: The ID of the tag response.
-    :vartype id: str
-    :ivar name: The name of the tag response.
-    :vartype name: str
-    :ivar type: The type of the tag response.
-    :vartype type: object
-    :param properties: Required. tags object returned in the response body.
-    :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'properties': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'object'},
-        'properties': {'key': 'properties', 'type': 'Tags'},
-    }
-
-    def __init__(self, *, properties, **kwargs) -> None:
-        super(TagResponse, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.properties = properties
-
-
 class Tags(Model):
     """key and value pairs for tags.
 
@@ -1621,6 +1559,49 @@ class Tags(Model):
     def __init__(self, *, tags=None, **kwargs) -> None:
         super(Tags, self).__init__(**kwargs)
         self.tags = tags
+
+
+class TagsResource(Resource):
+    """Tags for the resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param properties: Required. tags property.
+    :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'Tags'},
+    }
+
+    def __init__(self, *, properties, location: str=None, tags=None, **kwargs) -> None:
+        super(TagsResource, self).__init__(location=location, tags=tags, **kwargs)
+        self.properties = properties
 
 
 class TagValue(Model):
