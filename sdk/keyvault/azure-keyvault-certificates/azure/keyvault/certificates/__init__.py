@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from .client import CertificateClient
-from .enums import CertificatePolicyAction, KeyCurveName, KeyType, SecretContentType, KeyUsageType
+from .enums import CertificatePolicyAction, KeyCurveName, KeyType, SecretContentType, KeyUsageType, WellKnownIssuerNames
 from .models import AdministratorContact, CertificatePolicy, CertificateContact, LifetimeAction
 
 __all__ = [
@@ -17,4 +17,5 @@ __all__ = [
     "KeyUsageType",
     "LifetimeAction",
     "SecretContentType",
+    "WellKnownIssuerNames",
 ]

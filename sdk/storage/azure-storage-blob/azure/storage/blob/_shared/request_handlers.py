@@ -66,7 +66,12 @@ def get_length(data):
         except (AttributeError, UnsupportedOperation):
             pass
         else:
-            return fstat(fileno).st_size
+            try:
+                return fstat(fileno).st_size
+            except OSError:
+                # Not a valid fileno, may be possible requests returned
+                # a socket number?
+                pass
 
         # If the stream is seekable and tell() is implemented, calculate the stream size.
         try:

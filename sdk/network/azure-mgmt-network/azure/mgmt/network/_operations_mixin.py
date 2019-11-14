@@ -92,6 +92,7 @@ class NetworkManagementClientOperationsMixin(object):
         mixin_instance.config = self.config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        mixin_instance.api_version = api_version
         return mixin_instance.check_dns_name_availability(location, domain_name_label, custom_headers, raw, **operation_config)
 
     def generatevirtualwanvpnserverconfigurationvpnprofile(self, resource_group_name, virtual_wan_name, vpn_server_configuration_resource_id=None, authentication_method=None, custom_headers=None, raw=False, polling=True, **operation_config):
@@ -137,6 +138,7 @@ class NetworkManagementClientOperationsMixin(object):
         mixin_instance.config = self.config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        mixin_instance.api_version = api_version
         return mixin_instance.generatevirtualwanvpnserverconfigurationvpnprofile(resource_group_name, virtual_wan_name, vpn_server_configuration_resource_id, authentication_method, custom_headers, raw, polling, **operation_config)
 
     def supported_security_providers(self, resource_group_name, virtual_wan_name, custom_headers=None, raw=False, **operation_config):
@@ -187,4 +189,5 @@ class NetworkManagementClientOperationsMixin(object):
         mixin_instance.config = self.config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        mixin_instance.api_version = api_version
         return mixin_instance.supported_security_providers(resource_group_name, virtual_wan_name, custom_headers, raw, **operation_config)
