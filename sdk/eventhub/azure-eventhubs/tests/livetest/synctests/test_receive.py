@@ -10,7 +10,7 @@ import pytest
 import time
 import datetime
 
-from azure.eventhub import EventData, EventPosition, TransportType
+from azure.eventhub import EventData, EventPosition, TransportType, EventHubError
 from azure.eventhub import EventHubConsumerClient
 
 
@@ -84,34 +84,41 @@ def test_receive_with_event_position_sync(connstr_senders, position, inclusive, 
         assert on_event.event.body_as_str() == expected_result
     thread.join()
 
-'''
+
 @pytest.mark.liveTest
-def test_receive_with_custom_datetime_sync(connstr_senders):
+def test_receive_owner_level(connstr_senders):
+    def on_event(partition_context, event):
+        pass
+    def on_error(partition_context, error):
+        on_error.error = error
+
+    on_error.error = None
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str)
-    for i in range(5):
-        senders[0].send(EventData(b"Message before timestamp"))
-    time.sleep(65)
-
-    now = datetime.datetime.utcnow()
-    offset = datetime.datetime(now.year, now.month, now.day, now.hour, now.minute)
-    for i in range(5):
-        senders[0].send(EventData(b"Message after timestamp"))
-
-    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition(offset))
-    with receiver:
-        all_received = []
-        received = receiver.receive(timeout=5)
-        while received:
-            all_received.extend(received)
-            received = receiver.receive(timeout=5)
-
-        assert len(all_received) == 5
-        for received_event in all_received:
-            assert received_event.body_as_str() == "Message after timestamp"
-            assert received_event.enqueued_time > offset
-    client.close()
-'''
+    client1 = EventHubConsumerClient.from_connection_string(connection_str)
+    client2 = EventHubConsumerClient.from_connection_string(connection_str)
+    with client1, client2:
+        thread1 = threading.Thread(target=client1.receive, args=(on_event, "$default"),
+                                   kwargs={"partition_id": "0", "initial_event_position": "-1",
+                                           "on_error": on_error})
+        thread1.start()
+        event_list = []
+        for i in range(20):
+            ed = EventData("Event Number {}".format(i))
+            event_list.append(ed)
+        senders[0].send(event_list)
+        time.sleep(5)
+        thread2 = threading.Thread(target=client2.receive, args=(on_event, "$default"),
+                                   kwargs = {"partition_id": "0", "initial_event_position": "-1", "owner_level": 1})
+        thread2.start()
+        event_list = []
+        for i in range(20):
+            ed = EventData("Event Number {}".format(i))
+            event_list.append(ed)
+        senders[0].send(event_list)
+        time.sleep(10)
+    thread1.join()
+    thread2.join()
+    assert isinstance(on_error.error, EventHubError)
 
 
 @pytest.mark.liveTest

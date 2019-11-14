@@ -81,7 +81,7 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_owner_level(connstr_senders):
+async def test_receive_owner_level_async(connstr_senders):
     app_prop = {"raw_prop": "raw_value"}
 
     async def on_event(partition_context, event):
@@ -93,7 +93,7 @@ async def test_receive_owner_level(connstr_senders):
     connection_str, senders = connstr_senders
     client1 = EventHubConsumerClient.from_connection_string(connection_str)
     client2 = EventHubConsumerClient.from_connection_string(connection_str)
-    try:
+    async with client1, client2:
         task1 = asyncio.ensure_future(client1.receive(on_event, "$default",
                                                     partition_id="0", initial_event_position="-1",
                                                     on_error=on_error))
@@ -112,11 +112,8 @@ async def test_receive_owner_level(connstr_senders):
             event_list.append(ed)
         senders[0].send(event_list)
         await asyncio.sleep(10)
-        task1.cancel()
-        task2.cancel()
-    finally:
-        await client1.close()
-        await client2.close()
+    task1.cancel()
+    task2.cancel()
     assert isinstance(on_error.error, EventHubError)
 
 
