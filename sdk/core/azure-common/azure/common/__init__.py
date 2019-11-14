@@ -3,10 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-from ._version import VERSION as _VERSION
+from ._version import VERSION
 
 __author__ = 'Microsoft Corp. <azpysdkhelp@microsoft.com>'
-__version__ = _VERSION
+__version__ = VERSION
 
 
 class AzureException(Exception):
