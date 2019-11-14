@@ -525,28 +525,6 @@ class CertificateClientTests(KeyVaultTestCase):
             san_dns_names=["sdk.azure-int.net"]
         )
 
-        cert_policy_generated = CertificatePolicyGenerated(
-            key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=True),
-            secret_properties=SecretProperties(content_type="application/x-pkcs12"),
-            issuer_parameters=IssuerParameters(
-                name="Self",
-                certificate_transparency=False
-            ),
-            x509_certificate_properties=X509CertificateProperties(
-                subject="CN=DefaultPolicy",
-                ekus=["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],
-                subject_alternative_names=SubjectAlternativeNames(
-                    dns_names=["sdk.azure-int.net"]
-                ),
-                key_usage=["decipherOnly"],
-                validity_in_months=12,
-            ),
-            lifetime_actions=[LifetimeActionGenerated(
-                action=Action(action_type="EmailContacts"),
-                trigger=Trigger(lifetime_percentage=98)
-            )]
-        )
-
         polling_interval = 0 if self.is_playback() else None
 
         # get certificate policy
@@ -556,21 +534,17 @@ class CertificateClientTests(KeyVaultTestCase):
             _polling_interval=polling_interval
         )
 
-        policy_to_validate = await client.get_policy(certificate_name=cert_name)
+        returned_policy = await client.get_policy(certificate_name=cert_name)
 
-        self._validate_certificate_policy(policy_to_validate, cert_policy_generated)
+        self._validate_certificate_policy(original_policy=cert_policy, returned_policy=returned_policy)
 
         cert_policy._key_type = KeyType.ec
         cert_policy._key_size = 256
         cert_policy._curve = KeyCurveName.p_256
 
-        cert_policy_generated.key_properties=KeyProperties(
-            exportable=True, key_type="EC", curve="P-256", reuse_key=True, key_size=256
-        )
+        returned_policy = await client.update_policy(certificate_name=cert_name, policy=cert_policy)
 
-        policy_to_validate = await client.update_policy(certificate_name=cert_name, policy=cert_policy)
-
-        self._validate_certificate_policy(policy_to_validate, cert_policy_generated)
+        self._validate_certificate_policy(original_policy=cert_policy, returned_policy=returned_policy)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
