@@ -15,7 +15,14 @@ DEV_STATUS_REGEX = r'(classifiers=\[(\s)*)(["\']Development Status :: .*["\'])'
 
 
 def path_excluded(path):
-    return "-nspkg" in path or "tests" in path # or "mgmt" in path
+    return "-nspkg" in path or "tests" in path or "mgmt" in path or is_metapackage(path)
+
+# Metapackages do not have an 'azure' folder within them
+def is_metapackage(package_path):
+    dir_path = package_path if path.isdir(package_path) else path.split(package_path)[0]
+
+    azure_path = path.join(dir_path, 'azure')
+    return not path.exists(azure_path)
 
 def get_setup_py_paths(base_path):
     glob_expression = path.join(base_path, SETUP_PY_GLOB)
