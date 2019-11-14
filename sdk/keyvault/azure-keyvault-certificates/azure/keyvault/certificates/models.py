@@ -551,15 +551,12 @@ class CertificatePolicy(object):
     :keyword str subject_name: The subject name of the certificate. Should be a valid X509
         distinguished name. Either subject_name or one of the subject alternative name parameters
         are required.
-    :keyword Iterable[str] san_emails: Subject alternative emails of the X509 object. Only one out
-        of san_emails, san_dns_names, and san_upns may be set. Either subject_name or one of the
-        subject alternative name parameters are required.
-    :keyword Iterable[str] san_dns_names: Subject alternative DNS names of the X509 object. Only one out
-        of san_emails, san_dns_names, and san_upns may be set. Either subject_name or one of the
-        subject alternative name parameters are required.
-    :keyword Iterable[str] san_upns: Subject alternative user principal names of the X509 object. Only one out
-        of san_emails, san_dns_names, and san_upns may be set. Either subject_name or one of the
-        subject alternative name parameters are required.
+    :keyword Iterable[str] san_emails: Subject alternative emails of the X509 object. Either
+        subject_name or one of the subject alternative name parameters are required.
+    :keyword Iterable[str] san_dns_names: Subject alternative DNS names of the X509 object. Either
+        subject_name or one of the subject alternative name parameters are required.
+    :keyword Iterable[str] san_upns: Subject alternative user principal names of the X509 object.
+        Either subject_name or one of the subject alternative name parameters are required.
     :keyword bool exportable: Indicates if the private key can be exported. For valid values,
         see KeyType.
     :keyword key_type: The type of key pair to be used for the certificate.
@@ -610,15 +607,11 @@ class CertificatePolicy(object):
         self._lifetime_actions = kwargs.pop("lifetime_actions", None)
         self._certificate_type = kwargs.pop("certificate_type", None)
         self._certificate_transparency = kwargs.pop("certificate_transparency", None)
-        self._san_emails = kwargs.pop("san_emails", None)
-        self._san_dns_names = kwargs.pop("san_dns_names", None)
-        self._san_upns = kwargs.pop("san_upns", None)
+        self._san_emails = kwargs.pop("san_emails", None) else None
+        self._san_dns_names = kwargs.pop("san_dns_names", None) else None
+        self._san_upns = kwargs.pop("san_upns", None) else None
 
-        sans = [self._san_emails, self._san_upns, self._san_dns_names]
-        sans = [x for x in sans if x is not None]
-        if len(sans) > 1:
-            raise ValueError("You can only set at most one of san_emails, san_dns_names, and san_upns")
-        if not sans and not self._subject_name:
+        if not self._san_emails and not self._san_upns and not self._san_dns_names and not self._subject_name:
             raise ValueError("You need to set either subject_name or one of the subject alternative names " +
                             "parameters")
 
@@ -696,10 +689,6 @@ class CertificatePolicy(object):
                 key_usage = [k.value if not isinstance(k, str) else k for k in self.key_usage]
             else:
                 key_usage = None
-
-            sans = [self._san_emails, self._san_upns, self._san_dns_names]
-            if len([x for x in sans if x is not None]) > 1:
-                raise ValueError("You can only set at most one of san_emails, san_dns_names, and san_upns")
 
             x509_certificate_properties = models.X509CertificateProperties(
                 subject=self.subject_name,
