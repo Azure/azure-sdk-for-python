@@ -509,6 +509,9 @@ class SapMonitor(Resource):
     :param log_analytics_workspace_arm_id: The ARM ID of the Log Analytics
      Workspace that is used for monitoring
     :type log_analytics_workspace_arm_id: str
+    :param enable_customer_analytics: The value indicating whether to send
+     analytics to Microsoft
+    :type enable_customer_analytics: bool
     :param log_analytics_workspace_id: The workspace ID of the log analytics
      workspace to be used for monitoring
     :type log_analytics_workspace_id: str
@@ -544,6 +547,7 @@ class SapMonitor(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_resource_group_name': {'key': 'properties.managedResourceGroupName', 'type': 'str'},
         'log_analytics_workspace_arm_id': {'key': 'properties.logAnalyticsWorkspaceArmId', 'type': 'str'},
+        'enable_customer_analytics': {'key': 'properties.enableCustomerAnalytics', 'type': 'bool'},
         'log_analytics_workspace_id': {'key': 'properties.logAnalyticsWorkspaceId', 'type': 'str'},
         'log_analytics_workspace_shared_key': {'key': 'properties.logAnalyticsWorkspaceSharedKey', 'type': 'str'},
     }
@@ -562,6 +566,7 @@ class SapMonitor(Resource):
         self.provisioning_state = None
         self.managed_resource_group_name = None
         self.log_analytics_workspace_arm_id = kwargs.get('log_analytics_workspace_arm_id', None)
+        self.enable_customer_analytics = kwargs.get('enable_customer_analytics', None)
         self.log_analytics_workspace_id = kwargs.get('log_analytics_workspace_id', None)
         self.log_analytics_workspace_shared_key = kwargs.get('log_analytics_workspace_shared_key', None)
 
