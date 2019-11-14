@@ -102,10 +102,10 @@ class CertificateClientTests(KeyVaultTestCase):
                 password=cert_password,
             )
 
-    def _validate_certificate_operation(self, pending_cert_operation, vault, cert_name, cert_policy):
+    def _validate_certificate_operation(self, pending_cert_operation, vault, cert_name, original_cert_policy):
         self.assertIsNotNone(pending_cert_operation)
         self.assertIsNotNone(pending_cert_operation.csr)
-        self.assertEqual(cert_policy.issuer_parameters.name, pending_cert_operation.issuer_name)
+        self.assertEqual(original_cert_policy.issuer_name, pending_cert_operation.issuer_name)
         pending_id = parse_vault_id(pending_cert_operation.id)
         self.assertEqual(pending_id.vault_url.strip("/"), vault.strip("/"))
         self.assertEqual(pending_id.name, cert_name)
@@ -432,21 +432,12 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
 
         cert_name = "asyncCanceledDeletedCert"
-        cert_policy = CertificatePolicyGenerated(
-            key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
-            secret_properties=SecretProperties(content_type="application/x-pkcs12"),
-            issuer_parameters=IssuerParameters(name="Self"),
-            x509_certificate_properties=X509CertificateProperties(
-                subject="CN=*.microsoft.com",
-                subject_alternative_names=SubjectAlternativeNames(dns_names=["sdk.azure-int.net"]),
-                validity_in_months=24,
-            ),
-        )
+        cert_policy = CertificatePolicy.get_default()
         polling_interval = 0 if self.is_playback() else None
         # create certificate
         create_certificate_poller = client.begin_create_certificate(
             certificate_name=cert_name,
-            policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy),
+            policy=cert_policy,
             _polling_interval=polling_interval
         )
 
@@ -458,7 +449,7 @@ class CertificateClientTests(KeyVaultTestCase):
             pending_cert_operation=cancel_operation,
             vault=client.vault_url,
             cert_name=cert_name,
-            cert_policy=cert_policy,
+            original_cert_policy=cert_policy,
         )
 
         self.assertEqual(create_certificate_poller.result().status.lower(), "cancelled")
@@ -470,7 +461,7 @@ class CertificateClientTests(KeyVaultTestCase):
             pending_cert_operation=retrieved_operation,
             vault=client.vault_url,
             cert_name=cert_name,
-            cert_policy=cert_policy,
+            original_cert_policy=cert_policy,
         )
 
         # delete certificate operation
@@ -480,7 +471,7 @@ class CertificateClientTests(KeyVaultTestCase):
             pending_cert_operation=deleted_operation,
             vault=client.vault_url,
             cert_name=cert_name,
-            cert_policy=cert_policy,
+            original_cert_policy=cert_policy,
         )
 
         try:
