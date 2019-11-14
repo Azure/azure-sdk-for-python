@@ -41,9 +41,10 @@ class ScriptType(object):
 
 
 class ScriptsProxy(object):
-    """
-    An interface to interact with stored procedures.
-    This class should not be instantiated directly, use :func:`ContainerProxy.scripts` attribute.
+    """An interface to interact with stored procedures.
+
+    This class should not be instantiated directly. Instead, use the
+    :func:`ContainerProxy.scripts` attribute.
     """
 
     def __init__(self, client_connection, container_link, is_system_key):
@@ -112,7 +113,7 @@ class ScriptsProxy(object):
 
     def create_stored_procedure(self, body, **kwargs):
         # type: (Dict[str, Any], Any) -> Dict[str, Any]
-        """Create a stored procedure in the container.
+        """Create a new stored procedure in the container.
 
         To replace an existing sproc, use the :func:`Container.scripts.replace_stored_procedure` method.
 
@@ -129,7 +130,9 @@ class ScriptsProxy(object):
 
     def replace_stored_procedure(self, sproc, body, **kwargs):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
-        """Replaces the specified stored procedure if it exists in the container.
+        """Replace a specified stored procedure in the container.
+
+        If the stored procedure does not already exist in the container, an exception is raised.
 
         :param sproc: The ID (name) or dict representing stored procedure to be replaced.
         :param body: A dict-like object representing the sproc to replace.
@@ -149,7 +152,9 @@ class ScriptsProxy(object):
 
     def delete_stored_procedure(self, sproc, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> None
-        """Delete the specified stored procedure from the container.
+        """Delete a specified stored procedure from the container.
+
+        If the stored procedure does not already exist in the container, an exception is raised.
 
         :param sproc: The ID (name) or dict representing stored procedure to be deleted.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The sproc wasn't deleted successfully.
@@ -171,7 +176,9 @@ class ScriptsProxy(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Any
-        """Execute the specified stored procedure.
+        """Execute a specified stored procedure.
+
+        If the stored procedure does not already exist in the container, an exception is raised.
 
         :param sproc: The ID (name) or dict representing stored procedure to be executed.
         :param partition_key: Specifies the partition key to indicate which partition the sproc should execute on.
@@ -239,7 +246,7 @@ class ScriptsProxy(object):
 
     def get_trigger(self, trigger, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
-        """Get the trigger identified by `id`.
+        """Get a trigger identified by `id`.
 
         :param trigger: The ID (name) or dict representing trigger to retrieve.
         :returns: A dict representing the retrieved trigger.
@@ -271,7 +278,9 @@ class ScriptsProxy(object):
 
     def replace_trigger(self, trigger, body, **kwargs):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
-        """Replaces the specified tigger if it exists in the container.
+        """Replace a specified tigger in the container.
+
+        If the trigger does not already exist in the container, an exception is raised.
 
         :param trigger: The ID (name) or dict representing trigger to be replaced.
         :param body: A dict-like object representing the trigger to replace.
@@ -291,7 +300,9 @@ class ScriptsProxy(object):
 
     def delete_trigger(self, trigger, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> None
-        """Delete the specified trigger from the container.
+        """Delete a specified trigger from the container.
+
+        If the trigger does not already exist in the container, an exception is raised.
 
         :param trigger: The ID (name) or dict representing trigger to be deleted.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The trigger wasn't deleted successfully.
@@ -306,10 +317,10 @@ class ScriptsProxy(object):
 
     def list_user_defined_functions(self, max_item_count=None, **kwargs):
         # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
-        """List all user defined functions in the container.
+        """List all the user-defined functions in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :returns: An Iterable of user defined functions (dicts).
+        :returns: An Iterable of user-defined functions (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
@@ -322,12 +333,12 @@ class ScriptsProxy(object):
 
     def query_user_defined_functions(self, query, parameters=None, max_item_count=None, **kwargs):
         # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
-        """Return all user defined functions matching the given `query`.
+        """Return user-defined functions matching a given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :returns: An Iterable of user defined functions (dicts).
+        :returns: An Iterable of user-defined functions (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
@@ -343,11 +354,11 @@ class ScriptsProxy(object):
 
     def get_user_defined_function(self, udf, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
-        """Get the stored procedure identified by `id`.
+        """Get a user-defined functions identified by `id`.
 
         :param udf: The ID (name) or dict representing udf to retrieve.
-        :returns: A dict representing the retrieved user defined function.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user defined function couldn't be retrieved.
+        :returns: A dict representing the retrieved user-defined function.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user-defined function couldn't be retrieved.
         :rtype: Iterable[dict[str, Any]]
         """
         request_options = build_options(kwargs)
@@ -358,13 +369,13 @@ class ScriptsProxy(object):
 
     def create_user_defined_function(self, body, **kwargs):
         # type: (Dict[str, Any], Any) -> Dict[str, Any]
-        """Create a user defined function in the container.
+        """Create a user-defined function in the container.
 
-        To replace an existing udf, use the :func:`ContainerProxy.scripts.replace_user_defined_function` method.
+        To replace an existing UDF, use the :func:`ContainerProxy.scripts.replace_user_defined_function` method.
 
         :param body: A dict-like object representing the udf to create.
-        :returns: A dict representing the new user defined function.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user defined function couldn't be created.
+        :returns: A dict representing the new user-defined function.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user-defined function couldn't be created.
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
@@ -375,12 +386,14 @@ class ScriptsProxy(object):
 
     def replace_user_defined_function(self, udf, body, **kwargs):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
-        """Replaces the specified user defined function if it exists in the container.
+        """Replace a specified user-defined function in the container.
+
+        If the UDF does not already exist in the container, an exception is raised.
 
         :param udf: The ID (name) or dict representing udf to be replaced.
         :param body: A dict-like object representing the udf to replace.
-        :returns: A dict representing the user defined function after replace went through.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the user defined function
+        :returns: A dict representing the user-defined function after replace went through.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the user-defined function
             with the given id does not exist.
         :rtype: dict[str, Any]
         """
@@ -395,7 +408,9 @@ class ScriptsProxy(object):
 
     def delete_user_defined_function(self, udf, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any) -> None
-        """Delete the specified user defined function from the container.
+        """Delete a specified user-defined function from the container.
+
+        If the UDF does not already exist in the container, an exception is raised.
 
         :param udf: The ID (name) or dict representing udf to be deleted.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The udf wasn't deleted successfully.

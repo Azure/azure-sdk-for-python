@@ -80,11 +80,8 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         Pipeline client to process the resquest
     :param azure.core.HttpRequest request:
         The request object to send through the pipeline
-
-    :return:
-        tuple of (result, headers)
-    :rtype:
-        tuple of (dict, dict)
+    :return: tuple of (result, headers)
+    :rtype: tuple of (dict, dict)
 
     """
     # pylint: disable=protected-access
@@ -190,24 +187,18 @@ def SynchronizedRequest(
 ):
     """Performs one synchronized http request according to the parameters.
 
-    :param object client:
-        Document client instance
+    :param object client: Document client instance
     :param dict request_params:
     :param _GlobalEndpointManager global_endpoint_manager:
-    :param  documents.ConnectionPolicy connection_policy:
-    :param azure.core.PipelineClient pipeline_client:
-        PipelineClient to process the request.
+    :param documents.ConnectionPolicy connection_policy:
+    :param azure.core.PipelineClient pipeline_client: PipelineClient to process the request.
     :param str method:
     :param str path:
     :param (str, unicode, file-like stream object, dict, list or None) request_data:
     :param dict query_params:
     :param dict headers:
-
-    :return:
-        tuple of (result, headers)
-    :rtype:
-        tuple of (dict dict)
-
+    :return: tuple of (result, headers)
+    :rtype: tuple of (dict dict)
     """
     request.data = _request_body_from_data(request_data)
     if request.data and isinstance(request.data, six.string_types):
