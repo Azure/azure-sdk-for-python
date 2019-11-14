@@ -156,7 +156,7 @@ class ReservationType(str, Enum):
 class MarketplacePurchasesPolicy(str, Enum):
 
     all_allowed = "AllAllowed"
-    free_allowed = "FreeAllowed"
+    only_free_allowed = "OnlyFreeAllowed"
     not_allowed = "NotAllowed"
 
 

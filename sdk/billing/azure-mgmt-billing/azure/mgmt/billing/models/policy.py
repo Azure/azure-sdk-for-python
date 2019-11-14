@@ -25,7 +25,7 @@ class Policy(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :param marketplace_purchases: The marketplace purchases are free, allowed
-     or not allowed. Possible values include: 'AllAllowed', 'FreeAllowed',
+     or not allowed. Possible values include: 'AllAllowed', 'OnlyFreeAllowed',
      'NotAllowed'
     :type marketplace_purchases: str or
      ~azure.mgmt.billing.models.MarketplacePurchasesPolicy
