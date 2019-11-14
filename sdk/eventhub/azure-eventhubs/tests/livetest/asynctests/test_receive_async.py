@@ -74,7 +74,7 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
             client2.receive(on_event, "$default",
                             initial_event_position= EventPosition(on_event.event_position, inclusive),
                             track_last_enqueued_event_properties=True))
-        await asyncio.sleep(5)
+        await asyncio.sleep(10)
         assert on_event.event.body_as_str() == expected_result
     task.cancel()
 
@@ -111,7 +111,7 @@ async def test_receive_owner_level(connstr_senders):
             ed = EventData("Event Number {}".format(i))
             event_list.append(ed)
         senders[0].send(event_list)
-        await asyncio.sleep(5)
+        await asyncio.sleep(10)
         task1.cancel()
         task2.cancel()
     finally:
@@ -127,7 +127,7 @@ async def test_receive_over_websocket_async(connstr_senders):
 
     async def on_event(partition_context, event):
         on_event.received.append(event)
-        on_event.app_prop = event[0].application_properties
+        on_event.app_prop = event.application_properties
 
     on_event.received = []
     on_event.app_prop = None

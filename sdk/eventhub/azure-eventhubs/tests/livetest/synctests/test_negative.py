@@ -88,78 +88,17 @@ def test_send_null_body(connection_str):
         client.close()
 
 
-'''
-This can be turned into unit test of EventData.
-@pytest.mark.liveTest
-def test_message_body_types(connstr_senders):
-    def on_events(partition_context, events):
-        on_events.called = True
-        pass
-    
-    connection_str, senders = connstr_senders
-    client = EventHubConsumerClient.from_connection_string(connection_str)
-    receiver = client._create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
-    try:
-        received = receiver.receive(timeout=5)
-        assert len(received) == 0
-        senders[0].send(EventData(b"Bytes Data"))
-        time.sleep(1)
-        received = receiver.receive(timeout=5)
-        assert len(received) == 1
-        assert list(received[0].body) == [b'Bytes Data']
-        assert received[0].body_as_str() == "Bytes Data"
-        with pytest.raises(TypeError):
-            received[0].body_as_json()
-
-        senders[0].send(EventData("Str Data"))
-        time.sleep(1)
-        received = receiver.receive(timeout=5)
-        assert len(received) == 1
-        assert list(received[0].body) == [b'Str Data']
-        assert received[0].body_as_str() == "Str Data"
-        with pytest.raises(TypeError):
-            received[0].body_as_json()
-
-        senders[0].send(EventData(b'{"test_value": "JSON bytes data", "key1": true, "key2": 42}'))
-        time.sleep(1)
-        received = receiver.receive(timeout=5)
-        assert len(received) == 1
-        assert list(received[0].body) == [b'{"test_value": "JSON bytes data", "key1": true, "key2": 42}']
-        assert received[0].body_as_str() == '{"test_value": "JSON bytes data", "key1": true, "key2": 42}'
-        assert received[0].body_as_json() == {"test_value": "JSON bytes data", "key1": True, "key2": 42}
-
-        senders[0].send(EventData('{"test_value": "JSON str data", "key1": true, "key2": 42}'))
-        time.sleep(1)
-        received = receiver.receive(timeout=5)
-        assert len(received) == 1
-        assert list(received[0].body) == [b'{"test_value": "JSON str data", "key1": true, "key2": 42}']
-        assert received[0].body_as_str() == '{"test_value": "JSON str data", "key1": true, "key2": 42}'
-        assert received[0].body_as_json() == {"test_value": "JSON str data", "key1": True, "key2": 42}
-
-        senders[0].send(EventData(42))
-        time.sleep(1)
-        received = receiver.receive(timeout=5)
-        assert len(received) == 1
-        assert received[0].body_as_str() == "42"
-        assert received[0].body == 42
-    except:
-        raise
-    finally:
-        receiver.close()
-        client.close()
-'''
-
 @pytest.mark.liveTest
 def test_create_batch_with_invalid_hostname_sync(invalid_hostname):
     client = EventHubProducerClient.from_connection_string(invalid_hostname)
-    with pytest.raises(ConnectError):
-        client.create_batch(max_size=300)
-    client.close()
+    with client:
+        with pytest.raises(ConnectError):
+            client.create_batch(max_size=300)
 
 
 @pytest.mark.liveTest
 def test_create_batch_with_too_large_size_sync(connection_str):
     client = EventHubProducerClient.from_connection_string(connection_str)
-    with pytest.raises(ValueError):
-        client.create_batch(max_size=5 * 1024 * 1024)
-    client.close()
+    with client:
+        with pytest.raises(ValueError):
+            client.create_batch(max_size=5 * 1024 * 1024)
