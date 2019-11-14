@@ -12,12 +12,6 @@
 from enum import Enum
 
 
-class CheckNameAvailabilityReason(str, Enum):
-
-    invalid = "Invalid"
-    already_exists = "AlreadyExists"
-
-
 class ServerConnectionType(str, Enum):
 
     default = "Default"
@@ -329,11 +323,6 @@ class OperationOrigin(str, Enum):
 
     user = "user"
     system = "system"
-
-
-class IdentityType(str, Enum):
-
-    system_assigned = "SystemAssigned"
 
 
 class SyncAgentState(str, Enum):
@@ -648,6 +637,11 @@ class InstancePoolLicenseType(str, Enum):
     base_price = "BasePrice"
 
 
+class IdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+
+
 class ManagedServerCreateMode(str, Enum):
 
     default = "Default"
@@ -684,6 +678,12 @@ class ManagedDatabaseCreateMode(str, Enum):
     restore_external_backup = "RestoreExternalBackup"
     point_in_time_restore = "PointInTimeRestore"
     recovery = "Recovery"
+
+
+class CheckNameAvailabilityReason(str, Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
 
 
 class LongTermRetentionDatabaseState(str, Enum):

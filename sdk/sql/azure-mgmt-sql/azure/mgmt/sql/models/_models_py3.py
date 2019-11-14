@@ -257,10 +257,9 @@ class CheckNameAvailabilityRequest(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name whose availability is to be checked.
+    :param name: Required.
     :type name: str
-    :ivar type: Required. The type of resource that is used as the scope of
-     the availability check. Default value: "Microsoft.Sql/servers" .
+    :ivar type: Required.  Default value: "Microsoft.Sql/servers" .
     :vartype type: str
     """
 
@@ -282,45 +281,44 @@ class CheckNameAvailabilityRequest(Model):
 
 
 class CheckNameAvailabilityResponse(Model):
-    """A response indicating whether the specified name for a resource is
-    available.
+    """The result of a name availability check.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar available: True if the name is available, otherwise false.
-    :vartype available: bool
-    :ivar message: A message explaining why the name is unavailable. Will be
-     null if the name is available.
-    :vartype message: str
     :ivar name: The name whose availability was checked.
     :vartype name: str
+    :ivar available: True if the name is available, otherwise false.
+    :vartype available: bool
     :ivar reason: The reason code explaining why the name is unavailable. Will
-     be null if the name is available. Possible values include: 'Invalid',
+     be undefined if the name is available. Possible values include: 'Invalid',
      'AlreadyExists'
     :vartype reason: str or ~azure.mgmt.sql.models.CheckNameAvailabilityReason
+    :ivar message: A message explaining why the name is unavailable. Will be
+     undefined if the name is available.
+    :vartype message: str
     """
 
     _validation = {
-        'available': {'readonly': True},
-        'message': {'readonly': True},
         'name': {'readonly': True},
+        'available': {'readonly': True},
         'reason': {'readonly': True},
+        'message': {'readonly': True},
     }
 
     _attribute_map = {
-        'available': {'key': 'available', 'type': 'bool'},
-        'message': {'key': 'message', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'available': {'key': 'available', 'type': 'bool'},
         'reason': {'key': 'reason', 'type': 'CheckNameAvailabilityReason'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(CheckNameAvailabilityResponse, self).__init__(**kwargs)
-        self.available = None
-        self.message = None
         self.name = None
+        self.available = None
         self.reason = None
+        self.message = None
 
 
 class CloudError(Model):
@@ -6186,6 +6184,39 @@ class PrivateEndpointConnection(ProxyResource):
         self.provisioning_state = None
 
 
+class PrivateEndpointConnectionProperties(Model):
+    """Properties of a private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param private_endpoint: Private endpoint which the connection belongs to.
+    :type private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
+    :param private_link_service_connection_state: Connection state of the
+     private endpoint connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateProperty
+    :ivar provisioning_state: State of the private endpoint connection.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'private_endpoint': {'key': 'privateEndpoint', 'type': 'PrivateEndpointProperty'},
+        'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, private_endpoint=None, private_link_service_connection_state=None, **kwargs) -> None:
+        super(PrivateEndpointConnectionProperties, self).__init__(**kwargs)
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.provisioning_state = None
+
+
 class PrivateEndpointProperty(Model):
     """PrivateEndpointProperty.
 
@@ -7036,6 +7067,10 @@ class Server(TrackedResource):
     :ivar fully_qualified_domain_name: The fully qualified domain name of the
      server.
     :vartype fully_qualified_domain_name: str
+    :ivar private_endpoint_connections: List of private endpoint connections
+     on a server
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.sql.models.ServerPrivateEndpointConnection]
     """
 
     _validation = {
@@ -7046,6 +7081,7 @@ class Server(TrackedResource):
         'kind': {'readonly': True},
         'state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -7061,6 +7097,7 @@ class Server(TrackedResource):
         'version': {'key': 'properties.version', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ServerPrivateEndpointConnection]'},
     }
 
     def __init__(self, *, location: str, tags=None, identity=None, administrator_login: str=None, administrator_login_password: str=None, version: str=None, **kwargs) -> None:
@@ -7072,6 +7109,7 @@ class Server(TrackedResource):
         self.version = version
         self.state = None
         self.fully_qualified_domain_name = None
+        self.private_endpoint_connections = None
 
 
 class ServerAutomaticTuning(ProxyResource):
@@ -7551,6 +7589,35 @@ class ServerKey(ProxyResource):
         self.creation_date = creation_date
 
 
+class ServerPrivateEndpointConnection(Model):
+    """A private endpoint connection under a server.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar properties: Private endpoint connection properties
+    :vartype properties:
+     ~azure.mgmt.sql.models.PrivateEndpointConnectionProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'properties': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'PrivateEndpointConnectionProperties'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ServerPrivateEndpointConnection, self).__init__(**kwargs)
+        self.id = None
+        self.properties = None
+
+
 class ServerSecurityAlertPolicy(ProxyResource):
     """A server security alert policy.
 
@@ -7646,6 +7713,10 @@ class ServerUpdate(Model):
     :ivar fully_qualified_domain_name: The fully qualified domain name of the
      server.
     :vartype fully_qualified_domain_name: str
+    :ivar private_endpoint_connections: List of private endpoint connections
+     on a server
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.sql.models.ServerPrivateEndpointConnection]
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -7653,6 +7724,7 @@ class ServerUpdate(Model):
     _validation = {
         'state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -7661,6 +7733,7 @@ class ServerUpdate(Model):
         'version': {'key': 'properties.version', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ServerPrivateEndpointConnection]'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -7671,6 +7744,7 @@ class ServerUpdate(Model):
         self.version = version
         self.state = None
         self.fully_qualified_domain_name = None
+        self.private_endpoint_connections = None
         self.tags = tags
 
 
