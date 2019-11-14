@@ -43,7 +43,7 @@ class DeploymentOperations(object):
             self, scope, deployment_name, operation_id, custom_headers=None, raw=False, **operation_config):
         """Gets a deployments operation.
 
-        :param scope: The scope of a deployment.
+        :param scope: The resource scope.
         :type scope: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
@@ -107,7 +107,7 @@ class DeploymentOperations(object):
             self, scope, deployment_name, top=None, custom_headers=None, raw=False, **operation_config):
         """Gets all deployments operations for a deployment.
 
-        :param scope: The scope of a deployment.
+        :param scope: The resource scope.
         :type scope: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str

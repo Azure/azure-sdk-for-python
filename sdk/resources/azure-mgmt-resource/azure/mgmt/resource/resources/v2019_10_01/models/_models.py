@@ -1526,13 +1526,20 @@ class TagDetails(Model):
 class TagPatchRequest(Model):
     """Tag Request for Patch operation.
 
-    :param operation: The operation type for the patch api. Possible values
-     include: 'Replace', 'Merge', 'Delete'
+    All required parameters must be populated in order to send to Azure.
+
+    :param operation: Required. The operation type for the patch api. Possible
+     values include: 'Replace', 'Merge', 'Delete'
     :type operation: str or
      ~azure.mgmt.resource.resources.v2019_10_01.models.enum
-    :param properties: tags object passing in the request.
+    :param properties: Required. tags object passing in the request.
     :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
     """
+
+    _validation = {
+        'operation': {'required': True},
+        'properties': {'required': True},
+    }
 
     _attribute_map = {
         'operation': {'key': 'operation', 'type': 'str'},
@@ -1548,9 +1555,15 @@ class TagPatchRequest(Model):
 class TagRequest(Model):
     """Tag Request for Put, Get, Delete operations.
 
-    :param properties: tags object passing in the request.
+    All required parameters must be populated in order to send to Azure.
+
+    :param properties: Required. tags object passing in the request.
     :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
     """
+
+    _validation = {
+        'properties': {'required': True},
+    }
 
     _attribute_map = {
         'properties': {'key': 'properties', 'type': 'Tags'},

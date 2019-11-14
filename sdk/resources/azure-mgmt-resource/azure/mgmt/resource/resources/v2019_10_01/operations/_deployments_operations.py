@@ -93,7 +93,7 @@ class DeploymentsOperations(object):
         asynchronous request failed, the URI in the Location header returns an
         error-level status code.
 
-        :param scope: The scope of a deployment.
+        :param scope: The resource scope.
         :type scope: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
@@ -134,7 +134,7 @@ class DeploymentsOperations(object):
             self, scope, deployment_name, custom_headers=None, raw=False, **operation_config):
         """Checks whether the deployment exists.
 
-        :param scope: The scope of a deployment.
+        :param scope: The resource scope.
         :type scope: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
@@ -244,7 +244,7 @@ class DeploymentsOperations(object):
         You can provide the template and parameters directly in the request or
         link to JSON files.
 
-        :param scope: The scope of a deployment.
+        :param scope: The resource scope.
         :type scope: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
@@ -298,7 +298,7 @@ class DeploymentsOperations(object):
             self, scope, deployment_name, custom_headers=None, raw=False, **operation_config):
         """Gets a deployment.
 
-        :param scope: The scope of a deployment.
+        :param scope: The resource scope.
         :type scope: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
@@ -365,7 +365,7 @@ class DeploymentsOperations(object):
         running template deployment and leaves the resources partially
         deployed.
 
-        :param scope: The scope of a deployment.
+        :param scope: The resource scope.
         :type scope: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
@@ -418,7 +418,7 @@ class DeploymentsOperations(object):
         """Validates whether the specified template is syntactically correct and
         will be accepted by Azure Resource Manager..
 
-        :param scope: The scope of a deployment.
+        :param scope: The resource scope.
         :type scope: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
@@ -492,7 +492,7 @@ class DeploymentsOperations(object):
             self, scope, deployment_name, custom_headers=None, raw=False, **operation_config):
         """Exports the template used for specified deployment.
 
-        :param scope: The scope of a deployment.
+        :param scope: The resource scope.
         :type scope: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
@@ -553,7 +553,7 @@ class DeploymentsOperations(object):
             self, scope, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Get all the deployments at the given scope.
 
-        :param scope: The scope of a deployment.
+        :param scope: The resource scope.
         :type scope: str
         :param filter: The filter to apply on the operation. For example, you
          can use $filter=provisioningState eq '{state}'.

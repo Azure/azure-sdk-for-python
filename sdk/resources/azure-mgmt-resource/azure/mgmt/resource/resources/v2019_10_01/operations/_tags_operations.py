@@ -340,13 +340,11 @@ class TagsOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/tagNames'}
 
     def resource_create(
-            self, scope, api_version, properties=None, custom_headers=None, raw=False, **operation_config):
+            self, scope, properties, custom_headers=None, raw=False, **operation_config):
         """Create or Replace existing tags with pass-in tags.
 
-        :param scope: The scope of the resources.
+        :param scope: The resource scope.
         :type scope: str
-        :param api_version: The API version to use for the operation.
-        :type api_version: str
         :param properties: tags object passing in the request.
         :type properties:
          ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
@@ -365,13 +363,13 @@ class TagsOperations(object):
         # Construct URL
         url = self.resource_create.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
+            'scope': self._serialize.url("scope", scope, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -391,7 +389,7 @@ class TagsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400, 404]:
+        if response.status_code not in [200, 404]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -408,14 +406,12 @@ class TagsOperations(object):
     resource_create.metadata = {'url': '/{scope}/providers/Microsoft.Resources/tags/default'}
 
     def resource_update(
-            self, scope, api_version, operation=None, properties=None, custom_headers=None, raw=False, **operation_config):
+            self, scope, operation, properties, custom_headers=None, raw=False, **operation_config):
         """Update multiple tags: if the tagKey exists, update tagValue with the
         new value; if not, insert the new record.
 
-        :param scope: The scope of the resources.
+        :param scope: The resource scope.
         :type scope: str
-        :param api_version: The API version to use for the operation.
-        :type api_version: str
         :param operation: The operation type for the patch api. Possible
          values include: 'Replace', 'Merge', 'Delete'
         :type operation: str or
@@ -438,13 +434,13 @@ class TagsOperations(object):
         # Construct URL
         url = self.resource_update.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
+            'scope': self._serialize.url("scope", scope, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -464,7 +460,7 @@ class TagsOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400, 404]:
+        if response.status_code not in [200, 404]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -481,13 +477,11 @@ class TagsOperations(object):
     resource_update.metadata = {'url': '/{scope}/providers/Microsoft.Resources/tags/default'}
 
     def resource_get(
-            self, scope, api_version, custom_headers=None, raw=False, **operation_config):
+            self, scope, custom_headers=None, raw=False, **operation_config):
         """Gets all the tags for the resource.
 
-        :param scope: The scope of the resources.
+        :param scope: The resource scope.
         :type scope: str
-        :param api_version: The API version to use for the operation.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -501,13 +495,13 @@ class TagsOperations(object):
         # Construct URL
         url = self.resource_get.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
+            'scope': self._serialize.url("scope", scope, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -523,7 +517,7 @@ class TagsOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400, 404]:
+        if response.status_code not in [200, 404]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -540,13 +534,11 @@ class TagsOperations(object):
     resource_get.metadata = {'url': '/{scope}/providers/Microsoft.Resources/tags/default'}
 
     def resource_delete(
-            self, scope, api_version, custom_headers=None, raw=False, **operation_config):
+            self, scope, custom_headers=None, raw=False, **operation_config):
         """Deletes all the tags for the resource.
 
-        :param scope: The scope of the resources.
+        :param scope: The resource scope.
         :type scope: str
-        :param api_version: The API version to use for the operation.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -559,13 +551,13 @@ class TagsOperations(object):
         # Construct URL
         url = self.resource_delete.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
+            'scope': self._serialize.url("scope", scope, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -580,7 +572,7 @@ class TagsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 400, 404]:
+        if response.status_code not in [200, 404]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
