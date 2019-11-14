@@ -203,5 +203,3 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         this will be a no op.
         """
         super(EventHubConsumer, self).close()
-
-    next = __next__  # for python2.7
