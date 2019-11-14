@@ -13,12 +13,12 @@ try:
     from ._models_py3 import Identity
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
-    from ._models_py3 import SystemAssignedIdentityResult
+    from ._models_py3 import SystemAssignedIdentity
 except (SyntaxError, ImportError):
     from ._models import Identity
     from ._models import Operation
     from ._models import OperationDisplay
-    from ._models import SystemAssignedIdentityResult
+    from ._models import SystemAssignedIdentity
 from ._paged_models import IdentityPaged
 from ._paged_models import OperationPaged
 from ._managed_service_identity_client_enums import (
@@ -29,7 +29,7 @@ __all__ = [
     'Identity',
     'Operation',
     'OperationDisplay',
-    'SystemAssignedIdentityResult',
+    'SystemAssignedIdentity',
     'OperationPaged',
     'IdentityPaged',
     'UserAssignedIdentities',

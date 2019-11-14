@@ -40,26 +40,31 @@ class SystemAssignedIdentitiesOperations(object):
         self.config = config
 
     def get_by_scope(
-            self, scope, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_scope, custom_headers=None, raw=False, **operation_config):
         """Gets the systemAssignedIdentity available under the specified RP scope.
 
-        :param scope: The scope of the resource. Parent resource being
-         extended by Managed Identities.
-        :type scope: str
+        :param resource_group_name: The name of the Resource Group to which
+         the identity belongs.
+        :type resource_group_name: str
+        :param resource_provider_scope: The resource provider scope of the
+         resource. Parent resource being extended by Managed Identities.
+        :type resource_provider_scope: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SystemAssignedIdentityResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.msi.models.SystemAssignedIdentityResult or
+        :return: SystemAssignedIdentity or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.msi.models.SystemAssignedIdentity or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.get_by_scope.metadata['url']
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceProviderScope': self._serialize.url("resource_provider_scope", resource_provider_scope, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -88,11 +93,11 @@ class SystemAssignedIdentitiesOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('SystemAssignedIdentityResult', response)
+            deserialized = self._deserialize('SystemAssignedIdentity', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_by_scope.metadata = {'url': '/{scope}/providers/Microsoft.ManagedIdentity/identities/default'}
+    get_by_scope.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderScope}/providers/Microsoft.ManagedIdentity/identities/default'}
