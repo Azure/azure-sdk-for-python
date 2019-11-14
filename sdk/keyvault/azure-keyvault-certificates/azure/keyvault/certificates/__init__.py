@@ -4,7 +4,7 @@
 # ------------------------------------
 from .client import CertificateClient
 from .enums import CertificatePolicyAction, KeyCurveName, KeyType, SecretContentType, KeyUsageType, WellKnownIssuerNames
-from .models import AdministratorContact, CertificatePolicy, CertificateContact, LifetimeAction
+from .models import AdministratorContact, CertificatePolicy, CertificateContact, LifetimeAction, CertificateIssuer, IssuerProperties
 
 __all__ = [
     "CertificatePolicyAction",
@@ -18,4 +18,6 @@ __all__ = [
     "LifetimeAction",
     "SecretContentType",
     "WellKnownIssuerNames",
+    "CertificateIssuer",
+    "IssuerProperties"
 ]
