@@ -284,7 +284,7 @@ class RetryPolicy(HTTPPolicy):
 
         return min(retry_counts) < 0
 
-    def increment(self, settings, response=None, error=None, stream=False):
+    def increment(self, settings, response=None, error=None):
         """Increment the retry counters.
 
         :param settings: The retry settings.
@@ -319,14 +319,14 @@ class RetryPolicy(HTTPPolicy):
                 settings['history'].append(RequestHistory(response.http_request, http_response=response.http_response))
 
         if not self.is_exhausted(settings):
-            if response.http_request.body and stream:
+            if response.http_request.body and hasattr(response.http_request.body, 'read'):
                 # no position was saved, then retry would not work
                 if 'body_position' not in settings:
                     return False
                 try:
                     # attempt to rewind the body to the initial position
                     response.http_request.body.seek(settings['body_position'], SEEK_SET)
-                except (UnsupportedOperation, ValueError):
+                except (UnsupportedOperation, ValueError, AttributeError) as err:
                     # if body is not seekable, then retry would not work
                     return False
             return True
@@ -356,12 +356,11 @@ class RetryPolicy(HTTPPolicy):
         retry_active = True
         response = None
         retry_settings = self.configure_retries(request.context.options)
-        stream = request.context.options.get('stream', False)
         while retry_active:
             try:
                 response = self.next.send(request)
                 if self.is_retry(retry_settings, response):
-                    retry_active = self.increment(retry_settings, response=response, stream=stream)
+                    retry_active = self.increment(retry_settings, response=response)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport, response=response)
                         continue

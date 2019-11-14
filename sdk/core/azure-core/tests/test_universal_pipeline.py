@@ -31,7 +31,10 @@ except ImportError:
     import mock
 
 import requests
-import sys
+try:
+    from io import BytesIO
+except ImportError:
+    from cStringIO import StringIO as BytesIO
 import pytest
 
 from azure.core.exceptions import DecodeError
@@ -131,7 +134,7 @@ def test_no_log(mock_http_logger):
     second_count = mock_http_logger.debug.call_count
     assert second_count == first_count * 2
 
-def test_retry_unseekable_body():
+def test_retry_seekable_body():
     def build_response(body, content_type=None):
         class MockResponse(HttpResponse):
             def __init__(self):
@@ -141,7 +144,9 @@ def test_retry_unseekable_body():
             def body(self):
                 return self._body
 
-        universal_request = HttpRequest('GET', 'http://127.0.0.1/', data='test')
+        data = BytesIO(b"Lots of dataaaa")
+        universal_request = HttpRequest('GET', 'http://127.0.0.1/', data=data)
+        universal_request.set_streamed_data_body(data)
         return PipelineResponse(universal_request, MockResponse(), PipelineContext(None, stream=True))
     
     response = build_response(b"<groot/>", content_type="application/xml")
@@ -152,9 +157,10 @@ def test_retry_unseekable_body():
         'history': [],
         'connect': 3,
         'read': 3,
+        'body_position': 10,
     }
-    increment = http_retry.increment(setting, response, stream=True)
-    assert not increment
+    increment = http_retry.increment(setting, response)
+    assert increment
 
 def test_raw_deserializer():
     raw_deserializer = ContentDecodePolicy()
