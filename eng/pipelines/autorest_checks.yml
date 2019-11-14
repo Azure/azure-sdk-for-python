@@ -1,3 +1,6 @@
+# This pipeline is triggered only for pr
+trigger: none
+
 pr:
   branches:
     include:
