@@ -5,9 +5,6 @@
 
 __path__ = __import__('pkgutil').extend_path(__path__, __name__)  # type: ignore
 
-from ._version import VERSION
-__version__ = VERSION
-
 from uamqp import constants  # type: ignore
 from ._common import EventData, EventDataBatch, EventPosition
 from ._producer_client import EventHubProducerClient
@@ -24,6 +21,9 @@ from .exceptions import (
     EventDataSendError,
     ConnectionLostError
 )
+
+from ._version import VERSION
+__version__ = VERSION
 
 TransportType = constants.TransportType
 

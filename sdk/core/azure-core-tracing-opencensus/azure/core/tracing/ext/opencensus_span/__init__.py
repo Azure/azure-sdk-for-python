@@ -11,6 +11,8 @@ from opencensus.trace.span import SpanKind as OpenCensusSpanKind
 from opencensus.trace.link import Link
 from opencensus.trace.propagation import trace_context_http_header_format
 
+from ._version import VERSION
+
 from azure.core.tracing import SpanKind, HttpSpanMixin  # pylint: disable=no-name-in-module
 
 try:
@@ -23,7 +25,6 @@ if TYPE_CHECKING:
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._version import VERSION
 
 __version__ = VERSION
 

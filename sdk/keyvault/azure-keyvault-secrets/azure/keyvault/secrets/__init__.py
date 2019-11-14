@@ -7,5 +7,5 @@ from ._client import SecretClient
 
 __all__ = ["SecretClient", "KeyVaultSecret", "SecretProperties", "DeletedSecret"]
 
-from ._verison import VERSION
+from ._version import VERSION
 __version__ = VERSION
