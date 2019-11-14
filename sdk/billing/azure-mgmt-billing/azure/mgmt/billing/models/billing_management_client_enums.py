@@ -168,8 +168,8 @@ class ReservationPurchasesPolicy(str, Enum):
 
 class ViewChargesPolicy(str, Enum):
 
-    none = "None"
-    subscription_owner = "SubscriptionOwner"
+    allowed = "Allowed"
+    not_allowed = "NotAllowed"
 
 
 class ViewCharges(str, Enum):

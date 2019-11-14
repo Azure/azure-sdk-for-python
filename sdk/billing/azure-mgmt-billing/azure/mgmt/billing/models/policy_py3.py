@@ -34,7 +34,7 @@ class Policy(Resource):
     :type reservation_purchases: str or
      ~azure.mgmt.billing.models.ReservationPurchasesPolicy
     :param view_charges: Who can view charges. Possible values include:
-     'None', 'SubscriptionOwner'
+     'Allowed', 'NotAllowed'
     :type view_charges: str or ~azure.mgmt.billing.models.ViewChargesPolicy
     """
 
