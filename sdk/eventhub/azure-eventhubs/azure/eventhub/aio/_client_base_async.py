@@ -207,7 +207,9 @@ class ConsumerProducerMixin(object):
 
     def _check_closed(self):
         if self.closed:
-            raise ClientClosedError("{} has been closed. Please create a new one to handle event data.".format(self._name))
+            raise ClientClosedError(
+                "{} has been closed. Please create a new one to handle event data.".format(self._name)
+            )
 
     async def _open(self):
         """

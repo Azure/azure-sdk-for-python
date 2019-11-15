@@ -66,7 +66,7 @@ class EventData(object):
     def __str__(self):
         try:
             body = self.body_as_str()
-        except:  # pylint: disable=broad-except
+        except:  # pylint: disable=bare-except
             body = "<read-error>"
         message_as_dict = {
             'body': body,
@@ -81,7 +81,7 @@ class EventData(object):
                 message_as_dict['enqueued_time'] = str(self.enqueued_time)
             if self.partition_key:
                 message_as_dict['partition_key'] = str(self.partition_key)
-        except:  # pylint: disable=broad-except
+        except:  # pylint: disable=bare-except
             pass
         return str(message_as_dict)
 
