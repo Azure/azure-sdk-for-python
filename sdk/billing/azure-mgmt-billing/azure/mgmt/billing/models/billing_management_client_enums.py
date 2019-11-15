@@ -156,7 +156,7 @@ class ReservationType(str, Enum):
 class MarketplacePurchasesPolicy(str, Enum):
 
     all_allowed = "AllAllowed"
-    free_allowed = "FreeAllowed"
+    only_free_allowed = "OnlyFreeAllowed"
     not_allowed = "NotAllowed"
 
 
@@ -168,8 +168,8 @@ class ReservationPurchasesPolicy(str, Enum):
 
 class ViewChargesPolicy(str, Enum):
 
-    none = "None"
-    subscription_owner = "SubscriptionOwner"
+    allowed = "Allowed"
+    not_allowed = "NotAllowed"
 
 
 class ViewCharges(str, Enum):
