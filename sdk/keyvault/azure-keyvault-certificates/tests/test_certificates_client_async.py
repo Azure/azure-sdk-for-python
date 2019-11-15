@@ -541,7 +541,7 @@ class CertificateClientTests(KeyVaultTestCase):
         # update certificate policy
         cert_policy = CertificatePolicyGenerated(
             issuer_parameters=IssuerParameters(name="Self"),
-            key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=3072, reuse_key=False),
+            key_properties=KeyProperties(exportable=True, key_type="RSA", key_size=2048, reuse_key=False),
             secret_properties=SecretProperties(content_type="application/x-pkcs12"),
             x509_certificate_properties=X509CertificateProperties(
                 subject="CN=DefaultPolicy", validity_in_months=12, key_usage=["digitalSignature", "keyEncipherment"]

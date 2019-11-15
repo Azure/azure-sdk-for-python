@@ -49,7 +49,7 @@ try:
     # Alternatively, if you would like to use our default policy, don't pass a policy parameter to
     # our certificate creation method
     cert_policy = CertificatePolicy(
-        issuer_name="Self",
+        issuer_name=WellKnownIssuerNames.Self,
         subject_name="CN=*.microsoft.com",
         san_dns_names=["sdk.azure-int.net"],
         exportable=True,

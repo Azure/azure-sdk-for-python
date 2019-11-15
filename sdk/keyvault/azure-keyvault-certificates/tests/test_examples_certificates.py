@@ -47,7 +47,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
-            issuer_name="Self",
+            issuer_name=WellKnownIssuerNames.Self,
             subject_name="CN=*.microsoft.com",
             san_dns_names=["sdk.azure-int.net"],
             exportable=True,
@@ -123,7 +123,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
-            issuer_name="Self",
+            issuer_name=WellKnownIssuerNames.Self,
             subject_name="CN=*.microsoft.com",
             san_dns_names=["sdk.azure-int.net"],
             exportable=True,
@@ -190,7 +190,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
-            issuer_name="Self",
+            issuer_name=WellKnownIssuerNames.Self,
             subject_name="CN=*.microsoft.com",
             san_dns_names=["sdk.azure-int.net"],
             exportable=True,
@@ -241,7 +241,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
-            issuer_name="Self",
+            issuer_name=WellKnownIssuerNames.Self,
             subject_name="CN=*.microsoft.com",
             san_dns_names=["sdk.azure-int.net"],
             exportable=True,
