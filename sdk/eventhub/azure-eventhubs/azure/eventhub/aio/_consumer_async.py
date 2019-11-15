@@ -5,7 +5,6 @@
 import asyncio
 import uuid
 import logging
-import time
 
 import uamqp  # type: ignore
 from uamqp import errors, types, utils  # type: ignore

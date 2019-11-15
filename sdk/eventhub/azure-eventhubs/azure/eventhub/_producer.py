@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import uuid
 import logging
 import time
+import threading
 from typing import Iterable, Union, Type
 
 from uamqp import types, constants, errors  # type: ignore
@@ -157,7 +158,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             if partition_key:
                 set_message_partition_key(event_data.message, partition_key)
             wrapper_event_data = event_data
-            trace_message(wrapper_event_data.message, child)
+            trace_message(wrapper_event_data.message, span)
         else:
             if isinstance(event_data, EventDataBatch):  # The partition_key in the param will be omitted.
                 if partition_key and partition_key != event_data._partition_key:  # pylint: disable=protected-access
@@ -166,7 +167,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             else:
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key)
-                event_data = _set_trace_message(event_data, child)
+                event_data = _set_trace_message(event_data, span)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         return wrapper_event_data

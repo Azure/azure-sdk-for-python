@@ -32,7 +32,6 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
 
 log = logging.getLogger(__name__)
-MAX_USER_AGENT_LENGTH = 512
 
 
 class ClientBaseAsync(ClientBase):

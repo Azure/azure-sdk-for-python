@@ -77,6 +77,7 @@ class EventHubProducerClient(ClientBaseAsync):
                 self._producers[p_id] = None
 
     async def _get_max_mesage_size(self):
+        # pylint: disable=protected-access
         async with self._lock:
             if not self._max_message_size_on_link:
                 await self._producers[ALL_PARTITIONS]._open_with_retry()
@@ -195,10 +196,10 @@ class EventHubProducerClient(ClientBaseAsync):
         """
         partition_id = partition_id or ALL_PARTITIONS
         try:
-            await self._producers[partition_id].send(event_data, **kwargs)
+            await self._producers[partition_id].send(event_data, partition_key=partition_key)
         except (KeyError, AttributeError, EventHubError):
             await self._start_producer(partition_id, timeout)
-            await self._producers[partition_id].send(event_data, **kwargs)
+            await self._producers[partition_id].send(event_data, partition_key=partition_key)
         if partition_id is not None and partition_id not in self._partition_ids:
             raise ConnectError("Invalid partition {} for the event hub {}".format(partition_id, self.eh_name))
 

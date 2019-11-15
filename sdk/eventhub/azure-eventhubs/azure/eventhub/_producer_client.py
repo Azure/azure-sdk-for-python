@@ -77,6 +77,7 @@ class EventHubProducerClient(ClientBase):
                 self._producers[p_id] = None
 
     def _get_max_mesage_size(self):
+        # pylint: disable=protected-access
         with self._lock:
             if not self._max_message_size_on_link:
                 self._producers[ALL_PARTITIONS]._open_with_retry()

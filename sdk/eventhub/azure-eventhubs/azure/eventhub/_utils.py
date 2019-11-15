@@ -12,7 +12,8 @@ from uamqp.message import MessageHeader  # type: ignore
 
 from azure.core.settings import settings # type: ignore
 
-from ._constants import PROP_PARTITION_KEY_AMQP_SYMBOL
+from azure.eventhub import __version__
+from ._constants import PROP_PARTITION_KEY_AMQP_SYMBOL, MAX_USER_AGENT_LENGTH
 
 
 def create_properties(user_agent=None):

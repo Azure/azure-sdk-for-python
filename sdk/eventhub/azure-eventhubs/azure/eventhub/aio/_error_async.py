@@ -11,10 +11,7 @@ from ..exceptions import (
     _create_eventhub_exception,
     EventHubError,
     EventDataSendError,
-    EventDataError,
-    ConnectError,
-    ConnectionLostError,
-    AuthenticationError
+    EventDataError
 )
 
 log = logging.getLogger(__name__)

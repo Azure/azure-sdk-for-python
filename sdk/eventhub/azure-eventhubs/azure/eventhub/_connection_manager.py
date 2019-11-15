@@ -54,13 +54,13 @@ class _SharedConnectionManager(object):  #pylint:disable=too-many-instance-attri
                 self._conn.destroy()
             self._conn = None
 
-    def reset_connection_if_broken(self):  # pylint:disable=c-extension-no-member
+    def reset_connection_if_broken(self):
         with self._lock:
             if self._conn and self._conn._state in (  # pylint:disable=protected-access
-                c_uamqp.ConnectionState.CLOSE_RCVD,
-                c_uamqp.ConnectionState.CLOSE_SENT,
-                c_uamqp.ConnectionState.DISCARDING,
-                c_uamqp.ConnectionState.END,
+                c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
             ):
                 self._conn = None
 

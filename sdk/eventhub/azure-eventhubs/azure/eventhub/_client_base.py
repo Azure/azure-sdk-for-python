@@ -5,13 +5,10 @@
 from __future__ import unicode_literals
 
 import logging
-import sys
-import platform
 import datetime
 import uuid
 import time
 import functools
-import threading
 from typing import Any, TYPE_CHECKING
 try:
     from urlparse import urlparse  # type: ignore
@@ -28,7 +25,6 @@ from uamqp import (
     compat
 )
 
-from azure.eventhub import __version__
 from .exceptions import _handle_exception, EventHubError
 from ._configuration import Configuration
 from ._utils import parse_sas_token
@@ -45,7 +41,6 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
 
 log = logging.getLogger(__name__)
-MAX_USER_AGENT_LENGTH = 512
 
 
 def _parse_conn_str(conn_str):
@@ -204,7 +199,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         last_exception = None
         while retried_times <= self._config.max_retries:
             mgmt_auth = self._create_auth()
-            mgmt_client = uamqp.AMQPClient(self._mgmt_target)
+            mgmt_client = AMQPClient(self._mgmt_target)
             try:
                 conn = self._conn_manager.get_connection(self._host, mgmt_auth)  #pylint:disable=assignment-from-none
                 mgmt_client.open(connection=conn)

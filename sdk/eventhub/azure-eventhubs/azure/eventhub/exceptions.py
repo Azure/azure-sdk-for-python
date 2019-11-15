@@ -31,7 +31,7 @@ def _error_handler(error):
         return errors.ErrorAction(retry=True)
     if error.condition == b"com.microsoft:container-close":
         return errors.ErrorAction(retry=True, backoff=4)
-    if error.condition in _NO_RETRY_ERRORS:
+    if error.condition in NO_RETRY_ERRORS:
         return errors.ErrorAction(retry=False)
     return errors.ErrorAction(retry=True)
 

@@ -10,7 +10,7 @@ import json
 import logging
 import six
 
-from uamqp import BatchMessage, Message, types, constants  # type: ignore
+from uamqp import BatchMessage, Message, constants  # type: ignore
 
 from .exceptions import EventDataError
 from ._utils import set_message_partition_key, trace_message
@@ -107,7 +107,7 @@ class EventData(object):
             retrieval_time_stamp = self.message.delivery_annotations.get(PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
             if retrieval_time_stamp:
                 retrieval_time_stamp = datetime.datetime.utcfromtimestamp(float(retrieval_time_stamp)/1000)
-            offset_bytes = self.message.delivery_annotations.get(EventData._PROP_LAST_ENQUEUED_OFFSET, None)
+            offset_bytes = self.message.delivery_annotations.get(PROP_LAST_ENQUEUED_OFFSET, None)
             offset = offset_bytes.decode('UTF-8') if offset_bytes else None
             self._last_enqueued_event_properties = {
                 "sequence_number": sequence_number,
