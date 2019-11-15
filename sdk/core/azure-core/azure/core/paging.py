@@ -34,7 +34,6 @@ from typing import (  # pylint: disable=unused-import
 )
 import logging
 
-
 _LOGGER = logging.getLogger(__name__)
 
 ReturnType = TypeVar("ReturnType")

@@ -38,7 +38,7 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'Test'
-    condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
+    condition: ne(variables['Skip.Test'], 'true')
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     variables:
     - template: ../variables/globals.yml
