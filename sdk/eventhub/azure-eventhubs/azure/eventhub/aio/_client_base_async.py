@@ -210,9 +210,6 @@ class ConsumerProducerMixin(object):
         if self.closed:
             raise EventHubError("{} has been closed. Please create a new one to handle event data.".format(self._name))
 
-    def _create_handler(self):
-        pass
-
     async def _open(self):
         """
         Open the EventHubConsumer using the supplied connection.
