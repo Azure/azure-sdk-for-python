@@ -39,6 +39,7 @@ from ._regulatory_compliance_assessments_operations import RegulatoryComplianceA
 from ._server_vulnerability_assessment_operations import ServerVulnerabilityAssessmentOperations
 from ._sub_assessments_operations import SubAssessmentsOperations
 from ._auto_dismiss_alerts_rules_operations import AutoDismissAlertsRulesOperations
+from ._auto_dismiss_alerts_rules_simulation_operations import AutoDismissAlertsRulesSimulationOperations
 
 __all__ = [
     'ComplianceResultsOperations',
@@ -71,4 +72,5 @@ __all__ = [
     'ServerVulnerabilityAssessmentOperations',
     'SubAssessmentsOperations',
     'AutoDismissAlertsRulesOperations',
+    'AutoDismissAlertsRulesSimulationOperations',
 ]

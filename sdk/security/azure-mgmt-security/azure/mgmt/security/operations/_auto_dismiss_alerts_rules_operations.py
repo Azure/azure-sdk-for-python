@@ -170,17 +170,15 @@ class AutoDismissAlertsRulesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/autoDismissAlertsRules/{autoDismissAlertsRuleName}'}
 
     def update(
-            self, auto_dismiss_alerts_rule_name, auto_dismiss_alerts_rule, test_rule=None, custom_headers=None, raw=False, **operation_config):
+            self, auto_dismiss_alerts_rule_name, auto_dismiss_alerts_rule, custom_headers=None, raw=False, **operation_config):
         """Update existing rule or create new rule if it doesn't exist.
 
         :param auto_dismiss_alerts_rule_name: The unique name of the auto
          dismiss alert rule
         :type auto_dismiss_alerts_rule_name: str
-        :param auto_dismiss_alerts_rule: Describes the auto dismiss rule
+        :param auto_dismiss_alerts_rule: Auto dismiss rule object
         :type auto_dismiss_alerts_rule:
          ~azure.mgmt.security.models.AutoDismissAlertsRule
-        :param test_rule: Type of the alert to get rules for
-        :type test_rule: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -202,8 +200,6 @@ class AutoDismissAlertsRulesOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if test_rule is not None:
-            query_parameters['TestRule'] = self._serialize.query("test_rule", test_rule, 'bool')
 
         # Construct headers
         header_parameters = {}

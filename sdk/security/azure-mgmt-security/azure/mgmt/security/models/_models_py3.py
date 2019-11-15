@@ -972,8 +972,6 @@ class AutoDismissAlertsRule(Resource):
     :param auto_dismiss_alerts_scope: The auto dismiss conditions
     :type auto_dismiss_alerts_scope:
      ~azure.mgmt.security.models.AutoDismissAlertsScope
-    :ivar rule_impact: Statistics about the impact of this rule, if enabled
-    :vartype rule_impact: ~azure.mgmt.security.models.RuleImpact
     """
 
     _validation = {
@@ -984,7 +982,6 @@ class AutoDismissAlertsRule(Resource):
         'last_modified_utc': {'readonly': True},
         'reason': {'required': True},
         'state': {'required': True},
-        'rule_impact': {'readonly': True},
     }
 
     _attribute_map = {
@@ -998,7 +995,6 @@ class AutoDismissAlertsRule(Resource):
         'state': {'key': 'properties.state', 'type': 'RuleState'},
         'comment': {'key': 'properties.comment', 'type': 'str'},
         'auto_dismiss_alerts_scope': {'key': 'properties.autoDismissAlertsScope', 'type': 'AutoDismissAlertsScope'},
-        'rule_impact': {'key': 'properties.ruleImpact', 'type': 'RuleImpact'},
     }
 
     def __init__(self, *, alert_type: str, reason: str, state, expiration_date_utc=None, comment: str=None, auto_dismiss_alerts_scope=None, **kwargs) -> None:
@@ -1010,7 +1006,61 @@ class AutoDismissAlertsRule(Resource):
         self.state = state
         self.comment = comment
         self.auto_dismiss_alerts_scope = auto_dismiss_alerts_scope
-        self.rule_impact = None
+
+
+class AutoDismissAlertsRulesSimulation(Model):
+    """Auto dismiss rules simulation result for subscription.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required.
+    :type location: str
+    :param scanned_alerts_number: Required.
+    :type scanned_alerts_number: int
+    :param dismissed_alerts_number: Required.
+    :type dismissed_alerts_number: int
+    """
+
+    _validation = {
+        'location': {'required': True},
+        'scanned_alerts_number': {'required': True},
+        'dismissed_alerts_number': {'required': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'scanned_alerts_number': {'key': 'scannedAlertsNumber', 'type': 'int'},
+        'dismissed_alerts_number': {'key': 'dismissedAlertsNumber', 'type': 'int'},
+    }
+
+    def __init__(self, *, location: str, scanned_alerts_number: int, dismissed_alerts_number: int, **kwargs) -> None:
+        super(AutoDismissAlertsRulesSimulation, self).__init__(**kwargs)
+        self.location = location
+        self.scanned_alerts_number = scanned_alerts_number
+        self.dismissed_alerts_number = dismissed_alerts_number
+
+
+class AutoDismissAlertsRulesSimulationList(Model):
+    """Auto dismiss rules simulation result list for subscription.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required.
+    :type value:
+     list[~azure.mgmt.security.models.AutoDismissAlertsRulesSimulation]
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[AutoDismissAlertsRulesSimulation]'},
+    }
+
+    def __init__(self, *, value, **kwargs) -> None:
+        super(AutoDismissAlertsRulesSimulationList, self).__init__(**kwargs)
+        self.value = value
 
 
 class AutoDismissAlertsScope(Model):
@@ -3486,33 +3536,6 @@ class RegulatoryComplianceStandard(Resource):
         self.failed_controls = None
         self.skipped_controls = None
         self.unsupported_controls = None
-
-
-class RuleImpact(Model):
-    """RuleImpact.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param scanned_alerts_number: Required.
-    :type scanned_alerts_number: int
-    :param dismissed_alerts_number: Required.
-    :type dismissed_alerts_number: int
-    """
-
-    _validation = {
-        'scanned_alerts_number': {'required': True},
-        'dismissed_alerts_number': {'required': True},
-    }
-
-    _attribute_map = {
-        'scanned_alerts_number': {'key': 'scannedAlertsNumber', 'type': 'int'},
-        'dismissed_alerts_number': {'key': 'dismissedAlertsNumber', 'type': 'int'},
-    }
-
-    def __init__(self, *, scanned_alerts_number: int, dismissed_alerts_number: int, **kwargs) -> None:
-        super(RuleImpact, self).__init__(**kwargs)
-        self.scanned_alerts_number = scanned_alerts_number
-        self.dismissed_alerts_number = dismissed_alerts_number
 
 
 class SecurityContact(Resource):
