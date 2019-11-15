@@ -1,12 +1,12 @@
 
 class EventHubProducerClient(ClientBaseAsync):
 
-    eh_name  # type: str
+    eventhub_name  # type: str
 
     def __init__(
             self,
-            host: str,
-            event_hub_path: str,
+            fully_qualified_namespace: str,
+            eventhub_name: str,
             credential: TokenCredential,
             **kwargs
     ) -> None:
@@ -19,51 +19,55 @@ class EventHubProducerClient(ClientBaseAsync):
     def from_connection_string(
         cls, conn_str: str,
         *,
-        event_hub_path: str = None,
+        eventhub_name: str = None,
         logging_enable: bool = False,
         http_proxy: dict = None,
         auth_timeout: float = 60,
         user_agent: str = None,
         retry_total: int = 3,
-        transport_type=None) -> EventHubProducerClient:
+        transport_type: TransportType = None) -> EventHubProducerClient:
 
-    async def send(
+    async def send_batch(
         self,
-        event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+        event_data_batch: EventDataBatch,
         *,
-        partition_key: Union[str, bytes] = None,
-        partition_id: str = None,
         timeout: float = None) -> None:
 
-    async def create_batch(self, events: Iterable[EventData] = None, max_size: int = None) -> EventDataBatch:
+    async def create_batch(
+        self,
+        *,
+        max_size: int = None,
+        partition_key: Union[str, bytes] = None,
+        partition_id: str = None) -> EventDataBatch:
 
-    async def get_properties(self) -> Dict[str, Any]:
+    async def get_eventhub_properties(self) -> Dict[str, Any]:
 
     async def get_partition_ids(self) -> List[str]:
 
-    async def get_partition_properties(self, partition: str) -> Dict[str, str]:
+    async def get_partition_properties(self, partition_id: str) -> Dict[str, str]:
 
     async def close(self) -> None:
 
 
 class EventHubConsumerClient(ClientBaseAsync):
 
-    eh_name  # type: str
+    eventhub_name  # type: str
 
     def __init__(
             self,
-            host: str,
-            event_hub_path: str,
+            fully_qualified_namespace: str,
+            eventhub_name: str,
+            consumer_group: str,
             credential: TokenCredential,
             *
-            partition_manager: PartitionManager,
+            checkpoint_store: CheckpointStore,
             load_balancing_interval: int = 10,
             logging_enable: bool = False,
             http_proxy: dict = None,
             auth_timeout: float = 60,
             user_agent: str = None,
             retry_total: int = 3,
-            transport_type=None
+            transport_type: TransportType = None
             **kwargs
     ) -> None:
 
@@ -77,23 +81,22 @@ class EventHubConsumerClient(ClientBaseAsync):
     async def receive(
             self,
             on_event: Callable[PartitionContext, EventData],
-            consumer_group: str,
             *,
             partition_id: str = None,
             owner_level: int = None,
             prefetch: int = 300,
             track_last_enqueued_event_properties: bool = False,
-            initial_event_position=None,
+            initial_event_position: Union[int, str, datetime.datetime, Dict[str, Any]] = None,
             on_error=None,
             on_partition_initialize=None,
             on_partition_close=None
     ) -> None:
 
-    async def get_properties(self) -> Dict[str, Any]:
+    async def get_eventhub_properties(self) -> Dict[str, Any]:
 
     async def get_partition_ids(self) -> List[str]:
 
-    async def get_partition_properties(self, partition: str) -> Dict[str, str]:
+    async def get_partition_properties(self, partition_id: str) -> Dict[str, str]:
 
     async def close(self) -> None:
 
@@ -103,28 +106,29 @@ class PartitionContext(object):
     fully_qualified_namespace  # type: str
     partition_id  # type: str
     eventhub_name  # type: str
-    consumer_group_name  # type: str
+    consumer_group  # type: str
     owner_id  # type: str
+    last_enqueued_event_properties  # Dict[str, Any]
 
     def __init__(
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        consumer_group_name: str,
+        consumer_group: str,
         partition_id: str,
         owner_id: str,
-        partition_manager: PartitionManager =None) -> None:
+        checkpoint_store: CheckpointStore = None) -> None:
 
-    async def update_checkpoint(self, event: EventData):
+    async def update_checkpoint(self, event: EventData) -> None:
 
 
-class PartitionManager(ABC):
+class CheckpointStore(ABC):
 
     async def list_ownership(
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        consumer_group_name: str) -> Iterable[Dict[str, Any]]:
+        consumer_group: str) -> Iterable[Dict[str, Any]]:
 
     async def claim_ownership(self, ownership_list: Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]:
 
@@ -132,12 +136,16 @@ class PartitionManager(ABC):
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        consumer_group_name: str,
+        consumer_group: str,
         partition_id: str,
         offset: str,
         sequence_number: int) -> None:
 
-    async def list_checkpoints(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group_name: str) -> Iterable[Dict[str,Any]]:
+    async def list_checkpoints(
+        self,
+        fully_qualified_namespace: str,
+        eventhub_name: str,
+        consumer_group: str) -> Iterable[Dict[str, Any]]:
 
 
 class EventData(object):
@@ -191,15 +199,7 @@ class EventDataBatch(object):
     @property
     def size(self) -> int:
 
-    def try_add(self, event_data: EventData) -> None:
-
-
-class EventPosition(object):
-
-    value  # type: Union[str, int, datetime.datetime]
-    inclusive  # type: bool
-
-    def __init__(self, value, inclusive=False):
+    def add(self, event_data: EventData) -> None:
 
 
 class CloseReason(Enum):
