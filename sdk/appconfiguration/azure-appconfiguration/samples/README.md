@@ -9,6 +9,8 @@ products:
 
 # Azure App Configuration Data Library Python Samples
 
+The following samples demonstrate how to use Azure App Configuration with Python.
+
 ## Prerequisites
 
 You must have an [Azure subscription][azure_sub], and a [Configuration Store][configuration_store] to use this package.

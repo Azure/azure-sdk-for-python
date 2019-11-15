@@ -8,9 +8,7 @@ products:
 
 # Azure Core Library Python Samples
 
-These are some code snippets that show the way in which you can set up some functionalities used in new SDKs such as logging, pipelines, etc.
-
-They are not intended to be ran as standalone application, but show you how these functionalities can be configured.
+This sample contains code snippets that show you how to use the sync, async, and config policies in the new Azure SDKs. They are not intended to be run as standalone application, but to show you how these functionalities can be configured.
 
 [test_example_sync.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/samples/test_example_sync.py) - samples of how to create a sync pipeline
 

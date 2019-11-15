@@ -4,6 +4,7 @@ languages:
   - python
 products:
   - azure
+  - azure-key-vault
 ---
 
 # Azure Key Vault Secrets Client Library Python Samples
