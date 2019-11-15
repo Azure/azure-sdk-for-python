@@ -11,6 +11,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
     HeadersPolicy,
     ProxyPolicy,
+    RequestIdPolicy,
     NetworkTraceLoggingPolicy,
     AsyncRetryPolicy,
     AsyncRedirectPolicy,
@@ -52,6 +53,7 @@ class AsyncTextAnalyticsClientBase(object):
         policies = [
             config.headers_policy,
             config.user_agent_policy,
+            RequestIdPolicy(**kwargs),
             config.proxy_policy,
             credential_policy,
             AsyncRedirectPolicy(**kwargs),

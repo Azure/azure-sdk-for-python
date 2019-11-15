@@ -11,6 +11,7 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
     HeadersPolicy,
+    RequestIdPolicy,
     ProxyPolicy,
     NetworkTraceLoggingPolicy,
     RetryPolicy,
@@ -49,6 +50,7 @@ class TextAnalyticsClientBase(object):
         policies = [
             config.headers_policy,
             config.user_agent_policy,
+            RequestIdPolicy(**kwargs),
             config.proxy_policy,
             credential_policy,
             config.redirect_policy,
