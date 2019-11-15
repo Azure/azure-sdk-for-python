@@ -1,18 +1,31 @@
+import argparse
 import re
 from os import path
+import sys
 
 from version_shared import get_packages, get_version_py
 
-SDK_PATH = "../../sdk/"
+DEFAULT_SDK_PATH = "../../sdk/"
 
 if __name__ == '__main__':
-    packages = get_packages(SDK_PATH)
+    parser = argparse.ArgumentParser(description='')
+    parser.add_argument('--sdk-path', default=DEFAULT_SDK_PATH, help='path to the sdk folder')
+    parser.add_argument('--always-succeed', action='store_true', help='return exit code 0 even if incorrect versions are detected')
+    args = parser.parse_args()
+
+    always_succeed = args.always_succeed
+
+    packages = get_packages(args.sdk_path)
 
     invalid_packages = []
     for package in packages:
-        # TODO: This try/except trying and catching too many things
+        package_name = package[1][0]
         try:
-            version_py_path = get_version_py(package[0])
+            try:
+                version_py_path = get_version_py(package[0])
+            except:
+                invalid_packages.append((package_name, 'Could not find _version.py file'))
+                continue
 
             with open(version_py_path, 'r') as version_py_file:
                 version_contents = version_py_file.read()
@@ -21,8 +34,7 @@ if __name__ == '__main__':
                     version_contents, re.MULTILINE).group(1)
 
                 if version != package[1][1]:
-                    print(f'{package[1][0]} setup.py: {package[1][1]} _version.py: {version}' )
-                    invalid_packages.append(package[1][0])
+                    invalid_packages.append((package_name, f'Version evaluation mismatch: setup.py: {package[1][1]} _version.py: {version}' ))
                     continue
 
 
@@ -34,15 +46,18 @@ if __name__ == '__main__':
                     package_dunder_init_file.read(), re.MULTILINE)
 
                 if not bool(version):
-                    invalid_packages.append(package[1][0])
+                    invalid_packages.append((package_name, 'Could not find __version__ = VERSION in package __init__.py'))
                     continue
 
-            # TODO: Try evaling __init__.py next to _version.py to ensure version match
-
+                # TODO: Try evaling __init__.py next to _version.py to ensure version match
         except:
-            invalid_packages.append(package[1][0])
+            invalid_packages.append(package_name, f'Unknown error {sys.exc_info()}')
 
-    print("=================\nInvalid Packages:\n=================\n")
+    if invalid_packages:
+        print("=================\nInvalid Packages:\n=================\n")
 
-    for invalid_package in invalid_packages:
-        print(invalid_package)
+        for invalid_package in invalid_packages:
+            print(f'{invalid_package[0]}\t{invalid_package[1]}')
+
+        if not always_succeed:
+            exit(1)
