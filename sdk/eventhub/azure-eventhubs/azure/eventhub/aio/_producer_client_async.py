@@ -250,7 +250,7 @@ class EventHubProducerClient(ClientBaseAsync):
 
         """
         async with self._lock:
-            for producer in self._producers:
+            for producer in self._producers.values():
                 if producer:
                     await producer.close()
         await self._conn_manager.close_connection()

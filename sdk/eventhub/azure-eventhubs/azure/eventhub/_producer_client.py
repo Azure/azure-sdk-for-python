@@ -191,7 +191,7 @@ class EventHubProducerClient(ClientBase):
 
         """
         with self._lock:
-            for producer in self._producers:
+            for producer in self._producers.values():
                 if producer:
                     producer.close()
             self._producers = {}
