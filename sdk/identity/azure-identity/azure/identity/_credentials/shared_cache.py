@@ -25,10 +25,12 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Mapping, Optional
+    from typing import Any, Iterable, List, Mapping, Optional
     import msal_extensions
     from azure.core.credentials import AccessToken
     from .._internal import AadClientBase
+
+    CacheItem = Mapping[str, str]
 
 
 MULTIPLE_ACCOUNTS = """Multiple users were discovered in the shared token cache. If using DefaultAzureCredential, set
@@ -39,14 +41,16 @@ MULTIPLE_MATCHING_ACCOUNTS = """Found multiple accounts matching{}{}. If using D
 variables AZURE_USERNAME and AZURE_TENANT_ID with the preferred username and tenant.
 Otherwise, specify them when constructing SharedTokenCacheCredential.\nDiscovered accounts: {}"""
 
-NO_ACCOUNTS = """The shared cache contains no accounts. To authenticate with SharedTokenCacheCredential, login through
-developer tooling supporting Azure single sign on"""
+NO_ACCOUNTS = """The shared cache contains no signed-in accounts. To authenticate with SharedTokenCacheCredential, login
+through developer tooling supporting Azure single sign on"""
 
 NO_MATCHING_ACCOUNTS = """The cache contains no account matching the specified{}{}. To authenticate with
 SharedTokenCacheCredential, login through developer tooling supporting Azure single sign on.\nDiscovered accounts: {}"""
 
 NO_TOKEN = """Token acquisition failed for user '{}'. To fix, re-authenticate
 through developer tooling supporting Azure single sign on"""
+
+_PUBLIC_CLOUD_ALIASES = {"login.windows.net", "login.microsoft.com", "sts.windows.net"}
 
 
 class SharedTokenCacheBase(ABC):
@@ -66,7 +70,7 @@ class SharedTokenCacheBase(ABC):
 
             # prevent writing to the shared cache
             # TODO: seperating deserializing access tokens from caching them would make this cleaner
-            cache.add = lambda *_: None
+            cache.add = lambda *_, **__: None
 
         if cache:
             self._cache = cache
@@ -79,42 +83,66 @@ class SharedTokenCacheBase(ABC):
         # type: (**Any) -> AadClientBase
         pass
 
+    def _get_cache_items_for_authority(self, credential_type):
+        # type: (TokenCache.CredentialType) -> List[CacheItem]
+        """yield cache items matching this credential's authority or one of its aliases"""
+
+        items = []
+        for item in self._cache.find(credential_type):
+            environment = item.get("environment")
+            if environment == self._authority or (
+                self._authority == KnownAuthorities.AZURE_PUBLIC_CLOUD and environment in _PUBLIC_CLOUD_ALIASES
+            ):
+                items.append(item)
+        return items
+
+    def _get_accounts_having_matching_refresh_tokens(self):
+        # type: () -> Iterable[CacheItem]
+        """returns an iterable of cached accounts which have a matching refresh token"""
+
+        refresh_tokens = self._get_cache_items_for_authority(TokenCache.CredentialType.REFRESH_TOKEN)
+        all_accounts = self._get_cache_items_for_authority(TokenCache.CredentialType.ACCOUNT)
+
+        accounts = {}
+        for refresh_token in refresh_tokens:
+            home_account_id = refresh_token.get("home_account_id")
+            if not home_account_id:
+                continue
+            for account in all_accounts:
+                # When the token has no family, msal.net falls back to matching client_id,
+                # which won't work for the shared cache because we don't know the IDs of
+                # all contributing apps. It should be unnecessary anyway because the
+                # apps should all belong to the family.
+                if home_account_id == account.get("home_account_id") and "family_id" in refresh_token:
+                    accounts[account["home_account_id"]] = account
+        return accounts.values()
+
     def _get_account(self, username=None, tenant_id=None):
-        # type: (Optional[str], Optional[str]) -> Mapping[str, str]
-        accounts = self._cache.find(TokenCache.CredentialType.ACCOUNT)
+        # type: (Optional[str], Optional[str]) -> CacheItem
+        """returns exactly one account which has a refresh token and matches username and/or tenant_id"""
+
+        accounts = self._get_accounts_having_matching_refresh_tokens()
         if not accounts:
+            # cache is empty or contains no refresh token -> user needs to sign in
             raise ClientAuthenticationError(message=NO_ACCOUNTS)
 
-        # filter according to arguments
-        query = {"username": username} if username else {}
-        filtered_accounts = self._cache.find(TokenCache.CredentialType.ACCOUNT, query=query)
-        if tenant_id:
-            filtered_accounts = [a for a in filtered_accounts if a.get("home_account_id", "").endswith(tenant_id)]
-
+        filtered_accounts = _filtered_accounts(accounts, username, tenant_id)
         if len(filtered_accounts) == 1:
-            account = filtered_accounts[0]
-            environment = account.get("environment")
-            if not environment or environment not in self._authority:
-                # doubtful this account can get the access token we want but public cloud's a special case
-                # because its authority has an alias: for our purposes login.windows.net = login.microsoftonline.com
-                if not (environment == "login.windows.net" and self._authority == KnownAuthorities.AZURE_PUBLIC_CLOUD):
-                    raise ClientAuthenticationError(message="No token for {}".format(self._authority))
-            return account
+            return filtered_accounts[0]
 
+        # no, or multiple, accounts after filtering -> choose the best error message
         cached_accounts = ", ".join(_account_to_string(account) for account in accounts)
-
         if username or tenant_id:
-            # no, or multiple, matching accounts for the given username and/or tenant id
             username_string = " username: {}".format(username) if username else ""
             tenant_string = " tenant: {}".format(tenant_id) if tenant_id else ""
-            if not filtered_accounts:
-                message = NO_MATCHING_ACCOUNTS.format(username_string, tenant_string, cached_accounts)
-            else:
+            if filtered_accounts:
                 message = MULTIPLE_MATCHING_ACCOUNTS.format(username_string, tenant_string, cached_accounts)
-            raise ClientAuthenticationError(message=message)
+            else:
+                message = NO_MATCHING_ACCOUNTS.format(username_string, tenant_string, cached_accounts)
+        else:
+            message = MULTIPLE_ACCOUNTS.format(cached_accounts)
 
-        # multiple cached accounts and no basis for selection
-        raise ClientAuthenticationError(message=MULTIPLE_ACCOUNTS.format(cached_accounts))
+        raise ClientAuthenticationError(message=message)
 
     def _get_refresh_tokens(self, scopes, account):
         """Yields all an account's cached refresh tokens except those which have a scope (which is unexpected) that
@@ -189,3 +217,21 @@ def _account_to_string(account):
     home_account_id = account.get("home_account_id", "").split(".")
     tenant_id = home_account_id[-1] if len(home_account_id) == 2 else ""
     return "(username: {}, tenant: {})".format(username, tenant_id)
+
+
+def _filtered_accounts(accounts, username=None, tenant_id=None):
+    """yield accounts matching username and/or tenant_id"""
+
+    filtered_accounts = []
+    for account in accounts:
+        if username and account.get("username") != username:
+            continue
+        if tenant_id:
+            try:
+                _, tenant = account["home_account_id"].split(".")
+                if tenant_id != tenant:
+                    continue
+            except:  # pylint:disable=bare-except
+                continue
+        filtered_accounts.append(account)
+    return filtered_accounts

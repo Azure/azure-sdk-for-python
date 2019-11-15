@@ -9,7 +9,6 @@ from azure.identity._credentials.shared_cache import (
     MULTIPLE_MATCHING_ACCOUNTS,
     NO_ACCOUNTS,
     NO_MATCHING_ACCOUNTS,
-    NO_TOKEN,
 )
 from msal import TokenCache
 import pytest
@@ -32,7 +31,7 @@ def test_no_matching_account():
 
     upn = "spam@eggs"
     tenant = "some-guid"
-    account = get_account_event(username=upn, uid="uid", utid=tenant)
+    account = get_account_event(username=upn, uid="uid", utid=tenant, refresh_token="refresh-token")
     cache = populated_cache(account)
 
     with pytest.raises(ClientAuthenticationError) as ex:
@@ -89,11 +88,14 @@ def test_no_refresh_token():
 
     # credential has no refresh token to redeem => it shouldn't use the network
     transport = Mock(side_effect=Exception())
-    credential = SharedTokenCacheCredential(_cache=cache, transport=transport)
 
-    with pytest.raises(ClientAuthenticationError) as ex:
+    credential = SharedTokenCacheCredential(_cache=cache, transport=transport)
+    with pytest.raises(ClientAuthenticationError, match=NO_ACCOUNTS):
         credential.get_token("scope")
-    assert ex.value.message.startswith(NO_TOKEN[: NO_TOKEN.index("{")])
+
+    credential = SharedTokenCacheCredential(_cache=cache, transport=transport, username="not@cache")
+    with pytest.raises(ClientAuthenticationError, match=NO_ACCOUNTS):
+        credential.get_token("scope")
 
 
 def test_two_accounts_username_unspecified():
@@ -191,6 +193,7 @@ def get_account_event(
             utid=utid,
             refresh_token=refresh_token,
             id_token=build_id_token(aud=client_id, preferred_username=username),
+            foci="1",
         ),
         "client_id": client_id,
         "token_endpoint": "https://" + authority + "/some/path",
@@ -203,6 +206,3 @@ def populated_cache(*accounts):
     for account in accounts:
         cache.add(account)
     return cache
-
-if __name__ == "__main__":
-    test_single_account()
