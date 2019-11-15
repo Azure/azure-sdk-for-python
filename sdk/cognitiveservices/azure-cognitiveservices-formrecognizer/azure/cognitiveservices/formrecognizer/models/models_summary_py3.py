@@ -23,7 +23,7 @@ class ModelsSummary(Model):
      subscription.
     :type limit: int
     :param last_updated_date_time: Required. Date and time (UTC) when the
-     summary is last updated.
+     summary was last updated.
     :type last_updated_date_time: datetime
     """
 

@@ -20,7 +20,7 @@ try:
     from .page_result_py3 import PageResult
     from .field_value_py3 import FieldValue
     from .document_result_py3 import DocumentResult
-    from .form_operation_error_py3 import FormOperationError
+    from .error_information_py3 import ErrorInformation
     from .analyze_result_py3 import AnalyzeResult
     from .analyze_operation_result_py3 import AnalyzeOperationResult
     from .train_source_filter_py3 import TrainSourceFilter
@@ -34,7 +34,6 @@ try:
     from .models_model_py3 import ModelsModel
     from .keys_result_py3 import KeysResult
     from .model_py3 import Model
-    from .error_information_py3 import ErrorInformation
     from .error_response_py3 import ErrorResponse, ErrorResponseException
 except (SyntaxError, ImportError):
     from .text_word import TextWord
@@ -47,7 +46,7 @@ except (SyntaxError, ImportError):
     from .page_result import PageResult
     from .field_value import FieldValue
     from .document_result import DocumentResult
-    from .form_operation_error import FormOperationError
+    from .error_information import ErrorInformation
     from .analyze_result import AnalyzeResult
     from .analyze_operation_result import AnalyzeOperationResult
     from .train_source_filter import TrainSourceFilter
@@ -61,7 +60,6 @@ except (SyntaxError, ImportError):
     from .models_model import ModelsModel
     from .keys_result import KeysResult
     from .model import Model
-    from .error_information import ErrorInformation
     from .error_response import ErrorResponse, ErrorResponseException
 from .form_recognizer_client_enums import (
     OperationStatus,
@@ -83,7 +81,7 @@ __all__ = [
     'PageResult',
     'FieldValue',
     'DocumentResult',
-    'FormOperationError',
+    'ErrorInformation',
     'AnalyzeResult',
     'AnalyzeOperationResult',
     'TrainSourceFilter',
@@ -97,7 +95,6 @@ __all__ = [
     'ModelsModel',
     'KeysResult',
     'Model',
-    'ErrorInformation',
     'ErrorResponse', 'ErrorResponseException',
     'OperationStatus',
     'LengthUnit',
