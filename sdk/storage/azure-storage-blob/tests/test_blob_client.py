@@ -33,7 +33,7 @@ _CONNECTION_ENDPOINTS_SECONDARY = {'blob': 'BlobSecondaryEndpoint'}
 class StorageClientTest(StorageTestCase):
     def setUp(self):
         super(StorageClientTest, self).setUp()
-        self.sas_token = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
+        self.sas_token = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Y%2FoUshaLLnoTPass'
         self.token_credential = self.generate_oauth_token()
 
     # --Helpers-----------------------------------------------------------------
@@ -574,5 +574,14 @@ class StorageClientTest(StorageTestCase):
                     self.assertEqual(
                         str(e.exception), "Connection string missing required connection details.")
 
+    @GlobalStorageAccountPreparer()
+    def test_closing_pipeline_client(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        for client, url in SERVICES.items():
+            # Act
+            service = client(
+                self.account_url(storage_account.name, "blob"), credential=storage_account_key, container_name='foo', blob_name='bar')
 
+            # Assert
+            assert hasattr(service, 'close')
 # ------------------------------------------------------------------------------
