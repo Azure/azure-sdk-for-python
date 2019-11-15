@@ -168,7 +168,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 except Exception as err:  # pylint:disable=broad-except
                     _LOGGER.warning(
                         "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
-                        " An error occurred while running initialize(). The exception is %r.",
+                        "An error occurred while running initialize(). The exception is %r.",
                         self._id, self._eventhub_name, partition_id, self._consumer_group_name, err
                     )
 

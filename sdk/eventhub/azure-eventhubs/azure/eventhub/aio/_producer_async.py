@@ -127,7 +127,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             self._unsent_events = self._handler.pending_messages
             if self._outcome != constants.MessageSendResult.Ok:
                 if self._outcome == constants.MessageSendResult.Timeout:
-                    self._condition = OperationTimeoutError("send operation timed out")
+                    self._condition = OperationTimeoutError("Send operation timed out")
                 raise self._condition
 
     async def _send_event_data_with_retry(self, timeout=None):

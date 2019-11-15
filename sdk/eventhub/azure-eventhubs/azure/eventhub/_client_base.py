@@ -8,6 +8,7 @@ import logging
 import uuid
 import time
 import functools
+import collections
 from typing import Any, TYPE_CHECKING
 try:
     from urlparse import urlparse  # type: ignore
@@ -97,24 +98,19 @@ def _build_uri(address, entity):
     return address
 
 
-class _Address(object):
-    def __init__(self, hostname=None, path=None):
-        self.hostname = hostname
-        self.path = path
+_Address = collections.namedtuple('Address', 'hostname path')
 
 
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, host, event_hub_path, credential, **kwargs):
         self.eh_name = event_hub_path
-        self._host = host
+        path = "/" + event_hub_path if event_hub_path else ""
+        self._address = _Address(hostname=host, path=path)
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
-        self._address = _Address()
-        self._address.hostname = host
-        self._address.path = "/" + event_hub_path if event_hub_path else ""
         self._credential = credential
         self._keep_alive = kwargs.get("keep_alive", 30)
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
-        self._mgmt_target = "amqps://{}/{}".format(self._host, self.eh_name)
+        self._mgmt_target = "amqps://{}/{}".format(self._address.hostname, self.eh_name)
         self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
         self._config = Configuration(**kwargs)
         self._debug = self._config.network_tracing
@@ -154,7 +150,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             password = self._credential.key
             if "@sas.root" in username:
                 return authentication.SASLPlain(
-                    self._host, username, password, http_proxy=http_proxy, transport_type=transport_type)
+                    self._address.hostname, username, password, http_proxy=http_proxy, transport_type=transport_type)
             return authentication.SASTokenAuth.from_shared_access_key(
                 self._auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy,
                 transport_type=transport_type)
@@ -200,7 +196,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             mgmt_auth = self._create_auth()
             mgmt_client = AMQPClient(self._mgmt_target)
             try:
-                conn = self._conn_manager.get_connection(self._host, mgmt_auth)  #pylint:disable=assignment-from-none
+                conn = self._conn_manager.get_connection(self._address.hostname, mgmt_auth)  #pylint:disable=assignment-from-none
                 mgmt_client.open(connection=conn)
                 response = mgmt_client.mgmt_request(
                     mgmt_msg,

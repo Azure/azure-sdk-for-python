@@ -60,7 +60,7 @@ class ClientBaseAsync(ClientBase):
             password = self._credential.key
             if "@sas.root" in username:
                 return authentication.SASLPlain(
-                    self._host, username, password, http_proxy=http_proxy, transport_type=transport_type)
+                    self._address.hostname, username, password, http_proxy=http_proxy, transport_type=transport_type)
             return authentication.SASTokenAsync.from_shared_access_key(
                 self._auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy,
                 transport_type=transport_type)
@@ -106,7 +106,7 @@ class ClientBaseAsync(ClientBase):
             mgmt_auth = self._create_auth()
             mgmt_client = AMQPClientAsync(self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing)
             try:
-                conn = await self._conn_manager.get_connection(self._host, mgmt_auth)
+                conn = await self._conn_manager.get_connection(self._address.hostname, mgmt_auth)
                 await mgmt_client.open_async(connection=conn)
                 response = await mgmt_client.mgmt_request_async(
                     mgmt_msg,
