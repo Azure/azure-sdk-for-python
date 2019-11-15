@@ -7,10 +7,17 @@ import logging
 
 from typing import Any, Union, TYPE_CHECKING, Iterable, List
 from uamqp import constants  # type: ignore
-from azure.eventhub import EventData, EventHubSharedKeyCredential, EventHubSASTokenCredential, EventDataBatch
+
+from ..exceptions import ConnectError, EventHubError
 from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
-from ..error import ConnectError
+from .._constants import ALL_PARTITIONS
+from .._common import (
+    EventData,
+    EventHubSharedKeyCredential,
+    EventHubSASTokenCredential,
+    EventDataBatch
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
@@ -58,22 +65,36 @@ class EventHubProducerClient(ClientBaseAsync):
         super(EventHubProducerClient, self).__init__(
             host=host, event_hub_path=event_hub_path, credential=credential,
             network_tracing=kwargs.pop("logging_enable", False), **kwargs)
-        self._producers = []  # type: List[EventHubProducer]
-        self._client_lock = asyncio.Lock()  # sync the creation of self._producers
-        self._producers_locks = []  # type: List[asyncio.Lock]
+        self._producers = {ALL_PARTITIONS: self._create_producer()}  # type: Dict[str, EventHubProducer]
+        self._lock = asyncio.Lock()  # sync the creation of self._producers
         self._max_message_size_on_link = 0
         self._partition_ids = None
 
-    async def _init_locks_for_producers(self):
-        if not self._producers:
-            async with self._client_lock:
-                if not self._producers:
-                    self._partition_ids = await self.get_partition_ids()
-                    num_of_producers = len(self._partition_ids) + 1
-                    self._producers = [None] * num_of_producers
-                    for _ in range(num_of_producers):
-                        self._producers_locks.append(asyncio.Lock())
-                        # self._producers_locks = [asyncio.Lock()] * num_of_producers
+    async def _get_partitions(self):
+        if not self._partition_ids:
+            self._partition_ids = await self.get_partition_ids()
+            for p_id in self._partition_ids:
+                self._producers[p_id] = None
+
+    async def _get_max_mesage_size(self):
+        async with self._lock:
+            if not self._max_message_size_on_link:
+                await self._producers[ALL_PARTITIONS]._open_with_retry()
+                self._max_message_size_on_link = \
+                    self._producers[ALL_PARTITIONS]._handler.message_handler._link.peer_max_message_size \
+                    or constants.MAX_MESSAGE_LENGTH_BYTES
+
+    async def _start_producer(self, partition_id, send_timeout):
+        async with self._lock:
+            await self._get_partitions()
+            if partition_id not in self._partition_ids and partition_id != ALL_PARTITIONS:
+                raise ConnectError("Invalid partition {} for the event hub {}".format(partition_id, self.eh_name))
+
+            if not self._producers[partition_id] or self._producers[partition_id].closed:
+                self._producers[partition_id] = self._create_producer(
+                    partition_id=partition_id,
+                    send_timeout=send_timeout
+                )
 
     def _create_producer(
             self, *,
@@ -172,19 +193,15 @@ class EventHubProducerClient(ClientBaseAsync):
                 :caption: Asynchronously sends event data
 
         """
-
-        await self._init_locks_for_producers()
-
+        partition_id = partition_id or ALL_PARTITIONS
+        send_timeout = kwargs.pop("timeout", None)
+        try:
+            await self._producers[partition_id].send(event_data, **kwargs)
+        except (KeyError, AttributeError, EventHubError):
+            await self._start_producer(partition_id)
+            await self._producers[partition_id].send(event_data, **kwargs)
         if partition_id is not None and partition_id not in self._partition_ids:
             raise ConnectError("Invalid partition {} for the event hub {}".format(partition_id, self.eh_name))
-
-        producer_index = int(partition_id) if partition_id is not None else -1
-        if self._producers[producer_index] is None or self._producers[producer_index]._closed:  # pylint:disable=protected-access
-            async with self._producers_locks[producer_index]:
-                if self._producers[producer_index] is None:
-                    self._producers[producer_index] = self._create_producer(partition_id=partition_id)
-        async with self._producers_locks[producer_index]:
-            await self._producers[producer_index].send(event_data, partition_key=partition_key, timeout=timeout)
 
     async def create_batch(self, max_size=None):
         # type:(int) -> EventDataBatch
@@ -206,14 +223,7 @@ class EventHubProducerClient(ClientBaseAsync):
 
         """
         if not self._max_message_size_on_link:
-            await self._init_locks_for_producers()
-            async with self._producers_locks[-1]:
-                if self._producers[-1] is None:
-                    self._producers[-1] = self._create_producer(partition_id=None)
-                    await self._producers[-1]._open_with_retry()  # pylint: disable=protected-access
-            async with self._client_lock:
-                self._max_message_size_on_link = \
-                    self._producers[-1]._handler.message_handler._link.peer_max_message_size or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access, line-too-long
+            await self._get_max_mesage_size()
 
         if max_size and max_size > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
@@ -239,7 +249,8 @@ class EventHubProducerClient(ClientBaseAsync):
                 :caption: Close down the handler.
 
         """
-        for producer in self._producers:
-            if producer:
-                await producer.close()
+        async with self._lock:
+            for producer in self._producers:
+                if producer:
+                    await producer.close()
         await self._conn_manager.close_connection()

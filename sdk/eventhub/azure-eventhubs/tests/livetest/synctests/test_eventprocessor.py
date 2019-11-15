@@ -12,7 +12,7 @@ from azure.eventhub import EventData, EventHubError
 from azure.eventhub._eventprocessor.event_processor import EventProcessor
 from azure.eventhub import CloseReason
 from azure.eventhub._eventprocessor.local_partition_manager import InMemoryPartitionManager
-from azure.eventhub.common import _Address
+from azure.eventhub._client_base import _Address
 
 
 def event_handler(partition_context, events):

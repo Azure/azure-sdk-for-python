@@ -7,14 +7,7 @@ import six
 
 from uamqp import errors, compat  # type: ignore
 
-
-_NO_RETRY_ERRORS = (
-    b"com.microsoft:argument-out-of-range",
-    b"com.microsoft:entity-disabled",
-    b"com.microsoft:auth-failed",
-    b"com.microsoft:precondition-failed",
-    b"com.microsoft:argument-error"
-)
+from ._constants import NO_RETRY_ERRORS
 
 log = logging.getLogger(__name__)
 

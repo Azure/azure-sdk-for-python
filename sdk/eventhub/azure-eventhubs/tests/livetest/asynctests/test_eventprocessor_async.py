@@ -13,7 +13,7 @@ from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.aio.eventprocessor.event_processor import EventProcessor, CloseReason
 from azure.eventhub.aio.eventprocessor.local_partition_manager import InMemoryPartitionManager
 from azure.eventhub import OwnershipLostError
-from azure.eventhub.common import _Address
+from azure.eventhub._client_base import _Address
 
 
 async def event_handler(partition_context, event):

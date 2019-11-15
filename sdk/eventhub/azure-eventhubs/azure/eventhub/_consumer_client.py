@@ -3,11 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import logging
+import threading
 from typing import Any, Union, Dict, Tuple, TYPE_CHECKING, Callable, List
 
-from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, EventData
+from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential, EventData
 from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
+from ._constants import ALL_PARTITIONS
 from ._eventprocessor.event_processor import EventProcessor
 from ._eventprocessor.partition_context import PartitionContext
 
@@ -71,19 +73,14 @@ class EventHubConsumerClient(ClientBase):
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
         # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
-        """"""
-        receive_timeout = kwargs.get("receive_timeout", 3)
-        if receive_timeout <= 0:
-            raise ValueError("receive_timeout must be greater than 0.")
-
-        kwargs['receive_timeout'] = receive_timeout
         self._partition_manager = kwargs.pop("partition_manager", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", 10)
+        network_tracing = kwargs.pop("logging_enable", False)
         super(EventHubConsumerClient, self).__init__(
             host=host, event_hub_path=event_hub_path, credential=credential,
-            network_tracing=kwargs.get("logging_enable"), **kwargs)
+            network_tracing=network_tracing, **kwargs)
+        self._lock = threading.Lock()
         self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
-        self._closed = False
 
     def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
         owner_level = kwargs.get("owner_level")
@@ -102,60 +99,6 @@ class EventHubConsumerClient(ClientBase):
             prefetch=prefetch,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties)
         return handler
-
-    @classmethod
-    def _stop_eventprocessor(cls, event_processor):
-        # pylint: disable=protected-access
-        eventhub_client = event_processor._eventhub_client
-        consumer_group = event_processor._consumer_group_name
-        partition_id = event_processor._partition_id
-        with eventhub_client._lock:
-            event_processor.stop()
-            if partition_id and (consumer_group, partition_id) in eventhub_client._event_processors:
-                del eventhub_client._event_processors[(consumer_group, partition_id)]
-            elif (consumer_group, '-1') in eventhub_client._event_processors:
-                del eventhub_client._event_processors[(consumer_group, "-1")]
-
-    @classmethod
-    def from_connection_string(cls, conn_str, **kwargs):
-        # type: (str, Any) -> EventHubConsumerClient
-        """
-        Create an EventHubConsumerClient from a connection string.
-
-        :param str conn_str: The connection string of an eventhub.
-        :keyword str event_hub_path: The path of the specific Event Hub to connect the client to.
-        :keyword bool network_tracing: Whether to output network trace logs to the logger. Default is `False`.
-        :keyword dict[str,Any] http_proxy: HTTP proxy settings. This must be a dictionary with the following
-         keys - 'proxy_hostname' (str value) and 'proxy_port' (int value).
-         Additionally the following keys may also be present - 'username', 'password'.
-        :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
-         The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
-        :keyword str user_agent: The user agent that needs to be appended to the built in user agent string.
-        :keyword int retry_total: The total number of attempts to redo the failed operation when an error happened.
-         Default value is 3.
-        :keyword transport_type: The type of transport protocol that will be used for communicating with
-         the Event Hubs service. Default is `TransportType.Amqp`.
-        :paramtype transport_type: ~azure.eventhub.TransportType
-        :keyword partition_manager:
-         stores the load balancing data and checkpoint data when receiving events
-         if partition_manager is specified. If it's None, this EventHubConsumerClient instance will receive
-         events without load balancing and checkpoint.
-        :paramtype partition_manager: ~azure.eventhub.PartitionManager
-        :keyword float load_balancing_interval:
-         When load balancing kicks in, this is the interval in seconds between two load balancing. Default is 10.
-        :rtype: ~azure.eventhub.EventHubConsumerClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
-                :start-after: [START create_eventhub_consumer_client_from_conn_str_sync]
-                :end-before: [END create_eventhub_consumer_client_from_conn_str_sync]
-                :language: python
-                :dedent: 4
-                :caption: Create a new instance of the EventHubConsumerClient from connection string.
-
-        """
-        return super(EventHubConsumerClient, cls).from_connection_string(conn_str, **kwargs)
 
     def receive(self, on_event, consumer_group, **kwargs):
         #  type: (Callable[[PartitionContext, List[EventData]], None], str, Any) -> None
@@ -213,21 +156,20 @@ class EventHubConsumerClient(ClientBase):
                 :caption: Receive events from the EventHub.
         """
         partition_id = kwargs.get("partition_id")
-
         with self._lock:
             error = None
-            if (consumer_group, '-1') in self._event_processors:
-                error = ValueError("This consumer client is already receiving events from all partitions for"
-                                   " consumer group {}. ".format(consumer_group))
+            if (consumer_group, ALL_PARTITIONS) in self._event_processors:
+                error = "This consumer client is already receiving events "
+                        "from all partitions for consumer group {}.".format(consumer_group)
             elif partition_id is None and any(x[0] == consumer_group for x in self._event_processors):
-                error = ValueError("This consumer client is already receiving events for consumer group {}. "
-                                   .format(consumer_group))
+                error = "This consumer client is already receiving events "
+                        "for consumer group {}.".format(consumer_group)
             elif (consumer_group, partition_id) in self._event_processors:
-                error = ValueError("This consumer is already receiving events from partition {} for consumer group {}. "
-                                   .format(partition_id, consumer_group))
+                error = "This consumer client is already receiving events "
+                        "from partition {} for consumer group {}. ".format(partition_id, consumer_group)
             if error:
                 log.warning(error)
-                raise error
+                raise ValueError(error)
 
             event_processor = EventProcessor(
                 self, consumer_group, on_event,
@@ -235,9 +177,16 @@ class EventHubConsumerClient(ClientBase):
                 polling_interval=self._load_balancing_interval,
                 **kwargs
             )
-            self._event_processors[(consumer_group, partition_id or "-1")] = event_processor
-
-        event_processor.start()
+            self._event_processors[(consumer_group, partition_id or ALL_PARTITIONS)] = event_processor
+        try:
+            event_processor.start()
+        finally:
+            event_processor.stop()
+            with self._lock:
+                try:
+                    del self._event_processors[(consumer_group, partition_id or ALL_PARTITIONS)]
+                except KeyError:
+                    pass
 
     def close(self):
         # type: () -> None
@@ -256,7 +205,7 @@ class EventHubConsumerClient(ClientBase):
 
         """
         with self._lock:
-            for _ in range(len(self._event_processors)):
-                _, ep = self._event_processors.popitem()
-                ep.stop()
-            super(EventHubConsumerClient, self).close()
+            for processor in self._event_processors.values():
+                processor.stop()
+            self._event_processors = {}
+        super(EventHubConsumerClient, self).close()

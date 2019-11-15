@@ -6,33 +6,18 @@ import asyncio
 import logging
 
 from uamqp import errors, compat  # type: ignore
-from ..error import EventHubError, EventDataSendError, \
-    EventDataError, ConnectError, ConnectionLostError, AuthenticationError
 
+from ..exceptions import (
+    _create_eventhub_exception
+    EventHubError,
+    EventDataSendError,
+    EventDataError,
+    ConnectError,
+    ConnectionLostError,
+    AuthenticationError
+)
 
 log = logging.getLogger(__name__)
-
-
-def _create_eventhub_exception(exception):
-    if isinstance(exception, errors.AuthenticationException):
-        error = AuthenticationError(str(exception), exception)
-    elif isinstance(exception, errors.VendorLinkDetach):
-        error = ConnectError(str(exception), exception)
-    elif isinstance(exception, errors.LinkDetach):
-        error = ConnectionLostError(str(exception), exception)
-    elif isinstance(exception, errors.ConnectionClose):
-        error = ConnectionLostError(str(exception), exception)
-    elif isinstance(exception, errors.MessageHandlerError):
-        error = ConnectionLostError(str(exception), exception)
-    elif isinstance(exception, errors.AMQPConnectionError):
-        error_type = AuthenticationError if str(exception).startswith("Unable to open authentication session") \
-            else ConnectError
-        error = error_type(str(exception), exception)
-    elif isinstance(exception, compat.TimeoutException):
-        error = ConnectionLostError(str(exception), exception)
-    else:
-        error = EventHubError(str(exception), exception)
-    return error
 
 
 async def _handle_exception(exception, closable):  # pylint:disable=too-many-branches, too-many-statements

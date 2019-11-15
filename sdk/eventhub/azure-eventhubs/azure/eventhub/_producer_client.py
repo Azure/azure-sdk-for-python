@@ -7,11 +7,17 @@ import threading
 
 from typing import Any, Union, TYPE_CHECKING, Iterable, List
 from uamqp import constants  # type:ignore
+
+from .exceptions import ConnectError, EventHubError
 from ._client_base import ClientBase
 from ._producer import EventHubProducer
-from .common import EventData, \
-    EventHubSharedKeyCredential, EventHubSASTokenCredential, EventDataBatch
-from .error import ConnectError
+from ._constants import ALL_PARTITIONS
+from ._common import (
+    EventData,
+    EventHubSharedKeyCredential,
+    EventHubSASTokenCredential,
+    EventDataBatch
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
@@ -59,21 +65,36 @@ class EventHubProducerClient(ClientBase):
         super(EventHubProducerClient, self).__init__(
             host=host, event_hub_path=event_hub_path, credential=credential,
             network_tracing=kwargs.get("logging_enable"), **kwargs)
-        self._producers = []  # type: List[EventHubProducer]
-        self._client_lock = threading.Lock()
-        self._producers_locks = []  # type: List[threading.Lock]
+        self._producers = {ALL_PARTITIONS: self._create_producer()}  # type: Dict[str, EventHubProducer]
         self._max_message_size_on_link = 0
         self._partition_ids = None
+        self._lock = threading.Lock()
 
-    def _init_locks_for_producers(self):
-        if not self._producers:
-            with self._client_lock:
-                if not self._producers:
-                    self._partition_ids = self.get_partition_ids()
-                    num_of_producers = len(self._partition_ids) + 1
-                    self._producers = [None] * num_of_producers
-                    for _ in range(num_of_producers):
-                        self._producers_locks.append(threading.Lock())
+    def _get_partitions(self):
+        if not self._partition_ids:
+            self._partition_ids = self.get_partition_ids()
+            for p_id in self._partition_ids:
+                self._producers[p_id] = None
+
+    def _get_max_mesage_size(self):
+        with self._lock:
+            if not self._max_message_size_on_link:
+                self._producers[ALL_PARTITIONS]._open_with_retry()
+                self._max_message_size_on_link = \
+                    self._producers[ALL_PARTITIONS]._handler.message_handler._link.peer_max_message_size \
+                    or constants.MAX_MESSAGE_LENGTH_BYTES
+
+    def _start_producer(self, partition_id, send_timeout):
+        with self._lock:
+            self._get_partitions()
+            if partition_id not in self._partition_ids and partition_id != ALL_PARTITIONS:
+                raise ConnectError("Invalid partition {} for the event hub {}".format(partition_id, self.eh_name))
+
+            if not self._producers[partition_id] or self._producers[partition_id].closed:
+                self._producers[partition_id] = self._create_producer(
+                    partition_id=partition_id,
+                    send_timeout=send_timeout
+                )
 
     def _create_producer(self, partition_id=None, send_timeout=None):
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
@@ -82,39 +103,6 @@ class EventHubProducerClient(ClientBase):
         handler = EventHubProducer(
             self, target, partition=partition_id, send_timeout=send_timeout)
         return handler
-
-    @classmethod
-    def from_connection_string(cls, conn_str, **kwargs):
-        # type: (str, Any) -> EventHubProducerClient
-        """
-        Create an EventHubProducerClient from a connection string.
-
-        :param str conn_str: The connection string of an eventhub.
-        :keyword str event_hub_path: The path of the specific Event Hub to connect the client to.
-        :keyword bool network_tracing: Whether to output network trace logs to the logger. Default is `False`.
-        :keyword dict[str,Any] http_proxy: HTTP proxy settings. This must be a dictionary with the following
-         keys - 'proxy_hostname' (str value) and 'proxy_port' (int value).
-         Additionally the following keys may also be present - 'username', 'password'.
-        :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
-         The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
-        :keyword str user_agent: The user agent that needs to be appended to the built in user agent string.
-        :keyword int retry_total: The total number of attempts to redo the failed operation when an error happened.
-         Default value is 3.
-        :keyword transport_type: The type of transport protocol that will be used for communicating with
-         the Event Hubs service. Default is `TransportType.Amqp`.
-        :paramtype transport_type: ~azure.eventhub.TransportType
-        :rtype: ~azure.eventhub.EventHubConsumerClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
-                :start-after: [START create_eventhub_producer_client_from_conn_str_sync]
-                :end-before: [END create_eventhub_producer_client_from_conn_str_sync]
-                :language: python
-                :dedent: 4
-                :caption: Create a new instance of the EventHubProducerClient from connection string.
-        """
-        return super(EventHubProducerClient, cls).from_connection_string(conn_str, **kwargs)
 
     def send(self, event_data, **kwargs):
         # type: (Union[EventData, EventDataBatch, Iterable[EventData]], Any) -> None
@@ -147,22 +135,13 @@ class EventHubProducerClient(ClientBase):
                 :caption: Sends event data
 
         """
-        partition_id = kwargs.pop("partition_id", None)
-
-        self._init_locks_for_producers()
-
-        if partition_id is not None and partition_id not in self._partition_ids:
-            raise ConnectError("Invalid partition {} for the event hub {}".format(partition_id, self.eh_name))
-
-        producer_index = int(partition_id) if partition_id is not None else -1
-        if self._producers[producer_index] is None or\
-                self._producers[producer_index]._closed:  # pylint:disable=protected-access
-            with self._producers_locks[producer_index]:
-                if self._producers[producer_index] is None:
-                    self._producers[producer_index] = self._create_producer(partition_id=partition_id)
-
-        with self._producers_locks[producer_index]:
-            self._producers[producer_index].send(event_data, **kwargs)
+        partition_id = kwargs.pop("partition_id", None) or ALL_PARTITIONS
+        send_timeout = kwargs.pop("timeout", None)
+        try:
+            self._producers[partition_id].send(event_data, **kwargs)
+        except (KeyError, AttributeError, EventHubError):
+            self._start_producer(partition_id)
+            self._producers[partition_id].send(event_data, **kwargs)
 
     def create_batch(self, max_size=None):
         # type:(int) -> EventDataBatch
@@ -185,15 +164,7 @@ class EventHubProducerClient(ClientBase):
         """
         # pylint: disable=protected-access
         if not self._max_message_size_on_link:
-            self._init_locks_for_producers()
-            with self._producers_locks[-1]:
-                if self._producers[-1] is None:
-                    self._producers[-1] = self._create_producer(partition_id=None)
-                    self._producers[-1]._open_with_retry()  # pylint: disable=protected-access
-            with self._client_lock:
-                self._max_message_size_on_link =\
-                    self._producers[-1]._handler.message_handler._link.peer_max_message_size \
-                    or constants.MAX_MESSAGE_LENGTH_BYTES
+            self._get_max_mesage_size()
 
         if max_size and max_size > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
@@ -218,7 +189,9 @@ class EventHubProducerClient(ClientBase):
                 :caption: Close down the client.
 
         """
-        for producer in self._producers:
-            if producer:
-                producer.close()
+        with self._lock:
+            for producer in self._producers:
+                if producer:
+                    producer.close()
+            self._producers = {}
         self._conn_manager.close_connection()

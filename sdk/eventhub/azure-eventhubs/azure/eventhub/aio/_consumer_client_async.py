@@ -2,12 +2,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+
+import asyncio
 import logging
 from typing import Any, Union, TYPE_CHECKING, Dict, Tuple
+
 from azure.eventhub import EventPosition, EventHubSharedKeyCredential, EventHubSASTokenCredential
-from .eventprocessor.event_processor import EventProcessor
+from ._eventprocessor.event_processor import EventProcessor
 from ._consumer_async import EventHubConsumer
 from ._client_base_async import ClientBaseAsync
+from .._constants import ALL_PARTITIONS
+
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
 
@@ -68,15 +73,14 @@ class EventHubConsumerClient(ClientBaseAsync):
 
     def __init__(self, host, event_hub_path, credential, **kwargs) -> None:
         # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
-        """"""
         self._partition_manager = kwargs.pop("partition_manager", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", 10)
         network_tracing = kwargs.pop("logging_enable", False)
         super(EventHubConsumerClient, self).__init__(
             host=host, event_hub_path=event_hub_path, credential=credential,
             network_tracing=network_tracing, **kwargs)
+        self._lock = asyncio.Lock()
         self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
-        self._closed = False
 
     def _create_consumer(
             self,
@@ -231,18 +235,18 @@ class EventHubConsumerClient(ClientBaseAsync):
         """
         async with self._lock:
             error = None
-            if (consumer_group, '-1') in self._event_processors:
-                error = ValueError("This consumer client is already receiving events from all partitions for"
-                                   " consumer group {}. ".format(consumer_group))
+            if (consumer_group, ALL_PARTITIONS) in self._event_processors:
+                error = "This consumer client is already receiving events "
+                        "from all partitions for consumer group {}. ".format(consumer_group))
             elif partition_id is None and any(x[0] == consumer_group for x in self._event_processors):
-                error = ValueError("This consumer client is already receiving events for consumer group {}. "
-                                   .format(consumer_group))
+                error = "This consumer client is already receiving events "
+                        "for consumer group {}. ".format(consumer_group))
             elif (consumer_group, partition_id) in self._event_processors:
-                error = ValueError("This consumer is already receiving events from partition {} for consumer group {}. "
-                                   .format(partition_id, consumer_group))
+                error = "This consumer client is already receiving events "
+                        "from partition {} for consumer group {}. ".format(partition_id, consumer_group))
             if error:
                 log.warning(error)
-                raise error
+                raise ValueError(error)
 
             event_processor = EventProcessor(
                 self, consumer_group, on_event,
@@ -257,19 +261,16 @@ class EventHubConsumerClient(ClientBaseAsync):
                 prefetch=prefetch,
                 track_last_enqueued_event_properties=track_last_enqueued_event_properties,
             )
-            if partition_id:
-                self._event_processors[(consumer_group, partition_id)] = event_processor
-            else:
-                self._event_processors[(consumer_group, "-1")] = event_processor
+            self._event_processors[(consumer_group, partition_id or ALL_PARTITIONS)] = event_processor
         try:
             await event_processor.start()
         finally:
             await event_processor.stop()
             async with self._lock:
-                if partition_id and (consumer_group, partition_id) in self._event_processors:
-                    del self._event_processors[(consumer_group, partition_id)]
-                elif partition_id is None and (consumer_group, '-1') in self._event_processors:
-                    del self._event_processors[(consumer_group, "-1")]
+                try:
+                    del self._event_processors[(consumer_group, partition_id or ALL_PARTITIONS)]
+                except KeyError:
+                    pass
 
     async def close(self):
         # type: () -> None
@@ -288,7 +289,7 @@ class EventHubConsumerClient(ClientBaseAsync):
 
         """
         async with self._lock:
-            for _ in range(len(self._event_processors)):
-                _, ep = self._event_processors.popitem()
-                await ep.stop()
+            for processor in self._event_processors.values():
+                await processor.stop()
+            self._event_processors = {}
             await super().close()

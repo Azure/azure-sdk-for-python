@@ -11,13 +11,22 @@ import datetime
 import functools
 from typing import Any, TYPE_CHECKING
 
-from uamqp import authentication, constants  # type: ignore
-from uamqp import Message, AMQPClientAsync  # type: ignore
+from uamqp import (
+    authentication,
+    constants,
+    errors,
+    compat,
+    Message,
+    AMQPClientAsync
+)
 
-from ..common import parse_sas_token, EventHubSharedKeyCredential, EventHubSASTokenCredential
-from .error_async import _handle_exception
+from .._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
 from .._client_base import ClientBase
+from .._utils import parse_sas_token
+from ..exceptions import EventHubError
+from .._constants import JWT_TOKEN_SCOPE, MGMT_OPERATION, MGMT_PARTITION_OPERATION
 from ._connection_manager_async import get_connection_manager
+from ._error_async import _handle_exception
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
@@ -31,7 +40,6 @@ class ClientBaseAsync(ClientBase):
         super(ClientBaseAsync, self).__init__(host=host, event_hub_path=event_hub_path,
                                               credential=credential, **kwargs)
         self._conn_manager = get_connection_manager(**kwargs)
-        self._lock = asyncio.Lock()
 
     async def __aenter__(self):
         return self
@@ -73,7 +81,7 @@ class ClientBaseAsync(ClientBase):
                 transport_type=transport_type)
 
         else:
-            get_jwt_token = functools.partial(self._credential.get_token, 'https://eventhubs.azure.net//.default')
+            get_jwt_token = functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE)
             return authentication.JWTTokenAsync(self._auth_uri, self._auth_uri,
                                                 get_jwt_token, http_proxy=http_proxy,
                                                 transport_type=transport_type)
@@ -132,7 +140,7 @@ class ClientBaseAsync(ClientBase):
         :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
         mgmt_msg = Message(application_properties={'name': self.eh_name})
-        response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:eventhub')
+        response = await self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
         output = {}
         eh_info = response.get_data()
         if eh_info:
@@ -172,7 +180,7 @@ class ClientBaseAsync(ClientBase):
         """
         mgmt_msg = Message(application_properties={'name': self.eh_name,
                                                    'partition': partition})
-        response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:partition')
+        response = await self._management_request(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
         partition_info = response.get_data()
         output = {}
         if partition_info:
@@ -189,3 +197,88 @@ class ClientBaseAsync(ClientBase):
     async def close(self):
         # type: () -> None
         await self._conn_manager.close_connection()
+
+
+class ConsumerProducerMixin(object):
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close()
+
+    def _check_closed(self):
+        if self.closed:
+            raise EventHubError("{} has been closed. Please create a new one to handle event data.".format(self._name))
+
+    def _create_handler(self):
+        pass
+
+    async def _open(self):
+        """
+        Open the EventHubConsumer using the supplied connection.
+
+        """
+        # pylint: disable=protected-access
+        if not self.running:
+            if self._handler:
+                await self._handler.close_async()
+            self._create_handler()
+            await self._handler.open_async(connection=await self._client._conn_manager.get_connection(
+                self._client._address.hostname,
+                self._client._create_auth()
+            ))
+            while not await self._handler.client_ready_async():
+                await asyncio.sleep(0.05)
+            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
+                                             or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
+            self.running = True
+
+    async def _close_handler(self):
+        if self._handler:
+            await self._handler.close_async()  # close the link (sharing connection) or connection (not sharing)
+        self.running = False
+
+    async def _close_connection(self):
+        await self._close_handler()
+        await self._client._conn_manager.reset_connection_if_broken()  # pylint:disable=protected-access
+
+    async def _handle_exception(self, exception):
+        if not self.running and isinstance(exception, compat.TimeoutException):
+            exception = errors.AuthenticationException("Authorization timeout.")
+            return await _handle_exception(exception, self)
+
+        return await _handle_exception(exception, self)
+
+    async def _do_retryable_operation(self, operation, timeout=100000, **kwargs):
+        # pylint:disable=protected-access
+        # timeout equals to 0 means no timeout, set the value to be a large number.
+        timeout_time = time.time() + (timeout if timeout else 100000)
+        retried_times = 0
+        last_exception = kwargs.pop('last_exception', None)
+        operation_need_param = kwargs.pop('operation_need_param', True)
+
+        while retried_times <= self._client._config.max_retries:
+            try:
+                if operation_need_param:
+                    return await operation(timeout_time=timeout_time, last_exception=last_exception, **kwargs)
+                return await operation()
+            except Exception as exception:  # pylint:disable=broad-except
+                last_exception = await self._handle_exception(exception)
+                await self._client._try_delay(retried_times=retried_times, last_exception=last_exception,
+                                              timeout_time=timeout_time, entity_name=self._name)
+                retried_times += 1
+
+        log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
+        raise last_exception
+
+    async def close(self):
+        # type: () -> None
+        """
+        Close down the handler. If the handler has already closed,
+        this will be a no op.
+        """
+        self.running = False
+        if self._handler:
+            await self._handler.close_async()
+        self.closed = True
