@@ -236,14 +236,14 @@ class EventHubConsumerClient(ClientBaseAsync):
         async with self._lock:
             error = None
             if (consumer_group, ALL_PARTITIONS) in self._event_processors:
-                error = "This consumer client is already receiving events "
-                        "from all partitions for consumer group {}. ".format(consumer_group))
+                error = ("This consumer client is already receiving events "
+                         "from all partitions for consumer group {}. ".format(consumer_group))
             elif partition_id is None and any(x[0] == consumer_group for x in self._event_processors):
-                error = "This consumer client is already receiving events "
-                        "for consumer group {}. ".format(consumer_group))
+                error = ("This consumer client is already receiving events "
+                         "for consumer group {}. ".format(consumer_group))
             elif (consumer_group, partition_id) in self._event_processors:
-                error = "This consumer client is already receiving events "
-                        "from partition {} for consumer group {}. ".format(partition_id, consumer_group))
+                error = ("This consumer client is already receiving events "
+                         "from partition {} for consumer group {}. ".format(partition_id, consumer_group))
             if error:
                 log.warning(error)
                 raise ValueError(error)
