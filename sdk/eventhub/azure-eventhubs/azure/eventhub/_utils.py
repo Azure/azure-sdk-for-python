@@ -40,7 +40,7 @@ except ImportError:
     TZ_UTC = UTC()  # type: ignore
 
 
-def utc_timestamp(timestamp):
+def utc_from_timestamp(timestamp):
     return datetime.datetime.fromtimestamp(timestamp, tz=TZ_UTC)
 
 
