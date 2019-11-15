@@ -7,7 +7,6 @@ from __future__ import unicode_literals
 import logging
 import asyncio
 import time
-import datetime
 import functools
 from typing import Any, TYPE_CHECKING
 
@@ -22,7 +21,7 @@ from uamqp import (
 
 from .._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
 from .._client_base import ClientBase
-from .._utils import parse_sas_token
+from .._utils import parse_sas_token, utc_timestamp
 from ..exceptions import EventHubError
 from .._constants import JWT_TOKEN_SCOPE, MGMT_OPERATION, MGMT_PARTITION_OPERATION
 from ._connection_manager_async import get_connection_manager
@@ -144,7 +143,7 @@ class ClientBaseAsync(ClientBase):
         eh_info = response.get_data()
         if eh_info:
             output['path'] = eh_info[b'name'].decode('utf-8')
-            output['created_at'] = datetime.datetime.utcfromtimestamp(float(eh_info[b'created_at']) / 1000)
+            output['created_at'] = utc_timestamp(float(eh_info[b'created_at']) / 1000)
             output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
         return output
 
@@ -188,8 +187,7 @@ class ClientBaseAsync(ClientBase):
             output['beginning_sequence_number'] = partition_info[b'begin_sequence_number']
             output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']
             output['last_enqueued_offset'] = partition_info[b'last_enqueued_offset'].decode('utf-8')
-            output['last_enqueued_time_utc'] = datetime.datetime.utcfromtimestamp(
-                float(partition_info[b'last_enqueued_time_utc'] / 1000))
+            output['last_enqueued_time_utc'] = utc_timestamp(float(partition_info[b'last_enqueued_time_utc'] / 1000))
             output['is_empty'] = partition_info[b'is_partition_empty']
         return output
 

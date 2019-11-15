@@ -13,7 +13,7 @@ import six
 from uamqp import BatchMessage, Message, constants  # type: ignore
 
 from .exceptions import EventDataError
-from ._utils import set_message_partition_key, trace_message
+from ._utils import set_message_partition_key, trace_message, utc_timestamp
 from ._constants import (
     PROP_SEQ_NUMBER,
     PROP_OFFSET,
@@ -103,10 +103,10 @@ class EventData(object):
             sequence_number = self.message.delivery_annotations.get(PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None)
             enqueued_time_stamp = self.message.delivery_annotations.get(PROP_LAST_ENQUEUED_TIME_UTC, None)
             if enqueued_time_stamp:
-                enqueued_time_stamp = datetime.datetime.utcfromtimestamp(float(enqueued_time_stamp)/1000)
+                enqueued_time_stamp = utc_timestamp(float(enqueued_time_stamp)/1000)
             retrieval_time_stamp = self.message.delivery_annotations.get(PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
             if retrieval_time_stamp:
-                retrieval_time_stamp = datetime.datetime.utcfromtimestamp(float(retrieval_time_stamp)/1000)
+                retrieval_time_stamp = utc_timestamp(float(retrieval_time_stamp)/1000)
             offset_bytes = self.message.delivery_annotations.get(PROP_LAST_ENQUEUED_OFFSET, None)
             offset = offset_bytes.decode('UTF-8') if offset_bytes else None
             self._last_enqueued_event_properties = {
@@ -149,7 +149,7 @@ class EventData(object):
         """
         timestamp = self.message.annotations.get(PROP_TIMESTAMP, None)
         if timestamp:
-            return datetime.datetime.utcfromtimestamp(float(timestamp)/1000)
+            return utc_timestamp(float(timestamp)/1000)
         return None
 
     @property

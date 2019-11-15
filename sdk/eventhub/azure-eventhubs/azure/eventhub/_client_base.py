@@ -5,7 +5,6 @@
 from __future__ import unicode_literals
 
 import logging
-import datetime
 import uuid
 import time
 import functools
@@ -27,7 +26,7 @@ from uamqp import (
 
 from .exceptions import _handle_exception, EventHubError
 from ._configuration import Configuration
-from ._utils import parse_sas_token
+from ._utils import parse_sas_token, utc_timestamp
 from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
 from ._connection_manager import get_connection_manager
 from ._constants import (
@@ -77,7 +76,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
         expiry = time.time() + 3600  # Default to 1 hour.
     encoded_uri = quote_plus(uri)
     ttl = int(expiry)
-    sign_key = '%s\n%d' % (encoded_uri, ttl)
+    sign_key = '{}\n{}'.format(encoded_uri, ttl)
     signature = b64encode(HMAC(b64decode(key), sign_key.encode('utf-8'), sha256).digest())
     result = {
         'sr': uri,
@@ -243,7 +242,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         eh_info = response.get_data()
         if eh_info:
             output['path'] = eh_info[b'name'].decode('utf-8')
-            output['created_at'] = datetime.datetime.utcfromtimestamp(float(eh_info[b'created_at']) / 1000)
+            output['created_at'] = utc_timestamp(float(eh_info[b'created_at']) / 1000)
             output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
         return output
 
@@ -287,8 +286,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             output['beginning_sequence_number'] = partition_info[b'begin_sequence_number']
             output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']
             output['last_enqueued_offset'] = partition_info[b'last_enqueued_offset'].decode('utf-8')
-            output['last_enqueued_time_utc'] = datetime.datetime.utcfromtimestamp(
-                float(partition_info[b'last_enqueued_time_utc'] / 1000))
+            output['last_enqueued_time_utc'] = utc_timestamp(float(partition_info[b'last_enqueued_time_utc'] / 1000))
             output['is_empty'] = partition_info[b'is_partition_empty']
         return output
 
