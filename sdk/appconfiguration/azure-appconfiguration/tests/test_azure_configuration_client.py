@@ -3,8 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from .app_config_test_base import *
-
+from _shared.app_config_test_base import *
 
 class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
     def __init__(self, method_name):
