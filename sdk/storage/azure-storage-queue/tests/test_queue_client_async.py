@@ -470,6 +470,17 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
         custom_headers = {'User-Agent': 'customer_user_agent'}
         await service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
 
+    @GlobalStorageAccountPreparer()
+    def test_closing_pipeline_client(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        for client, url in SERVICES.items():
+            # Act
+            service = client(
+                self.account_url(storage_account.name, "queue"), credential=storage_account_key, queue_name='queue')
+
+            # Assert
+            exists = hasattr(service, 'close')
+            self.assertTrue(exists)
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
