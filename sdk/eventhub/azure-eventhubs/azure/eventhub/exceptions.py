@@ -90,41 +90,32 @@ class EventHubError(Exception):
             self.details = details
 
 
-class ConnectionLostError(EventHubError):
-    """Connection to event hub is lost. SDK will retry. So this shouldn't happen.
+class ClientClosedError(EventHubError):
+    """The Client has been closed and is unable to process further events."""
 
-    """
+
+class ConnectionLostError(EventHubError):
+    """Connection to event hub is lost. SDK will retry. So this shouldn't happen."""
 
 
 class ConnectError(EventHubError):
-    """Fail to connect to event hubs
-
-    """
+    """Fail to connect to event hubs."""
 
 
 class AuthenticationError(ConnectError):
-    """Fail to connect to event hubs because of authentication problem
-
-
-    """
+    """Fail to connect to event hubs because of authentication problem."""
 
 
 class EventDataError(EventHubError):
-    """Problematic event data so the send will fail at client side
-
-    """
+    """Problematic event data so the send will fail at client side."""
 
 
 class EventDataSendError(EventHubError):
-    """Service returns error while an event data is being sent
-
-    """
+    """Service returns error while an event data is being sent."""
 
 
 class OperationTimeoutError(EventHubError):
-    """Operation times out
-
-    """
+    """Operation times out."""
 
 
 def _create_eventhub_exception(exception):

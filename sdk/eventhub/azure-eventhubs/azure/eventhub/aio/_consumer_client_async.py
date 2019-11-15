@@ -116,7 +116,8 @@ class EventHubConsumerClient(ClientBaseAsync):
                                retry_total: int = 3,
                                transport_type=None,
                                partition_manager=None,
-                               load_balancing_interval: float = 10
+                               load_balancing_interval: float = 10,
+                               **kwargs
                                ) -> 'EventHubConsumerClient':
         # pylint: disable=arguments-differ
         """
@@ -165,7 +166,8 @@ class EventHubConsumerClient(ClientBaseAsync):
             retry_total=retry_total,
             transport_type=transport_type,
             partition_manager=partition_manager,
-            load_balancing_interval=load_balancing_interval
+            load_balancing_interval=load_balancing_interval,
+            **kwargs
         )
 
     async def receive(

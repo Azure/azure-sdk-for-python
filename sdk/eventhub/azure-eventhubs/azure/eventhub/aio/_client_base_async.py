@@ -22,7 +22,7 @@ from uamqp import (
 from .._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
 from .._client_base import ClientBase
 from .._utils import parse_sas_token, utc_timestamp
-from ..exceptions import EventHubError
+from ..exceptions import ClientClosedError
 from .._constants import JWT_TOKEN_SCOPE, MGMT_OPERATION, MGMT_PARTITION_OPERATION
 from ._connection_manager_async import get_connection_manager
 from ._error_async import _handle_exception
@@ -119,10 +119,11 @@ class ClientBaseAsync(ClientBase):
                 last_exception = await _handle_exception(exception, self)
                 await self._try_delay(retried_times=retried_times, last_exception=last_exception)
                 retried_times += 1
+                if retried_times > self._config.max_retries:
+                    _LOGGER.info("%r returns an exception %r", self._container_id, last_exception)
+                    raise last_exception
             finally:
                 await mgmt_client.close_async()
-        _LOGGER.info("%r returns an exception %r", self._container_id, last_exception)  # pylint:disable=specify-parameter-names-in-call
-        raise last_exception
 
     async def get_properties(self):
         # type:() -> Dict[str, Any]
@@ -206,7 +207,7 @@ class ConsumerProducerMixin(object):
 
     def _check_closed(self):
         if self.closed:
-            raise EventHubError("{} has been closed. Please create a new one to handle event data.".format(self._name))
+            raise ClientClosedError("{} has been closed. Please create a new one to handle event data.".format(self._name))
 
     async def _open(self):
         """
@@ -272,7 +273,5 @@ class ConsumerProducerMixin(object):
         Close down the handler. If the handler has already closed,
         this will be a no op.
         """
-        self.running = False
-        if self._handler:
-            await self._handler.close_async()
+        await self._close_handler()
         self.closed = True

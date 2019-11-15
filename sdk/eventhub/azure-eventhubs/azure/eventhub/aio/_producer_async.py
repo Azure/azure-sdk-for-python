@@ -95,7 +95,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             self._target,
             auth=self._client._create_auth(),  # pylint:disable=protected-access
             debug=self._client._config.network_tracing,  # pylint:disable=protected-access
-            msg_timeout=self._timeout,
+            msg_timeout=self._timeout * 1000,
             error_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
             client_name=self._name,

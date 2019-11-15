@@ -40,7 +40,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
     Please use the method `create_consumer` on `EventHubClient` for creating `EventHubConsumer`.
     """
-    _timeout = 0
 
     def __init__(self, client, source, **kwargs):
         """
@@ -89,6 +88,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._reconnect_backoff = 1
         self._link_properties = {}
         self._error = None
+        self._timeout = 0
         partition = self._source.split('/')[-1]
         self._partition = partition
         self._name = "EHConsumer-{}-partition{}".format(uuid.uuid4(), partition)

@@ -120,7 +120,8 @@ class EventHubProducerClient(ClientBaseAsync):
             auth_timeout: float = 60,
             user_agent: str = None,
             retry_total: int = 3,
-            transport_type=None):
+            transport_type=None,
+            **kwargs):
         # type: (str, Any) -> EventHubProducerClient
         # pylint: disable=arguments-differ
         """
@@ -140,7 +141,7 @@ class EventHubProducerClient(ClientBaseAsync):
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
-        :rtype: ~azure.eventhub.aio.EventHubConsumerClient
+        :rtype: ~azure.eventhub.aio.EventHubProducerClient
 
         .. admonition:: Example:
 
@@ -159,7 +160,8 @@ class EventHubProducerClient(ClientBaseAsync):
             auth_timeout=auth_timeout,
             user_agent=user_agent,
             retry_total=retry_total,
-            transport_type=transport_type
+            transport_type=transport_type,
+            **kwargs
         )
 
     async def send(self, event_data,

@@ -64,18 +64,25 @@ class EventData(object):
         self.message.application_properties = {}
 
     def __str__(self):
+        try:
+            body = self.body_as_str()
+        except:  # pylint: disable=broad-except
+            body = "<read-error>"
         message_as_dict = {
-            'body': self.body_as_str(),
+            'body': body,
             'application_properties': str(self.application_properties)
         }
-        if self.sequence_number:
-            message_as_dict['sequence_number'] = str(self.sequence_number)
-        if self.offset:
-            message_as_dict['offset'] = str(self.offset)
-        if self.enqueued_time:
-            message_as_dict['enqueued_time'] = str(self.enqueued_time)
-        if self.partition_key:
-            message_as_dict['partition_key'] = str(self.partition_key)
+        try:
+            if self.sequence_number:
+                message_as_dict['sequence_number'] = str(self.sequence_number)
+            if self.offset:
+                message_as_dict['offset'] = str(self.offset)
+            if self.enqueued_time:
+                message_as_dict['enqueued_time'] = str(self.enqueued_time)
+            if self.partition_key:
+                message_as_dict['partition_key'] = str(self.partition_key)
+        except:  # pylint: disable=broad-except
+            pass
         return str(message_as_dict)
 
     @classmethod

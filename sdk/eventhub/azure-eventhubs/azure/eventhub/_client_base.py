@@ -25,7 +25,7 @@ from uamqp import (
     compat
 )
 
-from .exceptions import _handle_exception, EventHubError
+from .exceptions import _handle_exception, ClientClosedError
 from ._configuration import Configuration
 from ._utils import parse_sas_token, utc_timestamp
 from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
@@ -61,7 +61,9 @@ def _parse_conn_str(conn_str):
         elif key.lower() == 'entitypath':
             entity_path = value
     if not all([endpoint, shared_access_key_name, shared_access_key]):
-        raise ValueError("Invalid connection string")
+        raise ValueError(
+            "Invalid connection string. Should be in the format: "
+            "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>")
     return endpoint, shared_access_key_name, shared_access_key, entity_path
 
 
@@ -209,10 +211,11 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 last_exception = _handle_exception(exception, self)
                 self._try_delay(retried_times=retried_times, last_exception=last_exception)
                 retried_times += 1
+                if retried_times > self._config.max_retries:
+                    _LOGGER.info("%r returns an exception %r", self._container_id, last_exception)
+                    raise last_exception
             finally:
                 mgmt_client.close()
-        _LOGGER.info("%r returns an exception %r", self._container_id, last_exception)  # pylint:disable=specify-parameter-names-in-call
-        raise last_exception
 
     def _add_span_request_attributes(self, span):
         span.add_attribute("component", "eventhubs")
@@ -301,7 +304,7 @@ class ConsumerProducerMixin(object):
 
     def _check_closed(self):
         if self.closed:
-            raise EventHubError("{} has been closed. Please create a new one to handle event data.".format(self._name))
+            raise ClientClosedError("{} has been closed. Please create a new one to handle event data.".format(self._name))
 
     def _open(self):
         """Open the EventHubConsumer/EventHubProducer using the supplied connection.
@@ -364,7 +367,5 @@ class ConsumerProducerMixin(object):
         Close down the handler. If the handler has already closed,
         this will be a no op.
         """
-        self.running = False
-        if self._handler:
-            self._handler.close()  # this will close link if sharing connection. Otherwise close connection
+        self._close_handler()
         self.closed = True
