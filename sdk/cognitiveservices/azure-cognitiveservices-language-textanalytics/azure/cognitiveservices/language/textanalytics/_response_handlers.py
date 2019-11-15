@@ -107,7 +107,7 @@ def _validate_single_input(text, hint, hint_value):
     :param str hint_value: The user passed country_hint or language
     :return: A LanguageInput or MultiLanguageInput
     """
-    if isinstance(text, six.text_type):
+    if isinstance(text, six.string_types):
         return [{"id": "0", "text": text, hint: hint_value}]
     else:
         raise TypeError("Text parameter must be string.")

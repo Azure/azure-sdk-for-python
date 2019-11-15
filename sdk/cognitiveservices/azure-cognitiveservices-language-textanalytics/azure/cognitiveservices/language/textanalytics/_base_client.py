@@ -34,7 +34,7 @@ class TextAnalyticsClientBase(object):
             credential_policy = BearerTokenCredentialPolicy(
                 credentials, "https://cognitiveservices.azure.com/.default"
             )
-        elif isinstance(credentials, six.text_type):
+        elif isinstance(credentials, six.string_types):
             credential_policy = CognitiveServicesCredentialPolicy(credentials, **kwargs)
         elif credentials is not None:
             raise TypeError("Unsupported credential: {}".format(credentials))
