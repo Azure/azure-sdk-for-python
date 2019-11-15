@@ -62,6 +62,7 @@ def test_receive_with_event_position_sync(connstr_senders, position, inclusive, 
     on_event.event_position = None
     connection_str, senders = connstr_senders
     senders[0].send(EventData(b"Inclusive"))
+    senders[1].send(EventData(b"Inclusive"))
     client = EventHubConsumerClient.from_connection_string(connection_str)
     with client:
         thread = threading.Thread(target=client.receive, args=(on_event, "$default"),
@@ -73,6 +74,7 @@ def test_receive_with_event_position_sync(connstr_senders, position, inclusive, 
         assert on_event.event_position is not None
     thread.join()
     senders[0].send(EventData(expected_result))
+    senders[1].send(EventData(expected_result))
     client2 = EventHubConsumerClient.from_connection_string(connection_str)
     with client2:
         thread = threading.Thread(target=client2.receive, args=(on_event, "$default"),
