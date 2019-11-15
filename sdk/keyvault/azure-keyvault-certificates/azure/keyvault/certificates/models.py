@@ -607,9 +607,9 @@ class CertificatePolicy(object):
         self._lifetime_actions = kwargs.pop("lifetime_actions", None)
         self._certificate_type = kwargs.pop("certificate_type", None)
         self._certificate_transparency = kwargs.pop("certificate_transparency", None)
-        self._san_emails = kwargs.pop("san_emails", None) else None
-        self._san_dns_names = kwargs.pop("san_dns_names", None) else None
-        self._san_upns = kwargs.pop("san_upns", None) else None
+        self._san_emails = kwargs.pop("san_emails", None) or None
+        self._san_dns_names = kwargs.pop("san_dns_names", None) or None
+        self._san_upns = kwargs.pop("san_upns", None) or None
 
         if not self._san_emails and not self._san_upns and not self._san_dns_names and not self._subject_name:
             raise ValueError("You need to set either subject_name or one of the subject alternative names " +
