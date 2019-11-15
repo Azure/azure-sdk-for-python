@@ -1,20 +1,12 @@
 # --------------------------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
-# -----------------------------------------------------------------------------------
-
-from contextlib import contextmanager
-from typing import Dict, Type
+# --------------------------------------------------------------------------------------------
 import uuid
 import logging
 import time
 import threading
 from functools import partial
-
-from uamqp.compat import queue  # type: ignore
-
-from azure.core.tracing import SpanKind  # type: ignore
-from azure.core.settings import settings  # type: ignore
 
 from azure.eventhub import EventPosition
 from .partition_context import PartitionContext
@@ -125,7 +117,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         with self._context(event):
             self._handle_callback([self._event_handler, partition_context, event])
 
-    def _start(self):
+    def _load_balancing(self):
         """Start the EventProcessor.
 
         The EventProcessor will try to claim and balance partition ownership with other `EventProcessor`
@@ -191,7 +183,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
 
         log.info("EventProcessor %r is being started", self._id)
         self._running = True
-        thread = threading.Thread(target=self._start)
+        thread = threading.Thread(target=self._load_balancing)
         thread.daemon = True
         thread.start()
 
@@ -203,7 +195,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
 
                 try:
                     consumer.receive()
-                except Exception as error:
+                except Exception as error:  # pylint:disable=broad-except
                     log.warning(
                         "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                         " has met an error. The exception is %r.",

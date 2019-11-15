@@ -2,17 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
-
-from contextlib import contextmanager
-from typing import Dict, Type, Callable, List, Any
+from typing import Dict, Callable, List, Any
 import uuid
 import asyncio
 import logging
 from functools import partial
-
-
-from azure.core.tracing import SpanKind  # type: ignore
-from azure.core.settings import settings  # type: ignore
 
 from azure.eventhub import EventPosition, EventData, EventHubError
 from ..._eventprocessor.common import CloseReason
@@ -141,9 +135,9 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         with self._context(event):
             try:
                 await self._event_handler(partition_context, event)
-            except asyncio.CancelledError:
+            except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise
-            except Exception as error:
+            except Exception as error:  # pylint:disable=broad-except
                 await self._process_error(partition_context, error)
 
     async def _receive(self, partition_id, checkpoint=None):  # pylint: disable=too-many-statements
@@ -194,7 +188,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 except EventHubError as eh_error:
                     await self._process_error(partition_context, eh_error)
                     break
-                except Exception as error:
+                except Exception as error:  # pylint:disable=broad-except
                     await self._process_error(partition_context, error)
         finally:
             await self._consumers[partition_id].close()

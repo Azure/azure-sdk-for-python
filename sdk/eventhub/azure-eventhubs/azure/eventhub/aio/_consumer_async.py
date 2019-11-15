@@ -5,7 +5,6 @@
 import asyncio
 import uuid
 import logging
-from typing import List, Any
 import time
 from distutils.version import StrictVersion
 
@@ -15,7 +14,7 @@ from uamqp import ReceiveClientAsync, Source  # type: ignore
 from uamqp.compat import queue
 
 from ..common import EventData, EventPosition
-from ..error import _error_handler, EventHubError
+from ..error import _error_handler
 from ._consumer_producer_mixin_async import ConsumerProducerMixin
 
 log = logging.getLogger(__name__)
@@ -137,8 +136,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             loop=self._loop)
         self._messages_iter = None
 
-        self._handler._streaming_receive = True
-        self._handler._message_received_callback = self._message_received
+        self._handler._streaming_receive = True  # pylint:disable=protected-access
+        self._handler._message_received_callback = self._message_received  # pylint:disable=protected-access
 
     async def _open_with_retry(self):
         return await self._do_retryable_operation(self._open, operation_need_param=False)
@@ -198,12 +197,12 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                     await self._on_event_received(event_data)
                     self._event_queue.task_done()
                 return
-            except asyncio.CancelledError:
+            except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise
             except uamqp.errors.LinkDetach as ld_error:
                 if ld_error.condition == uamqp.constants.ErrorCodes.LinkStolen:
                     raise await self._handle_exception(ld_error)
-            except Exception as exception:
+            except Exception as exception:  # pylint: disable=broad-except
                 if self._last_received_event:
                     self._offset = EventPosition(self._last_received_event.offset)
                 last_exception = await self._handle_exception(exception)

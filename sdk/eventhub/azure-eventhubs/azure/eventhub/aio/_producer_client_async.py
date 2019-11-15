@@ -89,16 +89,16 @@ class EventHubProducerClient(ClientBaseAsync):
         return handler
 
     @classmethod
-    def from_connection_string(cls, conn_str: str,
-                               *,
-                               event_hub_path: str = None,
-                               logging_enable: bool = False,
-                               http_proxy: dict = None,
-                               auth_timeout: float = 60,
-                               user_agent: str = None,
-                               retry_total: int = 3,
-                               transport_type=None,
-                               ):
+    def from_connection_string(
+            cls, conn_str: str,
+            *,
+            event_hub_path: str = None,
+            logging_enable: bool = False,
+            http_proxy: dict = None,
+            auth_timeout: float = 60,
+            user_agent: str = None,
+            retry_total: int = 3,
+            transport_type=None):
         # type: (str, Any) -> EventHubProducerClient
         # pylint: disable=arguments-differ
         """
