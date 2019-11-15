@@ -750,7 +750,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint is required.
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
      auditing storage account. If state is Enabled and storageEndpoint is
@@ -843,6 +843,11 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
      or [Diagnostic Settings
      PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
     :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
     """
 
     _validation = {
@@ -866,9 +871,10 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
     }
 
-    def __init__(self, *, state, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, is_azure_monitor_target_enabled: bool=None, **kwargs) -> None:
+    def __init__(self, *, state, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, is_azure_monitor_target_enabled: bool=None, queue_delay_ms: int=None, **kwargs) -> None:
         super(DatabaseBlobAuditingPolicy, self).__init__(**kwargs)
         self.kind = None
         self.state = state
@@ -879,6 +885,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         self.storage_account_subscription_id = storage_account_subscription_id
         self.is_storage_secondary_key_in_use = is_storage_secondary_key_in_use
         self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled
+        self.queue_delay_ms = queue_delay_ms
 
 
 class DatabaseOperation(ProxyResource):
@@ -1372,9 +1379,9 @@ class DatabaseVulnerabilityAssessment(ProxyResource):
      is required if server level vulnerability assessment policy doesn't set
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
@@ -2594,7 +2601,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint is required.
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
      auditing storage account. If state is Enabled and storageEndpoint is
@@ -2687,6 +2694,11 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
      or [Diagnostic Settings
      PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
     :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
     """
 
     _validation = {
@@ -2709,9 +2721,10 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
         'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
     }
 
-    def __init__(self, *, state, predicate_expression: str=None, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, is_azure_monitor_target_enabled: bool=None, **kwargs) -> None:
+    def __init__(self, *, state, predicate_expression: str=None, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, is_azure_monitor_target_enabled: bool=None, queue_delay_ms: int=None, **kwargs) -> None:
         super(ExtendedDatabaseBlobAuditingPolicy, self).__init__(**kwargs)
         self.predicate_expression = predicate_expression
         self.state = state
@@ -2722,6 +2735,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
         self.storage_account_subscription_id = storage_account_subscription_id
         self.is_storage_secondary_key_in_use = is_storage_secondary_key_in_use
         self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled
+        self.queue_delay_ms = queue_delay_ms
 
 
 class ExtendedServerBlobAuditingPolicy(ProxyResource):
@@ -2747,7 +2761,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint is required.
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
      auditing storage account. If state is Enabled and storageEndpoint is
@@ -2840,6 +2854,11 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      or [Diagnostic Settings
      PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
     :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
     """
 
     _validation = {
@@ -2862,9 +2881,10 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
         'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
     }
 
-    def __init__(self, *, state, predicate_expression: str=None, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, is_azure_monitor_target_enabled: bool=None, **kwargs) -> None:
+    def __init__(self, *, state, predicate_expression: str=None, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, is_azure_monitor_target_enabled: bool=None, queue_delay_ms: int=None, **kwargs) -> None:
         super(ExtendedServerBlobAuditingPolicy, self).__init__(**kwargs)
         self.predicate_expression = predicate_expression
         self.state = state
@@ -2875,6 +2895,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
         self.storage_account_subscription_id = storage_account_subscription_id
         self.is_storage_secondary_key_in_use = is_storage_secondary_key_in_use
         self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled
+        self.queue_delay_ms = queue_delay_ms
 
 
 class FailoverGroup(ProxyResource):
@@ -5490,9 +5511,9 @@ class ManagedInstanceVulnerabilityAssessment(ProxyResource):
      https://myStorage.blob.core.windows.net/VaScans/).
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
@@ -7174,7 +7195,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint is required.
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
      auditing storage account. If state is Enabled and storageEndpoint is
@@ -7267,6 +7288,11 @@ class ServerBlobAuditingPolicy(ProxyResource):
      or [Diagnostic Settings
      PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
     :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
     """
 
     _validation = {
@@ -7288,9 +7314,10 @@ class ServerBlobAuditingPolicy(ProxyResource):
         'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
     }
 
-    def __init__(self, *, state, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, is_azure_monitor_target_enabled: bool=None, **kwargs) -> None:
+    def __init__(self, *, state, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, is_azure_monitor_target_enabled: bool=None, queue_delay_ms: int=None, **kwargs) -> None:
         super(ServerBlobAuditingPolicy, self).__init__(**kwargs)
         self.state = state
         self.storage_endpoint = storage_endpoint
@@ -7300,6 +7327,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
         self.storage_account_subscription_id = storage_account_subscription_id
         self.is_storage_secondary_key_in_use = is_storage_secondary_key_in_use
         self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled
+        self.queue_delay_ms = queue_delay_ms
 
 
 class ServerCommunicationLink(ProxyResource):
@@ -7763,9 +7791,9 @@ class ServerVulnerabilityAssessment(ProxyResource):
      https://myStorage.blob.core.windows.net/VaScans/).
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
