@@ -39,7 +39,7 @@ jobs:
         cd eng/versioning
         pip install -r requirements.txt
         python find_invalid_versions.py --always-succeed
-      description: Find Invalid Versions
+      displayName: Find Invalid Versions
 
   - job: 'Test'
     variables:
@@ -92,7 +92,7 @@ jobs:
 
     steps:
     - template: ../steps/test-nightly.yml
-      parameters: 
+      parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         OSName: $(OSName)
