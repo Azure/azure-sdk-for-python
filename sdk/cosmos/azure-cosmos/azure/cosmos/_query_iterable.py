@@ -29,6 +29,7 @@ from azure.cosmos._execution_context import execution_dispatcher
 
 class QueryIterable(PageIterator):
     """Represents an iterable object of the query results.
+
     QueryIterable is a wrapper for query execution context.
     """
 
@@ -43,20 +44,17 @@ class QueryIterable(PageIterator):
         partition_key=None,
         continuation_token=None,
     ):
-        """
-        Instantiates a QueryIterable for non-client side partitioning queries.
-        _ProxyQueryExecutionContext will be used as the internal query execution context
+        """Instantiates a QueryIterable for non-client side partitioning queries.
 
-        :param CosmosClient client:
-            Instance of document client.
+        _ProxyQueryExecutionContext will be used as the internal query execution
+        context.
+
+        :param CosmosClient client: Instance of document client.
         :param (str or dict) query:
-        :param dict options:
-            The request options for the request.
+        :param dict options: The request options for the request.
         :param method fetch_function:
-        :param method resource_type:
-            The type of the resource being queried
-        :param str resource_link:
-            If this is a Document query/feed collection_link is required.
+        :param method resource_type: The type of the resource being queried
+        :param str resource_link: If this is a Document query/feed collection_link is required.
 
         Example of `fetch_function`:
 
@@ -89,15 +87,13 @@ class QueryIterable(PageIterator):
         return continuation, block
 
     def _fetch_next(self, *args):  # pylint: disable=unused-argument
-        """Returns a block of results with respecting retry policy.
+        """Return a block of results with respecting retry policy.
 
-        This method only exists for backward compatibility reasons. (Because QueryIterable
-        has exposed fetch_next_block api).
+        This method only exists for backward compatibility reasons. (Because
+        QueryIterable has exposed fetch_next_block api).
 
-        :return:
-            List of results.
-        :rtype:
-            list
+        :return: List of results.
+        :rtype: list
         """
         block = self._ex_context.fetch_next_block()
         if not block:

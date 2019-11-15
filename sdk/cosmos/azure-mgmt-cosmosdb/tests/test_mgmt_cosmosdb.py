@@ -17,12 +17,12 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtCosmosDBTest, self).setUp()
         self.client = self.create_mgmt_client(
-            azure.mgmt.cosmosdb.CosmosDB
+            azure.mgmt.cosmosdb.CosmosDBManagementClient
         )
 
     @ResourceGroupPreparer()
     def test_accounts_create(self, resource_group, location):
-        account_name = self.get_resource_name('pycosmosdbtst')
+        account_name = self.get_resource_name('pycosmosdbx1')
 
         self.assertFalse(self.client.database_accounts.check_name_exists(account_name))
 
@@ -43,7 +43,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_accounts_features(self, resource_group, location):
-        account_name = self.get_resource_name('pycosmosdbtest')
+        account_name = self.get_resource_name('pycosmosdbx2')
 
         if not self.is_playback():
             async_cosmosdb_create = self.client.database_accounts.create_or_update(
@@ -109,7 +109,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_accounts_delete(self, resource_group, location):
-        account_name = self.get_resource_name('pydocumentdbtst')
+        account_name = self.get_resource_name('pydocumentdbx3')
 
         if not self.is_playback():
             async_cosmosdb_create = self.client.database_accounts.create_or_update(
