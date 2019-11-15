@@ -5,6 +5,7 @@ import sys
 from azure.eventhub import EventData
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub._eventprocessor.local_partition_manager import InMemoryPartitionManager
+from azure.eventhub._constants import ALL_PARTITIONS
 
 
 @pytest.mark.liveTest
@@ -82,5 +83,5 @@ def test_receive_load_balancing(connstr_senders):
         worker1.start()
         worker2.start()
         time.sleep(10)
-        assert len(client1._event_processors[("$default", "-1")]._consumers) == 1
-        assert len(client2._event_processors[("$default", "-1")]._consumers) == 1
+        assert len(client1._event_processors[("$default", ALL_PARTITIONS)]._consumers) == 1
+        assert len(client2._event_processors[("$default", ALL_PARTITIONS)]._consumers) == 1

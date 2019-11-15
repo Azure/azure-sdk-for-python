@@ -3,6 +3,7 @@ import asyncio
 from azure.eventhub import EventData, EventPosition
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.aio._eventprocessor.local_partition_manager import InMemoryPartitionManager
+from azure.eventhub._constants import ALL_PARTITIONS
 
 
 @pytest.mark.liveTest
@@ -67,7 +68,7 @@ async def test_receive_load_balancing_async(connstr_senders):
         task2 = asyncio.ensure_future(
             client2.receive(on_event, consumer_group="$default", initial_event_position="-1"))
         await asyncio.sleep(10)
-        assert len(client1._event_processors[("$default", "-1")]._tasks) == 1
-        assert len(client2._event_processors[("$default", "-1")]._tasks) == 1
+        assert len(client1._event_processors[("$default", ALL_PARTITIONS)]._tasks) == 1
+        assert len(client2._event_processors[("$default", ALL_PARTITIONS)]._tasks) == 1
     task1.cancel()
     task2.cancel()
