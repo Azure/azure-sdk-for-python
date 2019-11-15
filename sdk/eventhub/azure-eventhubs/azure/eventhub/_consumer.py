@@ -22,7 +22,7 @@ from ._constants import (
 )
 
 
-log = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instance-attributes
@@ -159,5 +159,5 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 last_exception = self._handle_exception(exception)
                 retried_times += 1
 
-        log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
+        _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
         raise last_exception

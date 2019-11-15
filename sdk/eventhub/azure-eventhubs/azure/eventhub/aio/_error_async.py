@@ -14,7 +14,7 @@ from ..exceptions import (
     EventDataError
 )
 
-log = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 async def _handle_exception(exception, closable):  # pylint:disable=too-many-branches, too-many-statements
@@ -25,7 +25,7 @@ async def _handle_exception(exception, closable):  # pylint:disable=too-many-bra
     except AttributeError:
         name = closable._container_id  # pylint: disable=protected-access
     if isinstance(exception, KeyboardInterrupt):  # pylint:disable=no-else-raise
-        log.info("%r stops due to keyboard interrupt", name)
+        _LOGGER.info("%r stops due to keyboard interrupt", name)
         await closable.close()
         raise exception
     elif isinstance(exception, EventHubError):
@@ -39,11 +39,11 @@ async def _handle_exception(exception, closable):  # pylint:disable=too-many-bra
             errors.MessageReleased,
             errors.MessageContentTooLarge)
             ):
-        log.info("%r Event data error (%r)", name, exception)
+        _LOGGER.info("%r Event data error (%r)", name, exception)
         error = EventDataError(str(exception), exception)
         raise error
     elif isinstance(exception, errors.MessageException):
-        log.info("%r Event data send error (%r)", name, exception)
+        _LOGGER.info("%r Event data send error (%r)", name, exception)
         error = EventDataSendError(str(exception), exception)
         raise error
     else:

@@ -26,7 +26,7 @@ from ._constants import (
     PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC,
 )
 
-log = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 # event_data.encoded_size < 255, batch encode overhead is 5, >=256, overhead is 8 each
 _BATCH_MESSAGE_OVERHEAD_COST = [5, 8]
@@ -314,7 +314,7 @@ class EventDataBatch(object):
         :raise: :class:`ValueError`, when exceeding the size limit.
         """
         if event_data is None:
-            log.warning("event_data is None when calling EventDataBatch.try_add. Ignored")
+            _LOGGER.warning("event_data is None when calling EventDataBatch.try_add. Ignored")
             return
         if not isinstance(event_data, EventData):
             raise TypeError('event_data should be an EventData instance.')

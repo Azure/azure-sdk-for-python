@@ -9,7 +9,7 @@ from uamqp import errors, compat  # type: ignore
 
 from ._constants import NO_RETRY_ERRORS
 
-log = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 def _error_handler(error):
@@ -155,7 +155,7 @@ def _handle_exception(exception, closable):  # pylint:disable=too-many-branches,
     except AttributeError:  # closable is an client object
         name = closable._container_id  # pylint: disable=protected-access
     if isinstance(exception, KeyboardInterrupt):  # pylint:disable=no-else-raise
-        log.info("%r stops due to keyboard interrupt", name)
+        _LOGGER.info("%r stops due to keyboard interrupt", name)
         closable.close()
         raise exception
     elif isinstance(exception, EventHubError):
@@ -169,11 +169,11 @@ def _handle_exception(exception, closable):  # pylint:disable=too-many-branches,
             errors.MessageReleased,
             errors.MessageContentTooLarge)
             ):
-        log.info("%r Event data error (%r)", name, exception)
+        _LOGGER.info("%r Event data error (%r)", name, exception)
         error = EventDataError(str(exception), exception)
         raise error
     elif isinstance(exception, errors.MessageException):
-        log.info("%r Event data send error (%r)", name, exception)
+        _LOGGER.info("%r Event data send error (%r)", name, exception)
         error = EventDataSendError(str(exception), exception)
         raise error
     else:

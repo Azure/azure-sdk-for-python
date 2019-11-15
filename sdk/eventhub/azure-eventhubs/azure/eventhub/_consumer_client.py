@@ -16,7 +16,7 @@ from ._eventprocessor.partition_context import PartitionContext
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
 
-log = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 class EventHubConsumerClient(ClientBase):
@@ -168,7 +168,7 @@ class EventHubConsumerClient(ClientBase):
                 error = ("This consumer client is already receiving events "
                          "from partition {} for consumer group {}. ".format(partition_id, consumer_group))
             if error:
-                log.warning(error)
+                _LOGGER.warning(error)
                 raise ValueError(error)
 
             event_processor = EventProcessor(

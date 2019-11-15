@@ -16,7 +16,7 @@ from .._constants import ALL_PARTITIONS
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
 
-log = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 class EventHubConsumerClient(ClientBaseAsync):
@@ -245,7 +245,7 @@ class EventHubConsumerClient(ClientBaseAsync):
                 error = ("This consumer client is already receiving events "
                          "from partition {} for consumer group {}. ".format(partition_id, consumer_group))
             if error:
-                log.warning(error)
+                _LOGGER.warning(error)
                 raise ValueError(error)
 
             event_processor = EventProcessor(
@@ -289,7 +289,6 @@ class EventHubConsumerClient(ClientBaseAsync):
 
         """
         async with self._lock:
-            for processor in self._event_processors.values():
-                await processor.stop()
+            await asyncio.gather(*[p.stop() for p in self._event_processors.values()], return_exceptions=True)
             self._event_processors = {}
             await super().close()

@@ -40,7 +40,7 @@ from ._constants import (
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
 
-log = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 def _parse_conn_str(conn_str):
@@ -120,7 +120,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._config = Configuration(**kwargs)
         self._debug = self._config.network_tracing
         self._conn_manager = get_connection_manager(**kwargs)
-        log.info("%r: Created the Event Hub client", self._container_id)
+        _LOGGER.info("%r: Created the Event Hub client", self._container_id)
 
     def __enter__(self):
         return self
@@ -188,9 +188,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         if backoff <= self._config.backoff_max and (
                 timeout_time is None or time.time() + backoff <= timeout_time):  # pylint:disable=no-else-return
             time.sleep(backoff)
-            log.info("%r has an exception (%r). Retrying...", format(entity_name), last_exception)
+            _LOGGER.info("%r has an exception (%r). Retrying...", format(entity_name), last_exception)
         else:
-            log.info("%r operation has timed out. Last exception before timeout is (%r)",
+            _LOGGER.info("%r operation has timed out. Last exception before timeout is (%r)",
                      entity_name, last_exception)
             raise last_exception
 
@@ -216,7 +216,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 retried_times += 1
             finally:
                 mgmt_client.close()
-        log.info("%r returns an exception %r", self._container_id, last_exception)  # pylint:disable=specify-parameter-names-in-call
+        _LOGGER.info("%r returns an exception %r", self._container_id, last_exception)  # pylint:disable=specify-parameter-names-in-call
         raise last_exception
 
     def _add_span_request_attributes(self, span):
@@ -361,7 +361,7 @@ class ConsumerProducerMixin(object):
                                         timeout_time=timeout_time, entity_name=self._name)
                 retried_times += 1
 
-        log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
+        _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
         raise last_exception
 
     def close(self):

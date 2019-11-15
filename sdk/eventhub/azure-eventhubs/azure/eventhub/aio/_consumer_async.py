@@ -21,7 +21,7 @@ from .._constants import (
     RECEIVER_RUNTIME_METRIC_SYMBOL
 )
 
-log = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instance-attributes
@@ -153,7 +153,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 await self._open()
                 await self._handler.do_work_async()
 
-                while self._event_queue.qsize():
+                while not self._event_queue.empty():
                     event_data = self._event_queue.get()
                     await self._on_event_received(event_data)
                     self._event_queue.task_done()
@@ -171,5 +171,5 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 last_exception = await self._handle_exception(exception)
                 retried_times += 1
 
-        log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
+        _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
         raise last_exception

@@ -23,7 +23,7 @@ from ._utils import create_properties, set_message_partition_key, trace_message
 from ._constants import TIMEOUT_SYMBOL
 
 
-log = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 def _set_partition_key(event_datas, partition_key):
@@ -122,7 +122,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                     error = last_exception
                 else:
                     error = OperationTimeoutError("Send operation timed out")
-                log.info("%r send operation timed out. (%r)", self._name, error)
+                _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
                 raise error
             self._handler._msg_timeout = remaining_time * 1000  # pylint: disable=protected-access
 
