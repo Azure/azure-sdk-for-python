@@ -11,7 +11,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import InteractiveBrowserCredential
 from azure.identity._internal import AuthCodeRedirectServer
 import pytest
-from six.moves import urllib
+from six.moves import urllib, urllib_parse
 
 from helpers import build_aad_response, mock_response, Request, validating_transport
 
@@ -23,7 +23,7 @@ except ImportError:  # python < 3.3
 
 @patch("azure.identity._credentials.browser.webbrowser.open")
 def test_interactive_credential(mock_open):
-    mock_open.return_value = True  # the real webbrowser.open returns a bool
+    mock_open.side_effect = _validate_auth_request_url
     oauth_state = "state"
     client_id = "client-id"
     expected_refresh_token = "refresh-token"
@@ -171,3 +171,13 @@ def test_no_browser():
     )
     with pytest.raises(ClientAuthenticationError, match=r".*browser.*"):
         credential.get_token("scope")
+
+
+def _validate_auth_request_url(url):
+    parsed_url = urllib_parse.urlparse(url)
+    params = urllib_parse.parse_qs(parsed_url.query)
+    assert params.get("prompt") == ["select_account"], "Auth code request doesn't specify 'prompt=select_account'."
+
+    # when used as a Mock's side_effect, this method's return value is the Mock's return value
+    # (the real webbrowser.open returns a bool)
+    return True

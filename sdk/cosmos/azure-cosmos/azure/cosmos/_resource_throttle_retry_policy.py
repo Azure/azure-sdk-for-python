@@ -19,7 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for resource throttle retry policy implementation in the Azure Cosmos database service.
+"""Internal class for resource throttle retry policy implementation in the Azure
+Cosmos database service.
 """
 
 from . import http_constants
@@ -37,10 +38,7 @@ class ResourceThrottleRetryPolicy(object):
         """Returns true if should retry based on the passed-in exception.
 
         :param (exceptions.CosmosHttpResponseError instance) exception:
-
-        :rtype:
-            boolean
-
+        :rtype: boolean
         """
         if self.current_retry_attempt_count < self._max_retry_attempt_count:
             self.current_retry_attempt_count += 1
