@@ -49,7 +49,7 @@ def test_receive_with_invalid_hostname_sync(invalid_hostname):
 
 @pytest.mark.liveTest
 def test_send_with_invalid_key(live_eventhub):
-    conn_str = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
+    conn_str = live_eventhub["connection_str"].format(
         live_eventhub['hostname'],
         live_eventhub['key_name'],
         'invalid',

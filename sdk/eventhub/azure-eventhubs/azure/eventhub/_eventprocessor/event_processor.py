@@ -14,7 +14,7 @@ from .ownership_manager import OwnershipManager
 from .common import CloseReason
 from. _eventprocessor_mixin import EventProcessorMixin
 
-log = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-attributes
@@ -62,7 +62,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     self._consumers[partition_id].stop = True
 
         if to_cancel_partitions:
-            log.info("EventProcesor %r has cancelled partitions %r", self._id, to_cancel_partitions)
+            _LOGGER.info("EventProcesor %r has cancelled partitions %r", self._id, to_cancel_partitions)
 
     def _create_tasks_for_claimed_ownership(self, claimed_partitions, checkpoints=None):
         with self._lock:
@@ -103,7 +103,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             if self._error_handler and callback != self._error_handler:
                 self._handle_callback([self._error_handler, partition_context, exp])
             else:
-                log.warning(
+                _LOGGER.warning(
                     "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                     " has another error during running process_error(). The exception is %r.",
                     partition_context.owner_id,
@@ -136,14 +136,14 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     to_cancel_list = set(self._consumers.keys()) - set(claimed_partition_ids)
                     self._create_tasks_for_claimed_ownership(claimed_partition_ids, checkpoints)
                 else:
-                    log.info("EventProcessor %r hasn't claimed an ownership. It keeps claiming.", self._id)
+                    _LOGGER.info("EventProcessor %r hasn't claimed an ownership. It keeps claiming.", self._id)
                     to_cancel_list = set(self._consumers.keys())
                 if to_cancel_list:
                     self._cancel_tasks_for_partitions(to_cancel_list)
             except Exception as err:  # pylint:disable=broad-except
-                log.warning("An exception (%r) occurred during balancing and claiming ownership for "
-                            "eventhub %r consumer group %r. Retrying after %r seconds",
-                            err, self._eventhub_name, self._consumer_group_name, self._polling_interval)
+                _LOGGER.warning("An exception (%r) occurred during balancing and claiming ownership for "
+                                "eventhub %r consumer group %r. Retrying after %r seconds",
+                                err, self._eventhub_name, self._consumer_group_name, self._polling_interval)
                 # ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
                 # when there are load balancing and/or checkpointing (partition_manager isn't None).
                 # They're swallowed here to retry every self._polling_interval seconds.
@@ -163,7 +163,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         with self._lock:
             del self._consumers[partition_id]
 
-        log.info(
+        _LOGGER.info(
             "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
             " is being closed. Reason is: %r",
             self._partition_contexts[partition_id].owner_id,
@@ -178,10 +178,10 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
 
     def start(self):
         if self._running:
-            log.info("EventProcessor %r has already started.", self._id)
+            _LOGGER.info("EventProcessor %r has already started.", self._id)
             return
 
-        log.info("EventProcessor %r is being started", self._id)
+        _LOGGER.info("EventProcessor %r is being started", self._id)
         self._running = True
         thread = threading.Thread(target=self._load_balancing)
         thread.daemon = True
@@ -196,7 +196,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 try:
                     consumer.receive()
                 except Exception as error:  # pylint:disable=broad-except
-                    log.warning(
+                    _LOGGER.warning(
                         "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                         " has met an error. The exception is %r.",
                         self._partition_contexts[partition_id].owner_id,
@@ -226,8 +226,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
 
         """
         if not self._running:
-            log.info("EventProcessor %r has already been stopped.", self._id)
+            _LOGGER.info("EventProcessor %r has already been stopped.", self._id)
             return
 
         self._running = False
-        log.info("EventProcessor %r has been stopped.", self._id)
+        _LOGGER.info("EventProcessor %r has been stopped.", self._id)

@@ -6,8 +6,8 @@
 import logging
 from .partition_manager import PartitionManager
 
-
 _LOGGER = logging.getLogger(__name__)
+
 
 class PartitionContext(object):
     """Contains partition related context information for a PartitionProcessor instance to use.

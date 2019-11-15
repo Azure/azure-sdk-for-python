@@ -13,7 +13,7 @@ import six
 from uamqp import BatchMessage, Message, constants  # type: ignore
 
 from .exceptions import EventDataError
-from ._utils import set_message_partition_key, trace_message
+from ._utils import set_message_partition_key, trace_message, utc_timestamp
 from ._constants import (
     PROP_SEQ_NUMBER,
     PROP_OFFSET,
@@ -26,7 +26,7 @@ from ._constants import (
     PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC,
 )
 
-log = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 # event_data.encoded_size < 255, batch encode overhead is 5, >=256, overhead is 8 each
 _BATCH_MESSAGE_OVERHEAD_COST = [5, 8]
@@ -64,18 +64,25 @@ class EventData(object):
         self.message.application_properties = {}
 
     def __str__(self):
+        try:
+            body = self.body_as_str()
+        except:  # pylint: disable=bare-except
+            body = "<read-error>"
         message_as_dict = {
-            'body': self.body_as_str(),
+            'body': body,
             'application_properties': str(self.application_properties)
         }
-        if self.sequence_number:
-            message_as_dict['sequence_number'] = str(self.sequence_number)
-        if self.offset:
-            message_as_dict['offset'] = str(self.offset)
-        if self.enqueued_time:
-            message_as_dict['enqueued_time'] = str(self.enqueued_time)
-        if self.partition_key:
-            message_as_dict['partition_key'] = str(self.partition_key)
+        try:
+            if self.sequence_number:
+                message_as_dict['sequence_number'] = str(self.sequence_number)
+            if self.offset:
+                message_as_dict['offset'] = str(self.offset)
+            if self.enqueued_time:
+                message_as_dict['enqueued_time'] = str(self.enqueued_time)
+            if self.partition_key:
+                message_as_dict['partition_key'] = str(self.partition_key)
+        except:  # pylint: disable=bare-except
+            pass
         return str(message_as_dict)
 
     @classmethod
@@ -103,10 +110,10 @@ class EventData(object):
             sequence_number = self.message.delivery_annotations.get(PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None)
             enqueued_time_stamp = self.message.delivery_annotations.get(PROP_LAST_ENQUEUED_TIME_UTC, None)
             if enqueued_time_stamp:
-                enqueued_time_stamp = datetime.datetime.utcfromtimestamp(float(enqueued_time_stamp)/1000)
+                enqueued_time_stamp = utc_timestamp(float(enqueued_time_stamp)/1000)
             retrieval_time_stamp = self.message.delivery_annotations.get(PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
             if retrieval_time_stamp:
-                retrieval_time_stamp = datetime.datetime.utcfromtimestamp(float(retrieval_time_stamp)/1000)
+                retrieval_time_stamp = utc_timestamp(float(retrieval_time_stamp)/1000)
             offset_bytes = self.message.delivery_annotations.get(PROP_LAST_ENQUEUED_OFFSET, None)
             offset = offset_bytes.decode('UTF-8') if offset_bytes else None
             self._last_enqueued_event_properties = {
@@ -149,7 +156,7 @@ class EventData(object):
         """
         timestamp = self.message.annotations.get(PROP_TIMESTAMP, None)
         if timestamp:
-            return datetime.datetime.utcfromtimestamp(float(timestamp)/1000)
+            return utc_timestamp(float(timestamp)/1000)
         return None
 
     @property
@@ -314,7 +321,7 @@ class EventDataBatch(object):
         :raise: :class:`ValueError`, when exceeding the size limit.
         """
         if event_data is None:
-            log.warning("event_data is None when calling EventDataBatch.try_add. Ignored")
+            _LOGGER.warning("event_data is None when calling EventDataBatch.try_add. Ignored")
             return
         if not isinstance(event_data, EventData):
             raise TypeError('event_data should be an EventData instance.')

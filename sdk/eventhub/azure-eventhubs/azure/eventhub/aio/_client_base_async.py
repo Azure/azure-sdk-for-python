@@ -7,7 +7,6 @@ from __future__ import unicode_literals
 import logging
 import asyncio
 import time
-import datetime
 import functools
 from typing import Any, TYPE_CHECKING
 
@@ -22,8 +21,8 @@ from uamqp import (
 
 from .._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
 from .._client_base import ClientBase
-from .._utils import parse_sas_token
-from ..exceptions import EventHubError
+from .._utils import parse_sas_token, utc_timestamp
+from ..exceptions import ClientClosedError
 from .._constants import JWT_TOKEN_SCOPE, MGMT_OPERATION, MGMT_PARTITION_OPERATION
 from ._connection_manager_async import get_connection_manager
 from ._error_async import _handle_exception
@@ -31,7 +30,7 @@ from ._error_async import _handle_exception
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
 
-log = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 class ClientBaseAsync(ClientBase):
@@ -61,7 +60,7 @@ class ClientBaseAsync(ClientBase):
             password = self._credential.key
             if "@sas.root" in username:
                 return authentication.SASLPlain(
-                    self._host, username, password, http_proxy=http_proxy, transport_type=transport_type)
+                    self._address.hostname, username, password, http_proxy=http_proxy, transport_type=transport_type)
             return authentication.SASTokenAsync.from_shared_access_key(
                 self._auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy,
                 transport_type=transport_type)
@@ -94,9 +93,9 @@ class ClientBaseAsync(ClientBase):
         if backoff <= self._config.backoff_max and (
                 timeout_time is None or time.time() + backoff <= timeout_time):  # pylint:disable=no-else-return
             await asyncio.sleep(backoff)
-            log.info("%r has an exception (%r). Retrying...", format(entity_name), last_exception)
+            _LOGGER.info("%r has an exception (%r). Retrying...", format(entity_name), last_exception)
         else:
-            log.info("%r operation has timed out. Last exception before timeout is (%r)",
+            _LOGGER.info("%r operation has timed out. Last exception before timeout is (%r)",
                      entity_name, last_exception)
             raise last_exception
 
@@ -107,7 +106,7 @@ class ClientBaseAsync(ClientBase):
             mgmt_auth = self._create_auth()
             mgmt_client = AMQPClientAsync(self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing)
             try:
-                conn = await self._conn_manager.get_connection(self._host, mgmt_auth)
+                conn = await self._conn_manager.get_connection(self._address.hostname, mgmt_auth)
                 await mgmt_client.open_async(connection=conn)
                 response = await mgmt_client.mgmt_request_async(
                     mgmt_msg,
@@ -120,10 +119,11 @@ class ClientBaseAsync(ClientBase):
                 last_exception = await _handle_exception(exception, self)
                 await self._try_delay(retried_times=retried_times, last_exception=last_exception)
                 retried_times += 1
+                if retried_times > self._config.max_retries:
+                    _LOGGER.info("%r returns an exception %r", self._container_id, last_exception)
+                    raise last_exception
             finally:
                 await mgmt_client.close_async()
-        log.info("%r returns an exception %r", self._container_id, last_exception)  # pylint:disable=specify-parameter-names-in-call
-        raise last_exception
 
     async def get_properties(self):
         # type:() -> Dict[str, Any]
@@ -144,7 +144,7 @@ class ClientBaseAsync(ClientBase):
         eh_info = response.get_data()
         if eh_info:
             output['path'] = eh_info[b'name'].decode('utf-8')
-            output['created_at'] = datetime.datetime.utcfromtimestamp(float(eh_info[b'created_at']) / 1000)
+            output['created_at'] = utc_timestamp(float(eh_info[b'created_at']) / 1000)
             output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
         return output
 
@@ -188,8 +188,7 @@ class ClientBaseAsync(ClientBase):
             output['beginning_sequence_number'] = partition_info[b'begin_sequence_number']
             output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']
             output['last_enqueued_offset'] = partition_info[b'last_enqueued_offset'].decode('utf-8')
-            output['last_enqueued_time_utc'] = datetime.datetime.utcfromtimestamp(
-                float(partition_info[b'last_enqueued_time_utc'] / 1000))
+            output['last_enqueued_time_utc'] = utc_timestamp(float(partition_info[b'last_enqueued_time_utc'] / 1000))
             output['is_empty'] = partition_info[b'is_partition_empty']
         return output
 
@@ -208,7 +207,9 @@ class ConsumerProducerMixin(object):
 
     def _check_closed(self):
         if self.closed:
-            raise EventHubError("{} has been closed. Please create a new one to handle event data.".format(self._name))
+            raise ClientClosedError(
+                "{} has been closed. Please create a new one to handle event data.".format(self._name)
+            )
 
     async def _open(self):
         """
@@ -265,7 +266,7 @@ class ConsumerProducerMixin(object):
                                               timeout_time=timeout_time, entity_name=self._name)
                 retried_times += 1
 
-        log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
+        _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
         raise last_exception
 
     async def close(self):
@@ -274,7 +275,5 @@ class ConsumerProducerMixin(object):
         Close down the handler. If the handler has already closed,
         this will be a no op.
         """
-        self.running = False
-        if self._handler:
-            await self._handler.close_async()
+        await self._close_handler()
         self.closed = True

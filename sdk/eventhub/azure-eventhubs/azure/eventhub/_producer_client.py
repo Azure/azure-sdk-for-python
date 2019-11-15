@@ -22,7 +22,7 @@ from ._common import (
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
 
-log = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 class EventHubProducerClient(ClientBase):
@@ -104,6 +104,38 @@ class EventHubProducerClient(ClientBase):
         handler = EventHubProducer(
             self, target, partition=partition_id, send_timeout=send_timeout)
         return handler
+
+    @classmethod
+    def from_connection_string(cls, conn_str, **kwargs):
+        # type: (str, Any) -> EventHubProducerClient
+        """
+        Create an EventHubProducerClient from a connection string.
+        :param str conn_str: The connection string of an eventhub.
+        :keyword str event_hub_path: The path of the specific Event Hub to connect the client to.
+        :keyword bool network_tracing: Whether to output network trace logs to the logger. Default is `False`.
+        :keyword dict[str,Any] http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys - 'proxy_hostname' (str value) and 'proxy_port' (int value).
+         Additionally the following keys may also be present - 'username', 'password'.
+        :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
+         The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
+        :keyword str user_agent: The user agent that needs to be appended to the built in user agent string.
+        :keyword int retry_total: The total number of attempts to redo the failed operation when an error happened.
+         Default value is 3.
+        :keyword transport_type: The type of transport protocol that will be used for communicating with
+         the Event Hubs service. Default is `TransportType.Amqp`.
+        :paramtype transport_type: ~azure.eventhub.TransportType
+        :rtype: ~azure.eventhub.EventHubProducerClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_eventhub.py
+                :start-after: [START create_eventhub_producer_client_from_conn_str_sync]
+                :end-before: [END create_eventhub_producer_client_from_conn_str_sync]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the EventHubProducerClient from connection string.
+        """
+        return super(EventHubProducerClient, cls).from_connection_string(conn_str, **kwargs)
 
     def send(self, event_data, **kwargs):
         # type: (Union[EventData, EventDataBatch, Iterable[EventData]], Any) -> None

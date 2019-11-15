@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import sys
 import platform
+import datetime
 
 from uamqp import types  # type: ignore
 from uamqp.message import MessageHeader  # type: ignore
@@ -14,6 +15,33 @@ from azure.core.settings import settings # type: ignore
 
 from azure.eventhub import __version__
 from ._constants import PROP_PARTITION_KEY_AMQP_SYMBOL, MAX_USER_AGENT_LENGTH
+
+
+class UTC(datetime.tzinfo):
+    """Time Zone info for handling UTC"""
+
+    def utcoffset(self, dt):
+        """UTF offset for UTC is 0."""
+        return datetime.timedelta(0)
+
+    def tzname(self, dt):
+        """Timestamp representation."""
+        return "Z"
+
+    def dst(self, dt):
+        """No daylight saving for UTC."""
+        return datetime.timedelta(hours=1)
+
+
+try:
+    from datetime import timezone
+    TZ_UTC = timezone.utc  # type: ignore
+except ImportError:
+    TZ_UTC = UTC()  # type: ignore
+
+
+def utc_timestamp(timestamp):
+    return datetime.datetime.fromtimestamp(timestamp, tz=TZ_UTC)
 
 
 def create_properties(user_agent=None):

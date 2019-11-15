@@ -5,10 +5,10 @@
 from __future__ import unicode_literals
 
 import logging
-import datetime
 import uuid
 import time
 import functools
+import collections
 from typing import Any, TYPE_CHECKING
 try:
     from urlparse import urlparse  # type: ignore
@@ -25,9 +25,9 @@ from uamqp import (
     compat
 )
 
-from .exceptions import _handle_exception, EventHubError
+from .exceptions import _handle_exception, ClientClosedError
 from ._configuration import Configuration
-from ._utils import parse_sas_token
+from ._utils import parse_sas_token, utc_timestamp
 from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
 from ._connection_manager import get_connection_manager
 from ._constants import (
@@ -40,7 +40,7 @@ from ._constants import (
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
 
-log = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 def _parse_conn_str(conn_str):
@@ -61,7 +61,9 @@ def _parse_conn_str(conn_str):
         elif key.lower() == 'entitypath':
             entity_path = value
     if not all([endpoint, shared_access_key_name, shared_access_key]):
-        raise ValueError("Invalid connection string")
+        raise ValueError(
+            "Invalid connection string. Should be in the format: "
+            "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>")
     return endpoint, shared_access_key_name, shared_access_key, entity_path
 
 
@@ -77,7 +79,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
         expiry = time.time() + 3600  # Default to 1 hour.
     encoded_uri = quote_plus(uri)
     ttl = int(expiry)
-    sign_key = '%s\n%d' % (encoded_uri, ttl)
+    sign_key = '{}\n{}'.format(encoded_uri, ttl)
     signature = b64encode(HMAC(b64decode(key), sign_key.encode('utf-8'), sha256).digest())
     result = {
         'sr': uri,
@@ -98,29 +100,24 @@ def _build_uri(address, entity):
     return address
 
 
-class _Address(object):
-    def __init__(self, hostname=None, path=None):
-        self.hostname = hostname
-        self.path = path
+_Address = collections.namedtuple('Address', 'hostname path')
 
 
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, host, event_hub_path, credential, **kwargs):
         self.eh_name = event_hub_path
-        self._host = host
+        path = "/" + event_hub_path if event_hub_path else ""
+        self._address = _Address(hostname=host, path=path)
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
-        self._address = _Address()
-        self._address.hostname = host
-        self._address.path = "/" + event_hub_path if event_hub_path else ""
         self._credential = credential
         self._keep_alive = kwargs.get("keep_alive", 30)
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
-        self._mgmt_target = "amqps://{}/{}".format(self._host, self.eh_name)
+        self._mgmt_target = "amqps://{}/{}".format(self._address.hostname, self.eh_name)
         self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
         self._config = Configuration(**kwargs)
         self._debug = self._config.network_tracing
         self._conn_manager = get_connection_manager(**kwargs)
-        log.info("%r: Created the Event Hub client", self._container_id)
+        _LOGGER.info("%r: Created the Event Hub client", self._container_id)
 
     def __enter__(self):
         return self
@@ -155,7 +152,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             password = self._credential.key
             if "@sas.root" in username:
                 return authentication.SASLPlain(
-                    self._host, username, password, http_proxy=http_proxy, transport_type=transport_type)
+                    self._address.hostname, username, password, http_proxy=http_proxy, transport_type=transport_type)
             return authentication.SASTokenAuth.from_shared_access_key(
                 self._auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy,
                 transport_type=transport_type)
@@ -188,9 +185,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         if backoff <= self._config.backoff_max and (
                 timeout_time is None or time.time() + backoff <= timeout_time):  # pylint:disable=no-else-return
             time.sleep(backoff)
-            log.info("%r has an exception (%r). Retrying...", format(entity_name), last_exception)
+            _LOGGER.info("%r has an exception (%r). Retrying...", format(entity_name), last_exception)
         else:
-            log.info("%r operation has timed out. Last exception before timeout is (%r)",
+            _LOGGER.info("%r operation has timed out. Last exception before timeout is (%r)",
                      entity_name, last_exception)
             raise last_exception
 
@@ -201,7 +198,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             mgmt_auth = self._create_auth()
             mgmt_client = AMQPClient(self._mgmt_target)
             try:
-                conn = self._conn_manager.get_connection(self._host, mgmt_auth)  #pylint:disable=assignment-from-none
+                conn = self._conn_manager.get_connection(self._address.hostname, mgmt_auth)  #pylint:disable=assignment-from-none
                 mgmt_client.open(connection=conn)
                 response = mgmt_client.mgmt_request(
                     mgmt_msg,
@@ -214,10 +211,11 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 last_exception = _handle_exception(exception, self)
                 self._try_delay(retried_times=retried_times, last_exception=last_exception)
                 retried_times += 1
+                if retried_times > self._config.max_retries:
+                    _LOGGER.info("%r returns an exception %r", self._container_id, last_exception)
+                    raise last_exception
             finally:
                 mgmt_client.close()
-        log.info("%r returns an exception %r", self._container_id, last_exception)  # pylint:disable=specify-parameter-names-in-call
-        raise last_exception
 
     def _add_span_request_attributes(self, span):
         span.add_attribute("component", "eventhubs")
@@ -243,7 +241,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         eh_info = response.get_data()
         if eh_info:
             output['path'] = eh_info[b'name'].decode('utf-8')
-            output['created_at'] = datetime.datetime.utcfromtimestamp(float(eh_info[b'created_at']) / 1000)
+            output['created_at'] = utc_timestamp(float(eh_info[b'created_at']) / 1000)
             output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
         return output
 
@@ -287,8 +285,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             output['beginning_sequence_number'] = partition_info[b'begin_sequence_number']
             output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']
             output['last_enqueued_offset'] = partition_info[b'last_enqueued_offset'].decode('utf-8')
-            output['last_enqueued_time_utc'] = datetime.datetime.utcfromtimestamp(
-                float(partition_info[b'last_enqueued_time_utc'] / 1000))
+            output['last_enqueued_time_utc'] = utc_timestamp(float(partition_info[b'last_enqueued_time_utc'] / 1000))
             output['is_empty'] = partition_info[b'is_partition_empty']
         return output
 
@@ -307,7 +304,9 @@ class ConsumerProducerMixin(object):
 
     def _check_closed(self):
         if self.closed:
-            raise EventHubError("{} has been closed. Please create a new one to handle event data.".format(self._name))
+            raise ClientClosedError(
+                "{} has been closed. Please create a new one to handle event data.".format(self._name)
+            )
 
     def _open(self):
         """Open the EventHubConsumer/EventHubProducer using the supplied connection.
@@ -361,7 +360,7 @@ class ConsumerProducerMixin(object):
                                         timeout_time=timeout_time, entity_name=self._name)
                 retried_times += 1
 
-        log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
+        _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
         raise last_exception
 
     def close(self):
@@ -370,7 +369,5 @@ class ConsumerProducerMixin(object):
         Close down the handler. If the handler has already closed,
         this will be a no op.
         """
-        self.running = False
-        if self._handler:
-            self._handler.close()  # this will close link if sharing connection. Otherwise close connection
+        self._close_handler()
         self.closed = True
