@@ -9,7 +9,7 @@ from ..._constants import EnvironmentVariables, KnownAuthorities
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
-from .user import SharedTokenCacheCredential
+from .shared_cache import SharedTokenCacheCredential
 
 _LOGGER = logging.getLogger(__name__)
 

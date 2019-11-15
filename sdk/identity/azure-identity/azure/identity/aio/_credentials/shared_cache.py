@@ -5,18 +5,18 @@
 from typing import TYPE_CHECKING
 from azure.core.exceptions import ClientAuthenticationError
 
-from ... import SharedTokenCacheCredential as SyncSharedTokenCacheCredential
-from .._authn_client import AsyncAuthnClient
+from ..._constants import AZURE_CLI_CLIENT_ID
+from ..._credentials.shared_cache import SharedTokenCacheBase, NO_TOKEN
+from .._internal.aad_client import AadClient
 from .._internal.exception_wrapper import wrap_exceptions
 
 if TYPE_CHECKING:
     from typing import Any
     from azure.core.credentials import AccessToken
-    from azure.identity._authn_client import AuthnClientBase
-    import msal_extensions
+    from ..._internal.aad_client import AadClientBase
 
 
-class SharedTokenCacheCredential(SyncSharedTokenCacheCredential):
+class SharedTokenCacheCredential(SharedTokenCacheBase):
     """Authenticates using tokens in the local cache shared between Microsoft applications.
 
     :param str username:
@@ -45,8 +45,15 @@ class SharedTokenCacheCredential(SyncSharedTokenCacheCredential):
         if not self._client:
             raise ClientAuthenticationError(message="Shared token cache unavailable")
 
-        return await self._client.obtain_token_by_refresh_token(scopes, self._username)
+        account = self._get_account(self._username, self._tenant_id)
+
+        # try each refresh token, returning the first access token acquired
+        for refresh_token in self._get_refresh_tokens(scopes, account):
+            token = await self._client.obtain_token_by_refresh_token(refresh_token, scopes)
+            return token
+
+        raise ClientAuthenticationError(message=NO_TOKEN.format(account.get("username")))
 
     @staticmethod
-    def _get_auth_client(**kwargs: "Any") -> "AuthnClientBase":
-        return AsyncAuthnClient(tenant="common", **kwargs)
+    def _get_auth_client(**kwargs: "Any") -> "AadClientBase":
+        return AadClient(tenant_id="common", client_id=AZURE_CLI_CLIENT_ID, **kwargs)
