@@ -35,7 +35,7 @@ class AzureAppConfigurationClientTestBase(AzureMgmtTestCase):
     def __init__(self, method_name, client_class):
         super(AzureAppConfigurationClientTestBase, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
-        if False:
+        if self.is_playback():
             connection_str = fake_settings.APP_CONFIG_CONNECTION
         else:
             from . import app_config_test_settings_real as real_settings
