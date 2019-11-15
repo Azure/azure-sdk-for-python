@@ -29,13 +29,12 @@ class AttestationClient(SDKClient):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, credentials):
 
-        self.config = AttestationClientConfiguration(credentials, base_url)
+        self.config = AttestationClientConfiguration(credentials)
         super(AttestationClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

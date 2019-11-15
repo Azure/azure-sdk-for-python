@@ -21,16 +21,14 @@ class AttestationClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, credentials):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        if not base_url:
-            base_url = 'http://localhost'
+        base_url = '{tenantBaseUrl}'
 
         super(AttestationClientConfiguration, self).__init__(base_url)
 

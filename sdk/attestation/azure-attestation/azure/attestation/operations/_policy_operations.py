@@ -40,13 +40,13 @@ class PolicyOperations(object):
         self.config = config
 
     def prepare_to_set(
-            self, authorization, tee, policy_jws, custom_headers=None, raw=False, **operation_config):
+            self, tenant_base_url, tee, policy_jws, custom_headers=None, raw=False, **operation_config):
         """Accepts a new policy document and returns a JWT which expresses  used
         in preparation to set attestation policy.
 
-        :param authorization: Authorization header containing AAD bearer
-         token.
-        :type authorization: str
+        :param tenant_base_url: The tenant name, for example
+         https://mytenant.attest.azure.net.
+        :type tenant_base_url: str
         :param tee: Specifies the trusted execution environment to be used to
          validate the evidence. Possible values include: 'SgxEnclave',
          'OpenEnclave', 'CyResComponent', 'AzureGuest'
@@ -65,6 +65,10 @@ class PolicyOperations(object):
         """
         # Construct URL
         url = self.prepare_to_set.metadata['url']
+        path_format_arguments = {
+            'tenantBaseUrl': self._serialize.url("tenant_base_url", tenant_base_url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -79,7 +83,6 @@ class PolicyOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['authorization'] = self._serialize.header("authorization", authorization, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -111,12 +114,12 @@ class PolicyOperations(object):
     prepare_to_set.metadata = {'url': '/operations/policy/update'}
 
     def get(
-            self, authorization, tee, custom_headers=None, raw=False, **operation_config):
+            self, tenant_base_url, tee, custom_headers=None, raw=False, **operation_config):
         """Retrieves the current policy for a given kind of TEE.
 
-        :param authorization: Authorization header containing AAD bearer
-         token.
-        :type authorization: str
+        :param tenant_base_url: The tenant name, for example
+         https://mytenant.attest.azure.net.
+        :type tenant_base_url: str
         :param tee: Specifies the trusted execution environment to be used to
          validate the evidence. Possible values include: 'SgxEnclave',
          'OpenEnclave', 'CyResComponent', 'AzureGuest'
@@ -132,6 +135,10 @@ class PolicyOperations(object):
         """
         # Construct URL
         url = self.get.metadata['url']
+        path_format_arguments = {
+            'tenantBaseUrl': self._serialize.url("tenant_base_url", tenant_base_url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -145,7 +152,6 @@ class PolicyOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['authorization'] = self._serialize.header("authorization", authorization, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -174,12 +180,12 @@ class PolicyOperations(object):
     get.metadata = {'url': '/operations/policy/current'}
 
     def set(
-            self, authorization, tee, new_attestation_policy, custom_headers=None, raw=False, **operation_config):
+            self, tenant_base_url, tee, new_attestation_policy, custom_headers=None, raw=False, **operation_config):
         """Sets the policy for a given kind of TEE.
 
-        :param authorization: Authorization header containing AAD bearer
-         token.
-        :type authorization: str
+        :param tenant_base_url: The tenant name, for example
+         https://mytenant.attest.azure.net.
+        :type tenant_base_url: str
         :param tee: Specifies the trusted execution environment to be used to
          validate the evidence. Possible values include: 'SgxEnclave',
          'OpenEnclave', 'CyResComponent', 'AzureGuest'
@@ -197,6 +203,10 @@ class PolicyOperations(object):
         """
         # Construct URL
         url = self.set.metadata['url']
+        path_format_arguments = {
+            'tenantBaseUrl': self._serialize.url("tenant_base_url", tenant_base_url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -211,7 +221,6 @@ class PolicyOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['authorization'] = self._serialize.header("authorization", authorization, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -241,13 +250,13 @@ class PolicyOperations(object):
     set.metadata = {'url': '/operations/policy/current'}
 
     def delete(
-            self, authorization, tee, policy_jws, custom_headers=None, raw=False, **operation_config):
+            self, tenant_base_url, tee, policy_jws, custom_headers=None, raw=False, **operation_config):
         """Deletes the attestation policy for the specified tenant and reverts to
         the default policy.
 
-        :param authorization: Authorization header containing AAD bearer
-         token.
-        :type authorization: str
+        :param tenant_base_url: The tenant name, for example
+         https://mytenant.attest.azure.net.
+        :type tenant_base_url: str
         :param tee: Specifies the trusted execution environment to be used to
          validate the evidence. Possible values include: 'SgxEnclave',
          'OpenEnclave', 'CyResComponent', 'AzureGuest'
@@ -265,6 +274,10 @@ class PolicyOperations(object):
         """
         # Construct URL
         url = self.delete.metadata['url']
+        path_format_arguments = {
+            'tenantBaseUrl': self._serialize.url("tenant_base_url", tenant_base_url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -279,7 +292,6 @@ class PolicyOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['authorization'] = self._serialize.header("authorization", authorization, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
