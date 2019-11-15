@@ -11,7 +11,6 @@ import logging
 import six
 
 from uamqp import BatchMessage, Message, types, constants  # type: ignore
-from uamqp.message import MessageHeader  # type: ignore
 
 from .exceptions import EventDataError
 from ._utils import set_message_partition_key, trace_message

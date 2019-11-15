@@ -194,11 +194,10 @@ class EventHubProducerClient(ClientBaseAsync):
 
         """
         partition_id = partition_id or ALL_PARTITIONS
-        send_timeout = kwargs.pop("timeout", None)
         try:
             await self._producers[partition_id].send(event_data, **kwargs)
         except (KeyError, AttributeError, EventHubError):
-            await self._start_producer(partition_id)
+            await self._start_producer(partition_id, timeout)
             await self._producers[partition_id].send(event_data, **kwargs)
         if partition_id is not None and partition_id not in self._partition_ids:
             raise ConnectError("Invalid partition {} for the event hub {}".format(partition_id, self.eh_name))

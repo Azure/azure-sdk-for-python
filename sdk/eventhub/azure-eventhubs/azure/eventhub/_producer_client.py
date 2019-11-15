@@ -140,7 +140,7 @@ class EventHubProducerClient(ClientBase):
         try:
             self._producers[partition_id].send(event_data, **kwargs)
         except (KeyError, AttributeError, EventHubError):
-            self._start_producer(partition_id)
+            self._start_producer(partition_id, send_timeout)
             self._producers[partition_id].send(event_data, **kwargs)
 
     def create_batch(self, max_size=None):

@@ -10,8 +10,8 @@ import asyncio
 
 from azure.eventhub import EventData, EventHubError
 from azure.eventhub.aio import EventHubConsumerClient
-from azure.eventhub.aio.eventprocessor.event_processor import EventProcessor, CloseReason
-from azure.eventhub.aio.eventprocessor.local_partition_manager import InMemoryPartitionManager
+from azure.eventhub.aio._eventprocessor.event_processor import EventProcessor, CloseReason
+from azure.eventhub.aio._eventprocessor.local_partition_manager import InMemoryPartitionManager
 from azure.eventhub import OwnershipLostError
 from azure.eventhub._client_base import _Address
 

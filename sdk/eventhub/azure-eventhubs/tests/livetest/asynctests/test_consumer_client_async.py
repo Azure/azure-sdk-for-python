@@ -2,7 +2,7 @@ import pytest
 import asyncio
 from azure.eventhub import EventData, EventPosition
 from azure.eventhub.aio import EventHubConsumerClient
-from azure.eventhub.aio.eventprocessor.local_partition_manager import InMemoryPartitionManager
+from azure.eventhub.aio._eventprocessor.local_partition_manager import InMemoryPartitionManager
 
 
 @pytest.mark.liveTest

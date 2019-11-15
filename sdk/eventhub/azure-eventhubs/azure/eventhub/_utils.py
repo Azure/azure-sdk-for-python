@@ -8,6 +8,7 @@ import sys
 import platform
 
 from uamqp import types  # type: ignore
+from uamqp.message import MessageHeader  # type: ignore
 
 from azure.core.settings import settings # type: ignore
 
@@ -74,8 +75,8 @@ def set_message_partition_key(message, partition_key):
         annotations[PROP_PARTITION_KEY_AMQP_SYMBOL] = partition_key  # pylint:disable=protected-access
         header = MessageHeader()
         header.durable = True
-        self.message.annotations = annotations
-        self.message.header = header
+        message.annotations = annotations
+        message.header = header
 
 
 def trace_message(message, parent_span=None):

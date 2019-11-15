@@ -8,7 +8,7 @@ import logging
 from uamqp import errors, compat  # type: ignore
 
 from ..exceptions import (
-    _create_eventhub_exception
+    _create_eventhub_exception,
     EventHubError,
     EventDataSendError,
     EventDataError,

@@ -18,8 +18,8 @@ from .._common import EventData, EventDataBatch
 from ..exceptions import _error_handler, OperationTimeoutError, EventDataError
 from .._producer import _set_partition_key, _set_trace_message
 from .._utils import create_properties, set_message_partition_key, trace_message
+from .._constants import TIMEOUT_SYMBOL
 from ._client_base_async import ConsumerProducerMixin
-from ._constants import TIMEOUT_SYMBOL
 
 log = logging.getLogger(__name__)
 
