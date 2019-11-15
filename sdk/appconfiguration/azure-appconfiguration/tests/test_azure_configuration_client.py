@@ -3,7 +3,30 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from _shared.app_config_test_base import *
+from azure.core import MatchConditions
+from azure.core.exceptions import (
+    ResourceModifiedError,
+    ResourceNotFoundError,
+    ResourceExistsError,
+    AzureError,
+)
+from azure.appconfiguration import (
+    ResourceReadOnlyError,
+    AzureAppConfigurationClient,
+    ConfigurationSetting,
+)
+from _shared.app_config_test_base import (
+    AzureAppConfigurationClientTestBase,
+    KEY,
+    LABEL,
+    TEST_VALUE,
+    TEST_CONTENT_TYPE,
+    LABEL_RESERVED_CHARS,
+    PAGE_SIZE,
+    KEY_UUID,
+)
+import pytest
+import datetime
 
 class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
     def __init__(self, method_name):
