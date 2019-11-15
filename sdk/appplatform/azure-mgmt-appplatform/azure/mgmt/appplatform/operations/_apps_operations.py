@@ -114,9 +114,7 @@ class AppsOperations(object):
 
     def _create_or_update_initial(
             self, resource_group_name, service_name, app_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        app_resource = None
-        if properties is not None:
-            app_resource = models.AppResource(properties=properties)
+        app_resource = models.AppResource(properties=properties)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -144,10 +142,7 @@ class AppsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if app_resource is not None:
-            body_content = self._serialize.body(app_resource, 'AppResource')
-        else:
-            body_content = None
+        body_content = self._serialize.body(app_resource, 'AppResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -287,9 +282,7 @@ class AppsOperations(object):
 
     def _update_initial(
             self, resource_group_name, service_name, app_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        app_resource = None
-        if properties is not None:
-            app_resource = models.AppResource(properties=properties)
+        app_resource = models.AppResource(properties=properties)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -317,10 +310,7 @@ class AppsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if app_resource is not None:
-            body_content = self._serialize.body(app_resource, 'AppResource')
-        else:
-            body_content = None
+        body_content = self._serialize.body(app_resource, 'AppResource')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)

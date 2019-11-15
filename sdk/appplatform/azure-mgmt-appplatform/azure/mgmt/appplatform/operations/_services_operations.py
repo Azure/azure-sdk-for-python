@@ -106,7 +106,7 @@ class ServicesOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, service_name, resource=None, custom_headers=None, raw=False, **operation_config):
+            self, resource, resource_group_name, service_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -132,10 +132,7 @@ class ServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if resource is not None:
-            body_content = self._serialize.body(resource, 'ServiceResource')
-        else:
-            body_content = None
+        body_content = self._serialize.body(resource, 'ServiceResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -160,17 +157,17 @@ class ServicesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, service_name, resource=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource, resource_group_name, service_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create a new Service or update an exiting Service.
 
+        :param resource: Parameters for the create or update operation
+        :type resource: ~azure.mgmt.appplatform.models.ServiceResource
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
         :param service_name: The name of the Service resource.
         :type service_name: str
-        :param resource: Parameters for the create or update operation
-        :type resource: ~azure.mgmt.appplatform.models.ServiceResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -185,9 +182,9 @@ class ServicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
+            resource=resource,
             resource_group_name=resource_group_name,
             service_name=service_name,
-            resource=resource,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -294,7 +291,7 @@ class ServicesOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, service_name, resource=None, custom_headers=None, raw=False, **operation_config):
+            self, resource, resource_group_name, service_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -320,10 +317,7 @@ class ServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if resource is not None:
-            body_content = self._serialize.body(resource, 'ServiceResource')
-        else:
-            body_content = None
+        body_content = self._serialize.body(resource, 'ServiceResource')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -348,17 +342,17 @@ class ServicesOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, service_name, resource=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource, resource_group_name, service_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Operation to update an exiting Service.
 
+        :param resource: Parameters for the update operation
+        :type resource: ~azure.mgmt.appplatform.models.ServiceResource
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
         :param service_name: The name of the Service resource.
         :type service_name: str
-        :param resource: Parameters for the update operation
-        :type resource: ~azure.mgmt.appplatform.models.ServiceResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -373,9 +367,9 @@ class ServicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
+            resource=resource,
             resource_group_name=resource_group_name,
             service_name=service_name,
-            resource=resource,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -485,9 +479,7 @@ class ServicesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        regenerate_test_key_request = None
-        if key_type is not None:
-            regenerate_test_key_request = models.RegenerateTestKeyRequestPayload(key_type=key_type)
+        regenerate_test_key_request = models.RegenerateTestKeyRequestPayload(key_type=key_type)
 
         # Construct URL
         url = self.regenerate_test_key.metadata['url']
@@ -514,10 +506,7 @@ class ServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if regenerate_test_key_request is not None:
-            body_content = self._serialize.body(regenerate_test_key_request, 'RegenerateTestKeyRequestPayload')
-        else:
-            body_content = None
+        body_content = self._serialize.body(regenerate_test_key_request, 'RegenerateTestKeyRequestPayload')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
