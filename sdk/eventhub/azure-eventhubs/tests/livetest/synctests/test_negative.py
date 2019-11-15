@@ -22,6 +22,9 @@ from azure.eventhub import EventHubProducerClient
 
 @pytest.mark.liveTest
 def test_send_with_invalid_hostname(invalid_hostname):
+    if sys.platform.startswith('darwin'):
+        pytest.skip("Skipping on OSX - it keeps reporting 'Unable to set external certificates' "
+                    "and blocking other tests")
     client = EventHubProducerClient.from_connection_string(invalid_hostname)
     with client:
         with pytest.raises(ConnectError):
@@ -95,6 +98,9 @@ def test_send_null_body(connection_str):
 
 @pytest.mark.liveTest
 def test_create_batch_with_invalid_hostname_sync(invalid_hostname):
+    if sys.platform.startswith('darwin'):
+        pytest.skip("Skipping on OSX - it keeps reporting 'Unable to set external certificates' "
+                    "and blocking other tests")
     client = EventHubProducerClient.from_connection_string(invalid_hostname)
     with client:
         with pytest.raises(ConnectError):

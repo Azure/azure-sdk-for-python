@@ -22,6 +22,9 @@ from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receivers):
+    if sys.platform.startswith('darwin'):
+        pytest.skip("Skipping on OSX - it keeps reporting 'Unable to set external certificates' "
+                    "and blocking other tests")
     _, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(invalid_hostname)
     async with client:
@@ -129,6 +132,9 @@ async def test_send_null_body_async(connection_str):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_create_batch_with_invalid_hostname_async(invalid_hostname):
+    if sys.platform.startswith('darwin'):
+        pytest.skip("Skipping on OSX - it keeps reporting 'Unable to set external certificates' "
+                    "and blocking other tests")
     client = EventHubProducerClient.from_connection_string(invalid_hostname)
     async with client:
         with pytest.raises(ConnectError):
