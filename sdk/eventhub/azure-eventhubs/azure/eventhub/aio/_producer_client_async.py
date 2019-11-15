@@ -200,8 +200,6 @@ class EventHubProducerClient(ClientBaseAsync):
         except (KeyError, AttributeError, EventHubError):
             await self._start_producer(partition_id, timeout)
             await self._producers[partition_id].send(event_data, partition_key=partition_key)
-        if partition_id is not None and partition_id not in self._partition_ids:
-            raise ConnectError("Invalid partition {} for the event hub {}".format(partition_id, self.eh_name))
 
     async def create_batch(self, max_size=None):
         # type:(int) -> EventDataBatch
