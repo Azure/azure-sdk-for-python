@@ -15,19 +15,19 @@ from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting,
 )
-from _shared.app_config_test_base import AzureAppConfigurationClientTestBase
-from _shared.async_proxy import AzureAppConfigurationClientProxy
+from app_config_test_base import (
+    AzureAppConfigurationClientTestBase,
+    KEY,
+    LABEL,
+    TEST_VALUE,
+    TEST_CONTENT_TYPE,
+    LABEL_RESERVED_CHARS,
+    PAGE_SIZE,
+    KEY_UUID,
+)
+from async_proxy import AzureAppConfigurationClientProxy
 import pytest
 import datetime
-
-PAGE_SIZE = 100
-KEY_UUID = "test_key_a6af8952-54a6-11e9-b600-2816a84d0309"
-LABEL_UUID = "1d7b2b28-549e-11e9-b51c-2816a84d0309"
-KEY = "PYTHON_UNIT_" + KEY_UUID
-LABEL = "test_label1_" + LABEL_UUID
-LABEL_RESERVED_CHARS = "test_label2_*, \\" + LABEL_UUID  # contains reserved chars *,\
-TEST_CONTENT_TYPE = "test content type"
-TEST_VALUE = "test value"
 
 class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
     def __init__(self, method_name):
