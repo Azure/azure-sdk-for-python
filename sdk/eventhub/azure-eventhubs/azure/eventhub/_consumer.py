@@ -105,11 +105,11 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         source = Source(self._source)
         if self._offset is not None:
             source.set_filter(self._offset._selector())  # pylint:disable=protected-access
+        desired_capabilities = None
         if self._track_last_enqueued_event_properties:
             symbol_array = [types.AMQPSymbol(RECEIVER_RUNTIME_METRIC_SYMBOL)]
-            desired_capabilities = {"desired_capabilities": utils.data_factory(types.AMQPArray(symbol_array))}
-        else:
-            desired_capabilities = {"desired_capabilities": None}
+            desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
+
         properties = create_properties(self._client._config.user_agent)  # pylint:disable=protected-access
         self._handler = ReceiveClient(
             source,
