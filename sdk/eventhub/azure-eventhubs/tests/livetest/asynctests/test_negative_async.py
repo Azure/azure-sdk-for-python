@@ -37,7 +37,7 @@ async def test_receive_with_invalid_param_async(live_eventhub_config, invalid_pl
     eventhub_config = live_eventhub_config.copy()
     if invalid_place != "partition":
         eventhub_config[invalid_place] = "invalid " + invalid_place
-    conn_str = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
+    conn_str = live_eventhub_config["connection_str"].format(
         eventhub_config['hostname'],
         eventhub_config['key_name'],
         eventhub_config['access_key'],

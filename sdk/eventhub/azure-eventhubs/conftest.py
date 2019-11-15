@@ -29,6 +29,7 @@ import uamqp
 from uamqp import authentication
 
 PARTITION_COUNT = 2
+CONN_STR = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}"
 
 def pytest_addoption(parser):
     parser.addoption(
@@ -100,6 +101,7 @@ def live_eventhub_config():
         config['namespace'] = os.environ['EVENT_HUB_NAMESPACE']
         config['consumer_group'] = "$Default"
         config['partition'] = "0"
+        config['connection_str'] = CONN_STR
     except KeyError:
         pytest.skip("Live EventHub configuration not found.")
     else:
@@ -128,7 +130,7 @@ def live_eventhub(live_eventhub_config):  # pylint: disable=redefined-outer-name
 
 @pytest.fixture()
 def connection_str(live_eventhub):
-    return "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
+    return CONN_STR.format(
         live_eventhub['hostname'],
         live_eventhub['key_name'],
         live_eventhub['access_key'],
@@ -137,7 +139,8 @@ def connection_str(live_eventhub):
 
 @pytest.fixture()
 def invalid_hostname(live_eventhub_config):
-    return "Endpoint=sb://invalid123.servicebus.windows.net/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
+    return CONN_STR.format(
+        "invalid123.servicebus.windows.net",
         live_eventhub_config['key_name'],
         live_eventhub_config['access_key'],
         live_eventhub_config['event_hub'])
@@ -145,16 +148,18 @@ def invalid_hostname(live_eventhub_config):
 
 @pytest.fixture()
 def invalid_key(live_eventhub_config):
-    return "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey=invalid;EntityPath={}".format(
+    return CONN_STR.format(
         live_eventhub_config['hostname'],
         live_eventhub_config['key_name'],
+        "invalid",
         live_eventhub_config['event_hub'])
 
 
 @pytest.fixture()
 def invalid_policy(live_eventhub_config):
-    return "Endpoint=sb://{}/;SharedAccessKeyName=invalid;SharedAccessKey={};EntityPath={}".format(
+    return CONN_STR.format(
         live_eventhub_config['hostname'],
+        "invalid",
         live_eventhub_config['access_key'],
         live_eventhub_config['event_hub'])
 

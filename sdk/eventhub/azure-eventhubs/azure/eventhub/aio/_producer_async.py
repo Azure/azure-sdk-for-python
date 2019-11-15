@@ -107,16 +107,17 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         return await self._do_retryable_operation(self._open, operation_need_param=False)
 
     def _set_msg_timeout(self, timeout_time, last_exception):
-        if timeout_time:
-            remaining_time = timeout_time - time.time()
-            if remaining_time <= 0.0:
-                if last_exception:
-                    error = last_exception
-                else:
-                    error = OperationTimeoutError("Send operation timed out")
-                _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
-                raise error
-            self._handler._msg_timeout = remaining_time * 1000  # pylint: disable=protected-access
+        if not timeout_time:
+            return
+        remaining_time = timeout_time - time.time()
+        if remaining_time <= 0.0:
+            if last_exception:
+                error = last_exception
+            else:
+                error = OperationTimeoutError("Send operation timed out")
+            _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
+            raise error
+        self._handler._msg_timeout = remaining_time * 1000  # pylint: disable=protected-access
 
     async def _send_event_data(self, timeout_time=None, last_exception=None):
         if self._unsent_events:
