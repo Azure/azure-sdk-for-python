@@ -57,7 +57,7 @@ class AsyncStorageAccountHostsMixin(object):
 
     async def __aexit__(self, *args):
         await self._client.__aexit__(*args)
-    
+
     async def close(self):
         await self._client.close()
 
