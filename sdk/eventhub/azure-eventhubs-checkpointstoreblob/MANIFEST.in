@@ -2,5 +2,5 @@ include *.md
 include azure/__init__.py
 include azure/eventhub/__init__.py
 include azure/eventhub/extensions/__init__.py
-recursive-include tests *.py *.yaml
+recursive-include tests *.py
 recursive-include samples *.py

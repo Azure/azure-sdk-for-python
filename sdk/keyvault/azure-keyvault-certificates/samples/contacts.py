@@ -41,7 +41,7 @@ try:
     ]
 
     # Creates and sets the certificate contacts for this key vault.
-    client.create_contacts(contacts=contact_list)
+    client.create_contacts(contact_list)
 
     # Gets the certificate contacts for this key vault.
     contacts = client.get_contacts()

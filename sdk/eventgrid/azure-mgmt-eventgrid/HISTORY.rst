@@ -3,6 +3,13 @@
 Release History
 ===============
 
+3.0.0rc2 (2019-11-11)
++++++++++++++++++++++
+
+**Features**
+
+- Model WebHookEventSubscriptionDestination has a new parameter azure_active_directory_tenant_id
+
 3.0.0rc1 (2019-10-24)
 +++++++++++++++++++++
 

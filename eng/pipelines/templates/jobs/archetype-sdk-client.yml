@@ -105,13 +105,13 @@ jobs:
               targetPath: $(Build.ArtifactStagingDirectory)
 
   - job: 'Test_Linux_Python38'
-    condition: ne(variables['Skip.Test'], 'true')
+    condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     variables:
     - template: ../variables/globals.yml
 
     dependsOn:
-       - 'Build'
+      - 'Build'
 
     pool:
       vmImage: 'ubuntu-16.04'

@@ -50,3 +50,15 @@ class KeyCurveName(str, Enum):
     p_384 = "P-384"  #: The NIST P-384 elliptic curve, AKA SECG curve SECP384R1.
     p_521 = "P-521"  #: The NIST P-521 elliptic curve, AKA SECG curve SECP521R1.
     p_256_k = "P-256K"  #: The SECG SECP256K1 elliptic curve.
+
+
+class WellKnownIssuerNames(str, Enum):
+    """Collection of well-known issuer names"""
+
+    Self = "Self"  #: Use this issuer for a self-signed certificate
+    Unknown = "Unknown"
+    """
+    If you use this issuer, you must manually get an x509 certificate from the issuer of your choice.
+    You must then call :func:`~azure.keyvault.certificates.CertificateClient.merge_certificate` to
+    merge the public x509 certificate with your key vault certificate pending object to complete creation.
+    """

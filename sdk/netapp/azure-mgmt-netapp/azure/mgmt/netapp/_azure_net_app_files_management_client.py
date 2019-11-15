@@ -13,8 +13,8 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import AzureNetAppFilesManagementClientConfiguration
-from .operations import AzureNetAppFilesManagementClientOperationsMixin
 from .operations import Operations
+from .operations import NetAppResourceOperations
 from .operations import AccountsOperations
 from .operations import PoolsOperations
 from .operations import VolumesOperations
@@ -23,7 +23,7 @@ from .operations import SnapshotsOperations
 from . import models
 
 
-class AzureNetAppFilesManagementClient(AzureNetAppFilesManagementClientOperationsMixin, SDKClient):
+class AzureNetAppFilesManagementClient(SDKClient):
     """Microsoft NetApp Azure Resource Provider specification
 
     :ivar config: Configuration for client.
@@ -31,6 +31,8 @@ class AzureNetAppFilesManagementClient(AzureNetAppFilesManagementClientOperation
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.netapp.operations.Operations
+    :ivar net_app_resource: NetAppResource operations
+    :vartype net_app_resource: azure.mgmt.netapp.operations.NetAppResourceOperations
     :ivar accounts: Accounts operations
     :vartype accounts: azure.mgmt.netapp.operations.AccountsOperations
     :ivar pools: Pools operations
@@ -59,11 +61,13 @@ class AzureNetAppFilesManagementClient(AzureNetAppFilesManagementClientOperation
         super(AzureNetAppFilesManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-07-01'
+        self.api_version = '2019-08-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.net_app_resource = NetAppResourceOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.accounts = AccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)

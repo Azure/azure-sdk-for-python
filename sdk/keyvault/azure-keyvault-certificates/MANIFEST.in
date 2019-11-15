@@ -2,4 +2,4 @@ include *.md
 include azure/__init__.py
 include azure/keyvault/__init__.py
 recursive-include samples *.py
-recursive-include tests *.py *.yaml
+recursive-include tests *.py

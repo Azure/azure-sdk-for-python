@@ -132,9 +132,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     :param str resource_type:
     :param dict options:
     :param str partition_key_range_id:
-
-    :return:
-        The HTTP request headers.
+    :return: The HTTP request headers.
     :rtype: dict
     """
     headers = dict(default_headers)
@@ -302,9 +300,7 @@ def GetResourceIdOrFullNameFromLink(resource_link):
     """Gets resource id or full name from resource link.
 
     :param str resource_link:
-
-    :return:
-        The resource id or full name from the resource link.
+    :return: The resource id or full name from the resource link.
     :rtype: str
     """
     # For named based, the resource link is the full name
@@ -354,9 +350,7 @@ def GetPathFromLink(resource_link, resource_type=""):
 
     :param str resource_link:
     :param str resource_type:
-
-    :return:
-        Path from resource link with resource type appended (if provided).
+    :return: Path from resource link with resource type appended (if provided).
     :rtype: str
     """
     resource_link = TrimBeginningAndEndingSlashes(resource_link)
@@ -427,11 +421,8 @@ def IsMasterResource(resourceType):
 def IsDatabaseLink(link):
     """Finds whether the link is a database Self Link or a database ID based link
 
-    :param str link:
-        Link to analyze
-
-    :return:
-        True or False.
+    :param str link: Link to analyze
+    :return: True or False.
     :rtype: boolean
     """
     if not link:
@@ -460,11 +451,8 @@ def IsDatabaseLink(link):
 def IsItemContainerLink(link):  # pylint: disable=too-many-return-statements
     """Finds whether the link is a document colllection Self Link or a document colllection ID based link
 
-    :param str link:
-        Link to analyze
-
-    :return:
-        True or False.
+    :param str link: Link to analyze
+    :return: True or False.
     :rtype: boolean
     """
     if not link:
@@ -499,24 +487,21 @@ def IsItemContainerLink(link):  # pylint: disable=too-many-return-statements
 
 
 def GetItemContainerInfo(self_link, alt_content_path, id_from_response):
-    """ Given the self link and alt_content_path from the reponse header and result
-        extract the collection name and collection id
+    """Given the self link and alt_content_path from the reponse header and
+    result extract the collection name and collection id.
 
-        Ever response header has alt-content-path that is the
-        owner's path in ascii. For document create / update requests, this can be used
-        to get the collection name, but for collection create response, we can't use it.
-        So we also rely on
+    Every response header has an alt-content-path that is the owner's path in
+    ASCII. For document create / update requests, this can be used to get the
+    collection name, but for collection create response, we can't use it.
 
     :param str self_link:
         Self link of the resource, as obtained from response result.
     :param str alt_content_path:
         Owner path of the resource, as obtained from response header.
     :param str resource_id:
-        'id' as returned from the response result. This is only used if it is deduced that the
-         request was to create a collection.
-
-    :return:
-        tuple of (collection rid, collection name)
+        'id' as returned from the response result. This is only used if it is
+        deduced that the request was to create a collection.
+    :return: tuple of (collection rid, collection name)
     :rtype: tuple
     """
 
@@ -545,15 +530,11 @@ def GetItemContainerInfo(self_link, alt_content_path, id_from_response):
 
 
 def GetItemContainerLink(link):
-    """Gets the document collection link
+    """Gets the document collection link.
 
-    :param str link:
-        Resource link
-
-    :return:
-        Document collection link.
+    :param str link: Resource link
+    :return: Document collection link.
     :rtype: str
-
     """
     link = TrimBeginningAndEndingSlashes(link) + "/"
 
@@ -565,19 +546,13 @@ def GetItemContainerLink(link):
 
 
 def IndexOfNth(s, value, n):
-    """Gets the index of Nth occurance of a given character in a string
+    """Gets the index of Nth occurance of a given character in a string.
 
-    :param str s:
-        Input string
-    :param char value:
-        Input char to be searched.
-    :param int n:
-        Nth occurrence of char to be searched.
-
-    :return:
-        Index of the Nth occurrence in the string.
+    :param str s: Input string
+    :param char value: Input char to be searched.
+    :param int n: Nth occurrence of char to be searched.
+    :return: Index of the Nth occurrence in the string.
     :rtype: int
-
     """
     remaining = n
     for i, elt in enumerate(s):
@@ -589,13 +564,11 @@ def IndexOfNth(s, value, n):
 
 
 def IsValidBase64String(string_to_validate):
-    """Verifies if a string is a valid Base64 encoded string, after replacing '-' with '/'
+    """Verifies if a string is a valid Base64 encoded string, after
+    replacing '-' with '/'
 
-    :param string string_to_validate:
-        String to validate.
-
-    :return:
-        Whether given string is a valid base64 string or not.
+    :param string string_to_validate: String to validate.
+    :return: Whether given string is a valid base64 string or not.
     :rtype: str
     """
     # '-' is not supported char for decoding in Python(same as C# and Java) which has

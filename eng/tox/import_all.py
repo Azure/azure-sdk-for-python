@@ -18,9 +18,6 @@ logging.getLogger().setLevel(logging.INFO)
 excluded_packages = [
     "azure",
     "azure-mgmt",
-    "azure.core.tracing.opencensus",
-    "azure.eventhub.checkpointstoreblob.aio",
-    "azure.storage.file.share" # Github issue 7879.
     ]
 
 def should_run_import_all(package_name):
@@ -41,17 +38,16 @@ if __name__ == "__main__":
 
     # get target package name from target package path
     pkg_dir = os.path.abspath(args.target_package)
-    pkg_name, _ = get_package_details(os.path.join(pkg_dir, 'setup.py'))
-    package_name = pkg_name.replace("-", ".")
+    package_name, namespace, _ = get_package_details(os.path.join(pkg_dir, 'setup.py'))
 
     if should_run_import_all(package_name):
         # import all modules from current package
         logging.info(
-            "Importing all modules from package [{0}] to verify dependency".format(
-                package_name
+            "Importing all modules from namespace [{0}] to verify dependency".format(
+                namespace
             )
         )
-        import_script_all = "from {0} import *".format(package_name)
+        import_script_all = "from {0} import *".format(namespace)
         exec(import_script_all)
         logging.info("Verified module dependency, no issues found")
     else:

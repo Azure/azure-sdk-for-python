@@ -10,7 +10,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-network/6.0.0 Azure-SDK-For-Python
+        msrest_azure/0.4.34 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -26,7 +26,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 22 Oct 2019 06:06:52 GMT
+      - Fri, 08 Nov 2019 03:16:10 GMT
       expires:
       - '-1'
       pragma:
@@ -43,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 7cc14713-370d-4581-9733-5b5bf3c26618
+      - 95cacf2a-1220-449f-95ee-1ac3952aacfd
     status:
       code: 200
       message: OK
