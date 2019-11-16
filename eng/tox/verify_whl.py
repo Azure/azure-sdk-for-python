@@ -11,20 +11,32 @@ import logging
 import os
 import glob
 import shutil
-from tox_helper_tasks import get_package_details, unzip_sdist_to_directory, move_and_rename, unzip_file_to_directory
+from tox_helper_tasks import (
+    get_package_details,
+    unzip_sdist_to_directory,
+    move_and_rename,
+    unzip_file_to_directory,
+)
 
 logging.getLogger().setLevel(logging.INFO)
 
 # Excluding auto generated applicationinsights and loganalytics
-EXCLUDED_PACKAGES = ['azure', 'azure-mgmt', 'azure-common','azure-applicationinsights', 'azure-loganalytics',]
+EXCLUDED_PACKAGES = [
+    "azure",
+    "azure-mgmt",
+    "azure-common",
+    "azure-applicationinsights",
+    "azure-loganalytics",
+]
+
 
 def extract_whl(dist_dir, version):
     # Find whl for the package
     path_to_whl = glob.glob(os.path.join(dist_dir, "*{}*.whl".format(version)))[0]
 
     # Cleanup any existing stale files if any and rename whl file to tar.gz
-    zip_file = path_to_whl.replace('.whl', '.tar.gz')
-    cleanup(zip_file)  
+    zip_file = path_to_whl.replace(".whl", ".tar.gz")
+    cleanup(zip_file)
     os.rename(path_to_whl, zip_file)
 
     # Extrat renamed gz file to unzipped folder
@@ -33,18 +45,25 @@ def extract_whl(dist_dir, version):
     unzip_file_to_directory(zip_file, extract_location)
     return extract_location
 
+
 def verify_whl_root_directory(dist_dir, version):
     # This method ensures root directory in whl is azure only
 
     extract_location = extract_whl(dist_dir, version)
     root_folders = os.listdir(extract_location)
     # check for non 'azure' folder as root folder
-    non_azure_folders = [d for d in root_folders if d != 'azure' and not d.endswith('.dist-info')]
+    non_azure_folders = [
+        d for d in root_folders if d != "azure" and not d.endswith(".dist-info")
+    ]
     if non_azure_folders:
-        logging.error("whl has following incorrect directory at root level [%s]", non_azure_folders)
+        logging.error(
+            "whl has following incorrect directory at root level [%s]",
+            non_azure_folders,
+        )
         return False
     else:
         return True
+
 
 def cleanup(path):
     # This function deletes all files and cleanup the directory if it exists
@@ -53,9 +72,15 @@ def cleanup(path):
             shutil.rmtree(path)
         else:
             os.remove(path)
-            
+
+
 def should_verify_package(package_name):
-    return package_name not in EXCLUDED_PACKAGES and "nspkg" not in package_name and '-mgmt' not in package_name
+    return (
+        package_name not in EXCLUDED_PACKAGES
+        and "nspkg" not in package_name
+        and "-mgmt" not in package_name
+    )
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -89,6 +114,7 @@ if __name__ == "__main__":
         if verify_whl_root_directory(args.dist_dir, ver):
             logging.info("Verified root directory in whl for package: [%s]", pkg_name)
         else:
-            logging.info("Failed to verify root directory in whl for package: [%s]", pkg_name)
+            logging.info(
+                "Failed to verify root directory in whl for package: [%s]", pkg_name
+            )
             exit(1)
-

@@ -9,20 +9,27 @@
 import argparse
 import logging
 import os
-import fnmatch
 import glob
 import shutil
-from tox_helper_tasks import get_package_details, unzip_sdist_to_directory, move_and_rename, unzip_file_to_directory
+from tox_helper_tasks import (
+    get_package_details,
+    unzip_sdist_to_directory,
+    move_and_rename,
+    unzip_file_to_directory,
+)
 from verify_whl import cleanup, should_verify_package
 
 logging.getLogger().setLevel(logging.INFO)
 
-ALLOWED_ROOT_DIRECTORIES = ['azure', 'tests', 'samples', 'examples']
+ALLOWED_ROOT_DIRECTORIES = ["azure", "tests", "samples", "examples"]
+
 
 def get_root_directories_in_source(package_dir):
-    # find all allowed directories in source path 
+    # find all allowed directories in source path
     source_folders = [
-        d for d in os.listdir(package_dir) if os.path.isdir(d) and d in ALLOWED_ROOT_DIRECTORIES
+        d
+        for d in os.listdir(package_dir)
+        if os.path.isdir(d) and d in ALLOWED_ROOT_DIRECTORIES
     ]
     return source_folders
 
@@ -48,7 +55,7 @@ def verify_sdist(package_dir, dist_dir, version):
     # compare folders in source directory against unzipped sdist
     missing_folders = set(source_folders) - set(sdist_folders)
     for folder in missing_folders:
-        logging.error("Source folder [%s] is not included in sdist", folder)     
+        logging.error("Source folder [%s] is not included in sdist", folder)
 
     if missing_folders:
         logging.info("Directories in source: %s", source_folders)
@@ -56,6 +63,7 @@ def verify_sdist(package_dir, dist_dir, version):
         return False
     else:
         return True
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -82,11 +90,11 @@ if __name__ == "__main__":
 
     # get target package name from target package path
     pkg_dir = os.path.abspath(args.target_package)
-    pkg_name, _, version = get_package_details(os.path.join(pkg_dir, "setup.py"))
+    pkg_name, _, ver = get_package_details(os.path.join(pkg_dir, "setup.py"))
 
     if should_verify_package(pkg_name):
         logging.info("Verifying sdist for package [%s]", pkg_name)
-        if verify_sdist(pkg_dir, args.dist_dir, version):
+        if verify_sdist(pkg_dir, args.dist_dir, ver):
             logging.info("Verified sdist for package [%s]", pkg_name)
         else:
             logging.info("Failed to verify sdist for package [%s]", pkg_name)
