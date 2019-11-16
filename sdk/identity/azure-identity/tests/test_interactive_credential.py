@@ -11,7 +11,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import InteractiveBrowserCredential
 from azure.identity._internal import AuthCodeRedirectServer
 import pytest
-from six.moves import urllib
+from six.moves import urllib, urllib_parse
 
 from helpers import build_aad_response, mock_response, Request, validating_transport
 
@@ -21,8 +21,9 @@ except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
 
-@patch("azure.identity._credentials.browser.webbrowser.open")  # prevent the credential opening a browser
+@patch("azure.identity._credentials.browser.webbrowser.open")
 def test_interactive_credential(mock_open):
+    mock_open.side_effect = _validate_auth_request_url
     oauth_state = "state"
     client_id = "client-id"
     expected_refresh_token = "refresh-token"
@@ -34,9 +35,7 @@ def test_interactive_credential(mock_open):
 
     discovery_response = mock_response(
         json_payload={
-            "authorization_endpoint": endpoint,
-            "token_endpoint": endpoint,
-            "tenant_discovery_endpoint": endpoint,
+            name: endpoint for name in ("authorization_endpoint", "token_endpoint", "tenant_discovery_endpoint")
         }
     )
     transport = validating_transport(
@@ -88,7 +87,6 @@ def test_interactive_credential(mock_open):
     assert token.token == expected_token
     assert mock_open.call_count == 1
 
-
     # As of MSAL 1.0.0, applications build a new client every time they redeem a refresh token.
     # Here we patch the private method they use for the sake of test coverage.
     # TODO: this will probably break when this MSAL behavior changes
@@ -106,9 +104,7 @@ def test_interactive_credential(mock_open):
     assert transport.send.call_count == 4
 
 
-@patch(
-    "azure.identity._credentials.browser.webbrowser.open", lambda _: None
-)  # prevent the credential opening a browser
+@patch("azure.identity._credentials.browser.webbrowser.open", lambda _: True)
 def test_interactive_credential_timeout():
     # mock transport handles MSAL's tenant discovery
     transport = Mock(
@@ -159,3 +155,29 @@ def test_redirect_server():
 
     assert response.code == 200
     assert server.query_params[expected_param] == [expected_value]
+
+
+@patch("azure.identity._credentials.browser.webbrowser.open", lambda _: False)
+def test_no_browser():
+    discovery_response = mock_response(
+        json_payload={
+            name: "https://foo/bar"
+            for name in ("authorization_endpoint", "token_endpoint", "tenant_discovery_endpoint")
+        }
+    )
+    transport = validating_transport(requests=[Request()] * 2, responses=[discovery_response, discovery_response])
+    credential = InteractiveBrowserCredential(
+        client_id="client-id", client_secret="secret", server_class=Mock(), transport=transport
+    )
+    with pytest.raises(ClientAuthenticationError, match=r".*browser.*"):
+        credential.get_token("scope")
+
+
+def _validate_auth_request_url(url):
+    parsed_url = urllib_parse.urlparse(url)
+    params = urllib_parse.parse_qs(parsed_url.query)
+    assert params.get("prompt") == ["select_account"], "Auth code request doesn't specify 'prompt=select_account'."
+
+    # when used as a Mock's side_effect, this method's return value is the Mock's return value
+    # (the real webbrowser.open returns a bool)
+    return True

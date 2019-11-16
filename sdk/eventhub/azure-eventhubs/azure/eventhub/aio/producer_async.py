@@ -202,7 +202,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             else:
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key)
-                event_data = _set_trace_message(event_data, child)
+                event_data = _set_trace_message(event_data)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
 
         wrapper_event_data.message.on_send_complete = self._on_outcome
