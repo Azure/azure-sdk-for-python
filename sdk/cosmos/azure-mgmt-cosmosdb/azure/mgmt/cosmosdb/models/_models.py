@@ -1576,6 +1576,21 @@ class GremlinGraphGetPropertiesResource(Model):
     :ivar _etag: A system generated property representing the resource etag
      required for optimistic concurrency control.
     :vartype _etag: str
+    :param _docs: A system generated property that specified the self-link for
+     documents in a resource.
+    :type _docs: str
+    :param _sprocs: A system generated property that specifies the self-link
+     for stored procedures in a resource.
+    :type _sprocs: str
+    :param _triggers: A system generated property that specifies the self-link
+     for triggers in a resource.
+    :type _triggers: str
+    :param _udfs: A system generated property that specifies the self-link for
+     user defined functions in a resource.
+    :type _udfs: str
+    :param _conflicts: A system generated property that specifies the
+     self-link for conflicts in a resource.
+    :type _conflicts: str
     """
 
     _validation = {
@@ -1595,6 +1610,11 @@ class GremlinGraphGetPropertiesResource(Model):
         '_rid': {'key': '_rid', 'type': 'str'},
         '_ts': {'key': '_ts', 'type': 'object'},
         '_etag': {'key': '_etag', 'type': 'str'},
+        '_docs': {'key': '_docs', 'type': 'str'},
+        '_sprocs': {'key': '_sprocs', 'type': 'str'},
+        '_triggers': {'key': '_triggers', 'type': 'str'},
+        '_udfs': {'key': '_udfs', 'type': 'str'},
+        '_conflicts': {'key': '_conflicts', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1608,6 +1628,11 @@ class GremlinGraphGetPropertiesResource(Model):
         self._rid = None
         self._ts = None
         self._etag = None
+        self._docs = kwargs.get('_docs', None)
+        self._sprocs = kwargs.get('_sprocs', None)
+        self._triggers = kwargs.get('_triggers', None)
+        self._udfs = kwargs.get('_udfs', None)
+        self._conflicts = kwargs.get('_conflicts', None)
 
 
 class GremlinGraphGetResults(ARMResourceProperties):
@@ -3037,6 +3062,12 @@ class SqlContainerGetPropertiesResource(Model):
     :type partition_key: ~azure.mgmt.cosmosdb.models.ContainerPartitionKey
     :param default_ttl: Default time to live
     :type default_ttl: int
+    :param ttl_property_path: This property should be only present when
+     DefaultTimeToLive is set. When this property is present, time to live for
+     a resource is decided based on the value of this property in the resource.
+     By default, it is set to null meaning the time to live is based on the _ts
+     property in resource
+    :type ttl_property_path: str
     :param unique_key_policy: The unique key policy configuration for
      specifying uniqueness constraints on documents in the collection in the
      Azure Cosmos DB service.
@@ -3053,6 +3084,21 @@ class SqlContainerGetPropertiesResource(Model):
     :ivar _etag: A system generated property representing the resource etag
      required for optimistic concurrency control.
     :vartype _etag: str
+    :param _docs: A system generated property that specified the self-link for
+     documents in a resource.
+    :type _docs: str
+    :param _sprocs: A system generated property that specifies the self-link
+     for stored procedures in a resource.
+    :type _sprocs: str
+    :param _triggers: A system generated property that specifies the self-link
+     for triggers in a resource.
+    :type _triggers: str
+    :param _udfs: A system generated property that specifies the self-link for
+     user defined functions in a resource.
+    :type _udfs: str
+    :param _conflicts: A system generated property that specifies the
+     self-link for conflicts in a resource.
+    :type _conflicts: str
     """
 
     _validation = {
@@ -3067,11 +3113,17 @@ class SqlContainerGetPropertiesResource(Model):
         'indexing_policy': {'key': 'indexingPolicy', 'type': 'IndexingPolicy'},
         'partition_key': {'key': 'partitionKey', 'type': 'ContainerPartitionKey'},
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
+        'ttl_property_path': {'key': 'ttlPropertyPath', 'type': 'str'},
         'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
         '_rid': {'key': '_rid', 'type': 'str'},
         '_ts': {'key': '_ts', 'type': 'object'},
         '_etag': {'key': '_etag', 'type': 'str'},
+        '_docs': {'key': '_docs', 'type': 'str'},
+        '_sprocs': {'key': '_sprocs', 'type': 'str'},
+        '_triggers': {'key': '_triggers', 'type': 'str'},
+        '_udfs': {'key': '_udfs', 'type': 'str'},
+        '_conflicts': {'key': '_conflicts', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -3080,11 +3132,17 @@ class SqlContainerGetPropertiesResource(Model):
         self.indexing_policy = kwargs.get('indexing_policy', None)
         self.partition_key = kwargs.get('partition_key', None)
         self.default_ttl = kwargs.get('default_ttl', None)
+        self.ttl_property_path = kwargs.get('ttl_property_path', None)
         self.unique_key_policy = kwargs.get('unique_key_policy', None)
         self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
         self._rid = None
         self._ts = None
         self._etag = None
+        self._docs = kwargs.get('_docs', None)
+        self._sprocs = kwargs.get('_sprocs', None)
+        self._triggers = kwargs.get('_triggers', None)
+        self._udfs = kwargs.get('_udfs', None)
+        self._conflicts = kwargs.get('_conflicts', None)
 
 
 class SqlContainerGetResults(ARMResourceProperties):
@@ -3145,6 +3203,12 @@ class SqlContainerResource(Model):
     :type partition_key: ~azure.mgmt.cosmosdb.models.ContainerPartitionKey
     :param default_ttl: Default time to live
     :type default_ttl: int
+    :param ttl_property_path: This property should be only present when
+     DefaultTimeToLive is set. When this property is present, time to live for
+     a resource is decided based on the value of this property in the resource.
+     By default, it is set to null meaning the time to live is based on the _ts
+     property in resource
+    :type ttl_property_path: str
     :param unique_key_policy: The unique key policy configuration for
      specifying uniqueness constraints on documents in the collection in the
      Azure Cosmos DB service.
@@ -3164,6 +3228,7 @@ class SqlContainerResource(Model):
         'indexing_policy': {'key': 'indexingPolicy', 'type': 'IndexingPolicy'},
         'partition_key': {'key': 'partitionKey', 'type': 'ContainerPartitionKey'},
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
+        'ttl_property_path': {'key': 'ttlPropertyPath', 'type': 'str'},
         'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
     }
@@ -3174,6 +3239,7 @@ class SqlContainerResource(Model):
         self.indexing_policy = kwargs.get('indexing_policy', None)
         self.partition_key = kwargs.get('partition_key', None)
         self.default_ttl = kwargs.get('default_ttl', None)
+        self.ttl_property_path = kwargs.get('ttl_property_path', None)
         self.unique_key_policy = kwargs.get('unique_key_policy', None)
         self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
 
