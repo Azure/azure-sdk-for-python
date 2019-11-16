@@ -117,7 +117,7 @@ def test_receive_owner_level(connstr_senders):
             ed = EventData("Event Number {}".format(i))
             event_list.append(ed)
         senders[0].send(event_list)
-        time.sleep(10)
+        time.sleep(20)
     thread1.join()
     thread2.join()
     assert isinstance(on_error.error, EventHubError)
