@@ -350,8 +350,9 @@ class ConsumerProducerMixin(object):
         retried_times = 0
         last_exception = kwargs.pop('last_exception', None)
         operation_need_param = kwargs.pop('operation_need_param', True)
+        max_retries = self._client._config.max_retries  # pylint:disable=protected-access
 
-        while retried_times <= self._client._config.max_retries:  # pylint: disable=protected-access
+        while retried_times <= max_retries:
             try:
                 if operation_need_param:
                     return operation(timeout_time=timeout_time, last_exception=last_exception, **kwargs)
@@ -361,9 +362,9 @@ class ConsumerProducerMixin(object):
                 self._client._try_delay(retried_times=retried_times, last_exception=last_exception,
                                         timeout_time=timeout_time, entity_name=self._name)
                 retried_times += 1
-
-        _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
-        raise last_exception
+                if retried_times > max_retries:
+                    _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
+                    raise last_exception
 
     def close(self):
         # type:() -> None

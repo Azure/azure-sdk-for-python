@@ -142,8 +142,9 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
     def receive(self):
         retried_times = 0
         last_exception = None
+        max_retries = self._client._config.max_retries  # pylint:disable=protected-access
 
-        while retried_times < self._client._config.max_retries:  # pylint:disable=protected-access
+        while retried_times <= max_retries:
             try:
                 self._open()
                 self._handler.do_work()
@@ -158,6 +159,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                     self._offset = EventPosition(self._last_received_event.offset)
                 last_exception = self._handle_exception(exception)
                 retried_times += 1
-
-        _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
-        raise last_exception
+                if retried_times > max_retries:
+                    _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
+                    raise last_exception
