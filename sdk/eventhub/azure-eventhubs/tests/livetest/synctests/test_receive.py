@@ -29,10 +29,10 @@ def test_receive_end_of_stream(connstr_senders):
                                   kwargs={"partition_id": "0", "initial_event_position": "@latest"})
         thread.daemon = True
         thread.start()
-        time.sleep(5)
+        time.sleep(10)
         assert on_event.called is False
         senders[0].send(EventData(b"Receiving only a single event"))
-        time.sleep(5)
+        time.sleep(10)
         assert on_event.called is True
     thread.join()
 
@@ -70,7 +70,7 @@ def test_receive_with_event_position_sync(connstr_senders, position, inclusive, 
                                   "track_last_enqueued_event_properties": True})
         thread.daemon = True
         thread.start()
-        time.sleep(5)
+        time.sleep(10)
         assert on_event.event_position is not None
     thread.join()
     senders[0].send(EventData(expected_result))
@@ -82,7 +82,7 @@ def test_receive_with_event_position_sync(connstr_senders, position, inclusive, 
                                           "track_last_enqueued_event_properties": True})
         thread.daemon = True
         thread.start()
-        time.sleep(5)
+        time.sleep(10)
         assert on_event.event.body_as_str() == expected_result
     thread.join()
 
@@ -104,16 +104,16 @@ def test_receive_owner_level(connstr_senders):
                                            "on_error": on_error})
         thread1.start()
         event_list = []
-        for i in range(20):
+        for i in range(5):
             ed = EventData("Event Number {}".format(i))
             event_list.append(ed)
         senders[0].send(event_list)
-        time.sleep(5)
+        time.sleep(10)
         thread2 = threading.Thread(target=client2.receive, args=(on_event, "$default"),
                                    kwargs = {"partition_id": "0", "initial_event_position": "-1", "owner_level": 1})
         thread2.start()
         event_list = []
-        for i in range(20):
+        for i in range(5):
             ed = EventData("Event Number {}".format(i))
             event_list.append(ed)
         senders[0].send(event_list)
@@ -129,7 +129,7 @@ def test_receive_over_websocket_sync(connstr_senders):
 
     def on_event(partition_context, event):
         on_event.received.append(event)
-        on_event.app_prop = event[0].application_properties
+        on_event.app_prop = event.application_properties
 
     on_event.received = []
     on_event.app_prop = None
@@ -137,7 +137,7 @@ def test_receive_over_websocket_sync(connstr_senders):
     client = EventHubConsumerClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket)
 
     event_list = []
-    for i in range(20):
+    for i in range(5):
         ed = EventData("Event Number {}".format(i))
         ed.application_properties = app_prop
         event_list.append(ed)
@@ -147,7 +147,7 @@ def test_receive_over_websocket_sync(connstr_senders):
         thread = threading.Thread(target=client.receive, args=(on_event, "$default"),
                                   kwargs={"partition_id": "0", "initial_event_position": "-1"})
         thread.start()
-        time.sleep(5)
-    assert len(on_event.received) == 20
+        time.sleep(10)
+    assert len(on_event.received) == 5
     for ed in on_event.received:
         assert ed.application_properties[b"raw_prop"] == b"raw_value"
