@@ -1,0 +1,47 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "Microsoft was founded by Bill Gates.",
+      "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '94'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/keyPhrases?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"0","keyPhrases":["Microsoft","Bill Gates"]}],"errors":[],"modelVersion":"latest"}'
+    headers:
+      apim-request-id:
+      - fcc0909a-070c-45a5-806c-490730c4ccf5
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=1
+      date:
+      - Thu, 14 Nov 2019 21:32:43 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-aml-ta-request-id:
+      - 83d6cd33-edab-4d8b-848a-6616c12747be
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '552'
+    status:
+      code: 200
+      message: OK
+version: 1

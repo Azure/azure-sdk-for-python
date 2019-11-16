@@ -1,0 +1,174 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": ""}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '40'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?showStats=false
+  response:
+    body:
+      string: '{"code":"InternalServerError","message":"Processing failed unexpectedly.
+        Please try again later."}'
+    headers:
+      apim-request-id:
+      - f6d3083c-f0c7-4b98-903e-4c5c11410735
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 14 Nov 2019 21:25:54 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-aml-ta-request-id:
+      - 5e937161-5b42-4360-b5a1-518285f579e1
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '12'
+    status:
+      code: 500
+      message: Internal Server Error
+- request:
+    body: '{"documents": [{"id": "0", "text": ""}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '40'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?showStats=false
+  response:
+    body:
+      string: '{"code":"InternalServerError","message":"Processing failed unexpectedly.
+        Please try again later."}'
+    headers:
+      apim-request-id:
+      - 24a683bd-8083-4cb5-b163-af756e078b31
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 14 Nov 2019 21:25:54 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-aml-ta-request-id:
+      - d503492e-d9e4-4713-84e0-377aeff5b15e
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '12'
+    status:
+      code: 500
+      message: Internal Server Error
+- request:
+    body: '{"documents": [{"id": "0", "text": ""}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '40'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?showStats=false
+  response:
+    body:
+      string: '{"code":"InternalServerError","message":"Processing failed unexpectedly.
+        Please try again later."}'
+    headers:
+      apim-request-id:
+      - eb0c6fd3-5b8b-4fc6-b500-9b1a737fcf05
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 14 Nov 2019 21:25:55 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-aml-ta-request-id:
+      - 874e8dd1-adf5-409a-bc11-44a2fc13f033
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '11'
+    status:
+      code: 500
+      message: Internal Server Error
+- request:
+    body: '{"documents": [{"id": "0", "text": ""}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '40'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?showStats=false
+  response:
+    body:
+      string: '{"code":"InternalServerError","message":"Processing failed unexpectedly.
+        Please try again later."}'
+    headers:
+      apim-request-id:
+      - 6d30793c-98af-4754-836b-2c3d72c8e8df
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 14 Nov 2019 21:25:58 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-aml-ta-request-id:
+      - 11921bf4-2cf6-44a7-b8e0-f46b202c5e3c
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '25'
+    status:
+      code: 500
+      message: Internal Server Error
+version: 1
