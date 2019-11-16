@@ -15,7 +15,8 @@ from tox_helper_tasks import get_package_details, unzip_sdist_to_directory, move
 
 logging.getLogger().setLevel(logging.INFO)
 
-EXCLUDED_PACKAGES = ['azure', 'azure-mgmt', 'azure-common',]
+# Excluding auto generated applicationinsights and loganalytics
+EXCLUDED_PACKAGES = ['azure', 'azure-mgmt', 'azure-common','azure-applicationinsights', 'azure-loganalytics',]
 
 def extract_whl(dist_dir, version):
     # Find whl for the package
