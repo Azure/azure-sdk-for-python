@@ -42,10 +42,10 @@ steps:
     displayName: 'Verify sdist'
     inputs:
      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-     arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist'
+     arguments: '--toxenv=verifysdist'
 
   - task: PythonScript@0
     displayName: 'Verify whl'
     inputs:
      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-     arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl'
+     arguments: '--toxenv=verifywhl'
