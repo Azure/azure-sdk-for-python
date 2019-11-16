@@ -52,6 +52,7 @@ from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     UserAgentPolicy,
     HttpLoggingPolicy,
+    RequestHistory,
 )
 
 def test_user_agent():
@@ -63,6 +64,19 @@ def test_user_agent():
         request = HttpRequest('GET', 'http://127.0.0.1/')
         policy.on_request(PipelineRequest(request, PipelineContext(None)))
         assert request.headers["user-agent"].endswith("mytools")
+
+def test_request_history():
+    class Non_deep_copiable(object):
+        def __deepcopy__(self, memodict={}):
+            raise ValueError()
+
+    body = Non_deep_copiable()
+    request = HttpRequest('GET', 'http://127.0.0.1/', {'user-agent': 'test_request_history'})
+    request.body = body
+    request_history = RequestHistory(request)
+    assert request_history.http_request.headers == request.headers
+    assert request_history.http_request.url == request.url
+    assert request_history.http_request.method == request.method
 
 @mock.patch('azure.core.pipeline.policies._universal._LOGGER')
 def test_no_log(mock_http_logger):
