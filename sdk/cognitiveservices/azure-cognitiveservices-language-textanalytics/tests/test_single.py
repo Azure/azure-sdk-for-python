@@ -124,6 +124,18 @@ class TextAnalyticsTest(CognitiveServiceTest):
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_single_language_detection_bad_model_version(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        with self.assertRaises(HttpResponseError):
+            response = single_detect_language(
+                endpoint=cognitiveservices_account,
+                credential=cognitiveservices_account_key,
+                text="Microsoft was founded by Bill Gates.",
+                country_hint="US",
+                model_version="old"
+            )
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
     def test_single_language_detection_get_stats_and_model_version(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         def callback(resp):
             self.assertIsNotNone(resp.statistics)
@@ -244,6 +256,18 @@ class TextAnalyticsTest(CognitiveServiceTest):
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_single_recognize_entities_bad_model_version(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        with self.assertRaises(HttpResponseError):
+            response = single_recognize_entities(
+                endpoint=cognitiveservices_account,
+                credential=cognitiveservices_account_key,
+                text="Microsoft was founded by Bill Gates.",
+                language="en",
+                model_version="old"
+            )
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
     def test_single_recognize_entities_get_stats_and_model_version(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         def callback(resp):
             self.assertIsNotNone(resp.statistics)
@@ -359,6 +383,18 @@ class TextAnalyticsTest(CognitiveServiceTest):
                 credential=cognitiveservices_account_key,
                 text="My SSN is 555-55-5555",
                 language="English"
+            )
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_single_recognize_pii_entities_bad_model_version(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        with self.assertRaises(HttpResponseError):
+            response = single_recognize_pii_entities(
+                endpoint=cognitiveservices_account,
+                credential=cognitiveservices_account_key,
+                text="Microsoft was founded by Bill Gates.",
+                language="en",
+                model_version="old"
             )
 
     @ResourceGroupPreparer()
@@ -484,6 +520,18 @@ class TextAnalyticsTest(CognitiveServiceTest):
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_single_recognize_linked_entities_bad_model_version(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        with self.assertRaises(HttpResponseError):
+            response = single_recognize_linked_entities(
+                endpoint=cognitiveservices_account,
+                credential=cognitiveservices_account_key,
+                text="Microsoft was founded by Bill Gates.",
+                language="en",
+                model_version="old"
+            )
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
     def test_single_recognize_linked_entities_get_stats_and_model_version(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         def callback(resp):
             self.assertIsNotNone(resp.statistics)
@@ -595,6 +643,18 @@ class TextAnalyticsTest(CognitiveServiceTest):
                 credential=cognitiveservices_account_key,
                 text="Microsoft was founded by Bill Gates.",
                 language="English"
+            )
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_single_extract_key_phrases_bad_model_version(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        with self.assertRaises(HttpResponseError):
+            response = single_extract_key_phrases(
+                endpoint=cognitiveservices_account,
+                credential=cognitiveservices_account_key,
+                text="Microsoft was founded by Bill Gates.",
+                language="en",
+                model_version="old"
             )
 
     @ResourceGroupPreparer()
@@ -712,6 +772,18 @@ class TextAnalyticsTest(CognitiveServiceTest):
                 credential=cognitiveservices_account_key,
                 text="I was unhappy with the food at the restaurant.",
                 language="English"
+            )
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_single_analyze_sentiment_bad_model_version(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        with self.assertRaises(HttpResponseError):
+            response = single_analyze_sentiment(
+                endpoint=cognitiveservices_account,
+                credential=cognitiveservices_account_key,
+                text="Microsoft was founded by Bill Gates.",
+                language="en",
+                model_version="old"
             )
 
     @ResourceGroupPreparer()
