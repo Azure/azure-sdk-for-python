@@ -283,11 +283,11 @@ class TextAnalyticsTest(CognitiveServiceTest):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
         docs = [
-            "I should take my cat to the veterinarian.",
-            "Este es un document escrito en Español.",
-            "猫は幸せ",
-            "Fahrt nach Stuttgart und dann zum Hotel zu Fu.",
-            ""
+            u"I should take my cat to the veterinarian.",
+            u"Este es un document escrito en Español.",
+            u"猫は幸せ",
+            u"Fahrt nach Stuttgart und dann zum Hotel zu Fu.",
+            u""
         ]
 
         response = text_analytics.detect_language(docs)
@@ -338,7 +338,7 @@ class TextAnalyticsTest(CognitiveServiceTest):
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             MultiLanguageInput(id="2", text="I did not like the hotel we stayed it. It was too expensive."),
-            "You cannot mix string input with the above inputs"
+            u"You cannot mix string input with the above inputs"
         ]
         with self.assertRaises(TypeError):
             response = text_analytics.analyze_sentiment(docs)
