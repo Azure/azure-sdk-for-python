@@ -138,7 +138,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     **kwargs
                 )
                 if isinstance(response, Error):
-                    result = [result.append(response) for _ in batch]
+                    for _ in batch:
+                        result.append(response)
                 else:
                     result.extend(response)
             return result
@@ -203,7 +204,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     **kwargs
                 )
                 if isinstance(response, Error):
-                    result = [result.append(response) for _ in batch]
+                    for _ in batch:
+                        result.append(response)
                 else:
                     result.extend(response)
             return result
@@ -267,7 +269,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     **kwargs
                 )
                 if isinstance(response, Error):
-                    result = [result.append(response) for _ in batch]
+                    for _ in batch:
+                        result.append(response)
                 else:
                     result.extend(response)
             return result
@@ -330,7 +333,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     **kwargs
                 )
                 if isinstance(response, Error):
-                    result = [result.append(response) for _ in batch]
+                    for _ in batch:
+                        result.append(response)
                 else:
                     result.extend(response)
             return result
@@ -393,7 +397,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     **kwargs
                 )
                 if isinstance(response, Error):
-                    result = [result.append(response) for _ in batch]
+                    for _ in batch:
+                        result.append(response)
                 else:
                     result.extend(response)
             return result
@@ -457,7 +462,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     **kwargs
                 )
                 if isinstance(response, Error):
-                    result = [result.append(response) for _ in batch]
+                    for _ in batch:
+                        result.append(response)
                 else:
                     result.extend(response)
             return result
