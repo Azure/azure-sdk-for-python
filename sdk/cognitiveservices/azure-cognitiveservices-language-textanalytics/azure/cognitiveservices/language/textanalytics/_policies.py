@@ -10,7 +10,7 @@ from ._models import RequestStatistics
 
 
 class CognitiveServicesCredentialPolicy(SansIOHTTPPolicy):
-    def __init__(self, cognitiveservices_key, **kwargs):
+    def __init__(self, cognitiveservices_key):
         if cognitiveservices_key is None:
             raise ValueError("Parameter 'credential' must not be None.")
         self.cognitiveservices_key = cognitiveservices_key
@@ -28,7 +28,7 @@ class TextAnalyticsResponseHook(HTTPPolicy):
         self._response_callback = kwargs.get("raw_response_hook")
         super(TextAnalyticsResponseHook, self).__init__()
 
-    def send(self, request, **kwargs):
+    def send(self, request):
         if request.context.options.get("response_hook", self._response_callback):
             statistics = request.context.get("statistics") or request.context.options.pop("statistics", None)
             model_version = request.context.get("model_version") or request.context.options.pop("model_version", None)
@@ -42,7 +42,7 @@ class TextAnalyticsResponseHook(HTTPPolicy):
                 model_version = data.get("modelVersion", None)
             for pipeline_obj in [request, response]:
                 if statistics is not None and not isinstance(statistics, RequestStatistics):
-                    statistics = RequestStatistics._from_generated(statistics)
+                    statistics = RequestStatistics._from_generated(statistics)  # pylint: disable=protected-access
                 pipeline_obj.statistics = statistics
                 pipeline_obj.model_version = model_version
             if response_callback:

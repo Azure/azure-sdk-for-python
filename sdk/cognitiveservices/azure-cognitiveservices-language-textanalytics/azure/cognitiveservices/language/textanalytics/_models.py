@@ -360,7 +360,7 @@ class LinkedEntity(object):
     def _from_generated(cls, entity):
         return cls(
             name=entity.name,
-            matches=[Match._from_generated(e) for e in entity.matches],
+            matches=[Match._from_generated(e) for e in entity.matches],  # pylint: disable=protected-access
             language=entity.language,
             id=entity.id,
             url=entity.url,

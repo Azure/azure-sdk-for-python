@@ -65,7 +65,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             endpoint=endpoint, credentials=credential, pipeline=self._pipeline
         )
 
-    def _segment_batch(self, docs):
+    def _segment_batch(self, docs):  # pylint: disable=no-self-use
         """Internal method that segments input documents > 1000 items into
         batches < 1000 items.
 
@@ -138,7 +138,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     **kwargs
                 )
                 if isinstance(response, Error):
-                    [result.append(response) for _ in batch]
+                    result = [result.append(response) for _ in batch]
                 else:
                     result.extend(response)
             return result
@@ -203,7 +203,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     **kwargs
                 )
                 if isinstance(response, Error):
-                    [result.append(response) for _ in batch]
+                    result = [result.append(response) for _ in batch]
                 else:
                     result.extend(response)
             return result
@@ -267,7 +267,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     **kwargs
                 )
                 if isinstance(response, Error):
-                    [result.append(response) for _ in batch]
+                    result = [result.append(response) for _ in batch]
                 else:
                     result.extend(response)
             return result
@@ -330,7 +330,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     **kwargs
                 )
                 if isinstance(response, Error):
-                    [result.append(response) for _ in batch]
+                    result = [result.append(response) for _ in batch]
                 else:
                     result.extend(response)
             return result
@@ -393,7 +393,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     **kwargs
                 )
                 if isinstance(response, Error):
-                    [result.append(response) for _ in batch]
+                    result = [result.append(response) for _ in batch]
                 else:
                     result.extend(response)
             return result
@@ -457,7 +457,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     **kwargs
                 )
                 if isinstance(response, Error):
-                    [result.append(response) for _ in batch]
+                    result = [result.append(response) for _ in batch]
                 else:
                     result.extend(response)
             return result

@@ -16,7 +16,7 @@ class AsyncTextAnalyticsResponseHook(AsyncHTTPPolicy):
         self._response_callback = kwargs.get('raw_response_hook')
         super(AsyncTextAnalyticsResponseHook, self).__init__()
 
-    async def send(self, request, **kwargs):
+    async def send(self, request):
         if request.context.options.get('response_hook', self._response_callback):
             statistics = request.context.get("statistics") or \
                 request.context.options.pop("statistics", None)
@@ -32,7 +32,7 @@ class AsyncTextAnalyticsResponseHook(AsyncHTTPPolicy):
                 model_version = data.get('modelVersion', None)
             for pipeline_obj in [request, response]:
                 if statistics is not None and not isinstance(statistics, RequestStatistics):
-                    statistics = RequestStatistics._from_generated(statistics)
+                    statistics = RequestStatistics._from_generated(statistics)  # pylint: disable=protected-access
                 pipeline_obj.statistics = statistics
                 pipeline_obj.model_version = model_version
             if response_callback:

@@ -36,7 +36,7 @@ class AsyncTextAnalyticsClientBase(object):
                 credentials, "https://cognitiveservices.azure.com/.default"
             )
         elif isinstance(credentials, six.string_types):
-            credential_policy = CognitiveServicesCredentialPolicy(credentials, **kwargs)
+            credential_policy = CognitiveServicesCredentialPolicy(credentials)
         elif credentials is not None:
             raise TypeError("Unsupported credential: {}".format(credentials))
 
@@ -65,7 +65,7 @@ class AsyncTextAnalyticsClientBase(object):
         ]
         return AsyncPipeline(config.transport, policies=policies)
 
-    def create_configuration(self, **kwargs):
+    def create_configuration(self, **kwargs):  # pylint: disable=no-self-use
         config = Configuration(**kwargs)
         config.user_agent_policy = kwargs.get('user_agent_policy') or UserAgentPolicy(**kwargs)
         config.headers_policy = kwargs.get('headers_policy') or HeadersPolicy(**kwargs)
@@ -74,8 +74,8 @@ class AsyncTextAnalyticsClientBase(object):
         return config
 
     async def __aenter__(self):
-        await self._client.__aenter__()
+        await self._client.__aenter__()  # pylint: disable=no-member
         return self
 
     async def __aexit__(self, *args):
-        await self._client.__aexit__(*args)
+        await self._client.__aexit__(*args)  # pylint: disable=no-member

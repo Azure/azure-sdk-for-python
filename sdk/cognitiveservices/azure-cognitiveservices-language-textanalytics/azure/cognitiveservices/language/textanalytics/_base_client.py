@@ -35,7 +35,7 @@ class TextAnalyticsClientBase(object):
                 credentials, "https://cognitiveservices.azure.com/.default"
             )
         elif isinstance(credentials, six.string_types):
-            credential_policy = CognitiveServicesCredentialPolicy(credentials, **kwargs)
+            credential_policy = CognitiveServicesCredentialPolicy(credentials)
         elif credentials is not None:
             raise TypeError("Unsupported credential: {}".format(credentials))
 
@@ -62,7 +62,7 @@ class TextAnalyticsClientBase(object):
         ]
         return Pipeline(config.transport, policies=policies)
 
-    def create_configuration(self, **kwargs):
+    def create_configuration(self, **kwargs):  # pylint: disable=no-self-use
         config = Configuration(**kwargs)
         config.user_agent_policy = kwargs.get("user_agent_policy") or UserAgentPolicy(**kwargs)
         config.headers_policy = kwargs.get("headers_policy") or HeadersPolicy(**kwargs)
@@ -74,8 +74,8 @@ class TextAnalyticsClientBase(object):
         return config
 
     def __enter__(self):
-        self._client.__enter__()
+        self._client.__enter__()  # pylint:disable=no-member
         return self
 
     def __exit__(self, *args):
-        self._client.__exit__(*args)
+        self._client.__exit__(*args)  # pylint:disable=no-member

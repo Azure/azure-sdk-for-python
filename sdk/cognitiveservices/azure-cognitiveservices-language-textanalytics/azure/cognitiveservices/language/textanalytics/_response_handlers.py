@@ -109,8 +109,7 @@ def _validate_single_input(text, hint, hint_value):
     """
     if isinstance(text, six.string_types):
         return [{"id": "0", "text": text, hint: hint_value}]
-    else:
-        raise TypeError("Text parameter must be string.")
+    raise TypeError("Text parameter must be string.")
 
 
 def _validate_batch_input(documents):
@@ -151,7 +150,7 @@ def order_results(response, combined):
     return ordered_response
 
 
-def language_result(response, obj, response_headers):
+def language_result(response, obj, response_headers):  # pylint: disable=unused-argument
     if hasattr(obj, "innererror"):
         return whole_batch_error(obj)
 
@@ -167,13 +166,13 @@ def language_result(response, obj, response_headers):
         else:
             results[idx] = DocumentLanguage(
                 id=language.id,
-                detected_languages=[DetectedLanguage._from_generated(l) for l in language.detected_languages],
-                statistics=DocumentStatistics._from_generated(language.statistics),
+                detected_languages=[DetectedLanguage._from_generated(l) for l in language.detected_languages],  # pylint: disable=protected-access
+                statistics=DocumentStatistics._from_generated(language.statistics),  # pylint: disable=protected-access
             )
     return results
 
 
-def entities_result(response, obj, response_headers):
+def entities_result(response, obj, response_headers):  # pylint: disable=unused-argument
     if hasattr(obj, "innererror"):
         return whole_batch_error(obj)
 
@@ -189,13 +188,13 @@ def entities_result(response, obj, response_headers):
         else:
             results[idx] = DocumentEntities(
                 id=entity.id,
-                entities=[Entity._from_generated(e) for e in entity.entities],
-                statistics=DocumentStatistics._from_generated(entity.statistics),
+                entities=[Entity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+                statistics=DocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
             )
     return results
 
 
-def linked_entities_result(response, obj, response_headers):
+def linked_entities_result(response, obj, response_headers):  # pylint: disable=unused-argument
     if hasattr(obj, "innererror"):
         return whole_batch_error(obj)
 
@@ -211,13 +210,13 @@ def linked_entities_result(response, obj, response_headers):
         else:
             results[idx] = DocumentLinkedEntities(
                 id=entity.id,
-                entities=[LinkedEntity._from_generated(e) for e in entity.entities],
-                statistics=DocumentStatistics._from_generated(entity.statistics),
+                entities=[LinkedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+                statistics=DocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
             )
     return results
 
 
-def key_phrases_result(response, obj, response_headers):
+def key_phrases_result(response, obj, response_headers):  # pylint: disable=unused-argument
     if hasattr(obj, "innererror"):
         return whole_batch_error(obj)
 
@@ -234,12 +233,12 @@ def key_phrases_result(response, obj, response_headers):
             results[idx] = DocumentKeyPhrases(
                 id=phrases.id,
                 key_phrases=phrases.key_phrases,
-                statistics=DocumentStatistics._from_generated(phrases.statistics),
+                statistics=DocumentStatistics._from_generated(phrases.statistics),  # pylint: disable=protected-access
             )
     return results
 
 
-def sentiment_result(response, obj, response_headers):
+def sentiment_result(response, obj, response_headers):  # pylint: disable=unused-argument
     if hasattr(obj, "innererror"):
         return whole_batch_error(obj)
 
@@ -256,8 +255,8 @@ def sentiment_result(response, obj, response_headers):
             results[idx] = DocumentSentiment(
                 id=sentiment.id,
                 sentiment=sentiment.sentiment,
-                statistics=DocumentStatistics._from_generated(sentiment.statistics),
+                statistics=DocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
                 document_scores=sentiment.document_scores,
-                sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences],
+                sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences],  # pylint: disable=protected-access
             )
     return results
