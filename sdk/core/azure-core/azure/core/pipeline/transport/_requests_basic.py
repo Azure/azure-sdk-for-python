@@ -225,18 +225,6 @@ class RequestsTransport(HttpTransport):
         error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
 
         try:
-            timeout = kwargs.pop('connection_timeout', self.connection_config.timeout)
-            connect = None
-            read = None
-            if isinstance(timeout, tuple):
-                if 'read_timeout' not in kwargs:
-                    _LOGGER.warning("Tuple timeout is deprecated.")
-                    connect, read = timeout
-                else:
-                    raise ValueError()
-            else:
-                connect = timeout
-                read = kwargs.pop('read_timeout', self.connection_config.timeout)
             response = self.session.request(  # type: ignore
                 request.method,
                 request.url,
@@ -244,7 +232,7 @@ class RequestsTransport(HttpTransport):
                 data=request.data,
                 files=request.files,
                 verify=kwargs.pop('connection_verify', self.connection_config.verify),
-                timeout=(connect, read),
+                timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
                 cert=kwargs.pop('connection_cert', self.connection_config.cert),
                 allow_redirects=False,
                 **kwargs)
