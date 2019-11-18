@@ -30,19 +30,6 @@ from ._models import (
 )
 
 
-# TODO: remove this method after service bug fix
-def process_entities_error(error):
-    """This should be removed after the bug with entities APIs is fixed.
-    """
-    raise_error = HttpResponseError
-    error_message = error.message
-    error_code = error.code
-    error_message += "\nErrorCode:{}".format(error_code)
-    error = raise_error(message=error_message)
-    error.error_code = error_code
-    raise error
-
-
 def process_single_error(error):
     """We actually raise the DocumentError for single text operations.
     """

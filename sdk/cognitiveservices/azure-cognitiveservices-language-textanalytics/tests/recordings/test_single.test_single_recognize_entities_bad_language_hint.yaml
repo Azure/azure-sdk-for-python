@@ -21,158 +21,27 @@ interactions:
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?showStats=false
   response:
     body:
-      string: '{"code":"InternalServerError","message":"Processing failed unexpectedly.
-        Please try again later."}'
+      string: '{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
+        language not supported. Pass in one of: ar,cs,da,de,en,es,fi,fr,hu,it,ja,ko,nl,no,pl,pt-BR,pt-PT,ru,sv,tr,zh-Hans"},"message":"Invalid
+        Language Code."}}],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 5c0a9a20-e2b1-4d86-b4c6-728827854200
+      - ba7f3f50-5207-48ff-9845-9fde4ebada47
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 14 Nov 2019 21:25:02 GMT
+      - Mon, 18 Nov 2019 17:16:15 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
       - chunked
       x-aml-ta-request-id:
-      - b1953e44-720b-45cc-a650-a6f3b0153868
+      - c2910a39-250c-474d-ac3b-90983091b06e
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '11'
+      - '2'
     status:
-      code: 500
-      message: Internal Server Error
-- request:
-    body: '{"documents": [{"id": "0", "text": "Microsoft was founded by Bill Gates.",
-      "language": "English"}]}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '99'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
-      X-BingApis-SDK-Client:
-      - Python-SDK
-    method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?showStats=false
-  response:
-    body:
-      string: '{"code":"InternalServerError","message":"Processing failed unexpectedly.
-        Please try again later."}'
-    headers:
-      apim-request-id:
-      - 94c6d0d0-15b2-4427-a877-34413af70a4d
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 14 Nov 2019 21:25:02 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-aml-ta-request-id:
-      - edaa5939-cdf9-42a3-97d1-da2a2318532d
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '8'
-    status:
-      code: 500
-      message: Internal Server Error
-- request:
-    body: '{"documents": [{"id": "0", "text": "Microsoft was founded by Bill Gates.",
-      "language": "English"}]}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '99'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
-      X-BingApis-SDK-Client:
-      - Python-SDK
-    method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?showStats=false
-  response:
-    body:
-      string: '{"code":"InternalServerError","message":"Processing failed unexpectedly.
-        Please try again later."}'
-    headers:
-      apim-request-id:
-      - d79b256e-3171-4c1c-b9b2-2126f2d86676
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 14 Nov 2019 21:25:05 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-aml-ta-request-id:
-      - f9cd6c05-8cc9-4a6a-9fa9-a4589adfac69
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '11'
-    status:
-      code: 500
-      message: Internal Server Error
-- request:
-    body: '{"documents": [{"id": "0", "text": "Microsoft was founded by Bill Gates.",
-      "language": "English"}]}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '99'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
-      X-BingApis-SDK-Client:
-      - Python-SDK
-    method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?showStats=false
-  response:
-    body:
-      string: '{"code":"InternalServerError","message":"Processing failed unexpectedly.
-        Please try again later."}'
-    headers:
-      apim-request-id:
-      - 5fba7863-9f2c-4cb4-b75a-ed33454cd708
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 14 Nov 2019 21:25:08 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-aml-ta-request-id:
-      - 3b20e18b-a5cb-44fe-ac29-662c1ba216dc
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '10'
-    status:
-      code: 500
-      message: Internal Server Error
+      code: 200
+      message: OK
 version: 1

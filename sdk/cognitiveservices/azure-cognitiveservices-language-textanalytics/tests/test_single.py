@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import pytest
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from devtools_testutils import ResourceGroupPreparer
 from devtools_testutils.cognitiveservices_testcase import CognitiveServiceTest, CognitiveServicesAccountPreparer
@@ -109,11 +108,9 @@ class TextAnalyticsTest(CognitiveServiceTest):
                 text={"id": "1", "text": "hello world"}
             )
 
-    # TODO: Will fail with "At least one document missing an Id" until service bug is fixed
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
     def test_single_language_detection_bad_country_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
-        pytest.skip("waiting on service bug")
         with self.assertRaises(HttpResponseError):
             response = single_detect_language(
                 endpoint=cognitiveservices_account,

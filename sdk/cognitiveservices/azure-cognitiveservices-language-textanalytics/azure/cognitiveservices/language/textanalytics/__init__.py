@@ -6,7 +6,7 @@
 
 from typing import Any, Optional, List  # pylint: disable=unused-import
 from ._text_analytics_client import TextAnalyticsClient
-from ._response_handlers import _validate_single_input, process_single_error, process_entities_error
+from ._response_handlers import _validate_single_input, process_single_error
 from ._version import VERSION
 from ._models import (
     LanguageInput,
@@ -150,10 +150,9 @@ def single_recognize_entities(
             show_stats=show_stats,
             **kwargs
         )
-        try:
-            return response[0].entities  # list[Entity]
-        except TypeError:
-            return process_entities_error(response)
+        if response[0].is_error:
+            return process_single_error(response[0])  # DocumentError
+        return response[0].entities  # list[Entity]
 
 
 def single_recognize_pii_entities(
@@ -198,10 +197,9 @@ def single_recognize_pii_entities(
             show_stats=show_stats,
             **kwargs
         )
-        try:
-            return response[0].entities  # list[Entity]
-        except TypeError:
-            return process_entities_error(response)
+        if response[0].is_error:
+            return process_single_error(response[0])  # DocumentError
+        return response[0].entities  # list[Entity]
 
 
 def single_recognize_linked_entities(
@@ -246,10 +244,9 @@ def single_recognize_linked_entities(
             show_stats=show_stats,
             **kwargs
         )
-        try:
-            return response[0].entities  # list[Entity]
-        except TypeError:
-            return process_entities_error(response)
+        if response[0].is_error:
+            return process_single_error(response[0])  # DocumentError
+        return response[0].entities  # list[LinkedEntity]
 
 
 def single_extract_key_phrases(

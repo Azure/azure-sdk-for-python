@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: '{"documents": [{"id": "0", "text": "My SSN is 555-55-5555", "language":
-      "English"}]}'
+    body: '{"documents": [{"id": "0", "text": "This is written in English.", "countryHint":
+      "United States"}]}'
     headers:
       Accept:
       - application/json
@@ -10,7 +10,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '84'
+      - '99'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
@@ -18,28 +18,31 @@ interactions:
       X-BingApis-SDK-Client:
       - Python-SDK
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/pii?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
   response:
     body:
-      string: '{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
-        language not supported. Pass in one of: en"},"message":"Invalid Language Code."}}],"modelVersion":"2019-10-01"}'
+      string: '{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","innerError":{"code":"InvalidCountryHint","message":"Country
+        hint is not valid. Please specify an ISO 3166-1 alpha-2 two letter country
+        code."},"message":"Invalid Country Hint."}}],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 9dd68ad4-3946-4c0e-9630-ac970fd60c8b
+      - 8dda0c2f-8e45-4091-9721-31452870dfed
       content-type:
       - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=0
       date:
-      - Mon, 18 Nov 2019 17:13:11 GMT
+      - Mon, 18 Nov 2019 17:01:22 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
       - chunked
       x-aml-ta-request-id:
-      - 47d55356-a635-4af5-86ef-7006d232cfa1
+      - fb6abf77-e289-47da-9723-4037f5319803
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '11'
+      - '8'
     status:
       code: 200
       message: OK

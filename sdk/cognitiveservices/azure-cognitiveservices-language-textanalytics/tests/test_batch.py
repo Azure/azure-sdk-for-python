@@ -35,11 +35,9 @@ class TextAnalyticsTest(CognitiveServiceTest):
         self.assertEqual(response[2].detected_languages[0].name, "Japanese")
         self.assertEqual(response[3].detected_languages[0].name, "German")
 
-    # TODO: This will fail until the service bug with country hint is fixed
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
     def test_some_errors_detect_language(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
-        pytest.skip("waiting on service bug fix")
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
         docs = [{"id": "1", "country_hint": "United States", "text": "I should take my cat to the veterinarian."},
@@ -99,11 +97,9 @@ class TextAnalyticsTest(CognitiveServiceTest):
         self.assertTrue(response[1].is_error)
         self.assertTrue(response[2].is_error)
 
-    # TODO: this will fail due to a bug in the service
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
     def test_all_errors_recognize_entities(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
-        pytest.skip("waiting on service bug fix")
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
         docs = [{"id": "1", "text": ""},
@@ -146,11 +142,9 @@ class TextAnalyticsTest(CognitiveServiceTest):
         self.assertTrue(response[1].is_error)
         self.assertFalse(response[2].is_error)
 
-    # TODO: this will fail due to a bug in the service
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
     def test_all_errors_recognize_pii_entities(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
-        pytest.skip("waiting on service bug fix")
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
         docs = [{"id": "1", "language": "es", "text": "hola"},
@@ -184,11 +178,9 @@ class TextAnalyticsTest(CognitiveServiceTest):
         self.assertTrue(response[0].is_error)
         self.assertFalse(response[1].is_error)
 
-    # TODO: this will fail due to a bug in the service
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
     def test_all_errors_recognize_linked_entities(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
-        pytest.skip("waiting on service bug fix")
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
         docs = [{"id": "1", "text": ""},
