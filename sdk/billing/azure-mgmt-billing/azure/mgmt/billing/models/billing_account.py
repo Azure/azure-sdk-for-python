@@ -30,7 +30,7 @@ class BillingAccount(Resource):
     :type address: ~azure.mgmt.billing.models.AddressDetails
     :ivar agreement_type: The type of agreement. Possible values include:
      'MicrosoftCustomerAgreement', 'EnterpriseAgreement',
-     'MicrosoftOnlineServicesProgram'
+     'MicrosoftOnlineServicesProgram', 'MicrosoftPartnerAgreement'
     :vartype agreement_type: str or ~azure.mgmt.billing.models.AgreementType
     :ivar customer_type: The type of customer. Possible values include:
      'Enterprise', 'Individual', 'Partner'

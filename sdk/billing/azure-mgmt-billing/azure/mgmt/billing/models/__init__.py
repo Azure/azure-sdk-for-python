@@ -167,6 +167,7 @@ from .customer_paged import CustomerPaged
 from .billing_subscription_paged import BillingSubscriptionPaged
 from .product_paged import ProductPaged
 from .transaction_paged import TransactionPaged
+from .invoice_paged import InvoicePaged
 from .transfer_details_paged import TransferDetailsPaged
 from .recipient_transfer_details_paged import RecipientTransferDetailsPaged
 from .operation_paged import OperationPaged
@@ -279,6 +280,7 @@ __all__ = [
     'BillingSubscriptionPaged',
     'ProductPaged',
     'TransactionPaged',
+    'InvoicePaged',
     'TransferDetailsPaged',
     'RecipientTransferDetailsPaged',
     'OperationPaged',
