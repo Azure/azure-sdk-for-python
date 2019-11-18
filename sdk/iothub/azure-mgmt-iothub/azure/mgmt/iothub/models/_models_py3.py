@@ -811,9 +811,12 @@ class IotHubLocationDescription(Model):
     """Public representation of one of the locations where a resource is
     provisioned.
 
-    :param location: Azure Geo Regions
+    :param location: The name of the Azure region
     :type location: str
-    :param role: Specific Role assigned to this location. Possible values
+    :param role: The role of the region, can be either primary or secondary.
+     The primary region is where the IoT hub is currently provisioned. The
+     secondary region is the Azure disaster recovery (DR) paired region and
+     also the region where the IoT hub can failover to. Possible values
      include: 'primary', 'secondary'
     :type role: str or ~azure.mgmt.iothub.models.IotHubReplicaRoleType
     """
@@ -909,9 +912,6 @@ class IotHubProperties(Model):
     :type cloud_to_device: ~azure.mgmt.iothub.models.CloudToDeviceProperties
     :param comments: IoT hub comments.
     :type comments: str
-    :param device_streams: The device streams properties of iothub.
-    :type device_streams:
-     ~azure.mgmt.iothub.models.IotHubPropertiesDeviceStreams
     :param features: The capabilities and features enabled for the IoT hub.
      Possible values include: 'None', 'DeviceManagement'
     :type features: str or ~azure.mgmt.iothub.models.Capabilities
@@ -940,12 +940,11 @@ class IotHubProperties(Model):
         'enable_file_upload_notifications': {'key': 'enableFileUploadNotifications', 'type': 'bool'},
         'cloud_to_device': {'key': 'cloudToDevice', 'type': 'CloudToDeviceProperties'},
         'comments': {'key': 'comments', 'type': 'str'},
-        'device_streams': {'key': 'deviceStreams', 'type': 'IotHubPropertiesDeviceStreams'},
         'features': {'key': 'features', 'type': 'str'},
         'locations': {'key': 'locations', 'type': '[IotHubLocationDescription]'},
     }
 
-    def __init__(self, *, authorization_policies=None, ip_filter_rules=None, event_hub_endpoints=None, routing=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications: bool=None, cloud_to_device=None, comments: str=None, device_streams=None, features=None, **kwargs) -> None:
+    def __init__(self, *, authorization_policies=None, ip_filter_rules=None, event_hub_endpoints=None, routing=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications: bool=None, cloud_to_device=None, comments: str=None, features=None, **kwargs) -> None:
         super(IotHubProperties, self).__init__(**kwargs)
         self.authorization_policies = authorization_policies
         self.ip_filter_rules = ip_filter_rules
@@ -959,25 +958,8 @@ class IotHubProperties(Model):
         self.enable_file_upload_notifications = enable_file_upload_notifications
         self.cloud_to_device = cloud_to_device
         self.comments = comments
-        self.device_streams = device_streams
         self.features = features
         self.locations = None
-
-
-class IotHubPropertiesDeviceStreams(Model):
-    """The device streams properties of iothub.
-
-    :param streaming_endpoints: List of Device Streams Endpoints.
-    :type streaming_endpoints: list[str]
-    """
-
-    _attribute_map = {
-        'streaming_endpoints': {'key': 'streamingEndpoints', 'type': '[str]'},
-    }
-
-    def __init__(self, *, streaming_endpoints=None, **kwargs) -> None:
-        super(IotHubPropertiesDeviceStreams, self).__init__(**kwargs)
-        self.streaming_endpoints = streaming_endpoints
 
 
 class IotHubQuotaMetricInfo(Model):
@@ -1453,7 +1435,7 @@ class RouteProperties(Model):
     :param source: Required. The source that the routing rule is to be applied
      to, such as DeviceMessages. Possible values include: 'Invalid',
      'DeviceMessages', 'TwinChangeEvents', 'DeviceLifecycleEvents',
-     'DeviceJobLifecycleEvents', 'DigitalTwinChangeEvents'
+     'DeviceJobLifecycleEvents'
     :type source: str or ~azure.mgmt.iothub.models.RoutingSource
     :param condition: The condition that is evaluated to apply the routing
      rule. If no condition is provided, it evaluates to true by default. For
@@ -1617,7 +1599,7 @@ class RoutingProperties(Model):
     :type fallback_route: ~azure.mgmt.iothub.models.FallbackRouteProperties
     :param enrichments: The list of user-provided enrichments that the IoT hub
      applies to messages to be delivered to built-in and custom endpoints. See:
-     https://aka.ms/iotmsgenrich
+     https://aka.ms/telemetryoneventgrid
     :type enrichments: list[~azure.mgmt.iothub.models.EnrichmentProperties]
     """
 
@@ -1938,7 +1920,7 @@ class TestAllRoutesInput(Model):
 
     :param routing_source: Routing source. Possible values include: 'Invalid',
      'DeviceMessages', 'TwinChangeEvents', 'DeviceLifecycleEvents',
-     'DeviceJobLifecycleEvents', 'DigitalTwinChangeEvents'
+     'DeviceJobLifecycleEvents'
     :type routing_source: str or ~azure.mgmt.iothub.models.RoutingSource
     :param message: Routing message
     :type message: ~azure.mgmt.iothub.models.RoutingMessage
