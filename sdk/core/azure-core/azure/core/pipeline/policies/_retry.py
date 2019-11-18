@@ -318,11 +318,12 @@ class RetryPolicy(HTTPPolicy):
                 settings['status'] -= 1
                 settings['history'].append(RequestHistory(response.http_request, http_response=response.http_response))
 
-        if not self.is_exhausted(settings):
-            if response.http_request.body and hasattr(response.http_request.body, 'read'):
-                return self.is_seekable(response.http_request.body)
-            return True
-        return False
+        if self.is_exhausted(settings):
+            return False
+
+        if response.http_request.body and hasattr(response.http_request.body, 'read'):
+            return self.is_seekable(response.http_request.body)
+        return True
 
     def is_seekable(self, body):
         try:
