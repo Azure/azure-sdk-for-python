@@ -15,7 +15,7 @@ from azure.core.tracing import SpanKind, AbstractSpan  # type: ignore
 from azure.core.settings import settings  # type: ignore
 
 from .._common import EventData, EventDataBatch
-from ..exceptions import _error_handler, OperationTimeoutError, EventDataError
+from ..exceptions import _error_handler, OperationTimeoutError
 from .._producer import _set_partition_key, _set_trace_message
 from .._utils import create_properties, set_message_partition_key, trace_message
 from .._constants import TIMEOUT_SYMBOL
@@ -155,7 +155,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         else:
             if isinstance(event_data, EventDataBatch):  # The partition_key in the param will be omitted.
                 if partition_key and partition_key != event_data._partition_key:  # pylint: disable=protected-access
-                    raise EventDataError('The partition_key does not match the one of the EventDataBatch')
+                    raise ValueError('The partition_key does not match the one of the EventDataBatch')
                 wrapper_event_data = event_data  # type:ignore
             else:
                 if partition_key:

@@ -138,11 +138,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         return await self._do_retryable_operation(self._open, operation_need_param=False)
 
     def _message_received(self, message):
-        # pylint:disable=protected-access
-        event_data = EventData._from_message(message)
-        trace_link_message(event_data)
+        self._event_queue.put(message)
         self._last_received_event = event_data
-        self._event_queue.put(event_data)
 
     async def receive(self):
         retried_times = 0
@@ -153,9 +150,10 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             try:
                 await self._open()
                 await self._handler.do_work_async()
-
                 while not self._event_queue.empty():
-                    event_data = self._event_queue.get()
+                    message = self._event_queue.get()
+                    event_data = EventData._from_message(message)
+                    trace_link_message(event_data)
                     await self._on_event_received(event_data)
                     self._event_queue.task_done()
                 return
