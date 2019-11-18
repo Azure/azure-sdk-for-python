@@ -189,13 +189,13 @@ client = EventHubConsumerClient.from_connection_string(connection_str, event_hub
 
 logger = logging.getLogger("azure.eventhub")
 
-def on_events(partition_context, events):
-    logger.info("Received {} events from partition {}".format(len(events), partition_context.partition_id))
+def on_event(partition_context, event):
+    logger.info("Received event from partition {}".format(partition_context.partition_id))
 
 with client:
-    client.receive(on_events=on_events, consumer_group="$Default")
+    client.receive(on_event=on_event, consumer_group="$Default")
     # receive events from specified partition:
-    # client.receive(on_events=on_events, consumer_group="$Default", partition_id='0')
+    # client.receive(on_event=on_event, consumer_group="$Default", partition_id='0')
 ```
 
 ### Async publish events to an Event Hub
@@ -273,15 +273,15 @@ event_hub_path = '<< NAME OF THE EVENT HUB >>'
 
 logger = logging.getLogger("azure.eventhub")
 
-async def on_events(partition_context, events):
-    logger.info("Received {} events from partition {}".format(len(events), partition_context.partition_id))
+async def on_event(partition_context, event):
+    logger.info("Received event from partition {}".format(partition_context.partition_id))
 
 async def receive():
     client = EventHubConsumerClient.from_connection_string(connection_str, event_hub_path=event_hub_path)
     async with client:
-        received = await client.receive(on_events=on_events, consumer_group='$Default')
+        received = await client.receive(on_event=on_event, consumer_group='$Default')
         # receive events from specified partition:
-        # received = await client.receive(on_events=on_events, consumer_group='$Default', partition_id='0')
+        # received = await client.receive(on_event=on_event, consumer_group='$Default', partition_id='0')
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
@@ -330,13 +330,12 @@ async def do_operation(event):
     print(event)
 
 
-async def process_events(partition_context, events):
-    await asyncio.gather(*[do_operation(event) for event in events])
-    await partition_context.update_checkpoint(events[-1])
+async def process_event(partition_context, event):
+    await partition_context.update_checkpoint(event)
 
 async def receive(client):
     try:
-        await client.receive(on_events=process_events, consumer_group="$Default")
+        await client.receive(on_event=process_event, consumer_group="$Default")
     except KeyboardInterrupt:
         await client.close()
 

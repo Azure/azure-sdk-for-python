@@ -14,8 +14,10 @@ def create_eventhub_producer_client():
     from azure.eventhub import EventHubProducerClient
     event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
     event_hub = os.environ['EVENT_HUB_NAME']
-    producer = EventHubProducerClient.from_connection_string(conn_str=event_hub_connection_str,
-                                                             event_hub_path=event_hub)
+    producer = EventHubProducerClient.from_connection_string(
+        conn_str=event_hub_connection_str,
+        event_hub_path=event_hub
+    )
     # [END create_eventhub_producer_client_from_conn_str_sync]
 
     # [START create_eventhub_producer_client_sync]
@@ -27,9 +29,12 @@ def create_eventhub_producer_client():
     shared_access_policy = os.environ['EVENT_HUB_SAS_POLICY']
     shared_access_key = os.environ['EVENT_HUB_SAS_KEY']
 
-    producer = EventHubProducerClient(host=hostname,
-                                      event_hub_path=event_hub,
-                                      credential=EventHubSharedKeyCredential(shared_access_policy, shared_access_key))
+    credential = EventHubSharedKeyCredential(shared_access_policy, shared_access_key)
+    producer = EventHubProducerClient(
+        host=hostname,
+        event_hub_path=event_hub,
+        credential=credential
+    )
     # [END create_eventhub_producer_client_sync]
     return producer
 
@@ -40,8 +45,10 @@ def create_eventhub_consumer_client():
     from azure.eventhub import EventHubConsumerClient
     event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
     event_hub = os.environ['EVENT_HUB_NAME']
-    consumer = EventHubConsumerClient.from_connection_string(conn_str=event_hub_connection_str,
-                                                             event_hub_path=event_hub)
+    consumer = EventHubConsumerClient.from_connection_string(
+        conn_str=event_hub_connection_str,
+        event_hub_path=event_hub
+    )
     # [END create_eventhub_consumer_client_from_conn_str_sync]
 
     # [START create_eventhub_consumer_client_sync]
@@ -53,9 +60,11 @@ def create_eventhub_consumer_client():
     shared_access_policy = os.environ['EVENT_HUB_SAS_POLICY']
     shared_access_key = os.environ['EVENT_HUB_SAS_KEY']
 
-    consumer = EventHubConsumerClient(host=hostname,
-                                      event_hub_path=event_hub,
-                                      credential=EventHubSharedKeyCredential(shared_access_policy, shared_access_key))
+    credential = EventHubSharedKeyCredential(shared_access_policy, shared_access_key)
+    consumer = EventHubConsumerClient(
+        host=hostname,
+        event_hub_path=event_hub,
+        credential=credential)
     # [END create_eventhub_consumer_client_sync]
     return consumer
 
@@ -95,13 +104,12 @@ def example_eventhub_sync_send_and_receive():
         # [START eventhub_consumer_client_receive_sync]
         logger = logging.getLogger("azure.eventhub")
 
-        def on_events(partition_context, events):
-            logger.info("Received {} messages from partition: {}".format(
-                len(events), partition_context.partition_id))
+        def on_event(partition_context, event):
+            logger.info("Received event from partition: {}".format(partition_context.partition_id))
             # Do ops on received events
 
         with consumer:
-            consumer.receive(on_events=on_events, consumer_group='$Default')
+            consumer.receive(on_event=on_event, consumer_group='$Default')
         # [END eventhub_consumer_client_receive_sync]
     finally:
         pass
@@ -115,8 +123,10 @@ def example_eventhub_producer_ops():
     event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
     event_hub = os.environ['EVENT_HUB_NAME']
 
-    producer = EventHubProducerClient.from_connection_string(conn_str=event_hub_connection_str,
-                                                             event_hub_path=event_hub)
+    producer = EventHubProducerClient.from_connection_string(
+        conn_str=event_hub_connection_str,
+        event_hub_path=event_hub
+    )
     try:
         producer.send(EventData(b"A single event"))
     finally:
@@ -141,17 +151,17 @@ def example_eventhub_consumer_ops():
 
     logger = logging.getLogger("azure.eventhub")
 
-    def on_events(partition_context, events):
-        logger.info("Received {} messages from partition: {}".format(
-            len(events), partition_context.partition_id))
+    def on_event(partition_context, event):
+        logger.info("Received event from partition: {}".format(partition_context.partition_id))
         # Do ops on received events
 
     # The receive method is blocking call, so execute it in a thread to
     # better demonstrate how to stop the receiving by calling he close method.
 
-    worker = threading.Thread(target=consumer.receive,
-                              kwargs={"on_events": on_events,
-                                      "consumer_group": "$Default"})
+    worker = threading.Thread(
+        target=consumer.receive,
+        kwargs={"on_event": on_event, "consumer_group": "$Default"}
+    )
     worker.start()
     time.sleep(10)  # Keep receiving for 10s then close.
     # Close down the consumer handler explicitly.

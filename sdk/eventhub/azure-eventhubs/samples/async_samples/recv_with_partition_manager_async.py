@@ -28,11 +28,10 @@ async def do_operation(event):
     # print(event)
 
 
-async def on_events(partition_context, events):
+async def on_event(partition_context, event):
     # put your code here
-    print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
-    await asyncio.gather(*[do_operation(event) for event in events])
-    await partition_context.update_checkpoint(events[-1])
+    print("Received event from partition: {}".format(partition_context.partition_id))
+    await partition_context.update_checkpoint(event)
 
 
 async def receive(client):
@@ -42,9 +41,9 @@ async def receive(client):
         partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
         which also try to receive events from all partitions and use the same storage resource.
         """
-        await client.receive(on_events=on_events, consumer_group="$Default")
+        await client.receive(on_event=on_event, consumer_group="$Default")
         # With specified partition_id, load-balance will be disabled
-        # await client.receive(event_handler=event_handler, consumer_group="$default", partition_id = '0'))
+        # await client.receive(on_event=on_event, consumer_group="$default", partition_id = '0'))
     except KeyboardInterrupt:
         await client.close()
 
