@@ -26,9 +26,8 @@ class BillingRoleDefinition(Resource):
     :vartype type: str
     :ivar description: The role description
     :vartype description: str
-    :ivar value: The list of billingPermissions a caller has on a billing
-     account.
-    :vartype value:
+    :param permissions: The billingPermissions the role has
+    :type permissions:
      list[~azure.mgmt.billing.models.BillingPermissionsProperties]
     :ivar role_name: The name of the role
     :vartype role_name: str
@@ -39,7 +38,6 @@ class BillingRoleDefinition(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'description': {'readonly': True},
-        'value': {'readonly': True},
         'role_name': {'readonly': True},
     }
 
@@ -48,12 +46,12 @@ class BillingRoleDefinition(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'value': {'key': 'properties.permissions.value', 'type': '[BillingPermissionsProperties]'},
+        'permissions': {'key': 'properties.permissions', 'type': '[BillingPermissionsProperties]'},
         'role_name': {'key': 'properties.roleName', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, permissions=None, **kwargs) -> None:
         super(BillingRoleDefinition, self).__init__(**kwargs)
         self.description = None
-        self.value = None
+        self.permissions = permissions
         self.role_name = None
