@@ -6,6 +6,7 @@ products:
   - azure
   - azure-key-vault
 ---
+
 # Azure Key Vault Secrets Client Library Python Samples
 
 These code snippets highlight this SDK's common use cases.
