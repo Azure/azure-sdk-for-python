@@ -328,7 +328,7 @@ class RetryPolicy(HTTPPolicy):
                 try:
                     # attempt to rewind the body to the initial position
                     response.http_request.body.seek(body_position, SEEK_SET)
-                except (UnsupportedOperation, ValueError, AttributeError) as err:
+                except (UnsupportedOperation, ValueError, AttributeError):
                     # if body is not seekable, then retry would not work
                     return False
             return True
