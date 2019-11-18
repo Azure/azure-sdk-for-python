@@ -479,8 +479,9 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
                 self.account_url(storage_account.name, "queue"), credential=storage_account_key, queue_name='queue')
 
             # Assert
-            exists = hasattr(service, 'close')
-            self.assertTrue(exists)
+            with servcie:
+                assert hasattr(service, 'close')
+                service.close()
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

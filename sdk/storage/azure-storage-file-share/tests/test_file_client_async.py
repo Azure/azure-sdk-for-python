@@ -418,7 +418,9 @@ class StorageFileClientTest(FileTestCase):
                 self.get_file_url(), credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
-            assert hasattr(service, 'close')
+            with servcie:
+                assert hasattr(service, 'close')
+                service.close()
 
 
 # ------------------------------------------------------------------------------
