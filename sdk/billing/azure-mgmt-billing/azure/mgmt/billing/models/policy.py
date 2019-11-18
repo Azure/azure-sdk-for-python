@@ -25,7 +25,7 @@ class Policy(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :param marketplace_purchases: The marketplace purchases are free, allowed
-     or not allowed. Possible values include: 'AllAllowed', 'FreeAllowed',
+     or not allowed. Possible values include: 'AllAllowed', 'OnlyFreeAllowed',
      'NotAllowed'
     :type marketplace_purchases: str or
      ~azure.mgmt.billing.models.MarketplacePurchasesPolicy
@@ -34,7 +34,7 @@ class Policy(Resource):
     :type reservation_purchases: str or
      ~azure.mgmt.billing.models.ReservationPurchasesPolicy
     :param view_charges: Who can view charges. Possible values include:
-     'None', 'SubscriptionOwner'
+     'Allowed', 'NotAllowed'
     :type view_charges: str or ~azure.mgmt.billing.models.ViewChargesPolicy
     """
 
