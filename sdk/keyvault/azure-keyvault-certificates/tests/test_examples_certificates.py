@@ -10,6 +10,7 @@ import os
 from devtools_testutils import ResourceGroupPreparer
 from certificates_preparer import VaultClientPreparer
 from certificates_test_case import KeyVaultTestCase
+from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
 
 
 def print(*args):
@@ -39,7 +40,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_crud_operations(self, vault_client, **kwargs):
-
         certificate_client = vault_client.certificates
 
         # [START create_certificate]
@@ -117,8 +117,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_list_operations(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
-
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
@@ -184,8 +182,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_example_certificate_backup_restore(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
-
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
@@ -234,9 +230,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_recover(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
-        from azure.core.exceptions import HttpResponseError
-
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
@@ -288,12 +281,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_example_contacts(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, CertificateContact
-
         certificate_client = vault_client.certificates
 
         # [START create_contacts]
-
+        from azure.keyvault.certificates import CertificateContact
         # Create a list of the contacts that you want to set for this key vault.
         contact_list = [
             CertificateContact(email="admin@contoso.com", name="John Doe", phone="1111111111"),
@@ -334,11 +325,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @VaultClientPreparer()
     def test_example_issuers(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import AdministratorContact, CertificatePolicy
-
         certificate_client = vault_client.certificates
 
         # [START create_issuer]
+        from azure.keyvault.certificates import AdministratorContact
 
         # First we specify the AdministratorContact for a issuer.
         admin_details = [

@@ -8,6 +8,7 @@ import os
 from devtools_testutils import ResourceGroupPreparer
 from certificates_async_preparer import AsyncVaultClientPreparer
 from certificates_async_test_case import AsyncKeyVaultTestCase
+from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
 
 
 def print(*args):
@@ -38,7 +39,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_crud_operations(self, vault_client, **kwargs):
-
         certificate_client = vault_client.certificates
 
         # [START create_certificate]
@@ -110,8 +110,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_list_operations(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
-
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
@@ -183,9 +181,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_backup_restore(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
-        import asyncio
-
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
@@ -239,9 +234,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_recover(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
-        from azure.core.exceptions import HttpResponseError
-
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
@@ -290,11 +282,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_contacts(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, CertificateContact
-
         certificate_client = vault_client.certificates
 
         # [START create_contacts]
+        from azure.keyvault.certificates import CertificateContact
 
         # Create a list of the contacts that you want to set for this key vault.
         contact_list = [
@@ -337,11 +328,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_issuers(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import AdministratorContact, CertificatePolicy
-
         certificate_client = vault_client.certificates
 
         # [START create_issuer]
+        from azure.keyvault.certificates import AdministratorContact
 
         # First we specify the AdministratorContact for a issuer.
         admin_details = [
