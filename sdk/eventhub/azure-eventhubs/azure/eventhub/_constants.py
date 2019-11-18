@@ -27,6 +27,7 @@ CONTAINER_PREFIX = "eventhub.pysdk-"
 JWT_TOKEN_SCOPE = "https://eventhubs.azure.net//.default"
 MGMT_OPERATION = b'com.microsoft:eventhub'
 MGMT_PARTITION_OPERATION = b'com.microsoft:partition'
+USER_AGENT_PREFIX = "azsdk-python-eventhubs"
 
 NO_RETRY_ERRORS = (
     b"com.microsoft:argument-out-of-range",
