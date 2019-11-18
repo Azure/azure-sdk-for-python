@@ -21,14 +21,13 @@ class TextWord(Model):
     :type text: str
     :param bounding_box: Required. Bounding box of an extracted word.
     :type bounding_box: list[float]
-    :param confidence: Required. Confidence value.
+    :param confidence: Confidence value.
     :type confidence: float
     """
 
     _validation = {
         'text': {'required': True},
         'bounding_box': {'required': True},
-        'confidence': {'required': True},
     }
 
     _attribute_map = {
