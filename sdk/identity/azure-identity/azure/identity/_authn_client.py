@@ -42,7 +42,6 @@ if TYPE_CHECKING:
     from azure.core.pipeline.policies import HTTPPolicy
 
 
-
 class AuthnClientBase(ABC):
     """Sans I/O authentication client methods"""
 
