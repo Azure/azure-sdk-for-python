@@ -342,10 +342,9 @@ class ConsumerProducerMixin(object):
             exception = errors.AuthenticationException("Authorization timeout.")
         return _handle_exception(exception, self)
 
-    def _do_retryable_operation(self, operation, timeout=100000, **kwargs):
+    def _do_retryable_operation(self, operation, timeout=None, **kwargs):
         # pylint:disable=protected-access
-        # timeout equals to 0 means no timeout, set the value to be a large number.
-        timeout_time = time.time() + (timeout if timeout else 100000)
+        timeout_time = (time.time() + timeout) if timeout else None
         retried_times = 0
         last_exception = kwargs.pop('last_exception', None)
         operation_need_param = kwargs.pop('operation_need_param', True)
