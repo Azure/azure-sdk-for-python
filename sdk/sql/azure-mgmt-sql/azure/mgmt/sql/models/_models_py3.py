@@ -7123,7 +7123,7 @@ class ServerAutomaticTuning(ProxyResource):
 
 
 class ServerAzureADAdministrator(ProxyResource):
-    """An server Active Directory Administrator.
+    """Azure Active Directory administrator.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -7136,15 +7136,14 @@ class ServerAzureADAdministrator(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar administrator_type: Required. The type of administrator. Default
-     value: "ActiveDirectory" .
+    :ivar administrator_type: Required. Type of the sever administrator.
+     Default value: "ActiveDirectory" .
     :vartype administrator_type: str
-    :param login: Required. The server administrator login value.
+    :param login: Required. Login name of the server administrator.
     :type login: str
-    :param sid: Required. The server administrator Sid (Secure ID).
+    :param sid: Required. SID (object ID) of the server administrator.
     :type sid: str
-    :param tenant_id: Required. The server Active Directory Administrator
-     tenant id.
+    :param tenant_id: Tenant ID of the administrator.
     :type tenant_id: str
     """
 
@@ -7155,7 +7154,6 @@ class ServerAzureADAdministrator(ProxyResource):
         'administrator_type': {'required': True, 'constant': True},
         'login': {'required': True},
         'sid': {'required': True},
-        'tenant_id': {'required': True},
     }
 
     _attribute_map = {
@@ -7170,7 +7168,7 @@ class ServerAzureADAdministrator(ProxyResource):
 
     administrator_type = "ActiveDirectory"
 
-    def __init__(self, *, login: str, sid: str, tenant_id: str, **kwargs) -> None:
+    def __init__(self, *, login: str, sid: str, tenant_id: str=None, **kwargs) -> None:
         super(ServerAzureADAdministrator, self).__init__(**kwargs)
         self.login = login
         self.sid = sid
