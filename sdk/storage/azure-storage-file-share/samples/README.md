@@ -1,10 +1,10 @@
 ---
-topic: sample
+page_type: sample
 languages:
   - python
 products:
   - azure
-  - azure-storage-file-share
+  - azure-storage
 ---
 
 # Azure Storage File Share client library for Python Samples

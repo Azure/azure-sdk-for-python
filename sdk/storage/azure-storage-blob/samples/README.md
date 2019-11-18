@@ -1,10 +1,10 @@
 ---
-topic: sample
+page_type: sample
 languages:
   - python
 products:
   - azure
-  - azure-storage-blob
+  - azure-storage
 ---
 
 # Azure Storage Blob client library for Python Samples
