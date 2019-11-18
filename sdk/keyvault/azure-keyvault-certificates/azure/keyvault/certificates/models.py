@@ -611,7 +611,7 @@ class CertificatePolicy(object):
         self._san_dns_names = kwargs.pop("san_dns_names", None) or None
         self._san_upns = kwargs.pop("san_upns", None) or None
 
-        if not (self._san_emails or not self._san_upns or not self._san_dns_names or not self._subject_name):
+        if not (self._san_emails or self._san_upns or self._san_dns_names or self._subject_name):
             raise ValueError("You need to set either subject_name or one of the subject alternative names " +
                             "parameters")
 
