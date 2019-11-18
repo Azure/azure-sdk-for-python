@@ -292,8 +292,8 @@ class RetryPolicy(HTTPPolicy):
         :type response: ~azure.core.pipeline.PipelineResponse
         :param error: An error encountered during the request, or
          None if the response was received successfully.
-        :return: Whether the retry attempts are exhausted.
-         False if exhausted; True if more retry attempts available.
+        :return: Whether any retry attempt is available
+         True if more retry attempts available, False otherwise
         :rtype: bool
         """
         settings['total'] -= 1
