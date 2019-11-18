@@ -117,7 +117,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._config = Configuration(**kwargs)
         self._debug = self._config.network_tracing
         self._conn_manager = get_connection_manager(**kwargs)
-        _LOGGER.info("%r: Created the Event Hub client", self._container_id)
 
     def __enter__(self):
         return self
@@ -179,7 +178,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def _close_connection(self):
         self._conn_manager.reset_connection_if_broken()
 
-    def _try_delay(self, retried_times, last_exception, timeout_time=None, entity_name=None):
+    def _backoff(self, retried_times, last_exception, timeout_time=None, entity_name=None):
         entity_name = entity_name or self._container_id
         backoff = self._config.backoff_factor * 2 ** retried_times
         if backoff <= self._config.backoff_max and (
@@ -209,7 +208,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 return response
             except Exception as exception:  # pylint: disable=broad-except
                 last_exception = _handle_exception(exception, self)
-                self._try_delay(retried_times=retried_times, last_exception=last_exception)
+                self._backoff(retried_times=retried_times, last_exception=last_exception)
                 retried_times += 1
                 if retried_times > self._config.max_retries:
                     _LOGGER.info("%r returns an exception %r", self._container_id, last_exception)
@@ -224,9 +223,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def get_properties(self):
         # type:() -> Dict[str, Any]
-        """
-        Get properties of the specified EventHub async.
-        Keys in the details dictionary include:
+        """Get properties of the EventHub.
+
+        Keys in the returned dictionary include:
 
             - path
             - created_at
@@ -257,8 +256,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def get_partition_properties(self, partition):
         # type:(str) -> Dict[str, Any]
-        """
-        Get properties of the specified partition async.
+        """Get properties of the specified partition.
+
         Keys in the details dictionary include:
 
             - event_hub_path
@@ -359,8 +358,12 @@ class ConsumerProducerMixin(object):
                 return operation()
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = self._handle_exception(exception)
-                self._client._try_delay(retried_times=retried_times, last_exception=last_exception,
-                                        timeout_time=timeout_time, entity_name=self._name)
+                self._client._backoff(
+                    retried_times=retried_times,
+                    last_exception=last_exception,
+                    timeout_time=timeout_time,
+                    entity_name=self._name
+                )
                 retried_times += 1
                 if retried_times > max_retries:
                     _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)

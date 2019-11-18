@@ -87,7 +87,7 @@ class ClientBaseAsync(ClientBase):
     async def _close_connection(self):
         await self._conn_manager.reset_connection_if_broken()
 
-    async def _try_delay(self, retried_times, last_exception, timeout_time=None, entity_name=None):
+    async def _backoff(self, retried_times, last_exception, timeout_time=None, entity_name=None):
         entity_name = entity_name or self._container_id
         backoff = self._config.backoff_factor * 2 ** retried_times
         if backoff <= self._config.backoff_max and (
@@ -117,7 +117,7 @@ class ClientBaseAsync(ClientBase):
                 return response
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = await _handle_exception(exception, self)
-                await self._try_delay(retried_times=retried_times, last_exception=last_exception)
+                await self._backoff(retried_times=retried_times, last_exception=last_exception)
                 retried_times += 1
                 if retried_times > self._config.max_retries:
                     _LOGGER.info("%r returns an exception %r", self._container_id, last_exception)
@@ -265,8 +265,12 @@ class ConsumerProducerMixin(object):
                 return await operation()
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = await self._handle_exception(exception)
-                await self._client._try_delay(retried_times=retried_times, last_exception=last_exception,
-                                              timeout_time=timeout_time, entity_name=self._name)
+                await self._client._backoff(
+                    retried_times=retried_times,
+                    last_exception=last_exception,
+                    timeout_time=timeout_time,
+                    entity_name=self._name
+                )
                 retried_times += 1
                 if retried_times > max_retries:
                     _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)

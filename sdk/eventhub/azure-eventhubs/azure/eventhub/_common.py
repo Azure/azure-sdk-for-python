@@ -12,7 +12,6 @@ import six
 
 from uamqp import BatchMessage, Message, constants  # type: ignore
 
-from .exceptions import EventDataError
 from ._utils import set_message_partition_key, trace_message, utc_from_timestamp
 from ._constants import (
     PROP_SEQ_NUMBER,
@@ -320,15 +319,9 @@ class EventDataBatch(object):
         :rtype: None
         :raise: :class:`ValueError`, when exceeding the size limit.
         """
-        if event_data is None:
-            _LOGGER.warning("event_data is None when calling EventDataBatch.try_add. Ignored")
-            return
-        if not isinstance(event_data, EventData):
-            raise TypeError('event_data should be an EventData instance.')
-
         if self._partition_key:
             if event_data.partition_key and event_data.partition_key != self._partition_key:
-                raise EventDataError('The partition key of event_data does not match the partition key of this batch.')
+                raise ValueError('The partition key of event_data does not match the partition key of this batch.')
             if not event_data.partition_key:
                 set_message_partition_key(event_data.message, self._partition_key)
 
