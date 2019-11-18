@@ -484,7 +484,7 @@ class StorageQueueClientTest(StorageTestCase):
                 self.account_url(storage_account.name, "queue"), credential=storage_account_key, queue_name='queue')
 
             # Assert
-            with servcie:
+            with service:
                 assert hasattr(service, 'close')
                 service.close()
 # ------------------------------------------------------------------------------
