@@ -558,7 +558,7 @@ class StorageClientTestAsync(AsyncStorageTestCase):
                 self.account_url(storage_account.name, "blob"), credential=storage_account_key, container_name='foo', blob_name='bar')
 
             # Assert
-            with servcie:
+            with service:
                 assert hasattr(service, 'close')
                 service.close()
 # ------------------------------------------------------------------------------
