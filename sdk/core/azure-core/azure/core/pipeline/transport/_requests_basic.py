@@ -229,7 +229,7 @@ class RequestsTransport(HttpTransport):
             connect = None
             read = None
             if isinstance(timeout, tuple):
-                if not 'read_timeout' in kwargs:
+                if 'read_timeout' not in kwargs:
                     _LOGGER.warning("Tuple timeout is deprecated.")
                     connect, read = timeout
                 else:
