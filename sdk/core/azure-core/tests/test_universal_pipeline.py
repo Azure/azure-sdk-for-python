@@ -174,7 +174,7 @@ def test_retry_seekable_body():
         'body_position': 10,
     }
     increment = http_retry.increment(setting, response)
-    assert not increment
+    assert increment
 
 def test_raw_deserializer():
     raw_deserializer = ContentDecodePolicy()
