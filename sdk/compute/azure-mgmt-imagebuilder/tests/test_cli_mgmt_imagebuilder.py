@@ -23,6 +23,8 @@ from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 IMAGE_TEMPLATE_NAME = "MyImageTemplate"
+IMAGE_NAME = 'MyImage'
+RUN_OUTPUT_NAME = 'image_it_pir_1'
 
 class MgmtImageBuilderClientTest(AzureMgmtTestCase):
 
@@ -33,9 +35,7 @@ class MgmtImageBuilderClientTest(AzureMgmtTestCase):
         )
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    def test_imagebuilderaz(self, resource_group):
-
-        SERVICE_NAME = "myapimrndxyz"
+    def test_imagebuilder(self, resource_group):
 
         # Create an Image Template.[put]
         BODY = {
@@ -58,7 +58,7 @@ class MgmtImageBuilderClientTest(AzureMgmtTestCase):
               {
                 "type": "Shell",
                 "name": "Shell Customizer Example",
-                "script_uri": "https://example.com/path/to/script.sh"
+                "script_uri": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/619a017566f2bdb2d9a85afd1fe2018bed822cc8/sdk/compute/azure-mgmt-imagebuilder/tests/script.sh"
               }
             ],
             "distribute": [
@@ -66,7 +66,7 @@ class MgmtImageBuilderClientTest(AzureMgmtTestCase):
                 "type": "ManagedImage",
                 "location": "eastus",
                 "run_output_name": "image_it_pir_1",
-                "image_id": "/subscriptions/" + self.settings.SUBSCRIPTION_ID + "/resourceGroups/" + resource_group.name + "/providers/Microsoft.Compute/images/" + "zimvm-image" + "",
+                "image_id": "/subscriptions/" + self.settings.SUBSCRIPTION_ID + "/resourceGroups/" + resource_group.name + "/providers/Microsoft.Compute/images/" + IMAGE_NAME + "",
                 "artifact_tags": {
                   "tag_name": "value"
                 }
@@ -100,7 +100,7 @@ class MgmtImageBuilderClientTest(AzureMgmtTestCase):
               {
                 "type": "Shell",
                 "name": "Shell Customizer Example",
-                "script_uri": "https://example.com/path/to/script.sh"
+                "script_uri": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/619a017566f2bdb2d9a85afd1fe2018bed822cc8/sdk/compute/azure-mgmt-imagebuilder/tests/script.sh"
               }
             ],
             "distribute": [
@@ -122,12 +122,6 @@ class MgmtImageBuilderClientTest(AzureMgmtTestCase):
         #result = self.mgmt_client.virtual_machine_image_templates.create_or_update(BODY, resource_group.name, IMAGE_TEMPLATE_NAME)
         #result = result.result()
 
-        # Retrieve single runOutput[get]
-        result = self.mgmt_client.virtual_machine_image_templates.get_run_output(resource_group.name, IMAGE_TEMPLATE_NAME, RUN_OUTPUT_NAME)
-
-        # Retrieve a list of all outputs created by the last run of an Image Template[get]
-        result = self.mgmt_client.virtual_machine_image_templates.list_run_outputs(resource_group.name, IMAGE_TEMPLATE_NAME, )
-
         # Retrieve an Image Template.[get]
         result = self.mgmt_client.virtual_machine_image_templates.get(resource_group.name, IMAGE_TEMPLATE_NAME)
 
@@ -141,14 +135,20 @@ class MgmtImageBuilderClientTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_machine_image_templates.run(resource_group.name, IMAGE_TEMPLATE_NAME)
         result = result.result()
 
+        # Retrieve single runOutput[get]
+        result = self.mgmt_client.virtual_machine_image_templates.get_run_output(resource_group.name, IMAGE_TEMPLATE_NAME, RUN_OUTPUT_NAME)
+
+        # Retrieve a list of all outputs created by the last run of an Image Template[get]
+        result = self.mgmt_client.virtual_machine_image_templates.list_run_outputs(resource_group.name, IMAGE_TEMPLATE_NAME)
+
         # Remove identities for an Image Template.[patch]
         BODY = {
           "identity": {
             "type": "None"
           }
         }
-        result = self.mgmt_client.virtual_machine_image_templates.update(resource_group.name, IMAGE_TEMPLATE_NAME, BODY)
-        result = result.result()
+        #result = self.mgmt_client.virtual_machine_image_templates.update(resource_group.name, IMAGE_TEMPLATE_NAME, BODY)
+        #result = result.result()
 
         # Update the tags for an Image Template.[patch]
         BODY = {
@@ -156,8 +156,8 @@ class MgmtImageBuilderClientTest(AzureMgmtTestCase):
             "new-tag": "new-value"
           }
         }
-        result = self.mgmt_client.virtual_machine_image_templates.update(resource_group.name, IMAGE_TEMPLATE_NAME, BODY)
-        result = result.result()
+        #result = self.mgmt_client.virtual_machine_image_templates.update(resource_group.name, IMAGE_TEMPLATE_NAME, BODY)
+        #result = result.result()
 
         # Delete an Image Template.[delete]
         result = self.mgmt_client.virtual_machine_image_templates.delete(resource_group.name, IMAGE_TEMPLATE_NAME)
