@@ -336,6 +336,7 @@ class RetryPolicy(HTTPPolicy):
         except (UnsupportedOperation, ValueError, AttributeError):
             # if body is not seekable, then retry would not work
             return False
+        return True
 
     def update_context(self, context, retry_settings):
         """Updates retry history in pipeline context.
