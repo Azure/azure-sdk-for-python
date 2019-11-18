@@ -6898,6 +6898,11 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
      is scaled-in.
     :type scale_in_policy:
      ~azure.mgmt.compute.v2019_03_01.models.ScaleInPolicy
+    :param proximity_placement_group: Specifies information about the
+     proximity placement group that the virtual machine scale set should be
+     assigned to. <br><br>Minimum api-version: 2018-04-01.
+    :type proximity_placement_group:
+     ~azure.mgmt.compute.v2019_03_01.models.SubResource
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -6916,6 +6921,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
         'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'scale_in_policy': {'key': 'properties.scaleInPolicy', 'type': 'ScaleInPolicy'},
+        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
     }
 
@@ -6931,6 +6937,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         self.single_placement_group = kwargs.get('single_placement_group', None)
         self.additional_capabilities = kwargs.get('additional_capabilities', None)
         self.scale_in_policy = kwargs.get('scale_in_policy', None)
+        self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
         self.identity = kwargs.get('identity', None)
 
 

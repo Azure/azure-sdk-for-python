@@ -6898,6 +6898,11 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
      is scaled-in.
     :type scale_in_policy:
      ~azure.mgmt.compute.v2019_03_01.models.ScaleInPolicy
+    :param proximity_placement_group: Specifies information about the
+     proximity placement group that the virtual machine scale set should be
+     assigned to. <br><br>Minimum api-version: 2018-04-01.
+    :type proximity_placement_group:
+     ~azure.mgmt.compute.v2019_03_01.models.SubResource
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -6916,10 +6921,11 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
         'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'scale_in_policy': {'key': 'properties.scaleInPolicy', 'type': 'ScaleInPolicy'},
+        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
     }
 
-    def __init__(self, *, tags=None, sku=None, plan=None, upgrade_policy=None, automatic_repairs_policy=None, virtual_machine_profile=None, overprovision: bool=None, do_not_run_extensions_on_overprovisioned_vms: bool=None, single_placement_group: bool=None, additional_capabilities=None, scale_in_policy=None, identity=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, sku=None, plan=None, upgrade_policy=None, automatic_repairs_policy=None, virtual_machine_profile=None, overprovision: bool=None, do_not_run_extensions_on_overprovisioned_vms: bool=None, single_placement_group: bool=None, additional_capabilities=None, scale_in_policy=None, proximity_placement_group=None, identity=None, **kwargs) -> None:
         super(VirtualMachineScaleSetUpdate, self).__init__(tags=tags, **kwargs)
         self.sku = sku
         self.plan = plan
@@ -6931,6 +6937,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         self.single_placement_group = single_placement_group
         self.additional_capabilities = additional_capabilities
         self.scale_in_policy = scale_in_policy
+        self.proximity_placement_group = proximity_placement_group
         self.identity = identity
 
 
