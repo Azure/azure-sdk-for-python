@@ -11,11 +11,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('--sdk-path', default=DEFAULT_SDK_PATH, help='path to the sdk folder')
     parser.add_argument('--always-succeed', action='store_true', help='return exit code 0 even if incorrect versions are detected')
+    parser.add_argument('--service-directory', default='', help='name of a service directory to target packages')
     args = parser.parse_args()
 
     always_succeed = args.always_succeed
 
-    packages = get_packages(args.sdk_path)
+    root_path = path.join(args.sdk_path, args.service_directory)
+    packages = get_packages(root_path)
 
     invalid_packages = []
     for package in packages:
@@ -54,10 +56,12 @@ if __name__ == '__main__':
             invalid_packages.append(package_name, f'Unknown error {sys.exc_info()}')
 
     if invalid_packages:
-        print("=================\nInvalid Packages:\n=================\n")
+        print("=================\nInvalid Packages:\n=================")
 
         for invalid_package in invalid_packages:
             print(f'{invalid_package[0]}\t{invalid_package[1]}')
 
         if not always_succeed:
             exit(1)
+    else:
+        print("No invalid packages found")

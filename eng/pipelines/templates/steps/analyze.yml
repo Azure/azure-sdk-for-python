@@ -26,6 +26,12 @@ steps:
      scriptPath: 'scripts/devops_tasks/verify_change_log.py'
      arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}}'
 
+  - script: |
+      cd eng/versioning
+      pip install -r requirements.txt
+      python find_invalid_versions.py --always-succeed --service-directory ${{parameters.ServiceDirectory}}
+    displayName: Find Invalid Versions
+
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
     # builds should be sufficient.
