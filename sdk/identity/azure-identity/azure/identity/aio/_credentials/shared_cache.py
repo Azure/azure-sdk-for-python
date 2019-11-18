@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from azure.core.exceptions import ClientAuthenticationError
 
 from ..._constants import AZURE_CLI_CLIENT_ID
-from ..._credentials.shared_cache import SharedTokenCacheBase, NO_TOKEN
+from ..._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 from .._internal.aad_client import AadClient
 from .._internal.exception_wrapper import wrap_exceptions
 

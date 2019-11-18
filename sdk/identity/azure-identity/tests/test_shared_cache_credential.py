@@ -4,7 +4,7 @@
 # ------------------------------------
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import KnownAuthorities, SharedTokenCacheCredential
-from azure.identity._credentials.shared_cache import (
+from azure.identity._internal.shared_token_cache import (
     MULTIPLE_ACCOUNTS,
     MULTIPLE_MATCHING_ACCOUNTS,
     NO_ACCOUNTS,
