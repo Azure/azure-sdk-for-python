@@ -409,7 +409,7 @@ class StorageFileClientTest(FileTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_user_agent_append_async())
 
-    def test_closing_pipeline_client_async(self):
+    async def test_closing_pipeline_client_async(self):
         # Arrange
 
         for client, url in SERVICES.items():
@@ -418,7 +418,7 @@ class StorageFileClientTest(FileTestCase):
                 self.get_file_url(), credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
-            with service:
+            async with service:
                 assert hasattr(service, 'close')
                 service.close()
 
