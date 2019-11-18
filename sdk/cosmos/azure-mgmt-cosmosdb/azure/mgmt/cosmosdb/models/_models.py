@@ -1576,21 +1576,6 @@ class GremlinGraphGetPropertiesResource(Model):
     :ivar _etag: A system generated property representing the resource etag
      required for optimistic concurrency control.
     :vartype _etag: str
-    :param _docs: A system generated property that specified the self-link for
-     documents in a resource.
-    :type _docs: str
-    :param _sprocs: A system generated property that specifies the self-link
-     for stored procedures in a resource.
-    :type _sprocs: str
-    :param _triggers: A system generated property that specifies the self-link
-     for triggers in a resource.
-    :type _triggers: str
-    :param _udfs: A system generated property that specifies the self-link for
-     user defined functions in a resource.
-    :type _udfs: str
-    :param _conflicts: A system generated property that specifies the
-     self-link for conflicts in a resource.
-    :type _conflicts: str
     """
 
     _validation = {
@@ -1610,11 +1595,6 @@ class GremlinGraphGetPropertiesResource(Model):
         '_rid': {'key': '_rid', 'type': 'str'},
         '_ts': {'key': '_ts', 'type': 'object'},
         '_etag': {'key': '_etag', 'type': 'str'},
-        '_docs': {'key': '_docs', 'type': 'str'},
-        '_sprocs': {'key': '_sprocs', 'type': 'str'},
-        '_triggers': {'key': '_triggers', 'type': 'str'},
-        '_udfs': {'key': '_udfs', 'type': 'str'},
-        '_conflicts': {'key': '_conflicts', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1628,11 +1608,6 @@ class GremlinGraphGetPropertiesResource(Model):
         self._rid = None
         self._ts = None
         self._etag = None
-        self._docs = kwargs.get('_docs', None)
-        self._sprocs = kwargs.get('_sprocs', None)
-        self._triggers = kwargs.get('_triggers', None)
-        self._udfs = kwargs.get('_udfs', None)
-        self._conflicts = kwargs.get('_conflicts', None)
 
 
 class GremlinGraphGetResults(ARMResourceProperties):
