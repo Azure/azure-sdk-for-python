@@ -221,7 +221,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         span.add_attribute("message_bus.destination", self._address.path)
         span.add_attribute("peer.address", self._address.hostname)
 
-    def get_properties(self):
+    def get_eventhub_properties(self):
         # type:() -> Dict[str, Any]
         """Get properties of the EventHub.
 
@@ -252,7 +252,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         :rtype: list[str]
         :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
-        return self.get_properties()['partition_ids']
+        return self.get_eventhub_properties()['partition_ids']
 
     def get_partition_properties(self, partition_id):
         # type:(str) -> Dict[str, Any]

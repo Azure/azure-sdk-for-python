@@ -129,7 +129,7 @@ class ClientBaseAsync(ClientBase):
             finally:
                 await mgmt_client.close_async()
 
-    async def get_properties(self):
+    async def get_eventhub_properties(self):
         # type:() -> Dict[str, Any]
         """
         Get properties of the specified EventHub async.
@@ -160,7 +160,7 @@ class ClientBaseAsync(ClientBase):
         :rtype: list[str]
         :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
-        return (await self.get_properties())['partition_ids']
+        return (await self.get_eventhub_properties())['partition_ids']
 
     async def get_partition_properties(self, partition_id):
         # type:(str) -> Dict[str, str]
