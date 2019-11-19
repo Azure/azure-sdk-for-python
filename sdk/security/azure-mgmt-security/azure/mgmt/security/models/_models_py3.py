@@ -1032,7 +1032,7 @@ class Automation(TrackedResource):
      security automation set of rules.
     :type sources: list[~azure.mgmt.security.models.AutomationSource]
     :param actions: A collection of the actions which are triggered if all the
-     configured rules evaluations, within at least one ruleset, are true.
+     configured rules evaluations, within at least one rule set, are true.
     :type actions: list[~azure.mgmt.security.models.AutomationAction]
     """
 
@@ -1142,7 +1142,7 @@ class AutomationActionEventHubInput(AutomationActionEventHub):
     :type action_type: str
     :param event_hub_resource_id: The target Event Hub Azure Resource ID.
     :type event_hub_resource_id: str
-    :param connection_string: The traget Event Hub connection string
+    :param connection_string: The target Event Hub connection string
     :type connection_string: str
     """
 
