@@ -10,65 +10,65 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .proxy_resource_py3 import ProxyResource
-    from .tracked_resource_py3 import TrackedResource
-    from .storage_profile_py3 import StorageProfile
-    from .server_properties_for_create_py3 import ServerPropertiesForCreate
-    from .server_properties_for_default_create_py3 import ServerPropertiesForDefaultCreate
-    from .server_properties_for_restore_py3 import ServerPropertiesForRestore
-    from .server_properties_for_geo_restore_py3 import ServerPropertiesForGeoRestore
-    from .server_properties_for_replica_py3 import ServerPropertiesForReplica
-    from .sku_py3 import Sku
-    from .server_py3 import Server
-    from .server_for_create_py3 import ServerForCreate
-    from .server_update_parameters_py3 import ServerUpdateParameters
-    from .firewall_rule_py3 import FirewallRule
-    from .virtual_network_rule_py3 import VirtualNetworkRule
-    from .database_py3 import Database
-    from .configuration_py3 import Configuration
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .operation_list_result_py3 import OperationListResult
-    from .log_file_py3 import LogFile
-    from .performance_tier_service_level_objectives_py3 import PerformanceTierServiceLevelObjectives
-    from .performance_tier_properties_py3 import PerformanceTierProperties
-    from .name_availability_request_py3 import NameAvailabilityRequest
-    from .name_availability_py3 import NameAvailability
-    from .server_security_alert_policy_py3 import ServerSecurityAlertPolicy
+    from ._models_py3 import Configuration
+    from ._models_py3 import Database
+    from ._models_py3 import FirewallRule
+    from ._models_py3 import LogFile
+    from ._models_py3 import NameAvailability
+    from ._models_py3 import NameAvailabilityRequest
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationListResult
+    from ._models_py3 import PerformanceTierProperties
+    from ._models_py3 import PerformanceTierServiceLevelObjectives
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import Server
+    from ._models_py3 import ServerForCreate
+    from ._models_py3 import ServerPropertiesForCreate
+    from ._models_py3 import ServerPropertiesForDefaultCreate
+    from ._models_py3 import ServerPropertiesForGeoRestore
+    from ._models_py3 import ServerPropertiesForReplica
+    from ._models_py3 import ServerPropertiesForRestore
+    from ._models_py3 import ServerSecurityAlertPolicy
+    from ._models_py3 import ServerUpdateParameters
+    from ._models_py3 import Sku
+    from ._models_py3 import StorageProfile
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
-    from .proxy_resource import ProxyResource
-    from .tracked_resource import TrackedResource
-    from .storage_profile import StorageProfile
-    from .server_properties_for_create import ServerPropertiesForCreate
-    from .server_properties_for_default_create import ServerPropertiesForDefaultCreate
-    from .server_properties_for_restore import ServerPropertiesForRestore
-    from .server_properties_for_geo_restore import ServerPropertiesForGeoRestore
-    from .server_properties_for_replica import ServerPropertiesForReplica
-    from .sku import Sku
-    from .server import Server
-    from .server_for_create import ServerForCreate
-    from .server_update_parameters import ServerUpdateParameters
-    from .firewall_rule import FirewallRule
-    from .virtual_network_rule import VirtualNetworkRule
-    from .database import Database
-    from .configuration import Configuration
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .operation_list_result import OperationListResult
-    from .log_file import LogFile
-    from .performance_tier_service_level_objectives import PerformanceTierServiceLevelObjectives
-    from .performance_tier_properties import PerformanceTierProperties
-    from .name_availability_request import NameAvailabilityRequest
-    from .name_availability import NameAvailability
-    from .server_security_alert_policy import ServerSecurityAlertPolicy
-from .server_paged import ServerPaged
-from .firewall_rule_paged import FirewallRulePaged
-from .virtual_network_rule_paged import VirtualNetworkRulePaged
-from .database_paged import DatabasePaged
-from .configuration_paged import ConfigurationPaged
-from .log_file_paged import LogFilePaged
-from .performance_tier_properties_paged import PerformanceTierPropertiesPaged
-from .maria_db_management_client_enums import (
+    from ._models import Configuration
+    from ._models import Database
+    from ._models import FirewallRule
+    from ._models import LogFile
+    from ._models import NameAvailability
+    from ._models import NameAvailabilityRequest
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import OperationListResult
+    from ._models import PerformanceTierProperties
+    from ._models import PerformanceTierServiceLevelObjectives
+    from ._models import ProxyResource
+    from ._models import Server
+    from ._models import ServerForCreate
+    from ._models import ServerPropertiesForCreate
+    from ._models import ServerPropertiesForDefaultCreate
+    from ._models import ServerPropertiesForGeoRestore
+    from ._models import ServerPropertiesForReplica
+    from ._models import ServerPropertiesForRestore
+    from ._models import ServerSecurityAlertPolicy
+    from ._models import ServerUpdateParameters
+    from ._models import Sku
+    from ._models import StorageProfile
+    from ._models import TrackedResource
+    from ._models import VirtualNetworkRule
+from ._paged_models import ConfigurationPaged
+from ._paged_models import DatabasePaged
+from ._paged_models import FirewallRulePaged
+from ._paged_models import LogFilePaged
+from ._paged_models import PerformanceTierPropertiesPaged
+from ._paged_models import ServerPaged
+from ._paged_models import VirtualNetworkRulePaged
+from ._maria_db_management_client_enums import (
     ServerVersion,
     SslEnforcementEnum,
     ServerState,
@@ -81,31 +81,31 @@ from .maria_db_management_client_enums import (
 )
 
 __all__ = [
+    'Configuration',
+    'Database',
+    'FirewallRule',
+    'LogFile',
+    'NameAvailability',
+    'NameAvailabilityRequest',
+    'Operation',
+    'OperationDisplay',
+    'OperationListResult',
+    'PerformanceTierProperties',
+    'PerformanceTierServiceLevelObjectives',
     'ProxyResource',
-    'TrackedResource',
-    'StorageProfile',
-    'ServerPropertiesForCreate',
-    'ServerPropertiesForDefaultCreate',
-    'ServerPropertiesForRestore',
-    'ServerPropertiesForGeoRestore',
-    'ServerPropertiesForReplica',
-    'Sku',
     'Server',
     'ServerForCreate',
-    'ServerUpdateParameters',
-    'FirewallRule',
-    'VirtualNetworkRule',
-    'Database',
-    'Configuration',
-    'OperationDisplay',
-    'Operation',
-    'OperationListResult',
-    'LogFile',
-    'PerformanceTierServiceLevelObjectives',
-    'PerformanceTierProperties',
-    'NameAvailabilityRequest',
-    'NameAvailability',
+    'ServerPropertiesForCreate',
+    'ServerPropertiesForDefaultCreate',
+    'ServerPropertiesForGeoRestore',
+    'ServerPropertiesForReplica',
+    'ServerPropertiesForRestore',
     'ServerSecurityAlertPolicy',
+    'ServerUpdateParameters',
+    'Sku',
+    'StorageProfile',
+    'TrackedResource',
+    'VirtualNetworkRule',
     'ServerPaged',
     'FirewallRulePaged',
     'VirtualNetworkRulePaged',

@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .maria_db_management_client import MariaDBManagementClient
-from .version import VERSION
+from ._configuration import MariaDBManagementClientConfiguration
+from ._maria_db_management_client import MariaDBManagementClient
+__all__ = ['MariaDBManagementClient', 'MariaDBManagementClientConfiguration']
 
-__all__ = ['MariaDBManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
