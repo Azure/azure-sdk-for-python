@@ -26,6 +26,10 @@ steps:
      scriptPath: 'scripts/devops_tasks/verify_change_log.py'
      arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}}'
 
+    # Using --always-succeed so as not to block the build. Once package
+    # target is based on data available per-package the --always-succeed should
+    # be removed so this script can help enforce correct practices
+    # (https://github.com/Azure/azure-sdk-for-python/issues/8697)
   - script: |
       cd eng/versioning
       pip install -r requirements.txt
