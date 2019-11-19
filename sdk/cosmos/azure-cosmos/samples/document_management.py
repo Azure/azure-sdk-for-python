@@ -66,7 +66,7 @@ def read_items(container):
 def query_items(container, doc_id):
     print('\n1.4 Querying for an  Item by Id\n')
 
-    # enable_cross_partition_query should be set to True as the collection is partitioned
+    # enable_cross_partition_query should be set to True as the container is partitioned
     items = list(container.query_items(
         query="SELECT * FROM r WHERE r.id=@id",
         parameters=[

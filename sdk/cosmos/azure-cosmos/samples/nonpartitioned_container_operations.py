@@ -51,8 +51,8 @@ DATABASE_ID = config.settings['database_id']
 CONTAINER_ID = config.settings['container_id']
 
 
-def create_nonpartitioned_collection(db):
-    # Create a non partitioned collection using the rest API and older version
+def create_nonpartitioned_container(db):
+    # Create a non partitioned container using the rest API and older version
     client = requests.Session()
     base_url_split = HOST.split(":");
     resource_url = base_url_split[0] + ":" + base_url_split[1] + ":" + base_url_split[2].split("/")[
@@ -80,12 +80,12 @@ def create_nonpartitioned_collection(db):
         # python 3 compatible: convert data from byte to unicode string
         data = data.decode('utf-8')
     data = json.loads(data)
-    created_collection = db.get_container_client("mycoll")
+    created_container = db.get_container_client("mycoll")
 
-    # Create a document in the non partitioned collection using the rest API and older version
+    # Create a document in the non partitioned container using the rest API and older version
     resource_url = base_url_split[0] + ":" + base_url_split[1] + ":" + base_url_split[2].split("/")[0] \
-                    + "//dbs/" + db.id + "/colls/" + created_collection.id + "/docs/"
-    resource_id_or_fullname = "dbs/" + db.id + "/colls/" + created_collection.id
+                    + "//dbs/" + db.id + "/colls/" + created_container.id + "/docs/"
+    resource_id_or_fullname = "dbs/" + db.id + "/colls/" + created_container.id
     resource_type = "docs"
     data = json.dumps(get_sales_order('SaledOrder0'))
 
@@ -105,7 +105,7 @@ def create_nonpartitioned_collection(db):
         data = data.decode('utf-8')
     data = json.loads(data)
     created_document = data
-    return created_collection, "SaledOrder0"
+    return created_container, "SaledOrder0"
 
 
 def get_authorization(client, verb, resource_id_or_fullname, resource_type, headers):
@@ -169,7 +169,7 @@ def read_items(container):
 def query_items(container, doc_id):
     print('\n1.4 Querying for an  Item by Id\n')
 
-    # enable_cross_partition_query should be set to True as the collection is partitioned
+    # enable_cross_partition_query should be set to True as the container is partitioned
     items = list(container.query_items(
         query="SELECT * FROM r WHERE r.id=@id",
         parameters=[
@@ -273,13 +273,13 @@ def run_sample():
 
         # setup container for this sample
         try:
-            container, document = create_nonpartitioned_collection(db)
+            container, document = create_nonpartitioned_container(db)
             print('Container with id \'{0}\' created'.format(CONTAINER_ID))
 
         except exceptions.CosmosResourceExistsError:
             print('Container with id \'{0}\' was found'.format(CONTAINER_ID))
 
-        # Read Item created in non partitioned collection using older API version
+        # Read Item created in non partitioned container using older API version
         read_item(container, document)
         create_items(container)
         read_items(container)

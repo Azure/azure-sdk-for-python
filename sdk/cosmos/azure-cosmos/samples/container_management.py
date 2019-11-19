@@ -22,8 +22,8 @@ import config
 #    2.2 - Create container with custom IndexPolicy
 #    2.3 - Create container with offer throughput set
 #    2.4 - Create container with unique key
-#    2.5 - Create Collection with partition key V2
-#    2.6 - Create Collection with partition key V1
+#    2.5 - Create Container with partition key V2
+#    2.6 - Create Container with partition key V1
 #
 # 3. Manage Container Offer Throughput
 #    3.1 - Get Container performance tier
@@ -134,11 +134,11 @@ def create_container(db, id):
     except exceptions.CosmosResourceExistsError:
         print('A container with id \'container_unique_keys\' already exists')
 
-    print("\n2.5 Create Collection - With Partition key V2 (Default)")
+    print("\n2.5 Create Container - With Partition key V2 (Default)")
 
     try:
         container = db.create_container(
-            id="collection_partition_key_v2",
+            id="container_partition_key_v2",
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
         properties = container.read()
@@ -146,13 +146,13 @@ def create_container(db, id):
         print('Partition Key - \'{0}\''.format(properties['partitionKey']))
 
     except exceptions.CosmosResourceExistsError:
-        print('A container with id \'collection_partition_key_v2\' already exists')
+        print('A container with id \'container_partition_key_v2\' already exists')
 
-    print("\n2.6 Create Collection - With Partition key V1")
+    print("\n2.6 Create Container - With Partition key V1")
 
     try:
         container = db.create_container(
-            id="collection_partition_key_v1",
+            id="container_partition_key_v1",
             partition_key=PartitionKey(path='/id', kind='Hash', version=1)
         )
         properties = container.read()
@@ -160,7 +160,7 @@ def create_container(db, id):
         print('Partition Key - \'{0}\''.format(properties['partitionKey']))
 
     except exceptions.CosmosResourceExistsError:
-        print('A container with id \'collection_partition_key_v1\' already exists')
+        print('A container with id \'container_partition_key_v1\' already exists')
 
 
 def manage_offer_throughput(db, id):
