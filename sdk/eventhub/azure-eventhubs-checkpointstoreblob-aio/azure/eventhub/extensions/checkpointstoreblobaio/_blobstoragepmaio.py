@@ -17,11 +17,21 @@ UPLOAD_DATA = ""
 
 
 class BlobCheckpointStore(PartitionManager):
-    """An PartitionManager that uses Azure Blob Storage to store the partition ownership and checkpoint data.
+    """A CheckpointStore that uses Azure Blob Storage to store the partition ownership and checkpoint data.
 
     This class implements methods list_ownership, claim_ownership, update_checkpoint and list_checkpoints that are
-    defined in class azure.eventhub.aio.PartitionManager of package azure-eventhub.
+    defined in class azure.eventhub.aio.CheckpointStore of package azure-eventhub.
 
+    :param str blob_account_url:
+        The URI to the storage account.
+    :param container_name:
+        The name of the container for the blobs.
+    :type container_name: str
+    :param credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string, an account
+        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the URL already has a SAS token, specifying an explicit credential will take priority.
     """
     def __init__(self, blob_account_url, container_name, credential=None, **kwargs):
         # type(str, str, Optional[Any], Any) -> None
@@ -33,7 +43,21 @@ class BlobCheckpointStore(PartitionManager):
 
     @classmethod
     def from_connection_string(cls, conn_str, container_name, credential=None, **kwargs):
-        # type: (str, str, Optional[Any], str) -> BlobPartitionManager
+        # type: (str, str, Optional[Any], str) -> BlobCheckpointStore
+        """Create BlobCheckpointStore from a storage connection string.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param container_name:
+            The container name for the blobs.
+        :type container_name: str
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string, an account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+        """
         container_client = ContainerClient.from_connection_string(
             conn_str,
             container_name,
@@ -49,14 +73,14 @@ class BlobCheckpointStore(PartitionManager):
     async def __aexit__(self, *args):
         await self._container_client.__aexit__(*args)
 
-    def _get_blob_client(self, blob_name):
+    def _get_blob_client(self, blob_name: str) -> BlobClient:
         result = self._cached_blob_clients.get(blob_name)
         if not result:
             result = self._container_client.get_blob_client(blob_name)
             self._cached_blob_clients[blob_name] = result
         return result
 
-    async def _upload_ownership(self, ownership, metadata):
+    async def _upload_ownership(self, ownership: Dict[str, Any], metadata: Dict[str, str]) -> None:
         etag = ownership.get("etag")
         condition = MatchConditions.IfNotModified if etag else MatchConditions.IfMissing
         blob_name = "{}/{}/{}/ownership/{}".format(
@@ -107,7 +131,7 @@ class BlobCheckpointStore(PartitionManager):
             )
             raise
 
-    async def _claim_one_partition(self, ownership):
+    async def _claim_one_partition(self, ownership: Dict[str, Any]) -> Dict[str, Any]:
         partition_id = ownership["partition_id"]
         namespace = ownership["fully_qualified_namespace"]
         eventhub_name = ownership["eventhub_name"]
@@ -140,17 +164,16 @@ class BlobCheckpointStore(PartitionManager):
         )
         return [ownership for ownership in results if not isinstance(ownership, Exception)]
 
-    async def update_checkpoint(self, fully_qualified_namespace, eventhub_name, consumer_group, partition_id,
-                                offset, sequence_number) -> None:
+    async def update_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
         metadata = {
-            "offset": offset,
-            "sequencenumber": str(sequence_number),
+            "offset": checkpoint['offset'],
+            "sequencenumber": str(checkpoint['sequence_number']),
         }
         blob_name = "{}/{}/{}/checkpoint/{}".format(
-            fully_qualified_namespace,
-            eventhub_name,
-            consumer_group,
-            partition_id)
+            checkpoint['fully_qualified_namespace'],
+            checkpoint['eventhub_name'],
+            checkpoint['consumer_group'],
+            checkpoint['partition_id'])
         blob_name = blob_name.lower()
         await self._get_blob_client(blob_name).upload_blob(
             data=UPLOAD_DATA,
@@ -179,3 +202,7 @@ class BlobCheckpointStore(PartitionManager):
             }
             result.append(checkpoint)
         return result
+
+    async def close(self) -> None:
+        """Close an open HTTP session and connection."""
+        return await self.__aexit__()
