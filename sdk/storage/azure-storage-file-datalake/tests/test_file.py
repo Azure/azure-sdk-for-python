@@ -24,6 +24,7 @@ from testcase import (
 # ------------------------------------------------------------------------------
 TEST_DIRECTORY_PREFIX = 'directory'
 TEST_FILE_PREFIX = 'file'
+FILE_PATH = 'file_output.temp.dat'
 # ------------------------------------------------------------------------------
 
 
@@ -97,6 +98,16 @@ class FileTest(StorageTestCase):
         self.assertIsNotNone(response)
 
     @record
+    def test_create_file_with_existing_name(self):
+        # Arrange
+        file_client = self._create_file_and_return_client()
+
+        with self.assertRaises(ResourceExistsError):
+            # if the file exists then throw error
+            # if_none_match='*' is to make sure no existing file
+            file_client.create_file(if_none_match='*')
+
+    @record
     def test_create_file_with_lease_id(self):
         # Arrange
         directory_name = self._get_directory_reference()
@@ -143,6 +154,16 @@ class FileTest(StorageTestCase):
         self.assertIsNotNone(response)
 
     @record
+    def test_append_empty_data(self):
+        file_client = self._create_file_and_return_client()
+
+        # Act
+        file_client.flush_data(0)
+        file_props = file_client.get_file_properties()
+
+        self.assertIsNotNone(file_props['size'], 0)
+
+    @record
     def test_flush_data(self):
         directory_name = self._get_directory_reference()
 
@@ -157,7 +178,10 @@ class FileTest(StorageTestCase):
         file_client.append_data(b'abc', 0, 3)
         response = file_client.flush_data(3)
 
+        # Assert
+        prop = file_client.get_file_properties()
         self.assertIsNotNone(response)
+        self.assertEqual(prop['size'], 3)
 
     @record
     def test_read_file(self):
@@ -171,6 +195,41 @@ class FileTest(StorageTestCase):
         # doanload the data and make sure it is the same as uploaded data
         downloaded_data = file_client.read_file()
         self.assertEqual(data, downloaded_data)
+
+    @record
+    def test_read_file_into_file(self):
+        file_client = self._create_file_and_return_client()
+        data = self.get_random_bytes(1024)
+
+        # upload data to file
+        file_client.append_data(data, 0, len(data))
+        file_client.flush_data(len(data))
+
+        # doanload the data into a file and make sure it is the same as uploaded data
+        with open(FILE_PATH, 'wb') as stream:
+            bytes_read = file_client.read_file(stream=stream, max_concurrency=2)
+
+        # Assert
+        self.assertIsInstance(bytes_read, int)
+        with open(FILE_PATH, 'rb') as stream:
+            actual = stream.read()
+            self.assertEqual(data, actual)
+
+    @record
+    def test_read_file_to_text(self):
+        file_client = self._create_file_and_return_client()
+        data = self.get_random_text_data(1024)
+
+        # upload data to file
+        file_client.append_data(data, 0, len(data))
+        file_client.flush_data(len(data))
+
+        # doanload the text data and make sure it is the same as uploaded data
+        downloaded_data = file_client.read_file(max_concurrency=2, encoding="utf-8")
+
+        # Assert
+        self.assertEqual(data, downloaded_data)
+
 
     @record
     def test_account_sas(self):
@@ -199,7 +258,7 @@ class FileTest(StorageTestCase):
         self.assertIsNotNone(properties)
 
         # try to write to the created file with the token
-        with self.assertRaises(StorageErrorException):
+        with self.assertRaises(HttpResponseError):
             file_client.append_data(b"abcd", 0, 4)
 
     @record

@@ -210,6 +210,26 @@ class FileSystemTest(StorageTestCase):
 
         self.assertEqual(len(paths), 2)
         self.assertEqual(paths[0].content_length, 5)
+
+    @record
+    def test_list_paths_recursively(self):
+        # Arrange
+        file_system = self._create_file_system()
+        for i in range(0, 6):
+            file_system.create_directory("dir1{}".format(i))
+
+            # create a subdirectory under the current directory
+            subdir = file_system.get_directory_client("dir1{}".format(i)).create_sub_directory("subdir")
+            subdir.create_sub_directory("subsub")
+
+            # create a file under the current directory
+            subdir.create_file("file")
+
+        paths = list(file_system.get_paths(recursive=True, upn=True))
+
+        # there are 24 subpaths in total
+        self.assertEqual(len(paths), 24)
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
