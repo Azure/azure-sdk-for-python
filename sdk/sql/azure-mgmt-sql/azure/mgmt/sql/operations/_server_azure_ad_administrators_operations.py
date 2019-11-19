@@ -28,6 +28,7 @@ class ServerAzureADAdministratorsOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the request. Constant value: "2018-06-01-preview".
+    :ivar administrator_name: The name of server active directory administrator. Constant value: "ActiveDirectory".
     """
 
     models = models
@@ -38,11 +39,12 @@ class ServerAzureADAdministratorsOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.api_version = "2018-06-01-preview"
+        self.administrator_name = "ActiveDirectory"
 
         self.config = config
 
     def get(
-            self, resource_group_name, server_name, administrator_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
         """Gets a server Administrator.
 
         :param resource_group_name: The name of the resource group that
@@ -51,9 +53,6 @@ class ServerAzureADAdministratorsOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param administrator_name: The name of server active directory
-         administrator.
-        :type administrator_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -70,7 +69,7 @@ class ServerAzureADAdministratorsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'administratorName': self._serialize.url("administrator_name", administrator_name, 'str')
+            'administratorName': self._serialize.url("self.administrator_name", self.administrator_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -110,14 +109,14 @@ class ServerAzureADAdministratorsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, server_name, administrator_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'administratorName': self._serialize.url("administrator_name", administrator_name, 'str')
+            'administratorName': self._serialize.url("self.administrator_name", self.administrator_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -162,7 +161,7 @@ class ServerAzureADAdministratorsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, server_name, administrator_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates a new Server Active Directory Administrator or updates an
         existing server Active Directory Administrator.
 
@@ -172,8 +171,6 @@ class ServerAzureADAdministratorsOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param administrator_name:
-        :type administrator_name: str
         :param parameters: The required parameters for creating or updating an
          Active Directory Administrator.
         :type parameters: ~azure.mgmt.sql.models.ServerAzureADAdministrator
@@ -194,7 +191,6 @@ class ServerAzureADAdministratorsOperations(object):
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             server_name=server_name,
-            administrator_name=administrator_name,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -221,14 +217,14 @@ class ServerAzureADAdministratorsOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, server_name, administrator_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'administratorName': self._serialize.url("administrator_name", administrator_name, 'str')
+            'administratorName': self._serialize.url("self.administrator_name", self.administrator_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -259,7 +255,7 @@ class ServerAzureADAdministratorsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, server_name, administrator_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, server_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes an existing server Active Directory Administrator.
 
         :param resource_group_name: The name of the resource group that
@@ -268,9 +264,6 @@ class ServerAzureADAdministratorsOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param administrator_name: The name of server active directory
-         administrator.
-        :type administrator_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -285,7 +278,6 @@ class ServerAzureADAdministratorsOperations(object):
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
             server_name=server_name,
-            administrator_name=administrator_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
