@@ -95,9 +95,11 @@ class PolicyMetadataOperations(object):
     get_resource.metadata = {'url': '/providers/Microsoft.PolicyInsights/policyMetadata/{resourceName}'}
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, query_options=None, custom_headers=None, raw=False, **operation_config):
         """Get a list of the policy metadata resources.
 
+        :param query_options: Additional parameters for the operation
+        :type query_options: ~azure.mgmt.policyinsights.models.QueryOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -109,6 +111,10 @@ class PolicyMetadataOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.policyinsights.models.ErrorResponseException>`
         """
+        top = None
+        if query_options is not None:
+            top = query_options.top
+
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -117,6 +123,8 @@ class PolicyMetadataOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=0)
 
             else:
                 url = next_link
