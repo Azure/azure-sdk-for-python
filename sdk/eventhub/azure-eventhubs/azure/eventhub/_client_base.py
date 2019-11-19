@@ -30,7 +30,7 @@ from uamqp import (
 
 from .exceptions import _handle_exception, ClientClosedError
 from ._configuration import Configuration
-from ._utils import parse_sas_token, utc_from_timestamp
+from ._utils import utc_from_timestamp
 from ._connection_manager import get_connection_manager
 from ._constants import (
     CONTAINER_PREFIX,
@@ -114,7 +114,7 @@ class EventHubSharedKeyCredential(object):
         self.key = key
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes, **kwargs):
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)

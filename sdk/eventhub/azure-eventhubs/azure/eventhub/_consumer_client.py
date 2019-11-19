@@ -7,7 +7,7 @@ import threading
 from typing import Any, Union, Dict, Tuple, TYPE_CHECKING, Callable, List
 
 from ._common import EventData
-from ._client_base import ClientBase, EventHubSharedKeyCredential
+from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
 from ._constants import ALL_PARTITIONS
 from ._eventprocessor.event_processor import EventProcessor

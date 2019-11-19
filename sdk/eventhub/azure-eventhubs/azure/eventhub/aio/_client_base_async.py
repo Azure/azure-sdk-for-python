@@ -20,7 +20,7 @@ from uamqp import (
 )
 
 from .._client_base import ClientBase, _generate_sas_token
-from .._utils import parse_sas_token, utc_from_timestamp
+from .._utils import utc_from_timestamp
 from ..exceptions import ClientClosedError
 from .._constants import JWT_TOKEN_SCOPE, MGMT_OPERATION, MGMT_PARTITION_OPERATION
 from ._connection_manager_async import get_connection_manager
@@ -44,7 +44,7 @@ class EventHubSharedKeyCredential(object):
         self.key = key
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    async def get_token(self, *scopes, **kwargs):
+    async def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)

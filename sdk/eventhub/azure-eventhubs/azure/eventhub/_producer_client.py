@@ -9,7 +9,7 @@ from typing import Any, Union, TYPE_CHECKING, Iterable, List
 from uamqp import constants  # type:ignore
 
 from .exceptions import ConnectError, EventHubError
-from ._client_base import ClientBase, EventHubSharedKeyCredential
+from ._client_base import ClientBase
 from ._producer import EventHubProducer
 from ._constants import ALL_PARTITIONS
 from ._common import EventData, EventDataBatch
