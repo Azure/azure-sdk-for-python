@@ -270,7 +270,7 @@ class EventDataBatch(object):
     Sending events in batch get better performance than sending individual events.
     EventDataBatch helps you create the maximum allowed size batch of `EventData` to improve sending performance.
 
-    Use `try_add` method to add events until the maximum batch size limit in bytes has been reached -
+    Use `add` method to add events until the maximum batch size limit in bytes has been reached -
     a `ValueError` will be raised.
     Use `send` method of :class:`EventHubProducerClient<azure.eventhub.EventHubProducerClient>`
     or the async :class:`EventHubProducerClient<azure.eventhub.aio.EventHubProducerClient>`
@@ -280,14 +280,16 @@ class EventDataBatch(object):
     to create an EventDataBatch object instead of instantiating an EventDataBatch object directly.**
 
     :param int max_size: The maximum size of bytes data that an EventDataBatch object can hold.
+    :param str partition_id: The specific partition ID to send to.
     :param str partition_key: With the given partition_key, event data will land to a particular partition of the
      Event Hub decided by the service.
     """
 
-    def __init__(self, max_size=None, partition_key=None):
+    def __init__(self, max_size=None, partition_id=None, partition_key=None):
         self.max_size = max_size or constants.MAX_MESSAGE_LENGTH_BYTES
-        self._partition_key = partition_key
         self.message = BatchMessage(data=[], multi_messages=False, properties=None)
+        self._partition_id = partition_id
+        self._partition_key = partition_key
 
         set_message_partition_key(self.message, self._partition_key)
         self._size = self.message.gather()[0].get_message_encoded_size()
@@ -310,7 +312,7 @@ class EventDataBatch(object):
         """
         return self._size
 
-    def try_add(self, event_data):
+    def add(self, event_data):
         """
         Try to add an EventData object, the size of EventData is a sum up of body, application_properties, etc.
 
