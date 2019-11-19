@@ -10,7 +10,7 @@ import os
 import uuid
 import warnings
 
-from azure.eventhub.extensions.checkpointstoreblob import BlobPartitionManager
+from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 
 
 def get_live_storage_blob_client():
@@ -47,9 +47,9 @@ def _claim_and_list_ownership(live_storage_blob_client):
     consumer_group = '$default'
     ownership_cnt = 8
     with live_storage_blob_client:
-        partition_manager = BlobPartitionManager(container_client=live_storage_blob_client)
+        checkpoint_store = BlobCheckpointStore(container_client=live_storage_blob_client)
 
-        ownership_list = partition_manager.list_ownership(
+        ownership_list = checkpoint_store.list_ownership(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
             consumer_group=consumer_group)
@@ -69,9 +69,9 @@ def _claim_and_list_ownership(live_storage_blob_client):
             ownership["sequence_number"] = "1"
             ownership_list.append(ownership)
 
-        partition_manager.claim_ownership(ownership_list)
+        checkpoint_store.claim_ownership(ownership_list)
 
-        ownership_list = partition_manager.list_ownership(
+        ownership_list = checkpoint_store.list_ownership(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
             consumer_group=consumer_group)
@@ -96,13 +96,13 @@ def _update_checkpoint(live_storage_blob_client):
     partition_cnt = 8
 
     with live_storage_blob_client:
-        partition_manager = BlobPartitionManager(container_client=live_storage_blob_client)
+        checkpoint_store = BlobCheckpointStore(container_client=live_storage_blob_client)
         for i in range(partition_cnt):
-            partition_manager.update_checkpoint(
+            checkpoint_store.update_checkpoint(
                 fully_qualified_namespace, eventhub_name, consumer_group, str(i),
                 '2', 20)
 
-        checkpoint_list = partition_manager.list_checkpoints(
+        checkpoint_list = checkpoint_store.list_checkpoints(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
             consumer_group=consumer_group)

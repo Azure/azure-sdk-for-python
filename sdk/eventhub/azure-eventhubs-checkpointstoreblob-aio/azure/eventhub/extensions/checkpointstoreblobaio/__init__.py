@@ -5,8 +5,8 @@
 
 __version__ = "1.0.0b5"
 
-from .blobstoragepmaio import BlobPartitionManager
+from .blobstoragecsaio import BlobCheckpointStore
 
 __all__ = [
-    "BlobPartitionManager",
+    "BlobCheckpointStore",
 ]

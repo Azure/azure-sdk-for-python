@@ -8,7 +8,7 @@ import threading
 import uuid
 import sqlite3
 import logging
-from .partition_manager import PartitionManager
+from .checkpoint_store import CheckpointStore
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -20,10 +20,10 @@ def _check_table_name(table_name):
     return table_name
 
 
-class Sqlite3PartitionManager(PartitionManager):
-    """An implementation of PartitionManager by using the sqlite3 in Python standard library.
+class Sqlite3CheckpointStore(CheckpointStore):
+    """An implementation of CheckpointStore by using the sqlite3 in Python standard library.
     Sqlite3 is a mini sql database that runs in memory or files.
-    Please don't use this PartitionManager for production use.
+    Please don't use this CheckpointStore for production use.
 
 
     """
@@ -52,7 +52,7 @@ class Sqlite3PartitionManager(PartitionManager):
         :param ownership_table: The table name of the sqlite3 database.
 
         """
-        super(Sqlite3PartitionManager, self).__init__()
+        super(Sqlite3CheckpointStore, self).__init__()
         self.ownership_table = _check_table_name(ownership_table)
         self.checkpoint_table = _check_table_name(checkpoint_table)
         conn = sqlite3.connect(db_filename, check_same_thread=False)

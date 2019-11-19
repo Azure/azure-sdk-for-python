@@ -7,7 +7,7 @@ import time
 import random
 from typing import List
 from collections import Counter, defaultdict
-from .partition_manager import PartitionManager
+from .checkpoint_store import CheckpointStore
 
 
 class OwnershipManager(object):
@@ -22,7 +22,7 @@ class OwnershipManager(object):
     """
     def __init__(
             self, eventhub_client, consumer_group: str, owner_id: str,
-            partition_manager: PartitionManager, ownership_timeout: float,
+            checkpoint_store: CheckpointStore, ownership_timeout: float,
             partition_id: str
     ):
         self.cached_parition_ids = []  # type: List[str]
@@ -31,7 +31,7 @@ class OwnershipManager(object):
         self.eventhub_name = eventhub_client.eventhub_name
         self.consumer_group = consumer_group
         self.owner_id = owner_id
-        self.partition_manager = partition_manager
+        self.checkpoint_store = checkpoint_store
         self.ownership_timeout = ownership_timeout
         self.partition_id = partition_id
         self._initializing = True
@@ -49,14 +49,14 @@ class OwnershipManager(object):
                 "Wrong partition id:{}. The eventhub has partitions: {}.".
                     format(self.partition_id, self.cached_parition_ids))
 
-        if self.partition_manager is None:
+        if self.checkpoint_store is None:
             return self.cached_parition_ids
 
-        ownership_list = await self.partition_manager.list_ownership(
+        ownership_list = await self.checkpoint_store.list_ownership(
             self.fully_qualified_namespace, self.eventhub_name, self.consumer_group
         )
         to_claim = await self._balance_ownership(ownership_list, self.cached_parition_ids)
-        claimed_list = await self.partition_manager.claim_ownership(to_claim) if to_claim else []
+        claimed_list = await self.checkpoint_store.claim_ownership(to_claim) if to_claim else []
         return [x["partition_id"] for x in claimed_list]
 
     async def _retrieve_partition_ids(self):
@@ -136,8 +136,8 @@ class OwnershipManager(object):
         return to_claim
 
     async def get_checkpoints(self):
-        if self.partition_manager:
-            checkpoints = await self.partition_manager.list_checkpoints(
+        if self.checkpoint_store:
+            checkpoints = await self.checkpoint_store.list_checkpoints(
                 self.fully_qualified_namespace, self.eventhub_name, self.consumer_group)
             return {x["partition_id"]: x for x in checkpoints}
         return {}

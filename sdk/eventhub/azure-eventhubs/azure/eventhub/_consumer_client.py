@@ -28,12 +28,12 @@ class EventHubConsumerClient(ClientBase):
 
     When multiple `EventHubConsumerClient` works with one process, multiple processes, or multiple computer machines
     and if they use the same repository as the load balancing and checkpointing store, they will balance automatically.
-    To enable the load balancing and / or checkpointing, partition_manager must be set when creating the
+    To enable the load balancing and / or checkpointing, checkpoint_store must be set when creating the
     `EventHubConsumerClient`.
 
     An `EventHubConsumerClient` can also receive from a specific partition when you call its method `receive()`
     and specify the partition_id.
-    Load balancing won't work in single-partition mode. But users can still save checkpoint if the partition_manager
+    Load balancing won't work in single-partition mode. But users can still save checkpoint if the checkpoint_store
     is set.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Event Hubs namespace.
@@ -56,10 +56,10 @@ class EventHubConsumerClient(ClientBase):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: 'proxy_hostname' (str value) and 'proxy_port' (int value).
      Additionally the following keys may also be present: 'username', 'password'.
-    :keyword partition_manager: stores the load balancing data and checkpoint data when receiving events
-     if partition_manager is specified. If it's None, this `EventHubConsumerClient` instance will receive
+    :keyword checkpoint_store: stores the load balancing data and checkpoint data when receiving events
+     if checkpoint_store is specified. If it's None, this `EventHubConsumerClient` instance will receive
      events without load balancing and checkpoint.
-    :paramtype partition_manager: ~azure.eventhub.PartitionManager
+    :paramtype checkpoint_store: ~azure.eventhub.CheckpointStore
     :keyword float load_balancing_interval: When load balancing kicks in, this is the interval in seconds
      between two load balancing. Default is 10.
 
@@ -80,7 +80,7 @@ class EventHubConsumerClient(ClientBase):
                  credential,  # type: Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential]
                  **kwargs
                  ):
-        self._partition_manager = kwargs.pop("partition_manager", None)
+        self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", 10)
         self._consumer_group = consumer_group
         network_tracing = kwargs.pop("logging_enable", False)
@@ -129,11 +129,11 @@ class EventHubConsumerClient(ClientBase):
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
-        :keyword partition_manager:
+        :keyword checkpoint_store:
          stores the load balancing data and checkpoint data when receiving events
-         if partition_manager is specified. If it's None, this EventHubConsumerClient instance will receive
+         if checkpoint_store is specified. If it's None, this EventHubConsumerClient instance will receive
          events without load balancing and checkpoint.
-        :paramtype partition_manager: ~azure.eventhub.PartitionManager
+        :paramtype checkpoint_store: ~azure.eventhub.CheckpointStore
         :keyword float load_balancing_interval:
          When load balancing kicks in, this is the interval in seconds between two load balancing. Default is 10.
         :rtype: ~azure.eventhub.EventHubConsumerClient
@@ -223,7 +223,7 @@ class EventHubConsumerClient(ClientBase):
 
             event_processor = EventProcessor(
                 self, self._consumer_group, on_event,
-                partition_manager=self._partition_manager,
+                checkpoint_store=self._checkpoint_store,
                 polling_interval=self._load_balancing_interval,
                 **kwargs
             )

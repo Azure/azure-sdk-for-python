@@ -3,22 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
 
-from .sqlite3_partition_manager import Sqlite3PartitionManager
+from .sqlite3_checkpoint_store import Sqlite3CheckpointStore
 
 
-class InMemoryPartitionManager(Sqlite3PartitionManager):
-    """A partition manager that stores checkpoint and load balancer partition ownership data in memory.
+class InMemoryCheckpointStore(Sqlite3CheckpointStore):
+    """A checkpoint store that stores checkpoint and load balancer partition ownership data in memory.
     This is for mock test only.
 
     """
     def __init__(self):
-        super(InMemoryPartitionManager, self).__init__(db_filename=":memory:")
+        super(InMemoryCheckpointStore, self).__init__(db_filename=":memory:")
 
 
-class FileBasedPartitionManager(Sqlite3PartitionManager):
-    """A partition manager that stores checkpoint and load balancer partition ownership data in a file.
+class FileBasedCheckpointStore(Sqlite3CheckpointStore):
+    """A checkpoint store that stores checkpoint and load balancer partition ownership data in a file.
     This is for internal test only.
 
     """
     def __init__(self, filename):
-        super(FileBasedPartitionManager, self).__init__(db_filename=filename)
+        super(FileBasedCheckpointStore, self).__init__(db_filename=filename)

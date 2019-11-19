@@ -12,7 +12,7 @@ from azure.eventhub import EventPosition, EventData, EventHubError
 from ..._eventprocessor.common import CloseReason
 from ..._eventprocessor._eventprocessor_mixin import EventProcessorMixin
 from .partition_context import PartitionContext
-from .partition_manager import PartitionManager
+from .checkpoint_store import CheckpointStore
 from ._ownership_manager import OwnershipManager
 from .utils import get_running_loop
 
@@ -30,7 +30,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             event_handler: Callable[[PartitionContext, List[EventData]], None],
             *,
             partition_id: str = None,
-            partition_manager: PartitionManager = None,
+            checkpoint_store: CheckpointStore = None,
             initial_event_position=EventPosition("-1"), polling_interval: float = 10.0,
             owner_level=None, prefetch=None, track_last_enqueued_event_properties=False,
             error_handler,
@@ -46,7 +46,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         self._error_handler = error_handler
         self._partition_initialize_handler = partition_initialize_handler
         self._partition_close_handler = partition_close_handler
-        self._partition_manager = partition_manager
+        self._checkpoint_store = checkpoint_store
         self._initial_event_position = initial_event_position  # will be replaced by reset event position in preview 4
         self._polling_interval = polling_interval
         self._ownership_timeout = self._polling_interval * 2
@@ -153,7 +153,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     self._consumer_group,
                     partition_id,
                     self._id,
-                    self._partition_manager
+                    self._checkpoint_store
                 )
                 self._partition_contexts[partition_id] = partition_context
 
@@ -210,12 +210,12 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         """
         _LOGGER.info("EventProcessor %r is being started", self._id)
         ownership_manager = OwnershipManager(self._eventhub_client, self._consumer_group, self._id,
-                                             self._partition_manager, self._ownership_timeout, self._partition_id)
+                                             self._checkpoint_store, self._ownership_timeout, self._partition_id)
         if not self._running:
             self._running = True
             while self._running:
                 try:
-                    checkpoints = await ownership_manager.get_checkpoints() if self._partition_manager else None
+                    checkpoints = await ownership_manager.get_checkpoints() if self._checkpoint_store else None
                     claimed_partition_ids = await ownership_manager.claim_ownership()
                     if claimed_partition_ids:
                         to_cancel_list = self._tasks.keys() - claimed_partition_ids
@@ -227,7 +227,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 except Exception as err:  # pylint:disable=broad-except
                     '''
                     ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
-                    when there are load balancing and/or checkpointing (partition_manager isn't None).
+                    when there are load balancing and/or checkpointing (checkpoint_store isn't None).
                     They're swallowed here to retry every self._polling_interval seconds. Meanwhile this event processor
                     won't lose the partitions it has claimed before.
                     If it keeps failing, other EventProcessors will start to claim ownership of the partitions

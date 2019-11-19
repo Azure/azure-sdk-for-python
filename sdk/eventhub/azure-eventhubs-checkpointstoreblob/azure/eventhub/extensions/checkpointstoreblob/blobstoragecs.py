@@ -9,7 +9,7 @@ import calendar
 from datetime import datetime
 from collections import defaultdict
 
-from azure.eventhub import PartitionManager, OwnershipLostError  # type: ignore # pylint:disable=no-name-in-module
+from azure.eventhub import CheckpointStore, OwnershipLostError  # type: ignore # pylint:disable=no-name-in-module
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError  # type: ignore
 from azure.storage.blob import BlobClient  # type: ignore
 
@@ -17,16 +17,16 @@ logger = logging.getLogger(__name__)
 UPLOAD_DATA = ""
 
 
-class BlobPartitionManager(PartitionManager):
-    """An PartitionManager that uses Azure Blob Storage to store the partition ownership and checkpoint data.
+class BlobCheckpointStore(CheckpointStore):
+    """An CheckpointStore that uses Azure Blob Storage to store the partition ownership and checkpoint data.
 
     This class implements methods list_ownership, claim_ownership, update_checkpoint and list_checkpoints that are
-    defined in class azure.eventhub.aio.PartitionManager of package azure-eventhub.
+    defined in class azure.eventhub.aio.CheckpointStore of package azure-eventhub.
 
     """
     def __init__(self, container_client):
         # type(ContainerClient) -> None
-        """Create a BlobPartitionManager
+        """Create a BlobCheckpointStore
 
         :param container_client: The Azure Blob Storage Container client that is used to save checkpoint data to Azure
         Blob Storage Container.
@@ -46,7 +46,7 @@ class BlobPartitionManager(PartitionManager):
         try:
             timestamp = date.timestamp()
         except AttributeError:  # python2.7 compatible
-            timestamp = time.mktime(BlobPartitionManager._utc_to_local(date).timetuple())\
+            timestamp = time.mktime(BlobCheckpointStore._utc_to_local(date).timetuple())\
                         + date.microsecond / 1e6
         return timestamp
 
