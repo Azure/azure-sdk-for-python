@@ -3,10 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-__version__ = "1.0.0b5"
+__version__ = "1.0.0b6"
 
-from .blobstoragepm import BlobPartitionManager
+from ._blobstoragepm import BlobCheckpointStore
 
 __all__ = [
-    "BlobPartitionManager",
+    "BlobCheckpointStore",
 ]
