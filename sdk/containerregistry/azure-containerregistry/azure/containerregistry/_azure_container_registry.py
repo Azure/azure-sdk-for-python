@@ -47,13 +47,16 @@ class AzureContainerRegistry(SDKClient):
 
     :param login_uri: Registry login URL
     :type login_uri: str
+    :param credentials: Subscription credentials which uniquely identify
+     client subscription.
+    :type credentials: None
     """
 
     def __init__(
-            self, login_uri):
+            self, login_uri, credentials):
 
-        self.config = AzureContainerRegistryConfiguration(login_uri)
-        super(AzureContainerRegistry, self).__init__(None, self.config)
+        self.config = AzureContainerRegistryConfiguration(login_uri, credentials)
+        super(AzureContainerRegistry, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2019-08-15-preview'

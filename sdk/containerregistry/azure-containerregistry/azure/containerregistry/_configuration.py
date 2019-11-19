@@ -21,13 +21,18 @@ class AzureContainerRegistryConfiguration(Configuration):
 
     :param login_uri: Registry login URL
     :type login_uri: str
+    :param credentials: Subscription credentials which uniquely identify
+     client subscription.
+    :type credentials: None
     """
 
     def __init__(
-            self, login_uri):
+            self, login_uri, credentials):
 
         if login_uri is None:
             raise ValueError("Parameter 'login_uri' must not be None.")
+        if credentials is None:
+            raise ValueError("Parameter 'credentials' must not be None.")
         base_url = '{url}'
 
         super(AzureContainerRegistryConfiguration, self).__init__(base_url)
@@ -38,3 +43,4 @@ class AzureContainerRegistryConfiguration(Configuration):
         self.add_user_agent('azure-containerregistry/{}'.format(VERSION))
 
         self.login_uri = login_uri
+        self.credentials = credentials
