@@ -11,7 +11,7 @@ import asyncio
 from azure.eventhub import EventData, EventHubError
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.aio._eventprocessor.event_processor import EventProcessor, CloseReason
-from azure.eventhub.aio._eventprocessor.local_checkpoint_store import InMemoryPartitionManager
+from azure.eventhub.aio._eventprocessor.local_checkpoint_store import InMemoryCheckpointStore
 from azure.eventhub import OwnershipLostError
 from azure.eventhub._client_base import _Address
 
@@ -28,12 +28,12 @@ async def test_loadbalancer_balance(connstr_senders):
     for sender in senders:
         sender.send(EventData("EventProcessor Test"))
     eventhub_client = EventHubConsumerClient.from_connection_string(connection_str)
-    partition_manager = InMemoryPartitionManager()
+    checkpoint_store = InMemoryCheckpointStore()
     tasks = []
 
     event_processor1 = EventProcessor(eventhub_client=eventhub_client,
                                       consumer_group_name='$default',
-                                      partition_manager=partition_manager,
+                                      checkpoint_store=checkpoint_store,
                                       event_handler=event_handler,
                                       error_handler=None,
                                       partition_initialize_handler=None,
@@ -46,7 +46,7 @@ async def test_loadbalancer_balance(connstr_senders):
 
     event_processor2 = EventProcessor(eventhub_client=eventhub_client,
                                       consumer_group_name='$default',
-                                      partition_manager=partition_manager,
+                                      checkpoint_store=checkpoint_store,
                                       event_handler=event_handler,
                                       error_handler=None,
                                       partition_initialize_handler=None,
@@ -60,7 +60,7 @@ async def test_loadbalancer_balance(connstr_senders):
 
     event_processor3 = EventProcessor(eventhub_client=eventhub_client,
                                       consumer_group_name='$default',
-                                      partition_manager=partition_manager,
+                                      checkpoint_store=checkpoint_store,
                                       event_handler=event_handler,
                                       error_handler=None,
                                       partition_initialize_handler=None,
@@ -82,7 +82,7 @@ async def test_loadbalancer_balance(connstr_senders):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_loadbalancer_list_ownership_error(connstr_senders):
-    class ErrorPartitionManager(InMemoryPartitionManager):
+    class ErrorCheckpointStore(InMemoryCheckpointStore):
         async def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
             raise RuntimeError("Test runtime error")
 
@@ -90,11 +90,11 @@ async def test_loadbalancer_list_ownership_error(connstr_senders):
     for sender in senders:
         sender.send(EventData("EventProcessor Test"))
     eventhub_client = EventHubConsumerClient.from_connection_string(connection_str)
-    partition_manager = ErrorPartitionManager()
+    checkpoint_store = ErrorCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
                                      consumer_group_name='$default',
-                                     partition_manager=partition_manager,
+                                     checkpoint_store=checkpoint_store,
                                      event_handler=event_handler,
                                      error_handler=None,
                                      partition_initialize_handler=None,
@@ -144,11 +144,11 @@ async def test_partition_processor(connstr_senders):
     for sender in senders:
         sender.send(EventData("EventProcessor Test"))
     eventhub_client = EventHubConsumerClient.from_connection_string(connection_str)
-    partition_manager = InMemoryPartitionManager()
+    checkpoint_store = InMemoryCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
                                      consumer_group_name='$default',
-                                     partition_manager=partition_manager,
+                                     checkpoint_store=checkpoint_store,
                                      event_handler=event_handler,
                                      error_handler=error_handler,
                                      partition_initialize_handler=partition_initialize_handler,
@@ -194,11 +194,11 @@ async def test_partition_processor_process_events_error(connstr_senders):
     for sender in senders:
         sender.send(EventData("EventProcessor Test"))
     eventhub_client = EventHubConsumerClient.from_connection_string(connection_str)
-    partition_manager = InMemoryPartitionManager()
+    checkpoint_store = InMemoryCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
                                      consumer_group_name='$default',
-                                     partition_manager=partition_manager,
+                                     checkpoint_store=checkpoint_store,
                                      event_handler=event_handler,
                                      error_handler=error_handler,
                                      partition_initialize_handler=None,
@@ -247,11 +247,11 @@ async def test_partition_processor_process_eventhub_consumer_error():
             pass
 
     eventhub_client = MockEventHubClient()
-    partition_manager = InMemoryPartitionManager()
+    checkpoint_store = InMemoryCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
                                      consumer_group_name='$default',
-                                     partition_manager=partition_manager,
+                                     checkpoint_store=checkpoint_store,
                                      event_handler=event_handler,
                                      error_handler=error_handler,
                                      partition_initialize_handler=None,
@@ -311,11 +311,11 @@ async def test_partition_processor_process_error_close_error():
             pass
 
     eventhub_client = MockEventHubClient() #EventHubClient.from_connection_string(connection_str, receive_timeout=3)
-    partition_manager = InMemoryPartitionManager()
+    checkpoint_store = InMemoryCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
                                      consumer_group_name='$default',
-                                     partition_manager=partition_manager,
+                                     checkpoint_store=checkpoint_store,
                                      event_handler=event_handler,
                                      error_handler=error_handler,
                                      partition_initialize_handler=partition_initialize_handler,
@@ -334,7 +334,7 @@ async def test_partition_processor_process_error_close_error():
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_partition_processor_process_update_checkpoint_error(connstr_senders):
-    class ErrorPartitionManager(InMemoryPartitionManager):
+    class ErrorCheckpointStore(InMemoryCheckpointStore):
         async def update_checkpoint(
                 self, fully_qualified_namespace, eventhub_name,
                 consumer_group_name, partition_id, offset, sequence_number):
@@ -356,11 +356,11 @@ async def test_partition_processor_process_update_checkpoint_error(connstr_sende
     for sender in senders:
         sender.send(EventData("EventProcessor Test"))
     eventhub_client = EventHubConsumerClient.from_connection_string(connection_str)
-    partition_manager = ErrorPartitionManager()
+    checkpoint_store = ErrorCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
                                      consumer_group_name='$default',
-                                     partition_manager=partition_manager,
+                                     checkpoint_store=checkpoint_store,
                                      event_handler=event_handler,
                                      error_handler=error_handler,
                                      partition_initialize_handler=None,

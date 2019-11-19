@@ -11,7 +11,7 @@ import time
 from azure.eventhub import EventData, EventHubError
 from azure.eventhub._eventprocessor.event_processor import EventProcessor
 from azure.eventhub import CloseReason
-from azure.eventhub._eventprocessor.local_partition_manager import InMemoryPartitionManager
+from azure.eventhub._eventprocessor.local_checkpoint_store import InMemoryCheckpointStore
 from azure.eventhub._client_base import _Address
 
 
@@ -47,11 +47,11 @@ def test_loadbalancer_balance():
             pass
 
     eventhub_client = MockEventHubClient()
-    partition_manager = InMemoryPartitionManager()
+    checkpoint_store = InMemoryCheckpointStore()
     threads = []
     event_processor1 = EventProcessor(eventhub_client=eventhub_client,
                                       consumer_group_name='$default',
-                                      partition_manager=partition_manager,
+                                      checkpoint_store=checkpoint_store,
                                       on_event=event_handler,
                                       polling_interval=3,
                                       receive_timeout=1)
@@ -64,7 +64,7 @@ def test_loadbalancer_balance():
     ep1_after_start = len(event_processor1._consumers)
     event_processor2 = EventProcessor(eventhub_client=eventhub_client,
                                       consumer_group_name='$default',
-                                      partition_manager=partition_manager,
+                                      checkpoint_store=checkpoint_store,
                                       on_event=event_handler,
                                       polling_interval=3,
                                       receive_timeout=1)
@@ -87,7 +87,7 @@ def test_loadbalancer_balance():
 
 
 def test_loadbalancer_list_ownership_error():
-    class ErrorPartitionManager(InMemoryPartitionManager):
+    class ErrorCheckpointStore(InMemoryCheckpointStore):
         def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
             raise RuntimeError("Test runtime error")
 
@@ -115,11 +115,11 @@ def test_loadbalancer_list_ownership_error():
             pass
 
     eventhub_client = MockEventHubClient()
-    partition_manager = ErrorPartitionManager()
+    checkpoint_store = ErrorCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
                                      consumer_group_name='$default',
-                                     partition_manager=partition_manager,
+                                     checkpoint_store=checkpoint_store,
                                      on_event=event_handler,
                                      polling_interval=1)
 
@@ -179,11 +179,11 @@ def test_partition_processor():
 
     eventhub_client = MockEventHubClient()
 
-    partition_manager = InMemoryPartitionManager()
+    checkpoint_store = InMemoryCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
                                      consumer_group_name='$default',
-                                     partition_manager=partition_manager,
+                                     checkpoint_store=checkpoint_store,
                                      on_event=event_handler,
                                      on_error=error_handler,
                                      on_partition_initialize=partition_initialize_handler,
@@ -246,11 +246,11 @@ def test_partition_processor_process_events_error():
             pass
 
     eventhub_client = MockEventHubClient()
-    partition_manager = InMemoryPartitionManager()
+    checkpoint_store = InMemoryCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
                                      consumer_group_name='$default',
-                                     partition_manager=partition_manager,
+                                     checkpoint_store=checkpoint_store,
                                      on_event=event_handler,
                                      on_error=error_handler,
                                      on_partition_close=partition_close_handler,
@@ -298,11 +298,11 @@ def test_partition_processor_process_eventhub_consumer_error():
             pass
 
     eventhub_client = MockEventHubClient()
-    partition_manager = InMemoryPartitionManager()
+    checkpoint_store = InMemoryCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
                                      consumer_group_name='$default',
-                                     partition_manager=partition_manager,
+                                     checkpoint_store=checkpoint_store,
                                      on_event=event_handler,
                                      on_error=error_handler,
                                      on_partition_close=partition_close_handler,
@@ -361,11 +361,11 @@ def test_partition_processor_process_error_close_error():
             pass
 
     eventhub_client = MockEventHubClient()  # EventHubClient.from_connection_string(connection_str, receive_timeout=3)
-    partition_manager = InMemoryPartitionManager()
+    checkpoint_store = InMemoryCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
                                      consumer_group_name='$default',
-                                     partition_manager=partition_manager,
+                                     checkpoint_store=checkpoint_store,
                                      on_event=event_handler,
                                      on_error=error_handler,
                                      on_partition_initialize=partition_initialize_handler,
@@ -385,7 +385,7 @@ def test_partition_processor_process_error_close_error():
 
 def test_partition_processor_process_update_checkpoint_error():
     assert_map = {}
-    class ErrorPartitionManager(InMemoryPartitionManager):
+    class ErrorCheckpointStore(InMemoryCheckpointStore):
         def update_checkpoint(
                 self, fully_qualified_namespace, eventhub_name,
                 consumer_group_name, partition_id, offset, sequence_number):
@@ -427,11 +427,11 @@ def test_partition_processor_process_update_checkpoint_error():
             pass
 
     eventhub_client = MockEventHubClient()
-    partition_manager = ErrorPartitionManager()
+    checkpoint_store = ErrorCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
                                      consumer_group_name='$default',
-                                     partition_manager=partition_manager,
+                                     checkpoint_store=checkpoint_store,
                                      on_event=event_handler,
                                      on_error=error_handler,
                                      on_partition_close=partition_close_handler,
