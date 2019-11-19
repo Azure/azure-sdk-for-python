@@ -38,7 +38,7 @@ class PartitionContext(object):
                 self.partition_id, event.offset, event.sequence_number
             )
         else:
-            _LOGGER.info(
+            _LOGGER.warning(
                 "namespace %r, eventhub %r, consumer_group %r, partition_id %r "
                 "update_checkpoint is called without partition manager. No checkpoint is updated.",
                 self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name, self.partition_id)
