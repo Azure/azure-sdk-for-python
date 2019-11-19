@@ -317,7 +317,7 @@ class RetryPolicy(HTTPPolicy):
             # status_forcelist and a the given method is in the whitelist
             if response:
                 settings['status'] -= 1
-                if hasattr(response, 'http_request'):
+                if hasattr(response, 'http_request') and hasattr(response, 'http_response'):
                     settings['history'].append(
                         RequestHistory(
                             response.http_request,
