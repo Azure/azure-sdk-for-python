@@ -10,9 +10,6 @@ from uamqp import constants  # type: ignore
 from ._version import VERSION
 __version__ = VERSION
 
-from .common import EventData, EventDataBatch, EventPosition
-from .error import EventHubError, EventDataError, ConnectError, \
-    AuthenticationError, EventDataSendError, ConnectionLostError
 from ._producer_client import EventHubProducerClient
 from ._consumer_client import EventHubConsumerClient
 from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
