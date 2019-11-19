@@ -184,6 +184,26 @@ def connstr_receivers(connection_str):
 
 
 @pytest.fixture()
+def short_idle_connstr_receivers(connection_str):
+    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    eh_hub_info = client.get_eventhub_info()
+    partitions = eh_hub_info["partition_ids"]
+
+    recv_offset = Offset("@latest")
+    receivers = []
+    for p in partitions:
+        receivers.append(client.add_receiver("$default", p, prefetch=500, offset=Offset("@latest"), idle_timeout=11))
+
+    client.run()
+
+    for r in receivers:
+        r.receive(timeout=1)
+    yield connection_str, receivers
+
+    client.stop()
+
+
+@pytest.fixture()
 def connstr_senders(connection_str):
     client = EventHubClient.from_connection_string(connection_str, debug=True)
     eh_hub_info = client.get_eventhub_info()
