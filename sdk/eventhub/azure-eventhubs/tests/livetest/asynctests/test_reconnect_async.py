@@ -8,32 +8,45 @@
 import asyncio
 import pytest
 
-from azure.eventhub import EventData
-from azure.eventhub.aio.client_async import EventHubClient
+from azure.eventhub import EventData, EventHubSharedKeyCredential
+from azure.eventhub.aio import EventHubProducerClient
+
+import uamqp
+from uamqp import authentication
 
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_with_long_interval_async(connstr_receivers, sleep):
-    connection_str, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(connection_str)
-    sender = client._create_producer()
-    try:
+async def test_send_with_long_interval_async(live_eventhub, sleep):
+    sender = EventHubProducerClient(live_eventhub['hostname'], live_eventhub['event_hub'],
+                                    EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key']))
+    async with sender:
         await sender.send(EventData(b"A single event"))
         for _ in range(1):
             if sleep:
                 await asyncio.sleep(300)
             else:
-                sender._handler._connection._conn.destroy()
+                await sender._producers[-1]._handler._connection._conn.destroy()
             await sender.send(EventData(b"A single event"))
-    finally:
-        await sender.close()
+        partition_ids = await sender.get_partition_ids()
 
     received = []
-    for r in receivers:
-        if not sleep:  # if sender sleeps, the receivers will be disconnected. destroy connection to simulate
-            r._handler._connection._conn.destroy()
-        received.extend(r.receive(timeout=5))
+    for p in partition_ids:
+        uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
+        sas_auth = authentication.SASTokenAuth.from_shared_access_key(
+            uri, live_eventhub['key_name'], live_eventhub['access_key'])
+
+        source = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
+            live_eventhub['hostname'],
+            live_eventhub['event_hub'],
+            live_eventhub['consumer_group'],
+            p)
+        receiver = uamqp.ReceiveClient(source, auth=sas_auth, debug=False, timeout=5000, prefetch=500)
+        try:
+            receiver.open()
+            received.extend([EventData._from_message(x) for x in receiver.receive_message_batch(timeout=5000)])
+        finally:
+            receiver.close()
+
     assert len(received) == 2
     assert list(received[0].body)[0] == b"A single event"
-    await client.close()

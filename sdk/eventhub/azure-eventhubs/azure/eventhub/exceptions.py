@@ -7,16 +7,9 @@ import six
 
 from uamqp import errors, compat  # type: ignore
 
+from ._constants import NO_RETRY_ERRORS
 
-_NO_RETRY_ERRORS = (
-    b"com.microsoft:argument-out-of-range",
-    b"com.microsoft:entity-disabled",
-    b"com.microsoft:auth-failed",
-    b"com.microsoft:precondition-failed",
-    b"com.microsoft:argument-error"
-)
-
-log = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 def _error_handler(error):
@@ -38,7 +31,7 @@ def _error_handler(error):
         return errors.ErrorAction(retry=True)
     if error.condition == b"com.microsoft:container-close":
         return errors.ErrorAction(retry=True, backoff=4)
-    if error.condition in _NO_RETRY_ERRORS:
+    if error.condition in NO_RETRY_ERRORS:
         return errors.ErrorAction(retry=False)
     return errors.ErrorAction(retry=True)
 
@@ -97,41 +90,32 @@ class EventHubError(Exception):
             self.details = details
 
 
-class ConnectionLostError(EventHubError):
-    """Connection to event hub is lost. SDK will retry. So this shouldn't happen.
+class ClientClosedError(EventHubError):
+    """The Client has been closed and is unable to process further events."""
 
-    """
+
+class ConnectionLostError(EventHubError):
+    """Connection to event hub is lost. SDK will retry. So this shouldn't happen."""
 
 
 class ConnectError(EventHubError):
-    """Fail to connect to event hubs
-
-    """
+    """Fail to connect to event hubs."""
 
 
 class AuthenticationError(ConnectError):
-    """Fail to connect to event hubs because of authentication problem
-
-
-    """
+    """Fail to connect to event hubs because of authentication problem."""
 
 
 class EventDataError(EventHubError):
-    """Problematic event data so the send will fail at client side
-
-    """
+    """Problematic event data so the send will fail at client side."""
 
 
 class EventDataSendError(EventHubError):
-    """Service returns error while an event data is being sent
-
-    """
+    """Service returns error while an event data is being sent."""
 
 
 class OperationTimeoutError(EventHubError):
-    """Operation times out
-
-    """
+    """Operation times out."""
 
 
 def _create_eventhub_exception(exception):
@@ -162,7 +146,7 @@ def _handle_exception(exception, closable):  # pylint:disable=too-many-branches,
     except AttributeError:  # closable is an client object
         name = closable._container_id  # pylint: disable=protected-access
     if isinstance(exception, KeyboardInterrupt):  # pylint:disable=no-else-raise
-        log.info("%r stops due to keyboard interrupt", name)
+        _LOGGER.info("%r stops due to keyboard interrupt", name)
         closable.close()
         raise exception
     elif isinstance(exception, EventHubError):
@@ -176,11 +160,11 @@ def _handle_exception(exception, closable):  # pylint:disable=too-many-branches,
             errors.MessageReleased,
             errors.MessageContentTooLarge)
             ):
-        log.info("%r Event data error (%r)", name, exception)
+        _LOGGER.info("%r Event data error (%r)", name, exception)
         error = EventDataError(str(exception), exception)
         raise error
     elif isinstance(exception, errors.MessageException):
-        log.info("%r Event data send error (%r)", name, exception)
+        _LOGGER.info("%r Event data send error (%r)", name, exception)
         error = EventDataSendError(str(exception), exception)
         raise error
     else:

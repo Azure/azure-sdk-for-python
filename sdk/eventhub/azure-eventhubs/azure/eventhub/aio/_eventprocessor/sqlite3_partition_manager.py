@@ -9,7 +9,7 @@ import sqlite3
 import logging
 from .partition_manager import PartitionManager
 
-logger = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 def _check_table_name(table_name: str):
@@ -98,9 +98,9 @@ class Sqlite3PartitionManager(PartitionManager):
                               + ") values ("+",".join(["?"] * len(self.ownership_fields)) + ")"
                         cursor.execute(sql, tuple(p.get(field) for field in self.ownership_fields))
                     except sqlite3.OperationalError as op_err:
-                        logger.info("EventProcessor %r failed to claim partition %r "
-                                    "because it was claimed by another EventProcessor at the same time. "
-                                    "The Sqlite3 exception is %r", p["owner_id"], p["partition_id"], op_err)
+                        _LOGGER.info("EventProcessor %r failed to claim partition %r "
+                                     "because it was claimed by another EventProcessor at the same time. "
+                                     "The Sqlite3 exception is %r", p["owner_id"], p["partition_id"], op_err)
                         continue
                     else:
                         result.append(p)
@@ -117,9 +117,9 @@ class Sqlite3PartitionManager(PartitionManager):
                                        + tuple(p.get(field) for field in self.primary_keys))
                         result.append(p)
                     else:
-                        logger.info("EventProcessor %r failed to claim partition %r "
-                                    "because it was claimed by another EventProcessor at the same time", p["owner_id"],
-                                    p["partition_id"])
+                        _LOGGER.info("EventProcessor %r failed to claim partition %r "
+                                     "because it was claimed by another EventProcessor at the same time", p["owner_id"],
+                                     p["partition_id"])
             self.conn.commit()
             return result
         finally:

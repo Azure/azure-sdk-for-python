@@ -10,33 +10,25 @@ import json
 import logging
 import six
 
-from uamqp import BatchMessage, Message, types, constants  # type: ignore
-from uamqp.message import MessageHeader  # type: ignore
+from uamqp import BatchMessage, Message, constants  # type: ignore
 
-from azure.core.settings import settings # type: ignore
+from ._utils import set_message_partition_key, trace_message, utc_from_timestamp
+from ._constants import (
+    PROP_SEQ_NUMBER,
+    PROP_OFFSET,
+    PROP_PARTITION_KEY,
+    PROP_PARTITION_KEY_AMQP_SYMBOL,
+    PROP_TIMESTAMP,
+    PROP_LAST_ENQUEUED_SEQUENCE_NUMBER,
+    PROP_LAST_ENQUEUED_OFFSET,
+    PROP_LAST_ENQUEUED_TIME_UTC,
+    PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC,
+)
 
-from .error import EventDataError
-
-log = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 # event_data.encoded_size < 255, batch encode overhead is 5, >=256, overhead is 8 each
 _BATCH_MESSAGE_OVERHEAD_COST = [5, 8]
-
-
-def parse_sas_token(sas_token):
-    """Parse a SAS token into its components.
-
-    :param sas_token: The SAS token.
-    :type sas_token: str
-    :rtype: dict[str, str]
-    """
-    sas_data = {}
-    token = sas_token.partition(' ')[2]
-    fields = token.split('&')
-    for field in fields:
-        key, value = field.split('=', 1)
-        sas_data[key.lower()] = value
-    return sas_data
 
 
 class EventData(object):
@@ -57,16 +49,6 @@ class EventData(object):
 
     """
 
-    _PROP_SEQ_NUMBER = b"x-opt-sequence-number"
-    _PROP_OFFSET = b"x-opt-offset"
-    _PROP_PARTITION_KEY = b"x-opt-partition-key"
-    _PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(_PROP_PARTITION_KEY)
-    _PROP_TIMESTAMP = b"x-opt-enqueued-time"
-    _PROP_LAST_ENQUEUED_SEQUENCE_NUMBER = b"last_enqueued_sequence_number"
-    _PROP_LAST_ENQUEUED_OFFSET = b"last_enqueued_offset"
-    _PROP_LAST_ENQUEUED_TIME_UTC = b"last_enqueued_time_utc"
-    _PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC = b"runtime_info_retrieval_time_utc"
-
     def __init__(self, body=None):
         self._last_enqueued_event_properties = {}
         if body and isinstance(body, list):
@@ -81,96 +63,67 @@ class EventData(object):
         self.message.application_properties = {}
 
     def __str__(self):
-        dic = {
-            'body': self.body_as_str(),
+        try:
+            body = self.body_as_str()
+        except:  # pylint: disable=bare-except
+            body = "<read-error>"
+        message_as_dict = {
+            'body': body,
             'application_properties': str(self.application_properties)
         }
+        try:
+            if self.sequence_number:
+                message_as_dict['sequence_number'] = str(self.sequence_number)
+            if self.offset:
+                message_as_dict['offset'] = str(self.offset)
+            if self.enqueued_time:
+                message_as_dict['enqueued_time'] = str(self.enqueued_time)
+            if self.partition_key:
+                message_as_dict['partition_key'] = str(self.partition_key)
+        except:  # pylint: disable=bare-except
+            pass
+        return str(message_as_dict)
 
-        if self.sequence_number:
-            dic['sequence_number'] = str(self.sequence_number)
-        if self.offset:
-            dic['offset'] = str(self.offset)
-        if self.enqueued_time:
-            dic['enqueued_time'] = str(self.enqueued_time)
-        if self.partition_key:
-            dic['partition_key'] = str(self.partition_key)
-        return str(dic)
+    @classmethod
+    def _from_message(cls, message):
+        """Internal use only.
 
-    def _set_partition_key(self, value):
+        Creates an EventData object from a raw uamqp message.
+
+        :param ~uamqp.Message message: A received uamqp message.
+        :rtype: ~azure.eventhub.EventData
         """
-        Set the partition key of the event data object.
-
-        :param value: The partition key to set.
-        :type value: str or bytes
-        """
-        annotations = dict(self.message.annotations)
-        annotations[EventData._PROP_PARTITION_KEY_AMQP_SYMBOL] = value
-        header = MessageHeader()
-        header.durable = True
-        self.message.annotations = annotations
-        self.message.header = header
-
-    def _trace_message(self, parent_span=None):
-        """Add tracing information to this message.
-
-        Will open and close a "Azure.EventHubs.message" span, and
-        add the "DiagnosticId" as app properties of the message.
-        """
-        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-        if span_impl_type is not None:
-            current_span = parent_span or span_impl_type(span_impl_type.get_current_span())
-            message_span = current_span.span(name="Azure.EventHubs.message")
-            message_span.start()
-            app_prop = dict(self.application_properties) if self.application_properties else dict()
-            app_prop.setdefault(b"Diagnostic-Id", message_span.get_trace_parent().encode('ascii'))
-            self.application_properties = app_prop
-            message_span.finish()
-
-    def _trace_link_message(self, parent_span=None):
-        """Link the current message to current span.
-
-        Will extract DiagnosticId if available.
-        """
-        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-        if span_impl_type is not None:
-            current_span = parent_span or span_impl_type(span_impl_type.get_current_span())
-            if current_span and self.application_properties:
-                traceparent = self.application_properties.get(b"Diagnostic-Id", "").decode('ascii')
-                if traceparent:
-                    current_span.link(traceparent)
+        event_data = cls(body='')
+        event_data.message = message
+        return event_data
 
     def _get_last_enqueued_event_properties(self):
+        """Extracts the last enqueued event in from the received event delivery annotations.
+
+        :rtype: Dict[str, Any]
+        """
         if self._last_enqueued_event_properties:
             return self._last_enqueued_event_properties
 
         if self.message.delivery_annotations:
-            enqueued_time_stamp = \
-                self.message.delivery_annotations.get(EventData._PROP_LAST_ENQUEUED_TIME_UTC, None)
-            retrieval_time_stamp = \
-                self.message.delivery_annotations.get(EventData._PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
-
+            sequence_number = self.message.delivery_annotations.get(PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None)
+            enqueued_time_stamp = self.message.delivery_annotations.get(PROP_LAST_ENQUEUED_TIME_UTC, None)
+            if enqueued_time_stamp:
+                enqueued_time_stamp = utc_from_timestamp(float(enqueued_time_stamp)/1000)
+            retrieval_time_stamp = self.message.delivery_annotations.get(PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
+            if retrieval_time_stamp:
+                retrieval_time_stamp = utc_from_timestamp(float(retrieval_time_stamp)/1000)
+            offset_bytes = self.message.delivery_annotations.get(PROP_LAST_ENQUEUED_OFFSET, None)
+            offset = offset_bytes.decode('UTF-8') if offset_bytes else None
             self._last_enqueued_event_properties = {
-                "sequence_number":
-                    self.message.delivery_annotations.get(EventData._PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None),
-                "offset":
-                    self.message.delivery_annotations.get(EventData._PROP_LAST_ENQUEUED_OFFSET, None),
-                "enqueued_time":
-                    datetime.datetime.utcfromtimestamp(
-                        float(enqueued_time_stamp)/1000) if enqueued_time_stamp else None,
-                "retrieval_time":
-                    datetime.datetime.utcfromtimestamp(
-                        float(retrieval_time_stamp)/1000) if retrieval_time_stamp else None
+                "sequence_number": sequence_number,
+                "offset": offset,
+                "enqueued_time": enqueued_time_stamp,
+                "retrieval_time": retrieval_time_stamp
             }
             return self._last_enqueued_event_properties
 
         return None
-
-    @classmethod
-    def _from_message(cls, message):
-        # pylint:disable=protected-access
-        event_data = cls(body='')
-        event_data.message = message
-        return event_data
 
     @property
     def sequence_number(self):
@@ -179,7 +132,7 @@ class EventData(object):
 
         :rtype: int or long
         """
-        return self.message.annotations.get(EventData._PROP_SEQ_NUMBER, None)
+        return self.message.annotations.get(PROP_SEQ_NUMBER, None)
 
     @property
     def offset(self):
@@ -189,7 +142,7 @@ class EventData(object):
         :rtype: str
         """
         try:
-            return self.message.annotations[EventData._PROP_OFFSET].decode('UTF-8')
+            return self.message.annotations[PROP_OFFSET].decode('UTF-8')
         except (KeyError, AttributeError):
             return None
 
@@ -200,9 +153,9 @@ class EventData(object):
 
         :rtype: datetime.datetime
         """
-        timestamp = self.message.annotations.get(EventData._PROP_TIMESTAMP, None)
+        timestamp = self.message.annotations.get(PROP_TIMESTAMP, None)
         if timestamp:
-            return datetime.datetime.utcfromtimestamp(float(timestamp)/1000)
+            return utc_from_timestamp(float(timestamp)/1000)
         return None
 
     @property
@@ -213,9 +166,9 @@ class EventData(object):
         :rtype: bytes
         """
         try:
-            return self.message.annotations[EventData._PROP_PARTITION_KEY_AMQP_SYMBOL]
+            return self.message.annotations[PROP_PARTITION_KEY_AMQP_SYMBOL]
         except KeyError:
-            return self.message.annotations.get(EventData._PROP_PARTITION_KEY, None)
+            return self.message.annotations.get(PROP_PARTITION_KEY, None)
 
     @property
     def application_properties(self):
@@ -336,7 +289,7 @@ class EventDataBatch(object):
         self._partition_key = partition_key
         self.message = BatchMessage(data=[], multi_messages=False, properties=None)
 
-        self._set_partition_key(partition_key)
+        set_message_partition_key(self.message, self._partition_key)
         self._size = self.message.gather()[0].get_message_encoded_size()
         self._count = 0
 
@@ -348,17 +301,6 @@ class EventDataBatch(object):
         batch_data_instance = EventDataBatch(partition_key=partition_key)
         batch_data_instance.message._body_gen = batch_data  # pylint:disable=protected-access
         return batch_data_instance
-
-    def _set_partition_key(self, value):
-        if value:
-            annotations = self.message.annotations
-            if annotations is None:
-                annotations = dict()
-            annotations[types.AMQPSymbol(EventData._PROP_PARTITION_KEY)] = value  # pylint:disable=protected-access
-            header = MessageHeader()
-            header.durable = True
-            self.message.annotations = annotations
-            self.message.header = header
 
     @property
     def size(self):
@@ -377,29 +319,22 @@ class EventDataBatch(object):
         :rtype: None
         :raise: :class:`ValueError`, when exceeding the size limit.
         """
-        if event_data is None:
-            log.warning("event_data is None when calling EventDataBatch.try_add. Ignored")
-            return
-        if not isinstance(event_data, EventData):
-            raise TypeError('event_data should be type of EventData')
-
         if self._partition_key:
             if event_data.partition_key and event_data.partition_key != self._partition_key:
-                raise EventDataError('The partition_key of event_data does not match the one of the EventDataBatch')
+                raise ValueError('The partition key of event_data does not match the partition key of this batch.')
             if not event_data.partition_key:
-                event_data._set_partition_key(self._partition_key)  # pylint:disable=protected-access
+                set_message_partition_key(event_data.message, self._partition_key)
 
-        event_data._trace_message()  # pylint:disable=protected-access
-
+        trace_message(event_data)
         event_data_size = event_data.message.get_message_encoded_size()
 
         # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
-        #  message into the BatchMessage would be 5 bytes, if >= 256, it would be 8 bytes.
-        size_after_add = self._size + event_data_size\
+        # message into the BatchMessage would be 5 bytes, if >= 256, it would be 8 bytes.
+        size_after_add = self._size + event_data_size \
             + _BATCH_MESSAGE_OVERHEAD_COST[0 if (event_data_size < 256) else 1]
 
         if size_after_add > self.max_size:
-            raise ValueError("EventDataBatch has reached its size limit {}".format(self.max_size))
+            raise ValueError("EventDataBatch has reached its size limit: {}".format(self.max_size))
 
         self.message._body_gen.append(event_data)  # pylint: disable=protected-access
         self._size = size_after_add
@@ -481,9 +416,3 @@ class EventHubSharedKeyCredential(object):
     def __init__(self, policy, key):
         self.policy = policy
         self.key = key
-
-
-class _Address(object):
-    def __init__(self, hostname=None, path=None):
-        self.hostname = hostname
-        self.path = path

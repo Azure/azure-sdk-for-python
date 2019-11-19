@@ -16,22 +16,15 @@ from azure.eventhub.aio import EventHubConsumerClient
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 
 
-async def do_operation(event):
-    pass
-    # do some sync or async operations. If the operation is i/o intensive, async will have better performance
+async def on_event(partition_context, event):
+    print("Received event from partition: {}".format(partition_context.partition_id))
+    # Do some sync or async operations. If the operation is i/o intensive, async will have better performance
     # print(event)
-
-
-async def on_events(partition_context, events):
-    # put your code here
-    print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
-    await asyncio.gather(*[do_operation(event) for event in events])
 
 
 async def receive(client):
     try:
-        await client.receive(on_events=on_events,
-                             consumer_group="$default")
+        await client.receive(on_event=on_event, consumer_group="$default")
     except KeyboardInterrupt:
         await client.close()
 
