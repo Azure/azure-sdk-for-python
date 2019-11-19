@@ -35,6 +35,7 @@ class AsyncTextAnalyticsResponseHook(AsyncHTTPPolicy):
                     statistics = RequestStatistics._from_generated(statistics)  # pylint: disable=protected-access
                 pipeline_obj.statistics = statistics
                 pipeline_obj.model_version = model_version
+                pipeline_obj.raw_response = data
             if response_callback:
                 if asyncio.iscoroutine(response_callback):
                     await response_callback(response)

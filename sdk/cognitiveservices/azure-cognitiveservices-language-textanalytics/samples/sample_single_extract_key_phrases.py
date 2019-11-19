@@ -10,7 +10,7 @@
 FILE: sample_single_extract_key_phrases.py
 
 DESCRIPTION:
-    This samples demonstrates how to extract key phrases from a single string.
+    This sample demonstrates how to extract key phrases from a single string.
 
     This module-level, single method is meant to be used as an introduction
     for new users of the text analytics service. For optimum use of the service,

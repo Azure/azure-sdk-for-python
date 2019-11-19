@@ -107,16 +107,17 @@ def _validate_batch_input(documents):
     :return: A list of LanguageInput or MultiLanguageInput
     """
     string_input, nonstring_input = False, False
+    string_batch = []
     for idx, doc in enumerate(documents):
         if isinstance(doc, six.text_type):
             string_input = True
-            documents[idx] = {"id": str(idx), "text": doc}
+            string_batch.append({"id": str(idx), "text": doc})
         if isinstance(doc, (dict, MultiLanguageInput, LanguageInput)):
             nonstring_input = True
 
     if string_input and nonstring_input:
         raise TypeError("Mixing string and dictionary/object input unsupported.")
-    return documents
+    return string_batch if string_batch != [] else documents
 
 
 def order_results(response, combined):

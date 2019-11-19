@@ -10,7 +10,7 @@
 FILE: sample_single_recognize_pii_entities.py
 
 DESCRIPTION:
-    This samples demonstrates how to recognize personally identifiable
+    This sample demonstrates how to recognize personally identifiable
     information in a single string. For the list of supported entity types,
     see https://aka.ms/tanerpii
 

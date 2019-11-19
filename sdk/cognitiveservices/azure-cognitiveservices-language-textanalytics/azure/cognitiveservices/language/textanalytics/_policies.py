@@ -45,6 +45,7 @@ class TextAnalyticsResponseHook(HTTPPolicy):
                     statistics = RequestStatistics._from_generated(statistics)  # pylint: disable=protected-access
                 pipeline_obj.statistics = statistics
                 pipeline_obj.model_version = model_version
+                pipeline_obj.raw_response = data
             if response_callback:
                 response_callback(response)
                 request.context.response_callback = response_callback

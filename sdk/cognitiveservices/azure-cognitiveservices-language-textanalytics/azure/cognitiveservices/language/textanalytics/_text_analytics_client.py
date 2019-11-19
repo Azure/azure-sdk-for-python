@@ -59,7 +59,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     """
 
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, str, Any) -> None
+        # type: (str, Any, Any) -> None
         super(TextAnalyticsClient, self).__init__(credentials=credential, **kwargs)
         self._client = TextAnalyticsAPI(
             endpoint=endpoint, credentials=credential, pipeline=self._pipeline

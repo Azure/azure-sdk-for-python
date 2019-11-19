@@ -10,7 +10,7 @@
 FILE: sample_single_recognize_linked_entities.py
 
 DESCRIPTION:
-    This samples demonstrates how to recognize entities in a single string
+    This sample demonstrates how to recognize entities in a single string
     and returns links to the entities from a well-known knowledge base.
 
     This module-level, single method is meant to be used as an introduction

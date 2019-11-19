@@ -10,7 +10,7 @@
 FILE: sample_single_analyze_sentiment.py
 
 DESCRIPTION:
-    This samples demonstrates how to analyze sentiment from a single string.
+    This sample demonstrates how to analyze sentiment from a single string.
     An overall sentiment and a per-sentence sentiment is returned.
 
     This module-level, single method is meant to be used as an introduction

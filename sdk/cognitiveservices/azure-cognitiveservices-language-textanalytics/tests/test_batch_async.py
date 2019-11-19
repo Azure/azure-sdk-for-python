@@ -394,7 +394,8 @@ class TextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
         def callback(response):
-            self.assertEqual(response.model_version, "latest")
+            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response.raw_response)
             self.assertEqual(response.statistics.documents_count, 5)
             self.assertEqual(response.statistics.transactions_count, 4)
             self.assertEqual(response.statistics.valid_documents_count, 4)
