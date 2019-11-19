@@ -75,7 +75,6 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                             self._eventhub_name,
                             self._consumer_group_name,
                             partition_id,
-                            self._id,
                             self._partition_manager
                         )
                         self._partition_contexts[partition_id] = partition_context
@@ -106,7 +105,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 _LOGGER.warning(
                     "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                     " has another error during running process_error(). The exception is %r.",
-                    partition_context.owner_id,
+                    self._id,
                     partition_context.eventhub_name,
                     partition_context.partition_id,
                     partition_context.consumer_group_name,
@@ -166,7 +165,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         _LOGGER.info(
             "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
             " is being closed. Reason is: %r",
-            self._partition_contexts[partition_id].owner_id,
+            self._id,
             self._partition_contexts[partition_id].eventhub_name,
             self._partition_contexts[partition_id].partition_id,
             self._partition_contexts[partition_id].consumer_group_name,
@@ -199,7 +198,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     _LOGGER.warning(
                         "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                         " has met an error. The exception is %r.",
-                        self._partition_contexts[partition_id].owner_id,
+                        self._id,
                         self._partition_contexts[partition_id].eventhub_name,
                         self._partition_contexts[partition_id].partition_id,
                         self._partition_contexts[partition_id].consumer_group_name,
