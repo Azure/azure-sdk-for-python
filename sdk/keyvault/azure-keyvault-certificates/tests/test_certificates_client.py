@@ -743,7 +743,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self._validate_certificate_issuer(issuer=issuer, expected=expected)
 
         # delete certificate issuer
-        client.delete_issuer(issuer_nameissuer_name)
+        client.delete_issuer(issuer_name=issuer_name)
 
         # get certificate issuer returns not found
         try:
