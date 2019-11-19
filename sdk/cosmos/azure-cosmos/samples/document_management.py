@@ -6,12 +6,12 @@ import datetime
 import config
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes - 
-# 
-# 1. An Azure Cosmos account - 
+# Prerequistes -
+#
+# 1. An Azure Cosmos account -
 #    https:#azure.microsoft.com/en-us/documentation/articles/documentdb-create-account/
 #
-# 2. Microsoft Azure Cosmos PyPi package - 
+# 2. Microsoft Azure Cosmos PyPi package -
 #    https://pypi.python.org/pypi/azure-cosmos/
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic CRUD operations on a Item resource for Azure Cosmos
@@ -32,7 +32,7 @@ def create_items(container):
     sales_order = get_sales_order("SalesOrder1")
     container.create_item(body=sales_order)
 
-    # As your app evolves, let's say your object has a new schema. You can insert SalesOrderV2 objects without any 
+    # As your app evolves, let's say your object has a new schema. You can insert SalesOrderV2 objects without any
     # changes to the database tier.
     sales_order2 = get_sales_order_v2("SalesOrder2")
     container.create_item(body=sales_order2)
@@ -56,9 +56,9 @@ def read_items(container):
     #       Important to handle throttles whenever you are doing operations such as this that might
     #       result in a 429 (throttled request)
     item_list = list(container.read_all_items(max_item_count=10))
-    
+
     print('Found {0} items'.format(item_list.__len__()))
-    
+
     for doc in item_list:
         print('Item Id: {0}'.format(doc.get('id')))
 
@@ -144,7 +144,7 @@ def get_sales_order_v2(item_id):
             'items' : [
                 {'order_qty' : 3,
                     'product_code' : 'A-123',      # notice how in item details we no longer reference a ProductId
-                    'product_name' : 'Product 1',  # instead we have decided to denormalise our schema and include 
+                    'product_name' : 'Product 1',  # instead we have decided to denormalise our schema and include
                     'currency_symbol' : '$',       # the Product details relevant to the Order on to the Order directly
                     'currecny_code' : 'USD',       # this is a typical refactor that happens in the course of an application
                     'unit_price' : 17.1,           # that would have previously required schema changes and data migrations etc.
@@ -191,7 +191,7 @@ def run_sample():
 
     except exceptions.CosmosHttpResponseError as e:
         print('\nrun_sample has caught an error. {0}'.format(e.message))
-    
+
     finally:
             print("\nrun_sample done")
 

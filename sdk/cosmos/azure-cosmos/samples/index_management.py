@@ -20,18 +20,18 @@ PARTITION_KEY = PartitionKey(path='/id', kind='Hash')
 #   automatic
 #   includedPaths
 #   excludedPaths
-#   
+#
 # We can toggle 'automatic' to eiher be True or False depending upon whether we want to have indexing over all columns by default or not.
 # indexingMode can be either of consistent, lazy or none
-#   
-# We can provide options while creating documents. indexingDirective is one such, 
+#
+# We can provide options while creating documents. indexingDirective is one such,
 # by which we can tell whether it should be included or excluded in the index of the parent collection.
 # indexingDirective can be either 'Include', 'Exclude' or 'Default'
 
 
 # To run this Demo, please provide your own CA certs file or download one from
 #     http://curl.haxx.se/docs/caextract.html
-# Setup the certificate file in .pem format. 
+# Setup the certificate file in .pem format.
 # If you still get an SSLError, try disabling certificate verification and suppress warnings
 
 def obtain_client():
@@ -144,8 +144,8 @@ def query_documents_with_custom_query(container, query_with_optional_parameters,
 
 def explicitly_exclude_from_index(db):
     """ The default index policy on a DocumentContainer will AUTOMATICALLY index ALL documents added.
-        There may be scenarios where you want to exclude a specific doc from the index even though all other 
-        documents are being indexed automatically. 
+        There may be scenarios where you want to exclude a specific doc from the index even though all other
+        documents are being indexed automatically.
         This method demonstrates how to use an index directive to control this
 
     """
@@ -203,7 +203,7 @@ def explicitly_exclude_from_index(db):
 
 def use_manual_indexing(db):
     """The default index policy on a DocumentContainer will AUTOMATICALLY index ALL documents added.
-       There may be cases where you can want to turn-off automatic indexing and only selectively add only specific documents to the index. 
+       There may be cases where you can want to turn-off automatic indexing and only selectively add only specific documents to the index.
        This method demonstrates how to control this by setting the value of automatic within indexingPolicy to False
 
     """
@@ -266,9 +266,9 @@ def use_manual_indexing(db):
 def exclude_paths_from_index(db):
     """The default behavior is for Cosmos to index every attribute in every document automatically.
        There are times when a document contains large amounts of information, in deeply nested structures
-       that you know you will never search on. In extreme cases like this, you can exclude paths from the 
+       that you know you will never search on. In extreme cases like this, you can exclude paths from the
        index to save on storage cost, improve write performance and also improve read performance because the index is smaller
-       
+
        This method demonstrates how to set excludedPaths within indexingPolicy
     """
     try:
@@ -282,14 +282,14 @@ def exclude_paths_from_index(db):
             "excludedNode" : { "subExcluded" : "something",  "subExcludedNode" : { "someProperty" : "value" } }
             }
         collection_to_create = { "id" : CONTAINER_ID ,
-                                "indexingPolicy" : 
-                                { 
+                                "indexingPolicy" :
+                                {
                                     "includedPaths" : [ {'path' : "/*"} ], # Special mandatory path of "/*" required to denote include entire tree
                                     "excludedPaths" : [ {'path' : "/metaData/*"}, # exclude metaData node, and anything under it
-                                                        {'path' : "/subDoc/nonSearchable/*"}, # exclude ONLY a part of subDoc    
+                                                        {'path' : "/subDoc/nonSearchable/*"}, # exclude ONLY a part of subDoc
                                                         {'path' : "/\"excludedNode\"/*"} # exclude excludedNode node, and anything under it
                                                       ]
-                                    } 
+                                    }
                                 }
         print(collection_to_create)
         print(doc_with_nested_structures)
@@ -337,14 +337,14 @@ def exclude_paths_from_index(db):
 
 
 def range_scan_on_hash_index(db):
-    """When a range index is not available (i.e. Only hash or no index found on the path), comparisons queries can still 
+    """When a range index is not available (i.e. Only hash or no index found on the path), comparisons queries can still
        be performed as scans using Allow scan request headers passed through options
 
        This method demonstrates how to force a scan when only hash indexes exist on the path
 
        ===== Warning=====
-       This was made an opt-in model by design. 
-       Scanning is an expensive operation and doing this will have a large impact 
+       This was made an opt-in model by design.
+       Scanning is an expensive operation and doing this will have a large impact
        on RequstUnits charged for an operation and will likely result in queries being throttled sooner.
     """
     try:
@@ -352,11 +352,11 @@ def range_scan_on_hash_index(db):
 
         # Force a range scan operation on a hash indexed path
         collection_to_create = { "id" : CONTAINER_ID ,
-                                "indexingPolicy" : 
-                                { 
+                                "indexingPolicy" :
+                                {
                                     "includedPaths" : [ {'path' : "/"} ],
                                     "excludedPaths" : [ {'path' : "/length/*"} ] # exclude length
-                                    } 
+                                    }
                                 }
         created_Container = db.create_container(
             id=collection_to_create['id'],
@@ -408,10 +408,10 @@ def use_range_indexes_on_strings(db):
         # print(collections)
 
         # Use range indexes on strings
-        
+
         # This is how you can specify a range index on strings (and numbers) for all properties.
         # This is the recommended indexing policy for collections. i.e. precision -1
-        #indexingPolicy = { 
+        #indexingPolicy = {
         #    'indexingPolicy': {
         #        'includedPaths': [
         #            {
@@ -470,7 +470,7 @@ def use_range_indexes_on_strings(db):
         message = "Documents ordered by region"
         query_documents_with_custom_query(created_Container, query, message)
 
-        # You can also perform filters against string comparison like >= 'UK'. Note that you can perform a prefix query, 
+        # You can also perform filters against string comparison like >= 'UK'. Note that you can perform a prefix query,
         # the equivalent of LIKE 'U%' (is >= 'U' AND < 'U')
         query = { "query" : "SELECT * FROM r WHERE r.region >= 'U'" }
         message = "Documents with region begining with U"
@@ -507,8 +507,8 @@ def perform_index_transformations(db):
         print("Changing to string & number range indexing with maximum precision (needed for Order By).")
 
         properties['indexingPolicy']['includedPaths'][0]['indexes'] = [{
-            'kind': documents.IndexKind.Range, 
-            'dataType': documents.DataType.String, 
+            'kind': documents.IndexKind.Range,
+            'dataType': documents.DataType.String,
             'precision': -1
         }]
 
