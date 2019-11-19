@@ -5,14 +5,14 @@
 import logging
 import threading
 
-from typing import Any, Union, TYPE_CHECKING, Iterable, List
+from typing import Any, Union, TYPE_CHECKING, Iterable
 from uamqp import constants  # type:ignore
 
 from .exceptions import ConnectError, EventHubError
 from ._client_base import ClientBase
 from ._producer import EventHubProducer
 from ._constants import ALL_PARTITIONS
-from ._common import (
+from ._common import (  # pylint: disable=unused-import
     EventData,
     EventHubSharedKeyCredential,
     EventHubSASTokenCredential,
@@ -60,8 +60,12 @@ class EventHubProducerClient(ClientBase):
             :caption: Create a new instance of the EventHubProducerClient.
 
     """
-    def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
-        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
+    def __init__(self,
+                 fully_qualified_namespace,  # type: str
+                 eventhub_name,  # type: str
+                 credential,  # type: Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, 'TokenCredential']
+                 **kwargs):
+        # type:(Any) -> None
         """"""
         super(EventHubProducerClient, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,

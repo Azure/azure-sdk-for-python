@@ -4,9 +4,9 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import threading
-from typing import Any, Union, Dict, Tuple, TYPE_CHECKING, Callable, List
+from typing import Any, Union, Dict, Tuple, TYPE_CHECKING, Callable, List  # pylint: disable=unused-import
 
-from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential, EventData
+from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential, EventData  # pylint: disable=unused-import
 from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
 from ._constants import ALL_PARTITIONS
@@ -74,13 +74,13 @@ class EventHubConsumerClient(ClientBase):
     """
 
     def __init__(self,
-                 fully_qualified_namespace,
-                 eventhub_name,
-                 consumer_group,
-                 credential,
+                 fully_qualified_namespace,  # type: str
+                 eventhub_name,  # type: str
+                 consumer_group,  # type: str
+                 credential,  # type: Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, 'TokenCredential']
                  **kwargs
                  ):
-        # type: (str, str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential]) -> None
+        # type: (Any) -> None
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", 10)
         self._consumer_group = consumer_group

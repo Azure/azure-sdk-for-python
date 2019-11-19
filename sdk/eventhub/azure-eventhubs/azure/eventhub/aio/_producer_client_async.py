@@ -60,9 +60,11 @@ class EventHubProducerClient(ClientBaseAsync):
             :caption: Create a new instance of the EventHubProducerClient.
     """
 
-    def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs) -> None:
-        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
-        """"""
+    def __init__(self,
+                 fully_qualified_namespace: str,
+                 eventhub_name: str,
+                 credential: Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, 'TokenCredential'],
+                 **kwargs) -> None:
         super(EventHubProducerClient, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
