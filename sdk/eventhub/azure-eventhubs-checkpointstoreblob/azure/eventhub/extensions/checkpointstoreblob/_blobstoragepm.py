@@ -53,7 +53,7 @@ class BlobCheckpointStore(PartitionManager):
 
     @classmethod
     def from_connection_string(cls, conn_str, container_name, credential=None, **kwargs):
-        # type: (str, str, Optional[Any], str) -> BlobPartitionManager
+        # type: (str, str, Optional[Any], str) -> BlobCheckpointStore
         container_client = ContainerClient.from_connection_string(
             conn_str,
             container_name,

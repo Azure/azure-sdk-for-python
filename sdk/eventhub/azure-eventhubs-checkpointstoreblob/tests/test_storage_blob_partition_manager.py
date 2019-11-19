@@ -10,7 +10,7 @@ import os
 import uuid
 import warnings
 
-from azure.eventhub.extensions.checkpointstoreblob import BlobPartitionManager
+from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 
 
 def get_live_storage_blob_client():
@@ -24,32 +24,32 @@ def get_live_storage_blob_client():
     except ImportError or ModuleNotFoundError:
         return None, None
 
-    container_str = str(uuid.uuid4())
+    container_name = str(uuid.uuid4())
     blob_service_client = BlobServiceClient.from_connection_string(storage_connection_str)
-    blob_service_client.create_container(container_str)
-    container_client = ContainerClient.from_connection_string(storage_connection_str, container_str)
-    return container_str, container_client
+    blob_service_client.create_container(container_name)
+    return storage_connection_str, container_name
 
 
-def remove_live_storage_blob_client(container_str):
+def remove_live_storage_blob_client(container_name):
     try:
         storage_connection_str = os.environ['AZURE_STORAGE_CONN_STR']
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(storage_connection_str)
-        blob_service_client.delete_container(container_str)
+        blob_service_client.delete_container(container_name)
     except:
         warnings.warn(UserWarning("storage container teardown failed"))
 
 
-def _claim_and_list_ownership(live_storage_blob_client):
+def _claim_and_list_ownership(storage_connection_str, container_name):
     fully_qualified_namespace = 'test_namespace'
     eventhub_name = 'eventhub'
     consumer_group_name = '$default'
     ownership_cnt = 8
-    with live_storage_blob_client:
-        partition_manager = BlobPartitionManager(container_client=live_storage_blob_client)
 
-        ownership_list = partition_manager.list_ownership(
+    checkpoint_store = BlobCheckpointStore.from_connection_string(
+        storage_connection_str, container_name)
+    with checkpoint_store:
+        ownership_list = checkpoint_store.list_ownership(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
             consumer_group_name=consumer_group_name)
@@ -69,9 +69,9 @@ def _claim_and_list_ownership(live_storage_blob_client):
             ownership["sequence_number"] = "1"
             ownership_list.append(ownership)
 
-        partition_manager.claim_ownership(ownership_list)
+        checkpoint_store.claim_ownership(ownership_list)
 
-        ownership_list = partition_manager.list_ownership(
+        ownership_list = checkpoint_store.list_ownership(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
             consumer_group_name=consumer_group_name)
@@ -80,29 +80,30 @@ def _claim_and_list_ownership(live_storage_blob_client):
 
 @pytest.mark.liveTest
 def test_claim_and_list_ownership():
-    container_str, live_storage_blob_client = get_live_storage_blob_client()
+    storage_connection_str, container_name = get_live_storage_blob_client()
     if not live_storage_blob_client:
         pytest.skip("Storage blob client can't be created")
     try:
-        _claim_and_list_ownership(live_storage_blob_client)
+        _claim_and_list_ownership(storage_connection_str, container_name)
     finally:
-        remove_live_storage_blob_client(container_str)
+        remove_live_storage_blob_client(container_name)
 
 
-def _update_checkpoint(live_storage_blob_client):
+def _update_checkpoint(storage_connection_str, container_name):
     fully_qualified_namespace = 'test_namespace'
     eventhub_name = 'eventhub'
     consumer_group_name = '$default'
     partition_cnt = 8
 
-    with live_storage_blob_client:
-        partition_manager = BlobPartitionManager(container_client=live_storage_blob_client)
+    checkpoint_store = BlobCheckpointStore.from_connection_string(
+        storage_connection_str, container_name)
+    with checkpoint_store:
         for i in range(partition_cnt):
-            partition_manager.update_checkpoint(
+            checkpoint_store.update_checkpoint(
                 fully_qualified_namespace, eventhub_name, consumer_group_name, str(i),
                 '2', 20)
 
-        checkpoint_list = partition_manager.list_checkpoints(
+        checkpoint_list = checkpoint_store.list_checkpoints(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
             consumer_group_name=consumer_group_name)
@@ -114,10 +115,8 @@ def _update_checkpoint(live_storage_blob_client):
 
 @pytest.mark.liveTest
 def test_update_checkpoint():
-    container_str, live_storage_blob_client = get_live_storage_blob_client()
-    if not live_storage_blob_client:
-        pytest.skip("Storage blob client can't be created")
+    storage_connection_str, container_name = get_live_storage_blob_client()
     try:
-        _update_checkpoint(live_storage_blob_client)
+        _update_checkpoint(storage_connection_str, container_name)
     finally:
-        remove_live_storage_blob_client(container_str)
+        remove_live_storage_blob_client(container_name)

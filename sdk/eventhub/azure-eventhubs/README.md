@@ -302,12 +302,12 @@ and to store the relevant information required by the load balancing algorithm.
 Search pypi with the prefix `azure-eventhub-checkpointstore` to
 find packages that support this and use the PartitionManager implementation from one such package. Please note that both sync and async libraries are provided.
 
-In the below example, we create an instance of `EventHubConsumerClient` and use a `BlobPartitionManager`. You need
+In the below example, we create an instance of `EventHubConsumerClient` and use a `BlobCheckpointStore`. You need
 to [create an Azure Storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal)
 and a [Blob Container](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container) to run the code.
 
 [Azure Blob Storage Partition Manager Async](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio)
-and [Azure Blob Storage Partition Manager Sync](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob)
+and [Azure Blob Storage Checkpoint Store Sync](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob)
 are one of the `PartitionManager` implementations we provide that applies Azure Blob Storage as the persistent store.
 
 
@@ -316,14 +316,14 @@ import asyncio
 
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.storage.blob.aio import ContainerClient
-from azure.eventhub.extensions.checkpointstoreblobaio import BlobPartitionManager
+from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
 RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
 RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 event_hub_path = '<< NAME OF THE EVENT HUB >>'
 storage_connection_str = '<< CONNECTION STRING FOR THE STORAGE >>'
-blob_name_str = '<<STRING FOR THE BLOB NAME>>'
+container_name = '<<STRING FOR THE BLOB NAME>>'
 
 async def do_operation(event):
     # do some sync or async operations. If the operation is i/o intensive, async will have better performance
@@ -340,12 +340,11 @@ async def receive(client):
         await client.close()
 
 async def main():
-    container_client = ContainerClient.from_connection_string(storage_connection_str, blob_name_str)
-    partition_manager = BlobPartitionManager(container_client)
+    checkpoint_store = BlobCheckpointStore.from_connection_string(storage_connection_str, container_name)
     client = EventHubConsumerClient.from_connection_string(
         connection_str,
         event_hub_path=event_hub_path,
-        partition_manager=partition_manager,  # For load balancing and checkpoint. Leave None for no load balancing
+        checkpoint_store=checkpoint_store,  # For load balancing and checkpoint. Leave None for no load balancing
     )
     async with client:
         await receive(client)

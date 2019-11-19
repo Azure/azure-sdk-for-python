@@ -1,8 +1,11 @@
 # Release History
 
-## 2019-11-04 5.0.0b6
+## 2019-12-04 5.0.0b6
 
 **Breaking changes**
+
+- Receive event callback parameter has been renamed to `on_event` and now operates on a single event rather than a list of events.
+
 
 ## 2019-11-04 5.0.0b5
 
