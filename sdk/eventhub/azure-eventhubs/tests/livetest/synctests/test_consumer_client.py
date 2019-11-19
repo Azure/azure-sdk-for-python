@@ -4,7 +4,7 @@ import threading
 import sys
 from azure.eventhub import EventData
 from azure.eventhub import EventHubConsumerClient
-from azure.eventhub._eventprocessor.local_partition_manager import InMemoryPartitionManager
+from azure.eventhub._eventprocessor.local_checkpoint_store import InMemoryCheckpointStore
 from azure.eventhub._constants import ALL_PARTITIONS
 
 
@@ -62,11 +62,11 @@ def test_receive_load_balancing(connstr_senders):
         pytest.skip("Skipping on OSX - test code using multiple threads. Sometimes OSX aborts python process")
 
     connection_str, senders = connstr_senders
-    pm = InMemoryPartitionManager()
+    cs = InMemoryCheckpointStore()
     client1 = EventHubConsumerClient.from_connection_string(
-        connection_str, partition_manager=pm, load_balancing_interval=1)
+        connection_str, checkpoint_store=cs, load_balancing_interval=1)
     client2 = EventHubConsumerClient.from_connection_string(
-        connection_str, partition_manager=pm, load_balancing_interval=1)
+        connection_str, checkpoint_store=cs, load_balancing_interval=1)
 
     def on_event(partition_context, event):
         pass
