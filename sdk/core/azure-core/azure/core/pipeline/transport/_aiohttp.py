@@ -171,12 +171,15 @@ class AioHttpTransport(AsyncHttpTransport):
             config['skip_auto_headers'] = ['Content-Type']
         try:
             stream_response = config.pop("stream", False)
+            timeout = config.pop('connection_timeout', self.connection_config.timeout)
+            read_timeout = config.pop('read_timeout', self.connection_config.read_timeout)
+            socket_timeout = aiohttp.ClientTimeout(sock_connect=timeout, sock_read=read_timeout)
             result = await self.session.request(
                 request.method,
                 request.url,
                 headers=request.headers,
                 data=self._get_request_data(request),
-                timeout=config.pop('connection_timeout', self.connection_config.timeout),
+                timeout=socket_timeout,
                 allow_redirects=False,
                 **config
             )
