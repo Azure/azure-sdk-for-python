@@ -3,6 +3,15 @@
 Release History
 ===============
 
+0.13.0 (2019-11-20)
++++++++++++++++++++
+
+**Features**
+
+- Model SapMonitor has a new parameter enable_customer_analytics
+- Model SapMonitor has a new parameter log_analytics_workspace_id
+- Model SapMonitor has a new parameter log_analytics_workspace_shared_key
+
 0.11.0 (2019-11-12)
 +++++++++++++++++++
 
