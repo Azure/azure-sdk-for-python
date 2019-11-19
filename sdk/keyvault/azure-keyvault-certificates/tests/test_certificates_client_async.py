@@ -80,8 +80,8 @@ class CertificateClientTests(KeyVaultTestCase):
             ),
         )
         imported_certificate = await client.import_certificate(
-            certificate_name=cert_name,
-            certificate_bytes=cert_content,
+            cert_name,
+            cert_content,
             policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy),
             password=cert_password,
         )
@@ -274,7 +274,7 @@ class CertificateClientTests(KeyVaultTestCase):
         # get certificate returns not found
         try:
             await client.get_certificate_version(
-                certificate_name=cert_name, version=deleted_cert_bundle.properties.version
+                cert_name, deleted_cert_bundle.properties.version
             )
             self.fail("Get should fail")
         except Exception as ex:
@@ -426,7 +426,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # purge select certificates
         for certificate_name in [c for c in certs.keys() if c.startswith("certprg")]:
-            await client.purge_deleted_certificate(certificate_name=certificate_name)
+            await client.purge_deleted_certificate(certificate_name)
 
         if not self.is_playback():
             await asyncio.sleep(50)
@@ -475,7 +475,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         # cancel certificate operation
-        cancel_operation = await client.cancel_certificate_operation(certificate_name=cert_name)
+        cancel_operation = await client.cancel_certificate_operation(cert_name)
         self.assertTrue(hasattr(cancel_operation, "cancellation_requested"))
         self.assertTrue(cancel_operation.cancellation_requested)
         self._validate_certificate_operation(
@@ -487,7 +487,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         cancelled = False
         for _ in range(10):
-            if (await client.get_certificate_operation(certificate_name=cert_name)).status.lower() == "cancelled":
+            if (await client.get_certificate_operation(cert_name)).status.lower() == "cancelled":
                 cancelled = True
                 break
             await asyncio.sleep(10)
@@ -505,7 +505,7 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
         # delete certificate operation
-        deleted_operation = await client.delete_certificate_operation(certificate_name=cert_name)
+        deleted_operation = await client.delete_certificate_operation(cert_name)
         self.assertIsNotNone(deleted_operation)
         self._validate_certificate_operation(
             pending_cert_operation=deleted_operation,
@@ -535,7 +535,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # get certificate policy
         await self._import_common_certificate(client=client, cert_name=cert_name)
-        retrieved_policy = await client.get_policy(certificate_name=cert_name)
+        retrieved_policy = await client.get_policy(cert_name)
         self.assertIsNotNone(retrieved_policy)
 
         # update certificate policy
@@ -631,7 +631,7 @@ class CertificateClientTests(KeyVaultTestCase):
         await client.delete_certificate(certificate_name=cert_name, _polling_interval=polling_interval)
 
         # restore certificate
-        restored_certificate = await client.restore_certificate_backup(backup=certificate_backup)
+        restored_certificate = await client.restore_certificate_backup(certificate_backup)
         self._validate_certificate_bundle(
             cert=restored_certificate, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
         )
@@ -664,8 +664,8 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # the poller will stop immediately because the issuer is `Unknown`
         await client.create_certificate(
-            certificate_name=cert_name,
-            policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy),
+            cert_name,
+            CertificatePolicy._from_certificate_policy_bundle(cert_policy),
             _polling_interval=polling_interval
         )
 
@@ -690,7 +690,7 @@ class CertificateClientTests(KeyVaultTestCase):
         signed_certificate_bytes = signed_certificate_bytes.lstrip("-----BEGIN CERTIFICATE-----")
         signed_certificate_bytes = signed_certificate_bytes.rstrip("-----END CERTIFICATE-----")
 
-        await client.merge_certificate(certificate_name=cert_name, x509_certificates=[signed_certificate_bytes.encode()])
+        await client.merge_certificate(cert_name, [signed_certificate_bytes.encode()])
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
@@ -705,7 +705,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # create certificate issuer
         issuer = await client.create_issuer(
-            issuer_name=issuer_name, provider="Test", account_id="keyvaultuser", admin_details=admin_details, enabled=True
+            issuer_name, "Test", account_id="keyvaultuser", admin_details=admin_details, enabled=True
         )
 
         properties = IssuerProperties(
@@ -722,7 +722,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self._validate_certificate_issuer(issuer=issuer, expected=expected)
 
         # get certificate issuer
-        issuer = await client.get_issuer(issuer_name=issuer_name)
+        issuer = await client.get_issuer(issuer_name)
         self._validate_certificate_issuer(issuer=issuer, expected=expected)
 
         # list certificate issuers
@@ -763,7 +763,7 @@ class CertificateClientTests(KeyVaultTestCase):
             admin_details=admin_details,
             attributes=IssuerAttributes(enabled=True),
         )
-        issuer = await client.update_issuer(issuer_name=issuer_name, admin_details=admin_details)
+        issuer = await client.update_issuer(issuer_name, admin_details=admin_details)
         self._validate_certificate_issuer(issuer=issuer, expected=expected)
 
         # delete certificate issuer

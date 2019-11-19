@@ -248,7 +248,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # create certificate
         certificate = client.begin_create_certificate(
-            certificate_name=cert_name, policy=CertificatePolicy.get_default(), _polling_interval=polling_interval
+            cert_name, CertificatePolicy.get_default(), _polling_interval=polling_interval
         ).result()
         self._validate_certificate_bundle(cert=certificate, cert_name=cert_name, cert_policy=cert_policy)
 
@@ -261,7 +261,7 @@ class CertificateClientTests(KeyVaultTestCase):
         # update certificate
         tags = {"tag1": "updated_value1"}
         cert_bundle = client.update_certificate_properties(
-            certificate_name=cert_name, tags=tags
+            cert_name, tags=tags
         )
         self._validate_certificate_bundle(cert=cert_bundle, cert_name=cert_name, cert_policy=cert_policy)
         self.assertEqual(tags, cert_bundle.properties.tags)
@@ -270,7 +270,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # delete certificate
         delete_cert_poller = client.begin_delete_certificate(
-            certificate_name=cert_name, _polling_interval=polling_interval
+            cert_name, _polling_interval=polling_interval
         )
         deleted_cert_bundle = delete_cert_poller.result()
         self._validate_certificate_bundle(cert=deleted_cert_bundle, cert_name=cert_name, cert_policy=cert_policy)
@@ -278,7 +278,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # get certificate returns not found
         try:
-            client.get_certificate_version(certificate_name=cert_name, version=deleted_cert_bundle.properties.version)
+            client.get_certificate_version(cert_name, deleted_cert_bundle.properties.version)
             self.fail("Get should fail")
         except Exception as ex:
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
@@ -351,7 +351,7 @@ class CertificateClientTests(KeyVaultTestCase):
         # list certificate versions
         self._validate_certificate_list(
             certificates=(client.list_properties_of_certificate_versions(
-                certificate_name=cert_name, max_page_size=max_certificates - 1
+                cert_name, max_page_size=max_certificates - 1
             )),
             expected=expected
         )
@@ -368,7 +368,7 @@ class CertificateClientTests(KeyVaultTestCase):
         ]
 
         # create certificate contacts
-        contacts = client.create_contacts(contacts=contact_list)
+        contacts = client.create_contacts(contact_list)
         self._validate_certificate_contacts(contacts=contacts, expected=contact_list)
 
         # get certificate contacts
@@ -432,7 +432,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # purge select certificates
         for certificate_name in [c for c in certs.keys() if c.startswith("certprg")]:
-            client.purge_deleted_certificate(certificate_name=certificate_name)
+            client.purge_deleted_certificate(certificate_name)
 
         if not self.is_playback():
             time.sleep(50)
@@ -484,7 +484,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         self.assertEqual(create_certificate_poller.result().status.lower(), "cancelled")
 
-        retrieved_operation = client.get_certificate_operation(certificate_name=cert_name)
+        retrieved_operation = client.get_certificate_operation(cert_name)
         self.assertTrue(hasattr(retrieved_operation, "cancellation_requested"))
         self.assertTrue(retrieved_operation.cancellation_requested)
         self._validate_certificate_operation(
@@ -524,7 +524,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # get certificate policy
         self._import_common_certificate(client=client, cert_name=cert_name)
-        retrieved_policy = client.get_policy(certificate_name=cert_name)
+        retrieved_policy = client.get_policy(cert_name)
         self.assertIsNotNone(retrieved_policy)
 
         # update certificate policy
@@ -610,7 +610,7 @@ class CertificateClientTests(KeyVaultTestCase):
         create_certificate_poller.wait()
 
         # create a backup
-        certificate_backup = client.backup_certificate(certificate_name=cert_name)
+        certificate_backup = client.backup_certificate(cert_name)
 
         # delete the certificate
         client.begin_delete_certificate(certificate_name=cert_name, _polling_interval=polling_interval).wait()
@@ -686,7 +686,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # create certificate issuer
         issuer = client.create_issuer(
-            issuer_name=issuer_name, provider="Test", account_id="keyvaultuser", admin_details=admin_details, enabled=True
+            issuer_name, "Test", account_id="keyvaultuser", admin_details=admin_details, enabled=True
         )
 
         expected = CertificateIssuer(
@@ -699,7 +699,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self._validate_certificate_issuer(issuer=issuer, expected=expected)
 
         # get certificate issuer
-        issuer = client.get_issuer(issuer_name=issuer_name)
+        issuer = client.get_issuer(issuer_name)
         self._validate_certificate_issuer(issuer=issuer, expected=expected)
 
         # list certificate issuers
@@ -743,7 +743,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self._validate_certificate_issuer(issuer=issuer, expected=expected)
 
         # delete certificate issuer
-        client.delete_issuer(issuer_name=issuer_name)
+        client.delete_issuer(issuer_name)
 
         # get certificate issuer returns not found
         try:
