@@ -12,9 +12,8 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING,
 )
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import HttpResponseError
-from ._generated._text_analytics_api import TextAnalyticsAPI
-from ._models import Error
+from ._generated.models import ErrorException
+from ._generated._text_analytics_client import TextAnalyticsClient as TextAnalytics
 from ._base_client import TextAnalyticsClientBase
 from ._response_handlers import (
     _validate_batch_input,
@@ -61,7 +60,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Any, Any) -> None
         super(TextAnalyticsClient, self).__init__(credentials=credential, **kwargs)
-        self._client = TextAnalyticsAPI(
+        self._client = TextAnalytics(
             endpoint=endpoint, credentials=credential, pipeline=self._pipeline
         )
 
@@ -123,7 +122,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     cls=language_result,
                     **kwargs
                 )
-            except HttpResponseError as error:
+            except ErrorException as error:
                 process_batch_error(error)
 
         result = []
@@ -137,13 +136,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     cls=language_result,
                     **kwargs
                 )
-                if isinstance(response, Error):
-                    for _ in batch:
-                        result.append(response)
-                else:
-                    result.extend(response)
+                result.extend(response)
             return result
-        except HttpResponseError as error:
+        except ErrorException as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -189,7 +184,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     cls=entities_result,
                     **kwargs
                 )
-            except HttpResponseError as error:
+            except ErrorException as error:
                 process_batch_error(error)
 
         result = []
@@ -203,13 +198,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     cls=entities_result,
                     **kwargs
                 )
-                if isinstance(response, Error):
-                    for _ in batch:
-                        result.append(response)
-                else:
-                    result.extend(response)
+                result.extend(response)
             return result
-        except HttpResponseError as error:
+        except ErrorException as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -254,7 +245,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     cls=entities_result,
                     **kwargs
                 )
-            except HttpResponseError as error:
+            except ErrorException as error:
                 process_batch_error(error)
 
         result = []
@@ -268,13 +259,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     cls=entities_result,
                     **kwargs
                 )
-                if isinstance(response, Error):
-                    for _ in batch:
-                        result.append(response)
-                else:
-                    result.extend(response)
+                result.extend(response)
             return result
-        except HttpResponseError as error:
+        except ErrorException as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -318,7 +305,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     cls=linked_entities_result,
                     **kwargs
                 )
-            except HttpResponseError as error:
+            except ErrorException as error:
                 process_batch_error(error)
 
         result = []
@@ -332,13 +319,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     cls=linked_entities_result,
                     **kwargs
                 )
-                if isinstance(response, Error):
-                    for _ in batch:
-                        result.append(response)
-                else:
-                    result.extend(response)
+                result.extend(response)
             return result
-        except HttpResponseError as error:
+        except ErrorException as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -382,7 +365,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     cls=key_phrases_result,
                     **kwargs
                 )
-            except HttpResponseError as error:
+            except ErrorException as error:
                 process_batch_error(error)
 
         result = []
@@ -396,13 +379,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     cls=key_phrases_result,
                     **kwargs
                 )
-                if isinstance(response, Error):
-                    for _ in batch:
-                        result.append(response)
-                else:
-                    result.extend(response)
+                result.extend(response)
             return result
-        except HttpResponseError as error:
+        except ErrorException as error:
             process_batch_error(error)
 
     @distributed_trace
@@ -447,7 +426,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     cls=sentiment_result,
                     **kwargs
                 )
-            except HttpResponseError as error:
+            except ErrorException as error:
                 process_batch_error(error)
 
         result = []
@@ -461,11 +440,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     cls=sentiment_result,
                     **kwargs
                 )
-                if isinstance(response, Error):
-                    for _ in batch:
-                        result.append(response)
-                else:
-                    result.extend(response)
+                result.extend(response)
             return result
-        except HttpResponseError as error:
+        except ErrorException as error:
             process_batch_error(error)

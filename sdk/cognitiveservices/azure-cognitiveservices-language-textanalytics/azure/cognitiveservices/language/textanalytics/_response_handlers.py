@@ -26,7 +26,6 @@ from ._models import (
     DocumentLanguage,
     DetectedLanguage,
     DocumentError,
-    Error
 )
 
 
@@ -68,18 +67,6 @@ def process_batch_error(error):
     error = raise_error(message=error_message, response=error.response)
     error.error_code = error.status_code
     raise error
-
-
-def whole_batch_error(err):
-    """500 status code error for batch.
-    """
-    return Error(
-        code=err.code,
-        message=err.message,
-        target=err.target,
-        innererror=err.innererror,
-        details=err.details
-    )
 
 
 def _validate_single_input(text, hint, hint_value):
@@ -136,9 +123,6 @@ def order_results(response, combined):
 
 
 def language_result(response, obj, response_headers):  # pylint: disable=unused-argument
-    if hasattr(obj, "innererror"):
-        return whole_batch_error(obj)
-
     if obj.errors:
         combined = obj.documents + obj.errors
         results = order_results(response, combined)
@@ -158,9 +142,6 @@ def language_result(response, obj, response_headers):  # pylint: disable=unused-
 
 
 def entities_result(response, obj, response_headers):  # pylint: disable=unused-argument
-    if hasattr(obj, "innererror"):
-        return whole_batch_error(obj)
-
     if obj.errors:
         combined = obj.documents + obj.errors
         results = order_results(response, combined)
@@ -180,9 +161,6 @@ def entities_result(response, obj, response_headers):  # pylint: disable=unused-
 
 
 def linked_entities_result(response, obj, response_headers):  # pylint: disable=unused-argument
-    if hasattr(obj, "innererror"):
-        return whole_batch_error(obj)
-
     if obj.errors:
         combined = obj.documents + obj.errors
         results = order_results(response, combined)
@@ -202,9 +180,6 @@ def linked_entities_result(response, obj, response_headers):  # pylint: disable=
 
 
 def key_phrases_result(response, obj, response_headers):  # pylint: disable=unused-argument
-    if hasattr(obj, "innererror"):
-        return whole_batch_error(obj)
-
     if obj.errors:
         combined = obj.documents + obj.errors
         results = order_results(response, combined)
@@ -224,9 +199,6 @@ def key_phrases_result(response, obj, response_headers):  # pylint: disable=unus
 
 
 def sentiment_result(response, obj, response_headers):  # pylint: disable=unused-argument
-    if hasattr(obj, "innererror"):
-        return whole_batch_error(obj)
-
     if obj.errors:
         combined = obj.documents + obj.errors
         results = order_results(response, combined)

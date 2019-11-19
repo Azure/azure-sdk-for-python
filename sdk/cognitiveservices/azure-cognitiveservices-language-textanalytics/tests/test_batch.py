@@ -390,27 +390,3 @@ class TextAnalyticsTest(CognitiveServiceTest):
         for doc in response:
             self.assertEqual(doc.detected_languages[0].name, "English")
 
-    @pytest.mark.live_test_only  # live test only because generates huge recording
-    @ResourceGroupPreparer()
-    @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    def test_segment_batch_with_500_batch_error_duplicated(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
-        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
-
-        docs = []
-        for idx in range(1000):
-            docs.append("Bill Gates founded Microsoft")  # first batch
-
-        for idx in range(1000):
-            docs.append("")  # this will cause a whole batch failure for the second batch
-
-        for idx in range(50):
-            docs.append("Bill Gates founded Microsoft")  # third batch
-
-        response = text_analytics.recognize_entities(docs)
-
-        self.assertEqual(len(response), 2050)
-        for idx, doc in enumerate(response):
-            if doc.is_error:
-                self.assertTrue(2000 > idx >= 1000)
-            else:
-                self.assertTrue(isinstance(doc, DocumentEntities))

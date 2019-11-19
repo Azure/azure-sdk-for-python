@@ -44,10 +44,12 @@ class DocumentEntities(object):
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
     :param entities: Required. Recognized entities in the document.
-    :type entities: list[~textanalytics.models.Entity]
+    :type entities:
+     list[~azure.cognitiveservices.language.textanalytics.models.Entity]
     :param statistics: if showStats=true was specified in the request this
      field will contain information about the document payload.
-    :type statistics: ~textanalytics.models.DocumentStatistics
+    :type statistics:
+     ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a DocumentEntities.
     """
@@ -67,10 +69,12 @@ class DocumentLanguage(object):
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
     :param detected_languages: Required. A list of extracted languages.
-    :type detected_languages: list[~textanalytics.models.DetectedLanguage]
+    :type detected_languages:
+     list[~azure.cognitiveservices.language.textanalytics.models.DetectedLanguage]
     :param statistics: if showStats=true was specified in the request this
      field will contain information about the document payload.
-    :type statistics: ~textanalytics.models.DocumentStatistics
+    :type statistics:
+     ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a DocumentLanguage.
     """
@@ -91,8 +95,8 @@ class Entity(object):
     :type text: str
     :param type: Required. Entity type, such as Person/Location/Org/SSN etc
     :type type: str
-    :param sub_type: Entity sub type, such as Age/Year/TimeRange etc
-    :type sub_type: str
+    :param subtype: Entity sub type, such as Age/Year/TimeRange etc
+    :type subtype: str
     :param offset: Required. Start position (in Unicode characters) for the
      entity text.
     :type offset: int
@@ -105,19 +109,19 @@ class Entity(object):
     """
 
     def __init__(self, **kwargs):
-        self.text = kwargs.get("text", None)
-        self.type = kwargs.get("type", None)
-        self.sub_type = kwargs.get("sub_type", None)
-        self.offset = kwargs.get("offset", None)
-        self.length = kwargs.get("length", None)
-        self.score = kwargs.get("score", None)
+        self.text = kwargs.get('text', None)
+        self.type = kwargs.get('type', None)
+        self.subtype = kwargs.get('subtype', None)
+        self.offset = kwargs.get('offset', None)
+        self.length = kwargs.get('length', None)
+        self.score = kwargs.get('score', None)
 
     @classmethod
     def _from_generated(cls, entity):
         return cls(
             text=entity.text,
             type=entity.type,
-            sub_type=entity.sub_type,
+            subtype=entity.subtype,
             offset=entity.offset,
             length=entity.length,
             score=entity.score,
@@ -132,16 +136,19 @@ class Error(object):
     :param code: Required. Error code. Possible values include:
      'invalidRequest', 'invalidArgument', 'internalServerError',
      'serviceUnavailable'
-    :type code: str or ~textanalytics.models.enum
+    :type code: str or
+     ~azure.cognitiveservices.language.textanalytics.models.enum
     :param message: Required. Error message.
     :type message: str
     :param target: Error target.
     :type target: str
     :param innererror: Inner error contains more specific information.
-    :type innererror: ~textanalytics.models.InnerError
+    :type innererror:
+     ~azure.cognitiveservices.language.textanalytics.models.InnerError
     :param details: Details about specific errors that led to this reported
      error.
-    :type details: list[~textanalytics.models.Error]
+    :type details:
+     list[~azure.cognitiveservices.language.textanalytics.models.Error]
     :param is_error: Boolean check for error item when iterating over list of
      results. Always True for an instance of a Error.
     """
@@ -160,14 +167,19 @@ class InnerError(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Error code.
-    :type code: str
+    :param code: Required. Error code. Possible values include:
+     'invalidParameterValue', 'invalidRequestBodyFormat', 'emptyRequest',
+     'missingInputRecords', 'invalidDocument', 'modelVersionIncorrect',
+     'invalidDocumentBatch', 'unsupportedLanguageCode', 'invalidCountryHint'
+    :type code: str or
+     ~azure.cognitiveservices.language.textanalytics.models.enum
     :param message: Required. Error message.
     :type message: str
     :param target: Error target.
     :type target: str
     :param innererror: Inner error contains more specific information.
-    :type innererror: ~textanalytics.models.InnerError
+    :type innererror:
+     ~azure.cognitiveservices.language.textanalytics.models.InnerError
     """
 
     def __init__(self, **kwargs):
@@ -190,7 +202,8 @@ class DocumentKeyPhrases(object):
     :type key_phrases: list[str]
     :param statistics: if showStats=true was specified in the request this
      field will contain information about the document payload.
-    :type statistics: ~textanalytics.models.DocumentStatistics
+    :type statistics:
+     ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a DocumentKeyPhrases.
     """
@@ -210,10 +223,12 @@ class DocumentLinkedEntities(object):
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
     :param entities: Required. Recognized well-known entities in the document.
-    :type entities: list[~textanalytics.models.LinkedEntity]
+    :type entities:
+     list[~azure.cognitiveservices.language.textanalytics.models.LinkedEntity]
     :param statistics: if showStats=true was specified in the request this
      field will contain information about the document payload.
-    :type statistics: ~textanalytics.models.DocumentStatistics
+    :type statistics:
+     ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a DocumentLinkedEntities.
     """
@@ -235,14 +250,17 @@ class DocumentSentiment(object):
     :param sentiment: Required. Predicted sentiment for document (Negative,
      Neutral, Positive, or Mixed). Possible values include: 'positive',
      'neutral', 'negative', 'mixed'
-    :type sentiment: str or ~textanalytics.models.enum
-    :param statistics:
-    :type statistics: ~textanalytics.models.DocumentStatistics
+    :type sentiment: str or
+     ~azure.cognitiveservices.language.textanalytics.models.enum
+    :param statistics: The document statistics.
+    :type statistics:
+     ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
     :param document_scores: Required. Document level sentiment confidence
      scores between 0 and 1 for each sentiment class.
     :type document_scores: object
     :param sentences: Required. Sentence level sentiment analysis.
-    :type sentences: list[~textanalytics.models.SentenceSentiment]
+    :type sentences:
+     list[~azure.cognitiveservices.language.textanalytics.models.SentenceSentiment]
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always False for an instance of a DocumentSentiment.
     """
@@ -332,7 +350,8 @@ class LinkedEntity(object):
     :type name: str
     :param matches: Required. List of instances this entity appears in the
      text.
-    :type matches: list[~textanalytics.models.Match]
+    :type matches:
+     list[~azure.cognitiveservices.language.textanalytics.models.Match]
     :param language: Required. Language used in the data source.
     :type language: str
     :param id: Unique identifier of the recognized entity from the data
@@ -465,7 +484,8 @@ class SentenceSentiment(object):
 
     :param sentiment: Required. The predicted Sentiment for the sentence.
      Possible values include: 'positive', 'neutral', 'negative'
-    :type sentiment: str or ~textanalytics.models.enum
+    :type sentiment: str or
+     ~azure.cognitiveservices.language.textanalytics.models.enum
     :param sentence_scores: Required. The sentiment confidence score between 0
      and 1 for the sentence for all classes.
     :type sentence_scores: object
@@ -474,7 +494,7 @@ class SentenceSentiment(object):
     :type offset: int
     :param length: Required. The length of the sentence by Unicode standard.
     :type length: int
-    :param warnings: Required. The warnings generated for the sentence.
+    :param warnings: The warnings generated for the sentence.
     :type warnings: list[str]
     """
 
