@@ -82,19 +82,19 @@ class AadClientBase(ABC):
         _raise_for_error(response)
 
         # TokenCache.add mutates the response. In particular, it removes tokens.
-        original_response = copy.deepcopy(response)
+        response_copy = copy.deepcopy(response)
 
         self._cache.add(event={"response": response, "scope": scopes}, now=now)
-        if "expires_on" in original_response:
-            expires_on = int(original_response["expires_on"])
-        elif "expires_in" in original_response:
-            expires_on = now + int(original_response["expires_in"])
+        if "expires_on" in response_copy:
+            expires_on = int(response_copy["expires_on"])
+        elif "expires_in" in response_copy:
+            expires_on = now + int(response_copy["expires_in"])
         else:
-            _scrub_secrets(original_response)
+            _scrub_secrets(response_copy)
             raise ClientAuthenticationError(
-                message="Unexpected response from Azure Active Directory: {}".format(original_response)
+                message="Unexpected response from Azure Active Directory: {}".format(response_copy)
             )
-        return AccessToken(original_response["access_token"], expires_on)
+        return AccessToken(response_copy["access_token"], expires_on)
 
     @abc.abstractmethod
     def _get_client_session(self, **kwargs):
