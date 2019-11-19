@@ -38,7 +38,7 @@ def test_client_secret_credential(aad_credential, live_eventhub):
                                   kwargs={"consumer_group": '$default',
                                           "partition_id": '0'})
         worker.start()
-        time.sleep(3)
+        time.sleep(6)
 
     worker.join()
     assert on_event.called is True
