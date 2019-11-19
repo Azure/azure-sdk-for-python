@@ -162,7 +162,7 @@ class ClientBaseAsync(ClientBase):
         """
         return (await self.get_properties())['partition_ids']
 
-    async def get_partition_properties(self, partition):
+    async def get_partition_properties(self, partition_id):
         # type:(str) -> Dict[str, str]
         """
         Get properties of the specified partition async.
@@ -176,13 +176,13 @@ class ClientBaseAsync(ClientBase):
             - last_enqueued_time_utc
             - is_empty
 
-        :param partition: The target partition id.
-        :type partition: str
+        :param partition_id: The target partition id.
+        :type partition_id: str
         :rtype: dict
         :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
         mgmt_msg = Message(application_properties={'name': self.eventhub_name,
-                                                   'partition': partition})
+                                                   'partition': partition_id})
         response = await self._management_request(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
         partition_info = response.get_data()
         output = {}
