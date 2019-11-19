@@ -21,9 +21,15 @@ if sys.version_info < (3, 5):
     collect_ignore.append("samples/async_samples")
     collect_ignore.append("examples/async_examples")
 
-from azure.eventhub.client import EventHubClient
+# from azure.eventhub.client import EventHubClient
+from azure.eventhub import EventHubConsumerClient
+from azure.eventhub import EventHubProducerClient
 from azure.eventhub import EventPosition
+import uamqp
+from uamqp import authentication
 
+PARTITION_COUNT = 2
+CONN_STR = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}"
 
 def pytest_addoption(parser):
     parser.addoption(
@@ -65,7 +71,7 @@ log = get_logger(None, logging.DEBUG)
 def create_eventhub(eventhub_config, client=None):
     from azure.servicebus.control_client import ServiceBusService, EventHub
     hub_name = str(uuid.uuid4())
-    hub_value = EventHub(partition_count=2)
+    hub_value = EventHub(partition_count=PARTITION_COUNT)
     client = client or ServiceBusService(
         service_namespace=eventhub_config['namespace'],
         shared_access_key_name=eventhub_config['key_name'],
@@ -95,6 +101,7 @@ def live_eventhub_config():
         config['namespace'] = os.environ['EVENT_HUB_NAMESPACE']
         config['consumer_group'] = "$Default"
         config['partition'] = "0"
+        config['connection_str'] = CONN_STR
     except KeyError:
         pytest.skip("Live EventHub configuration not found.")
     else:
@@ -123,7 +130,7 @@ def live_eventhub(live_eventhub_config):  # pylint: disable=redefined-outer-name
 
 @pytest.fixture()
 def connection_str(live_eventhub):
-    return "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
+    return CONN_STR.format(
         live_eventhub['hostname'],
         live_eventhub['key_name'],
         live_eventhub['access_key'],
@@ -132,7 +139,8 @@ def connection_str(live_eventhub):
 
 @pytest.fixture()
 def invalid_hostname(live_eventhub_config):
-    return "Endpoint=sb://invalid123.servicebus.windows.net/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
+    return CONN_STR.format(
+        "invalid123.servicebus.windows.net",
         live_eventhub_config['key_name'],
         live_eventhub_config['access_key'],
         live_eventhub_config['event_hub'])
@@ -140,16 +148,18 @@ def invalid_hostname(live_eventhub_config):
 
 @pytest.fixture()
 def invalid_key(live_eventhub_config):
-    return "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey=invalid;EntityPath={}".format(
+    return CONN_STR.format(
         live_eventhub_config['hostname'],
         live_eventhub_config['key_name'],
+        "invalid",
         live_eventhub_config['event_hub'])
 
 
 @pytest.fixture()
 def invalid_policy(live_eventhub_config):
-    return "Endpoint=sb://{}/;SharedAccessKeyName=invalid;SharedAccessKey={};EntityPath={}".format(
+    return CONN_STR.format(
         live_eventhub_config['hostname'],
+        "invalid",
         live_eventhub_config['access_key'],
         live_eventhub_config['event_hub'])
 
@@ -163,24 +173,30 @@ def aad_credential():
 
 
 @pytest.fixture()
-def connstr_receivers(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
-    partitions = client.get_partition_ids()
+def connstr_receivers(connection_str, live_eventhub_config):
+    partitions = [str(i) for i in range(PARTITION_COUNT)]
     receivers = []
     for p in partitions:
-        receiver = client._create_consumer(consumer_group="$default", partition_id=p, event_position=EventPosition("-1"), prefetch=500)
-        receiver._open()
+        uri = "sb://{}/{}".format(live_eventhub_config['hostname'], live_eventhub_config['event_hub'])
+        sas_auth = authentication.SASTokenAuth.from_shared_access_key(
+            uri, live_eventhub_config['key_name'], live_eventhub_config['access_key'])
+
+        source = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
+            live_eventhub_config['hostname'],
+            live_eventhub_config['event_hub'],
+            live_eventhub_config['consumer_group'],
+            p)
+        receiver = uamqp.ReceiveClient(source, auth=sas_auth, debug=False, timeout=5000, prefetch=500)
+        receiver.open()
         receivers.append(receiver)
     yield connection_str, receivers
-
     for r in receivers:
         r.close()
-    client.close()
 
 
 @pytest.fixture()
 def connstr_senders(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    client = EventHubProducerClient.from_connection_string(connection_str)
     partitions = client.get_partition_ids()
 
     senders = []
