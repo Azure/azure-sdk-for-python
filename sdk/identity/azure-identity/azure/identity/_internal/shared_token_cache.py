@@ -33,17 +33,20 @@ if TYPE_CHECKING:
 
 MULTIPLE_ACCOUNTS = """Multiple users were discovered in the shared token cache. If using DefaultAzureCredential, set
 the AZURE_USERNAME environment variable to the preferred username. Otherwise,
-specify it when constructing SharedTokenCacheCredential.\nDiscovered accounts: {}"""
+specify it when constructing SharedTokenCacheCredential.
+Discovered accounts: {}"""
 
 MULTIPLE_MATCHING_ACCOUNTS = """Found multiple accounts matching{}{}. If using DefaultAzureCredential, set environment
 variables AZURE_USERNAME and AZURE_TENANT_ID with the preferred username and tenant.
-Otherwise, specify them when constructing SharedTokenCacheCredential.\nDiscovered accounts: {}"""
+Otherwise, specify them when constructing SharedTokenCacheCredential.
+Discovered accounts: {}"""
 
 NO_ACCOUNTS = """The shared cache contains no signed-in accounts. To authenticate with SharedTokenCacheCredential, login
 through developer tooling supporting Azure single sign on"""
 
 NO_MATCHING_ACCOUNTS = """The cache contains no account matching the specified{}{}. To authenticate with
-SharedTokenCacheCredential, login through developer tooling supporting Azure single sign on.\nDiscovered accounts: {}"""
+SharedTokenCacheCredential, login through developer tooling supporting Azure single sign on.
+Discovered accounts: {}"""
 
 NO_TOKEN = """Token acquisition failed for user '{}'. To fix, re-authenticate
 through developer tooling supporting Azure single sign on"""
