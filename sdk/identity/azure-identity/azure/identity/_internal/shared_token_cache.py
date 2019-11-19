@@ -73,7 +73,7 @@ def _filtered_accounts(accounts, username=None, tenant_id=None):
                 _, tenant = account["home_account_id"].split(".")
                 if tenant_id != tenant:
                     continue
-            except:  # pylint:disable=bare-except
+            except Exception:  # pylint:disable=broad-except
                 continue
         filtered_accounts.append(account)
     return filtered_accounts
