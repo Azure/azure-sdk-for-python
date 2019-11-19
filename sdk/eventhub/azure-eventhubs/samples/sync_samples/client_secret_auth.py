@@ -23,5 +23,12 @@ producer = EventHubProducerClient(host=HOSTNAME,
                                   credential=credential)
 
 with producer:
-    event = EventData(body='A single message')
-    producer.send(event, partition_id='0')
+    event_data_batch = producer.create_batch(max_size=10000)
+    while True:
+        try:
+            event_data_batch.add(EventData('Message inside EventBatchData'))
+        except ValueError:
+            # EventDataBatch object reaches max_size.
+            # New EventDataBatch object can be created here to send more data
+            break
+    producer.send_batch(event_data_batch)

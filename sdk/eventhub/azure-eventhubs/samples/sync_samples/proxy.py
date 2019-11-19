@@ -37,7 +37,15 @@ producer_client = EventHubProducerClient.from_connection_string(
     conn_str=CONNECTION_STR, event_hub_path=EVENT_HUB, http_proxy=HTTP_PROXY)
 
 with producer_client:
-    producer_client.send(EventData("A single event"))
+    event_data_batch = producer_client.create_batch(max_size=10000)
+    while True:
+        try:
+            event_data_batch.add(EventData('Message inside EventBatchData'))
+        except ValueError:
+            # EventDataBatch object reaches max_size.
+            # New EventDataBatch object can be created here to send more data
+            break
+    producer.send_batch(event_data_batch)
     print('Finish sending.')
 
 with consumer_client:

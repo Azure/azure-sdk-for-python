@@ -16,28 +16,35 @@ import asyncio
 import os
 
 from azure.eventhub.aio import EventHubProducerClient
-from azure.eventhub import EventData
+from azure.eventhub import EventData, EventDataBatch
 
 EVENT_HUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENT_HUB = os.environ['EVENT_HUB_NAME']
 
 
 async def run(producer):
+
     async with producer:
-        ed = EventData("msg")
-        await producer.send(ed)  # The event will be distributed to available partitions via round-robin.
 
-        ed = EventData("msg sent to partition_id 0")
-        await producer.send(ed, partition_id='0')  # Specifying partition_id
+        # Without specifying partition_id or partition_key
+        # The events will be distributed to available partitions via round-robin.
+        event_data_batch = await producer.create_batch(max_size=10000)
 
-        ed = EventData("msg sent with partition_key")
-        await producer.send(ed, partition_key="p_key")  # Specifying partition_key
+        # Specifying partition_id
+        # event_data_batch = producer.create_batch(partition_id='0')
 
-        # Send a list of events
-        event_list = []
-        for i in range(1500):
-            event_list.append(EventData('Hello World'))
-        await producer.send(event_list)
+        # Specifying partition_key
+        # event_data_batch = producer.create_batch(partition_key='pkey')
+
+        while True:
+            try:
+                event_data_batch.add(EventData('Message inside EventBatchData'))
+            except ValueError:
+                # EventDataBatch object reaches max_size.
+                # New EventDataBatch object can be created here to send more data
+                break
+
+        await producer.send_batch(event_data_batch)
 
 
 loop = asyncio.get_event_loop()

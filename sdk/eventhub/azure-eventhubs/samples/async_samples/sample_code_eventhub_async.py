@@ -71,7 +71,7 @@ async def example_eventhub_async_send_and_receive():
         event_data_batch = await producer.create_batch(max_size=10000)
         while True:
             try:
-                event_data_batch.try_add(EventData('Message inside EventBatchData'))
+                event_data_batch.add(EventData('Message inside EventBatchData'))
             except ValueError:
                 # The EventDataBatch object reaches its max_size.
                 # You can send the full EventDataBatch object and create a new one here.
@@ -80,8 +80,15 @@ async def example_eventhub_async_send_and_receive():
 
         # [START eventhub_producer_client_send_async]
         async with producer:
-            event_data = EventData(b"A single event")
-            await producer.send(event_data)
+            event_data_batch = await producer.create_batch(max_size=10000)
+            while True:
+                try:
+                    event_data_batch.add(EventData('Message inside EventBatchData'))
+                except ValueError:
+                    # The EventDataBatch object reaches its max_size.
+                    # You can send the full EventDataBatch object and create a new one here.
+                    break
+            await producer.send_batch(event_data_batch)
         # [END eventhub_producer_client_send_async]
         await asyncio.sleep(1)
 
@@ -113,7 +120,15 @@ async def example_eventhub_async_producer_ops():
         event_hub_path=event_hub
     )
     try:
-        await producer.send(EventData(b"A single event"))
+        event_data_batch = await producer.create_batch(max_size=10000)
+        while True:
+            try:
+                event_data_batch.add(EventData('Message inside EventBatchData'))
+            except ValueError:
+                # The EventDataBatch object reaches its max_size.
+                # You can send the full EventDataBatch object and create a new one here.
+                break
+        await producer.send_batch(event_data_batch)
     finally:
         # Close down the producer handler.
         await producer.close()
