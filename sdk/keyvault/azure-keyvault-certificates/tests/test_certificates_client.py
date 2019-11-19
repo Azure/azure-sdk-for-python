@@ -351,7 +351,7 @@ class CertificateClientTests(KeyVaultTestCase):
         # list certificate versions
         self._validate_certificate_list(
             certificates=(client.list_properties_of_certificate_versions(
-                cert_name, max_page_size=max_certificates - 1
+                certificate_name=cert_name, max_page_size=max_certificates - 1
             )),
             expected=expected
         )
@@ -368,7 +368,7 @@ class CertificateClientTests(KeyVaultTestCase):
         ]
 
         # create certificate contacts
-        contacts = client.create_contacts(contact_list)
+        contacts = client.create_contacts(contacts=contact_list)
         self._validate_certificate_contacts(contacts=contacts, expected=contact_list)
 
         # get certificate contacts
@@ -610,7 +610,7 @@ class CertificateClientTests(KeyVaultTestCase):
         create_certificate_poller.wait()
 
         # create a backup
-        certificate_backup = client.backup_certificate(cert_name)
+        certificate_backup = client.backup_certificate(certificate_name=cert_name)
 
         # delete the certificate
         client.begin_delete_certificate(certificate_name=cert_name, _polling_interval=polling_interval).wait()
@@ -743,7 +743,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self._validate_certificate_issuer(issuer=issuer, expected=expected)
 
         # delete certificate issuer
-        client.delete_issuer(issuer_name)
+        client.delete_issuer(issuer_nameissuer_name)
 
         # get certificate issuer returns not found
         try:

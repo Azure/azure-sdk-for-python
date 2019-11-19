@@ -256,7 +256,7 @@ class CertificateClientTests(KeyVaultTestCase):
         # update certificate
         tags = {"tag1": "updated_value1"}
         cert_bundle = await client.update_certificate_properties(
-            certificate_name=cert_name, tags=tags
+            cert_name, tags=tags
         )
         self._validate_certificate_bundle(
             cert=cert_bundle, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
@@ -631,7 +631,7 @@ class CertificateClientTests(KeyVaultTestCase):
         await client.delete_certificate(certificate_name=cert_name, _polling_interval=polling_interval)
 
         # restore certificate
-        restored_certificate = await client.restore_certificate_backup(certificate_backup)
+        restored_certificate = await client.restore_certificate_backup(backup=certificate_backup)
         self._validate_certificate_bundle(
             cert=restored_certificate, vault=client.vault_url, cert_name=cert_name, cert_policy=cert_policy
         )
