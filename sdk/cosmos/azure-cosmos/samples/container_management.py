@@ -20,12 +20,12 @@ import config
 # 2. Create Container
 #    2.1 - Basic Create
 #    2.2 - Create container with custom IndexPolicy
-#    2.3 - Create container with offer throughput set
+#    2.3 - Create container with provisioned throughput set
 #    2.4 - Create container with unique key
 #    2.5 - Create Container with partition key V2
 #    2.6 - Create Container with partition key V1
 #
-# 3. Manage Container Offer Throughput
+# 3. Manage Container Provisioned Throughput
 #    3.1 - Get Container performance tier
 #    3.2 - Change performance tier
 #
@@ -104,7 +104,7 @@ def create_container(db, id):
     except exceptions.CosmosResourceExistsError:
         print('A container with id \'{0}\' already exists'.format(coll['id']))
 
-    print("\n2.3 Create Container - With custom offer throughput")
+    print("\n2.3 Create Container - With custom provisioned throughput")
 
     try:
         coll = {"id": "container_custom_throughput"}
@@ -163,10 +163,10 @@ def create_container(db, id):
         print('A container with id \'container_partition_key_v1\' already exists')
 
 
-def manage_offer_throughput(db, id):
+def manage_provisioned_throughput(db, id):
     print("\n3.1 Get Container Performance tier")
 
-    #A Container's Offer Throughput determines the performance throughput of a container.
+    #A Container's Provisioned Throughput determines the performance throughput of a container.
     #A Container is loosely coupled to Offer through the Offer's offerResourceId
     #Offer.offerResourceId == Container._rid
     #Offer.resource == Container._self
@@ -183,13 +183,13 @@ def manage_offer_throughput(db, id):
     except exceptions.CosmosResourceExistsError:
         print('A container with id \'{0}\' does not exist'.format(id))
 
-    print("\n3.2 Change Offer Throughput of Container")
+    print("\n3.2 Change Provisioned Throughput of Container")
 
-    #The Offer Throughput of a container controls the throughput allocated to the Container
+    #The Provisioned Throughput of a container controls the throughput allocated to the Container
 
     #The following code shows how you can change Container's throughput
     offer = container.replace_throughput(offer.offer_throughput + 100)
-    print('Replaced Offer. Offer Throughput is now \'{0}\''.format(offer.properties['content']['offerThroughput']))
+    print('Replaced Offer. Provisioned Throughput is now \'{0}\''.format(offer.properties['content']['offerThroughput']))
 
 
 def read_Container(db, id):
@@ -246,8 +246,8 @@ def run_sample():
         # create a container
         create_container(db, CONTAINER_ID)
 
-        # get & change Offer Throughput of container
-        manage_offer_throughput(db, CONTAINER_ID)
+        # get & change Provisioned Throughput of container
+        manage_provisioned_throughput(db, CONTAINER_ID)
 
         # get a container using its id
         read_Container(db, CONTAINER_ID)
