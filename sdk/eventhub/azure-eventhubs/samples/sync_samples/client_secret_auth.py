@@ -13,13 +13,13 @@ from azure.eventhub import EventData, EventHubProducerClient
 from azure.identity import EnvironmentCredential
 
 
-HOSTNAME = os.environ['EVENT_HUB_HOSTNAME']
+fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
 EVENT_HUB = os.environ['EVENT_HUB_NAME']
 
 
 credential = EnvironmentCredential()
-producer = EventHubProducerClient(host=HOSTNAME,
-                                  event_hub_path=EVENT_HUB,
+producer = EventHubProducerClient(fully_qualified_namespace=fully_qualified_namespace,
+                                  eventhub_name=EVENT_HUB,
                                   credential=credential)
 
 with producer:

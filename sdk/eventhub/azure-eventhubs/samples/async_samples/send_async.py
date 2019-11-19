@@ -41,7 +41,7 @@ async def run(producer):
 
 
 loop = asyncio.get_event_loop()
-producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONNECTION_STR, event_hub_path=EVENT_HUB)
+producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONNECTION_STR, eventhub_name=EVENT_HUB)
 tasks = asyncio.gather(
     run(producer))
 start_time = time.time()

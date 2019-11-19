@@ -32,9 +32,9 @@ def on_event(partition_context, events):
 
 
 consumer_client = EventHubConsumerClient.from_connection_string(
-    conn_str=CONNECTION_STR, event_hub_path=EVENT_HUB, http_proxy=HTTP_PROXY)
+    conn_str=CONNECTION_STR, eventhub_name=EVENT_HUB, http_proxy=HTTP_PROXY)
 producer_client = EventHubProducerClient.from_connection_string(
-    conn_str=CONNECTION_STR, event_hub_path=EVENT_HUB, http_proxy=HTTP_PROXY)
+    conn_str=CONNECTION_STR, eventhub_name=EVENT_HUB, http_proxy=HTTP_PROXY)
 
 with producer_client:
     producer_client.send(EventData("A single event"))

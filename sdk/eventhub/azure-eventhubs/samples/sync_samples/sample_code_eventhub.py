@@ -16,7 +16,7 @@ def create_eventhub_producer_client():
     event_hub = os.environ['EVENT_HUB_NAME']
     producer = EventHubProducerClient.from_connection_string(
         conn_str=event_hub_connection_str,
-        event_hub_path=event_hub
+        eventhub_name=event_hub
     )
     # [END create_eventhub_producer_client_from_conn_str_sync]
 
@@ -24,15 +24,15 @@ def create_eventhub_producer_client():
     import os
     from azure.eventhub import EventHubProducerClient, EventHubSharedKeyCredential
 
-    hostname = os.environ['EVENT_HUB_HOSTNAME']
+    fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
     event_hub = os.environ['EVENT_HUB_NAME']
     shared_access_policy = os.environ['EVENT_HUB_SAS_POLICY']
     shared_access_key = os.environ['EVENT_HUB_SAS_KEY']
 
     credential = EventHubSharedKeyCredential(shared_access_policy, shared_access_key)
     producer = EventHubProducerClient(
-        host=hostname,
-        event_hub_path=event_hub,
+        fully_qualified_namespace=fully_qualified_namespace,
+        eventhub_name=event_hub,
         credential=credential
     )
     # [END create_eventhub_producer_client_sync]
@@ -47,7 +47,7 @@ def create_eventhub_consumer_client():
     event_hub = os.environ['EVENT_HUB_NAME']
     consumer = EventHubConsumerClient.from_connection_string(
         conn_str=event_hub_connection_str,
-        event_hub_path=event_hub
+        eventhub_name=event_hub
     )
     # [END create_eventhub_consumer_client_from_conn_str_sync]
 
@@ -55,15 +55,15 @@ def create_eventhub_consumer_client():
     import os
     from azure.eventhub import EventHubConsumerClient, EventHubSharedKeyCredential
 
-    hostname = os.environ['EVENT_HUB_HOSTNAME']
+    fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
     event_hub = os.environ['EVENT_HUB_NAME']
     shared_access_policy = os.environ['EVENT_HUB_SAS_POLICY']
     shared_access_key = os.environ['EVENT_HUB_SAS_KEY']
 
     credential = EventHubSharedKeyCredential(shared_access_policy, shared_access_key)
     consumer = EventHubConsumerClient(
-        host=hostname,
-        event_hub_path=event_hub,
+        fully_qualified_namespace=fully_qualified_namespace,
+        eventhub_name=event_hub,
         credential=credential)
     # [END create_eventhub_consumer_client_sync]
     return consumer
@@ -125,7 +125,7 @@ def example_eventhub_producer_ops():
 
     producer = EventHubProducerClient.from_connection_string(
         conn_str=event_hub_connection_str,
-        event_hub_path=event_hub
+        eventhub_name=event_hub
     )
     try:
         producer.send(EventData(b"A single event"))
@@ -146,7 +146,7 @@ def example_eventhub_consumer_ops():
     from azure.eventhub import EventHubConsumerClient
     consumer = EventHubConsumerClient.from_connection_string(
         conn_str=event_hub_connection_str,
-        event_hub_path=event_hub
+        eventhub_name=event_hub
     )
 
     logger = logging.getLogger("azure.eventhub")

@@ -34,9 +34,13 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class ClientBaseAsync(ClientBase):
-    def __init__(self, host, event_hub_path, credential, **kwargs):
-        super(ClientBaseAsync, self).__init__(host=host, event_hub_path=event_hub_path,
-                                              credential=credential, **kwargs)
+    def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
+        super(ClientBaseAsync, self).__init__(
+            fully_qualified_namespace=fully_qualified_namespace,
+            eventhub_name=eventhub_name,
+            credential=credential,
+            **kwargs
+        )
         self._conn_manager = get_connection_manager(**kwargs)
 
     async def __aenter__(self):
@@ -138,7 +142,7 @@ class ClientBaseAsync(ClientBase):
         :rtype: dict
         :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
-        mgmt_msg = Message(application_properties={'name': self.eh_name})
+        mgmt_msg = Message(application_properties={'name': self.eventhub_name})
         response = await self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
         output = {}
         eh_info = response.get_data()
@@ -164,7 +168,7 @@ class ClientBaseAsync(ClientBase):
         Get properties of the specified partition async.
         Keys in the details dictionary include:
 
-            - event_hub_path
+            - eventhub_name
             - id
             - beginning_sequence_number
             - last_enqueued_sequence_number
@@ -177,13 +181,13 @@ class ClientBaseAsync(ClientBase):
         :rtype: dict
         :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
-        mgmt_msg = Message(application_properties={'name': self.eh_name,
+        mgmt_msg = Message(application_properties={'name': self.eventhub_name,
                                                    'partition': partition})
         response = await self._management_request(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
         partition_info = response.get_data()
         output = {}
         if partition_info:
-            output['event_hub_path'] = partition_info[b'name'].decode('utf-8')
+            output['eventhub_name'] = partition_info[b'name'].decode('utf-8')
             output['id'] = partition_info[b'partition'].decode('utf-8')
             output['beginning_sequence_number'] = partition_info[b'begin_sequence_number']
             output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']

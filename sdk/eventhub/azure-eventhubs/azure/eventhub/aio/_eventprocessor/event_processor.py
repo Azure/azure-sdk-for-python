@@ -40,7 +40,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         self._consumer_group_name = consumer_group_name
         self._eventhub_client = eventhub_client
         self._namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
-        self._eventhub_name = eventhub_client.eh_name
+        self._eventhub_name = eventhub_client.eventhub_name
         self._partition_id = partition_id
         self._event_handler = event_handler
         self._error_handler = error_handler

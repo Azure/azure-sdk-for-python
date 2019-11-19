@@ -26,7 +26,7 @@ class OwnershipManager(object):
         self.cached_parition_ids = []  # type: List[str]
         self.eventhub_client = eventhub_client
         self.fully_qualified_namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
-        self.eventhub_name = eventhub_client.eh_name
+        self.eventhub_name = eventhub_client.eventhub_name
         self.consumer_group_name = consumer_group_name
         self.owner_id = owner_id
         self.partition_manager = partition_manager

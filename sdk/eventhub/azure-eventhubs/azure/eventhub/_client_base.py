@@ -104,15 +104,15 @@ _Address = collections.namedtuple('Address', 'hostname path')
 
 
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
-    def __init__(self, host, event_hub_path, credential, **kwargs):
-        self.eh_name = event_hub_path
-        path = "/" + event_hub_path if event_hub_path else ""
-        self._address = _Address(hostname=host, path=path)
+    def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
+        self.eventhub_name = eventhub_name
+        path = "/" + eventhub_name if eventhub_name else ""
+        self._address = _Address(hostname=fully_qualified_namespace, path=path)
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._credential = credential
         self._keep_alive = kwargs.get("keep_alive", 30)
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
-        self._mgmt_target = "amqps://{}/{}".format(self._address.hostname, self.eh_name)
+        self._mgmt_target = "amqps://{}/{}".format(self._address.hostname, self.eventhub_name)
         self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
         self._config = Configuration(**kwargs)
         self._debug = self._config.network_tracing
@@ -126,9 +126,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
-        event_hub_path = kwargs.pop("event_hub_path", None)
+        eventhub_name = kwargs.pop("eventhub_name", None)
         address, policy, key, entity = _parse_conn_str(conn_str)
-        entity = event_hub_path or entity
+        entity = eventhub_name or entity
         left_slash_pos = address.find("//")
         if left_slash_pos != -1:
             host = address[left_slash_pos + 2:]
@@ -234,7 +234,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         :rtype: dict
         :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
-        mgmt_msg = Message(application_properties={'name': self.eh_name})
+        mgmt_msg = Message(application_properties={'name': self.eventhub_name})
         response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
         output = {}
         eh_info = response.get_data()
@@ -260,7 +260,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
         Keys in the details dictionary include:
 
-            - event_hub_path
+            - eventhub_name
             - id
             - beginning_sequence_number
             - last_enqueued_sequence_number
@@ -273,13 +273,13 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         :rtype: dict
         :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
-        mgmt_msg = Message(application_properties={'name': self.eh_name,
+        mgmt_msg = Message(application_properties={'name': self.eventhub_name,
                                                    'partition': partition})
         response = self._management_request(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
         partition_info = response.get_data()
         output = {}
         if partition_info:
-            output['event_hub_path'] = partition_info[b'name'].decode('utf-8')
+            output['eventhub_name'] = partition_info[b'name'].decode('utf-8')
             output['id'] = partition_info[b'partition'].decode('utf-8')
             output['beginning_sequence_number'] = partition_info[b'begin_sequence_number']
             output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']
