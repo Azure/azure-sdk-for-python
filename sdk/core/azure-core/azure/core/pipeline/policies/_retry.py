@@ -309,14 +309,21 @@ class RetryPolicy(HTTPPolicy):
         elif error and self._is_read_error(error):
             # Read retry?
             settings['read'] -= 1
-            settings['history'].append(RequestHistory(response.http_request, error=error))
+            if hasattr(response, 'http_request'):
+                settings['history'].append(RequestHistory(response.http_request, error=error))
 
         else:
             # Incrementing because of a server error like a 500 in
             # status_forcelist and a the given method is in the whitelist
             if response:
                 settings['status'] -= 1
-                settings['history'].append(RequestHistory(response.http_request, http_response=response.http_response))
+                if hasattr(response, 'http_request'):
+                    settings['history'].append(
+                        RequestHistory(
+                            response.http_request,
+                            http_response=response.http_response
+                        )
+                    )
 
         if self.is_exhausted(settings):
             return False
