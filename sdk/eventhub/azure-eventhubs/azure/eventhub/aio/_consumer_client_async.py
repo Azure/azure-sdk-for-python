@@ -130,7 +130,7 @@ class EventHubConsumerClient(ClientBaseAsync):
                                checkpoint_store=None,
                                load_balancing_interval: float = 10,
                                **kwargs
-                               ) -> 'EventHubConsumerClient':
+                               ) -> 'EventHubConsumerClient':  # pylint: disable=arguments-differ
         # pylint: disable=arguments-differ
         """
         Create an EventHubConsumerClient from a connection string.
@@ -196,6 +196,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             on_partition_initialize=None,
             on_partition_close=None
     ) -> None:
+        # type: (Any) -> None
         """Receive events from partition(s) optionally with load balancing and checkpointing.
 
         :param on_event: The callback function for handling received event. The callback takes two

@@ -74,12 +74,13 @@ class EventHubConsumerClient(ClientBase):
     """
 
     def __init__(self,
-                 fully_qualified_namespace,  # type: str
-                 eventhub_name,  # type: str
-                 consumer_group,  # type: str
-                 credential,  # type: Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential]
+                 fully_qualified_namespace,
+                 eventhub_name,
+                 consumer_group,
+                 credential,
                  **kwargs
                  ):
+        # type: (str, str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential]) -> None
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", 10)
         self._consumer_group = consumer_group
@@ -110,7 +111,7 @@ class EventHubConsumerClient(ClientBase):
         return handler
 
     @classmethod
-    def from_connection_string(cls, conn_str, consumer_group, **kwargs):
+    def from_connection_string(cls, conn_str, consumer_group, **kwargs):  # pylint: disable=arguments-differ
         # type: (str, str, Any) -> EventHubConsumerClient
         """Create an EventHubConsumerClient from a connection string.
 

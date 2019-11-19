@@ -69,7 +69,7 @@ class EventData(object):
             body = "<read-error>"
         message_as_dict = {
             'body': body,
-            'application_properties': str(self.application_properties)
+            'application_properties': str(self.properties)
         }
         try:
             if self.sequence_number:
