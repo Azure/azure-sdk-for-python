@@ -13,7 +13,8 @@ from azure.identity.aio._credentials.managed_identity import ImdsCredential, Msi
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
-from helpers import mock_response
+from helpers import async_validating_transport, mock_response, Request
+from test_shared_cache_credential import build_aad_response, get_account_event, populated_cache
 
 
 @pytest.mark.asyncio
@@ -101,3 +102,96 @@ def test_exclude_options():
     if SharedTokenCacheCredential.supported():
         credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
         assert_credentials_not_present(credential, SharedTokenCacheCredential)
+
+
+@pytest.mark.asyncio
+async def test_shared_cache_tenant_id():
+    expected_access_token = "expected-access-token"
+    refresh_token_a = "refresh-token-a"
+    refresh_token_b = "refresh-token-b"
+    upn = "spam@eggs"
+    tenant_a = "tenant-a"
+    tenant_b = "tenant-b"
+
+    # two cached accounts, same username, different tenants -> shared_cache_tenant_id should prevail
+    account_a = get_account_event(username=upn, uid="another-guid", utid=tenant_a, refresh_token=refresh_token_a)
+    account_b = get_account_event(username=upn, uid="more-guid", utid=tenant_b, refresh_token=refresh_token_b)
+    cache = populated_cache(account_a, account_b)
+
+    credential = get_credential_for_shared_cache_test(
+        refresh_token_b, expected_access_token, cache, shared_cache_tenant_id=tenant_b
+    )
+    token = await credential.get_token("scope")
+    assert token.token == expected_access_token
+
+    # redundantly specifying shared_cache_username makes no difference
+    credential = get_credential_for_shared_cache_test(
+        refresh_token_b, expected_access_token, cache, shared_cache_tenant_id=tenant_b, shared_cache_username=upn
+    )
+    token = await credential.get_token("scope")
+    assert token.token == expected_access_token
+
+    # shared_cache_tenant_id should prevail over AZURE_TENANT_ID
+    with patch("os.environ", {EnvironmentVariables.AZURE_TENANT_ID: tenant_a}):
+        credential = get_credential_for_shared_cache_test(
+            refresh_token_b, expected_access_token, cache, shared_cache_tenant_id=tenant_b
+        )
+    token = await credential.get_token("scope")
+    assert token.token == expected_access_token
+
+    # AZURE_TENANT_ID should be used when shared_cache_tenant_id isn't specified
+    with patch("os.environ", {EnvironmentVariables.AZURE_TENANT_ID: tenant_b}):
+        credential = get_credential_for_shared_cache_test(refresh_token_b, expected_access_token, cache)
+    token = await credential.get_token("scope")
+    assert token.token == expected_access_token
+
+
+@pytest.mark.asyncio
+async def test_shared_cache_username():
+    expected_access_token = "expected-access-token"
+    refresh_token_a = "refresh-token-a"
+    refresh_token_b = "refresh-token-b"
+    upn_a = "spam@eggs"
+    upn_b = "eggs@spam"
+    tenant_id = "the-tenant"
+
+    # two cached accounts, same tenant, different usernames -> shared_cache_username should prevail
+    account_a = get_account_event(username=upn_a, uid="another-guid", utid=tenant_id, refresh_token=refresh_token_a)
+    account_b = get_account_event(username=upn_b, uid="more-guid", utid=tenant_id, refresh_token=refresh_token_b)
+    cache = populated_cache(account_a, account_b)
+
+    credential = get_credential_for_shared_cache_test(
+        refresh_token_a, expected_access_token, cache, shared_cache_username=upn_a
+    )
+    token = await credential.get_token("scope")
+    assert token.token == expected_access_token
+
+    # shared_cache_username should prevail over AZURE_USERNAME
+    with patch("os.environ", {EnvironmentVariables.AZURE_USERNAME: upn_b}):
+        credential = get_credential_for_shared_cache_test(
+            refresh_token_a, expected_access_token, cache, shared_cache_username=upn_a
+        )
+    token = await credential.get_token("scope")
+    assert token.token == expected_access_token
+
+    # AZURE_USERNAME should be used when shared_cache_username isn't specified
+    with patch("os.environ", {EnvironmentVariables.AZURE_USERNAME: upn_b}):
+        credential = get_credential_for_shared_cache_test(refresh_token_b, expected_access_token, cache)
+    token = await credential.get_token("scope")
+    assert token.token == expected_access_token
+
+
+def get_credential_for_shared_cache_test(expected_refresh_token, expected_access_token, cache, **kwargs):
+    exclude_other_credentials = {
+        option: True for option in ("exclude_environment_credential", "exclude_managed_identity_credential")
+    }
+
+    # validating transport will raise if the shared cache credential isn't used, or selects the wrong refresh token
+    transport = async_validating_transport(
+        requests=[Request(required_data={"refresh_token": expected_refresh_token})],
+        responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
+    )
+
+    # this credential uses a mock shared cache, so it works on all platforms
+    with patch.object(SharedTokenCacheCredential, "supported", lambda: True):
+        return DefaultAzureCredential(_cache=cache, transport=transport, **exclude_other_credentials, **kwargs)

@@ -38,12 +38,19 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Defaults to **False**.
     :keyword bool exclude_shared_token_cache_credential: Whether to exclude the shared token cache. Defaults to
         **False**.
+    :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.SharedTokenCacheCredential`.
+        Defaults to the value of environment variable AZURE_USERNAME, if any.
+    :keyword str shared_cache_tenant_id: Preferred tenant for :class:`~azure.identity.SharedTokenCacheCredential`.
+        Defaults to the value of environment variable AZURE_TENANT_ID, if any.
     """
 
     def __init__(self, **kwargs):
         authority = kwargs.pop("authority", KnownAuthorities.AZURE_PUBLIC_CLOUD)
 
-        username = kwargs.pop("username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
+        shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
+        shared_cache_tenant_id = kwargs.pop(
+            "shared_cache_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
+        )
 
         exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
@@ -56,7 +63,11 @@ class DefaultAzureCredential(ChainedTokenCredential):
             credentials.append(ManagedIdentityCredential(**kwargs))
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
             try:
-                credentials.append(SharedTokenCacheCredential(username=username, authority=authority, **kwargs))
+                # username and/or tenant_id are only required when the cache contains tokens for multiple identities
+                shared_cache = SharedTokenCacheCredential(
+                    username=shared_cache_username, tenant_id=shared_cache_tenant_id, authority=authority, **kwargs
+                )
+                credentials.append(shared_cache)
             except Exception as ex:  # pylint:disable=broad-except
                 # transitive dependency pywin32 doesn't support 3.8 (https://github.com/mhammond/pywin32/issues/1431)
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
