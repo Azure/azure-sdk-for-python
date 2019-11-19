@@ -68,6 +68,11 @@ jobs:
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.7'
           CoverageArg: ''
+        Linux_Python38:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.8'
+          CoverageArg: ''
         Windows_Python35:
           OSName: 'Windows'
           OSVmImage: 'windows-2019'
