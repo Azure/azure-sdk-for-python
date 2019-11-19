@@ -19,8 +19,26 @@ class PartitionContext(object):
         self.fully_qualified_namespace = fully_qualified_namespace
         self.partition_id = partition_id
         self.eventhub_name = eventhub_name
+        self._last_received_event = None
         self.consumer_group_name = consumer_group_name
         self._partition_manager = partition_manager
+
+    @property
+    def last_enqueued_event_properties(self):
+        """
+        The latest enqueued event information. This property will be updated each time an event is received when
+        the receiver is created with `track_last_enqueued_event_properties` being `True`.
+        The dict includes following information of the partition:
+
+            - `sequence_number`
+            - `offset`
+            - `enqueued_time`
+            - `retrieval_time`
+
+        :rtype: dict or None
+        """
+        if self._last_received_event:
+            return self._last_received_event._get_last_enqueued_event_properties()  # pylint: disable=protected-access
 
     async def update_checkpoint(self, event):
         """

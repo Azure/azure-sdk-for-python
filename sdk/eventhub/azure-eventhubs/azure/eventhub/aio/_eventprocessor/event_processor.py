@@ -134,6 +134,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
     async def _on_event_received(self, partition_context, event):
         with self._context(event):
             try:
+                if self._track_last_enqueued_event_properties:
+                    partition_context._last_received_event = event
                 await self._event_handler(partition_context, event)
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise

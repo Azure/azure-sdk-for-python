@@ -114,6 +114,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
 
     def _on_event_received(self, partition_context, event):
         with self._context(event):
+            if self._track_last_enqueued_event_properties:
+                partition_context._last_received_event = event
             self._handle_callback([self._event_handler, partition_context, event])
 
     def _load_balancing(self):
