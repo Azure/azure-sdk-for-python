@@ -26,8 +26,8 @@ import config
 #    2.6 - Create Container with partition key V1
 #
 # 3. Manage Container Provisioned Throughput
-#    3.1 - Get Container performance tier
-#    3.2 - Change performance tier
+#    3.1 - Get Container provisioned throughput (RU/s)
+#    3.2 - Change provisioned throughput (RU/s)
 #
 # 4. Get a Container by its Id property
 #
@@ -39,7 +39,7 @@ import config
 #
 # Running this sample will create (and delete) multiple Containers on your account.
 # Each time a Container is created the account will be billed for 1 hour of usage based on
-# the performance tier of that account.
+# the provisioned throughput (RU/s) of that account.
 # ----------------------------------------------------------------------------------------------------------
 
 HOST = config.settings['host']
@@ -164,7 +164,7 @@ def create_container(db, id):
 
 
 def manage_provisioned_throughput(db, id):
-    print("\n3.1 Get Container Performance tier")
+    print("\n3.1 Get Container provisioned throughput (RU/s)")
 
     #A Container's Provisioned Throughput determines the performance throughput of a container.
     #A Container is loosely coupled to Offer through the Offer's offerResourceId
