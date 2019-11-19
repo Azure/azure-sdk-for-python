@@ -14,12 +14,12 @@ from azure.identity import EnvironmentCredential
 
 
 fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
-EVENT_HUB = os.environ['EVENT_HUB_NAME']
+eventhub_name = os.environ['EVENT_HUB_NAME']
 
 
 credential = EnvironmentCredential()
 producer = EventHubProducerClient(fully_qualified_namespace=fully_qualified_namespace,
-                                  eventhub_name=EVENT_HUB,
+                                  eventhub_name=eventhub_name,
                                   credential=credential)
 
 with producer:

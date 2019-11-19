@@ -12,7 +12,7 @@ import os
 from azure.eventhub import EventPosition, EventHubConsumerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENT_HUB = os.environ['EVENT_HUB_NAME']
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 EVENT_POSITION = EventPosition("-1")
 PARTITION = "0"
@@ -41,7 +41,7 @@ def on_event(partition_context, event):
 if __name__ == '__main__':
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
-        eventhub_name=EVENT_HUB,
+        eventhub_name=EVENTHUB_NAME,
     )
 
     try:
