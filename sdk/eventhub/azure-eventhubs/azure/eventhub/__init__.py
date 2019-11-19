@@ -9,7 +9,7 @@ from uamqp import constants  # type: ignore
 from ._common import EventData, EventDataBatch, EventPosition
 from ._producer_client import EventHubProducerClient
 from ._consumer_client import EventHubConsumerClient
-from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
+from ._client_base import EventHubSharedKeyCredential
 from ._eventprocessor.partition_manager import PartitionManager
 from ._eventprocessor.common import CloseReason, OwnershipLostError
 from ._eventprocessor.partition_context import PartitionContext
@@ -38,7 +38,6 @@ __all__ = [
     "EventHubConsumerClient",
     "TransportType",
     "EventHubSharedKeyCredential",
-    "EventHubSASTokenCredential",
     "PartitionManager",
     "CloseReason",
     "OwnershipLostError",

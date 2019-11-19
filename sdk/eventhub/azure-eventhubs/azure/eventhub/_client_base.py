@@ -31,7 +31,6 @@ from uamqp import (
 from .exceptions import _handle_exception, ClientClosedError
 from ._configuration import Configuration
 from ._utils import parse_sas_token, utc_from_timestamp
-from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
 from ._connection_manager import get_connection_manager
 from ._constants import (
     CONTAINER_PREFIX,
@@ -44,6 +43,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
 
 _LOGGER = logging.getLogger(__name__)
+_Address = collections.namedtuple('Address', 'hostname path')
+_AccessToken = collections.namedtuple('AccessToken', 'token expires_on')
 
 
 def _parse_conn_str(conn_str):
@@ -87,7 +88,8 @@ def _generate_sas_token(uri, policy, key, expiry=None):
         'se': str(ttl)}
     if policy:
         result['skn'] = policy
-    return 'SharedAccessSignature ' + urlencode(result)
+    token = 'SharedAccessSignature ' + urlencode(result)
+    return _AccessToken(token=token, expires_on=ttl)
 
 
 def _build_uri(address, entity):
@@ -100,7 +102,22 @@ def _build_uri(address, entity):
     return address
 
 
-_Address = collections.namedtuple('Address', 'hostname path')
+class EventHubSharedKeyCredential(object):
+    """
+    The shared access key credential used for authentication.
+
+    :param str policy: The name of the shared access policy.
+    :param str key: The shared access key.
+    """
+    def __init__(self, policy, key):
+        self.policy = policy
+        self.key = key
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    def get_token(self, *scopes, **kwargs):
+        if not scopes:
+            raise ValueError("No token scope provided.")
+        return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
@@ -141,39 +158,29 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         Create an ~uamqp.authentication.SASTokenAuth instance to authenticate
         the session.
         """
-        http_proxy = self._config.http_proxy
-        transport_type = self._config.transport_type
-        auth_timeout = self._config.auth_timeout
-
-        # TODO: the following code can be refactored to create auth from classes directly instead of using if-else
-        if isinstance(self._credential, EventHubSharedKeyCredential):  # pylint:disable=no-else-return
-            username = self._credential.policy
-            password = self._credential.key
-            if "@sas.root" in username:
-                return authentication.SASLPlain(
-                    self._address.hostname, username, password, http_proxy=http_proxy, transport_type=transport_type)
-            return authentication.SASTokenAuth.from_shared_access_key(
-                self._auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy,
-                transport_type=transport_type)
-
-        elif isinstance(self._credential, EventHubSASTokenCredential):
-            token = self._credential.get_sas_token()
-            try:
-                expiry = int(parse_sas_token(token)['se'])
-            except (KeyError, TypeError, IndexError):
-                raise ValueError("Supplied SAS token has no valid expiry value.")
-            return authentication.SASTokenAuth(
-                self._auth_uri, self._auth_uri, token,
-                expires_at=expiry,
-                timeout=auth_timeout,
-                http_proxy=http_proxy,
-                transport_type=transport_type)
-
-        else:  # Azure credential
-            get_jwt_token = functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE)
-            return authentication.JWTTokenAuth(self._auth_uri, self._auth_uri,
-                                               get_jwt_token, http_proxy=http_proxy,
-                                               transport_type=transport_type)
+        try:
+            token_type = self._credential.token_type
+        except AttributeError:
+            token_type = b'jwt'
+        if token_type == b"servicebus.windows.net:sastoken":
+            auth = authentication.JWTTokenAuth(
+                self._auth_uri,
+                self._auth_uri,
+                functools.partial(self._credential.get_token, self._auth_uri),
+                token_type=token_type,
+                timeout=self._config.auth_timeout,
+                http_proxy=self._config.http_proxy,
+                transport_type=self._config.transport_type)
+            auth.update_token()
+            return auth
+        return authentication.JWTTokenAuth(
+            self._auth_uri,
+            self._auth_uri,
+            functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE),
+            token_type=token_type,
+            timeout=self._config.auth_timeout,
+            http_proxy=self._config.http_proxy,
+            transport_type=self._config.transport_type)
 
     def _close_connection(self):
         self._conn_manager.reset_connection_if_broken()
@@ -317,11 +324,11 @@ class ConsumerProducerMixin(object):
         if not self.running:
             if self._handler:
                 self._handler.close()
-            self._create_handler()
-            self._handler.open(connection=self._client._conn_manager.get_connection(  # pylint: disable=protected-access
-                self._client._address.hostname,
-                self._client._create_auth()
-            ))
+            auth = self._client._create_auth()
+            self._create_handler(auth)
+            self._handler.open(
+                connection=self._client._conn_manager.get_connection(self._client._address.hostname, auth)  # pylint: disable=protected-access
+            )
             while not self._handler.client_ready():
                 time.sleep(0.05)
             self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
