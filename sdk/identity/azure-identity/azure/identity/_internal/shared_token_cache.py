@@ -172,16 +172,10 @@ class SharedTokenCacheBase(ABC):
 
         raise ClientAuthenticationError(message=message)
 
-    def _get_refresh_tokens(self, scopes, account):
-        """Yields all an account's cached refresh tokens except those which have a scope (which is unexpected) that
-        isn't a superset of ``scopes``."""
-
-        for token in self._cache.find(
+    def _get_refresh_tokens(self, account):
+        return self._cache.find(
             TokenCache.CredentialType.REFRESH_TOKEN, query={"home_account_id": account.get("home_account_id")}
-        ):
-            if "target" in token and not all((scope in token["target"] for scope in scopes)):
-                continue
-            yield token
+        )
 
     @staticmethod
     def supported():

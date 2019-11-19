@@ -48,7 +48,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         account = self._get_account(self._username, self._tenant_id)
 
         # try each refresh token, returning the first access token acquired
-        for refresh_token in self._get_refresh_tokens(scopes, account):
+        for refresh_token in self._get_refresh_tokens(account):
             token = await self._client.obtain_token_by_refresh_token(refresh_token, scopes)
             return token
 
