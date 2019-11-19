@@ -30,7 +30,7 @@ async def test_client_secret_credential_async(aad_credential, live_eventhub):
                                              user_agent='customized information')
 
     async with producer_client:
-        await producer_client.send(EventData(body='A single message'))
+        await producer_client.send(EventData(body='A single message'), partition_id='0')
 
     def on_event(partition_context, event):
         on_event.called = True
@@ -39,7 +39,7 @@ async def test_client_secret_credential_async(aad_credential, live_eventhub):
     on_event.called = False
     async with consumer_client:
         task = asyncio.ensure_future(consumer_client.receive(on_event, '$default', partition_id='0'))
-        await asyncio.sleep(20)
+        await asyncio.sleep(6)
     await task
     assert on_event.called is True
     assert on_event.partition_id == "0"
