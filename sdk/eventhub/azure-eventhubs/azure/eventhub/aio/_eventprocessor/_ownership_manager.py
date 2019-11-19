@@ -21,7 +21,7 @@ class OwnershipManager(object):
 
     """
     def __init__(
-            self, eventhub_client, consumer_group_name: str, owner_id: str,
+            self, eventhub_client, consumer_group: str, owner_id: str,
             partition_manager: PartitionManager, ownership_timeout: float,
             partition_id: str
     ):
@@ -29,7 +29,7 @@ class OwnershipManager(object):
         self.eventhub_client = eventhub_client
         self.fully_qualified_namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
         self.eventhub_name = eventhub_client.eventhub_name
-        self.consumer_group_name = consumer_group_name
+        self.consumer_group = consumer_group
         self.owner_id = owner_id
         self.partition_manager = partition_manager
         self.ownership_timeout = ownership_timeout
@@ -53,7 +53,7 @@ class OwnershipManager(object):
             return self.cached_parition_ids
 
         ownership_list = await self.partition_manager.list_ownership(
-            self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name
+            self.fully_qualified_namespace, self.eventhub_name, self.consumer_group
         )
         to_claim = await self._balance_ownership(ownership_list, self.cached_parition_ids)
         claimed_list = await self.partition_manager.claim_ownership(to_claim) if to_claim else []
@@ -83,7 +83,7 @@ class OwnershipManager(object):
                         "fully_qualified_namespace": self.fully_qualified_namespace,
                         "partition_id": pid,
                         "eventhub_name": self.eventhub_name,
-                        "consumer_group_name": self.consumer_group_name,
+                        "consumer_group": self.consumer_group,
                         "owner_id": self.owner_id
                     }
                 )
@@ -120,7 +120,7 @@ class OwnershipManager(object):
                     {"fully_qualified_namespace": self.fully_qualified_namespace,
                      "partition_id": random_partition_id,
                      "eventhub_name": self.eventhub_name,
-                     "consumer_group_name": self.consumer_group_name,
+                     "consumer_group": self.consumer_group,
                      }
                 )
                 random_chosen_to_claim["owner_id"] = self.owner_id
@@ -138,6 +138,6 @@ class OwnershipManager(object):
     async def get_checkpoints(self):
         if self.partition_manager:
             checkpoints = await self.partition_manager.list_checkpoints(
-                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name)
+                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group)
             return {x["partition_id"]: x for x in checkpoints}
         return {}

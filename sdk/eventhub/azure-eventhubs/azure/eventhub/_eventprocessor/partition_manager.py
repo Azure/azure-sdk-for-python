@@ -14,7 +14,7 @@ class PartitionManager(object):
     """
 
     @abstractmethod
-    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
+    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group):
         # type: (str, str, str) -> Iterable[Dict[str, Any]]
         """
         Retrieves a complete ownership list from the chosen storage service.
@@ -23,12 +23,12 @@ class PartitionManager(object):
          The format is like "<namespace>.servicebus.windows.net"
         :param str eventhub_name: The name of the specific Event Hub the ownership are associated with, relative to
          the Event Hubs namespace that contains it.
-        :param str consumer_group_name: The name of the consumer group the ownership are associated with.
+        :param str consumer_group: The name of the consumer group the ownership are associated with.
         :rtype: Iterable[Dict[str, Any]], Iterable of dictionaries containing partition ownership information:
 
                 - fully_qualified_namespace
                 - eventhub_name
-                - consumer_group_name
+                - consumer_group
                 - owner_id
                 - partition_id
                 - last_modified_time
@@ -46,7 +46,7 @@ class PartitionManager(object):
 
                 - fully_qualified_namespace
                 - eventhub_name
-                - consumer_group_name
+                - consumer_group
                 - owner_id
                 - partition_id
                 - last_modified_time
@@ -54,7 +54,7 @@ class PartitionManager(object):
         """
 
     @abstractmethod
-    def update_checkpoint(self, fully_qualified_namespace, eventhub_name, consumer_group_name,
+    def update_checkpoint(self, fully_qualified_namespace, eventhub_name, consumer_group,
                           partition_id, offset, sequence_number):
         # type: (str, str, str, str, str, int) -> None
         """
@@ -65,7 +65,7 @@ class PartitionManager(object):
          The format is like "<namespace>.servicebus.windows.net"
         :param str eventhub_name: The name of the specific Event Hub the ownership are associated with, relative to
          the Event Hubs namespace that contains it.
-        :param str consumer_group_name: The name of the consumer group the ownership are associated with.
+        :param str consumer_group: The name of the consumer group the ownership are associated with.
         :param str partition_id: The partition id which the checkpoint is created for.
         :param str offset: The offset of the :class:`EventData<azure.eventhub.EventData>`
          the new checkpoint will be associated with.
@@ -75,7 +75,7 @@ class PartitionManager(object):
         """
 
     @abstractmethod
-    def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
+    def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group):
         # type: (str, str, str) -> Iterable[Dict[str, Any]]
         """List the updated checkpoints from the store
 
@@ -83,12 +83,12 @@ class PartitionManager(object):
          The format is like "<namespace>.servicebus.windows.net"
         :param str eventhub_name: The name of the specific Event Hub the ownership are associated with, relative to
          the Event Hubs namespace that contains it.
-        :param str consumer_group_name: The name of the consumer group the ownership are associated with.
+        :param str consumer_group: The name of the consumer group the ownership are associated with.
         :rtype: Iterable[Dict[str,Any]], Iterable of dictionaries containing partition ownership information:
 
                 - fully_qualified_namespace
                 - eventhub_name
-                - consumer_group_name
+                - consumer_group
                 - partition_id
                 - sequence_number
                 - offset

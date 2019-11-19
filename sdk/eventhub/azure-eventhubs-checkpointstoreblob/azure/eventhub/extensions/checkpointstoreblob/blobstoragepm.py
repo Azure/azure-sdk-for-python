@@ -64,7 +64,7 @@ class BlobPartitionManager(PartitionManager):
         else:
             etag_match = {"if_none_match": '*'}
         blob_name = "{}/{}/{}/ownership/{}".format(ownership["fully_qualified_namespace"], ownership["eventhub_name"],
-                                     ownership["consumer_group_name"], ownership["partition_id"])
+                                     ownership["consumer_group"], ownership["partition_id"])
         uploaded_blob_properties = self._get_blob_client(blob_name).upload_blob(
             data=UPLOAD_DATA, overwrite=True, metadata=metadata, **etag_match
         )
@@ -72,18 +72,18 @@ class BlobPartitionManager(PartitionManager):
         ownership["last_modified_time"] = self._to_timestamp(uploaded_blob_properties["last_modified"])
         ownership.update(metadata)
 
-    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
+    def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group):
         try:
             blobs = self._container_client.list_blobs(
                 name_starts_with="{}/{}/{}/ownership".format(
-                    fully_qualified_namespace, eventhub_name, consumer_group_name),
+                    fully_qualified_namespace, eventhub_name, consumer_group),
                 include=['metadata'])
             result = []
             for b in blobs:
                 ownership = {
                     "fully_qualified_namespace": fully_qualified_namespace,
                     "eventhub_name": eventhub_name,
-                    "consumer_group_name": consumer_group_name,
+                    "consumer_group": consumer_group,
                     "partition_id": b.name.split("/")[-1],
                     "owner_id": b.metadata["ownerId"],
                     "etag": b.etag,
@@ -94,14 +94,14 @@ class BlobPartitionManager(PartitionManager):
         except Exception as err:  # pylint:disable=broad-except
             logger.warning("An exception occurred during list_ownership for "
                            "namespace %r eventhub %r consumer group %r. "
-                           "Exception is %r", fully_qualified_namespace, eventhub_name, consumer_group_name, err)
+                           "Exception is %r", fully_qualified_namespace, eventhub_name, consumer_group, err)
             raise
 
     def _claim_one_partition(self, ownership):
         partition_id = ownership["partition_id"]
         fully_qualified_namespace = ownership["fully_qualified_namespace"]
         eventhub_name = ownership["eventhub_name"]
-        consumer_group_name = ownership["consumer_group_name"]
+        consumer_group = ownership["consumer_group"]
         owner_id = ownership["owner_id"]
         metadata = {"ownerId": owner_id}
         try:
@@ -111,14 +111,14 @@ class BlobPartitionManager(PartitionManager):
             logger.info(
                 "EventProcessor instance %r of namespace %r eventhub %r consumer group %r "
                 "lost ownership to partition %r",
-                owner_id, fully_qualified_namespace, eventhub_name, consumer_group_name, partition_id)
+                owner_id, fully_qualified_namespace, eventhub_name, consumer_group, partition_id)
             raise OwnershipLostError()
         except Exception as err:  # pylint:disable=broad-except
             logger.warning("An exception occurred when EventProcessor instance %r claim_ownership for "
                            "namespace %r eventhub %r consumer group %r partition %r. "
                            "The ownership is now lost. Exception "
                            "is %r",
-                           owner_id, fully_qualified_namespace, eventhub_name, consumer_group_name, partition_id, err)
+                           owner_id, fully_qualified_namespace, eventhub_name, consumer_group, partition_id, err)
             return ownership  # Keep the ownership if an unexpected error happens
 
     def claim_ownership(self, ownership_list):
@@ -130,22 +130,22 @@ class BlobPartitionManager(PartitionManager):
                 pass
         return gathered_results
 
-    def update_checkpoint(self, fully_qualified_namespace, eventhub_name, consumer_group_name, partition_id,
+    def update_checkpoint(self, fully_qualified_namespace, eventhub_name, consumer_group, partition_id,
                                 offset, sequence_number):
         metadata = {
             "Offset": offset,
             "SequenceNumber": str(sequence_number),
         }
         blob_name = "{}/{}/{}/checkpoint/{}".format(fully_qualified_namespace, eventhub_name,
-                                     consumer_group_name, partition_id)
+                                     consumer_group, partition_id)
         self._get_blob_client(blob_name).upload_blob(
             data=UPLOAD_DATA, overwrite=True, metadata=metadata
         )
 
-    def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
+    def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group):
         blobs = self._container_client.list_blobs(
             name_starts_with="{}/{}/{}/checkpoint".format(
-                fully_qualified_namespace, eventhub_name, consumer_group_name),
+                fully_qualified_namespace, eventhub_name, consumer_group),
             include=['metadata'])
         result = []
         for b in blobs:
@@ -153,7 +153,7 @@ class BlobPartitionManager(PartitionManager):
             checkpoint = {
                 "fully_qualified_namespace": fully_qualified_namespace,
                 "eventhub_name": eventhub_name,
-                "consumer_group_name": consumer_group_name,
+                "consumer_group": consumer_group,
                 "partition_id": b.name.split("/")[-1],
                 "offset": metadata["Offset"],
                 "sequence_number": metadata["SequenceNumber"]

@@ -26,7 +26,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
 
     """
     def __init__(
-            self, eventhub_client, consumer_group_name: str,
+            self, eventhub_client, consumer_group: str,
             event_handler: Callable[[PartitionContext, List[EventData]], None],
             *,
             partition_id: str = None,
@@ -37,7 +37,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             partition_initialize_handler,
             partition_close_handler
     ):
-        self._consumer_group_name = consumer_group_name
+        self._consumer_group = consumer_group
         self._eventhub_client = eventhub_client
         self._namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
         self._eventhub_name = eventhub_client.eventhub_name
@@ -90,7 +90,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             partition_context.owner_id,
             partition_context.eventhub_name,
             partition_context.partition_id,
-            partition_context.consumer_group_name,
+            partition_context.consumer_group,
             err
         )
         if self._error_handler:
@@ -103,7 +103,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     partition_context.owner_id,
                     partition_context.eventhub_name,
                     partition_context.partition_id,
-                    partition_context.consumer_group_name,
+                    partition_context.consumer_group,
                     err_again
                 )
 
@@ -115,7 +115,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 partition_context.owner_id,
                 partition_context.eventhub_name,
                 partition_context.partition_id,
-                partition_context.consumer_group_name,
+                partition_context.consumer_group,
                 reason
             )
             try:
@@ -127,7 +127,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     partition_context.owner_id,
                     partition_context.eventhub_name,
                     partition_context.partition_id,
-                    partition_context.consumer_group_name,
+                    partition_context.consumer_group,
                     err
                 )
 
@@ -150,7 +150,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 partition_context = PartitionContext(
                     self._namespace,
                     self._eventhub_name,
-                    self._consumer_group_name,
+                    self._consumer_group,
                     partition_id,
                     self._id,
                     self._partition_manager
@@ -169,7 +169,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     _LOGGER.warning(
                         "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
                         "An error occurred while running initialize(). The exception is %r.",
-                        self._id, self._eventhub_name, partition_id, self._consumer_group_name, err
+                        self._id, self._eventhub_name, partition_id, self._consumer_group, err
                     )
 
             while self._running:
@@ -182,7 +182,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                         self._id,
                         self._eventhub_name,
                         partition_id,
-                        self._consumer_group_name
+                        self._consumer_group
                     )
                     raise
                 except EventHubError as eh_error:
@@ -209,7 +209,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
 
         """
         _LOGGER.info("EventProcessor %r is being started", self._id)
-        ownership_manager = OwnershipManager(self._eventhub_client, self._consumer_group_name, self._id,
+        ownership_manager = OwnershipManager(self._eventhub_client, self._consumer_group, self._id,
                                              self._partition_manager, self._ownership_timeout, self._partition_id)
         if not self._running:
             self._running = True
@@ -236,7 +236,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     '''  # pylint:disable=pointless-string-statement
                     _LOGGER.warning("An exception (%r) occurred during balancing and claiming ownership for "
                                     "eventhub %r consumer group %r. Retrying after %r seconds",
-                                    err, self._eventhub_name, self._consumer_group_name, self._polling_interval)
+                                    err, self._eventhub_name, self._consumer_group, self._polling_interval)
                 await asyncio.sleep(self._polling_interval)
 
     async def stop(self):

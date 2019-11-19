@@ -14,12 +14,12 @@ class PartitionContext(object):
 
     Users can use update_checkpoint() of this class to save checkpoint data.
     """
-    def __init__(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group_name: str,
+    def __init__(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str,
                  partition_id: str, owner_id: str, partition_manager: PartitionManager = None):
         self.fully_qualified_namespace = fully_qualified_namespace
         self.partition_id = partition_id
         self.eventhub_name = eventhub_name
-        self.consumer_group_name = consumer_group_name
+        self.consumer_group = consumer_group
         self.owner_id = owner_id
         self._partition_manager = partition_manager
 
@@ -34,11 +34,11 @@ class PartitionContext(object):
         """
         if self._partition_manager:
             await self._partition_manager.update_checkpoint(
-                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name,
+                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group,
                 self.partition_id, event.offset, event.sequence_number
             )
         else:
             _LOGGER.warning(
                 "namespace %r, eventhub %r, consumer_group %r, partition_id %r "
                 "update_checkpoint is called without partition manager. No checkpoint is updated.",
-                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name, self.partition_id)
+                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group, self.partition_id)
