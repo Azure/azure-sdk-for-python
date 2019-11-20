@@ -46,6 +46,7 @@ try:
     from .invoice_section_creation_request_py3 import InvoiceSectionCreationRequest
     from .invoice_section_list_result_py3 import InvoiceSectionListResult
     from .invoice_section_with_create_sub_permission_py3 import InvoiceSectionWithCreateSubPermission
+    from .json_patch_operation_py3 import JsonPatchOperation
     from .download_url_py3 import DownloadUrl
     from .error_details_py3 import ErrorDetails
     from .error_response_py3 import ErrorResponse, ErrorResponseException
@@ -122,6 +123,7 @@ except (SyntaxError, ImportError):
     from .invoice_section_creation_request import InvoiceSectionCreationRequest
     from .invoice_section_list_result import InvoiceSectionListResult
     from .invoice_section_with_create_sub_permission import InvoiceSectionWithCreateSubPermission
+    from .json_patch_operation import JsonPatchOperation
     from .download_url import DownloadUrl
     from .error_details import ErrorDetails
     from .error_response import ErrorResponse, ErrorResponseException
@@ -235,6 +237,7 @@ __all__ = [
     'InvoiceSectionCreationRequest',
     'InvoiceSectionListResult',
     'InvoiceSectionWithCreateSubPermission',
+    'JsonPatchOperation',
     'DownloadUrl',
     'ErrorDetails',
     'ErrorResponse', 'ErrorResponseException',

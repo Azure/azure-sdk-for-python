@@ -28,7 +28,6 @@ from .policies_operations import PoliciesOperations
 from .billing_property_operations import BillingPropertyOperations
 from .transfers_operations import TransfersOperations
 from .partner_transfers_operations import PartnerTransfersOperations
-from .partner_transfers_transfers_operations import PartnerTransfersTransfersOperations
 from .recipient_transfers_operations import RecipientTransfersOperations
 from .operations import Operations
 from .billing_role_definitions_operations import BillingRoleDefinitionsOperations
@@ -56,7 +55,6 @@ __all__ = [
     'BillingPropertyOperations',
     'TransfersOperations',
     'PartnerTransfersOperations',
-    'PartnerTransfersTransfersOperations',
     'RecipientTransfersOperations',
     'Operations',
     'BillingRoleDefinitionsOperations',

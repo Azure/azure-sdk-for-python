@@ -276,7 +276,7 @@ class BillingProfilesOperations(object):
 
 
     def _update_initial(
-            self, billing_account_name, billing_profile_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, patch, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -301,7 +301,7 @@ class BillingProfilesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'BillingProfile')
+        body_content = self._serialize.body(patch, '[JsonPatchOperation]')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -328,16 +328,15 @@ class BillingProfilesOperations(object):
         return deserialized
 
     def update(
-            self, billing_account_name, billing_profile_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, billing_account_name, billing_profile_name, patch, custom_headers=None, raw=False, polling=True, **operation_config):
         """The operation to update a billing profile.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
-        :param parameters: Request parameters supplied to the update billing
-         profile operation.
-        :type parameters: ~azure.mgmt.billing.models.BillingProfile
+        :param patch: The payload that is used to patch the billing profile.
+        :type patch: list[~azure.mgmt.billing.models.JsonPatchOperation]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -355,7 +354,7 @@ class BillingProfilesOperations(object):
         raw_result = self._update_initial(
             billing_account_name=billing_account_name,
             billing_profile_name=billing_profile_name,
-            parameters=parameters,
+            patch=patch,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

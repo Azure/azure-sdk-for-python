@@ -32,7 +32,6 @@ from .operations.policies_operations import PoliciesOperations
 from .operations.billing_property_operations import BillingPropertyOperations
 from .operations.transfers_operations import TransfersOperations
 from .operations.partner_transfers_operations import PartnerTransfersOperations
-from .operations.partner_transfers_transfers_operations import PartnerTransfersTransfersOperations
 from .operations.recipient_transfers_operations import RecipientTransfersOperations
 from .operations.operations import Operations
 from .operations.billing_role_definitions_operations import BillingRoleDefinitionsOperations
@@ -118,8 +117,6 @@ class BillingManagementClient(SDKClient):
     :vartype transfers: azure.mgmt.billing.operations.TransfersOperations
     :ivar partner_transfers: PartnerTransfers operations
     :vartype partner_transfers: azure.mgmt.billing.operations.PartnerTransfersOperations
-    :ivar partner_transfers_transfers: PartnerTransfersTransfers operations
-    :vartype partner_transfers_transfers: azure.mgmt.billing.operations.PartnerTransfersTransfersOperations
     :ivar recipient_transfers: RecipientTransfers operations
     :vartype recipient_transfers: azure.mgmt.billing.operations.RecipientTransfersOperations
     :ivar operations: Operations operations
@@ -189,8 +186,6 @@ class BillingManagementClient(SDKClient):
         self.transfers = TransfersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.partner_transfers = PartnerTransfersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.partner_transfers_transfers = PartnerTransfersTransfersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.recipient_transfers = RecipientTransfersOperations(
             self._client, self.config, self._serialize, self._deserialize)
