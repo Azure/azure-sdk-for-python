@@ -6,7 +6,7 @@
 # pylint: disable=too-many-lines,too-many-public-methods
 from ._shared import parse_vault_id
 from ._shared._generated.v7_0 import models
-from .enums import CertificatePolicyAction, KeyUsageType, KeyCurveName, KeyType, SecretContentType, WellKnownIssuerNames
+from ._enums import CertificatePolicyAction, KeyUsageType, KeyCurveName, KeyType, SecretContentType, WellKnownIssuerNames
 
 try:
     from typing import TYPE_CHECKING

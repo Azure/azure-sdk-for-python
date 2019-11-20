@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from .client import CertificateClient
-from .enums import CertificatePolicyAction, KeyCurveName, KeyType, SecretContentType, KeyUsageType, WellKnownIssuerNames
+from ._enums import CertificatePolicyAction, KeyCurveName, KeyType, SecretContentType, KeyUsageType, WellKnownIssuerNames
 from ._models import(
     AdministratorContact,
     CertificateContact,
