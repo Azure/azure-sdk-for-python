@@ -8,6 +8,7 @@ import os
 from devtools_testutils import ResourceGroupPreparer
 from certificates_async_preparer import AsyncVaultClientPreparer
 from certificates_async_test_case import AsyncKeyVaultTestCase
+from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
 
 
 def print(*args):
@@ -38,32 +39,28 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_crud_operations(self, vault_client, **kwargs):
-
         certificate_client = vault_client.certificates
 
         # [START create_certificate]
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
+        from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.Self,
+            subject_name="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
-            subject_name="CN=*.microsoft.com",
             validity_in_months=24,
-            san_dns_names=["sdk.azure-int.net"],
         )
         cert_name = "cert-name"
-        # create a certificate with optional arguments, returns an async poller
-        create_certificate_poller = certificate_client.create_certificate(
+
+        certificate = await certificate_client.create_certificate(
             certificate_name=cert_name, policy=cert_policy
         )
-
-        # awaiting the certificate poller gives us the result of the long running operation
-        certificate = await create_certificate_poller
 
         print(certificate.id)
         print(certificate.name)
@@ -113,21 +110,19 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_list_operations(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
-
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.Self,
+            subject_name="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
-            subject_name="CN=*.microsoft.com",
             validity_in_months=24,
-            san_dns_names=["sdk.azure-int.net"],
         )
 
         polling_interval = 0 if self.is_playback() else None
@@ -186,22 +181,19 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_backup_restore(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
-        import asyncio
-
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.Self,
+            subject_name="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
-            subject_name="CN=*.microsoft.com",
             validity_in_months=24,
-            san_dns_names=["sdk.azure-int.net"],
         )
 
         cert_name = "cert-name"
@@ -242,22 +234,19 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_recover(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType
-        from azure.core.exceptions import HttpResponseError
-
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.Self,
+            subject_name="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
             content_type=SecretContentType.PKCS12,
-            issuer_name="Self",
-            subject_name="CN=*.microsoft.com",
             validity_in_months=24,
-            san_dns_names=["sdk.azure-int.net"],
         )
 
         cert_name = "cert-name"
@@ -293,11 +282,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_contacts(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, CertificateContact
-
         certificate_client = vault_client.certificates
 
         # [START create_contacts]
+        from azure.keyvault.certificates import CertificateContact
 
         # Create a list of the contacts that you want to set for this key vault.
         contact_list = [
@@ -340,11 +328,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_issuers(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import AdministratorContact, CertificatePolicy
-
         certificate_client = vault_client.certificates
 
         # [START create_issuer]
+        from azure.keyvault.certificates import AdministratorContact
 
         # First we specify the AdministratorContact for a issuer.
         admin_details = [
