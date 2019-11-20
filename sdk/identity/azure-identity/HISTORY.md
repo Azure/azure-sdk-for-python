@@ -9,6 +9,8 @@
 ([8470](https://github.com/Azure/azure-sdk-for-python/pull/8470))
 - The credentials composing `DefaultAzureCredential` are configurable by keyword
 arguments ([8514](https://github.com/Azure/azure-sdk-for-python/pull/8514))
+- `SharedTokenCacheCredential` accepts an optional `tenant_id` keyword argument
+([8689](https://github.com/Azure/azure-sdk-for-python/pull/8689))
 
 
 ### 2019-11-05 1.0.1

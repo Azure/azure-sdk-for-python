@@ -76,17 +76,6 @@ class AuthnClientBase(ABC):
                 return AccessToken(token["secret"], expires_on)
         return None
 
-    def get_refresh_tokens(self, scopes, account):
-        """Yields all an account's cached refresh tokens except those which have a scope (which is unexpected) that
-        isn't a superset of ``scopes``."""
-
-        for token in self._cache.find(
-            TokenCache.CredentialType.REFRESH_TOKEN, query={"home_account_id": account.get("home_account_id")}
-        ):
-            if "target" in token and not all((scope in token["target"] for scope in scopes)):
-                continue
-            yield token
-
     def get_refresh_token_grant_request(self, refresh_token, scopes):
         data = {
             "grant_type": "refresh_token",
@@ -98,11 +87,6 @@ class AuthnClientBase(ABC):
 
     @abc.abstractmethod
     def request_token(self, scopes, method, headers, form_data, params, **kwargs):
-        pass
-
-    @abc.abstractmethod
-    def obtain_token_by_refresh_token(self, scopes, username):
-        # type: (Iterable[str], Optional[str]) -> AccessToken
         pass
 
     def _deserialize_and_cache_token(self, response, scopes, request_time):
@@ -218,61 +202,6 @@ class AuthnClient(AuthnClientBase):
         response = self._pipeline.run(request, stream=False, **kwargs)
         token = self._deserialize_and_cache_token(response=response, scopes=scopes, request_time=request_time)
         return token
-
-    def obtain_token_by_refresh_token(self, scopes, username=None):
-        # type: (Iterable[str], Optional[str]) -> AccessToken
-        """Acquire an access token using a cached refresh token. Raises ClientAuthenticationError if that fails.
-        This is only used by SharedTokenCacheCredential and isn't robust enough for anything else."""
-
-        # if an username is provided, restrict our search to accounts that have that username
-        query = {"username": username} if username else {}
-        accounts = self._cache.find(TokenCache.CredentialType.ACCOUNT, query=query)
-
-        # if more than one account was returned, ensure that that they all have the same home_account_id. If so,
-        # we'll treat them as equal, otherwise we can't know which one to pick, so we'll raise an error.
-        if len(accounts) > 1 and len({account.get("home_account_id") for account in accounts}) != 1:
-            if username:
-                message = (
-                    "Multiple entries found for user '{}' were found in the shared token cache. "
-                    "This is not currently supported by SharedTokenCacheCredential."
-                ).format(username)
-            else:
-                # TODO: we could identify usernames associated with exactly one home account id
-                message = (
-                    "Multiple users were discovered in the shared token cache. If using DefaultAzureCredential, set "
-                    "the AZURE_USERNAME environment variable to the preferred username. Otherwise, specify it when "
-                    "constructing SharedTokenCacheCredential."
-                    "\nDiscovered accounts: {}"
-                ).format(", ".join({account.get("username") for account in accounts}))
-            raise ClientAuthenticationError(message=message)
-
-        for account in accounts:
-            # ensure the account is associated with the token authority we expect to use
-            # ('environment' is an authority e.g. 'login.microsoftonline.com')
-            environment = account.get("environment")
-            if not environment or environment not in self._auth_url:
-                # doubtful this account can get the access token we want but public cloud's a special case
-                # because its authority has an alias: for our purposes login.windows.net = login.microsoftonline.com
-                if not (environment == "login.windows.net" and KnownAuthorities.AZURE_PUBLIC_CLOUD in self._auth_url):
-                    continue
-
-            # try each refresh token, returning the first access token acquired
-            for token in self.get_refresh_tokens(scopes, account):
-                request = self.get_refresh_token_grant_request(token, scopes)
-                request_time = int(time.time())
-                response = self._pipeline.run(request, stream=False)
-                try:
-                    return self._deserialize_and_cache_token(
-                        response=response, scopes=scopes, request_time=request_time
-                    )
-                except ClientAuthenticationError:
-                    continue
-
-        message = "No cached token found"
-        if username:
-            message += " for '{}'".format(username)
-
-        raise ClientAuthenticationError(message=message)
 
     @staticmethod
     def _create_config(**kwargs):

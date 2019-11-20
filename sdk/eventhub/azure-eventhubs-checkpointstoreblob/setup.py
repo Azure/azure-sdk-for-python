@@ -21,8 +21,8 @@ package_folder_path = "azure/eventhub/extensions/checkpointstoreblob"
 namespace_name = "azure.eventhub.extensions.checkpointstoreblob"
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, '__init__.py'), 'r') as fd:
-    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
 if not version:

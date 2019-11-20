@@ -14,7 +14,7 @@ If partition id is specified, the partition_manager can only be used for checkpo
 import os
 from azure.storage.blob import ContainerClient
 from azure.eventhub import EventHubConsumerClient
-from azure.eventhub.extensions.checkpointstoreblob import BlobPartitionManager
+from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]

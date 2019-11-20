@@ -27,7 +27,7 @@ class EventProcessorMixin(object):
 
     def create_consumer(self, partition_id, initial_event_position, on_event_received):
         consumer = self._eventhub_client._create_consumer(  # pylint: disable=protected-access
-            self._consumer_group_name,
+            self._consumer_group,
             partition_id,
             initial_event_position,
             on_event_received=on_event_received,

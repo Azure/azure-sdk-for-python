@@ -109,18 +109,18 @@ def test_send_multiple_partitions_with_app_prop(connstr_receivers):
     client = EventHubProducerClient.from_connection_string(connection_str)
     with client:
         ed0 = EventData(b"Message 0")
-        ed0.application_properties = app_prop
+        ed0.properties = app_prop
         client.send(ed0, partition_id="0")
         ed1 = EventData(b"Message 1")
-        ed1.application_properties = app_prop
+        ed1.properties = app_prop
         client.send(ed1, partition_id="1")
 
     partition_0 = [EventData._from_message(x) for x in receivers[0].receive_message_batch(timeout=5000)]
     assert len(partition_0) == 1
-    assert partition_0[0].application_properties[b"raw_prop"] == b"raw_value"
+    assert partition_0[0].properties[b"raw_prop"] == b"raw_value"
     partition_1 = [EventData._from_message(x) for x in receivers[1].receive_message_batch(timeout=5000)]
     assert len(partition_1) == 1
-    assert partition_1[0].application_properties[b"raw_prop"] == b"raw_value"
+    assert partition_1[0].properties[b"raw_prop"] == b"raw_value"
 
 
 @pytest.mark.liveTest
@@ -141,6 +141,7 @@ def test_send_over_websocket_sync(connstr_receivers):
 
 @pytest.mark.liveTest
 def test_send_with_create_event_batch_with_app_prop_sync(connstr_receivers):
+    pytest.skip("Waiting on uAMQP release")
     connection_str, receivers = connstr_receivers
     app_prop_key = "raw_prop"
     app_prop_value = "raw_value"
@@ -151,7 +152,7 @@ def test_send_with_create_event_batch_with_app_prop_sync(connstr_receivers):
         while True:
             try:
                 ed = EventData('A single event data')
-                ed.application_properties = app_prop
+                ed.properties = app_prop
                 event_data_batch.try_add(ed)
             except ValueError:
                 break
@@ -160,4 +161,4 @@ def test_send_with_create_event_batch_with_app_prop_sync(connstr_receivers):
         for r in receivers:
             received.extend(r.receive_message_batch(timeout=5000))
         assert len(received) > 1
-        assert EventData._from_message(received[0]).application_properties[b"raw_prop"] == b"raw_value"
+        assert EventData._from_message(received[0]).properties[b"raw_prop"] == b"raw_value"

@@ -91,7 +91,7 @@ jobs:
 
     steps:
     - template: ../steps/test-nightly.yml
-      parameters: 
+      parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         OSName: $(OSName)
