@@ -40,6 +40,7 @@ class PartitionContext(object):
         """
         if self._last_received_event:
             return self._last_received_event._get_last_enqueued_event_properties()  # pylint: disable=protected-access
+        return None
 
     def update_checkpoint(self, event):
         """
