@@ -30,7 +30,7 @@ from azure.keyvault.certificates._shared._generated.v7_0.models import (
     ActionType,
     IssuerAttributes,
 )
-from azure.keyvault.certificates.models import CertificateIssuer, IssuerProperties
+from azure.keyvault.certificates import CertificateIssuer, IssuerProperties
 from certificates_async_preparer import AsyncVaultClientPreparer
 
 

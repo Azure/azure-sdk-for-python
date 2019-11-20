@@ -81,7 +81,7 @@ class CertificateOperationError(object):
     :param str code: The error code.
     :param str message: The error message.
     :param inner_error: The error object itself
-    :type inner_error: ~azure.keyvault.certificates.models.CertificateError
+    :type inner_error: ~azure.keyvault.certificates.CertificateOperationError
     """
 
     def __init__(self, code, message, inner_error):
@@ -330,7 +330,7 @@ class KeyVaultCertificate(object):
         # type: () -> CertificateProperties
         """The certificate's properties
 
-        :rtype: ~azure.keyvault.certificates.models.CertificateAttributes
+        :rtype: ~azure.keyvault.certificates.CertificateAttributes
         """
         return self._properties
 
@@ -560,20 +560,20 @@ class CertificatePolicy(object):
     :keyword bool exportable: Indicates if the private key can be exported. For valid values,
         see KeyType.
     :keyword key_type: The type of key pair to be used for the certificate.
-    :paramtype key_type: str or ~azure.keyvault.certificates.enums.KeyType
+    :paramtype key_type: str or ~azure.keyvault.certificates.KeyType
     :keyword int key_size: The key size in bits. For example: 2048, 3072, or 4096
         for RSA.
     :keyword bool reuse_key: Indicates if the same key pair will be used on certificate
         renewal.
     :keyword curve: Elliptic curve name. For valid values, see KeyCurveName.
-    :paramtype curve: str or ~azure.keyvault.certificates.enums.KeyCurveName
+    :paramtype curve: str or ~azure.keyvault.certificates.KeyCurveName
     :keyword ekus: The enhanced key usages.
     :paramtype ekus: list[str]
     :keyword key_usage: List of key usages.
-    :paramtype key_usage: list[str or ~azure.keyvault.certificates.enums.KeyUsageType]
+    :paramtype key_usage: list[str or ~azure.keyvault.certificates.KeyUsageType]
     :keyword content_type: The media type (MIME type) of the secret backing the certificate.
         For valid values, see SecretContentType.
-    :paramtype content_type: ~azure.keyvault.certificates.enums.SecretContentType or str
+    :paramtype content_type: ~azure.keyvault.certificates.SecretContentType or str
     :keyword int validity_in_months: The duration that the certificate is valid in months.
     :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime
         of a certificate
@@ -827,7 +827,7 @@ class CertificatePolicy(object):
         # type: () -> KeyType
         """The type of key pair to be used for the certificate.
 
-        :rtype: ~azure.keyvault.certificates.enums.KeyType
+        :rtype: ~azure.keyvault.certificates.KeyType
         """
         return self._key_type
 
@@ -854,7 +854,7 @@ class CertificatePolicy(object):
         # type: () -> KeyCurveName
         """Elliptic curve name.
 
-        :rtype: ~azure.keyvault.certificates.enums.KeyCurveName
+        :rtype: ~azure.keyvault.certificates.KeyCurveName
         """
         return self._curve
 
@@ -872,7 +872,7 @@ class CertificatePolicy(object):
         # type: () -> list[KeyUsageType]
         """List of key usages.
 
-        :rtype: list[~azure.keyvault.certificates.enums.KeyUsageType]
+        :rtype: list[~azure.keyvault.certificates.KeyUsageType]
         """
         return self._key_usage
 
@@ -881,7 +881,7 @@ class CertificatePolicy(object):
         # type: () -> SecretContentType
         """The media type (MIME type).
 
-        :rtype: ~azure.keyvault.certificates.enums.SecretContentType
+        :rtype: ~azure.keyvault.certificates.SecretContentType
         """
         return self._content_type
 
@@ -933,7 +933,7 @@ class CertificatePolicy(object):
         """Actions and their triggers that will be performed by Key Vault over
         the lifetime of the certificate.
 
-        :rtype: list[~azure.keyvault.certificates.models.LifetimeAction]
+        :rtype: list[~azure.keyvault.certificates.LifetimeAction]
         """
         return self._lifetime_actions
 
@@ -1191,7 +1191,7 @@ class CertificateIssuer(object):
         # type: () -> IssuerProperties
         """The properties of the issuer.
 
-        :rtype: ~azure.keyvault.certificates.models.IssuerProperties
+        :rtype: ~azure.keyvault.certificates.IssuerProperties
         """
         return self._properties
 
@@ -1251,7 +1251,7 @@ class CertificateIssuer(object):
         # type: () -> List[AdministratorContact]
         """Details of the organization administrator of this issuer.
 
-        :rtype: list[~azure.keyvault.certificates.models.AdministratorContact]
+        :rtype: list[~azure.keyvault.certificates.AdministratorContact]
         """
         return self._admin_details
 
@@ -1261,7 +1261,7 @@ class LifetimeAction(object):
     lifetime of a certificate.
 
     :param action: The type of the action. For valid values, see CertificatePolicyAction
-    :type action: str or ~azure.keyvault.certificates.enums.CertificatePolicyAction
+    :type action: str or ~azure.keyvault.certificates.CertificatePolicyAction
     :param int lifetime_percentage: Percentage of lifetime at which to trigger. Value
         should be between 1 and 99.
     :param int days_before_expiry: Days before expiry to attempt renewal. Value should be between
@@ -1305,7 +1305,7 @@ class LifetimeAction(object):
         """The type of the action that will be executed.
         Valid values are "EmailContacts" and "AutoRenew"
 
-        :rtype: str or ~azure.keyvault.certificates.enums.CertificatePolicyAction
+        :rtype: str or ~azure.keyvault.certificates.CertificatePolicyAction
         """
         return self._action
 

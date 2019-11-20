@@ -12,7 +12,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
 from ._shared._polling import DeletePollingMethod, RecoverDeletedPollingMethod, KeyVaultOperationPoller
-from .models import (
+from ._models import (
     KeyVaultCertificate,
     CertificateProperties,
     CertificatePolicy,
@@ -71,14 +71,14 @@ class CertificateClient(KeyVaultClientBase):
         :param str certificate_name: The name of the certificate.
         :param policy: The management policy for the certificate.
         :type policy:
-         ~azure.keyvault.certificates.models.CertificatePolicy
+         ~azure.keyvault.certificates.CertificatePolicy
         :keyword bool enabled: Whether the certificate is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :returns: An LROPoller for the create certificate operation. Waiting on the poller
          gives you the certificate if creation is successful, the CertificateOperation if not.
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.certificates.models.KeyVaultCertificate or
-         ~azure.keyvault.certificates.models.CertificateOperation]
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.certificates.KeyVaultCertificate or
+         ~azure.keyvault.certificates.CertificateOperation]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Keyword arguments
@@ -137,7 +137,7 @@ class CertificateClient(KeyVaultClientBase):
 
         :param str certificate_name: The name of the certificate in the given vault.
         :returns: An instance of KeyVaultCertificate
-        :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
+        :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -170,7 +170,7 @@ class CertificateClient(KeyVaultClientBase):
         :param str certificate_name: The name of the certificate in the given vault.
         :param str version: The version of the certificate.
         :returns: An instance of KeyVaultCertificate
-        :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
+        :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -251,7 +251,7 @@ class CertificateClient(KeyVaultClientBase):
 
         :param str certificate_name: The name of the certificate.
         :return: The deleted certificate
-        :rtype: ~azure.keyvault.certificates.models.DeletedCertificate
+        :rtype: ~azure.keyvault.certificates.DeletedCertificate
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -352,9 +352,9 @@ class CertificateClient(KeyVaultClientBase):
         :keyword str password: If the private key in the passed in certificate is encrypted, it
          is the password used for encryption.
         :keyword policy: The management policy for the certificate
-        :paramtype policy: ~azure.keyvault.certificates.models.CertificatePolicy
+        :paramtype policy: ~azure.keyvault.certificates.CertificatePolicy
         :returns: The imported KeyVaultCertificate
-        :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
+        :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
 
@@ -388,7 +388,7 @@ class CertificateClient(KeyVaultClientBase):
 
         :param str certificate_name: The name of the certificate in a given key vault.
         :return: The certificate policy
-        :rtype: ~azure.keyvault.certificates.models.CertificatePolicy
+        :rtype: ~azure.keyvault.certificates.CertificatePolicy
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         bundle = self._client.get_certificate_policy(
@@ -406,9 +406,9 @@ class CertificateClient(KeyVaultClientBase):
 
         :param str certificate_name: The name of the certificate in the given vault.
         :param policy: The policy for the certificate.
-        :type policy: ~azure.keyvault.certificates.models.CertificatePolicy
+        :type policy: ~azure.keyvault.certificates.CertificatePolicy
         :return: The certificate policy
-        :rtype: ~azure.keyvault.certificates.models.CertificatePolicy
+        :rtype: ~azure.keyvault.certificates.CertificatePolicy
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         bundle = self._client.update_certificate_policy(
@@ -440,7 +440,7 @@ class CertificateClient(KeyVaultClientBase):
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :returns: The updated KeyVaultCertificate
-        :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
+        :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -507,7 +507,7 @@ class CertificateClient(KeyVaultClientBase):
 
         :param bytes backup: The backup blob associated with a certificate bundle.
         :return: The restored KeyVaultCertificate
-        :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
+        :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -538,7 +538,7 @@ class CertificateClient(KeyVaultClientBase):
          not completely deleted.
         :return: An iterator like instance of DeletedCertificate
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.DeletedCertificate]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.DeletedCertificate]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -573,7 +573,7 @@ class CertificateClient(KeyVaultClientBase):
          completely provisioned.
         :returns: An iterator like instance of CertificateProperties
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateProperties]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.CertificateProperties]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -605,7 +605,7 @@ class CertificateClient(KeyVaultClientBase):
         :param str certificate_name: The name of the certificate.
         :returns: An iterator like instance of CertificateProperties
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateProperties]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.CertificateProperties]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -634,9 +634,9 @@ class CertificateClient(KeyVaultClientBase):
         operation requires the certificates/managecontacts permission.
 
         :param contacts: The contact list for the vault certificates.
-        :type contacts: list[~azure.keyvault.certificates.models.CertificateContact]
+        :type contacts: list[~azure.keyvault.certificates.CertificateContact]
         :returns: The created list of contacts
-        :rtype: list[~azure.keyvault.certificates.models.CertificateContact]
+        :rtype: list[~azure.keyvault.certificates.CertificateContact]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -664,7 +664,7 @@ class CertificateClient(KeyVaultClientBase):
         permission.
 
         :return: The certificate contacts for the key vault.
-        :rtype: list[~azure.keyvault.certificates.models.CertificateContact]
+        :rtype: list[~azure.keyvault.certificates.CertificateContact]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -687,7 +687,7 @@ class CertificateClient(KeyVaultClientBase):
         This operation requires the certificates/managecontacts permission.
 
         :return: Contacts
-        :rtype: list[~azure.keyvault.certificates.models.CertificateContact]
+        :rtype: list[~azure.keyvault.certificates.CertificateContact]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -711,7 +711,7 @@ class CertificateClient(KeyVaultClientBase):
 
         :param str certificate_name: The name of the certificate.
         :returns: The created CertificateOperation
-        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :rtype: ~azure.keyvault.certificates.CertificateOperation
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -733,7 +733,7 @@ class CertificateClient(KeyVaultClientBase):
 
         :param str certificate_name: The name of the certificate.
         :return: The deleted CertificateOperation
-        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :rtype: ~azure.keyvault.certificates.CertificateOperation
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         bundle = self._client.delete_certificate_operation(
@@ -751,7 +751,7 @@ class CertificateClient(KeyVaultClientBase):
 
         :param str certificate_name: The name of the certificate.
         :returns: The cancelled certificate operation
-        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :rtype: ~azure.keyvault.certificates.CertificateOperation
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         bundle = self._client.update_certificate_operation(
@@ -782,7 +782,7 @@ class CertificateClient(KeyVaultClientBase):
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :return: The merged certificate
-        :rtype: ~azure.keyvault.certificates.models.KeyVaultCertificate
+        :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
 
@@ -811,7 +811,7 @@ class CertificateClient(KeyVaultClientBase):
 
         :param str issuer_name: The name of the issuer.
         :return: The specified certificate issuer.
-        :rtype: ~azure.keyvault.certificates.models.CertificateIssuer
+        :rtype: ~azure.keyvault.certificates.CertificateIssuer
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the issuer doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -846,9 +846,9 @@ class CertificateClient(KeyVaultClientBase):
         :keyword str organization_id: Id of the organization
         :keyword admin_details: Details of the organization administrators of the
          certificate issuer.
-        :paramtype admin_details: list[~azure.keyvault.certificates.models.AdministratorContact]
+        :paramtype admin_details: list[~azure.keyvault.certificates.AdministratorContact]
         :returns: The created CertificateIssuer
-        :rtype: ~azure.keyvault.certificates.models.CertificateIssuer
+        :rtype: ~azure.keyvault.certificates.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -918,9 +918,9 @@ class CertificateClient(KeyVaultClientBase):
         :keyword str password: The password/secret/account key.
         :keyword str organization_id: Id of the organization
         :keyword admin_details: Details of the organization administrators of the certificate issuer
-        :paramtype admin_details: list[~azure.keyvault.certificates.models.AdministratorContact]
+        :paramtype admin_details: list[~azure.keyvault.certificates.AdministratorContact]
         :return: The updated issuer
-        :rtype: ~azure.keyvault.certificates.models.CertificateIssuer
+        :rtype: ~azure.keyvault.certificates.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
 
@@ -978,7 +978,7 @@ class CertificateClient(KeyVaultClientBase):
 
         :param str issuer_name: The name of the issuer.
         :return: CertificateIssuer
-        :rtype: ~azure.keyvault.certificates.models.CertificateIssuer
+        :rtype: ~azure.keyvault.certificates.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -1004,7 +1004,7 @@ class CertificateClient(KeyVaultClientBase):
         permission.
 
         :return: An iterator like instance of Issuers
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateIssuer]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.CertificateIssuer]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
