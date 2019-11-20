@@ -25,29 +25,23 @@ class CognitiveServicesCredentialPolicy(SansIOHTTPPolicy):
 
 class TextAnalyticsResponseHook(HTTPPolicy):
     def __init__(self, **kwargs):
-        self._response_callback = kwargs.get("raw_response_hook")
+        self._response_callback = kwargs.get("response_hook")
         super(TextAnalyticsResponseHook, self).__init__()
 
     def send(self, request):
         if request.context.options.get("response_hook", self._response_callback):
-            statistics = request.context.get("statistics") or request.context.options.pop("statistics", None)
-            model_version = request.context.get("model_version") or request.context.options.pop("model_version", None)
-            response_callback = request.context.get("response_callback") or \
-                request.context.options.pop("response_hook", self._response_callback)
+            response_callback = request.context.options.pop("response_hook", self._response_callback)
 
             response = self.next.send(request)
-            if statistics is None and model_version is None:
-                data = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
-                statistics = data.get("statistics", None)
-                model_version = data.get("modelVersion", None)
-            for pipeline_obj in [request, response]:
-                if statistics is not None and not isinstance(statistics, RequestStatistics):
-                    statistics = RequestStatistics._from_generated(statistics)  # pylint: disable=protected-access
-                pipeline_obj.statistics = statistics
-                pipeline_obj.model_version = model_version
-                pipeline_obj.raw_response = data
+            data = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
+            statistics = data.get("statistics", None)
+            model_version = data.get("modelVersion", None)
+
+            batch_statistics = RequestStatistics._from_generated(statistics)  # pylint: disable=protected-access
+            response.statistics = batch_statistics
+            response.model_version = model_version
+            response.raw_response = data
             if response_callback:
                 response_callback(response)
-                request.context.response_callback = response_callback
             return response
         return self.next.send(request)
