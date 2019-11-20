@@ -111,7 +111,7 @@ class PolicyOperations(object):
             return client_raw_response
 
         return deserialized
-    prepare_to_set.metadata = {'url': '/operations/policy/update'}
+    prepare_to_set.metadata = {'url': '/operations/policy/updatepolicy'}
 
     def get(
             self, tenant_base_url, tee, custom_headers=None, raw=False, **operation_config):
