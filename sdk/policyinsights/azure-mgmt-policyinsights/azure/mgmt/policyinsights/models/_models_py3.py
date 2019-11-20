@@ -597,15 +597,15 @@ class PolicyMetadata(Model):
     :vartype title: str
     :ivar owner: The owner of the policy metadata.
     :vartype owner: str
-    :ivar description: The description of the policy metadata.
-    :vartype description: str
-    :ivar requirements: The requirements of the policy metadata.
-    :vartype requirements: str
     :ivar additional_content_url: Url for getting additional content about the
      resource metadata.
     :vartype additional_content_url: str
     :ivar metadata: Additional metadata.
     :vartype metadata: object
+    :ivar description: The description of the policy metadata.
+    :vartype description: str
+    :ivar requirements: The requirements of the policy metadata.
+    :vartype requirements: str
     :ivar id: The ID of the policy metadata.
     :vartype id: str
     :ivar type: The type of the policy metadata.
@@ -619,10 +619,10 @@ class PolicyMetadata(Model):
         'category': {'readonly': True},
         'title': {'readonly': True},
         'owner': {'readonly': True},
-        'description': {'readonly': True},
-        'requirements': {'readonly': True},
         'additional_content_url': {'readonly': True},
         'metadata': {'readonly': True},
+        'description': {'readonly': True},
+        'requirements': {'readonly': True},
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
@@ -633,10 +633,10 @@ class PolicyMetadata(Model):
         'category': {'key': 'properties.category', 'type': 'str'},
         'title': {'key': 'properties.title', 'type': 'str'},
         'owner': {'key': 'properties.owner', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'requirements': {'key': 'properties.requirements', 'type': 'str'},
         'additional_content_url': {'key': 'properties.additionalContentUrl', 'type': 'str'},
         'metadata': {'key': 'properties.metadata', 'type': 'object'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'requirements': {'key': 'properties.requirements', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -648,10 +648,10 @@ class PolicyMetadata(Model):
         self.category = None
         self.title = None
         self.owner = None
-        self.description = None
-        self.requirements = None
         self.additional_content_url = None
         self.metadata = None
+        self.description = None
+        self.requirements = None
         self.id = None
         self.type = None
         self.name = None
@@ -1200,10 +1200,6 @@ class SlimPolicyMetadata(Model):
     :vartype title: str
     :ivar owner: The owner of the policy metadata.
     :vartype owner: str
-    :ivar description: The description of the policy metadata.
-    :vartype description: str
-    :ivar requirements: The requirements of the policy metadata.
-    :vartype requirements: str
     :ivar additional_content_url: Url for getting additional content about the
      resource metadata.
     :vartype additional_content_url: str
@@ -1222,8 +1218,6 @@ class SlimPolicyMetadata(Model):
         'category': {'readonly': True},
         'title': {'readonly': True},
         'owner': {'readonly': True},
-        'description': {'readonly': True},
-        'requirements': {'readonly': True},
         'additional_content_url': {'readonly': True},
         'metadata': {'readonly': True},
         'id': {'readonly': True},
@@ -1236,8 +1230,6 @@ class SlimPolicyMetadata(Model):
         'category': {'key': 'properties.category', 'type': 'str'},
         'title': {'key': 'properties.title', 'type': 'str'},
         'owner': {'key': 'properties.owner', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'requirements': {'key': 'properties.requirements', 'type': 'str'},
         'additional_content_url': {'key': 'properties.additionalContentUrl', 'type': 'str'},
         'metadata': {'key': 'properties.metadata', 'type': 'object'},
         'id': {'key': 'id', 'type': 'str'},
@@ -1251,8 +1243,6 @@ class SlimPolicyMetadata(Model):
         self.category = None
         self.title = None
         self.owner = None
-        self.description = None
-        self.requirements = None
         self.additional_content_url = None
         self.metadata = None
         self.id = None
