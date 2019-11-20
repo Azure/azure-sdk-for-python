@@ -7,7 +7,7 @@ import time
 import uuid
 import sqlite3
 import logging
-from .partition_manager import PartitionManager
+from .checkpoint_store import CheckpointStore
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -19,8 +19,8 @@ def _check_table_name(table_name: str):
     return table_name
 
 
-class Sqlite3PartitionManager(PartitionManager):
-    """An implementation of PartitionManager by using the sqlite3 in Python standard library.
+class Sqlite3CheckpointStore(CheckpointStore):
+    """An implementation of CheckpointStore by using the sqlite3 in Python standard library.
     Sqlite3 is a mini sql database that runs in memory or files.
     This is for test only.
 
@@ -29,7 +29,7 @@ class Sqlite3PartitionManager(PartitionManager):
 
     """
     primary_keys_dict = {"fully_qualified_namespace": "text", "eventhub_name": "text",
-                         "consumer_group_name": "text", "partition_id": "text"}
+                         "consumer_group": "text", "partition_id": "text"}
     primary_keys = list(primary_keys_dict.keys())
 
     ownership_data_fields_dict = {"owner_id": "text", "last_modified_time": "real", "etag": "text"}
@@ -44,7 +44,7 @@ class Sqlite3PartitionManager(PartitionManager):
 
     def __init__(self, db_filename: str = ":memory:",
                  ownership_table: str = "ownership", checkpoint_table: str = "checkpoint"):
-        super(Sqlite3PartitionManager, self).__init__()
+        super(Sqlite3CheckpointStore, self).__init__()
         self.ownership_table = _check_table_name(ownership_table)
         self.checkpoint_table = _check_table_name(checkpoint_table)
         conn = sqlite3.connect(db_filename)
@@ -69,13 +69,13 @@ class Sqlite3PartitionManager(PartitionManager):
             c.close()
         self.conn = conn
 
-    async def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
+    async def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group):
         cursor = self.conn.cursor()
         try:
             cursor.execute("select " + ",".join(self.ownership_fields) +
                            " from "+_check_table_name(self.ownership_table) +
-                           " where fully_qualified_namespace=? and eventhub_name=? and consumer_group_name=?",
-                           (fully_qualified_namespace, eventhub_name, consumer_group_name))
+                           " where fully_qualified_namespace=? and eventhub_name=? and consumer_group=?",
+                           (fully_qualified_namespace, eventhub_name, consumer_group))
             return [dict(zip(self.ownership_fields, row)) for row in cursor.fetchall()]
         finally:
             cursor.close()
@@ -126,7 +126,7 @@ class Sqlite3PartitionManager(PartitionManager):
             cursor.close()
 
     async def update_checkpoint(
-            self, fully_qualified_namespace, eventhub_name, consumer_group_name, partition_id, offset, sequence_number):
+            self, fully_qualified_namespace, eventhub_name, consumer_group, partition_id, offset, sequence_number):
         cursor = self.conn.cursor()
         localvars = locals()
         try:
@@ -141,15 +141,15 @@ class Sqlite3PartitionManager(PartitionManager):
         finally:
             cursor.close()
 
-    async def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
+    async def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group):
         cursor = self.conn.cursor()
         try:
             cursor.execute("select "
                            + ",".join(self.checkpoint_fields)
                            + " from "
                            + self.checkpoint_table
-                           + " where fully_qualified_namespace=? and eventhub_name=? and consumer_group_name=?",
-                           (fully_qualified_namespace, eventhub_name, consumer_group_name)
+                           + " where fully_qualified_namespace=? and eventhub_name=? and consumer_group=?",
+                           (fully_qualified_namespace, eventhub_name, consumer_group)
                            )
             return [dict(zip(self.checkpoint_fields, row)) for row in cursor.fetchall()]
 

@@ -4,12 +4,12 @@
 # --------------------------------------------------------------------------------------------
 from ._consumer_client_async import EventHubConsumerClient
 from ._producer_client_async import EventHubProducerClient
-from ._eventprocessor.partition_manager import PartitionManager
+from ._eventprocessor.checkpoint_store import CheckpointStore
 from ._eventprocessor.partition_context import PartitionContext
 
 __all__ = [
     "EventHubConsumerClient",
     "EventHubProducerClient",
-    "PartitionManager",
+    "CheckpointStore",
     "PartitionContext",
 ]

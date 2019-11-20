@@ -6,8 +6,8 @@
 from ._version import VERSION
 __version__ = VERSION
 
-from .blobstoragepmaio import BlobPartitionManager
+from .blobstoragecsaio import BlobCheckpointStore
 
 __all__ = [
-    "BlobPartitionManager",
+    "BlobCheckpointStore",
 ]

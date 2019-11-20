@@ -36,11 +36,10 @@ def test_receive_with_invalid_hostname_sync(invalid_hostname):
     def on_event(partition_context, event):
         pass
 
-    client = EventHubConsumerClient.from_connection_string(invalid_hostname)
+    client = EventHubConsumerClient.from_connection_string(invalid_hostname, consumer_group='$default')
     with client:
         thread = threading.Thread(target=client.receive,
-                                  args=(on_event, ),
-                                  kwargs={"consumer_group": '$default'})
+                                  args=(on_event, ))
         thread.start()
         time.sleep(2)
         assert len(client._event_processors) == 1

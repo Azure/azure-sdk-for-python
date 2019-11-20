@@ -14,7 +14,7 @@ from ._common import EventData, EventDataBatch, EventPosition
 from ._producer_client import EventHubProducerClient
 from ._consumer_client import EventHubConsumerClient
 from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
-from ._eventprocessor.partition_manager import PartitionManager
+from ._eventprocessor.checkpoint_store import CheckpointStore
 from ._eventprocessor.common import CloseReason, OwnershipLostError
 from ._eventprocessor.partition_context import PartitionContext
 from .exceptions import (
@@ -43,7 +43,7 @@ __all__ = [
     "TransportType",
     "EventHubSharedKeyCredential",
     "EventHubSASTokenCredential",
-    "PartitionManager",
+    "CheckpointStore",
     "CloseReason",
     "OwnershipLostError",
     "PartitionContext",

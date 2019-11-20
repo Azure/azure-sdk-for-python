@@ -1,8 +1,19 @@
 # Release History
 
-## 2019-11-04 5.0.0b6
+## 2019-12-03 5.0.0b6
 
 **Breaking changes**
+
+- `EventData`
+    - Renamed property `application_properties` to `properties`.
+- `EventHubConsumerClient` and `EventHubProducerClient`
+    - Renamed method `get_properties` to `get_eventhub_properties`.
+    - Renamed parameters in constructor: `host` to `fully_qualified_namespace`, `event_hub_path` to `eventhub_name`.
+    - Renamed parameters in `get_partition_properties`: `partition` to `partition_id`.
+- Moved `consumer_group` parameter from `receive` method to the constructor of `EventHubConsumerClient`.
+- Renamed module `PartitionManager` to `CheckpointStore`.
+  
+
 
 ## 2019-11-04 5.0.0b5
 
