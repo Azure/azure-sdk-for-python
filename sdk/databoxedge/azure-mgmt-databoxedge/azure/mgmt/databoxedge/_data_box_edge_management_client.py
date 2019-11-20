@@ -24,8 +24,11 @@ from .operations import OrdersOperations
 from .operations import RolesOperations
 from .operations import SharesOperations
 from .operations import StorageAccountCredentialsOperations
+from .operations import StorageAccountsOperations
+from .operations import ContainersOperations
 from .operations import TriggersOperations
 from .operations import UsersOperations
+from .operations import LocationsOperations
 from . import models
 
 
@@ -57,10 +60,16 @@ class DataBoxEdgeManagementClient(SDKClient):
     :vartype shares: azure.mgmt.databoxedge.operations.SharesOperations
     :ivar storage_account_credentials: StorageAccountCredentials operations
     :vartype storage_account_credentials: azure.mgmt.databoxedge.operations.StorageAccountCredentialsOperations
+    :ivar storage_accounts: StorageAccounts operations
+    :vartype storage_accounts: azure.mgmt.databoxedge.operations.StorageAccountsOperations
+    :ivar containers: Containers operations
+    :vartype containers: azure.mgmt.databoxedge.operations.ContainersOperations
     :ivar triggers: Triggers operations
     :vartype triggers: azure.mgmt.databoxedge.operations.TriggersOperations
     :ivar users: Users operations
     :vartype users: azure.mgmt.databoxedge.operations.UsersOperations
+    :ivar locations: Locations operations
+    :vartype locations: azure.mgmt.databoxedge.operations.LocationsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -77,7 +86,7 @@ class DataBoxEdgeManagementClient(SDKClient):
         super(DataBoxEdgeManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-07-01'
+        self.api_version = '2019-08-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -103,7 +112,13 @@ class DataBoxEdgeManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.storage_account_credentials = StorageAccountCredentialsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.storage_accounts = StorageAccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.containers = ContainersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.triggers = TriggersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.users = UsersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.locations = LocationsOperations(
             self._client, self.config, self._serialize, self._deserialize)

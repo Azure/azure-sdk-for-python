@@ -456,6 +456,62 @@ class ContactDetails(Model):
         self.email_list = kwargs.get('email_list', None)
 
 
+class Container(ARMBaseModel):
+    """Represents a container on the  Data Box Edge/Gateway device.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The path ID that uniquely identifies the object.
+    :vartype id: str
+    :ivar name: The object name.
+    :vartype name: str
+    :ivar type: The hierarchical type of the object.
+    :vartype type: str
+    :ivar container_status: Current status of the container. Possible values
+     include: 'OK', 'Offline', 'Unknown', 'Updating', 'NeedsAttention'
+    :vartype container_status: str or
+     ~azure.mgmt.databoxedge.models.ContainerStatus
+    :param data_format: Required. DataFormat for Container. Possible values
+     include: 'BlockBlob', 'PageBlob', 'AzureFile'
+    :type data_format: str or
+     ~azure.mgmt.databoxedge.models.AzureContainerDataFormat
+    :ivar refresh_details: Details of the refresh job on this container.
+    :vartype refresh_details: ~azure.mgmt.databoxedge.models.RefreshDetails
+    :ivar created_date_time: The UTC time when container got created.
+    :vartype created_date_time: datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'container_status': {'readonly': True},
+        'data_format': {'required': True},
+        'refresh_details': {'readonly': True},
+        'created_date_time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'container_status': {'key': 'properties.containerStatus', 'type': 'str'},
+        'data_format': {'key': 'properties.dataFormat', 'type': 'str'},
+        'refresh_details': {'key': 'properties.refreshDetails', 'type': 'RefreshDetails'},
+        'created_date_time': {'key': 'properties.createdDateTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Container, self).__init__(**kwargs)
+        self.container_status = None
+        self.data_format = kwargs.get('data_format', None)
+        self.refresh_details = None
+        self.created_date_time = None
+
+
 class DataBoxEdgeDevice(ARMBaseModel):
     """The Data Box Edge/Gateway device.
 
@@ -778,7 +834,7 @@ class IoTDeviceInfo(Model):
     :param io_thost_hub: Required. Host name for the IoT hub associated to the
      device.
     :type io_thost_hub: str
-    :param io_thost_hub_id: Id of the IoT hub associated to the device.
+    :param io_thost_hub_id: Id for the IoT hub associated to the device.
     :type io_thost_hub_id: str
     :param authentication: IoT device authentication info.
     :type authentication: ~azure.mgmt.databoxedge.models.Authentication
@@ -1006,7 +1062,8 @@ class Job(Model):
     :ivar error: The error details.
     :vartype error: ~azure.mgmt.databoxedge.models.JobErrorDetails
     :ivar job_type: The type of the job. Possible values include: 'Invalid',
-     'ScanForUpdates', 'DownloadUpdates', 'InstallUpdates', 'RefreshShare'
+     'ScanForUpdates', 'DownloadUpdates', 'InstallUpdates', 'RefreshShare',
+     'RefreshContainer'
     :vartype job_type: str or ~azure.mgmt.databoxedge.models.JobType
     :ivar current_stage: Current stage of the update operation. Possible
      values include: 'Unknown', 'Initial', 'ScanStarted', 'ScanComplete',
@@ -1027,10 +1084,11 @@ class Job(Model):
     :ivar error_manifest_file: Local share/remote container relative path to
      the error manifest file of the refresh.
     :vartype error_manifest_file: str
-    :ivar share_id: ARM ID of the share that was refreshed.
-    :vartype share_id: str
+    :ivar refreshed_entity_id: ARM ID of the entity that was refreshed.
+    :vartype refreshed_entity_id: str
     :param folder: If only subfolders need to be refreshed, then the subfolder
-     path inside the share. (The path is empty if there are no subfolders.)
+     path inside the share or container. (The path is empty if there are no
+     subfolders.)
     :type folder: str
     """
 
@@ -1049,7 +1107,7 @@ class Job(Model):
         'install_progress': {'readonly': True},
         'total_refresh_errors': {'readonly': True},
         'error_manifest_file': {'readonly': True},
-        'share_id': {'readonly': True},
+        'refreshed_entity_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1067,7 +1125,7 @@ class Job(Model):
         'install_progress': {'key': 'properties.installProgress', 'type': 'UpdateInstallProgress'},
         'total_refresh_errors': {'key': 'properties.totalRefreshErrors', 'type': 'int'},
         'error_manifest_file': {'key': 'properties.errorManifestFile', 'type': 'str'},
-        'share_id': {'key': 'properties.shareId', 'type': 'str'},
+        'refreshed_entity_id': {'key': 'properties.refreshedEntityId', 'type': 'str'},
         'folder': {'key': 'properties.folder', 'type': 'str'},
     }
 
@@ -1087,7 +1145,7 @@ class Job(Model):
         self.install_progress = None
         self.total_refresh_errors = None
         self.error_manifest_file = None
-        self.share_id = None
+        self.refreshed_entity_id = None
         self.folder = kwargs.get('folder', None)
 
 
@@ -1667,17 +1725,23 @@ class OrderStatus(Model):
     :vartype update_date_time: datetime
     :param comments: Comments related to this status change.
     :type comments: str
+    :ivar additional_order_details: Dictionary to hold generic information
+     which is not stored
+     by the already existing properties
+    :vartype additional_order_details: dict[str, str]
     """
 
     _validation = {
         'status': {'required': True},
         'update_date_time': {'readonly': True},
+        'additional_order_details': {'readonly': True},
     }
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
         'update_date_time': {'key': 'updateDateTime', 'type': 'iso-8601'},
         'comments': {'key': 'comments', 'type': 'str'},
+        'additional_order_details': {'key': 'additionalOrderDetails', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
@@ -1685,6 +1749,7 @@ class OrderStatus(Model):
         self.status = kwargs.get('status', None)
         self.update_date_time = None
         self.comments = kwargs.get('comments', None)
+        self.additional_order_details = None
 
 
 class PeriodicTimerEventTrigger(Trigger):
@@ -1777,22 +1842,23 @@ class PeriodicTimerSourceInfo(Model):
 
 
 class RefreshDetails(Model):
-    """Fields for tracking refresh job on the share.
+    """Fields for tracking refresh job on the share or container.
 
-    :param in_progress_refresh_job_id: If a refresh share job is currently in
-     progress on this share, this field indicates the ARM resource ID of that
-     job. The field is empty if no job is in progress.
+    :param in_progress_refresh_job_id: If a refresh job is currently in
+     progress on this share or container, this field indicates the ARM resource
+     ID of that job. The field is empty if no job is in progress.
     :type in_progress_refresh_job_id: str
     :param last_completed_refresh_job_time_in_utc: Indicates the completed
-     time for the last refresh job on this particular share, if any.This could
-     be a failed job or a successful job.
+     time for the last refresh job on this particular share or container, if
+     any.This could be a failed job or a successful job.
     :type last_completed_refresh_job_time_in_utc: datetime
     :param error_manifest_file: Indicates the relative path of the error xml
-     for the last refresh job on this particular share, if any. This could be a
-     failed job or a successful job.
+     for the last refresh job on this particular share or container, if any.
+     This could be a failed job or a successful job.
     :type error_manifest_file: str
     :param last_job: Indicates the id of the last refresh job on this
-     particular share,if any. This could be a failed job or a successful job.
+     particular share or container,if any. This could be a failed job or a
+     successful job.
     :type last_job: str
     """
 
@@ -1809,6 +1875,82 @@ class RefreshDetails(Model):
         self.last_completed_refresh_job_time_in_utc = kwargs.get('last_completed_refresh_job_time_in_utc', None)
         self.error_manifest_file = kwargs.get('error_manifest_file', None)
         self.last_job = kwargs.get('last_job', None)
+
+
+class ResourceTypeSku(Model):
+    """SkuInformation object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar resource_type: The type of the resource
+    :vartype resource_type: str
+    :ivar name: The Sku name. Possible values include: 'Gateway', 'Edge',
+     'TEA_1Node', 'TEA_1Node_UPS', 'TEA_1Node_Heater', 'TEA_1Node_UPS_Heater',
+     'TEA_4Node_Heater', 'TEA_4Node_UPS_Heater', 'TMA'
+    :vartype name: str or ~azure.mgmt.databoxedge.models.SkuName
+    :ivar kind: The Sku kind
+    :vartype kind: str
+    :ivar tier: The Sku tier. Possible values include: 'Standard'
+    :vartype tier: str or ~azure.mgmt.databoxedge.models.SkuTier
+    :ivar size: The Sku kind
+    :vartype size: str
+    :ivar family: The Sku family
+    :vartype family: str
+    :ivar locations: Availability of the SKU for the region
+    :vartype locations: list[str]
+    :ivar api_versions: The API versions in which SKU is available
+    :vartype api_versions: list[str]
+    :ivar location_info: Availability of the SKU for the location/zone
+    :vartype location_info:
+     list[~azure.mgmt.databoxedge.models.SkuLocationInfo]
+    :ivar costs: The pricing info of the Sku.
+    :vartype costs: list[~azure.mgmt.databoxedge.models.SkuCost]
+    :ivar restrictions: Restrictions of the SKU availability.
+    :vartype restrictions: list[~azure.mgmt.databoxedge.models.SkuRestriction]
+    """
+
+    _validation = {
+        'resource_type': {'readonly': True},
+        'name': {'readonly': True},
+        'kind': {'readonly': True},
+        'tier': {'readonly': True},
+        'size': {'readonly': True},
+        'family': {'readonly': True},
+        'locations': {'readonly': True},
+        'api_versions': {'readonly': True},
+        'location_info': {'readonly': True},
+        'costs': {'readonly': True},
+        'restrictions': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+        'size': {'key': 'size', 'type': 'str'},
+        'family': {'key': 'family', 'type': 'str'},
+        'locations': {'key': 'locations', 'type': '[str]'},
+        'api_versions': {'key': 'apiVersions', 'type': '[str]'},
+        'location_info': {'key': 'locationInfo', 'type': '[SkuLocationInfo]'},
+        'costs': {'key': 'costs', 'type': '[SkuCost]'},
+        'restrictions': {'key': 'restrictions', 'type': '[SkuRestriction]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ResourceTypeSku, self).__init__(**kwargs)
+        self.resource_type = None
+        self.name = None
+        self.kind = None
+        self.tier = None
+        self.size = None
+        self.family = None
+        self.locations = None
+        self.api_versions = None
+        self.location_info = None
+        self.costs = None
+        self.restrictions = None
 
 
 class RoleSinkInfo(Model):
@@ -2012,7 +2154,9 @@ class ShareAccessRight(Model):
 class Sku(Model):
     """The SKU type.
 
-    :param name: SKU name. Possible values include: 'Gateway', 'Edge'
+    :param name: SKU name. Possible values include: 'Gateway', 'Edge',
+     'TEA_1Node', 'TEA_1Node_UPS', 'TEA_1Node_Heater', 'TEA_1Node_UPS_Heater',
+     'TEA_4Node_Heater', 'TEA_4Node_UPS_Heater', 'TMA'
     :type name: str or ~azure.mgmt.databoxedge.models.SkuName
     :param tier: The SKU tier. This is based on the SKU name. Possible values
      include: 'Standard'
@@ -2028,6 +2172,202 @@ class Sku(Model):
         super(Sku, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.tier = kwargs.get('tier', None)
+
+
+class SkuCost(Model):
+    """The metadata for retrieving price info.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar meter_id: Used for querying price from commerce.
+    :vartype meter_id: str
+    :ivar quantity: The cost quantity.
+    :vartype quantity: long
+    :ivar extended_unit: Restriction of the SKU for the location/zone
+    :vartype extended_unit: str
+    """
+
+    _validation = {
+        'meter_id': {'readonly': True},
+        'quantity': {'readonly': True},
+        'extended_unit': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'meter_id': {'key': 'meterId', 'type': 'str'},
+        'quantity': {'key': 'quantity', 'type': 'long'},
+        'extended_unit': {'key': 'extendedUnit', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SkuCost, self).__init__(**kwargs)
+        self.meter_id = None
+        self.quantity = None
+        self.extended_unit = None
+
+
+class SkuLocationInfo(Model):
+    """The location info.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar location: The location.
+    :vartype location: str
+    :ivar zones: The zones.
+    :vartype zones: list[str]
+    :ivar sites: The sites.
+    :vartype sites: list[str]
+    """
+
+    _validation = {
+        'location': {'readonly': True},
+        'zones': {'readonly': True},
+        'sites': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+        'sites': {'key': 'sites', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SkuLocationInfo, self).__init__(**kwargs)
+        self.location = None
+        self.zones = None
+        self.sites = None
+
+
+class SkuRestriction(Model):
+    """The restrictions because of which SKU cannot be used.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The type of the restriction.
+    :vartype type: str
+    :ivar values: The locations where sku is restricted.
+    :vartype values: list[str]
+    :ivar reason_code: The SKU restriction reason. Possible values include:
+     'NotAvailableForSubscription', 'QuotaId'
+    :vartype reason_code: str or
+     ~azure.mgmt.databoxedge.models.SkuRestrictionReasonCode
+    :ivar restriction_info: Restriction of the SKU for the location/zone
+    :vartype restriction_info:
+     ~azure.mgmt.databoxedge.models.SkuRestrictionInfo
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'values': {'readonly': True},
+        'reason_code': {'readonly': True},
+        'restriction_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'values': {'key': 'values', 'type': '[str]'},
+        'reason_code': {'key': 'reasonCode', 'type': 'str'},
+        'restriction_info': {'key': 'restrictionInfo', 'type': 'SkuRestrictionInfo'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SkuRestriction, self).__init__(**kwargs)
+        self.type = None
+        self.values = None
+        self.reason_code = None
+        self.restriction_info = None
+
+
+class SkuRestrictionInfo(Model):
+    """The restriction info with locations and zones.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar locations: The locations.
+    :vartype locations: list[str]
+    :ivar zones: The zones.
+    :vartype zones: list[str]
+    """
+
+    _validation = {
+        'locations': {'readonly': True},
+        'zones': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'locations': {'key': 'locations', 'type': '[str]'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SkuRestrictionInfo, self).__init__(**kwargs)
+        self.locations = None
+        self.zones = None
+
+
+class StorageAccount(ARMBaseModel):
+    """Represents a Storage Account on the  Data Box Edge/Gateway device.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The path ID that uniquely identifies the object.
+    :vartype id: str
+    :ivar name: The object name.
+    :vartype name: str
+    :ivar type: The hierarchical type of the object.
+    :vartype type: str
+    :param description: Description for the storage Account.
+    :type description: str
+    :param storage_account_status: Current status of the storage account.
+     Possible values include: 'OK', 'Offline', 'Unknown', 'Updating',
+     'NeedsAttention'
+    :type storage_account_status: str or
+     ~azure.mgmt.databoxedge.models.StorageAccountStatus
+    :param data_policy: Data policy of the storage Account. Possible values
+     include: 'Cloud', 'Local'
+    :type data_policy: str or ~azure.mgmt.databoxedge.models.DataPolicy
+    :param storage_account_credential_id: Storage Account Credential Id
+    :type storage_account_credential_id: str
+    :ivar blob_endpoint: BlobEndpoint of Storage Account
+    :vartype blob_endpoint: str
+    :ivar container_count: The Container Count. Present only for Storage
+     Accounts with DataPolicy set to Cloud.
+    :vartype container_count: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'blob_endpoint': {'readonly': True},
+        'container_count': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'storage_account_status': {'key': 'properties.storageAccountStatus', 'type': 'str'},
+        'data_policy': {'key': 'properties.dataPolicy', 'type': 'str'},
+        'storage_account_credential_id': {'key': 'properties.storageAccountCredentialId', 'type': 'str'},
+        'blob_endpoint': {'key': 'properties.blobEndpoint', 'type': 'str'},
+        'container_count': {'key': 'properties.containerCount', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StorageAccount, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.storage_account_status = kwargs.get('storage_account_status', None)
+        self.data_policy = kwargs.get('data_policy', None)
+        self.storage_account_credential_id = kwargs.get('storage_account_credential_id', None)
+        self.blob_endpoint = None
+        self.container_count = None
 
 
 class StorageAccountCredential(ARMBaseModel):
@@ -2390,36 +2730,40 @@ class UploadCertificateRequest(Model):
 class UploadCertificateResponse(Model):
     """The upload registration certificate response.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     :param auth_type: Specifies authentication type. Possible values include:
      'Invalid', 'AzureActiveDirectory'
     :type auth_type: str or ~azure.mgmt.databoxedge.models.AuthenticationType
-    :param resource_id: Required. The resource ID of the Data Box Edge/Gateway
-     device.
-    :type resource_id: str
-    :param aad_authority: Required. Azure Active Directory tenant authority.
-    :type aad_authority: str
-    :param aad_tenant_id: Required. Azure Active Directory tenant ID.
-    :type aad_tenant_id: str
-    :param service_principal_client_id: Required. Azure Active Directory
-     service principal client ID.
-    :type service_principal_client_id: str
-    :param service_principal_object_id: Required. Azure Active Directory
-     service principal object ID.
-    :type service_principal_object_id: str
-    :param azure_management_endpoint_audience: Required. The azure management
-     endpoint audience.
-    :type azure_management_endpoint_audience: str
+    :ivar resource_id: The resource ID of the Data Box Edge/Gateway device.
+    :vartype resource_id: str
+    :ivar aad_authority: Azure Active Directory tenant authority.
+    :vartype aad_authority: str
+    :ivar aad_tenant_id: Azure Active Directory tenant ID.
+    :vartype aad_tenant_id: str
+    :ivar service_principal_client_id: Azure Active Directory service
+     principal client ID.
+    :vartype service_principal_client_id: str
+    :ivar service_principal_object_id: Azure Active Directory service
+     principal object ID.
+    :vartype service_principal_object_id: str
+    :ivar azure_management_endpoint_audience: The azure management endpoint
+     audience.
+    :vartype azure_management_endpoint_audience: str
+    :ivar aad_audience: Identifier of the target resource that is the
+     recipient of the requested token.
+    :vartype aad_audience: str
     """
 
     _validation = {
-        'resource_id': {'required': True},
-        'aad_authority': {'required': True},
-        'aad_tenant_id': {'required': True},
-        'service_principal_client_id': {'required': True},
-        'service_principal_object_id': {'required': True},
-        'azure_management_endpoint_audience': {'required': True},
+        'resource_id': {'readonly': True},
+        'aad_authority': {'readonly': True},
+        'aad_tenant_id': {'readonly': True},
+        'service_principal_client_id': {'readonly': True},
+        'service_principal_object_id': {'readonly': True},
+        'azure_management_endpoint_audience': {'readonly': True},
+        'aad_audience': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2430,17 +2774,19 @@ class UploadCertificateResponse(Model):
         'service_principal_client_id': {'key': 'servicePrincipalClientId', 'type': 'str'},
         'service_principal_object_id': {'key': 'servicePrincipalObjectId', 'type': 'str'},
         'azure_management_endpoint_audience': {'key': 'azureManagementEndpointAudience', 'type': 'str'},
+        'aad_audience': {'key': 'aadAudience', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(UploadCertificateResponse, self).__init__(**kwargs)
         self.auth_type = kwargs.get('auth_type', None)
-        self.resource_id = kwargs.get('resource_id', None)
-        self.aad_authority = kwargs.get('aad_authority', None)
-        self.aad_tenant_id = kwargs.get('aad_tenant_id', None)
-        self.service_principal_client_id = kwargs.get('service_principal_client_id', None)
-        self.service_principal_object_id = kwargs.get('service_principal_object_id', None)
-        self.azure_management_endpoint_audience = kwargs.get('azure_management_endpoint_audience', None)
+        self.resource_id = None
+        self.aad_authority = None
+        self.aad_tenant_id = None
+        self.service_principal_client_id = None
+        self.service_principal_object_id = None
+        self.azure_management_endpoint_audience = None
+        self.aad_audience = None
 
 
 class User(ARMBaseModel):
@@ -2449,6 +2795,8 @@ class User(ARMBaseModel):
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar id: The path ID that uniquely identifies the object.
     :vartype id: str
@@ -2463,12 +2811,16 @@ class User(ARMBaseModel):
      This field should not be specified during user creation.
     :type share_access_rights:
      list[~azure.mgmt.databoxedge.models.ShareAccessRight]
+    :param user_type: Required. Type of the user. Possible values include:
+     'Share', 'LocalManagement', 'ARM'
+    :type user_type: str or ~azure.mgmt.databoxedge.models.UserType
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'user_type': {'required': True},
     }
 
     _attribute_map = {
@@ -2477,12 +2829,14 @@ class User(ARMBaseModel):
         'type': {'key': 'type', 'type': 'str'},
         'encrypted_password': {'key': 'properties.encryptedPassword', 'type': 'AsymmetricEncryptedSecret'},
         'share_access_rights': {'key': 'properties.shareAccessRights', 'type': '[ShareAccessRight]'},
+        'user_type': {'key': 'properties.userType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         self.encrypted_password = kwargs.get('encrypted_password', None)
         self.share_access_rights = kwargs.get('share_access_rights', None)
+        self.user_type = kwargs.get('user_type', None)
 
 
 class UserAccessRight(Model):
