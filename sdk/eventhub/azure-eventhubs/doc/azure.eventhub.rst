@@ -80,10 +80,6 @@ azure.eventhub package
         :members:
         :undoc-members:
 
-    .. autoclass:: azure.eventhub.OwnershipLostError
-        :members:
-        :undoc-members:
-
 
 Subpackages
 -----------
