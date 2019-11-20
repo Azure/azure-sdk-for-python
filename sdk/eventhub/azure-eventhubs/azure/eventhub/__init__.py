@@ -26,10 +26,6 @@ from .exceptions import (
     ConnectionLostError
 )
 
-
-
-
-
 TransportType = constants.TransportType
 
 __all__ = [
