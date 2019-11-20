@@ -43,6 +43,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
 
         # Receive parameters
         self._owner_level = kwargs.get("owner_level", None)
+        if self._partition_manager and self._owner_level is None:
+            self._owner_level = 0
         self._prefetch = kwargs.get("prefetch", None)
         self._track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
         self._last_enqueued_event_properties = {}

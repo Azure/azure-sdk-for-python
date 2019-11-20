@@ -53,6 +53,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         self._tasks = {}  # type: Dict[str, asyncio.Task]
         self._partition_contexts = {}  # type: Dict[str, PartitionContext]
         self._owner_level = owner_level
+        if self._partition_manager and self._owner_level is None:
+            self._owner_level = 0
         self._prefetch = prefetch
         self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
         self._last_enqueued_event_properties = {}  # type: Dict[str, Dict[str, Any]]
