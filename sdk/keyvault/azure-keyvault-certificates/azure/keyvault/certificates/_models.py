@@ -377,8 +377,8 @@ class CertificateOperation(object):
     """A certificate operation is returned in case of asynchronous requests.
 
     :param str cert_operation_id: The certificate id.
-    :param str issuer_name: Name of the operation's issuer object or reserved names;
-        for example, 'Self' or 'Unknown
+    :param issuer_name: Name of the operation's issuer object or reserved names.
+    :type issuer_name: str or ~azure.keyvault.certificates.WellKnownIssuerNames
     :param str certificate_type: Type of certificate requested from the issuer provider.
     :param bool certificate_transparency: Indicates if the certificate this operation is
         running for is published to certificate transparency logs.
@@ -397,7 +397,7 @@ class CertificateOperation(object):
     def __init__(
         self,
         cert_operation_id=None,  # type: Optional[str]
-        issuer_name=None,  # type: Optional[str]
+        issuer_name=None,  # type: Optional[Union[str, WellKnownIssuerNames]]
         certificate_type=None,  # type: Optional[str]
         certificate_transparency=False,  # type: Optional[bool]
         csr=None,  # type: Optional[bytes]
