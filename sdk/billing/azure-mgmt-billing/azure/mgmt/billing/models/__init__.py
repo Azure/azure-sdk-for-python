@@ -75,9 +75,9 @@ try:
     from .billing_role_assignment_py3 import BillingRoleAssignment
     from .billing_role_assignment_list_result_py3 import BillingRoleAssignmentListResult
     from .billing_permissions_properties_py3 import BillingPermissionsProperties
-    from .billing_permissions_list_result_py3 import BillingPermissionsListResult
     from .billing_role_definition_py3 import BillingRoleDefinition
     from .billing_role_definition_list_result_py3 import BillingRoleDefinitionListResult
+    from .billing_permissions_list_result_py3 import BillingPermissionsListResult
     from .participants_py3 import Participants
     from .agreement_py3 import Agreement
     from .agreement_list_result_py3 import AgreementListResult
@@ -151,9 +151,9 @@ except (SyntaxError, ImportError):
     from .billing_role_assignment import BillingRoleAssignment
     from .billing_role_assignment_list_result import BillingRoleAssignmentListResult
     from .billing_permissions_properties import BillingPermissionsProperties
-    from .billing_permissions_list_result import BillingPermissionsListResult
     from .billing_role_definition import BillingRoleDefinition
     from .billing_role_definition_list_result import BillingRoleDefinitionListResult
+    from .billing_permissions_list_result import BillingPermissionsListResult
     from .participants import Participants
     from .agreement import Agreement
     from .agreement_list_result import AgreementListResult
@@ -264,9 +264,9 @@ __all__ = [
     'BillingRoleAssignment',
     'BillingRoleAssignmentListResult',
     'BillingPermissionsProperties',
-    'BillingPermissionsListResult',
     'BillingRoleDefinition',
     'BillingRoleDefinitionListResult',
+    'BillingPermissionsListResult',
     'Participants',
     'Agreement',
     'AgreementListResult',

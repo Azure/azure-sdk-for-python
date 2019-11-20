@@ -67,6 +67,7 @@ class AgreementType(str, Enum):
     microsoft_customer_agreement = "MicrosoftCustomerAgreement"
     enterprise_agreement = "EnterpriseAgreement"
     microsoft_online_services_program = "MicrosoftOnlineServicesProgram"
+    microsoft_partner_agreement = "MicrosoftPartnerAgreement"
 
 
 class CustomerType(str, Enum):

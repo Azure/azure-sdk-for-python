@@ -37,7 +37,7 @@ class TransactionsOperations(object):
         self.config = config
 
     def list_by_customer(
-            self, billing_account_name, customer_name, start_date, end_date, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, customer_name, period_start_date, period_end_date, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists the transactions by customer id for given start date and end
         date.
 
@@ -45,10 +45,10 @@ class TransactionsOperations(object):
         :type billing_account_name: str
         :param customer_name: Customer name.
         :type customer_name: str
-        :param start_date: Start date
-        :type start_date: str
-        :param end_date: End date
-        :type end_date: str
+        :param period_start_date: Start date
+        :type period_start_date: str
+        :param period_end_date: End date
+        :type period_end_date: str
         :param filter: May be used to filter by transaction kind. The filter
          supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not
          currently support 'ne', 'or', or 'not'. Tag filter is a key value pair
@@ -79,8 +79,8 @@ class TransactionsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                query_parameters['startDate'] = self._serialize.query("start_date", start_date, 'str')
-                query_parameters['endDate'] = self._serialize.query("end_date", end_date, 'str')
+                query_parameters['periodStartDate'] = self._serialize.query("period_start_date", period_start_date, 'str')
+                query_parameters['periodEndDate'] = self._serialize.query("period_end_date", period_end_date, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
@@ -119,16 +119,16 @@ class TransactionsOperations(object):
     list_by_customer.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/customers/{customerName}/transactions'}
 
     def list_by_billing_account(
-            self, billing_account_name, start_date, end_date, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, period_start_date, period_end_date, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists the transactions by billing account name for given start and end
         date.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
-        :param start_date: Start date
-        :type start_date: str
-        :param end_date: End date
-        :type end_date: str
+        :param period_start_date: Start date
+        :type period_start_date: str
+        :param period_end_date: End date
+        :type period_end_date: str
         :param filter: May be used to filter by transaction kind. The filter
          supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not
          currently support 'ne', 'or', or 'not'. Tag filter is a key value pair
@@ -158,8 +158,8 @@ class TransactionsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                query_parameters['startDate'] = self._serialize.query("start_date", start_date, 'str')
-                query_parameters['endDate'] = self._serialize.query("end_date", end_date, 'str')
+                query_parameters['periodStartDate'] = self._serialize.query("period_start_date", period_start_date, 'str')
+                query_parameters['periodEndDate'] = self._serialize.query("period_end_date", period_end_date, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
@@ -198,7 +198,7 @@ class TransactionsOperations(object):
     list_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/transactions'}
 
     def list_by_billing_profile(
-            self, billing_account_name, billing_profile_name, start_date, end_date, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, period_start_date, period_end_date, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists the transactions by billing profile name for given start date and
         end date.
 
@@ -206,10 +206,10 @@ class TransactionsOperations(object):
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
-        :param start_date: Start date
-        :type start_date: str
-        :param end_date: End date
-        :type end_date: str
+        :param period_start_date: Start date
+        :type period_start_date: str
+        :param period_end_date: End date
+        :type period_end_date: str
         :param filter: May be used to filter by transaction kind. The filter
          supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not
          currently support 'ne', 'or', or 'not'. Tag filter is a key value pair
@@ -237,8 +237,8 @@ class TransactionsOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        query_parameters['startDate'] = self._serialize.query("start_date", start_date, 'str')
-        query_parameters['endDate'] = self._serialize.query("end_date", end_date, 'str')
+        query_parameters['periodStartDate'] = self._serialize.query("period_start_date", period_start_date, 'str')
+        query_parameters['periodEndDate'] = self._serialize.query("period_end_date", period_end_date, 'str')
         if filter is not None:
             query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
@@ -272,7 +272,7 @@ class TransactionsOperations(object):
     list_by_billing_profile.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/transactions'}
 
     def list_by_invoice_section(
-            self, billing_account_name, billing_profile_name, invoice_section_name, start_date, end_date, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, invoice_section_name, period_start_date, period_end_date, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists the transactions by invoice section name for given start date and
         end date.
 
@@ -282,10 +282,10 @@ class TransactionsOperations(object):
         :type billing_profile_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
-        :param start_date: Start date
-        :type start_date: str
-        :param end_date: End date
-        :type end_date: str
+        :param period_start_date: Start date
+        :type period_start_date: str
+        :param period_end_date: End date
+        :type period_end_date: str
         :param filter: May be used to filter by transaction kind. The filter
          supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not
          currently support 'ne', 'or', or 'not'. Tag filter is a key value pair
@@ -314,8 +314,8 @@ class TransactionsOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        query_parameters['startDate'] = self._serialize.query("start_date", start_date, 'str')
-        query_parameters['endDate'] = self._serialize.query("end_date", end_date, 'str')
+        query_parameters['periodStartDate'] = self._serialize.query("period_start_date", period_start_date, 'str')
+        query_parameters['periodEndDate'] = self._serialize.query("period_end_date", period_end_date, 'str')
         if filter is not None:
             query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
@@ -349,7 +349,7 @@ class TransactionsOperations(object):
     list_by_invoice_section.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/transactions'}
 
     def get(
-            self, billing_account_name, billing_profile_name, transaction_name, start_date, end_date, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, transaction_name, period_start_date, period_end_date, custom_headers=None, raw=False, **operation_config):
         """Get the transaction.
 
         :param billing_account_name: billing Account Id.
@@ -358,10 +358,10 @@ class TransactionsOperations(object):
         :type billing_profile_name: str
         :param transaction_name: Transaction name.
         :type transaction_name: str
-        :param start_date: Start date
-        :type start_date: str
-        :param end_date: End date
-        :type end_date: str
+        :param period_start_date: Start date
+        :type period_start_date: str
+        :param period_end_date: End date
+        :type period_end_date: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -384,8 +384,8 @@ class TransactionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['startDate'] = self._serialize.query("start_date", start_date, 'str')
-        query_parameters['endDate'] = self._serialize.query("end_date", end_date, 'str')
+        query_parameters['periodStartDate'] = self._serialize.query("period_start_date", period_start_date, 'str')
+        query_parameters['periodEndDate'] = self._serialize.query("period_end_date", period_end_date, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
