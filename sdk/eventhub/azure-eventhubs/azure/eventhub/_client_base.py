@@ -137,9 +137,19 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             host = address
 
         if consumer_group:  # Only consumer has the consumer_group arg
-            return cls(host, entity, consumer_group, EventHubSharedKeyCredential(policy, key), **kwargs)
-        else:
-            return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
+            return cls(  # pylint:disable=too-many-function-args
+                host,
+                entity,
+                consumer_group,
+                EventHubSharedKeyCredential(policy, key),
+                **kwargs
+            )
+        return cls(
+            host,
+            entity,
+            EventHubSharedKeyCredential(policy, key),
+            **kwargs
+        )
 
     def _create_auth(self):
         """
