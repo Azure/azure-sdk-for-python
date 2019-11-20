@@ -37,9 +37,9 @@ except ImportError:
     from cStringIO import StringIO as BytesIO
 import pytest
 
-from azure.core.exceptions import DecodeError
-from azure.core.configuration import Configuration
+from azure.core.exceptions import DecodeError, AzureError
 from azure.core.pipeline import (
+    Pipeline,
     PipelineResponse,
     PipelineRequest,
     PipelineContext
@@ -57,6 +57,7 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     RequestHistory,
     RetryPolicy,
+    HTTPPolicy,
 )
 
 def test_user_agent():
@@ -175,6 +176,16 @@ def test_retry_seekable_body():
     }
     increment = http_retry.increment(setting, response)
     assert increment
+
+def test_retry_without_http_response():
+    class NaughtyPolicy(HTTPPolicy):
+        def send(*args):
+            raise AzureError('boo')
+
+    policies = [RetryPolicy(), NaughtyPolicy()]
+    pipeline = Pipeline(policies=policies, transport=None)
+    with pytest.raises(AzureError):
+        pipeline.run(HttpRequest('GET', url='https://foo.bar'))
 
 def test_raw_deserializer():
     raw_deserializer = ContentDecodePolicy()

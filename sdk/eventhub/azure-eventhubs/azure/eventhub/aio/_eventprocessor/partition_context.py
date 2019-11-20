@@ -4,7 +4,7 @@
 # -----------------------------------------------------------------------------------
 
 import logging
-from .partition_manager import PartitionManager
+from .checkpoint_store import CheckpointStore
 from ..._utils import get_last_enqueued_event_properties
 
 _LOGGER = logging.getLogger(__name__)
@@ -15,14 +15,14 @@ class PartitionContext(object):
 
     Users can use update_checkpoint() of this class to save checkpoint data.
     """
-    def __init__(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group_name: str,
-                 partition_id: str, partition_manager: PartitionManager = None) -> None:
+    def __init__(self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str,
+                 partition_id: str, checkpoint_store: CheckpointStore = None):
         self.fully_qualified_namespace = fully_qualified_namespace
         self.partition_id = partition_id
         self.eventhub_name = eventhub_name
-        self.consumer_group_name = consumer_group_name
+        self.consumer_group = consumer_group
         self._last_received_event = None
-        self._partition_manager = partition_manager
+        self._checkpoint_store = checkpoint_store
 
     @property
     def last_enqueued_event_properties(self):
@@ -51,13 +51,13 @@ class PartitionContext(object):
          sequence number information used for checkpoint.
         :rtype: None
         """
-        if self._partition_manager:
-            await self._partition_manager.update_checkpoint(
-                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name,
+        if self._checkpoint_store:
+            await self._checkpoint_store.update_checkpoint(
+                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group,
                 self.partition_id, event.offset, event.sequence_number
             )
         else:
-            _LOGGER.info(
+            _LOGGER.warning(
                 "namespace %r, eventhub %r, consumer_group %r, partition_id %r "
-                "update_checkpoint is called without partition manager. No checkpoint is updated.",
-                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group_name, self.partition_id)
+                "update_checkpoint is called without checkpoint store. No checkpoint is updated.",
+                self.fully_qualified_namespace, self.eventhub_name, self.consumer_group, self.partition_id)

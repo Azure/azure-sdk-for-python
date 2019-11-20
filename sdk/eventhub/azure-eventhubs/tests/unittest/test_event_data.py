@@ -18,7 +18,7 @@ def test_constructor(test_input, expected_result):
         event_data = EventData(test_input)
         assert event_data.body_as_str() == expected_result
         assert event_data.partition_key is None
-        assert len(event_data.application_properties) == 0
+        assert len(event_data.properties) == 0
         assert event_data.enqueued_time is None
         assert event_data.offset is None
         assert event_data.sequence_number is None
@@ -42,8 +42,8 @@ def test_body_wrong_json():
 def test_app_properties():
     app_props = {"a": "b"}
     event_data = EventData("")
-    event_data.application_properties = app_props
-    assert event_data.application_properties["a"] == "b"
+    event_data.properties = app_props
+    assert event_data.properties["a"] == "b"
 
 
 def test_event_data_batch():

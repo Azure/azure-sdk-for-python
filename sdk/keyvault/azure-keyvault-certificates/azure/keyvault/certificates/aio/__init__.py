@@ -3,6 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from .client import CertificateClient
+from ._client import CertificateClient
 
 __all__ = ["CertificateClient"]

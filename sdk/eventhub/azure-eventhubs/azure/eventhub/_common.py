@@ -63,7 +63,7 @@ class EventData(object):
             body = "<read-error>"
         message_as_dict = {
             'body': body,
-            'application_properties': str(self.application_properties)
+            'application_properties': str(self.properties)
         }
         try:
             if self.sequence_number:
@@ -137,7 +137,7 @@ class EventData(object):
             return self.message.annotations.get(PROP_PARTITION_KEY, None)
 
     @property
-    def application_properties(self):
+    def properties(self):
         """
         Application defined properties on the message.
 
@@ -145,8 +145,8 @@ class EventData(object):
         """
         return self.message.application_properties
 
-    @application_properties.setter
-    def application_properties(self, value):
+    @properties.setter
+    def properties(self, value):
         """
         Application defined properties on the message.
 

@@ -104,15 +104,17 @@ _Address = collections.namedtuple('Address', 'hostname path')
 
 
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
-    def __init__(self, host, event_hub_path, credential, **kwargs):
-        self.eh_name = event_hub_path
-        path = "/" + event_hub_path if event_hub_path else ""
-        self._address = _Address(hostname=host, path=path)
+    def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
+        self.eventhub_name = eventhub_name
+        if not eventhub_name:
+            raise ValueError("The eventhub name can not be None or empty.")
+        path = "/" + eventhub_name if eventhub_name else ""
+        self._address = _Address(hostname=fully_qualified_namespace, path=path)
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._credential = credential
         self._keep_alive = kwargs.get("keep_alive", 30)
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
-        self._mgmt_target = "amqps://{}/{}".format(self._address.hostname, self.eh_name)
+        self._mgmt_target = "amqps://{}/{}".format(self._address.hostname, self.eventhub_name)
         self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
         self._config = Configuration(**kwargs)
         self._debug = self._config.network_tracing
@@ -126,15 +128,30 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
-        event_hub_path = kwargs.pop("event_hub_path", None)
+        eventhub_name = kwargs.pop("eventhub_name", None)
+        consumer_group = kwargs.pop("consumer_group", None)
         address, policy, key, entity = _parse_conn_str(conn_str)
-        entity = event_hub_path or entity
+        entity = eventhub_name or entity
         left_slash_pos = address.find("//")
         if left_slash_pos != -1:
             host = address[left_slash_pos + 2:]
         else:
             host = address
-        return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
+
+        if consumer_group:  # Only consumer has the consumer_group arg
+            return cls(  # pylint:disable=too-many-function-args
+                host,
+                entity,
+                consumer_group,
+                EventHubSharedKeyCredential(policy, key),
+                **kwargs
+            )
+        return cls(
+            host,
+            entity,
+            EventHubSharedKeyCredential(policy, key),
+            **kwargs
+        )
 
     def _create_auth(self):
         """
@@ -221,25 +238,25 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         span.add_attribute("message_bus.destination", self._address.path)
         span.add_attribute("peer.address", self._address.hostname)
 
-    def get_properties(self):
+    def get_eventhub_properties(self):
         # type:() -> Dict[str, Any]
         """Get properties of the EventHub.
 
         Keys in the returned dictionary include:
 
-            - path
+            - eventhub_name
             - created_at
             - partition_ids
 
         :rtype: dict
         :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
-        mgmt_msg = Message(application_properties={'name': self.eh_name})
+        mgmt_msg = Message(application_properties={'name': self.eventhub_name})
         response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
         output = {}
         eh_info = response.get_data()
         if eh_info:
-            output['path'] = eh_info[b'name'].decode('utf-8')
+            output['eventhub_name'] = eh_info[b'name'].decode('utf-8')
             output['created_at'] = utc_from_timestamp(float(eh_info[b'created_at']) / 1000)
             output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
         return output
@@ -252,15 +269,15 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         :rtype: list[str]
         :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
-        return self.get_properties()['partition_ids']
+        return self.get_eventhub_properties()['partition_ids']
 
-    def get_partition_properties(self, partition):
+    def get_partition_properties(self, partition_id):
         # type:(str) -> Dict[str, Any]
         """Get properties of the specified partition.
 
         Keys in the details dictionary include:
 
-            - event_hub_path
+            - eventhub_name
             - id
             - beginning_sequence_number
             - last_enqueued_sequence_number
@@ -268,18 +285,18 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             - last_enqueued_time_utc
             - is_empty
 
-        :param partition: The target partition id.
-        :type partition: str
+        :param partition_id: The target partition id.
+        :type partition_id: str
         :rtype: dict
         :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
-        mgmt_msg = Message(application_properties={'name': self.eh_name,
-                                                   'partition': partition})
+        mgmt_msg = Message(application_properties={'name': self.eventhub_name,
+                                                   'partition': partition_id})
         response = self._management_request(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
         partition_info = response.get_data()
         output = {}
         if partition_info:
-            output['event_hub_path'] = partition_info[b'name'].decode('utf-8')
+            output['eventhub_name'] = partition_info[b'name'].decode('utf-8')
             output['id'] = partition_info[b'partition'].decode('utf-8')
             output['beginning_sequence_number'] = partition_info[b'begin_sequence_number']
             output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']

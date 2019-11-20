@@ -385,3 +385,7 @@ def test_recursive_multipart_receive():
 
     internal_response0 = internal_response[0]
     assert internal_response0.status_code == 400
+
+def test_close_unopened_transport():
+    transport = RequestsTransport()
+    transport.close()

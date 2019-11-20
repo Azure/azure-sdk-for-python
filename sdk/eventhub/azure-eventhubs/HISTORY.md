@@ -1,9 +1,17 @@
 # Release History
 
-## 2019-11-04 5.0.0b6
+## 2019-12-03 5.0.0b6
 
 **Breaking changes**
 
+- `EventData`
+    - Renamed property `application_properties` to `properties`.
+- `EventHubConsumerClient` and `EventHubProducerClient`
+    - Renamed method `get_properties` to `get_eventhub_properties`.
+    - Renamed parameters in constructor: `host` to `fully_qualified_namespace`, `event_hub_path` to `eventhub_name`.
+    - Renamed parameters in `get_partition_properties`: `partition` to `partition_id`.
+- Moved `consumer_group` parameter from `receive` method to the constructor of `EventHubConsumerClient`.
+- Renamed module `PartitionManager` to `CheckpointStore`.
 - Removed class `EventPostition`.
     - The `initial_event_position` parameter of the `receive` method accepts offset(`str`), sequence number(`int`), datetime (`datetime.datetime`) or `dict` of these types.
     - The `initial_event_position_inclusive` parameter of the `receive` method accepts `bool` or `dict` indicating whether the given event position is inclusive or not.

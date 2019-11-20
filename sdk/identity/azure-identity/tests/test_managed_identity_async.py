@@ -136,7 +136,7 @@ async def test_app_service_user_assigned_identity():
                 url,
                 method="GET",
                 required_headers={"Metadata": "true", "secret": secret},
-                required_params={"api-version": "2017-09-01", "client_id": client_id, "resource": scope},
+                required_params={"api-version": "2017-09-01", "clientid": client_id, "resource": scope},
             )
         ],
         responses=[

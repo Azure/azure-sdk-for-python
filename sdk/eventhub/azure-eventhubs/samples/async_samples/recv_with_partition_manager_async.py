@@ -16,7 +16,7 @@ import asyncio
 import os
 from azure.storage.blob.aio import ContainerClient
 from azure.eventhub.aio import EventHubConsumerClient
-from azure.eventhub.extensions.checkpointstoreblobaio import BlobPartitionManager
+from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
