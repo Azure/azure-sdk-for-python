@@ -1,10 +1,21 @@
+#!/usr/bin/env python
+
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
+# Below are common methods for the devops build steps. This is the common location that will be updated with
+# package targeting during release.
+
 import argparse
 from os import path
 from packaging.version import parse
 
 from version_shared import get_packages, set_version_py, set_dev_classifier
 
-DEFAULT_SDK_PATH = "../../sdk/"
+root_dir = path.abspath(path.join(path.abspath(__file__), "..", "..", ".."))
+
 MAX_R_DIGITS = 3
 
 def format_build_id(build_id):
@@ -17,7 +28,7 @@ def format_build_id(build_id):
 def get_dev_version(current_version, build_id):
     parsed_version = parse(current_version)
     release = parsed_version.release
-    return f"{release[0]}.{release[1]}.{release[2]}.dev{build_id}"
+    return "{0}.{1}.{2}.dev{3}".format(release[0], release[1], release[2], build_id)
 
 def is_in_service(sdk_path, setup_py_location, service_name):
     sdk_prefix = path.normpath(sdk_path)
@@ -27,28 +38,38 @@ def is_in_service(sdk_path, setup_py_location, service_name):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Increments version for a given package name based on the released version')
-    parser.add_argument('--sdk-path', default=DEFAULT_SDK_PATH, help='path to the sdk folder')
-    parser.add_argument('--service-name', required=True, help='name of the service for which to set the dev build id (e.g. keyvault)')
-    parser.add_argument('--build-id', required=True, help='id of the build (generally of the form YYYYMMDD.r) dot characters(.) will be removed')
+
+    parser.add_argument(
+        "glob_string",
+        nargs="?",
+        help=(
+            "A comma separated list of glob strings that will target the top level directories that contain packages."
+            'Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'
+        ),
+    )
+
+    parser.add_argument('--service', help='name of the service for which to set the dev build id (e.g. keyvault)')
+    parser.add_argument("-b", '--build-id', required=True, help='id of the build (generally of the form YYYYMMDD.r) dot characters(.) will be removed')
 
     args = parser.parse_args()
 
-    service_name = args.service_name.replace('_', '-')
+    if args.service:
+        target_dir = path.join(root_dir, "sdk", args.service)
+    else:
+        target_dir = path.join(root_dir, "sdk")
+
+    target_packages = get_packages(args.glob_string, target_dir)
     build_id = format_build_id(args.build_id)
-    sdk_path = args.sdk_path
-
-    packages = get_packages(sdk_path)
-    target_packages = [pkg for pkg in packages if is_in_service(sdk_path, pkg[0], service_name)]
-
+    
     if not target_packages:
-        print(f"No packages found for service {service_name}")
+        print("No packages found")
 
     for target_package in target_packages:
         try:
             new_version = get_dev_version(target_package[1][1], build_id)
-            print(f'{target_package[1][0]}: {target_package[1][1]} -> {new_version}')
+            print('{0}: {1} -> {2}'.format(target_package[1][0], target_package[1][1], new_version))
 
             set_version_py(target_package[0], new_version)
             set_dev_classifier(target_package[0], new_version)
         except:
-            print(f'Could not set dev version for package: {target_package[1][0]}')
+            print('Could not set dev version for package: {0}'.format(target_package[1][0]))

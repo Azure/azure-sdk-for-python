@@ -1,9 +1,19 @@
+#!/usr/bin/env python
+
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
+# Below are common methods for the devops build steps. This is the common location that will be updated with
+# package targeting during release.
+import os
 import argparse
 from packaging.version import parse
 
 from version_shared import get_packages, set_version_py, set_dev_classifier
 
-DEFAULT_SDK_PATH = "../../sdk/"
+root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
 def increment_version(old_version):
     parsed_version = parse(old_version)
@@ -17,14 +27,27 @@ def increment_version(old_version):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Increments version for a given package name based on the released version')
-    parser.add_argument('--sdk-path', default=DEFAULT_SDK_PATH, help='path to the sdk folder')
     parser.add_argument('--package-name', required=True, help='name of package (accetps both formats: azure-service-package and azure_service_pacage)')
-
+    parser.add_argument(
+        "glob_string",
+        nargs="?",
+        help=(
+            "A comma separated list of glob strings that will target the top level directories that contain packages."
+            'Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'
+        ),
+    )
+    parser.add_argument('--service', help='name of the service for which to set the dev build id (e.g. keyvault)')
     args = parser.parse_args()
 
     package_name = args.package_name.replace('_', '-')
 
-    packages = get_packages(args.sdk_path)
+    if args.service:
+        target_dir = os.path.join(root_dir, "sdk", args.service)
+    else:
+        target_dir = os.path.join(root_dir, "sdk")
+
+    packages = get_packages(args.glob_string, target_dir)
+
     package_map = { pkg[1][0]: pkg for pkg in packages }
 
     if package_name not in package_map:

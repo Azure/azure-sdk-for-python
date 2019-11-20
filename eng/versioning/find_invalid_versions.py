@@ -1,3 +1,12 @@
+#!/usr/bin/env python
+
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
+# Below are common methods for the devops build steps. This is the common location that will be updated with
+# package targeting during release.
 import argparse
 import re
 from os import path
@@ -5,19 +14,30 @@ import sys
 
 from version_shared import get_packages, get_version_py
 
-DEFAULT_SDK_PATH = "../../sdk/"
+root_dir = path.abspath(path.join(path.abspath(__file__), "..", "..", ".."))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('--sdk-path', default=DEFAULT_SDK_PATH, help='path to the sdk folder')
     parser.add_argument('--always-succeed', action='store_true', help='return exit code 0 even if incorrect versions are detected')
-    parser.add_argument('--service-directory', default='', help='name of a service directory to target packages')
+    parser.add_argument('--service-directory', help='name of a service directory to target packages')
+    parser.add_argument(
+        "glob_string",
+        nargs="?",
+        help=(
+            "A comma separated list of glob strings that will target the top level directories that contain packages."
+            'Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'
+        ),
+    )
     args = parser.parse_args()
 
     always_succeed = args.always_succeed
 
-    root_path = path.join(args.sdk_path, args.service_directory)
-    packages = get_packages(root_path)
+    if args.service_directory:
+        target_dir = path.join(root_dir, "sdk", args.service_directory)
+    else:
+        target_dir = path.join(root_dir, "sdk")
+
+    packages = get_packages(args.glob_string, target_dir)
 
     invalid_packages = []
     for package in packages:
