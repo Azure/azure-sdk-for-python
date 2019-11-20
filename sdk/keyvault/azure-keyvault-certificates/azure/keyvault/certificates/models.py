@@ -546,85 +546,74 @@ class CertificateOperation(object):
 class CertificatePolicy(object):
     """Management policy for a certificate.
 
-    :param bool exportable: Indicates if the private key can be exported. For valid values,
+    :param str issuer_name: Name of the referenced issuer object or reserved names; for example,
+        'Self' or 'Unknown"
+    :keyword str subject_name: The subject name of the certificate. Should be a valid X509
+        distinguished name. Either subject_name or one of the subject alternative name parameters
+        are required.
+    :keyword Iterable[str] san_emails: Subject alternative emails of the X509 object. Either
+        subject_name or one of the subject alternative name parameters are required.
+    :keyword Iterable[str] san_dns_names: Subject alternative DNS names of the X509 object. Either
+        subject_name or one of the subject alternative name parameters are required.
+    :keyword Iterable[str] san_upns: Subject alternative user principal names of the X509 object.
+        Either subject_name or one of the subject alternative name parameters are required.
+    :keyword bool exportable: Indicates if the private key can be exported. For valid values,
         see KeyType.
-    :param key_type: The type of key pair to be used for the certificate.
-    :type key_type: str or ~azure.keyvault.certificates.enums.KeyType
-    :param int key_size: The key size in bits. For example: 2048, 3072, or 4096
+    :keyword key_type: The type of key pair to be used for the certificate.
+    :paramtype key_type: str or ~azure.keyvault.certificates.enums.KeyType
+    :keyword int key_size: The key size in bits. For example: 2048, 3072, or 4096
         for RSA.
-    :param bool reuse_key: Indicates if the same key pair will be used on certificate
+    :keyword bool reuse_key: Indicates if the same key pair will be used on certificate
         renewal.
-    :param curve: Elliptic curve name. For valid values, see KeyCurveName.
-    :type curve: str or ~azure.keyvault.certificates.enums.KeyCurveName
-    :param ekus: The enhanced key usages.
-    :type ekus: list[str]
-    :param key_usage: List of key usages.
-    :type key_usage: list[str or ~azure.keyvault.certificates.enums.KeyUsageType]
-    :param content_type: The media type (MIME type) of the secret backing the certificate.
+    :keyword curve: Elliptic curve name. For valid values, see KeyCurveName.
+    :paramtype curve: str or ~azure.keyvault.certificates.enums.KeyCurveName
+    :keyword ekus: The enhanced key usages.
+    :paramtype ekus: list[str]
+    :keyword key_usage: List of key usages.
+    :paramtype key_usage: list[str or ~azure.keyvault.certificates.enums.KeyUsageType]
+    :keyword content_type: The media type (MIME type) of the secret backing the certificate.
         For valid values, see SecretContentType.
-    :type content_type: ~azure.keyvault.certificates.enums.SecretContentType or str
-    :param str subject_name: The subject name of the certificate. Should be a valid X509
-        distinguished name.
-    :param int validity_in_months: The duration that the certificate is valid in months.
-    :param lifetime_actions: Actions that will be performed by Key Vault over the lifetime
+    :paramtype content_type: ~azure.keyvault.certificates.enums.SecretContentType or str
+    :keyword int validity_in_months: The duration that the certificate is valid in months.
+    :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime
         of a certificate
-    :type lifetime_actions: Iterable[~azure.keyvault.certificates.LifetimeAction]
-    :param str issuer_name: Name of the referenced issuer object or reserved names.
-        :class:`~azure.keyvault.certificates.WellKnownIssuerNames` contains popular issuer names.
-    :param str certificate_type: Type of certificate to be requested from the issuer provider.
-    :param bool certificate_transparency: Indicates if the certificates generated under this policy
+    :paramtype lifetime_actions: Iterable[~azure.keyvault.certificates.LifetimeAction]
+    :keyword str certificate_type: Type of certificate to be requested from the issuer provider.
+    :keyword bool certificate_transparency: Indicates if the certificates generated under this policy
         should be published to certificate transparency logs.
-    :keyword Iterable[str] san_emails: Subject alternative emails of the X509 object. Only one out
-        of san_emails, san_dns_names, and san_upns may be set.
-    :keyword Iterable[str] san_dns_names: Subject alternative DNS names of the X509 object. Only one out
-        of san_emails, san_dns_names, and san_upns may be set.
-    :keyword Iterable[str] san_upns: Subject alternative user principal names of the X509 object. Only one out
-        of san_emails, san_dns_names, and san_upns may be set.
+
     """
 
     # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
         issuer_name,  # type: str
-        subject_name,  # type: str
-        exportable=None,  # type: Optional[bool]
-        key_type=None,  # type: Optional[KeyType]
-        key_size=None,  # type: Optional[str]
-        reuse_key=None,  # type: Optional[bool]
-        curve=None,  # type: Optional[KeyCurveName]
-        ekus=None,  # type: Optional[list[str]]
-        key_usage=None,  # type: Optional[list[Union[KeyUsageType, str]]]
-        content_type=None,  # type: Optional[Union[SecretContentType, str]]
-        validity_in_months=None,  # type: Optional[int]
-        lifetime_actions=None,  # type: Optional[list[LifetimeAction]]
-        certificate_type=None,  # type: Optional[str]
-        certificate_transparency=None,  # type: Optional[bool]
         **kwargs  # type: **Any
     ):
         # type: (...) -> None
-        self._subject_name = subject_name
-        self._attributes = kwargs.get("attributes", None)
-        self._id = kwargs.get("cert_policy_id", None)
-        self._exportable = exportable
-        self._key_type = key_type
-        self._key_size = key_size
-        self._reuse_key = reuse_key
-        self._curve = curve
-        self._ekus = ekus
-        self._key_usage = key_usage
-        self._content_type = content_type
-        self._validity_in_months = validity_in_months
-        self._lifetime_actions = lifetime_actions
         self._issuer_name = issuer_name
-        self._certificate_type = certificate_type
-        self._certificate_transparency = certificate_transparency
-        self._san_emails = kwargs.pop("san_emails", None)
-        self._san_dns_names = kwargs.pop("san_dns_names", None)
-        self._san_upns = kwargs.pop("san_upns", None)
+        self._subject_name = kwargs.pop("subject_name", None)
+        self._attributes = kwargs.pop("attributes", None)
+        self._id = kwargs.pop("cert_policy_id", None)
+        self._exportable = kwargs.pop("exportable", None)
+        self._key_type = kwargs.pop("key_type", None)
+        self._key_size = kwargs.pop("key_size", None)
+        self._reuse_key = kwargs.pop("reuse_key", None)
+        self._curve = kwargs.pop("curve", None)
+        self._ekus = kwargs.pop("ekus", None)
+        self._key_usage = kwargs.pop("key_usage", None)
+        self._content_type = kwargs.pop("content_type", None)
+        self._validity_in_months = kwargs.pop("validity_in_months", None)
+        self._lifetime_actions = kwargs.pop("lifetime_actions", None)
+        self._certificate_type = kwargs.pop("certificate_type", None)
+        self._certificate_transparency = kwargs.pop("certificate_transparency", None)
+        self._san_emails = kwargs.pop("san_emails", None) or None
+        self._san_dns_names = kwargs.pop("san_dns_names", None) or None
+        self._san_upns = kwargs.pop("san_upns", None) or None
 
-        sans = [self._san_emails, self._san_upns, self._san_dns_names]
-        if len([x for x in sans if x is not None]) > 1:
-            raise ValueError("You can only set at most one of san_emails, san_dns_names, and san_upns")
+        if not (self._san_emails or self._san_upns or self._san_dns_names or self._subject_name):
+            raise ValueError("You need to set either subject_name or one of the subject alternative names " +
+                            "parameters")
 
     @classmethod
     def get_default(cls):
@@ -700,10 +689,6 @@ class CertificatePolicy(object):
                 key_usage = [k.value if not isinstance(k, str) else k for k in self.key_usage]
             else:
                 key_usage = None
-
-            sans = [self._san_emails, self._san_upns, self._san_dns_names]
-            if len([x for x in sans if x is not None]) > 1:
-                raise ValueError("You can only set at most one of san_emails, san_dns_names, and san_upns")
 
             x509_certificate_properties = models.X509CertificateProperties(
                 subject=self.subject_name,

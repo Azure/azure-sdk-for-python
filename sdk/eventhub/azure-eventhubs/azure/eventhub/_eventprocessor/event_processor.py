@@ -23,17 +23,17 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
     in the context of a given consumer group.
 
     """
-    def __init__(self, eventhub_client, consumer_group_name, on_event, **kwargs):
-        self._consumer_group_name = consumer_group_name
+    def __init__(self, eventhub_client, consumer_group, on_event, **kwargs):
+        self._consumer_group = consumer_group
         self._eventhub_client = eventhub_client
         self._namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
-        self._eventhub_name = eventhub_client.eh_name
+        self._eventhub_name = eventhub_client.eventhub_name
         self._event_handler = on_event
         self._partition_id = kwargs.get("partition_id", None)
         self._error_handler = kwargs.get("on_error", None)
         self._partition_initialize_handler = kwargs.get("on_partition_initialize", None)
         self._partition_close_handler = kwargs.get("on_partition_close", None)
-        self._partition_manager = kwargs.get("partition_manager", None)
+        self._checkpoint_store = kwargs.get("checkpoint_store", None)
         self._initial_event_position = kwargs.get("initial_event_position", EventPosition("-1"))
 
         self._polling_interval = kwargs.get("polling_interval", 10.0)
@@ -73,10 +73,10 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                         partition_context = PartitionContext(
                             self._namespace,
                             self._eventhub_name,
-                            self._consumer_group_name,
+                            self._consumer_group,
                             partition_id,
                             self._id,
-                            self._partition_manager
+                            self._checkpoint_store
                         )
                         self._partition_contexts[partition_id] = partition_context
 
@@ -109,7 +109,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     partition_context.owner_id,
                     partition_context.eventhub_name,
                     partition_context.partition_id,
-                    partition_context.consumer_group_name,
+                    partition_context.consumer_group,
                     exp
                 )
 
@@ -126,11 +126,11 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         :return: None
 
         """
-        ownership_manager = OwnershipManager(self._eventhub_client, self._consumer_group_name, self._id,
-                                             self._partition_manager, self._ownership_timeout, self._partition_id)
+        ownership_manager = OwnershipManager(self._eventhub_client, self._consumer_group, self._id,
+                                             self._checkpoint_store, self._ownership_timeout, self._partition_id)
         while self._running:
             try:
-                checkpoints = ownership_manager.get_checkpoints() if self._partition_manager else None
+                checkpoints = ownership_manager.get_checkpoints() if self._checkpoint_store else None
                 claimed_partition_ids = ownership_manager.claim_ownership()
                 if claimed_partition_ids:
                     to_cancel_list = set(self._consumers.keys()) - set(claimed_partition_ids)
@@ -143,9 +143,9 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             except Exception as err:  # pylint:disable=broad-except
                 _LOGGER.warning("An exception (%r) occurred during balancing and claiming ownership for "
                                 "eventhub %r consumer group %r. Retrying after %r seconds",
-                                err, self._eventhub_name, self._consumer_group_name, self._polling_interval)
+                                err, self._eventhub_name, self._consumer_group, self._polling_interval)
                 # ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
-                # when there are load balancing and/or checkpointing (partition_manager isn't None).
+                # when there are load balancing and/or checkpointing (checkpoint_store isn't None).
                 # They're swallowed here to retry every self._polling_interval seconds.
                 # Meanwhile this event processor won't lose the partitions it has claimed before.
                 # If it keeps failing, other EventProcessors will start to claim ownership of the partitions
@@ -169,7 +169,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             self._partition_contexts[partition_id].owner_id,
             self._partition_contexts[partition_id].eventhub_name,
             self._partition_contexts[partition_id].partition_id,
-            self._partition_contexts[partition_id].consumer_group_name,
+            self._partition_contexts[partition_id].consumer_group,
             reason
         )
 
@@ -202,7 +202,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                         self._partition_contexts[partition_id].owner_id,
                         self._partition_contexts[partition_id].eventhub_name,
                         self._partition_contexts[partition_id].partition_id,
-                        self._partition_contexts[partition_id].consumer_group_name,
+                        self._partition_contexts[partition_id].consumer_group,
                         error
                     )
                     if self._error_handler:

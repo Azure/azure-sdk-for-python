@@ -60,5 +60,5 @@ class EnvironmentCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError:
         """
         if not self._credential:
-            raise ClientAuthenticationError(message="Incomplete environment configuration.")
+            raise ClientAuthenticationError(message="Incomplete environment configuration")
         return await self._credential.get_token(*scopes, **kwargs)

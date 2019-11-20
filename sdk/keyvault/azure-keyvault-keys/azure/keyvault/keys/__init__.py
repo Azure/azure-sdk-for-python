@@ -16,3 +16,6 @@ __all__ = [
     "DeletedKey",
     "KeyProperties",
 ]
+
+from ._version import VERSION
+__version__ = VERSION

@@ -34,3 +34,6 @@ __all__ = [
     "SharedTokenCacheCredential",
     "UsernamePasswordCredential",
 ]
+
+from ._version import VERSION
+__version__ = VERSION
