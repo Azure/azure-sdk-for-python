@@ -243,7 +243,7 @@ class EventData(object):
         except Exception as e:
             raise TypeError("Event data is not compatible with JSON type: {}".format(e))
 
-    def encode_message(self):
+    def _encode_message(self):
         return self.message.encode_message()
 
 
