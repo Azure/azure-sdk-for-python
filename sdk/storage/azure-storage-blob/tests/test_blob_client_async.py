@@ -46,7 +46,7 @@ class AiohttpTestTransport(AioHttpTransport):
 class StorageClientTestAsync(AsyncStorageTestCase):
     def setUp(self):
         super(StorageClientTestAsync, self).setUp()
-        self.sas_token = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Y%2FoUshaLLnoTPass'
+        self.sas_token = self.generate_sas_token()
         self.token_credential = self.generate_oauth_token()
 
     # --Helpers-----------------------------------------------------------------
