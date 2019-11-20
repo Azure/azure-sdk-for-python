@@ -381,7 +381,7 @@ class TextAnalyticsTest(CognitiveServiceTest):
     def test_batch_size_over_limit(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
-        docs = ["hello world"] * 1050
+        docs = [u"hello world"] * 1050
         with self.assertRaises(HttpResponseError):
             response = text_analytics.detect_language(docs)
 
