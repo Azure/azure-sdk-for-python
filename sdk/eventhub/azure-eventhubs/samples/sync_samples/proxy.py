@@ -26,7 +26,7 @@ HTTP_PROXY = {
 
 
 def on_event(partition_context, event):
-    print("received eventfrom partition: {}".format(partition_context.partition_id))
+    print("received event from partition: {}".format(partition_context.partition_id))
     # do some operations on the event
     print(event)
 

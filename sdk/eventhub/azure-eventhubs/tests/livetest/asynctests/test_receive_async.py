@@ -116,7 +116,7 @@ async def test_receive_owner_level_async(connstr_senders):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_over_websocket_async(connstr_senders):
-    pytest.skip("Waiting on uAMQP release")
+    pytest.skip("Waiting on uAMQP release on the message reading properties")
     app_prop = {"raw_prop": "raw_value"}
 
     async def on_event(partition_context, event):

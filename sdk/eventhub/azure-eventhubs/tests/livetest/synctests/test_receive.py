@@ -121,7 +121,7 @@ def test_receive_owner_level(connstr_senders):
 
 @pytest.mark.liveTest
 def test_receive_over_websocket_sync(connstr_senders):
-    pytest.skip("Waiting on uAMQP release")
+    pytest.skip("Waiting on uAMQP release on the message reading properties")
     app_prop = {"raw_prop": "raw_value"}
 
     def on_event(partition_context, event):
