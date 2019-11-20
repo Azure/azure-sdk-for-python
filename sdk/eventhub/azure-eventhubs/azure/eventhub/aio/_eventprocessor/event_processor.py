@@ -31,7 +31,9 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             *,
             partition_id: str = None,
             partition_manager: PartitionManager = None,
-            initial_event_position=EventPosition("-1"), polling_interval: float = 10.0,
+            initial_event_position="-1",
+            initial_event_position_inclusive=False,
+            polling_interval: float = 10.0,
             owner_level=None, prefetch=None, track_last_enqueued_event_properties=False,
             error_handler,
             partition_initialize_handler,
@@ -47,7 +49,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         self._partition_initialize_handler = partition_initialize_handler
         self._partition_close_handler = partition_close_handler
         self._partition_manager = partition_manager
-        self._initial_event_position = initial_event_position  # will be replaced by reset event position in preview 4
+        self._initial_event_position = initial_event_position
+        self._initial_event_position_inclusive = initial_event_position_inclusive
         self._polling_interval = polling_interval
         self._ownership_timeout = self._polling_interval * 2
         self._tasks = {}  # type: Dict[str, asyncio.Task]

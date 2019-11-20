@@ -3,26 +3,39 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import six
+import datetime
 from contextlib import contextmanager
 
 from azure.core.tracing import SpanKind  # type: ignore
 from azure.core.settings import settings  # type: ignore
 
-from azure.eventhub import EventPosition
+from azure.eventhub._common import EventPosition
 
 
 class EventProcessorMixin(object):
 
     def get_init_event_position(self, partition_id, checkpoint):
         checkpoint_offset = checkpoint.get("offset") if checkpoint else None
+
+        is_inclusive = False
+        if isinstance(self._initial_event_position_inclusive, bool):
+            is_inclusive = self._initial_event_position_inclusive
+        elif isinstance(self._initial_event_position_inclusive, dict):
+            is_inclusive = self._initial_event_position_inclusive.get(partition_id, False)
+
+        event_position = "-1"
         if checkpoint_offset:
-            initial_event_position = EventPosition(checkpoint_offset)
-        elif isinstance(self._initial_event_position, EventPosition):
-            initial_event_position = self._initial_event_position
+            event_position = checkpoint_offset
+        elif isinstance(self._initial_event_position, (str, six.integer_types, datetime.datetime)):
+            event_position = self._initial_event_position
         elif isinstance(self._initial_event_position, dict):
-            initial_event_position = self._initial_event_position.get(partition_id, EventPosition("-1"))
+            event_position = self._initial_event_position.get(partition_id, "-1")
         else:
-            initial_event_position = EventPosition(self._initial_event_position)
+            event_position = self._initial_event_position
+
+        initial_event_position = EventPosition(event_position, inclusive=is_inclusive)
+
         return initial_event_position
 
     def create_consumer(self, partition_id, initial_event_position, on_event_received):

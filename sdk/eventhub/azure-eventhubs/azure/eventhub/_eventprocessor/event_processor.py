@@ -34,7 +34,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         self._partition_initialize_handler = kwargs.get("on_partition_initialize", None)
         self._partition_close_handler = kwargs.get("on_partition_close", None)
         self._partition_manager = kwargs.get("partition_manager", None)
-        self._initial_event_position = kwargs.get("initial_event_position", EventPosition("-1"))
+        self._initial_event_position = kwargs.get("initial_event_position", "-1")
+        self._initial_event_position_inclusive = kwargs.get("initial_event_position_inclusive", False)
 
         self._polling_interval = kwargs.get("polling_interval", 10.0)
         self._ownership_timeout = self._polling_interval * 2

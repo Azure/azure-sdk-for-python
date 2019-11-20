@@ -6,7 +6,7 @@
 __path__ = __import__('pkgutil').extend_path(__path__, __name__)  # type: ignore
 __version__ = "5.0.0b6"
 from uamqp import constants  # type: ignore
-from ._common import EventData, EventDataBatch, EventPosition
+from ._common import EventData, EventDataBatch
 from ._producer_client import EventHubProducerClient
 from ._consumer_client import EventHubConsumerClient
 from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
@@ -33,7 +33,6 @@ __all__ = [
     "EventDataError",
     "EventDataSendError",
     "AuthenticationError",
-    "EventPosition",
     "EventHubProducerClient",
     "EventHubConsumerClient",
     "TransportType",

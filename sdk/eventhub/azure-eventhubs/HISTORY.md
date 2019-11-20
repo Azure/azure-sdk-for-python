@@ -4,6 +4,10 @@
 
 **Breaking changes**
 
+- Removed class `EventPostition`.
+    - The `initial_event_position` parameter of the `receive` method accepts offset(`str`), sequence number(`int`), datetime (`datetime.datetime`) or `dict` of these types.
+    - The `initial_event_position_inclusive` parameter of the `receive` method accepts `bool` or `dict` indicating whether the given event position is inclusive or not.
+
 ## 2019-11-04 5.0.0b5
 
 **Breaking changes**

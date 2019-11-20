@@ -178,6 +178,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             prefetch: int = 300,
             track_last_enqueued_event_properties: bool = False,
             initial_event_position=None,
+            initial_event_position_inclusive=None,
             on_error=None,
             on_partition_initialize=None,
             on_partition_close=None
@@ -208,8 +209,13 @@ class EventHubConsumerClient(ClientBaseAsync):
         :keyword initial_event_position: Start receiving from this initial_event_position
          if there isn't checkpoint data for a partition. Use the checkpoint data if there it's available. This can be a
          a dict with partition id as the key and position as the value for individual partitions, or a single
-         EventPosition instance for all partitions.
-        :paramtype initial_event_position: ~azure.eventhub.EventPosition or dict[str,~azure.eventhub.EventPosition]
+         value for all partitions. The value type can be str, int, datetime.datetime.
+        :paramtype initial_event_position: str, int, datetime.datetime or dict[str, Any]
+        :keyword initial_event_position_inclusive: Determine the given initial_event_position is inclusive(>=) or
+         not (>). True for inclusive and False for exclusive. This can be a dict with partition id as the key and
+         bool as the value indicating individual initial_event_position of specific partition is inclusive or not.
+         This can also be a single bool value for all initial_event_position. By default it's false.
+        :paramtype initial_event_position_inclusive: bool or dict[str, bool]
         :keyword on_error: The callback function which would be called when there is an error met during the receiving
          time. The callback takes two parameters: `partition_context` which contains partition information
          and `error` being the exception. Please define the callback like `on_error(partition_context, error)`.
@@ -257,7 +263,8 @@ class EventHubConsumerClient(ClientBaseAsync):
                 error_handler=on_error,
                 partition_initialize_handler=on_partition_initialize,
                 partition_close_handler=on_partition_close,
-                initial_event_position=initial_event_position or EventPosition("-1"),
+                initial_event_position=initial_event_position or "-1",
+                initial_event_position_inclusive=initial_event_position_inclusive or False,
                 polling_interval=self._load_balancing_interval,
                 owner_level=owner_level,
                 prefetch=prefetch,
