@@ -43,14 +43,14 @@ async def run_sample():
     client = CertificateClient(vault_url=VAULT_URL, credential=credential)
     try:
         # First we specify the AdministratorContact for our issuers.
-        admin_details = [
+        admin_contacts = [
             AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
 
         # Next we create an issuer with these administrator details
         # The name field refers to the name you would like to get the issuer. There are also pre-set names, such as 'Self' and 'Unknown'
         await client.create_issuer(
-            issuer_name="issuer1", provider="Test", account_id="keyvaultuser", admin_details=admin_details, enabled=True
+            issuer_name="issuer1", provider="Test", account_id="keyvaultuser", admin_contacts=admin_contacts, enabled=True
         )
 
         # Now we get this issuer by name
@@ -60,23 +60,23 @@ async def run_sample():
         print(issuer1.properties.provider)
         print(issuer1.account_id)
 
-        for admin_detail in issuer1.admin_details:
-            print(admin_detail.first_name)
-            print(admin_detail.last_name)
-            print(admin_detail.email)
-            print(admin_detail.phone)
+        for admin_contact in issuer1.admin_contacts:
+            print(admin_contact.first_name)
+            print(admin_contact.last_name)
+            print(admin_contact.email)
+            print(admin_contact.phone)
 
         # Now we update the admnistrator contact for this issuer
-        admin_details = [
+        admin_contacts = [
             AdministratorContact(first_name="Jane", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
-        issuer1 = await client.update_issuer(issuer_name="issuer1", admin_details=admin_details)
+        issuer1 = await client.update_issuer(issuer_name="issuer1", admin_contacts=admin_contacts)
 
-        for admin_detail in issuer1.admin_details:
-            print(admin_detail.first_name)
-            print(admin_detail.last_name)
-            print(admin_detail.email)
-            print(admin_detail.phone)
+        for admin_contact in issuer1.admin_contacts:
+            print(admin_contact.first_name)
+            print(admin_contact.last_name)
+            print(admin_contact.email)
+            print(admin_contact.phone)
 
         # Now we will list all of the certificate issuers for this key vault. To better demonstrate this, we will first create another issuer.
         await client.create_issuer(issuer_name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)

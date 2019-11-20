@@ -331,23 +331,23 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         from azure.keyvault.certificates import AdministratorContact
 
         # First we specify the AdministratorContact for a issuer.
-        admin_details = [
+        admin_contacts = [
             AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
 
         issuer = certificate_client.create_issuer(
-            issuer_name="issuer1", provider="Test", account_id="keyvaultuser", admin_details=admin_details, enabled=True
+            issuer_name="issuer1", provider="Test", account_id="keyvaultuser", admin_contacts=admin_contacts, enabled=True
         )
 
         print(issuer.name)
         print(issuer.properties.provider)
         print(issuer.account_id)
 
-        for admin_detail in issuer.admin_details:
-            print(admin_detail.first_name)
-            print(admin_detail.last_name)
-            print(admin_detail.email)
-            print(admin_detail.phone)
+        for admin_contact in issuer.admin_contacts:
+            print(admin_contact.first_name)
+            print(admin_contact.last_name)
+            print(admin_contact.email)
+            print(admin_contact.phone)
 
         # [END create_issuer]
 
@@ -359,11 +359,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(issuer.properties.provider)
         print(issuer.account_id)
 
-        for admin_detail in issuer.admin_details:
-            print(admin_detail.first_name)
-            print(admin_detail.last_name)
-            print(admin_detail.email)
-            print(admin_detail.phone)
+        for admin_contact in issuer.admin_contacts:
+            print(admin_contact.first_name)
+            print(admin_contact.last_name)
+            print(admin_contact.email)
+            print(admin_contact.phone)
 
         # [END get_issuer]
 
@@ -387,10 +387,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_issuer.properties.provider)
         print(deleted_issuer.account_id)
 
-        for admin_detail in deleted_issuer.admin_details:
-            print(admin_detail.first_name)
-            print(admin_detail.last_name)
-            print(admin_detail.email)
-            print(admin_detail.phone)
+        for admin_contact in deleted_issuer.admin_contacts:
+            print(admin_contact.first_name)
+            print(admin_contact.last_name)
+            print(admin_contact.email)
+            print(admin_contact.phone)
 
         # [END delete_issuer]

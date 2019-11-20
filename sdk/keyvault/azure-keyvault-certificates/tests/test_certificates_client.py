@@ -199,23 +199,23 @@ class CertificateClientTests(KeyVaultTestCase):
             self.assertEqual(contact.name, exp_contact.name)
             self.assertEqual(contact.phone, exp_contact.phone)
 
-    def _admin_detail_equal(self, admin_detail, exp_admin_detail):
+    def _admin_contact_equal(self, admin_contact, exp_admin_contact):
         return (
-            admin_detail.first_name == exp_admin_detail.first_name
-            and admin_detail.last_name == exp_admin_detail.last_name
-            and admin_detail.email == exp_admin_detail.email
-            and admin_detail.phone == exp_admin_detail.phone
+            admin_contact.first_name == exp_admin_contact.first_name
+            and admin_contact.last_name == exp_admin_contact.last_name
+            and admin_contact.email == exp_admin_contact.email
+            and admin_contact.phone == exp_admin_contact.phone
         )
 
     def _validate_certificate_issuer(self, issuer, expected):
         self._validate_certificate_issuer_properties(issuer.properties, expected.properties)
         self.assertEqual(issuer.account_id, expected.account_id)
-        self.assertEqual(len(issuer.admin_details), len(expected.admin_details))
-        for admin_detail in issuer.admin_details:
-            exp_admin_detail = next(
-                (ad for ad in expected.admin_details if self._admin_detail_equal(admin_detail, ad)), None
+        self.assertEqual(len(issuer.admin_contacts), len(expected.admin_contacts))
+        for admin_contact in issuer.admin_contacts:
+            exp_admin_contact = next(
+                (ad for ad in expected.admin_contacts if self._admin_contact_equal(admin_contact, ad)), None
             )
-            self.assertIsNotNone(exp_admin_detail)
+            self.assertIsNotNone(exp_admin_contact)
         self.assertEqual(issuer.password, expected.password)
         self.assertEqual(issuer.organization_id, expected.organization_id)
 
@@ -676,7 +676,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertIsNotNone(vault_client)
         client = vault_client.certificates
         issuer_name = "issuer"
-        admin_details = [
+        admin_contacts = [
             AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
 
@@ -686,13 +686,13 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # create certificate issuer
         issuer = client.create_issuer(
-            issuer_name, "Test", account_id="keyvaultuser", admin_details=admin_details, enabled=True
+            issuer_name, "Test", account_id="keyvaultuser", admin_contacts=admin_contacts, enabled=True
         )
 
         expected = CertificateIssuer(
             properties=properties,
             account_id="keyvaultuser",
-            admin_details=admin_details,
+            admin_contacts=admin_contacts,
             attributes=IssuerAttributes(enabled=True),
         )
 
@@ -708,7 +708,7 @@ class CertificateClientTests(KeyVaultTestCase):
             issuer_name=issuer_name + "2",
             provider="Test",
             account_id="keyvaultuser2",
-            admin_details=admin_details,
+            admin_contacts=admin_contacts,
             enabled=True,
         )
 
@@ -729,17 +729,17 @@ class CertificateClientTests(KeyVaultTestCase):
             self._validate_certificate_issuer_properties(issuer=issuer, expected=exp_issuer)
 
         # update certificate issuer
-        admin_details = [
+        admin_contacts = [
             AdministratorContact(first_name="Jane", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
 
         expected = CertificateIssuer(
             properties=properties,
             account_id="keyvaultuser",
-            admin_details=admin_details,
+            admin_contacts=admin_contacts,
             attributes=IssuerAttributes(enabled=True),
         )
-        issuer = client.update_issuer(issuer_name=issuer_name, admin_details=admin_details)
+        issuer = client.update_issuer(issuer_name=issuer_name, admin_contacts=admin_contacts)
         self._validate_certificate_issuer(issuer=issuer, expected=expected)
 
         # delete certificate issuer

@@ -844,9 +844,9 @@ class CertificateClient(KeyVaultClientBase):
         :keyword str account_id: The user name/account name/account id.
         :keyword str password: The password/secret/account key.
         :keyword str organization_id: Id of the organization
-        :keyword admin_details: Details of the organization administrators of the
+        :keyword admin_contacts: Contact details of the organization administrators of the
          certificate issuer.
-        :paramtype admin_details: list[~azure.keyvault.certificates.AdministratorContact]
+        :paramtype admin_contacts: list[~azure.keyvault.certificates.AdministratorContact]
         :returns: The created CertificateIssuer
         :rtype: ~azure.keyvault.certificates.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -864,27 +864,27 @@ class CertificateClient(KeyVaultClientBase):
         account_id = kwargs.pop("account_id", None)
         password = kwargs.pop("password", None)
         organization_id = kwargs.pop("organization_id", None)
-        admin_details = kwargs.pop("admin_details", None)
+        admin_contacts = kwargs.pop("admin_contacts", None)
 
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
         else:
             issuer_credentials = None
-        if admin_details and admin_details[0]:
-            admin_details_to_pass = [
+        if admin_contacts and admin_contacts[0]:
+            admin_contacts_to_pass = [
                 self._client.models.AdministratorDetails(
                     first_name=admin_detail.first_name,
                     last_name=admin_detail.last_name,
                     email_address=admin_detail.email,
                     phone=admin_detail.phone,
                 )
-                for admin_detail in admin_details
+                for admin_detail in admin_contacts
             ]
         else:
-            admin_details_to_pass = admin_details
-        if organization_id or admin_details:
+            admin_contacts_to_pass = admin_contacts
+        if organization_id or admin_contacts:
             organization_details = self._client.models.OrganizationDetails(
-                id=organization_id, admin_details=admin_details_to_pass
+                id=organization_id, admin_contacts=admin_contacts_to_pass
             )
         else:
             organization_details = None
@@ -917,8 +917,8 @@ class CertificateClient(KeyVaultClientBase):
         :keyword str account_id: The user name/account name/account id.
         :keyword str password: The password/secret/account key.
         :keyword str organization_id: Id of the organization
-        :keyword admin_details: Details of the organization administrators of the certificate issuer
-        :paramtype admin_details: list[~azure.keyvault.certificates.AdministratorContact]
+        :keyword admin_contacts: Contact details of the organization administrators of the certificate issuer
+        :paramtype admin_contacts: list[~azure.keyvault.certificates.AdministratorContact]
         :return: The updated issuer
         :rtype: ~azure.keyvault.certificates.CertificateIssuer
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -929,27 +929,27 @@ class CertificateClient(KeyVaultClientBase):
         account_id = kwargs.pop("account_id", None)
         password = kwargs.pop("password", None)
         organization_id = kwargs.pop("organization_id", None)
-        admin_details = kwargs.pop("admin_details", None)
+        admin_contacts = kwargs.pop("admin_contacts", None)
 
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
         else:
             issuer_credentials = None
-        if admin_details and admin_details[0]:
-            admin_details_to_pass = [
+        if admin_contacts and admin_contacts[0]:
+            admin_contacts_to_pass = [
                 self._client.models.AdministratorDetails(
                     first_name=admin_detail.first_name,
                     last_name=admin_detail.last_name,
                     email_address=admin_detail.email,
                     phone=admin_detail.phone,
                 )
-                for admin_detail in admin_details
+                for admin_detail in admin_contacts
             ]
         else:
-            admin_details_to_pass = admin_details
-        if organization_id or admin_details:
+            admin_contacts_to_pass = admin_contacts
+        if organization_id or admin_contacts:
             organization_details = self._client.models.OrganizationDetails(
-                id=organization_id, admin_details=admin_details_to_pass
+                id=organization_id, admin_contacts=admin_contacts_to_pass
             )
         else:
             organization_details = None

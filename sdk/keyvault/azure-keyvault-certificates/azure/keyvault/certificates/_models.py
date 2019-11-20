@@ -47,14 +47,14 @@ class AdministratorContact(object):
         )[:1024]
 
     @classmethod
-    def _from_admin_details_bundle(cls, admin_details_bundle):
+    def _from_admin_contacts_bundle(cls, admin_contacts_bundle):
         # type: (models.AdministratorDetails) -> AdministratorContact
         """Construct a AdministratorContact from an autorest-generated AdministratorDetailsBundle"""
         return cls(
-            email=admin_details_bundle.email_address,
-            first_name=admin_details_bundle.first_name,
-            last_name=admin_details_bundle.last_name,
-            phone=admin_details_bundle.phone,
+            email=admin_contacts_bundle.email_address,
+            first_name=admin_contacts_bundle.first_name,
+            last_name=admin_contacts_bundle.last_name,
+            phone=admin_contacts_bundle.phone,
         )
 
     @property
@@ -1134,8 +1134,8 @@ class CertificateIssuer(object):
     :param str account_id: The username / account name / account id.
     :param str password: The password / secret / account key.
     :param str organization_id: The ID of the organization.
-    :param admin_details: Details of the organization administrator.
-    :type admin_details: list[~azure.keyvault.certificates.AdministratorContact]
+    :param admin_contacts: Details of the organization administrator.
+    :type admin_contacts: list[~azure.keyvault.certificates.AdministratorContact]
     """
 
     def __init__(
@@ -1145,7 +1145,7 @@ class CertificateIssuer(object):
         account_id=None,  # type: Optional[str]
         password=None,  # type: Optional[str]
         organization_id=None,  # type: Optional[str]
-        admin_details=None,  # type: Optional[List[AdministratorContact]]
+        admin_contacts=None,  # type: Optional[List[AdministratorContact]]
     ):
         # type: (...) -> None
         self._properties = properties
@@ -1153,7 +1153,7 @@ class CertificateIssuer(object):
         self._account_id = account_id
         self._password = password
         self._organization_id = organization_id
-        self._admin_details = admin_details
+        self._admin_contacts = admin_contacts
 
     def __repr__(self):
         # type () -> str
@@ -1163,21 +1163,21 @@ class CertificateIssuer(object):
     def _from_issuer_bundle(cls, issuer_bundle):
         # type: (models.IssuerBundle) -> CertificateIssuer
         """Construct a CertificateIssuer from an autorest-generated IssuerBundle"""
-        admin_details = []
-        admin_details_service = (
+        admin_contacts = []
+        admin_contacts_service = (
             issuer_bundle.organization_details.admin_details if issuer_bundle.organization_details else None
         )
-        if admin_details_service:
+        if admin_contacts_service:
             # pylint:disable=protected-access
-            for admin_detail in admin_details_service:
-                admin_details.append(AdministratorContact._from_admin_details_bundle(admin_detail))
+            for admin_contact in admin_contacts_service:
+                admin_contacts.append(AdministratorContact._from_admin_contacts_bundle(admin_contact))
         return cls(
             properties=IssuerProperties._from_issuer_item(issuer_bundle),  # pylint: disable=protected-access
             attributes=issuer_bundle.attributes,
             account_id=issuer_bundle.credentials.account_id if issuer_bundle.credentials else None,
             password=issuer_bundle.credentials.password if issuer_bundle.credentials else None,
             organization_id=issuer_bundle.organization_details.id if issuer_bundle.organization_details else None,
-            admin_details=admin_details,
+            admin_contacts=admin_contacts,
         )
 
     @property
@@ -1254,13 +1254,13 @@ class CertificateIssuer(object):
         return self._organization_id
 
     @property
-    def admin_details(self):
+    def admin_contacts(self):
         # type: () -> List[AdministratorContact]
-        """Details of the organization administrator of this issuer.
+        """Contact details of the organization administrator of this issuer.
 
         :rtype: list[~azure.keyvault.certificates.AdministratorContact]
         """
-        return self._admin_details
+        return self._admin_contacts
 
 
 class LifetimeAction(object):
