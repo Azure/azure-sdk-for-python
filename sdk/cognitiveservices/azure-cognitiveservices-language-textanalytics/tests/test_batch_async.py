@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import pytest
+from azure.core.exceptions import HttpResponseError
 from devtools_testutils import ResourceGroupPreparer
 from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
 from azure.core.pipeline.transport import AioHttpTransport
@@ -414,16 +414,12 @@ class TextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
             response_hook=callback
         )
 
-    @pytest.mark.live_test_only  # live test only because generates huge recording
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
     @AsyncCognitiveServiceTestCase.await_prepared_test
-    async def test_segment_batch_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+    async def test_batch_size_over_limit_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
-        docs = ["hello world"] * 3050
-        response = await text_analytics.detect_language(docs)
-
-        self.assertEqual(len(response), 3050)
-        for doc in response:
-            self.assertEqual(doc.detected_languages[0].name, "English")
+        docs = ["hello world"] * 1050
+        with self.assertRaises(HttpResponseError):
+            response = await text_analytics.detect_language(docs)

@@ -37,8 +37,6 @@ if TYPE_CHECKING:
         DocumentError,
     )
 
-MAX_BATCH_SIZE = 1000
-
 
 class TextAnalyticsClient(TextAnalyticsClientBase):
     """The Text Analytics API is a suite of text analytics web services built with best-in-class
@@ -63,23 +61,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self._client = TextAnalytics(
             endpoint=endpoint, credentials=credential, pipeline=self._pipeline
         )
-
-    def _segment_batch(self, docs):  # pylint: disable=no-self-use
-        """Internal method that segments input documents > 1000 items into
-        batches < 1000 items.
-
-        :param docs: The original input documents
-        :type docs: list[dict] or list[(Multi)LanguageInput]
-        :return: list[list]
-        """
-        segmented_batches = []
-        num_batches = len(docs) // MAX_BATCH_SIZE
-        for x in range(num_batches):
-            segmented_batches.append(
-                docs[x*MAX_BATCH_SIZE:(x+1)*MAX_BATCH_SIZE]
-            )
-        segmented_batches.append(docs[num_batches*MAX_BATCH_SIZE:])
-        return segmented_batches
 
     @distributed_trace
     def detect_language(
@@ -113,31 +94,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         docs = _validate_batch_input(documents)
-        if len(docs) < MAX_BATCH_SIZE:
-            try:
-                return self._client.languages(
-                    documents=docs,
-                    model_version=model_version,
-                    show_stats=show_stats,
-                    cls=language_result,
-                    **kwargs
-                )
-            except ErrorException as error:
-                process_batch_error(error)
-
-        result = []
-        segmented_batches = self._segment_batch(docs)
         try:
-            for batch in segmented_batches:
-                response = self._client.languages(
-                    documents=batch,
-                    model_version=model_version,
-                    show_stats=show_stats,
-                    cls=language_result,
-                    **kwargs
-                )
-                result.extend(response)
-            return result
+            return self._client.languages(
+                documents=docs,
+                model_version=model_version,
+                show_stats=show_stats,
+                cls=language_result,
+                **kwargs
+            )
         except ErrorException as error:
             process_batch_error(error)
 
@@ -175,31 +139,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         docs = _validate_batch_input(documents)
-        if len(docs) < MAX_BATCH_SIZE:
-            try:
-                return self._client.entities_recognition_general(
-                    documents=docs,
-                    model_version=model_version,
-                    show_stats=show_stats,
-                    cls=entities_result,
-                    **kwargs
-                )
-            except ErrorException as error:
-                process_batch_error(error)
-
-        result = []
-        segmented_batches = self._segment_batch(docs)
         try:
-            for batch in segmented_batches:
-                response = self._client.entities_recognition_general(
-                    documents=batch,
-                    model_version=model_version,
-                    show_stats=show_stats,
-                    cls=entities_result,
-                    **kwargs
-                )
-                result.extend(response)
-            return result
+            return self._client.entities_recognition_general(
+                documents=docs,
+                model_version=model_version,
+                show_stats=show_stats,
+                cls=entities_result,
+                **kwargs
+            )
         except ErrorException as error:
             process_batch_error(error)
 
@@ -236,31 +183,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         docs = _validate_batch_input(documents)
-        if len(docs) < MAX_BATCH_SIZE:
-            try:
-                return self._client.entities_recognition_pii(
-                    documents=docs,
-                    model_version=model_version,
-                    show_stats=show_stats,
-                    cls=entities_result,
-                    **kwargs
-                )
-            except ErrorException as error:
-                process_batch_error(error)
-
-        result = []
-        segmented_batches = self._segment_batch(docs)
         try:
-            for batch in segmented_batches:
-                response = self._client.entities_recognition_pii(
-                    documents=batch,
-                    model_version=model_version,
-                    show_stats=show_stats,
-                    cls=entities_result,
-                    **kwargs
-                )
-                result.extend(response)
-            return result
+            return self._client.entities_recognition_pii(
+                documents=docs,
+                model_version=model_version,
+                show_stats=show_stats,
+                cls=entities_result,
+                **kwargs
+            )
         except ErrorException as error:
             process_batch_error(error)
 
@@ -296,31 +226,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         docs = _validate_batch_input(documents)
-        if len(docs) < MAX_BATCH_SIZE:
-            try:
-                return self._client.entities_linking(
-                    documents=docs,
-                    model_version=model_version,
-                    show_stats=show_stats,
-                    cls=linked_entities_result,
-                    **kwargs
-                )
-            except ErrorException as error:
-                process_batch_error(error)
-
-        result = []
-        segmented_batches = self._segment_batch(docs)
         try:
-            for batch in segmented_batches:
-                response = self._client.entities_linking(
-                    documents=batch,
-                    model_version=model_version,
-                    show_stats=show_stats,
-                    cls=linked_entities_result,
-                    **kwargs
-                )
-                result.extend(response)
-            return result
+            return self._client.entities_linking(
+                documents=docs,
+                model_version=model_version,
+                show_stats=show_stats,
+                cls=linked_entities_result,
+                **kwargs
+            )
         except ErrorException as error:
             process_batch_error(error)
 
@@ -356,31 +269,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         docs = _validate_batch_input(documents)
-        if len(docs) < MAX_BATCH_SIZE:
-            try:
-                return self._client.key_phrases(
-                    documents=docs,
-                    model_version=model_version,
-                    show_stats=show_stats,
-                    cls=key_phrases_result,
-                    **kwargs
-                )
-            except ErrorException as error:
-                process_batch_error(error)
-
-        result = []
-        segmented_batches = self._segment_batch(docs)
         try:
-            for batch in segmented_batches:
-                response = self._client.key_phrases(
-                    documents=batch,
-                    model_version=model_version,
-                    show_stats=show_stats,
-                    cls=key_phrases_result,
-                    **kwargs
-                )
-                result.extend(response)
-            return result
+            return self._client.key_phrases(
+                documents=docs,
+                model_version=model_version,
+                show_stats=show_stats,
+                cls=key_phrases_result,
+                **kwargs
+            )
         except ErrorException as error:
             process_batch_error(error)
 
@@ -417,30 +313,13 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         docs = _validate_batch_input(documents)
-        if len(docs) < MAX_BATCH_SIZE:
-            try:
-                return self._client.sentiment(
-                    documents=docs,
-                    model_version=model_version,
-                    show_stats=show_stats,
-                    cls=sentiment_result,
-                    **kwargs
-                )
-            except ErrorException as error:
-                process_batch_error(error)
-
-        result = []
-        segmented_batches = self._segment_batch(docs)
         try:
-            for batch in segmented_batches:
-                response = self._client.sentiment(
-                    documents=batch,
-                    model_version=model_version,
-                    show_stats=show_stats,
-                    cls=sentiment_result,
-                    **kwargs
-                )
-                result.extend(response)
-            return result
+            return self._client.sentiment(
+                documents=docs,
+                model_version=model_version,
+                show_stats=show_stats,
+                cls=sentiment_result,
+                **kwargs
+            )
         except ErrorException as error:
             process_batch_error(error)

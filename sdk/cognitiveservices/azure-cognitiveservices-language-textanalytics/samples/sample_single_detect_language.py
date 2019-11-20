@@ -48,8 +48,8 @@ class SingleDetectLanguageSample(object):
             country_hint="US"
         )
 
-        print("Language detected: {}".format(result.name))
-        print("Confidence score: {}".format(result.score))
+        print("Language detected: {}".format(result.detected_languages[0].name))
+        print("Confidence score: {}".format(result.detected_languages[0].score))
 
 
 if __name__ == '__main__':

@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-cognitiveservices-language-textanalytics/3.0.0b1
       X-BingApis-SDK-Client:
       - Python-SDK
     method: POST
@@ -22,26 +22,26 @@ interactions:
   response:
     body:
       string: '{"documents":[{"id":"0","entities":[{"text":"555-55-5555","type":"U.S.
-        Social Security Number (SSN)","subtype":"","offset":10,"length":11,"score":0.85}]}],"errors":[],"modelVersion":"latest"}'
+        Social Security Number (SSN)","subtype":"","offset":10,"length":11,"score":0.85}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 49d425a5-28da-4fdf-8a14-c68e4ff58b48
+      - d13232be-c32e-4946-a2c1-55e47d9e7c84
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 14 Nov 2019 21:33:40 GMT
+      - Wed, 20 Nov 2019 01:37:32 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
       - chunked
       x-aml-ta-request-id:
-      - c09e4081-08ab-4cbb-b9cd-8f5d64d04c85
+      - 50b629a8-4543-4c8a-91c6-38cfa3c19705
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '27'
+      - '18'
     status:
       code: 200
       message: OK

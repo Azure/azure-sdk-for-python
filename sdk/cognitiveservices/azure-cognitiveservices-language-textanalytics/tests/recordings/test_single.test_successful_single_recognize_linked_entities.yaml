@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-cognitiveservices-language-textanalytics/3.0.0b1
       X-BingApis-SDK-Client:
       - Python-SDK
     method: POST
@@ -23,26 +23,26 @@ interactions:
     body:
       string: '{"documents":[{"id":"0","entities":[{"name":"Bill Gates","matches":[{"text":"Bill
         Gates","offset":25,"length":10,"score":0.23098251518339441}],"language":"en","id":"Bill
-        Gates","url":"https://en.wikipedia.org/wiki/Bill_Gates","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":0,"length":9,"score":0.18758846618202618}],"language":"en","id":"Microsoft","url":"https://en.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"}]}],"errors":[],"modelVersion":"latest"}'
+        Gates","url":"https://en.wikipedia.org/wiki/Bill_Gates","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":0,"length":9,"score":0.18758846618202618}],"language":"en","id":"Microsoft","url":"https://en.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 057d7679-5797-407c-beb0-421a6dba7d21
+      - 936a5c59-3832-487d-b9ab-b3f5fa0eed31
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 14 Nov 2019 21:33:25 GMT
+      - Wed, 20 Nov 2019 01:38:09 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
       - chunked
       x-aml-ta-request-id:
-      - d462c830-91b7-4a0d-89fc-17867bbf62b3
+      - df545a9d-e8a0-401b-b2ef-3afe36dd1c62
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '12'
+      - '17'
     status:
       code: 200
       message: OK

@@ -56,7 +56,7 @@ class SingleExtractKeyPhrasesSample(object):
         )
 
         print("Key phrases found:\n")
-        for phrase in result:
+        for phrase in result.key_phrases:
             print(phrase)
 
 

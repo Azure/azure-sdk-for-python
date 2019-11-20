@@ -63,10 +63,11 @@ def single_detect_language(
             credential,  # type: str
             text,  # type: str
             country_hint=None,  # type: Optional[str]
+            show_stats=False,   # type: Optional[bool]
             model_version=None,  # type: Optional[str]
             **kwargs  # type: Any
 ):
-    # type: (...) -> DetectedLanguage
+    # type: (...) -> DocumentLanguage
     """Detect Language for a single document.
 
     The API returns the detected language and a numeric score between 0 and
@@ -84,16 +85,18 @@ def single_detect_language(
     :type text: str
     :param country_hint: The optional country hint for the text.
     :type country_hint: str
+    :param show_stats: (Optional) if set to true, response will contain
+        document level statistics.
+    :type show_stats: bool
     :param model_version: This value indicates which model will
         be used for scoring. If a model-version is not specified, the API
         will default to the latest, non-preview version.
     :type model_version: str
-    :return: An instance of DetectedLanguage.
-    :rtype: ~azure.cognitiveservices.language.textanalytics.DetectedLanguage
+    :return: An instance of DocumentLanguage.
+    :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentLanguage
     :raises: ~azure.core.exceptions.HttpResponseError
     """
     doc = _validate_single_input(text, "country_hint", country_hint)
-    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = client.detect_language(
             documents=doc,
@@ -103,7 +106,7 @@ def single_detect_language(
         )
         if response[0].is_error:
             return process_single_error(response[0])  # DocumentError
-        return response[0].detected_languages[0]  # DetectedLanguage
+        return response[0]  # DocumentLanguage
 
 
 def single_recognize_entities(
@@ -111,10 +114,11 @@ def single_recognize_entities(
         credential,  # type: str
         text,  # type: str
         language=None,  # type: Optional[str]
+        show_stats=False,  # type: Optional[bool]
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
-    # type: (...) -> List[Entity]
+    # type: (...) -> DocumentEntities
     """Named Entity Recognition for a single document.
 
     The API returns a list of general named entities in a given document.
@@ -133,16 +137,18 @@ def single_recognize_entities(
     :type text: str
     :param language: The optional language hint for the text.
     :type language: str
+    :param show_stats: (Optional) if set to true, response will contain
+    document level statistics.
+    :type show_stats: bool
     :param model_version: This value indicates which model will
         be used for scoring. If a model-version is not specified, the API
         will default to the latest, non-preview version.
     :type model_version: str
-    :return: A list of Entity
-    :rtype: list[~azure.cognitiveservices.language.textanalytics.Entity]
+    :return: An instance of DocumentEntities.
+    :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentEntities
     :raises: ~azure.core.exceptions.HttpResponseError
     """
     doc = _validate_single_input(text, "language", language)
-    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = client.recognize_entities(
             documents=doc,
@@ -152,7 +158,7 @@ def single_recognize_entities(
         )
         if response[0].is_error:
             return process_single_error(response[0])  # DocumentError
-        return response[0].entities  # list[Entity]
+        return response[0]  # DocumentEntities
 
 
 def single_recognize_pii_entities(
@@ -160,10 +166,11 @@ def single_recognize_pii_entities(
         credential,  # type: str
         text,  # type: str
         language=None,  # type: Optional[str]
+        show_stats=False,  # type: Optional[bool]
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
-    # type: (...) -> List[Entity]
+    # type: (...) -> DocumentEntities
     """Recognize entities containing personal information for a single document.
 
     The API returns a list of personal information entities ("SSN",
@@ -180,16 +187,18 @@ def single_recognize_pii_entities(
     :type text: str
     :param language: The optional language hint for the text.
     :type language: str
+    :param show_stats: (Optional) if set to true, response will contain
+        document level statistics.
+    :type show_stats: bool
     :param model_version: This value indicates which model will
     be used for scoring. If a model-version is not specified, the API
     will default to the latest, non-preview version.
     :type model_version: str
-    :return: A list of Entity
-    :rtype: list[~azure.cognitiveservices.language.textanalytics.Entity]
+    :return: An instance of DocumentEntities.
+    :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentEntities
     :raises: ~azure.core.exceptions.HttpResponseError
     """
     doc = _validate_single_input(text, "language", language)
-    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = client.recognize_pii_entities(
             documents=doc,
@@ -199,7 +208,7 @@ def single_recognize_pii_entities(
         )
         if response[0].is_error:
             return process_single_error(response[0])  # DocumentError
-        return response[0].entities  # list[Entity]
+        return response[0]  # DocumentEntities
 
 
 def single_recognize_linked_entities(
@@ -207,10 +216,11 @@ def single_recognize_linked_entities(
         credential,  # type: str
         text,  # type: str
         language=None,  # type: Optional[str]
+        show_stats=False,  # type: Optional[bool]
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
-    # type: (...) -> List[LinkedEntity]
+    # type: (...) -> DocumentLinkedEntities
     """Recognize linked entities from a well-known knowledge base
     for a single document.
 
@@ -227,16 +237,18 @@ def single_recognize_linked_entities(
     :type text: str
     :param language: The optional language hint for the text.
     :type language: str
+    :param show_stats: (Optional) if set to true, response will contain
+        document level statistics.
+    :type show_stats: bool
     :param model_version: This value indicates which model will
     be used for scoring. If a model-version is not specified, the API
     will default to the latest, non-preview version.
     :type model_version: str
-    :return: A list of LinkedEntity
-    :rtype: list[~azure.cognitiveservices.language.textanalytics.LinkedEntity]
+    :return: An instance of DocumentLinkedEntities
+    :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentLinkedEntities
     :raises: ~azure.core.exceptions.HttpResponseError
     """
     doc = _validate_single_input(text, "language", language)
-    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = client.recognize_linked_entities(
             documents=doc,
@@ -246,7 +258,7 @@ def single_recognize_linked_entities(
         )
         if response[0].is_error:
             return process_single_error(response[0])  # DocumentError
-        return response[0].entities  # list[LinkedEntity]
+        return response[0]  # DocumentLinkedEntities
 
 
 def single_extract_key_phrases(
@@ -254,10 +266,11 @@ def single_extract_key_phrases(
         credential,  # type: str
         text,  # type: str
         language=None,  # type: Optional[str]
+        show_stats=False,  # type: Optional[bool]
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
-    # type: (...) -> List[str]
+    # type: (...) -> DocumentKeyPhrases
     """Extract Key Phrases for a single document.
 
     The API returns a list of strings denoting the key phrases in the input
@@ -273,16 +286,18 @@ def single_extract_key_phrases(
     :type text: str
     :param language: The optional language hint for the text.
     :type language: str
+    :param show_stats: (Optional) if set to true, response will contain
+        document level statistics.
+    :type show_stats: bool
     :param model_version: This value indicates which model will
     be used for scoring. If a model-version is not specified, the API
     will default to the latest, non-preview version.
     :type model_version: str
-    :return: A list of key phrases found in the text.
-    :rtype: list[str]
+    :return: An instance of DocumentKeyPhrases
+    :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentKeyPhrases
     :raises: ~azure.core.exceptions.HttpResponseError
     """
     doc = _validate_single_input(text, "language", language)
-    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = client.extract_key_phrases(
             documents=doc,
@@ -292,7 +307,7 @@ def single_extract_key_phrases(
         )
         if response[0].is_error:
             return process_single_error(response[0])  # DocumentError
-        return response[0].key_phrases  # list[str]
+        return response[0]  # DocumentKeyPhrases
 
 
 def single_analyze_sentiment(
@@ -300,6 +315,7 @@ def single_analyze_sentiment(
         credential,  # type: str
         text,  # type: str
         language=None,  # type: Optional[str]
+        show_stats=False,  # type: Optional[bool]
         model_version=None,  # type: Optional[str]
         **kwargs  # type: Any
 ):
@@ -321,6 +337,9 @@ def single_analyze_sentiment(
     :type text: str
     :param language: The optional language hint for the text.
     :type language: str
+    :param show_stats: (Optional) if set to true, response will contain
+        document level statistics.
+    :type show_stats: bool
     :param model_version: This value indicates which model will
     be used for scoring. If a model-version is not specified, the API
     will default to the latest, non-preview version.
@@ -330,7 +349,6 @@ def single_analyze_sentiment(
     :raises: ~azure.core.exceptions.HttpResponseError
     """
     doc = _validate_single_input(text, "language", language)
-    show_stats = kwargs.pop("show_stats", False)
     with TextAnalyticsClient(endpoint, credential=credential, **kwargs) as client:
         response = client.analyze_sentiment(
             documents=doc,

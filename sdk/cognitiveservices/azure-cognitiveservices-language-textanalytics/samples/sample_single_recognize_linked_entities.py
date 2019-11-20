@@ -82,7 +82,7 @@ class SingleRecognizeLinkedEntitiesSample(object):
             language="en"
         )
 
-        for entity in result:
+        for entity in result.entities:
             print("Entity: {}".format(entity.name))
             print("Url: {}".format(entity.url))
             print("Data Source: {}\n".format(entity.data_source))

@@ -31,9 +31,9 @@ class TextAnalyticsTest(CognitiveServiceTest):
             country_hint="US"
         )
 
-        self.assertEqual(response.name, "English")
-        self.assertEqual(response.iso6391_name, "en")
-        self.assertEqual(response.score, 1.0)
+        self.assertEqual(response.detected_languages[0].name, "English")
+        self.assertEqual(response.detected_languages[0].iso6391_name, "en")
+        self.assertEqual(response.detected_languages[0].score, 1.0)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
@@ -159,9 +159,9 @@ class TextAnalyticsTest(CognitiveServiceTest):
             language="en"
         )
 
-        self.assertEqual(response[0].text, "Microsoft")
-        self.assertEqual(response[1].text, "Bill Gates")
-        for entity in response:
+        self.assertEqual(response.entities[0].text, "Microsoft")
+        self.assertEqual(response.entities[1].text, "Bill Gates")
+        for entity in response.entities:
             self.assertIsNotNone(entity.type)
             self.assertIsNotNone(entity.offset)
             self.assertIsNotNone(entity.length)
@@ -291,8 +291,8 @@ class TextAnalyticsTest(CognitiveServiceTest):
             language="en"
         )
 
-        self.assertEqual(response[0].text, "555-55-5555")
-        for entity in response:
+        self.assertEqual(response.entities[0].text, "555-55-5555")
+        for entity in response.entities:
             self.assertIsNotNone(entity.type)
             self.assertIsNotNone(entity.offset)
             self.assertIsNotNone(entity.length)
@@ -422,9 +422,9 @@ class TextAnalyticsTest(CognitiveServiceTest):
             language="en"
         )
 
-        self.assertEqual(response[0].name, "Bill Gates")
-        self.assertEqual(response[1].name, "Microsoft")
-        for entity in response:
+        self.assertEqual(response.entities[0].name, "Bill Gates")
+        self.assertEqual(response.entities[1].name, "Microsoft")
+        for entity in response.entities:
             self.assertIsNotNone(entity.matches)
             self.assertIsNotNone(entity.language)
             self.assertIsNotNone(entity.id)
@@ -555,8 +555,8 @@ class TextAnalyticsTest(CognitiveServiceTest):
             language="en"
         )
 
-        self.assertIn("Microsoft", response)
-        self.assertIn("Bill Gates", response)
+        self.assertIn("Microsoft", response.key_phrases)
+        self.assertIn("Bill Gates", response.key_phrases)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")

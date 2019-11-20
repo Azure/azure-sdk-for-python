@@ -4,8 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import pytest
-
+from azure.core.exceptions import HttpResponseError
 from devtools_testutils import ResourceGroupPreparer
 from devtools_testutils.cognitiveservices_testcase import CognitiveServiceTest, CognitiveServicesAccountPreparer
 from azure.cognitiveservices.language.textanalytics import (
@@ -377,16 +376,12 @@ class TextAnalyticsTest(CognitiveServiceTest):
             response_hook=callback
         )
 
-    @pytest.mark.live_test_only  # live test only because generates huge recording
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
-    def test_segment_batch(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+    def test_batch_size_over_limit(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 
-        docs = ["hello world"] * 3050
-        response = text_analytics.detect_language(docs)
-
-        self.assertEqual(len(response), 3050)
-        for doc in response:
-            self.assertEqual(doc.detected_languages[0].name, "English")
+        docs = ["hello world"] * 1050
+        with self.assertRaises(HttpResponseError):
+            response = text_analytics.detect_language(docs)
 
