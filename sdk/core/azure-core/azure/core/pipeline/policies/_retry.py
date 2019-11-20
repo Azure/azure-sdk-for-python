@@ -28,6 +28,7 @@
 This module is the requests implementation of Pipeline ABC
 """
 from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
+from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
 import email
@@ -291,8 +292,8 @@ class RetryPolicy(HTTPPolicy):
         :type response: ~azure.core.pipeline.PipelineResponse
         :param error: An error encountered during the request, or
          None if the response was received successfully.
-        :return: Whether the retry attempts are exhausted.
-         False if exhausted; True if more retry attempts available.
+        :return: Whether any retry attempt is available
+         True if more retry attempts available, False otherwise
         :rtype: bool
         """
         settings['total'] -= 1
@@ -308,16 +309,42 @@ class RetryPolicy(HTTPPolicy):
         elif error and self._is_read_error(error):
             # Read retry?
             settings['read'] -= 1
-            settings['history'].append(RequestHistory(response.http_request, error=error))
+            if hasattr(response, 'http_request'):
+                settings['history'].append(RequestHistory(response.http_request, error=error))
 
         else:
             # Incrementing because of a server error like a 500 in
             # status_forcelist and a the given method is in the whitelist
             if response:
                 settings['status'] -= 1
-                settings['history'].append(RequestHistory(response.http_request, http_response=response.http_response))
+                if hasattr(response, 'http_request') and hasattr(response, 'http_response'):
+                    settings['history'].append(
+                        RequestHistory(
+                            response.http_request,
+                            http_response=response.http_response
+                        )
+                    )
 
-        return not self.is_exhausted(settings)
+        if self.is_exhausted(settings):
+            return False
+
+        if response.http_request.body and hasattr(response.http_request.body, 'read'):
+            return self.is_seekable(response.http_request.body)
+        return True
+
+    def is_seekable(self, body):
+        try:
+            body_position = body.tell()
+        except (AttributeError, UnsupportedOperation):
+            # if body position cannot be obtained, then retries will not work
+            return False
+        try:
+            # attempt to rewind the body to the initial position
+            body.seek(body_position, SEEK_SET)
+        except (UnsupportedOperation, ValueError, AttributeError):
+            # if body is not seekable, then retry would not work
+            return False
+        return True
 
     def update_context(self, context, retry_settings):
         """Updates retry history in pipeline context.

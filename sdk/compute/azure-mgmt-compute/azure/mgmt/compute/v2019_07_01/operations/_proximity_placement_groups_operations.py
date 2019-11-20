@@ -236,7 +236,7 @@ class ProximityPlacementGroupsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/proximityPlacementGroups/{proximityPlacementGroupName}'}
 
     def get(
-            self, resource_group_name, proximity_placement_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, proximity_placement_group_name, include_colocation_status=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves information about a proximity placement group .
 
         :param resource_group_name: The name of the resource group.
@@ -244,6 +244,10 @@ class ProximityPlacementGroupsOperations(object):
         :param proximity_placement_group_name: The name of the proximity
          placement group.
         :type proximity_placement_group_name: str
+        :param include_colocation_status: includeColocationStatus=true enables
+         fetching the colocation status of all the resources in the proximity
+         placement group.
+        :type include_colocation_status: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -265,6 +269,8 @@ class ProximityPlacementGroupsOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if include_colocation_status is not None:
+            query_parameters['includeColocationStatus'] = self._serialize.query("include_colocation_status", include_colocation_status, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers

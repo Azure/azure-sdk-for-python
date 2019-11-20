@@ -21,18 +21,14 @@ CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 
 
-def do_operation(event):
-    # do some operations on the event, avoid time-consuming ops
-    pass
+def on_event(partition_context, event):
+    print("Received event from partition: {}".format(partition_context.partition_id))
 
+    # Put your code here to do some operations on the event.
+    # Avoid time-consuming operations.
+    print(event)
 
-def on_events(partition_context, events):
-    # put your code here
-    print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
-    for event in events:
-        do_operation(event)
-
-    partition_context.update_checkpoint(events[-1])
+    partition_context.update_checkpoint(event)
 
 
 if __name__ == '__main__':
@@ -50,8 +46,8 @@ if __name__ == '__main__':
             partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
             which also try to receive events from all partitions and use the same storage resource.
             """
-            consumer_client.receive(on_events=on_events, consumer_group='$Default')
+            consumer_client.receive(on_event=on_event, consumer_group='$Default')
             # With specified partition_id, load-balance will be disabled
-            # client.receive(on_events=on_events, consumer_group='$Default', partition_id='0')
+            # client.receive(on_event=on_event, consumer_group='$Default', partition_id='0')
     except KeyboardInterrupt:
         print('Stop receiving.')

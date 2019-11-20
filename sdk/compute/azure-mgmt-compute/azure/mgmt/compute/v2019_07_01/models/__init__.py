@@ -47,6 +47,7 @@ try:
     from ._models_py3 import DiskSku
     from ._models_py3 import DiskUpdate
     from ._models_py3 import Encryption
+    from ._models_py3 import EncryptionSetIdentity
     from ._models_py3 import EncryptionSettingsCollection
     from ._models_py3 import EncryptionSettingsElement
     from ._models_py3 import Gallery
@@ -104,7 +105,6 @@ try:
     from ._models_py3 import ReplicationStatus
     from ._models_py3 import RequestRateByIntervalInput
     from ._models_py3 import Resource
-    from ._models_py3 import ResourceIdentity
     from ._models_py3 import ResourceRange
     from ._models_py3 import RollbackStatusInfo
     from ._models_py3 import RollingUpgradePolicy
@@ -245,6 +245,7 @@ except (SyntaxError, ImportError):
     from ._models import DiskSku
     from ._models import DiskUpdate
     from ._models import Encryption
+    from ._models import EncryptionSetIdentity
     from ._models import EncryptionSettingsCollection
     from ._models import EncryptionSettingsElement
     from ._models import Gallery
@@ -302,7 +303,6 @@ except (SyntaxError, ImportError):
     from ._models import ReplicationStatus
     from ._models import RequestRateByIntervalInput
     from ._models import Resource
-    from ._models import ResourceIdentity
     from ._models import ResourceRange
     from ._models import RollbackStatusInfo
     from ._models import RollingUpgradePolicy
@@ -444,11 +444,11 @@ from ._compute_management_client_enums import (
     ComponentNames,
     SettingNames,
     ProtocolTypes,
+    VirtualMachinePriorityTypes,
+    VirtualMachineEvictionPolicyTypes,
     ResourceIdentityType,
     MaintenanceOperationResultCodeTypes,
     HyperVGenerationType,
-    VirtualMachinePriorityTypes,
-    VirtualMachineEvictionPolicyTypes,
     UpgradeMode,
     VirtualMachineScaleSetScaleInRules,
     OperatingSystemStateTypes,
@@ -513,6 +513,7 @@ __all__ = [
     'DiskSku',
     'DiskUpdate',
     'Encryption',
+    'EncryptionSetIdentity',
     'EncryptionSettingsCollection',
     'EncryptionSettingsElement',
     'Gallery',
@@ -570,7 +571,6 @@ __all__ = [
     'ReplicationStatus',
     'RequestRateByIntervalInput',
     'Resource',
-    'ResourceIdentity',
     'ResourceRange',
     'RollbackStatusInfo',
     'RollingUpgradePolicy',
@@ -711,11 +711,11 @@ __all__ = [
     'ComponentNames',
     'SettingNames',
     'ProtocolTypes',
+    'VirtualMachinePriorityTypes',
+    'VirtualMachineEvictionPolicyTypes',
     'ResourceIdentityType',
     'MaintenanceOperationResultCodeTypes',
     'HyperVGenerationType',
-    'VirtualMachinePriorityTypes',
-    'VirtualMachineEvictionPolicyTypes',
     'UpgradeMode',
     'VirtualMachineScaleSetScaleInRules',
     'OperatingSystemStateTypes',

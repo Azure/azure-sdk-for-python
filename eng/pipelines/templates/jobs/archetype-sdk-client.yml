@@ -68,6 +68,11 @@ jobs:
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.7'
           CoverageArg: ''
+        Linux_Python38:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.8'
+          CoverageArg: ''
         Windows_Python35:
           OSName: 'Windows'
           OSVmImage: 'windows-2019'
@@ -96,35 +101,6 @@ jobs:
         OSName: $(OSName)
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        ToxTestEnv: 'whl,sdist'
-        BeforeTestSteps: 
-          - task: DownloadPipelineArtifact@0
-            inputs:
-              artifactName: 'artifacts' 
-              targetPath: $(Build.ArtifactStagingDirectory)
-
-  - job: 'Test_Linux_Python38'
-    condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
-    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-    variables:
-    - template: ../variables/globals.yml
-
-    dependsOn:
-      - 'Build'
-
-    pool:
-      vmImage: 'ubuntu-16.04'
-
-    steps:
-    - template: ../steps/build-test-python38.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
-        OSName: 'Linux'
-        CoverageArg: ''
-        PythonVersion: '3.8'
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ToxTestEnv: 'whl,sdist'
         BeforeTestSteps: 

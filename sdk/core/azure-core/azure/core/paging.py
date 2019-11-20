@@ -109,6 +109,9 @@ class ItemPaged(Iterator[ReturnType]):
             continuation_token=continuation_token, *self._args, **self._kwargs
         )
 
+    def __repr__(self):
+        return "<iterator object azure.core.paging.ItemPaged at {}>".format(hex(id(self)))
+
     def __iter__(self):
         """Return 'self'."""
         return self

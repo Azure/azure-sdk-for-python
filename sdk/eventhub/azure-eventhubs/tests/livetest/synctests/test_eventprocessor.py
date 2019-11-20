@@ -9,12 +9,10 @@ import threading
 import time
 
 from azure.eventhub import EventData, EventHubError
-from azure.eventhub.client import EventHubClient
 from azure.eventhub._eventprocessor.event_processor import EventProcessor
 from azure.eventhub import CloseReason
 from azure.eventhub._eventprocessor.local_partition_manager import InMemoryPartitionManager
-from azure.eventhub._eventprocessor.common import OwnershipLostError
-from azure.eventhub.common import _Address
+from azure.eventhub._client_base import _Address
 
 
 def event_handler(partition_context, events):
@@ -30,15 +28,21 @@ def test_loadbalancer_balance():
             self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
 
         def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
-            return MockEventhubConsumer()
+            consumer = MockEventhubConsumer(**kwargs)
+            return consumer
 
         def get_partition_ids(self):
             return ["0", "1"]
 
     class MockEventhubConsumer(object):
+        def __init__(self, **kwargs):
+            self.stop = False
+            self._on_event_received = kwargs.get("on_event_received")
+
         def receive(self):
             time.sleep(0.1)
-            return []
+            self._on_event_received(EventData(""))
+
         def close(self):
             pass
 
@@ -57,7 +61,7 @@ def test_loadbalancer_balance():
     threads.append(thread1)
 
     time.sleep(2)
-    ep1_after_start = len(event_processor1._working_threads)
+    ep1_after_start = len(event_processor1._consumers)
     event_processor2 = EventProcessor(eventhub_client=eventhub_client,
                                       consumer_group_name='$default',
                                       partition_manager=partition_manager,
@@ -69,12 +73,12 @@ def test_loadbalancer_balance():
     thread2.start()
     threads.append(thread2)
     time.sleep(10)
-    ep2_after_start = len(event_processor2._working_threads)
+    ep2_after_start = len(event_processor2._consumers)
 
     event_processor1.stop()
     thread1.join()
     time.sleep(10)
-    ep2_after_ep1_stopped = len(event_processor2._working_threads)
+    ep2_after_ep1_stopped = len(event_processor2._consumers)
     event_processor2.stop()
 
     assert ep1_after_start == 2
@@ -94,15 +98,18 @@ def test_loadbalancer_list_ownership_error():
             self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
 
         def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
-            return MockEventhubConsumer()
+            return MockEventhubConsumer(**kwargs)
 
         def get_partition_ids(self):
             return ["0", "1"]
 
     class MockEventhubConsumer(object):
+        def __init__(self, **kwargs):
+            self.stop = False
+            self._on_event_received = kwargs.get("on_event_received")
+
         def receive(self):
-            time.sleep(0.5)
-            return []
+            time.sleep(0.1)
 
         def close(self):
             pass
@@ -120,7 +127,7 @@ def test_loadbalancer_list_ownership_error():
     thread.start()
     time.sleep(2)
     event_processor_running = event_processor._running
-    event_processor_partitions = len(event_processor._working_threads)
+    event_processor_partitions = len(event_processor._consumers)
     event_processor.stop()
     thread.join()
     assert event_processor_running is True
@@ -132,12 +139,12 @@ def test_partition_processor():
     event_map = {}
 
     def partition_initialize_handler(partition_context):
-        assert_map["initialize"] = "called"
         assert partition_context
+        assert_map["initialize"] = "called"
 
-    def event_handler(partition_context, events):
-        event_map[partition_context.partition_id] = event_map.get(partition_context.partition_id, 0) + len(events)
-        partition_context.update_checkpoint(events[-1])
+    def event_handler(partition_context, event):
+        event_map[partition_context.partition_id] = event_map.get(partition_context.partition_id, 0) + 1
+        partition_context.update_checkpoint(event)
         assert_map["checkpoint"] = "checkpoint called"
 
     def partition_close_handler(partition_context, reason):
@@ -153,15 +160,19 @@ def test_partition_processor():
             self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
 
         def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
-            return MockEventhubConsumer()
+            return MockEventhubConsumer(**kwargs)
 
         def get_partition_ids(self):
             return ["0", "1"]
 
     class MockEventhubConsumer(object):
+        def __init__(self, **kwargs):
+            self.stop = False
+            self._on_event_received = kwargs.get("on_event_received")
+
         def receive(self):
             time.sleep(0.5)
-            return [EventData("test data")]
+            self._on_event_received(EventData("test data"))
 
         def close(self):
             pass
@@ -182,7 +193,7 @@ def test_partition_processor():
     thread = threading.Thread(target=event_processor.start)
     thread.start()
     time.sleep(2)
-    ep_partitions = len(event_processor._working_threads)
+    ep_partitions = len(event_processor._consumers)
     event_processor.stop()
     time.sleep(2)
     assert ep_partitions == 2
@@ -195,7 +206,7 @@ def test_partition_processor():
 
 def test_partition_processor_process_events_error():
     assert_result = {}
-    def event_handler(partition_context, events):
+    def event_handler(partition_context, event):
         if partition_context.partition_id == "1":
             raise RuntimeError("processing events error")
         else:
@@ -203,15 +214,12 @@ def test_partition_processor_process_events_error():
 
     def error_handler(partition_context, error):
         if partition_context.partition_id == "1":
-            assert_result["error"] = "runtime error"
+            assert_result["error"] = error
         else:
             assert_result["error"] = "not an error"
 
     def partition_close_handler(partition_context, reason):
-        if partition_context.partition_id == "1":
-            assert reason == CloseReason.OWNERSHIP_LOST
-        else:
-            assert reason == CloseReason.SHUTDOWN
+        pass
 
     class MockEventHubClient(object):
         eh_name = "test_eh_name"
@@ -220,15 +228,19 @@ def test_partition_processor_process_events_error():
             self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
 
         def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
-            return MockEventhubConsumer()
+            return MockEventhubConsumer(**kwargs)
 
         def get_partition_ids(self):
             return ["0", "1"]
 
     class MockEventhubConsumer(object):
+        def __init__(self, **kwargs):
+            self.stop = False
+            self._on_event_received = kwargs.get("on_event_received")
+
         def receive(self):
             time.sleep(0.5)
-            return [EventData("test data")]
+            self._on_event_received(EventData("test data"))
 
         def close(self):
             pass
@@ -248,7 +260,7 @@ def test_partition_processor_process_events_error():
     time.sleep(2)
     event_processor.stop()
     thread.join()
-    assert assert_result["error"] == "runtime error"
+    assert isinstance(assert_result["error"], RuntimeError)
 
 
 def test_partition_processor_process_eventhub_consumer_error():
@@ -269,12 +281,16 @@ def test_partition_processor_process_eventhub_consumer_error():
             self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
 
         def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
-            return MockEventhubConsumer()
+            return MockEventhubConsumer(**kwargs)
 
         def get_partition_ids(self):
             return ["0", "1"]
 
     class MockEventhubConsumer(object):
+        def __init__(self, **kwargs):
+            self.stop = False
+            self._on_event_received = kwargs.get("on_event_received")
+
         def receive(self):
             time.sleep(0.5)
             raise EventHubError("Mock EventHubConsumer EventHubError")
@@ -301,18 +317,23 @@ def test_partition_processor_process_eventhub_consumer_error():
 
 
 def test_partition_processor_process_error_close_error():
+
     def partition_initialize_handler(partition_context):
+        partition_initialize_handler.called = True
         raise RuntimeError("initialize error")
 
-    def event_handler(partition_context, events):
+    def event_handler(partition_context, event):
+        event_handler.called = True
         raise RuntimeError("process_events error")
 
     def error_handler(partition_context, error):
         assert isinstance(error, RuntimeError)
+        error_handler.called = True
         raise RuntimeError("process_error error")
 
     def partition_close_handler(partition_context, reason):
-        assert reason == CloseReason.OWNERSHIP_LOST
+        assert reason == CloseReason.SHUTDOWN
+        partition_close_handler.called = True
         raise RuntimeError("close error")
 
     class MockEventHubClient(object):
@@ -322,15 +343,20 @@ def test_partition_processor_process_error_close_error():
             self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
 
         def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
-            return MockEventhubConsumer()
+            return MockEventhubConsumer(**kwargs)
 
         def get_partition_ids(self):
             return ["0", "1"]
 
     class MockEventhubConsumer(object):
+        def __init__(self, **kwargs):
+            self.stop = False
+            self._on_event_received = kwargs.get("on_event_received")
+
         def receive(self):
             time.sleep(0.5)
-            return [EventData("mock events")]
+            self._on_event_received(EventData("test data"))
+
         def close(self):
             pass
 
@@ -351,6 +377,11 @@ def test_partition_processor_process_error_close_error():
     event_processor.stop()
     thread.join()
 
+    assert partition_initialize_handler.called
+    assert event_handler.called
+    assert error_handler.called
+    assert partition_close_handler.called
+
 
 def test_partition_processor_process_update_checkpoint_error():
     assert_map = {}
@@ -361,9 +392,9 @@ def test_partition_processor_process_update_checkpoint_error():
             if partition_id == "1":
                 raise ValueError("Mocked error")
 
-    def event_handler(partition_context, events):
-        if events:
-            partition_context.update_checkpoint(events[-1])
+    def event_handler(partition_context, event):
+        if event:
+            partition_context.update_checkpoint(event)
 
     def error_handler(partition_context, error):
         assert_map["error"] = error
@@ -378,15 +409,19 @@ def test_partition_processor_process_update_checkpoint_error():
             self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
 
         def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
-            return MockEventhubConsumer()
+            return MockEventhubConsumer(**kwargs)
 
         def get_partition_ids(self):
             return ["0", "1"]
 
     class MockEventhubConsumer(object):
+        def __init__(self, **kwargs):
+            self.stop = False
+            self._on_event_received = kwargs.get("on_event_received")
+
         def receive(self):
             time.sleep(0.5)
-            return [EventData("test data")]
+            self._on_event_received(EventData("test data"))
 
         def close(self):
             pass
