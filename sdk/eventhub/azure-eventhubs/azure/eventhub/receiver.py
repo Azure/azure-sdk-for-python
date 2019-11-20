@@ -61,7 +61,7 @@ class Receiver(object):
         self.properties = None
         self.redirected = None
         self.error = None
-        self.idle_timeout = (idle_timeout * 1000) if idle_timeout else (60 * 1000)
+        self.idle_timeout = (idle_timeout * 1000) if idle_timeout else None
         partition = self.source.split('/')[-1]
         self.name = "EHReceiver-{}-partition{}".format(uuid.uuid4(), partition)
         source = Source(self.source)
