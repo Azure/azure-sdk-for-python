@@ -85,6 +85,8 @@ class RetryPolicy(HTTPPolicy):
 
     #: Maximum backoff time.
     BACKOFF_MAX = 120
+    _SAFE_CODES = set(range(506)) - set([408, 500, 502, 503, 504])
+    _RETRY_CODES = set(range(999)) - _SAFE_CODES
 
     def __init__(self, **kwargs):
         self.total_retries = kwargs.pop('retry_total', 10)
@@ -94,10 +96,9 @@ class RetryPolicy(HTTPPolicy):
         self.backoff_factor = kwargs.pop('retry_backoff_factor', 0.8)
         self.backoff_max = kwargs.pop('retry_backoff_max', self.BACKOFF_MAX)
 
-        safe_codes = [i for i in range(500) if i != 408] + [501, 505]
-        retry_codes = [i for i in range(999) if i not in safe_codes]
+        retry_codes = self._RETRY_CODES
         status_codes = kwargs.pop('retry_on_status_codes', [])
-        self._retry_on_status_codes = set(status_codes + retry_codes)
+        self._retry_on_status_codes = set(status_codes) | retry_codes
         self._method_whitelist = frozenset(['HEAD', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'])
         self._respect_retry_after_header = True
         super(RetryPolicy, self).__init__()
