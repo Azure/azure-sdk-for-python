@@ -7,7 +7,7 @@ import asyncio
 import logging
 from typing import Any, Callable, Union
 from azure.core.polling import AsyncPollingMethod
-from ..models import KeyVaultCertificate, CertificateOperation
+from .._models import KeyVaultCertificate, CertificateOperation
 
 
 logger = logging.getLogger(__name__)
