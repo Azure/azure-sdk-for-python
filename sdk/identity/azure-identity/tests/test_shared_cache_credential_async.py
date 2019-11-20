@@ -18,6 +18,7 @@ from msal import TokenCache
 import pytest
 
 from helpers import async_validating_transport, build_aad_response, build_id_token, mock_response, Request
+from test_shared_cache_credential import get_account_event, populated_cache
 
 
 @pytest.mark.asyncio
@@ -449,34 +450,3 @@ async def test_authority_with_no_known_alias():
     credential = SharedTokenCacheCredential(authority=authority, _cache=cache, transport=transport)
     token = await credential.get_token("scope")
     assert token.token == expected_access_token
-
-
-def get_account_event(
-    username,
-    uid,
-    utid,
-    authority=KnownAuthorities.AZURE_PUBLIC_CLOUD,
-    client_id="client-id",
-    refresh_token="refresh-token",
-    scopes=None,
-):
-    return {
-        "response": build_aad_response(
-            uid=uid,
-            utid=utid,
-            refresh_token=refresh_token,
-            id_token=build_id_token(aud=client_id, preferred_username=username),
-            foci="1",
-        ),
-        "client_id": client_id,
-        "token_endpoint": "https://" + "/".join((authority, utid, "/path")),
-        "scope": scopes or ["scope"],
-    }
-
-
-def populated_cache(*accounts):
-    cache = TokenCache()
-    for account in accounts:
-        cache.add(account)
-    cache.add = lambda *_, **__: None  # prevent anything being added to the cache
-    return cache
