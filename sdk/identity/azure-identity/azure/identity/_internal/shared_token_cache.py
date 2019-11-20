@@ -51,7 +51,16 @@ Discovered accounts: {}"""
 NO_TOKEN = """Token acquisition failed for user '{}'. To fix, re-authenticate
 through developer tooling supporting Azure single sign on"""
 
-_PUBLIC_CLOUD_ALIASES = {"login.windows.net", "login.microsoft.com", "sts.windows.net"}
+# build a dictionary {authority: {its known aliases}}, aliases taken from MSAL.NET's KnownMetadataProvider
+KNOWN_ALIASES = {
+    alias: aliases  # N.B. aliases includes alias itself
+    for aliases in (
+        frozenset((KnownAuthorities.AZURE_CHINA, "login.partner.microsoftonline.cn")),
+        frozenset((KnownAuthorities.AZURE_PUBLIC_CLOUD, "login.windows.net", "login.microsoft.com", "sts.windows.net")),
+        frozenset((KnownAuthorities.AZURE_GOVERNMENT, "login.usgovcloudapi.net")),
+    )
+    for alias in aliases
+}
 
 
 def _account_to_string(account):
@@ -84,6 +93,7 @@ class SharedTokenCacheBase(ABC):
         # type: (Optional[str], **Any) -> None
 
         self._authority = kwargs.pop("authority", KnownAuthorities.AZURE_PUBLIC_CLOUD)
+        self._authority_aliases = KNOWN_ALIASES.get(self._authority) or frozenset((self._authority,))
         self._username = username
         self._tenant_id = kwargs.pop("tenant_id", None)
 
@@ -118,9 +128,7 @@ class SharedTokenCacheBase(ABC):
         items = []
         for item in self._cache.find(credential_type):
             environment = item.get("environment")
-            if environment == self._authority or (
-                self._authority == KnownAuthorities.AZURE_PUBLIC_CLOUD and environment in _PUBLIC_CLOUD_ALIASES
-            ):
+            if environment in self._authority_aliases:
                 items.append(item)
         return items
 

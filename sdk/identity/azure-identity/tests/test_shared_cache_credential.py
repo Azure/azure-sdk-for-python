@@ -5,6 +5,7 @@
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import KnownAuthorities, SharedTokenCacheCredential
 from azure.identity._internal.shared_token_cache import (
+    KNOWN_ALIASES,
     MULTIPLE_ACCOUNTS,
     MULTIPLE_MATCHING_ACCOUNTS,
     NO_ACCOUNTS,
@@ -381,6 +382,56 @@ def test_same_tenant_different_usernames():
     assert token.token == access_token_a
 
 
+def test_authority_aliases():
+    """the credential should use a refresh token valid for any known alias of its authority"""
+
+    expected_access_token = "access-token"
+
+    for authority in KNOWN_ALIASES:
+        # cache a token for this authority
+        expected_refresh_token = authority.replace(".", "")
+        account = get_account_event(
+            "spam@eggs", "uid", "tenant", authority=authority, refresh_token=expected_refresh_token
+        )
+        cache = populated_cache(account)
+
+        # the token should be acceptable for this authority itself
+        transport = validating_transport(
+            requests=[Request(required_data={"refresh_token": expected_refresh_token})],
+            responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
+        )
+        credential = SharedTokenCacheCredential(authority=authority, _cache=cache, transport=transport)
+        token = credential.get_token("scope")
+        assert token.token == expected_access_token
+
+        # it should be acceptable for every known alias of this authority
+        for alias in KNOWN_ALIASES[authority]:
+            transport = validating_transport(
+                requests=[Request(required_data={"refresh_token": expected_refresh_token})],
+                responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
+            )
+            credential = SharedTokenCacheCredential(authority=alias, _cache=cache, transport=transport)
+            token = credential.get_token("scope")
+            assert token.token == expected_access_token
+
+
+def test_authority_with_no_known_alias():
+    """given an appropriate token, an authority with no known aliases should work"""
+
+    authority = "unknown.authority"
+    expected_access_token = "access-token"
+    expected_refresh_token = "refresh-token"
+    account = get_account_event("spam@eggs", "uid", "tenant", authority=authority, refresh_token=expected_refresh_token)
+    cache = populated_cache(account)
+    transport = validating_transport(
+        requests=[Request(required_data={"refresh_token": expected_refresh_token})],
+        responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
+    )
+    credential = SharedTokenCacheCredential(authority=authority, _cache=cache, transport=transport)
+    token = credential.get_token("scope")
+    assert token.token == expected_access_token
+
+
 def get_account_event(
     username,
     uid,
@@ -408,4 +459,5 @@ def populated_cache(*accounts):
     cache = TokenCache()
     for account in accounts:
         cache.add(account)
+    cache.add = lambda *_, **__: None  # prevent anything being added to the cache
     return cache
