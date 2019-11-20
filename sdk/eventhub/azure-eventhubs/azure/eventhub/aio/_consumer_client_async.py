@@ -5,9 +5,10 @@
 
 import asyncio
 import logging
+import datetime
 from typing import Any, Union, TYPE_CHECKING, Dict, Tuple
 
-from azure.eventhub import EventPosition, EventHubSharedKeyCredential, EventHubSASTokenCredential
+from azure.eventhub import EventHubSharedKeyCredential, EventHubSASTokenCredential
 from ._eventprocessor.event_processor import EventProcessor
 from ._consumer_async import EventHubConsumer
 from ._client_base_async import ClientBaseAsync
@@ -86,7 +87,8 @@ class EventHubConsumerClient(ClientBaseAsync):
             self,
             consumer_group: str,
             partition_id: str,
-            event_position: EventPosition, **kwargs
+            event_position: Union[str, int, datetime.datetime],
+            **kwargs
     ) -> EventHubConsumer:
         owner_level = kwargs.get("owner_level")
         prefetch = kwargs.get("prefetch") or self._config.prefetch

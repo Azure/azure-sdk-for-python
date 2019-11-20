@@ -7,11 +7,13 @@ from __future__ import unicode_literals
 import sys
 import platform
 import datetime
+import calendar
+import six
 
 from uamqp import types  # type: ignore
 from uamqp.message import MessageHeader  # type: ignore
 
-from azure.core.settings import settings # type: ignore
+from azure.core.settings import settings  # type: ignore
 
 from azure.eventhub import __version__
 from ._constants import (
@@ -38,7 +40,7 @@ class UTC(datetime.tzinfo):
 
 
 try:
-    from datetime import timezone
+    from datetime import timezone  # pylint: disable=ungrouped-imports
     TZ_UTC = timezone.utc  # type: ignore
 except ImportError:
     TZ_UTC = UTC()  # type: ignore
@@ -140,3 +142,17 @@ def trace_link_message(message, parent_span=None):
             traceparent = message.application_properties.get(b"Diagnostic-Id", "").decode('ascii')
             if traceparent:
                 current_span.link(traceparent)
+
+
+def event_position_selector(value, inclusive=False):
+    """
+    Creates a selector expression of the offset.
+
+    """
+    operator = ">=" if inclusive else ">"
+    if isinstance(value, datetime.datetime):  # pylint:disable=no-else-return
+        timestamp = (calendar.timegm(value.utctimetuple()) * 1000) + (value.microsecond / 1000)
+        return ("amqp.annotation.x-opt-enqueued-time {} '{}'".format(operator, int(timestamp))).encode('utf-8')
+    elif isinstance(value, six.integer_types):
+        return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, value)).encode('utf-8')
+    return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, value)).encode('utf-8')

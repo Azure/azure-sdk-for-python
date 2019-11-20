@@ -8,7 +8,7 @@ import asyncio
 import logging
 from functools import partial
 
-from azure.eventhub import EventPosition, EventData, EventHubError
+from azure.eventhub import EventData, EventHubError
 from ..._eventprocessor.common import CloseReason
 from ..._eventprocessor._eventprocessor_mixin import EventProcessorMixin
 from .partition_context import PartitionContext
@@ -140,7 +140,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         with self._context(event):
             try:
                 if self._track_last_enqueued_event_properties:
-                    partition_context._last_received_event = event
+                    partition_context._last_received_event = event  # pylint: disable=protected-access
                 await self._event_handler(partition_context, event)
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise

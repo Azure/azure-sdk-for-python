@@ -3,26 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import six
 import datetime
 from contextlib import contextmanager
+import six
 
 from azure.core.tracing import SpanKind  # type: ignore
 from azure.core.settings import settings  # type: ignore
-
-from azure.eventhub._common import EventPosition
 
 
 class EventProcessorMixin(object):
 
     def get_init_event_position(self, partition_id, checkpoint):
         checkpoint_offset = checkpoint.get("offset") if checkpoint else None
-
-        is_inclusive = False
-        if isinstance(self._initial_event_position_inclusive, bool):
-            is_inclusive = self._initial_event_position_inclusive
-        elif isinstance(self._initial_event_position_inclusive, dict):
-            is_inclusive = self._initial_event_position_inclusive.get(partition_id, False)
 
         event_position = "-1"
         if checkpoint_offset:
@@ -34,7 +26,7 @@ class EventProcessorMixin(object):
         else:
             event_position = self._initial_event_position
 
-        initial_event_position = EventPosition(event_position, inclusive=is_inclusive)
+        initial_event_position = event_position
 
         return initial_event_position
 

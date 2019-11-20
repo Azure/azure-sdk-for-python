@@ -4,8 +4,6 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals
 
-import datetime
-import calendar
 import json
 import logging
 import six
@@ -325,52 +323,6 @@ class EventDataBatch(object):
         self.message._body_gen.append(event_data)  # pylint: disable=protected-access
         self._size = size_after_add
         self._count += 1
-
-
-class EventPosition(object):
-    """
-    The position(offset, sequence or timestamp) where a consumer starts.
-
-    :param value: The event position value. The value can be type of datetime.datetime or int or str.
-    :type value: int, str or datetime.datetime
-    :param bool inclusive: Whether to include the supplied value as the start point.
-
-    Examples:
-
-    Beginning of the event stream:
-      >>> event_pos = EventPosition("-1")
-    End of the event stream:
-      >>> event_pos = EventPosition("@latest")
-    Events after the specified offset:
-      >>> event_pos = EventPosition("12345")
-    Events from the specified offset:
-      >>> event_pos = EventPosition("12345", True)
-    Events after a datetime:
-      >>> event_pos = EventPosition(datetime.datetime.utcnow())
-    Events after a specific sequence number:
-      >>> event_pos = EventPosition(1506968696002)
-    """
-
-    def __init__(self, value, inclusive=False):
-        self.value = value if value is not None else "-1"
-        self.inclusive = inclusive
-
-    def __str__(self):
-        return str(self.value)
-
-    def _selector(self):
-        """
-        Creates a selector expression of the offset.
-
-        :rtype: bytes
-        """
-        operator = ">=" if self.inclusive else ">"
-        if isinstance(self.value, datetime.datetime):  # pylint:disable=no-else-return
-            timestamp = (calendar.timegm(self.value.utctimetuple()) * 1000) + (self.value.microsecond/1000)
-            return ("amqp.annotation.x-opt-enqueued-time {} '{}'".format(operator, int(timestamp))).encode('utf-8')
-        elif isinstance(self.value, six.integer_types):
-            return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, self.value)).encode('utf-8')
-        return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
 
 
 # TODO: move some behaviors to these two classes.
