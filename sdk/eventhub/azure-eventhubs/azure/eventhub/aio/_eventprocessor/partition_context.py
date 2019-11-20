@@ -5,6 +5,7 @@
 
 import logging
 from .partition_manager import PartitionManager
+from ..._utils import get_last_enqueued_event_properties
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -38,7 +39,7 @@ class PartitionContext(object):
         :rtype: dict or None
         """
         if self._last_received_event:
-            return self._last_received_event._get_last_enqueued_event_properties()  # pylint: disable=protected-access
+            return get_last_enqueued_event_properties(self._last_received_event)
         return None
 
     async def update_checkpoint(self, event):

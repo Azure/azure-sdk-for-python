@@ -19,7 +19,11 @@ from azure.eventhub import __version__
 from ._constants import (
     PROP_PARTITION_KEY_AMQP_SYMBOL,
     MAX_USER_AGENT_LENGTH,
-    USER_AGENT_PREFIX
+    USER_AGENT_PREFIX,
+    PROP_LAST_ENQUEUED_SEQUENCE_NUMBER,
+    PROP_LAST_ENQUEUED_TIME_UTC,
+    PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC,
+    PROP_LAST_ENQUEUED_OFFSET
 )
 
 
@@ -156,3 +160,32 @@ def event_position_selector(value, inclusive=False):
     elif isinstance(value, six.integer_types):
         return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, value)).encode('utf-8')
     return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, value)).encode('utf-8')
+
+
+def get_last_enqueued_event_properties(event_data):
+    """Extracts the last enqueued event in from the received event delivery annotations.
+    :rtype: Dict[str, Any]
+    """
+    # pylint: disable=protected-access
+    if event_data._last_enqueued_event_properties:
+        return event_data._last_enqueued_event_properties
+
+    if event_data.message.delivery_annotations:
+        sequence_number = event_data.message.delivery_annotations.get(PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None)
+        enqueued_time_stamp = event_data.message.delivery_annotations.get(PROP_LAST_ENQUEUED_TIME_UTC, None)
+        if enqueued_time_stamp:
+            enqueued_time_stamp = utc_from_timestamp(float(enqueued_time_stamp)/1000)
+        retrieval_time_stamp = event_data.message.delivery_annotations.get(PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
+        if retrieval_time_stamp:
+            retrieval_time_stamp = utc_from_timestamp(float(retrieval_time_stamp)/1000)
+        offset_bytes = event_data.message.delivery_annotations.get(PROP_LAST_ENQUEUED_OFFSET, None)
+        offset = offset_bytes.decode('UTF-8') if offset_bytes else None
+
+        event_data._last_enqueued_event_properties = {
+            "sequence_number": sequence_number,
+            "offset": offset,
+            "enqueued_time": enqueued_time_stamp,
+            "retrieval_time": retrieval_time_stamp
+        }
+        return event_data._last_enqueued_event_properties
+    return None

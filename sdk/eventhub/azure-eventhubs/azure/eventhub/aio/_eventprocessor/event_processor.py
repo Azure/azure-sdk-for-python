@@ -60,7 +60,6 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             self._owner_level = 0
         self._prefetch = prefetch
         self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
-        self._last_enqueued_event_properties = {}  # type: Dict[str, Dict[str, Any]]
         self._id = str(uuid.uuid4())
         self._running = False
 
@@ -68,11 +67,6 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
 
     def __repr__(self):
         return 'EventProcessor: id {}'.format(self._id)
-
-    def _get_last_enqueued_event_properties(self, partition_id):
-        if partition_id in self._tasks and partition_id in self._last_enqueued_event_properties:
-            return self._last_enqueued_event_properties[partition_id]
-        raise ValueError("You're not receiving events from partition {}".format(partition_id))
 
     async def _cancel_tasks_for_partitions(self, to_cancel_partitions):
         for partition_id in to_cancel_partitions:

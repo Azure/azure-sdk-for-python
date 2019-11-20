@@ -47,7 +47,6 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             self._owner_level = 0
         self._prefetch = kwargs.get("prefetch", None)
         self._track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
-        self._last_enqueued_event_properties = {}
         self._id = str(uuid.uuid4())
         self._running = False
         self._lock = threading.RLock()
@@ -155,11 +154,6 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 # that this EventProcessor is working on. So two or multiple EventProcessors may be working
                 # on the same partition.
             time.sleep(self._polling_interval)
-
-    def _get_last_enqueued_event_properties(self, partition_id):
-        if partition_id in self._consumers and partition_id in self._last_enqueued_event_properties:
-            return self._last_enqueued_event_properties[partition_id]
-        raise ValueError("You're not receiving events from partition {}".format(partition_id))
 
     def _close_consumer(self, partition_id, consumer, reason):
         consumer.close()

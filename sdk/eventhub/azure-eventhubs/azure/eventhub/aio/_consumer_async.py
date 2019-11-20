@@ -102,7 +102,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._link_properties[types.AMQPSymbol(TIMEOUT_SYMBOL)] = types.AMQPLong(int(link_property_timeout_ms))
         self._handler = None
         self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
-        self._last_enqueued_event_properties = {}
         self._event_queue = queue.Queue()
         self._last_received_event = None
 
