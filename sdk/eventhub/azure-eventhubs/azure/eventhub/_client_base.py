@@ -127,6 +127,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
         eventhub_name = kwargs.pop("eventhub_name", None)
+        consumer_group = kwargs.pop("consumer_group", None)
         address, policy, key, entity = _parse_conn_str(conn_str)
         entity = eventhub_name or entity
         left_slash_pos = address.find("//")
@@ -134,7 +135,11 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             host = address[left_slash_pos + 2:]
         else:
             host = address
-        return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
+
+        if consumer_group:  # Only consumer has the consumer_group arg
+            return cls(host, entity, consumer_group, EventHubSharedKeyCredential(policy, key), **kwargs)
+        else:
+            return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
 
     def _create_auth(self):
         """
@@ -227,7 +232,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
         Keys in the returned dictionary include:
 
-            - path
+            - eventhub_name
             - created_at
             - partition_ids
 
@@ -239,7 +244,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         output = {}
         eh_info = response.get_data()
         if eh_info:
-            output['path'] = eh_info[b'name'].decode('utf-8')
+            output['eventhub_name'] = eh_info[b'name'].decode('utf-8')
             output['created_at'] = utc_from_timestamp(float(eh_info[b'created_at']) / 1000)
             output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
         return output

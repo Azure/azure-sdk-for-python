@@ -27,12 +27,12 @@ async def test_loadbalancer_balance(connstr_senders):
     connection_str, senders = connstr_senders
     for sender in senders:
         sender.send(EventData("EventProcessor Test"))
-    eventhub_client = EventHubConsumerClient.from_connection_string(connection_str)
+    eventhub_client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     checkpoint_store = InMemoryCheckpointStore()
     tasks = []
 
     event_processor1 = EventProcessor(eventhub_client=eventhub_client,
-                                      consumer_group_name='$default',
+                                      consumer_group='$default',
                                       checkpoint_store=checkpoint_store,
                                       event_handler=event_handler,
                                       error_handler=None,
@@ -45,7 +45,7 @@ async def test_loadbalancer_balance(connstr_senders):
     assert len(event_processor1._tasks) == 2  # event_processor1 claims two partitions
 
     event_processor2 = EventProcessor(eventhub_client=eventhub_client,
-                                      consumer_group_name='$default',
+                                      consumer_group='$default',
                                       checkpoint_store=checkpoint_store,
                                       event_handler=event_handler,
                                       error_handler=None,
@@ -59,7 +59,7 @@ async def test_loadbalancer_balance(connstr_senders):
     assert len(event_processor2._tasks) == 1
 
     event_processor3 = EventProcessor(eventhub_client=eventhub_client,
-                                      consumer_group_name='$default',
+                                      consumer_group='$default',
                                       checkpoint_store=checkpoint_store,
                                       event_handler=event_handler,
                                       error_handler=None,
@@ -83,17 +83,17 @@ async def test_loadbalancer_balance(connstr_senders):
 @pytest.mark.asyncio
 async def test_loadbalancer_list_ownership_error(connstr_senders):
     class ErrorCheckpointStore(InMemoryCheckpointStore):
-        async def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
+        async def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group):
             raise RuntimeError("Test runtime error")
 
     connection_str, senders = connstr_senders
     for sender in senders:
         sender.send(EventData("EventProcessor Test"))
-    eventhub_client = EventHubConsumerClient.from_connection_string(connection_str)
+    eventhub_client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     checkpoint_store = ErrorCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group_name='$default',
+                                     consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
                                      event_handler=event_handler,
                                      error_handler=None,
@@ -143,11 +143,11 @@ async def test_partition_processor(connstr_senders):
     connection_str, senders = connstr_senders
     for sender in senders:
         sender.send(EventData("EventProcessor Test"))
-    eventhub_client = EventHubConsumerClient.from_connection_string(connection_str)
+    eventhub_client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     checkpoint_store = InMemoryCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group_name='$default',
+                                     consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
                                      event_handler=event_handler,
                                      error_handler=error_handler,
@@ -193,11 +193,11 @@ async def test_partition_processor_process_events_error(connstr_senders):
     connection_str, senders = connstr_senders
     for sender in senders:
         sender.send(EventData("EventProcessor Test"))
-    eventhub_client = EventHubConsumerClient.from_connection_string(connection_str)
+    eventhub_client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     checkpoint_store = InMemoryCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group_name='$default',
+                                     consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
                                      event_handler=event_handler,
                                      error_handler=error_handler,
@@ -224,12 +224,12 @@ async def test_partition_processor_process_eventhub_consumer_error():
         partition_close_handler.reason = reason
 
     class MockEventHubClient(object):
-        eh_name = "test_eh_name"
+        eventhub_name = "test_eh_name"
 
         def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
+            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
+        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
             return MockEventhubConsumer(**kwargs)
 
         async def get_partition_ids(self):
@@ -250,7 +250,7 @@ async def test_partition_processor_process_eventhub_consumer_error():
     checkpoint_store = InMemoryCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group_name='$default',
+                                     consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
                                      event_handler=event_handler,
                                      error_handler=error_handler,
@@ -287,12 +287,12 @@ async def test_partition_processor_process_error_close_error():
         raise RuntimeError("close error")
 
     class MockEventHubClient(object):
-        eh_name = "test_eh_name"
+        eventhub_name = "test_eh_name"
 
         def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
+            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
+        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
             return MockEventhubConsumer(**kwargs)
 
         async def get_partition_ids(self):
@@ -314,7 +314,7 @@ async def test_partition_processor_process_error_close_error():
     checkpoint_store = InMemoryCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group_name='$default',
+                                     consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
                                      event_handler=event_handler,
                                      error_handler=error_handler,
@@ -337,7 +337,7 @@ async def test_partition_processor_process_update_checkpoint_error(connstr_sende
     class ErrorCheckpointStore(InMemoryCheckpointStore):
         async def update_checkpoint(
                 self, fully_qualified_namespace, eventhub_name,
-                consumer_group_name, partition_id, offset, sequence_number):
+                consumer_group, partition_id, offset, sequence_number):
             if partition_id == "1":
                 raise OwnershipLostError("Mocked ownership lost")
 
@@ -355,11 +355,11 @@ async def test_partition_processor_process_update_checkpoint_error(connstr_sende
     connection_str, senders = connstr_senders
     for sender in senders:
         sender.send(EventData("EventProcessor Test"))
-    eventhub_client = EventHubConsumerClient.from_connection_string(connection_str)
+    eventhub_client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     checkpoint_store = ErrorCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group_name='$default',
+                                     consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
                                      event_handler=event_handler,
                                      error_handler=error_handler,

@@ -135,7 +135,7 @@ class ClientBaseAsync(ClientBase):
         Get properties of the specified EventHub async.
         Keys in the details dictionary include:
 
-            - path
+            - eventhub_name
             - created_at
             - partition_ids
 
@@ -147,7 +147,7 @@ class ClientBaseAsync(ClientBase):
         output = {}
         eh_info = response.get_data()
         if eh_info:
-            output['path'] = eh_info[b'name'].decode('utf-8')
+            output['eventhub_name'] = eh_info[b'name'].decode('utf-8')
             output['created_at'] = utc_from_timestamp(float(eh_info[b'created_at']) / 1000)
             output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
         return output

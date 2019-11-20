@@ -46,17 +46,17 @@ async def test_receive_with_invalid_param_async(live_eventhub_config, invalid_pl
         eventhub_config['access_key'],
         eventhub_config['event_hub'])
 
-    client = EventHubConsumerClient.from_connection_string(conn_str, retry_total=0)
+    client = EventHubConsumerClient.from_connection_string(conn_str, consumer_group='$default', retry_total=0)
 
     async def on_event(partition_context, event):
         pass
 
     async with client:
         if invalid_place == "partition":
-            task = asyncio.ensure_future(client.receive(on_event, "$default", partition_id=invalid_place,
+            task = asyncio.ensure_future(client.receive(on_event, partition_id=invalid_place,
                                          initial_event_position=EventPosition("-1")))
         else:
-            task = asyncio.ensure_future(client.receive(on_event, "$default", partition_id="0",
+            task = asyncio.ensure_future(client.receive(on_event, partition_id="0",
                                                         initial_event_position=EventPosition("-1")))
         await asyncio.sleep(10)
         assert len(client._event_processors) == 1
@@ -84,7 +84,7 @@ async def test_send_with_invalid_policy_async(invalid_policy):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_non_existing_entity_sender_async(connection_str):
-    client = EventHubProducerClient.from_connection_string(connection_str, event_hub_path="nemo")
+    client = EventHubProducerClient.from_connection_string(connection_str, eventhub_name="nemo")
     async with client:
         with pytest.raises(ConnectError):
             await client.send(EventData("test data"))

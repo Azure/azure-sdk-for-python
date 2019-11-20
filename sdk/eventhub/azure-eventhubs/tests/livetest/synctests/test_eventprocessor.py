@@ -22,12 +22,12 @@ def event_handler(partition_context, events):
 def test_loadbalancer_balance():
 
     class MockEventHubClient(object):
-        eh_name = "test_eh_name"
+        eventhub_name = "test_eventhub_name"
 
         def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
+            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
+        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
             consumer = MockEventhubConsumer(**kwargs)
             return consumer
 
@@ -50,7 +50,7 @@ def test_loadbalancer_balance():
     checkpoint_store = InMemoryCheckpointStore()
     threads = []
     event_processor1 = EventProcessor(eventhub_client=eventhub_client,
-                                      consumer_group_name='$default',
+                                      consumer_group='$default',
                                       checkpoint_store=checkpoint_store,
                                       on_event=event_handler,
                                       polling_interval=3,
@@ -63,7 +63,7 @@ def test_loadbalancer_balance():
     time.sleep(2)
     ep1_after_start = len(event_processor1._consumers)
     event_processor2 = EventProcessor(eventhub_client=eventhub_client,
-                                      consumer_group_name='$default',
+                                      consumer_group='$default',
                                       checkpoint_store=checkpoint_store,
                                       on_event=event_handler,
                                       polling_interval=3,
@@ -88,16 +88,16 @@ def test_loadbalancer_balance():
 
 def test_loadbalancer_list_ownership_error():
     class ErrorCheckpointStore(InMemoryCheckpointStore):
-        def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group_name):
+        def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group):
             raise RuntimeError("Test runtime error")
 
     class MockEventHubClient(object):
-        eh_name = "test_eh_name"
+        eventhub_name = "test_eventhub_name"
 
         def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
+            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
+        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
             return MockEventhubConsumer(**kwargs)
 
         def get_partition_ids(self):
@@ -118,7 +118,7 @@ def test_loadbalancer_list_ownership_error():
     checkpoint_store = ErrorCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group_name='$default',
+                                     consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
                                      on_event=event_handler,
                                      polling_interval=1)
@@ -154,12 +154,12 @@ def test_partition_processor():
         assert_map["error"] = err
 
     class MockEventHubClient(object):
-        eh_name = "test_eh_name"
+        eventhub_name = "test_eventhub_name"
 
         def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
+            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
+        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
             return MockEventhubConsumer(**kwargs)
 
         def get_partition_ids(self):
@@ -182,7 +182,7 @@ def test_partition_processor():
     checkpoint_store = InMemoryCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group_name='$default',
+                                     consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
                                      on_event=event_handler,
                                      on_error=error_handler,
@@ -222,12 +222,12 @@ def test_partition_processor_process_events_error():
         pass
 
     class MockEventHubClient(object):
-        eh_name = "test_eh_name"
+        eventhub_name = "test_eventhub_name"
 
         def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
+            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
+        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
             return MockEventhubConsumer(**kwargs)
 
         def get_partition_ids(self):
@@ -249,7 +249,7 @@ def test_partition_processor_process_events_error():
     checkpoint_store = InMemoryCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group_name='$default',
+                                     consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
                                      on_event=event_handler,
                                      on_error=error_handler,
@@ -275,12 +275,12 @@ def test_partition_processor_process_eventhub_consumer_error():
         assert_result["reason"] = CloseReason.OWNERSHIP_LOST
 
     class MockEventHubClient(object):
-        eh_name = "test_eh_name"
+        eventhub_name = "test_eventhub_name"
 
         def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
+            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
+        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
             return MockEventhubConsumer(**kwargs)
 
         def get_partition_ids(self):
@@ -301,7 +301,7 @@ def test_partition_processor_process_eventhub_consumer_error():
     checkpoint_store = InMemoryCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group_name='$default',
+                                     consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
                                      on_event=event_handler,
                                      on_error=error_handler,
@@ -337,12 +337,12 @@ def test_partition_processor_process_error_close_error():
         raise RuntimeError("close error")
 
     class MockEventHubClient(object):
-        eh_name = "test_eh_name"
+        eventhub_name = "test_eventhub_name"
 
         def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
+            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
+        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
             return MockEventhubConsumer(**kwargs)
 
         def get_partition_ids(self):
@@ -364,7 +364,7 @@ def test_partition_processor_process_error_close_error():
     checkpoint_store = InMemoryCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group_name='$default',
+                                     consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
                                      on_event=event_handler,
                                      on_error=error_handler,
@@ -388,7 +388,7 @@ def test_partition_processor_process_update_checkpoint_error():
     class ErrorCheckpointStore(InMemoryCheckpointStore):
         def update_checkpoint(
                 self, fully_qualified_namespace, eventhub_name,
-                consumer_group_name, partition_id, offset, sequence_number):
+                consumer_group, partition_id, offset, sequence_number):
             if partition_id == "1":
                 raise ValueError("Mocked error")
 
@@ -403,12 +403,12 @@ def test_partition_processor_process_update_checkpoint_error():
         pass
 
     class MockEventHubClient(object):
-        eh_name = "test_eh_name"
+        eventhub_name = "test_eventhub_name"
 
         def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eh_name)
+            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group_name, partition_id, event_position, **kwargs):
+        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
             return MockEventhubConsumer(**kwargs)
 
         def get_partition_ids(self):
@@ -430,7 +430,7 @@ def test_partition_processor_process_update_checkpoint_error():
     checkpoint_store = ErrorCheckpointStore()
 
     event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group_name='$default',
+                                     consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
                                      on_event=event_handler,
                                      on_error=error_handler,
