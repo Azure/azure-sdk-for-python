@@ -56,8 +56,16 @@ def build_aad_response(  # simulate a response from AAD
 
 class Request:
     def __init__(
-        self, url=None, url_substring=None, method=None, required_headers={}, required_data={}, required_params={}
+        self,
+        url=None,
+        authority=None,
+        url_substring=None,
+        method=None,
+        required_headers={},
+        required_data={},
+        required_params={},
     ):
+        self.authority = authority
         self.method = method
         self.url = url
         self.url_substring = url_substring
@@ -66,8 +74,15 @@ class Request:
         self.required_params = required_params
 
     def assert_matches(self, request):
+        # TODO: rewrite this to report all mismatches, and use the parsed url
+        url = six.moves.urllib_parse.urlparse(request.url)
+
         if self.url:
             assert request.url.split("?")[0] == self.url
+        if self.authority:
+            assert url.netloc == self.authority, "Expected authority '{}', actual was '{}".format(
+                self.authority, url.netloc
+            )
         if self.url_substring:
             assert self.url_substring in request.url
         if self.method:

@@ -416,7 +416,7 @@ async def test_authority_aliases():
 
         # the token should be acceptable for this authority itself
         transport = async_validating_transport(
-            requests=[Request(required_data={"refresh_token": expected_refresh_token})],
+            requests=[Request(authority=authority, required_data={"refresh_token": expected_refresh_token})],
             responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
         )
         credential = SharedTokenCacheCredential(authority=authority, _cache=cache, transport=transport)
@@ -426,7 +426,7 @@ async def test_authority_aliases():
         # it should also be acceptable for every known alias of this authority
         for alias in KNOWN_ALIASES[authority]:
             transport = async_validating_transport(
-                requests=[Request(required_data={"refresh_token": expected_refresh_token})],
+                requests=[Request(authority=alias, required_data={"refresh_token": expected_refresh_token})],
                 responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
             )
             credential = SharedTokenCacheCredential(authority=alias, _cache=cache, transport=transport)
@@ -444,7 +444,7 @@ async def test_authority_with_no_known_alias():
     account = get_account_event("spam@eggs", "uid", "tenant", authority=authority, refresh_token=expected_refresh_token)
     cache = populated_cache(account)
     transport = async_validating_transport(
-        requests=[Request(required_data={"refresh_token": expected_refresh_token})],
+        requests=[Request(authority=authority, required_data={"refresh_token": expected_refresh_token})],
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
     )
     credential = SharedTokenCacheCredential(authority=authority, _cache=cache, transport=transport)

@@ -45,7 +45,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
     """
 
     def __init__(self, **kwargs):
-        authority = kwargs.pop("authority", KnownAuthorities.AZURE_PUBLIC_CLOUD)
+        authority = kwargs.pop("authority", None) or KnownAuthorities.AZURE_PUBLIC_CLOUD
 
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
         shared_cache_tenant_id = kwargs.pop(

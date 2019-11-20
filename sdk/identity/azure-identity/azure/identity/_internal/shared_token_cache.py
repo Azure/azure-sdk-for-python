@@ -92,7 +92,7 @@ class SharedTokenCacheBase(ABC):
     def __init__(self, username=None, **kwargs):  # pylint:disable=unused-argument
         # type: (Optional[str], **Any) -> None
 
-        self._authority = kwargs.pop("authority", KnownAuthorities.AZURE_PUBLIC_CLOUD)
+        self._authority = kwargs.pop("authority", None) or KnownAuthorities.AZURE_PUBLIC_CLOUD
         self._authority_aliases = KNOWN_ALIASES.get(self._authority) or frozenset((self._authority,))
         self._username = username
         self._tenant_id = kwargs.pop("tenant_id", None)
@@ -112,7 +112,9 @@ class SharedTokenCacheBase(ABC):
 
         if cache:
             self._cache = cache
-            self._client = self._get_auth_client(cache=cache, **kwargs)  # type: Optional[AadClientBase]
+            self._client = self._get_auth_client(
+                authority=self._authority, cache=cache, **kwargs
+            )  # type: Optional[AadClientBase]
         else:
             self._client = None
 

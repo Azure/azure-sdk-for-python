@@ -19,10 +19,7 @@ from test_shared_cache_credential import build_aad_response, get_account_event, 
 
 @pytest.mark.asyncio
 async def test_default_credential_authority():
-    # TODO need a mock cache to test SharedTokenCacheCredential
-    you_shall_not_pass = "sentinel"
     authority = "authority.com"
-    tenant_id = "expected_tenant"
     expected_access_token = "***"
     response = mock_response(
         json_payload={
@@ -40,16 +37,17 @@ async def test_default_credential_authority():
 
         async def send(request, **_):
             url = urlparse(request.url)
-            assert url.scheme == "https"
-            assert url.netloc == expected_authority
-            assert url.path.startswith("/" + tenant_id)
+            assert url.scheme == "https", "Unexpected scheme '{}'".format(url.scheme)
+            assert url.netloc == expected_authority, "Expected authority '{}', actual was '{}'".format(
+                expected_authority, url.netloc
+            )
             return response
 
         # environment credential configured with client secret should respect authority
         environment = {
             EnvironmentVariables.AZURE_CLIENT_ID: "client_id",
             EnvironmentVariables.AZURE_CLIENT_SECRET: "secret",
-            EnvironmentVariables.AZURE_TENANT_ID: tenant_id,
+            EnvironmentVariables.AZURE_TENANT_ID: "tenant_id",
         }
         with patch("os.environ", environment):
             transport = Mock(send=send)
@@ -69,6 +67,14 @@ async def test_default_credential_authority():
                 credential = DefaultAzureCredential(transport=transport)
             access_token, _ = await credential.get_token("scope")
             assert access_token == expected_access_token
+
+        # shared cache credential should respect authority
+        account = get_account_event(username="spam@eggs", uid="guid", utid="tenant", authority=authority_kwarg)
+        cache = populated_cache(account)
+        with patch.object(SharedTokenCacheCredential, "supported"):
+            credential = DefaultAzureCredential(_cache=cache, authority=authority_kwarg, transport=Mock(send=send))
+        access_token, _ = await credential.get_token("scope")
+        assert access_token == expected_access_token
 
     # all credentials not representing managed identities should use a specified authority or default to public cloud
     await exercise_credentials("authority.com")
