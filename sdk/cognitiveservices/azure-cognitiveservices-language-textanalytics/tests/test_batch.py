@@ -28,10 +28,10 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
 
         response = text_analytics.detect_language(docs)
 
-        self.assertEqual(response[0].detected_languages[0].name, "English")
-        self.assertEqual(response[1].detected_languages[0].name, "Spanish")
-        self.assertEqual(response[2].detected_languages[0].name, "Japanese")
-        self.assertEqual(response[3].detected_languages[0].name, "German")
+        self.assertEqual(response[0].detected_language.name, "English")
+        self.assertEqual(response[1].detected_language.name, "Spanish")
+        self.assertEqual(response[2].detected_language.name, "Japanese")
+        self.assertEqual(response[3].detected_language.name, "German")
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
@@ -281,10 +281,10 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
         ]
 
         response = text_analytics.detect_language(docs)
-        self.assertEqual(response[0].detected_languages[0].name, "English")
-        self.assertEqual(response[1].detected_languages[0].name, "Spanish")
-        self.assertEqual(response[2].detected_languages[0].name, "Japanese")
-        self.assertEqual(response[3].detected_languages[0].name, "German")
+        self.assertEqual(response[0].detected_language.name, "English")
+        self.assertEqual(response[1].detected_language.name, "Spanish")
+        self.assertEqual(response[2].detected_language.name, "Japanese")
+        self.assertEqual(response[3].detected_language.name, "German")
         self.assertTrue(response[4].is_error)
 
     @ResourceGroupPreparer()
@@ -300,10 +300,10 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
         ]
 
         response = text_analytics.detect_language(docs)
-        self.assertEqual(response[0].detected_languages[0].name, "English")
-        self.assertEqual(response[1].detected_languages[0].name, "Spanish")
-        self.assertEqual(response[2].detected_languages[0].name, "Japanese")
-        self.assertEqual(response[3].detected_languages[0].name, "German")
+        self.assertEqual(response[0].detected_language.name, "English")
+        self.assertEqual(response[1].detected_language.name, "Spanish")
+        self.assertEqual(response[2].detected_language.name, "Japanese")
+        self.assertEqual(response[3].detected_language.name, "German")
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")

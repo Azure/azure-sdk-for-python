@@ -54,8 +54,8 @@ class SingleDetectLanguageSampleAsync(object):
             show_stats=True
         )
 
-        print("Language detected: {}".format(result.detected_languages[0].name))
-        print("Confidence score: {}\n".format(result.detected_languages[0].score))
+        print("Language detected: {}".format(result.detected_language.name))
+        print("Confidence score: {}\n".format(result.detected_language.score))
         print("Document Statistics:")
         print("Text character count: {}".format(result.statistics.characters_count))
         print("Transactions count: {}".format(result.statistics.transactions_count))

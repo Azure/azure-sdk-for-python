@@ -68,9 +68,9 @@ class DocumentLanguage(object):
 
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
-    :param detected_languages: Required. A list of extracted languages.
-    :type detected_languages:
-     list[~azure.cognitiveservices.language.textanalytics.models.DetectedLanguage]
+    :param detected_language: Required. The extracted language.
+    :type detected_language:
+     ~azure.cognitiveservices.language.textanalytics.models.DetectedLanguage
     :param statistics: if showStats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
@@ -81,7 +81,7 @@ class DocumentLanguage(object):
 
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
-        self.detected_languages = kwargs.get("detected_languages", None)
+        self.detected_language = kwargs.get("detected_language", None)
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 

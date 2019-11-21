@@ -135,7 +135,7 @@ def language_result(response, obj, response_headers):  # pylint: disable=unused-
         else:
             results[idx] = DocumentLanguage(
                 id=language.id,
-                detected_languages=[DetectedLanguage._from_generated(l) for l in language.detected_languages],  # pylint: disable=protected-access
+                detected_language=DetectedLanguage._from_generated(language.detected_languages[0]),  # pylint: disable=protected-access
                 statistics=DocumentStatistics._from_generated(language.statistics),  # pylint: disable=protected-access
             )
     return results
