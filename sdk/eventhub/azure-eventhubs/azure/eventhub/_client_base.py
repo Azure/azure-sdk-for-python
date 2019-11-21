@@ -9,16 +9,13 @@ import uuid
 import time
 import functools
 import collections
-from base64 import b64encode, b64decode
-from hashlib import sha256
-from hmac import HMAC
 from typing import Any
 from datetime import timedelta
 try:
     from urlparse import urlparse  # type: ignore
-    from urllib import urlencode, quote_plus  # type: ignore
+    from urllib import quote_plus  # type: ignore
 except ImportError:
-    from urllib.parse import urlparse, urlencode, quote_plus
+    from urllib.parse import urlparse, quote_plus
 
 from uamqp import (
     AMQPClient,
