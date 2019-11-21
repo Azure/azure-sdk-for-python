@@ -125,8 +125,7 @@ class Sqlite3CheckpointStore(CheckpointStore):
         finally:
             cursor.close()
 
-    async def update_checkpoint(
-            self, fully_qualified_namespace, eventhub_name, consumer_group, partition_id, offset, sequence_number):
+    async def update_checkpoint(self, checkpoint):
         cursor = self.conn.cursor()
         localvars = locals()
         try:

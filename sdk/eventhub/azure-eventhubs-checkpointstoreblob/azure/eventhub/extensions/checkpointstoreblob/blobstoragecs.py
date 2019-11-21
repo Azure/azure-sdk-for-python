@@ -161,26 +161,21 @@ class BlobCheckpointStore(CheckpointStore):
                 pass
         return gathered_results
 
-    def update_checkpoint(
-            self, fully_qualified_namespace,
-            eventhub_name,
-            consumer_group,
-            partition_id,
-            offset,
-            sequence_number
-        ):
+    def update_checkpoint(self, checkpoint):
         metadata = {
-            "offset": offset,
-            "sequencenumber": str(sequence_number),
+            "offset": checkpoint['offset'],
+            "sequencenumber": str(checkpoint['sequence_number']),
         }
         blob_name = "{}/{}/{}/checkpoint/{}".format(
-            fully_qualified_namespace,
-            eventhub_name,
-            consumer_group,
-            partition_id)
+            checkpoint['fully_qualified_namespace'],
+            checkpoint['eventhub_name'],
+            checkpoint['consumer_group'],
+            checkpoint['partition_id'])
         blob_name = blob_name.lower()
         self._get_blob_client(blob_name).upload_blob(
-            data=UPLOAD_DATA, overwrite=True, metadata=metadata
+            data=UPLOAD_DATA,
+            overwrite=True,
+            metadata=metadata
         )
 
     def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group):

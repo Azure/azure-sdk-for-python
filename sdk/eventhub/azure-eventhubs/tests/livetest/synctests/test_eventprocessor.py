@@ -386,10 +386,8 @@ def test_partition_processor_process_error_close_error():
 def test_partition_processor_process_update_checkpoint_error():
     assert_map = {}
     class ErrorCheckpointStore(InMemoryCheckpointStore):
-        def update_checkpoint(
-                self, fully_qualified_namespace, eventhub_name,
-                consumer_group, partition_id, offset, sequence_number):
-            if partition_id == "1":
+        def update_checkpoint(self, checkpoint):
+            if checkpoint['partition_id'] == "1":
                 raise ValueError("Mocked error")
 
     def event_handler(partition_context, event):

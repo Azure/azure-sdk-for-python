@@ -335,10 +335,8 @@ async def test_partition_processor_process_error_close_error():
 @pytest.mark.asyncio
 async def test_partition_processor_process_update_checkpoint_error(connstr_senders):
     class ErrorCheckpointStore(InMemoryCheckpointStore):
-        async def update_checkpoint(
-                self, fully_qualified_namespace, eventhub_name,
-                consumer_group, partition_id, offset, sequence_number):
-            if partition_id == "1":
+        async def update_checkpoint(self, checkpoint):
+            if checkpoint['partition_id'] == "1":
                 raise OwnershipLostError("Mocked ownership lost")
 
     async def event_handler(partition_context, event):
