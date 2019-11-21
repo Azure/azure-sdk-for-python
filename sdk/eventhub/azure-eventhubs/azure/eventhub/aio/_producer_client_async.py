@@ -58,7 +58,7 @@ class EventHubProducerClient(ClientBaseAsync):
     def __init__(self,
                  fully_qualified_namespace: str,
                  eventhub_name: str,
-                 credential: TokenCredential,
+                 credential: 'TokenCredential',
                  **kwargs) -> None:
         super(EventHubProducerClient, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,

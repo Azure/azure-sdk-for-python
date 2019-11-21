@@ -26,9 +26,6 @@ from .._constants import JWT_TOKEN_SCOPE, MGMT_OPERATION, MGMT_PARTITION_OPERATI
 from ._connection_manager_async import get_connection_manager
 from ._error_async import _handle_exception
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential  # type: ignore
-
 _LOGGER = logging.getLogger(__name__)
 
 

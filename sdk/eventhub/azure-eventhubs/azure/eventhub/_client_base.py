@@ -39,9 +39,6 @@ from ._constants import (
     MGMT_PARTITION_OPERATION
 )
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential  # type: ignore
-
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple('Address', 'hostname path')
 _AccessToken = collections.namedtuple('AccessToken', 'token expires_on')

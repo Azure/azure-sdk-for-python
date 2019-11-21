@@ -77,7 +77,7 @@ class EventHubConsumerClient(ClientBaseAsync):
                  fully_qualified_namespace: str,
                  eventhub_name: str,
                  consumer_group: str,
-                 credential: TokenCredential,
+                 credential: 'TokenCredential',
                  **kwargs) -> None:
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", 10)
