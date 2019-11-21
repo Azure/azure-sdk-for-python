@@ -47,7 +47,7 @@ if __name__ == '__main__':
     try:
         with consumer_client:
             consumer_client.receive(
-                on_event=on_event,
+                on_events=on_event,
                 consumer_group='$Default',
                 on_partition_initialize=on_partition_initialize,
                 on_partition_close=on_partition_close,
