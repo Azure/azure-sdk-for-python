@@ -119,9 +119,9 @@ async def test_shared_cache_tenant_id():
     refresh_token_a = "refresh-token-a"
     refresh_token_b = "refresh-token-b"
 
-    # The value of the UPN is arbitrary because this test verifies the credential's behavior given a specified
-    # tenant ID. During a complete live test run, $AZURE_USERNAME will have a value which DefaultAzureCredential
-    # should pass to SharedTokenCacheCredential. We prefer the environment value to prevent that breaking this test.
+    # The value of upn is arbitrary because this test verifies the credential's behavior given a specified
+    # tenant. During a complete live test run, $AZURE_USERNAME will have a value which DefaultAzureCredential
+    # should pass to SharedTokenCacheCredential. This test will fail if the mock accounts don't match that value.
     upn = os.environ.get(EnvironmentVariables.AZURE_USERNAME, "spam@eggs")
 
     tenant_a = "tenant-a"
@@ -168,9 +168,9 @@ async def test_shared_cache_username():
     upn_a = "spam@eggs"
     upn_b = "eggs@spam"
 
-    # The value of the tenant ID is arbitrary because this test verifies the credential's behavior given a specified
-    # username. During a complete live test run, $AZURE_TENANT_ID will have a value which DefaultAzureCredential should
-    # pass to SharedTokenCacheCredential. We prefer the environment value here to prevent that breaking this test.
+    # The value of tenant_id is arbitrary because this test verifies the credential's behavior given a specified
+    # username. During a complete live test run, $AZURE_TENANT_ID will have a value which DefaultAzureCredential
+    # should pass to SharedTokenCacheCredential. This test will fail if the mock accounts don't match that value.
     tenant_id = os.environ.get(EnvironmentVariables.AZURE_TENANT_ID, "the-tenant")
 
     # two cached accounts, same tenant, different usernames -> shared_cache_username should prevail
