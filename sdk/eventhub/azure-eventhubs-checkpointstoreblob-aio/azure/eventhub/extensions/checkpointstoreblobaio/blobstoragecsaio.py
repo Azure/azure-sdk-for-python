@@ -37,7 +37,7 @@ class BlobCheckpointStore(CheckpointStore):
         # type(str, str, Optional[Any], Any) -> None
         container_client = kwargs.pop('container_client', None)
         self._container_client = container_client or ContainerClient(
-            blob_account_url, container_name, credential=None, **kwargs
+            blob_account_url, container_name, credential=credential, **kwargs
         )
         self._cached_blob_clients = defaultdict()  # type: Dict[str, BlobClient]
 
