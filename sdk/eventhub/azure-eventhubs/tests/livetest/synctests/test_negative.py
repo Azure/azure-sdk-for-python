@@ -11,7 +11,7 @@ import threading
 
 from azure.eventhub import (
     EventData,
-    EventPosition,
+    EventDataBatch,
     AuthenticationError,
     ConnectError,
     EventDataSendError)
@@ -21,14 +21,16 @@ from azure.eventhub import EventHubProducerClient
 
 
 @pytest.mark.liveTest
-def test_send_with_invalid_hostname(invalid_hostname):
+def test_send_batch_with_invalid_hostname(invalid_hostname):
     if sys.platform.startswith('darwin'):
         pytest.skip("Skipping on OSX - it keeps reporting 'Unable to set external certificates' "
                     "and blocking other tests")
     client = EventHubProducerClient.from_connection_string(invalid_hostname)
     with client:
         with pytest.raises(ConnectError):
-            client.send(EventData("test data"))
+            batch = EventDataBatch()
+            batch.add(EventData("test data"))
+            client.send_batch(batch)
 
 
 @pytest.mark.liveTest
@@ -47,7 +49,7 @@ def test_receive_with_invalid_hostname_sync(invalid_hostname):
 
 
 @pytest.mark.liveTest
-def test_send_with_invalid_key(live_eventhub):
+def test_send_batch_with_invalid_key(live_eventhub):
     conn_str = live_eventhub["connection_str"].format(
         live_eventhub['hostname'],
         live_eventhub['key_name'],
@@ -55,42 +57,49 @@ def test_send_with_invalid_key(live_eventhub):
         live_eventhub['event_hub'])
     client = EventHubProducerClient.from_connection_string(conn_str)
     with pytest.raises(ConnectError):
-        client.send(EventData("test data"))
+        batch = EventDataBatch()
+        batch.add(EventData("test data"))
+        client.send_batch(batch)
     client.close()
 
 
 @pytest.mark.liveTest
-def test_send_to_invalid_partitions(connection_str):
+def test_send_batch_to_invalid_partitions(connection_str):
     partitions = ["XYZ", "-1", "1000", "-"]
     for p in partitions:
         client = EventHubProducerClient.from_connection_string(connection_str)
         try:
             with pytest.raises(ConnectError):
-                client.send(EventData("test data"), partition_id=p)
+                batch = client.create_batch(partition_id=p)
+                batch.add(EventData("test data"))
+                client.send_batch(batch)
         finally:
             client.close()
 
 
 @pytest.mark.liveTest
-def test_send_too_large_message(connection_str):
+def test_send_batch_too_large_message(connection_str):
     if sys.platform.startswith('darwin'):
         pytest.skip("Skipping on OSX - open issue regarding message size")
     client = EventHubProducerClient.from_connection_string(connection_str)
     try:
         data = EventData(b"A" * 1100000)
-        with pytest.raises(EventDataSendError):
-            client.send(data)
+        batch = client.create_batch()
+        with pytest.raises(ValueError):
+            batch.add(data)
     finally:
         client.close()
 
 
 @pytest.mark.liveTest
-def test_send_null_body(connection_str):
+def test_send_batch_null_body(connection_str):
     client = EventHubProducerClient.from_connection_string(connection_str)
     try:
         with pytest.raises(ValueError):
             data = EventData(None)
-            client.send(data)
+            batch = client.create_batch()
+            batch.add(data)
+            client.send_batch(batch)
     finally:
         client.close()
 

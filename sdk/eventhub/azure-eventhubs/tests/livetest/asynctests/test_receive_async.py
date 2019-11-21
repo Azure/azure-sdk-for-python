@@ -8,7 +8,7 @@ import asyncio
 import pytest
 import time
 
-from azure.eventhub import EventData, EventPosition, TransportType, EventHubError
+from azure.eventhub import EventData, TransportType, EventHubError
 from azure.eventhub.aio import EventHubConsumerClient
 
 
@@ -43,10 +43,10 @@ async def test_receive_end_of_stream_async(connstr_senders):
 @pytest.mark.asyncio
 async def test_receive_with_event_position_async(connstr_senders, position, inclusive, expected_result):
     async def on_event(partition_context, event):
-        assert event.last_enqueued_event_properties.get('sequence_number') == event.sequence_number
-        assert event.last_enqueued_event_properties.get('offset') == event.offset
-        assert event.last_enqueued_event_properties.get('enqueued_time') == event.enqueued_time
-        assert event.last_enqueued_event_properties.get('retrieval_time') is not None
+        assert partition_context.last_enqueued_event_properties.get('sequence_number') == event.sequence_number
+        assert partition_context.last_enqueued_event_properties.get('offset') == event.offset
+        assert partition_context.last_enqueued_event_properties.get('enqueued_time') == event.enqueued_time
+        assert partition_context.last_enqueued_event_properties.get('retrieval_time') is not None
 
         if position == "offset":
             on_event.event_position = event.offset
@@ -72,7 +72,7 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
     async with client2:
         task = asyncio.ensure_future(
             client2.receive(on_event,
-                            initial_event_position= EventPosition(on_event.event_position, inclusive),
+                            initial_event_position= on_event.event_position, initial_event_position_inclusive=inclusive,
                             track_last_enqueued_event_properties=True))
         await asyncio.sleep(10)
         assert on_event.event.body_as_str() == expected_result
@@ -116,7 +116,6 @@ async def test_receive_owner_level_async(connstr_senders):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_over_websocket_async(connstr_senders):
-    pytest.skip("Waiting on uAMQP release on the message reading properties")
     app_prop = {"raw_prop": "raw_value"}
 
     async def on_event(partition_context, event):
