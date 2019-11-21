@@ -358,7 +358,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
     @distributed_trace_async
-    async def update_policy(
+    async def update_certificate_policy(
         self, certificate_name: str, policy: CertificatePolicy, **kwargs: "**Any"
     ) -> CertificatePolicy:
         """Updates the policy for a certificate.

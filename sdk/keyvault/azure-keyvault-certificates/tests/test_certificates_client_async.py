@@ -551,7 +551,7 @@ class CertificateClientTests(KeyVaultTestCase):
             ),
         )
 
-        await client.update_policy(
+        await client.update_certificate_policy(
             certificate_name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
         )
         updated_cert_policy = await client.get_certificate_policy(certificate_name=cert_name)
