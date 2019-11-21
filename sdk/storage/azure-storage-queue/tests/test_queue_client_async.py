@@ -471,7 +471,7 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
         await service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
 
     @GlobalStorageAccountPreparer()
-    async def test_closing_pipeline_client(self, resource_group, location, storage_account, storage_account_key):
+    async def test_closing_pipeline_client_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for client, url in SERVICES.items():
             # Act
@@ -482,6 +482,16 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
             async with service:
                 assert hasattr(service, 'close')
                 service.close()
+
+    @GlobalStorageAccountPreparer()
+    async def test_closing_pipeline_client_simple_async(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        for client, url in SERVICES.items():
+            # Act
+            service = client(
+                self.account_url(storage_account.name, "queue"), credential=storage_account_key, queue_name='queue')
+            service.close()
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

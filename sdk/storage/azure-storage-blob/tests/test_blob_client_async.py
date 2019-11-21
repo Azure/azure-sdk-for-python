@@ -561,4 +561,15 @@ class StorageClientTestAsync(AsyncStorageTestCase):
             async with service:
                 assert hasattr(service, 'close')
                 service.close()
+
+    @GlobalStorageAccountPreparer()
+    async def test_closing_pipeline_client_simple(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+
+        for client, url in SERVICES.items():
+            # Act
+            service = client(
+                self.account_url(storage_account.name, "blob"), credential=storage_account_key, container_name='foo', blob_name='bar')
+            service.close()
+                
 # ------------------------------------------------------------------------------

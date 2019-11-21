@@ -422,6 +422,15 @@ class StorageFileClientTest(FileTestCase):
                 assert hasattr(service, 'close')
                 service.close()
 
+    async def test_closing_pipeline_client_simple_async(self):
+        # Arrange
+
+        for client, url in SERVICES.items():
+            # Act
+            service = client(
+                self.get_file_url(), credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
+            service.close()
+
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

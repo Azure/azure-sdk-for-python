@@ -417,7 +417,7 @@ class StorageFileClientTest(FileTestCase):
                     self.assertEqual(
                         str(e.exception), "Connection string missing required connection details.")
 
-    def test_closing_pipeline_client_async(self):
+    def test_closing_pipeline_client(self):
         # Arrange
 
         for client, url in SERVICES.items():
@@ -429,6 +429,16 @@ class StorageFileClientTest(FileTestCase):
             with service:
                 assert hasattr(service, 'close')
                 service.close()
+
+    def test_closing_pipeline_client_simple(self):
+        # Arrange
+
+        for client, url in SERVICES.items():
+            # Act
+            service = client(
+                self.get_file_url(), credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
+            service.close()
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
