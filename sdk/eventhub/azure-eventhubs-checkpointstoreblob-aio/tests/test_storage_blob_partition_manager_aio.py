@@ -97,9 +97,15 @@ async def _update_checkpoint(connection_str, container_name):
     checkpoint_store = BlobCheckpointStore.from_connection_string(connection_str, container_name)
     async with checkpoint_store:
         for i in range(partition_cnt):
-            await checkpoint_store.update_checkpoint(
-                fully_qualified_namespace, eventhub_name, consumer_group, str(i),
-                '2', 20)
+            checkpoint = {
+                'fully_qualified_namespace': fully_qualified_namespace,
+                'eventhub_name': eventhub_name,
+                'consumer_group': consumer_group,
+                'partition_id': str(i),
+                'offset': '2',
+                'sequence_number': 20
+            }
+            await checkpoint_store.update_checkpoint(checkpoint)
 
         checkpoint_list = await checkpoint_store.list_checkpoints(
             fully_qualified_namespace=fully_qualified_namespace,

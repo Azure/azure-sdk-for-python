@@ -99,9 +99,15 @@ def _update_checkpoint(storage_connection_str, container_name):
         storage_connection_str, container_name)
     with checkpoint_store:
         for i in range(partition_cnt):
-            checkpoint_store.update_checkpoint(
-                fully_qualified_namespace, eventhub_name, consumer_group, str(i),
-                '2', 20)
+            checkpoint = {
+                'fully_qualified_namespace': fully_qualified_namespace,
+                'eventhub_name': eventhub_name,
+                'consumer_group': consumer_group,
+                'partition_id': str(i),
+                'offset': '2',
+                'sequence_number': 20
+            }
+            checkpoint_store.update_checkpoint(checkpoint)
 
         checkpoint_list = checkpoint_store.list_checkpoints(
             fully_qualified_namespace=fully_qualified_namespace,
