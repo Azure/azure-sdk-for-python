@@ -92,6 +92,15 @@ Release History
 - Model AzureSqlProtectedItem has a new parameter deferred_delete_time_in_utc
 - Model AzureSqlProtectedItem has a new parameter is_scheduled_for_deferred_delete
 
+**General Breaking changes**
+
+This version uses a next-generation code generator that might introduce breaking changes if from some import. In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+RecoveryServicesBackupClient cannot be imported from azure.mgmt.recoveryservicesbackup.recovery_services_backup_client anymore (import from azure.mgmt.recoveryservicesbackup works like before)
+RecoveryServicesBackupClientConfiguration import has been moved from azure.mgmt.recoveryservicesbackup.recovery_services_backup_client to azure.mgmt.recoveryservicesbackup
+A model MyClass from a "models" sub-module cannot be imported anymore using azure.mgmt.recoveryservicesbackup.models.my_class (import from azure.mgmt.recoveryservicesbackup.models works like before)
+An operation class MyClassOperations from an operations sub-module cannot be imported anymore using azure.mgmt.recoveryservicesbackup.operations.my_class_operations (import from azure.mgmt.recoveryservicesbackup.operations works like before)
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
 0.4.0 (2019-05-21)
 ++++++++++++++++++
 
