@@ -32,7 +32,7 @@ def test_send_with_long_interval_sync(short_idle_connstr_receivers):
 
     received = []
     for r in receivers:
-        received.extend(r.receive(timeout=5))
+        received.extend(r.receive(timeout=2))
 
     assert len(received) == 0
 
@@ -43,7 +43,7 @@ def test_send_with_long_interval_sync(short_idle_connstr_receivers):
     client.stop()
 
     for r in receivers:
-        received.extend(r.receive(timeout=5))
+        received.extend(r.receive(timeout=2))
 
     # We expect only 1 because the receiver, having not read prior to timing out, won't have ANY 
     # concept of an internal checkpoint to resume from.
