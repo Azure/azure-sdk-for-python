@@ -1044,42 +1044,20 @@ class FileShare(AzureEntityResource):
 
 
 class FileShareCreateParameters(Model):
-    """FileShareCreateParameters.
+    """The parameters used to create the file share.
 
-    :param metadata: A name-value pair to associate with the share as
-     metadata.
-    :type metadata: dict[str, str]
-    :param share_quota: The maximum size of the share, in gigabytes. Must be
-     greater than 0, and less than or equal to 5TB (5120).
-    :type share_quota: int
-    :param enabled_protocols: Protocols for file shares. It cannot be changed
-     after file share creation. Possible values include: 'SMB', 'NFS'
-    :type enabled_protocols: str or
-     ~azure.mgmt.storage.v2019_06_01.models.EnabledProtocols
-    :param root_squash: Reduction of the access rights for the remote
-     superuser. Possible values include: 'NoRootSquash', 'RootSquash',
-     'AllSquash'
-    :type root_squash: str or
-     ~azure.mgmt.storage.v2019_06_01.models.RootSquash
+    :param properties: Properties of the file share to create the file share.
+    :type properties:
+     ~azure.mgmt.storage.v2019_06_01.models.FileSharePropertiesCreateParameters
     """
 
-    _validation = {
-        'share_quota': {'maximum': 5120, 'minimum': 1},
-    }
-
     _attribute_map = {
-        'metadata': {'key': 'metadata', 'type': '{str}'},
-        'share_quota': {'key': 'shareQuota', 'type': 'int'},
-        'enabled_protocols': {'key': 'enabledProtocols', 'type': 'str'},
-        'root_squash': {'key': 'rootSquash', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'FileSharePropertiesCreateParameters'},
     }
 
-    def __init__(self, *, metadata=None, share_quota: int=None, enabled_protocols=None, root_squash=None, **kwargs) -> None:
+    def __init__(self, *, properties=None, **kwargs) -> None:
         super(FileShareCreateParameters, self).__init__(**kwargs)
-        self.metadata = metadata
-        self.share_quota = share_quota
-        self.enabled_protocols = enabled_protocols
-        self.root_squash = root_squash
+        self.properties = properties
 
 
 class FileShareItem(AzureEntityResource):
@@ -1148,8 +1126,47 @@ class FileShareItem(AzureEntityResource):
         self.root_squash = root_squash
 
 
-class FileShareUpdateParameters(Model):
-    """FileShareUpdateParameters.
+class FileSharePropertiesCreateParameters(Model):
+    """FileSharePropertiesCreateParameters.
+
+    :param metadata: A name-value pair to associate with the share as
+     metadata.
+    :type metadata: dict[str, str]
+    :param share_quota: The maximum size of the share, in gigabytes. Must be
+     greater than 0, and less than or equal to 5TB (5120).
+    :type share_quota: int
+    :param enabled_protocols: Protocols for file shares. It cannot be changed
+     after file share creation. Possible values include: 'SMB', 'NFS'
+    :type enabled_protocols: str or
+     ~azure.mgmt.storage.v2019_06_01.models.EnabledProtocols
+    :param root_squash: Reduction of the access rights for the remote
+     superuser. Possible values include: 'NoRootSquash', 'RootSquash',
+     'AllSquash'
+    :type root_squash: str or
+     ~azure.mgmt.storage.v2019_06_01.models.RootSquash
+    """
+
+    _validation = {
+        'share_quota': {'maximum': 5120, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'metadata': {'key': 'metadata', 'type': '{str}'},
+        'share_quota': {'key': 'shareQuota', 'type': 'int'},
+        'enabled_protocols': {'key': 'enabledProtocols', 'type': 'str'},
+        'root_squash': {'key': 'rootSquash', 'type': 'str'},
+    }
+
+    def __init__(self, *, metadata=None, share_quota: int=None, enabled_protocols=None, root_squash=None, **kwargs) -> None:
+        super(FileSharePropertiesCreateParameters, self).__init__(**kwargs)
+        self.metadata = metadata
+        self.share_quota = share_quota
+        self.enabled_protocols = enabled_protocols
+        self.root_squash = root_squash
+
+
+class FileSharePropertiesUpdateParameters(Model):
+    """FileSharePropertiesUpdateParameters.
 
     :param metadata: A name-value pair to associate with the share as
      metadata.
@@ -1175,10 +1192,27 @@ class FileShareUpdateParameters(Model):
     }
 
     def __init__(self, *, metadata=None, share_quota: int=None, root_squash=None, **kwargs) -> None:
-        super(FileShareUpdateParameters, self).__init__(**kwargs)
+        super(FileSharePropertiesUpdateParameters, self).__init__(**kwargs)
         self.metadata = metadata
         self.share_quota = share_quota
         self.root_squash = root_squash
+
+
+class FileShareUpdateParameters(Model):
+    """The parameters used to create the file share.
+
+    :param properties: Properties of the file share to update the file share.
+    :type properties:
+     ~azure.mgmt.storage.v2019_06_01.models.FileSharePropertiesUpdateParameters
+    """
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'FileSharePropertiesUpdateParameters'},
+    }
+
+    def __init__(self, *, properties=None, **kwargs) -> None:
+        super(FileShareUpdateParameters, self).__init__(**kwargs)
+        self.properties = properties
 
 
 class GeoReplicationStats(Model):

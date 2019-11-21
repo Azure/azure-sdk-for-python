@@ -125,7 +125,7 @@ class FileSharesOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/default/shares'}
 
     def create(
-            self, resource_group_name, account_name, share_name, file_share, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, share_name, properties=None, custom_headers=None, raw=False, **operation_config):
         """Creates a new share under the specified account as described by request
         body. The share resource includes metadata and properties for that
         share. It does not include a list of the files contained by the share.
@@ -144,9 +144,10 @@ class FileSharesOperations(object):
          dash (-) character must be immediately preceded and followed by a
          letter or number.
         :type share_name: str
-        :param file_share: Properties of the file share to create.
-        :type file_share:
-         ~azure.mgmt.storage.v2019_06_01.models.FileShareCreateParameters
+        :param properties: Properties of the file share to create the file
+         share.
+        :type properties:
+         ~azure.mgmt.storage.v2019_06_01.models.FileSharePropertiesCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -157,6 +158,8 @@ class FileSharesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        file_share = models.FileShareCreateParameters(properties=properties)
+
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -208,7 +211,7 @@ class FileSharesOperations(object):
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/default/shares/{shareName}'}
 
     def update(
-            self, resource_group_name, account_name, share_name, file_share, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, share_name, properties=None, custom_headers=None, raw=False, **operation_config):
         """Updates share properties as specified in request body. Properties not
         mentioned in the request will not be changed. Update fails if the
         specified share does not already exist. .
@@ -226,9 +229,10 @@ class FileSharesOperations(object):
          dash (-) character must be immediately preceded and followed by a
          letter or number.
         :type share_name: str
-        :param file_share: Properties to update for the file share.
-        :type file_share:
-         ~azure.mgmt.storage.v2019_06_01.models.FileShareUpdateParameters
+        :param properties: Properties of the file share to update the file
+         share.
+        :type properties:
+         ~azure.mgmt.storage.v2019_06_01.models.FileSharePropertiesUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -239,6 +243,8 @@ class FileSharesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        file_share = models.FileShareUpdateParameters(properties=properties)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
