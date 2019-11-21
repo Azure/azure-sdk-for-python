@@ -81,7 +81,7 @@ def _claim_and_list_ownership(storage_connection_str, container_name):
 @pytest.mark.liveTest
 def test_claim_and_list_ownership():
     storage_connection_str, container_name = get_live_storage_blob_client()
-    if not live_storage_blob_client:
+    if not storage_connection_str:
         pytest.skip("Storage blob client can't be created")
     try:
         _claim_and_list_ownership(storage_connection_str, container_name)
@@ -116,6 +116,8 @@ def _update_checkpoint(storage_connection_str, container_name):
 @pytest.mark.liveTest
 def test_update_checkpoint():
     storage_connection_str, container_name = get_live_storage_blob_client()
+    if not storage_connection_str:
+        pytest.skip("Storage blob client can't be created")
     try:
         _update_checkpoint(storage_connection_str, container_name)
     finally:

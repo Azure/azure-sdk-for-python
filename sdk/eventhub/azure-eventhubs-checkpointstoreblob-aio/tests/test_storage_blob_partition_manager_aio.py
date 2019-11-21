@@ -79,6 +79,8 @@ async def _claim_and_list_ownership(connection_str, container_name):
 @pytest.mark.liveTest
 def test_claim_and_list_ownership():
     connection_str, container_name = get_live_storage_blob_client()
+    if not connection_str:
+        pytest.skip("Storage blob client can't be created")
     try:
         loop = asyncio.get_event_loop()
         loop.run_until_complete(_claim_and_list_ownership(connection_str, container_name))
@@ -112,6 +114,8 @@ async def _update_checkpoint(connection_str, container_name):
 @pytest.mark.liveTest
 def test_update_checkpoint():
     connection_str, container_name = get_live_storage_blob_client()
+    if not connection_str:
+        pytest.skip("Storage blob client can't be created")
     try:
         loop = asyncio.get_event_loop()
         loop.run_until_complete(_update_checkpoint(connection_str, container_name))
