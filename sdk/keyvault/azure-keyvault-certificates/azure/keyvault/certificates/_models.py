@@ -47,14 +47,14 @@ class AdministratorContact(object):
         )[:1024]
 
     @classmethod
-    def _from_admin_details(cls, admin_contacts_bundle):
+    def _from_admin_detail(cls, admin_detail):
         # type: (models.AdministratorDetails) -> AdministratorContact
         """Construct a AdministratorContact from an autorest-generated AdministratorDetailsBundle"""
         return cls(
-            email=admin_contacts_bundle.email_address,
-            first_name=admin_contacts_bundle.first_name,
-            last_name=admin_contacts_bundle.last_name,
-            phone=admin_contacts_bundle.phone,
+            email=admin_detail.email_address,
+            first_name=admin_detail.first_name,
+            last_name=admin_detail.last_name,
+            phone=admin_detail.phone,
         )
 
     @property
@@ -1170,7 +1170,7 @@ class CertificateIssuer(object):
         if admin_details:
             # pylint:disable=protected-access
             for admin_detail in admin_details:
-                admin_contacts.append(AdministratorContact._from_admin_details(admin_detail))
+                admin_contacts.append(AdministratorContact._from_admin_detail(admin_detail))
         return cls(
             properties=IssuerProperties._from_issuer_item(issuer_bundle),  # pylint: disable=protected-access
             attributes=issuer_bundle.attributes,

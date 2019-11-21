@@ -828,8 +828,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
         else:
             issuer_credentials = None
-        if admin_contacts and admin_contacts[0]:
-            admin_contacts_to_pass = list(
+        if admin_contacts:
+            admin_details = [
                 self._client.models.AdministratorDetails(
                     first_name=contact.first_name,
                     last_name=contact.last_name,
@@ -837,12 +837,12 @@ class CertificateClient(AsyncKeyVaultClientBase):
                     phone=contact.phone,
                 )
                 for contact in admin_contacts
-            )
+            ]
         else:
-            admin_contacts_to_pass = admin_contacts
-        if organization_id or admin_contacts:
+            admin_details = None
+        if organization_id or admin_details:
             organization_details = self._client.models.OrganizationDetails(
-                id=organization_id, admin_contacts=admin_contacts_to_pass
+                id=organization_id, admin_contacts=admin_details
             )
         else:
             organization_details = None
@@ -905,7 +905,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             )
         else:
             admin_details = None
-        if organization_id or admin_contacts:
+        if organization_id or admin_details:
             organization_details = self._client.models.OrganizationDetails(
                 id=organization_id, admin_contacts=admin_details
             )
