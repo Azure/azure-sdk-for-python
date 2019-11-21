@@ -14,33 +14,33 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-cognitiveservices-language-textanalytics/3.0.0b1
       X-BingApis-SDK-Client:
       - Python-SDK
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?model-version=latest&showStats=true
   response:
     body:
-      string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","sentiment":"negative","statistics":{"charactersCount":46,"transactionsCount":1},"documentScores":{"positive":0.0003182481741533,"neutral":0.0002766175020952,"negative":0.9994051456451416},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":0.0003182481741533,"neutral":0.0002766175020952,"negative":0.9994051456451416},"offset":0,"length":46}]}],"errors":[],"modelVersion":"latest"}'
+      string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","sentiment":"negative","statistics":{"charactersCount":46,"transactionsCount":1},"documentScores":{"positive":8.3826489572E-06,"neutral":1.4686445411E-06,"negative":0.99999022483825684},"sentences":[{"sentiment":"negative","sentenceScores":{"positive":8.3826489572E-06,"neutral":1.4686445411E-06,"negative":0.99999022483825684},"offset":0,"length":46}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - bbc4e37d-881f-4c12-94d4-bc2949bcd95c
+      - 1d203c59-928a-4a11-8809-8e8240d8d690
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 14 Nov 2019 21:19:20 GMT
+      - Thu, 21 Nov 2019 01:27:53 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
       - chunked
       x-aml-ta-request-id:
-      - a61808b5-73a3-456f-ba27-d2748718ef74
+      - b171fbc8-e35f-409e-bb72-5323e2824c5a
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '58'
+      - '82'
     status:
       code: 200
       message: OK

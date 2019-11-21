@@ -7,59 +7,64 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_single_detect_language.py
+FILE: sample_single_extract_key_phrases_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to detect the language of a single string.
+    This sample demonstrates how to extract key phrases from a single string.
 
     This module-level, single method is meant to be used as an introduction
     for new users of the text analytics service. For optimum use of the service,
     use the methods that support batching documents.
 
 USAGE:
-    python sample_single_detect_language.py
+    python sample_single_extract_key_phrases_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
     2) AZURE_COGNITIVE_SERVICES_KEY - your cognitive services account key
 
 OUTPUT:
-    Language detected: English
-    Confidence score: 1.0
+    Key phrases found:
 
-    Document Statistics:
-    Text character count: 42
-    Transactions count: 1
+    King County
+    United States
+    Washington
+    city
+    miles
+    Redmond
+    Seattle
 """
 
 import os
+import asyncio
 
 
-class SingleDetectLanguageSample(object):
+class SingleExtractKeyPhrasesSampleAsync(object):
 
     endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
     key = os.getenv("AZURE_COGNITIVE_SERVICES_KEY")
 
-    def detect_language(self):
-        from azure.cognitiveservices.language.textanalytics import single_detect_language
+    async def extract_key_phrases_async(self):
+        from azure.cognitiveservices.language.textanalytics.aio import single_extract_key_phrases
 
-        text = "I need to take my cat to the veterinarian."
+        text = "Redmond is a city in King County, Washington, United States, located 15 miles east of Seattle."
 
-        result = single_detect_language(
+        result = await single_extract_key_phrases(
             endpoint=self.endpoint,
             credential=self.key,
             text=text,
-            country_hint="US",
-            show_stats=True
+            language="en"
         )
 
-        print("Language detected: {}".format(result.detected_languages[0].name))
-        print("Confidence score: {}\n".format(result.detected_languages[0].score))
-        print("Document Statistics:")
-        print("Text character count: {}".format(result.statistics.characters_count))
-        print("Transactions count: {}".format(result.statistics.transactions_count))
+        print("Key phrases found:\n")
+        for phrase in result.key_phrases:
+            print(phrase)
 
+
+async def main():
+    sample = SingleExtractKeyPhrasesSampleAsync()
+    await sample.extract_key_phrases_async()
 
 if __name__ == '__main__':
-    sample = SingleDetectLanguageSample()
-    sample.detect_language()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

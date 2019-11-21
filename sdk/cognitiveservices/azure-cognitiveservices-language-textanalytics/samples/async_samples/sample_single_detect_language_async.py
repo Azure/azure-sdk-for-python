@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_single_detect_language.py
+FILE: sample_single_detect_language_async.py
 
 DESCRIPTION:
     This sample demonstrates how to detect the language of a single string.
@@ -17,7 +17,7 @@ DESCRIPTION:
     use the methods that support batching documents.
 
 USAGE:
-    python sample_single_detect_language.py
+    python sample_single_detect_language_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
@@ -33,19 +33,20 @@ OUTPUT:
 """
 
 import os
+import asyncio
 
 
-class SingleDetectLanguageSample(object):
+class SingleDetectLanguageSampleAsync(object):
 
     endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
     key = os.getenv("AZURE_COGNITIVE_SERVICES_KEY")
 
-    def detect_language(self):
-        from azure.cognitiveservices.language.textanalytics import single_detect_language
+    async def detect_language_async(self):
+        from azure.cognitiveservices.language.textanalytics.aio import single_detect_language
 
         text = "I need to take my cat to the veterinarian."
 
-        result = single_detect_language(
+        result = await single_detect_language(
             endpoint=self.endpoint,
             credential=self.key,
             text=text,
@@ -60,6 +61,10 @@ class SingleDetectLanguageSample(object):
         print("Transactions count: {}".format(result.statistics.transactions_count))
 
 
+async def main():
+    sample = SingleDetectLanguageSampleAsync()
+    await sample.detect_language_async()
+
 if __name__ == '__main__':
-    sample = SingleDetectLanguageSample()
-    sample.detect_language()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

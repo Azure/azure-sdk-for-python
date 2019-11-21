@@ -13,34 +13,34 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-textanalyticsclient/3.0.0b1
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-cognitiveservices-language-textanalytics/3.0.0b1
       X-BingApis-SDK-Client:
       - Python-SDK
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?model-version=latest&showStats=true
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/keyPhrases?model-version=latest&showStats=true
   response:
     body:
-      string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","statistics":{"charactersCount":36,"transactionsCount":1},"entities":[{"text":"Microsoft","type":"Organization","offset":0,"length":9,"score":0.999969482421875},{"text":"Bill
-        Gates","type":"Person","offset":25,"length":10,"score":0.99999237060546875}]}],"errors":[],"modelVersion":"latest"}'
+      string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","keyPhrases":["Microsoft","Bill
+        Gates"],"statistics":{"charactersCount":36,"transactionsCount":1}}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - d7ee49f0-c080-4bdc-b2f9-ed8b88c4c00f
+      - 839aa568-b131-4559-851b-d0fb6e1550ac
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 14 Nov 2019 21:26:28 GMT
+      - Thu, 21 Nov 2019 01:28:07 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
       - chunked
       x-aml-ta-request-id:
-      - 8e9e8ffb-b48c-4745-a5cd-34ebfe47edfb
+      - af1ccc29-eea7-4dc0-84ca-b673fdd8d498
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '19'
+      - '11'
     status:
       code: 200
       message: OK

@@ -12,10 +12,9 @@ from azure.cognitiveservices.language.textanalytics import (
     LanguageInput,
     MultiLanguageInput
 )
-from azure.cognitiveservices.language.textanalytics import DocumentEntities
 
 
-class TextAnalyticsTest(CognitiveServiceTest):
+class BatchTextAnalyticsTest(CognitiveServiceTest):
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")

@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Any, Optional, List  # pylint: disable=unused-import
+from typing import Any, Optional  # pylint: disable=unused-import
 from ._text_analytics_client import TextAnalyticsClient
 from ._response_handlers import _validate_single_input, process_single_error
 from ._version import VERSION
@@ -81,17 +81,14 @@ def single_detect_language(
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
     :type credential: str or token credential
-    :param text: The single string to detect language from.
-    :type text: str
-    :param country_hint: The optional country hint for the text.
-    :type country_hint: str
-    :param show_stats: (Optional) if set to true, response will contain
+    :param str text: The single string to detect language from.
+    :param str country_hint: The country hint for the text. Accepts two
+        letter country codes specified by ISO 3166-1 alpha-2.
+    :param bool show_stats: If set to true, response will contain
         document level statistics.
-    :type show_stats: bool
-    :param model_version: This value indicates which model will
+    :param str model_version: This value indicates which model will
         be used for scoring. If a model-version is not specified, the API
         will default to the latest, non-preview version.
-    :type model_version: str
     :return: An instance of DocumentLanguage.
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentLanguage
     :raises: ~azure.core.exceptions.HttpResponseError
@@ -133,17 +130,13 @@ def single_recognize_entities(
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
     :type credential: str or token credential
-    :param text: The single string to recognize entities from.
-    :type text: str
-    :param language: The optional language hint for the text.
-    :type language: str
-    :param show_stats: (Optional) if set to true, response will contain
-    document level statistics.
-    :type show_stats: bool
-    :param model_version: This value indicates which model will
+    :param str text: The single string to recognize entities from.
+    :param str language: The language hint for the text.
+    :param bool show_stats: If set to true, response will contain
+        document level statistics.
+    :param str model_version: This value indicates which model will
         be used for scoring. If a model-version is not specified, the API
         will default to the latest, non-preview version.
-    :type model_version: str
     :return: An instance of DocumentEntities.
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentEntities
     :raises: ~azure.core.exceptions.HttpResponseError
@@ -183,17 +176,13 @@ def single_recognize_pii_entities(
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
     :type credential: str or token credential
-    :param text: The single string to recognize entities from.
-    :type text: str
-    :param language: The optional language hint for the text.
-    :type language: str
-    :param show_stats: (Optional) if set to true, response will contain
+    :param str text: The single string to recognize entities from.
+    :param str language: The language hint for the text.
+    :param bool show_stats: If set to true, response will contain
         document level statistics.
-    :type show_stats: bool
-    :param model_version: This value indicates which model will
+    :param str model_version: This value indicates which model will
     be used for scoring. If a model-version is not specified, the API
     will default to the latest, non-preview version.
-    :type model_version: str
     :return: An instance of DocumentEntities.
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentEntities
     :raises: ~azure.core.exceptions.HttpResponseError
@@ -233,17 +222,13 @@ def single_recognize_linked_entities(
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
     :type credential: str or token credential
-    :param text: The single string to recognize entities from.
-    :type text: str
-    :param language: The optional language hint for the text.
-    :type language: str
-    :param show_stats: (Optional) if set to true, response will contain
+    :param str text: The single string to recognize entities from.
+    :param str language: The optional language hint for the text.
+    :param bool show_stats: If set to true, response will contain
         document level statistics.
-    :type show_stats: bool
-    :param model_version: This value indicates which model will
-    be used for scoring. If a model-version is not specified, the API
-    will default to the latest, non-preview version.
-    :type model_version: str
+    :param str model_version: This value indicates which model will
+        be used for scoring. If a model-version is not specified, the API
+        will default to the latest, non-preview version.
     :return: An instance of DocumentLinkedEntities
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentLinkedEntities
     :raises: ~azure.core.exceptions.HttpResponseError
@@ -282,17 +267,13 @@ def single_extract_key_phrases(
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
     :type credential: str or token credential
-    :param text: The single string to extract key phrases from.
-    :type text: str
-    :param language: The optional language hint for the text.
-    :type language: str
-    :param show_stats: (Optional) if set to true, response will contain
+    :param str text: The single string to extract key phrases from.
+    :param str language: The optional language hint for the text.
+    :param bool show_stats: If set to true, response will contain
         document level statistics.
-    :type show_stats: bool
-    :param model_version: This value indicates which model will
+    :param str model_version: This value indicates which model will
     be used for scoring. If a model-version is not specified, the API
     will default to the latest, non-preview version.
-    :type model_version: str
     :return: An instance of DocumentKeyPhrases
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentKeyPhrases
     :raises: ~azure.core.exceptions.HttpResponseError
@@ -333,17 +314,13 @@ def single_analyze_sentiment(
         This can be the cognitive services subscription key or a token credential
         from azure.identity.
     :type credential: str or token credential
-    :param text: The single string to analyze sentiment from.
-    :type text: str
-    :param language: The optional language hint for the text.
-    :type language: str
-    :param show_stats: (Optional) if set to true, response will contain
+    :param str text: The single string to analyze sentiment from.
+    :param str language: The optional language hint for the text.
+    :param bool show_stats: If set to true, response will contain
         document level statistics.
-    :type show_stats: bool
-    :param model_version: This value indicates which model will
+    :param str model_version: This value indicates which model will
     be used for scoring. If a model-version is not specified, the API
     will default to the latest, non-preview version.
-    :type model_version: str
     :return: DocumentSentiment
     :rtype: ~azure.cognitiveservices.language.textanalytics.DocumentSentiment
     :raises: ~azure.core.exceptions.HttpResponseError

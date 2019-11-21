@@ -13,7 +13,6 @@ from azure.cognitiveservices.language.textanalytics.aio import TextAnalyticsClie
 from azure.cognitiveservices.language.textanalytics import (
     LanguageInput,
     MultiLanguageInput,
-    DocumentEntities
 )
 from asynctestcase import AsyncCognitiveServiceTestCase
 
@@ -29,7 +28,7 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class TextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
+class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
