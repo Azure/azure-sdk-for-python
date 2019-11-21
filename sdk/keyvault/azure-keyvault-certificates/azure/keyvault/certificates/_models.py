@@ -574,8 +574,8 @@ class CertificatePolicy(object):
         renewal.
     :keyword curve: Elliptic curve name. For valid values, see KeyCurveName.
     :paramtype curve: str or ~azure.keyvault.certificates.KeyCurveName
-    :keyword ekus: The enhanced key usages.
-    :paramtype ekus: list[str]
+    :keyword enhanced_key_usage: Ways the enhanced key can be used
+    :paramtype enhanced_key_usage: list[str]
     :keyword key_usage: List of key usages.
     :paramtype key_usage: list[str or ~azure.keyvault.certificates.KeyUsageType]
     :keyword content_type: The media type (MIME type) of the secret backing the certificate.
@@ -607,7 +607,7 @@ class CertificatePolicy(object):
         self._key_size = kwargs.pop("key_size", None)
         self._reuse_key = kwargs.pop("reuse_key", None)
         self._curve = kwargs.pop("curve", None)
-        self._ekus = kwargs.pop("ekus", None)
+        self._enhanced_key_usage = kwargs.pop("enhanced_key_usage", None)
         self._key_usage = kwargs.pop("key_usage", None)
         self._content_type = kwargs.pop("content_type", None)
         self._validity_in_months = kwargs.pop("validity_in_months", None)
@@ -685,7 +685,7 @@ class CertificatePolicy(object):
         # pylint:disable=too-many-boolean-expressions
         if (
             self.subject_name
-            or self.ekus
+            or self.enhanced_key_usage
             or self.key_usage
             or self.san_emails
             or self.san_user_principal_names
@@ -699,7 +699,7 @@ class CertificatePolicy(object):
 
             x509_certificate_properties = models.X509CertificateProperties(
                 subject=self.subject_name,
-                ekus=self.ekus,
+                ekus=self.enhanced_key_usage,
                 subject_alternative_names=models.SubjectAlternativeNames(
                     emails=self.san_emails, upns=self.san_user_principal_names, dns_names=self.san_dns_names
                 ),
@@ -785,7 +785,7 @@ class CertificatePolicy(object):
             key_size=key_properties.key_size if key_properties else None,
             reuse_key=key_properties.reuse_key if key_properties else None,
             curve=KeyCurveName(key_properties.curve) if key_properties and key_properties.curve else None,
-            ekus=x509_certificate_properties.ekus if x509_certificate_properties else None,
+            enhanced_key_usage=x509_certificate_properties.ekus if x509_certificate_properties else None,
             key_usage=key_usage,
             content_type=(
                 SecretContentType(certificate_policy_bundle.secret_properties.content_type)
@@ -866,13 +866,13 @@ class CertificatePolicy(object):
         return self._curve
 
     @property
-    def ekus(self):
+    def enhanced_key_usage(self):
         # type: () -> list[str]
         """The enhanced key usage.
 
         :rtype: list[str]
         """
-        return self._ekus
+        return self._enhanced_key_usage
 
     @property
     def key_usage(self):
