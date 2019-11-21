@@ -6,7 +6,7 @@
 from ._version import VERSION
 __version__ = VERSION
 
-from ._blobstoragecsaio import BlobCheckpointStore
+from .blobstoragecsaio import BlobCheckpointStore
 
 __all__ = [
     "BlobCheckpointStore",
