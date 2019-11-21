@@ -9,7 +9,6 @@ import asyncio
 from azure.eventhub import OwnershipLostError  # type: ignore  #pylint:disable=no-name-in-module
 from azure.eventhub.aio import CheckpointStore  # type: ignore
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError  # type: ignore
-from azure.core import MatchConditions
 from azure.storage.blob.aio import ContainerClient, BlobClient  # type: ignore
 
 logger = logging.getLogger(__name__)
@@ -82,7 +81,10 @@ class BlobCheckpointStore(CheckpointStore):
 
     async def _upload_ownership(self, ownership: Dict[str, Any], metadata: Dict[str, str]) -> None:
         etag = ownership.get("etag")
-        condition = MatchConditions.IfNotModified if etag else MatchConditions.IfMissing
+        if etag:
+            etag_match = {"if_match": etag}
+        else:
+            etag_match = {"if_none_match": '*'}
         blob_name = "{}/{}/{}/ownership/{}".format(
             ownership["fully_qualified_namespace"],
             ownership["eventhub_name"],
@@ -93,8 +95,7 @@ class BlobCheckpointStore(CheckpointStore):
             data=UPLOAD_DATA,
             overwrite=True,
             metadata=metadata,
-            etag=etag,
-            match_condition=condition
+            **etag_match
         )
         ownership["etag"] = uploaded_blob_properties["etag"]
         ownership["last_modified_time"] = uploaded_blob_properties["last_modified"].timestamp()
