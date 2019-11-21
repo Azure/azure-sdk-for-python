@@ -244,7 +244,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def download_blob(self, offset=None, length=None, **kwargs):
-        # type: (Optional[int], Optional[int], Any) -> Iterable[bytes]
+        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
         """Downloads a blob to a stream with automatic chunking.
 
         :param int offset:

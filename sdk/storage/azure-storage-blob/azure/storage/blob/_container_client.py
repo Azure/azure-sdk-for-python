@@ -863,13 +863,78 @@ class ContainerClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        blob = self.get_blob_client(blob) # type: ignore
+        blob_client = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
-        blob.delete_blob( # type: ignore
+        blob_client.delete_blob( # type: ignore
             delete_snapshots=delete_snapshots,
             timeout=timeout,
             **kwargs)
+
+    @distributed_trace
+    def download_blob(self, blob, offset=None, length=None, **kwargs):
+        # type: (Union[str, BlobProperties], Optional[int], Optional[int], **Any) -> StorageStreamDownloader
+        """Downloads a blob to a stream with automatic chunking.
+
+        :param blob: The blob with which to interact. If specified, this value will override
+            a blob value specified in the blob URL.
+        :type blob: str or ~azure.storage.blob.BlobProperties
+        :param int offset:
+            Start of byte range to use for downloading a section of the blob.
+            Must be set if length is provided.
+        :param int length:
+            Number of bytes to read from the stream. This is optional, but
+            should be supplied for optimal performance.
+        :keyword bool validate_content:
+            If true, calculates an MD5 hash for each chunk of the blob. The storage
+            service checks the hash of the content that has arrived with the hash
+            that was sent. This is primarily valuable for detecting bitflips on
+            the wire if using http instead of https, as https (the default), will
+            already validate. Note that this MD5 hash is not stored with the
+            blob. Also note that if enabled, the memory-efficient upload algorithm
+            will not be used because computing the MD5 hash requires buffering
+            entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :keyword lease:
+            Required if the blob has an active lease. If specified, download_blob only
+            succeeds if the blob's lease is active and matches this ID. Value can be a
+            BlobLeaseClient object or the lease ID as a string.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
+        :keyword int max_concurrency:
+            The number of parallel connections with which to download.
+        :keyword str encoding:
+            Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds. This method may make
+            multiple calls to the Azure service and the timeout will apply to
+            each call individually.
+        :returns: A iterable data generator (stream)
+        :rtype: ~azure.storage.blob.StorageStreamDownloader
+        """
+        blob_client = self.get_blob_client(blob) # type: ignore
+        kwargs.setdefault('merge_span', True)
+        return blob_client.download_blob(offset=offset, length=length, **kwargs)
 
     def _generate_delete_blobs_options(
         self, snapshot=None,
