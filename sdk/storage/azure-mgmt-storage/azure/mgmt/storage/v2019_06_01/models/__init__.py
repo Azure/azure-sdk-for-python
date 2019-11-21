@@ -33,7 +33,9 @@ try:
     from ._models_py3 import FileServiceItems
     from ._models_py3 import FileServiceProperties
     from ._models_py3 import FileShare
+    from ._models_py3 import FileShareCreateParameters
     from ._models_py3 import FileShareItem
+    from ._models_py3 import FileShareUpdateParameters
     from ._models_py3 import GeoReplicationStats
     from ._models_py3 import Identity
     from ._models_py3 import ImmutabilityPolicy
@@ -112,7 +114,9 @@ except (SyntaxError, ImportError):
     from ._models import FileServiceItems
     from ._models import FileServiceProperties
     from ._models import FileShare
+    from ._models import FileShareCreateParameters
     from ._models import FileShareItem
+    from ._models import FileShareUpdateParameters
     from ._models import GeoReplicationStats
     from ._models import Identity
     from ._models import ImmutabilityPolicy
@@ -207,6 +211,8 @@ from ._storage_management_client_enums import (
     LeaseDuration,
     ImmutabilityPolicyState,
     ImmutabilityPolicyUpdateType,
+    EnabledProtocols,
+    RootSquash,
     StorageAccountExpand,
     ListKeyExpand,
 )
@@ -235,7 +241,9 @@ __all__ = [
     'FileServiceItems',
     'FileServiceProperties',
     'FileShare',
+    'FileShareCreateParameters',
     'FileShareItem',
+    'FileShareUpdateParameters',
     'GeoReplicationStats',
     'Identity',
     'ImmutabilityPolicy',
@@ -329,6 +337,8 @@ __all__ = [
     'LeaseDuration',
     'ImmutabilityPolicyState',
     'ImmutabilityPolicyUpdateType',
+    'EnabledProtocols',
+    'RootSquash',
     'StorageAccountExpand',
     'ListKeyExpand',
 ]

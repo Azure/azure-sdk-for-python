@@ -243,6 +243,19 @@ class ImmutabilityPolicyUpdateType(str, Enum):
     extend = "extend"
 
 
+class EnabledProtocols(str, Enum):
+
+    smb = "SMB"
+    nfs = "NFS"
+
+
+class RootSquash(str, Enum):
+
+    no_root_squash = "NoRootSquash"
+    root_squash = "RootSquash"
+    all_squash = "AllSquash"
+
+
 class StorageAccountExpand(str, Enum):
 
     geo_replication_stats = "geoReplicationStats"

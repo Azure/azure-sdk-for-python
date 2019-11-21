@@ -1002,6 +1002,15 @@ class FileShare(AzureEntityResource):
     :param share_quota: The maximum size of the share, in gigabytes. Must be
      greater than 0, and less than or equal to 5TB (5120).
     :type share_quota: int
+    :param enabled_protocols: Protocols for file shares. Possible values
+     include: 'SMB', 'NFS'
+    :type enabled_protocols: str or
+     ~azure.mgmt.storage.v2019_06_01.models.EnabledProtocols
+    :param root_squash: Reduction of the access rights for the remote
+     superuser. Possible values include: 'NoRootSquash', 'RootSquash',
+     'AllSquash'
+    :type root_squash: str or
+     ~azure.mgmt.storage.v2019_06_01.models.RootSquash
     """
 
     _validation = {
@@ -1021,6 +1030,8 @@ class FileShare(AzureEntityResource):
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'metadata': {'key': 'properties.metadata', 'type': '{str}'},
         'share_quota': {'key': 'properties.shareQuota', 'type': 'int'},
+        'enabled_protocols': {'key': 'properties.enabledProtocols', 'type': 'str'},
+        'root_squash': {'key': 'properties.rootSquash', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1028,6 +1039,47 @@ class FileShare(AzureEntityResource):
         self.last_modified_time = None
         self.metadata = kwargs.get('metadata', None)
         self.share_quota = kwargs.get('share_quota', None)
+        self.enabled_protocols = kwargs.get('enabled_protocols', None)
+        self.root_squash = kwargs.get('root_squash', None)
+
+
+class FileShareCreateParameters(Model):
+    """FileShareCreateParameters.
+
+    :param metadata: A name-value pair to associate with the share as
+     metadata.
+    :type metadata: dict[str, str]
+    :param share_quota: The maximum size of the share, in gigabytes. Must be
+     greater than 0, and less than or equal to 5TB (5120).
+    :type share_quota: int
+    :param enabled_protocols: Protocols for file shares. It cannot be changed
+     after file share creation. Possible values include: 'SMB', 'NFS'
+    :type enabled_protocols: str or
+     ~azure.mgmt.storage.v2019_06_01.models.EnabledProtocols
+    :param root_squash: Reduction of the access rights for the remote
+     superuser. Possible values include: 'NoRootSquash', 'RootSquash',
+     'AllSquash'
+    :type root_squash: str or
+     ~azure.mgmt.storage.v2019_06_01.models.RootSquash
+    """
+
+    _validation = {
+        'share_quota': {'maximum': 5120, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'metadata': {'key': 'metadata', 'type': '{str}'},
+        'share_quota': {'key': 'shareQuota', 'type': 'int'},
+        'enabled_protocols': {'key': 'enabledProtocols', 'type': 'str'},
+        'root_squash': {'key': 'rootSquash', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FileShareCreateParameters, self).__init__(**kwargs)
+        self.metadata = kwargs.get('metadata', None)
+        self.share_quota = kwargs.get('share_quota', None)
+        self.enabled_protocols = kwargs.get('enabled_protocols', None)
+        self.root_squash = kwargs.get('root_squash', None)
 
 
 class FileShareItem(AzureEntityResource):
@@ -1055,6 +1107,15 @@ class FileShareItem(AzureEntityResource):
     :param share_quota: The maximum size of the share, in gigabytes. Must be
      greater than 0, and less than or equal to 5TB (5120).
     :type share_quota: int
+    :param enabled_protocols: Protocols for file shares. Possible values
+     include: 'SMB', 'NFS'
+    :type enabled_protocols: str or
+     ~azure.mgmt.storage.v2019_06_01.models.EnabledProtocols
+    :param root_squash: Reduction of the access rights for the remote
+     superuser. Possible values include: 'NoRootSquash', 'RootSquash',
+     'AllSquash'
+    :type root_squash: str or
+     ~azure.mgmt.storage.v2019_06_01.models.RootSquash
     """
 
     _validation = {
@@ -1074,6 +1135,8 @@ class FileShareItem(AzureEntityResource):
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'metadata': {'key': 'properties.metadata', 'type': '{str}'},
         'share_quota': {'key': 'properties.shareQuota', 'type': 'int'},
+        'enabled_protocols': {'key': 'properties.enabledProtocols', 'type': 'str'},
+        'root_squash': {'key': 'properties.rootSquash', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1081,6 +1144,41 @@ class FileShareItem(AzureEntityResource):
         self.last_modified_time = None
         self.metadata = kwargs.get('metadata', None)
         self.share_quota = kwargs.get('share_quota', None)
+        self.enabled_protocols = kwargs.get('enabled_protocols', None)
+        self.root_squash = kwargs.get('root_squash', None)
+
+
+class FileShareUpdateParameters(Model):
+    """FileShareUpdateParameters.
+
+    :param metadata: A name-value pair to associate with the share as
+     metadata.
+    :type metadata: dict[str, str]
+    :param share_quota: The maximum size of the share, in gigabytes. Must be
+     greater than 0, and less than or equal to 5TB (5120).
+    :type share_quota: int
+    :param root_squash: Reduction of the access rights for the remote
+     superuser. Possible values include: 'NoRootSquash', 'RootSquash',
+     'AllSquash'
+    :type root_squash: str or
+     ~azure.mgmt.storage.v2019_06_01.models.RootSquash
+    """
+
+    _validation = {
+        'share_quota': {'maximum': 5120, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'metadata': {'key': 'metadata', 'type': '{str}'},
+        'share_quota': {'key': 'shareQuota', 'type': 'int'},
+        'root_squash': {'key': 'rootSquash', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FileShareUpdateParameters, self).__init__(**kwargs)
+        self.metadata = kwargs.get('metadata', None)
+        self.share_quota = kwargs.get('share_quota', None)
+        self.root_squash = kwargs.get('root_squash', None)
 
 
 class GeoReplicationStats(Model):
