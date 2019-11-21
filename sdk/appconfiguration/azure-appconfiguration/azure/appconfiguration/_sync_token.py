@@ -68,7 +68,7 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
         :type request: ~azure.core.pipeline.PipelineRequest
         """
         sync_token_header = ",".join(str(x) for x in self._sync_tokens.values())
-        if sync_token_header != '':
+        if sync_token_header:
             request.http_request.headers.update({self._sync_token_header: sync_token_header})
 
     def on_response(self, request, response): # type: ignore # pylint: disable=arguments-differ
