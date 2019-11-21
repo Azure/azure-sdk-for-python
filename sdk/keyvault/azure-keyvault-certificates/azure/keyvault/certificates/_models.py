@@ -145,7 +145,7 @@ class CertificateProperties(object):
         # type: (**Any) -> None
         self._attributes = kwargs.get("attributes", None)
         self._id = kwargs.get("cert_id", None)
-        self._vault_id = parse_vault_id(self._id)
+        self._vault_id = parse_vault_id(self._id) if self._id else None
         self._thumbprint = kwargs.get("thumbprint", None)
         self._tags = kwargs.get("tags", None)
 
@@ -410,7 +410,7 @@ class CertificateOperation(object):
     ):
         # type: (...) -> None
         self._id = cert_operation_id
-        self._vault_id = parse_vault_id(cert_operation_id)
+        self._vault_id = parse_vault_id(cert_operation_id) if self._id else None
         self._issuer_name = issuer_name
         self._certificate_type = certificate_type
         self._certificate_transparency = certificate_transparency
@@ -1075,8 +1075,8 @@ class IssuerProperties(object):
 
     def __init__(self, provider=None, **kwargs):
         # type: (Optional[str], **Any) -> None
-        self._id = kwargs.get("issuer_id", None)
-        self._vault_id = parse_vault_id(self._id)
+        self._id = kwargs.pop("issuer_id", None)
+        self._vault_id = parse_vault_id(self._id) if self._id else None
         self._provider = provider
 
     def __repr__(self):
@@ -1121,8 +1121,7 @@ class IssuerProperties(object):
 class CertificateIssuer(object):
     """The issuer for a Key Vault certificate.
 
-    :param properties: The issuer's properties
-    :type properties: ~azure.keyvault.certificates.IssuerProperties
+    :param str provider: The issuer provider
     :param str account_id: The username / account name / account id.
     :param str password: The password / secret / account key.
     :param str organization_id: The ID of the organization.
@@ -1132,20 +1131,23 @@ class CertificateIssuer(object):
 
     def __init__(
         self,
-        properties=None,  # type: Optional[IssuerProperties]
+        provider=None,  # type: Optional[str]
         attributes=None,  # type: Optional[models.IssuerAttributes]
         account_id=None,  # type: Optional[str]
         password=None,  # type: Optional[str]
         organization_id=None,  # type: Optional[str]
         admin_details=None,  # type: Optional[List[AdministratorContact]]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
-        self._properties = properties
+        self._provider = provider
         self._attributes = attributes
         self._account_id = account_id
         self._password = password
         self._organization_id = organization_id
         self._admin_details = admin_details
+        self._id = kwargs.pop("issuer_id", None)
+        self._vault_id = parse_vault_id(self._id) if self._id else None
 
     def __repr__(self):
         # type () -> str
@@ -1164,35 +1166,45 @@ class CertificateIssuer(object):
             for admin_detail in admin_details_service:
                 admin_details.append(AdministratorContact._from_admin_details_bundle(admin_detail))
         return cls(
-            properties=IssuerProperties._from_issuer_item(issuer_bundle),  # pylint: disable=protected-access
+            provider=IssuerProperties._from_issuer_item(issuer_bundle).provider,  # pylint: disable=protected-access
             attributes=issuer_bundle.attributes,
             account_id=issuer_bundle.credentials.account_id if issuer_bundle.credentials else None,
             password=issuer_bundle.credentials.password if issuer_bundle.credentials else None,
             organization_id=issuer_bundle.organization_details.id if issuer_bundle.organization_details else None,
             admin_details=admin_details,
+            issuer_id=issuer_bundle.id,
         )
 
     @property
     def id(self):
         # type: () -> str
         """:rtype: str"""
-        return self._properties.id
+        return self._id
 
     @property
     def name(self):
         # type: () -> str
         # Issuer name is listed under version under vault_id
         """:rtype: str"""
-        return self._properties.name
+        return self._vault_id.version
 
     @property
-    def properties(self):
-        # type: () -> IssuerProperties
-        """The properties of the issuer.
+    def vault_url(self):
+        # type: () -> str
+        """URL of the vault containing the issuer
 
-        :rtype: ~azure.keyvault.certificates.IssuerProperties
+        :rtype: str
         """
-        return self._properties
+        return self._vault_id.vault_url
+
+    @property
+    def provider(self):
+        # type: () -> str
+        """The issuer provider.
+
+        :rtype: str
+        """
+        return self._provider
 
     @property
     def enabled(self):

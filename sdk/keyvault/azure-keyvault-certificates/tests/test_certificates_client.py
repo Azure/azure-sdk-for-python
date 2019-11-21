@@ -208,7 +208,10 @@ class CertificateClientTests(KeyVaultTestCase):
         )
 
     def _validate_certificate_issuer(self, issuer, expected):
-        self._validate_certificate_issuer_properties(issuer.properties, expected.properties)
+        self.assertEqual(issuer.id, expected.id)
+        self.assertEqual(issuer.name, expected.name)
+        self.assertEqual(issuer.provider, expected.provider)
+        self.assertEqual(issuer.vault_url, expected.vault_url)
         self.assertEqual(issuer.account_id, expected.account_id)
         self.assertEqual(len(issuer.admin_details), len(expected.admin_details))
         for admin_detail in issuer.admin_details:
@@ -680,20 +683,17 @@ class CertificateClientTests(KeyVaultTestCase):
             AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
 
-        properties = IssuerProperties(
-            issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name, provider="Test"
-        )
-
         # create certificate issuer
         issuer = client.create_issuer(
             issuer_name, "Test", account_id="keyvaultuser", admin_details=admin_details, enabled=True
         )
 
         expected = CertificateIssuer(
-            properties=properties,
+            provider="Test",
             account_id="keyvaultuser",
             admin_details=admin_details,
             attributes=IssuerAttributes(enabled=True),
+            issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name,
         )
 
         self._validate_certificate_issuer(issuer=issuer, expected=expected)
@@ -734,10 +734,11 @@ class CertificateClientTests(KeyVaultTestCase):
         ]
 
         expected = CertificateIssuer(
-            properties=properties,
+            provider="Test",
             account_id="keyvaultuser",
             admin_details=admin_details,
             attributes=IssuerAttributes(enabled=True),
+            issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name,
         )
         issuer = client.update_issuer(issuer_name=issuer_name, admin_details=admin_details)
         self._validate_certificate_issuer(issuer=issuer, expected=expected)

@@ -343,7 +343,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         )
 
         print(issuer.name)
-        print(issuer.properties.provider)
+        print(issuer.provider)
         print(issuer.account_id)
 
         for admin_detail in issuer.admin_details:
@@ -359,7 +359,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         issuer = await certificate_client.get_issuer("issuer1")
 
         print(issuer.name)
-        print(issuer.properties.provider)
+        print(issuer.provider)
         print(issuer.account_id)
 
         for admin_detail in issuer.admin_details:
@@ -387,7 +387,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         deleted_issuer = await certificate_client.delete_issuer("issuer1")
 
         print(deleted_issuer.name)
-        print(deleted_issuer.properties.provider)
+        print(deleted_issuer.provider)
         print(deleted_issuer.account_id)
 
         for admin_detail in deleted_issuer.admin_details:
