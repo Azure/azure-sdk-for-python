@@ -67,12 +67,7 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        sync_token_header = ''
-        for sync_token in self._sync_tokens.values():
-            if sync_token_header != '':
-                sync_token_header += ',' + str(sync_token)
-            else:
-                sync_token_header = str(sync_token)
+        sync_token_header = ",".join(str(x) for x in self._sync_tokens.values())
         if sync_token_header != '':
             request.http_request.headers.update({self._sync_token_header: sync_token_header})
 
