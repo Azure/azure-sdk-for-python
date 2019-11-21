@@ -91,6 +91,9 @@ class EventData(object):
         event_data.message = message
         return event_data
 
+    def _encode_message(self):
+        return self.message.encode_message()
+
     @property
     def sequence_number(self):
         """
@@ -211,8 +214,20 @@ class EventData(object):
         except Exception as e:
             raise TypeError("Event data is not compatible with JSON type: {}".format(e))
 
-    def _encode_message(self):
-        return self.message.encode_message()
+    @property
+    def application_properties(self):
+        # TODO: This method is for the purpose of livetest, because uamqp v.1.2.4 hasn't been released
+        # The gather() in uamqp.message of v1.2.3 depends on application_properties attribute,
+        # the livetest would all break if removing this property.
+        # It should be removed after uamqp v.1.2.4 is released
+        return self.properties
+
+    def encode_message(self):
+        # TODO: This method is for the purpose of livetest, because uamqp v.1.2.4 hasn't been released
+        # The gather() in uamqp.message of v1.2.3 depends on encode_message method,
+        # the livetest would all break if removing this method.
+        # It should be removed after uamqp v.1.2.4 is released
+        return self._encode_message()
 
 
 class EventDataBatch(object):
