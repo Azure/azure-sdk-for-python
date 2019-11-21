@@ -831,12 +831,12 @@ class CertificateClient(AsyncKeyVaultClientBase):
         if admin_contacts and admin_contacts[0]:
             admin_contacts_to_pass = list(
                 self._client.models.AdministratorDetails(
-                    first_name=admin_contact.first_name,
-                    last_name=admin_contact.last_name,
-                    email_address=admin_contact.email,
-                    phone=admin_contact.phone,
+                    first_name=contact.first_name,
+                    last_name=contact.last_name,
+                    email_address=contact.email,
+                    phone=contact.phone,
                 )
-                for admin_contact in admin_contacts
+                for contact in admin_contacts
             )
         else:
             admin_contacts_to_pass = admin_contacts
@@ -893,21 +893,21 @@ class CertificateClient(AsyncKeyVaultClientBase):
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
         else:
             issuer_credentials = None
-        if admin_contacts and admin_contacts[0]:
-            admin_contacts_to_pass = list(
+        if admin_contacts:
+            admin_details = list(
                 self._client.models.AdministratorDetails(
-                    first_name=admin_detail.first_name,
-                    last_name=admin_detail.last_name,
-                    email_address=admin_detail.email,
-                    phone=admin_detail.phone,
+                    first_name=contact.first_name,
+                    last_name=contact.last_name,
+                    email_address=contact.email,
+                    phone=contact.phone,
                 )
-                for admin_detail in admin_contacts
+                for contact in admin_contacts
             )
         else:
-            admin_contacts_to_pass = admin_contacts
+            admin_details = None
         if organization_id or admin_contacts:
             organization_details = self._client.models.OrganizationDetails(
-                id=organization_id, admin_contacts=admin_contacts_to_pass
+                id=organization_id, admin_contacts=admin_details
             )
         else:
             organization_details = None

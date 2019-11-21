@@ -57,11 +57,11 @@ try:
     print(issuer1.properties.provider)
     print(issuer1.account_id)
 
-    for admin_contact in issuer1.admin_contacts:
-        print(admin_contact.first_name)
-        print(admin_contact.last_name)
-        print(admin_contact.email)
-        print(admin_contact.phone)
+    for contact in issuer1.admin_contacts:
+        print(contact.first_name)
+        print(contact.last_name)
+        print(contact.email)
+        print(contact.phone)
 
     # Now we update the admnistrator contact for this issuer
     admin_contacts = [
@@ -69,11 +69,11 @@ try:
     ]
     issuer1 = client.update_issuer(issuer_name="issuer1", admin_contacts=admin_contacts)
 
-    for admin_contact in issuer1.admin_contacts:
-        print(admin_contact.first_name)
-        print(admin_contact.last_name)
-        print(admin_contact.email)
-        print(admin_contact.phone)
+    for contact in issuer1.admin_contacts:
+        print(contact.first_name)
+        print(contact.last_name)
+        print(contact.email)
+        print(contact.phone)
 
     # Now we will list all of the certificate issuers for this key vault. To better demonstrate this, we will first create another issuer.
     client.create_issuer(issuer_name="issuer2", provider="Test", account_id="keyvaultuser", enabled=True)

@@ -343,11 +343,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(issuer.properties.provider)
         print(issuer.account_id)
 
-        for admin_contact in issuer.admin_contacts:
-            print(admin_contact.first_name)
-            print(admin_contact.last_name)
-            print(admin_contact.email)
-            print(admin_contact.phone)
+        for contact in issuer.admin_contacts:
+            print(contact.first_name)
+            print(contact.last_name)
+            print(contact.email)
+            print(contact.phone)
 
         # [END create_issuer]
 
@@ -359,11 +359,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(issuer.properties.provider)
         print(issuer.account_id)
 
-        for admin_contact in issuer.admin_contacts:
-            print(admin_contact.first_name)
-            print(admin_contact.last_name)
-            print(admin_contact.email)
-            print(admin_contact.phone)
+        for contact in issuer.admin_contacts:
+            print(contact.first_name)
+            print(contact.last_name)
+            print(contact.email)
+            print(contact.phone)
 
         # [END get_issuer]
 
@@ -387,10 +387,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_issuer.properties.provider)
         print(deleted_issuer.account_id)
 
-        for admin_contact in deleted_issuer.admin_contacts:
-            print(admin_contact.first_name)
-            print(admin_contact.last_name)
-            print(admin_contact.email)
-            print(admin_contact.phone)
+        for contact in deleted_issuer.admin_contacts:
+            print(contact.first_name)
+            print(contact.last_name)
+            print(contact.email)
+            print(contact.phone)
 
         # [END delete_issuer]

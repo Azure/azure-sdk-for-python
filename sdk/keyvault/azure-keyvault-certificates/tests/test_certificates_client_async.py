@@ -187,21 +187,21 @@ class CertificateClientTests(KeyVaultTestCase):
             self.assertEqual(contact.name, exp_contact.name)
             self.assertEqual(contact.phone, exp_contact.phone)
 
-    def _admin_contact_equal(self, admin_contact, exp_admin_contact):
+    def _admin_contact_equal(self, contact, exp_admin_contact):
         return (
-            admin_contact.first_name == exp_admin_contact.first_name
-            and admin_contact.last_name == exp_admin_contact.last_name
-            and admin_contact.email == exp_admin_contact.email
-            and admin_contact.phone == exp_admin_contact.phone
+            contact.first_name == exp_admin_contact.first_name
+            and contact.last_name == exp_admin_contact.last_name
+            and contact.email == exp_admin_contact.email
+            and contact.phone == exp_admin_contact.phone
         )
 
     def _validate_certificate_issuer(self, issuer, expected):
         self._validate_certificate_issuer_properties(issuer.properties, expected.properties)
         self.assertEqual(issuer.account_id, expected.account_id)
         self.assertEqual(len(issuer.admin_contacts), len(expected.admin_contacts))
-        for admin_contact in issuer.admin_contacts:
+        for contact in issuer.admin_contacts:
             exp_admin_contact = next(
-                (ad for ad in expected.admin_contacts if self._admin_contact_equal(admin_contact, ad)), None
+                (ad for ad in expected.admin_contacts if self._admin_contact_equal(contact, ad)), None
             )
             self.assertIsNotNone(exp_admin_contact)
         self.assertEqual(issuer.password, expected.password)
