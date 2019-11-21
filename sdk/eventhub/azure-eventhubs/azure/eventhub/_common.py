@@ -244,14 +244,14 @@ class EventDataBatch(object):
     **Please use the create_batch method of EventHubProducerClient
     to create an EventDataBatch object instead of instantiating an EventDataBatch object directly.**
 
-    :param int max_size: The maximum size of bytes data that an EventDataBatch object can hold.
+    :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold.
     :param str partition_id: The specific partition ID to send to.
     :param str partition_key: With the given partition_key, event data will land to a particular partition of the
      Event Hub decided by the service.
     """
 
-    def __init__(self, max_size=None, partition_id=None, partition_key=None):
-        self.max_size = max_size or constants.MAX_MESSAGE_LENGTH_BYTES
+    def __init__(self, max_size_in_bytes=None, partition_id=None, partition_key=None):
+        self.max_size_in_bytes = max_size_in_bytes or constants.MAX_MESSAGE_LENGTH_BYTES
         self.message = BatchMessage(data=[], multi_messages=False, properties=None)
         self._partition_id = partition_id
         self._partition_key = partition_key
@@ -270,7 +270,7 @@ class EventDataBatch(object):
         return batch_data_instance
 
     @property
-    def size(self):
+    def size_in_bytes(self):
         """The size of EventDataBatch object in bytes
 
         :rtype: int
@@ -300,8 +300,8 @@ class EventDataBatch(object):
         size_after_add = self._size + event_data_size \
             + _BATCH_MESSAGE_OVERHEAD_COST[0 if (event_data_size < 256) else 1]
 
-        if size_after_add > self.max_size:
-            raise ValueError("EventDataBatch has reached its size limit: {}".format(self.max_size))
+        if size_after_add > self.max_size_in_bytes:
+            raise ValueError("EventDataBatch has reached its size limit: {}".format(self.max_size_in_bytes))
 
         self.message._body_gen.append(event_data)  # pylint: disable=protected-access
         self._size = size_after_add

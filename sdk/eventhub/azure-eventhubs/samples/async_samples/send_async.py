@@ -28,7 +28,7 @@ async def run(producer):
 
         # Without specifying partition_id or partition_key
         # The events will be distributed to available partitions via round-robin.
-        event_data_batch = await producer.create_batch(max_size=10000)
+        event_data_batch = await producer.create_batch(max_size_in_bytes=10000)
 
         # Specifying partition_id
         # event_data_batch = producer.create_batch(partition_id='0')

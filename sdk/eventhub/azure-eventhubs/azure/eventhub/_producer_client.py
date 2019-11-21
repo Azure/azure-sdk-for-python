@@ -190,7 +190,7 @@ class EventHubProducerClient(ClientBase):
          will assign to all partitions using round-robin.
         :keyword str partition_key: With the given partition_key, event data will land to
          a particular partition of the Event Hub decided by the service.
-        :keyword int max_size: The maximum size of bytes data that an EventDataBatch object can hold.
+        :keyword int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold.
         :rtype: ~azure.eventhub.EventDataBatch
 
         .. admonition:: Example:
@@ -206,16 +206,16 @@ class EventHubProducerClient(ClientBase):
         if not self._max_message_size_on_link:
             self._get_max_mesage_size()
 
-        max_size = kwargs.get("max_size", None)
+        max_size_in_bytes = kwargs.get("max_size_in_bytes", None)
         partition_id = kwargs.get("partition_id", None)
         partition_key = kwargs.get("partition_key", None)
 
-        if max_size and max_size > self._max_message_size_on_link:
+        if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
-                             .format(max_size, self._max_message_size_on_link))
+                             .format(max_size_in_bytes, self._max_message_size_on_link))
 
         event_data_batch = EventDataBatch(
-            max_size=(max_size or self._max_message_size_on_link),
+            max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
             partition_id=partition_id,
             partition_key=partition_key
         )

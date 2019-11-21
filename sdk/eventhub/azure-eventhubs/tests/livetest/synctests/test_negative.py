@@ -112,7 +112,7 @@ def test_create_batch_with_invalid_hostname_sync(invalid_hostname):
     client = EventHubProducerClient.from_connection_string(invalid_hostname)
     with client:
         with pytest.raises(ConnectError):
-            client.create_batch(max_size=300)
+            client.create_batch(max_size_in_bytes=300)
 
 
 @pytest.mark.liveTest
@@ -120,4 +120,4 @@ def test_create_batch_with_too_large_size_sync(connection_str):
     client = EventHubProducerClient.from_connection_string(connection_str)
     with client:
         with pytest.raises(ValueError):
-            client.create_batch(max_size=5 * 1024 * 1024)
+            client.create_batch(max_size_in_bytes=5 * 1024 * 1024)

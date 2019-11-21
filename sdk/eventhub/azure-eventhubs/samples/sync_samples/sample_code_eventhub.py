@@ -84,7 +84,7 @@ def example_eventhub_sync_send_and_receive():
         # [END create_event_data]
 
         # [START eventhub_producer_client_create_batch_sync]
-        event_data_batch = producer.create_batch(max_size=10000)
+        event_data_batch = producer.create_batch(max_size_in_bytes=10000)
         while True:
             try:
                 event_data_batch.add(EventData('Message inside EventBatchData'))
@@ -96,7 +96,7 @@ def example_eventhub_sync_send_and_receive():
 
         # [START eventhub_producer_client_send_sync]
         with producer:
-            event_data_batch = producer.create_batch(max_size=10000)
+            event_data_batch = producer.create_batch(max_size_in_bytes=10000)
 
             while True:
                 try:
@@ -137,7 +137,7 @@ def example_eventhub_producer_ops():
         eventhub_name=eventhub_name
     )
     try:
-        event_data_batch = producer.create_batch(max_size=10000)
+        event_data_batch = producer.create_batch(max_size_in_bytes=10000)
 
         while True:
             try:

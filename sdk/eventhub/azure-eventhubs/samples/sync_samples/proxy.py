@@ -37,7 +37,7 @@ producer_client = EventHubProducerClient.from_connection_string(
     conn_str=CONNECTION_STR, eventhub_name=EVENTHUB_NAME, http_proxy=HTTP_PROXY)
 
 with producer_client:
-    event_data_batch = producer_client.create_batch(max_size=10000)
+    event_data_batch = producer_client.create_batch(max_size_in_bytes=10000)
     while True:
         try:
             event_data_batch.add(EventData('Message inside EventBatchData'))

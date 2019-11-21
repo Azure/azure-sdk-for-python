@@ -103,7 +103,7 @@ def set_message_partition_key(message, partition_key):
     """Set the partition key as an annotation on a uamqp message.
 
     :param ~uamqp.Message message: The message to update.
-    :param bytes partition_key: The partition key value.
+    :param str partition_key: The partition key value.
     :rtype: None
     """
     if partition_key:

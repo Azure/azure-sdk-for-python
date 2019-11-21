@@ -151,7 +151,7 @@ async def test_create_batch_with_invalid_hostname_async(invalid_hostname):
     client = EventHubProducerClient.from_connection_string(invalid_hostname)
     async with client:
         with pytest.raises(ConnectError):
-            await client.create_batch(max_size=300)
+            await client.create_batch(max_size_in_bytes=300)
 
 
 @pytest.mark.liveTest
@@ -160,4 +160,4 @@ async def test_create_batch_with_too_large_size_async(connection_str):
     client = EventHubProducerClient.from_connection_string(connection_str)
     async with client:
         with pytest.raises(ValueError):
-            await client.create_batch(max_size=5 * 1024 * 1024)
+            await client.create_batch(max_size_in_bytes=5 * 1024 * 1024)
