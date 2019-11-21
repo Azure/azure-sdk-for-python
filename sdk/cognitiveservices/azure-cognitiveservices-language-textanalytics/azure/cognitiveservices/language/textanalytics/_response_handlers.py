@@ -79,23 +79,31 @@ def _validate_single_input(text, hint, hint_value):
     :return: A LanguageInput or MultiLanguageInput
     """
     if isinstance(text, six.string_types):
-        return [{"id": "0", "text": text, hint: hint_value}]
+        if hint_value:
+            return [{"id": "0", "text": text, hint: hint_value}]
+        return [{"id": "0", "text": text}]
     raise TypeError("Text parameter must be string.")
 
 
-def _validate_batch_input(documents):
+def _validate_batch_input(documents, hint, hint_value):
     """Validate that batch input has either all string docs
     or dict/LanguageInput/MultiLanguageInput, not a mix of both.
 
     :param list documents: The input documents.
     :return: A list of LanguageInput or MultiLanguageInput
     """
+    if not isinstance(documents, list):
+        raise TypeError("Documents parameter must be a list.")
+
     string_input, nonstring_input = False, False
     string_batch = []
     for idx, doc in enumerate(documents):
-        if isinstance(doc, six.text_type):
+        if isinstance(doc, six.string_types):
+            if hint_value:
+                string_batch.append({"id": str(idx), hint: hint_value, "text": doc})
+            else:
+                string_batch.append({"id": str(idx), "text": doc})
             string_input = True
-            string_batch.append({"id": str(idx), "text": doc})
         if isinstance(doc, (dict, MultiLanguageInput, LanguageInput)):
             nonstring_input = True
 

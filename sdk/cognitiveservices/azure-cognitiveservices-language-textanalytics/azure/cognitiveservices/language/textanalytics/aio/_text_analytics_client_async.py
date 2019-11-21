@@ -44,13 +44,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     tasks such as sentiment analysis, key phrase extraction and language detection. No training data
     is needed to use this API; just bring your text data. This API uses advanced natural language
     processing techniques to deliver best in class predictions.
+
     Further documentation can be found in
     https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview
 
-    :param str endpoint: Supported Cognitive Services endpoints (protocol and
-        hostname, for example: https://westus.api.cognitive.microsoft.com).
+    :param str endpoint: Supported Cognitive Services or Text Analytics resource
+        endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
-        This can be the cognitive services subscription key or a token credential
+        This can be the cognitive services/text analytics subscription key or a token credential
         from azure.identity.
     :type credentials: str or token credential
     """
@@ -68,6 +69,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         documents,  # type: List[str] or List[LanguageInput]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
+        country_hint=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentLanguage, DocumentError]]
@@ -77,23 +79,23 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         1. Scores close to 1 indicate 100% certainty that the identified
         language is true. See https://aka.ms/talangs for the list of enabled languages.
 
-        :param documents: The set of documents to process as part of this
-            batch.
-        :type documents: list[str] or list[~azure.cognitiveservices.language.textanalytics.LanguageInput]
-        :param model_version: (Optional) This value indicates which model will
+        :param documents: The set of documents to process as part of this batch.
+        :type documents:
+            list[str] or list[~azure.cognitiveservices.language.textanalytics.LanguageInput]
+        :param str model_version: This value indicates which model will
             be used for scoring. If a model-version is not specified, the API
             will default to the latest, non-preview version.
-        :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain
-            input and document level statistics.
-        :type show_stats: bool
+        :param bool show_stats: If set to true, response will contain document
+            level statistics.
+        :param str country_hint: A country hint for the entire batch. Per-document
+            country hints will take precedence over whole batch hints.
         :return: The combined list of DocumentLanguage and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentLanguage,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        docs = _validate_batch_input(documents)
+        docs = _validate_batch_input(documents, "country_hint", country_hint)
         try:
             return await self._client.languages(
                 documents=docs,
@@ -111,6 +113,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         documents,  # type: List[str] or List[MultiLanguageInput]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
+        language=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentEntities, DocumentError]]
@@ -122,23 +125,22 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         For the list of enabled languages, check:
         https://aka.ms/talangs
 
-        :param documents: The set of documents to process as part of this
-            batch.
-        :type documents: list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
-        :param model_version: (Optional) This value indicates which model will
+        :param documents: The set of documents to process as part of this batch.
+        :type documents:
+            list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
+        :param str model_version: This value indicates which model will
             be used for scoring. If a model-version is not specified, the API
             will default to the latest, non-preview version.
-        :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain
-            input and document level statistics.
-        :type show_stats: bool
+        :param bool show_stats: If set to true, response will contain document level statistics.
+        :param str language: The language for the entire batch. Per-document
+            language hints will take precedence over whole batch hints.
         :return: The combined list of DocumentEntities and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentEntities,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        docs = _validate_batch_input(documents)
+        docs = _validate_batch_input(documents, "language", language)
         try:
             return await self._client.entities_recognition_general(
                 documents=docs,
@@ -156,6 +158,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         documents,  # type: List[str] or List[MultiLanguageInput]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
+        language=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentEntities, DocumentError]]
@@ -166,23 +169,22 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         check https://aka.ms/tanerpii. See https://aka.ms/talangs
         for the list of enabled languages.
 
-        :param documents: The set of documents to process as part of this
-            batch.
-        :type documents: list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
-        :param model_version: (Optional) This value indicates which model will
+        :param documents: The set of documents to process as part of this batch.
+        :type documents:
+            list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
+        :param str model_version: This value indicates which model will
             be used for scoring. If a model-version is not specified, the API
             will default to the latest, non-preview version.
-        :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain
-            input and document level statistics.
-        :type show_stats: bool
+        :param bool show_stats: If set to true, response will contain document level statistics.
+        :param str language: The language for the entire batch. Per-document
+            language hints will take precedence over whole batch hints.
         :return: The combined list of DocumentEntities and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentEntities,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        docs = _validate_batch_input(documents)
+        docs = _validate_batch_input(documents, "language", language)
         try:
             return await self._client.entities_recognition_pii(
                 documents=docs,
@@ -200,6 +202,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         documents,  # type: List[str] or List[MultiLanguageInput]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
+        language=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentLinkedEntities, DocumentError]]
@@ -209,23 +212,22 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         well-known knowledge base. See https://aka.ms/talangs for
         supported languages in Text Analytics API.
 
-        :param documents: The set of documents to process as part of this
-            batch.
-        :type documents: list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
-        :param model_version: (Optional) This value indicates which model will
+        :param documents: The set of documents to process as part of this batch.
+        :type documents:
+            list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
+        :param str model_version: This value indicates which model will
             be used for scoring. If a model-version is not specified, the API
             will default to the latest, non-preview version.
-        :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain
-            input and document level statistics.
-        :type show_stats: bool
+        :param bool show_stats: If set to true, response will contain document level statistics.
+        :param str language: The language for the entire batch. Per-document
+            language hints will take precedence over whole batch hints.
         :return: The combined list of DocumentLinkedEntities and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentLinkedEntities,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        docs = _validate_batch_input(documents)
+        docs = _validate_batch_input(documents, "language", language)
         try:
             return await self._client.entities_linking(
                 documents=docs,
@@ -243,6 +245,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         documents,  # type: List[str] or List[MultiLanguageInput]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
+        language=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentKeyPhrases, DocumentError]]
@@ -252,23 +255,22 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         text. See https://aka.ms/talangs for the list of enabled
         languages.
 
-        :param documents: The set of documents to process as part of this
-            batch.
-        :type documents: list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
-        :param model_version: (Optional) This value indicates which model will
+        :param documents: The set of documents to process as part of this batch.
+        :type documents:
+            list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
+        :param str model_version: This value indicates which model will
             be used for scoring. If a model-version is not specified, the API
             will default to the latest, non-preview version.
-        :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain
-            input and document level statistics.
-        :type show_stats: bool
+        :param bool show_stats: If set to true, response will contain document level statistics.
+        :param str language: The language for the entire batch. Per-document
+            language hints will take precedence over whole batch hints.
         :return: The combined list of DocumentKeyPhrases and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentKeyPhrases,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        docs = _validate_batch_input(documents)
+        docs = _validate_batch_input(documents, "language", language)
         try:
             return await self._client.key_phrases(
                 documents=docs,
@@ -286,6 +288,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         documents,  # type: List[str] or List[MultiLanguageInput]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
+        language=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> List[Union[DocumentSentiment, DocumentError]]
@@ -296,23 +299,22 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         and each sentence within it. See https://aka.ms/talangs for the list
         of enabled languages.
 
-        :param documents: The set of documents to process as part of this
-            batch.
-        :type documents: list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
-        :param model_version: (Optional) This value indicates which model will
+        :param documents: The set of documents to process as part of this batch.
+        :type documents:
+            list[str] or list[~azure.cognitiveservices.language.textanalytics.MultiLanguageInput]
+        :param str model_version: This value indicates which model will
             be used for scoring. If a model-version is not specified, the API
             will default to the latest, non-preview version.
-        :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain
-            input and document level statistics.
-        :type show_stats: bool
+        :param bool show_stats: If set to true, response will contain document level statistics.
+        :param str language: The language for the entire batch. Per-document
+            language hints will take precedence over whole batch hints.
         :return: The combined list of DocumentSentiment and DocumentErrors in the order
             the original documents were passed in.
         :rtype: list[~azure.cognitiveservices.language.textanalytics.DocumentSentiment,
             ~azure.cognitiveservices.language.textanalytics.DocumentError]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        docs = _validate_batch_input(documents)
+        docs = _validate_batch_input(documents, "language", language)
         try:
             return await self._client.sentiment(
                 documents=docs,

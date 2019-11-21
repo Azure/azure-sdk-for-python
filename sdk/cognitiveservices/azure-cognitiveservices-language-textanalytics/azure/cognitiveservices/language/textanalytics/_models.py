@@ -469,6 +469,8 @@ class RequestStatistics(object):
 
     @classmethod
     def _from_generated(cls, statistics):
+        if statistics is None:
+            return None
         return cls(
             documents_count=statistics["documentsCount"],
             valid_documents_count=statistics["validDocumentsCount"],

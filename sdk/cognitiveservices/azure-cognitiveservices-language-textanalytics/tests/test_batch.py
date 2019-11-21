@@ -384,3 +384,46 @@ class BatchTextAnalyticsTest(CognitiveServiceTest):
         with self.assertRaises(HttpResponseError):
             response = text_analytics.detect_language(docs)
 
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_whole_batch_language_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
+
+        def callback(resp):
+            lang = resp.http_request.body.count("language")
+            self.assertEqual(lang, 3)
+
+        docs = [
+            u"This was the best day of my life.",
+            u"I did not like the hotel we stayed it. It was too expensive.",
+            u"The restaurant was not as good as I hoped."
+        ]
+
+        response = text_analytics.analyze_sentiment(docs, language="en", response_hook=callback)
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_whole_batch_country_hint(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
+
+        def callback(resp):
+            country = resp.http_request.body.count("countryHint")
+            self.assertEqual(country, 3)
+
+        docs = [
+            u"This was the best day of my life.",
+            u"I did not like the hotel we stayed it. It was too expensive.",
+            u"The restaurant was not as good as I hoped."
+        ]
+
+        response = text_analytics.detect_language(docs, country_hint="US", response_hook=callback)
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    def test_bad_document_input(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
+
+        docs = "This is the wrong type"
+
+        with self.assertRaises(TypeError):
+            response = text_analytics.analyze_sentiment(docs)
