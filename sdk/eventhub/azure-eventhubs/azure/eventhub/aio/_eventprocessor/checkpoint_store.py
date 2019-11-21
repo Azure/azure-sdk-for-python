@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
 
-from typing import Iterable, Dict, Any
+from typing import Iterable, Dict, Any, Union
 from abc import ABC, abstractmethod
 
 
@@ -53,7 +53,7 @@ class CheckpointStore(ABC):
         """
 
     @abstractmethod
-    async def update_checkpoint(self, checkpoint: Dict[str, Union[str int]]) -> None:
+    async def update_checkpoint(self, checkpoint: Dict[str, Union[str, int]]) -> None:
         """
         Updates the checkpoint using the given information for the associated partition and
         consumer group in the chosen storage service.
