@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import time
+import unittest
 from contextlib import contextmanager
 
 import azure.mgmt.recoveryservicesbackup
