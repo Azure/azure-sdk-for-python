@@ -43,11 +43,12 @@ _Address = collections.namedtuple('Address', 'hostname path')
 _AccessToken = collections.namedtuple('AccessToken', 'token expires_on')
 
 
-def _parse_conn_str(conn_str):
+def _parse_conn_str(conn_str, kwargs):
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
     entity_path = None
+    eventhub_name = kwargs.pop("eventhub_name", None)
     for element in conn_str.split(';'):
         key, _, value = element.partition('=')
         if key.lower() == 'endpoint':
@@ -64,7 +65,13 @@ def _parse_conn_str(conn_str):
         raise ValueError(
             "Invalid connection string. Should be in the format: "
             "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>")
-    return endpoint, shared_access_key_name, shared_access_key, entity_path
+    entity = eventhub_name or entity_path
+    left_slash_pos = endpoint.find("//")
+    if left_slash_pos != -1:
+        host = endpoint[left_slash_pos + 2:]
+    else:
+        host = endpoint
+    return host, shared_access_key_name, shared_access_key, entity
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):
@@ -137,28 +144,20 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
-        eventhub_name = kwargs.pop("eventhub_name", None)
         consumer_group = kwargs.pop("consumer_group", None)
-        address, policy, key, entity = _parse_conn_str(conn_str)
-        entity = eventhub_name or entity
-        left_slash_pos = address.find("//")
-        if left_slash_pos != -1:
-            host = address[left_slash_pos + 2:]
-        else:
-            host = address
-
+        host, policy, key, entity = _parse_conn_str(conn_str, kwargs)
         if consumer_group:  # Only consumer has the consumer_group arg
             return cls(  # pylint:disable=too-many-function-args
-                host,
-                entity,
-                consumer_group,
-                EventHubSharedKeyCredential(policy, key),
+                fully_qualified_namespace=host,
+                eventhub_name=entity,
+                consumer_group=consumer_group,
+                credential=EventHubSharedKeyCredential(policy, key),
                 **kwargs
             )
         return cls(
-            host,
-            entity,
-            EventHubSharedKeyCredential(policy, key),
+            fully_qualified_namespace=host,
+            eventhub_name=entity,
+            credential=EventHubSharedKeyCredential(policy, key),
             **kwargs
         )
 

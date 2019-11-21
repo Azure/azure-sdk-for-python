@@ -19,7 +19,7 @@ from uamqp import (
     AMQPClientAsync
 )
 
-from .._client_base import ClientBase, _generate_sas_token
+from .._client_base import ClientBase, _generate_sas_token, _parse_conn_str
 from .._utils import utc_from_timestamp
 from ..exceptions import ClientClosedError
 from .._constants import JWT_TOKEN_SCOPE, MGMT_OPERATION, MGMT_PARTITION_OPERATION
@@ -62,6 +62,26 @@ class ClientBaseAsync(ClientBase):
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close()
+
+    @classmethod
+    def from_connection_string(cls, conn_str, **kwargs):
+        consumer_group = kwargs.pop("consumer_group", None)
+        host, policy, key, entity = _parse_conn_str(conn_str, kwargs)
+
+        if consumer_group:  # Only consumer has the consumer_group arg
+            return cls(  # pylint:disable=too-many-function-args
+                fully_qualified_namespace=host,
+                eventhub_name=entity,
+                consumer_group=consumer_group,
+                credential=EventHubSharedKeyCredential(policy, key),
+                **kwargs
+            )
+        return cls(
+            fully_qualified_namespace=host,
+            eventhub_name=entity,
+            credential=EventHubSharedKeyCredential(policy, key),
+            **kwargs
+        )
 
     async def _create_auth(self):
         """
