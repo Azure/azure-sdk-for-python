@@ -27,6 +27,53 @@ class KeyVaultSecretStatus(str, Enum):
     unknown = "Unknown"
 
 
+class CertificateProductType(str, Enum):
+
+    standard_domain_validated_ssl = "StandardDomainValidatedSsl"
+    standard_domain_validated_wild_card_ssl = "StandardDomainValidatedWildCardSsl"
+
+
+class ProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    failed = "Failed"
+    canceled = "Canceled"
+    in_progress = "InProgress"
+    deleting = "Deleting"
+
+
+class CertificateOrderStatus(str, Enum):
+
+    pendingissuance = "Pendingissuance"
+    issued = "Issued"
+    revoked = "Revoked"
+    canceled = "Canceled"
+    denied = "Denied"
+    pendingrevocation = "Pendingrevocation"
+    pending_rekey = "PendingRekey"
+    unused = "Unused"
+    expired = "Expired"
+    not_submitted = "NotSubmitted"
+
+
+class CertificateOrderActionType(str, Enum):
+
+    certificate_issued = "CertificateIssued"
+    certificate_order_canceled = "CertificateOrderCanceled"
+    certificate_order_created = "CertificateOrderCreated"
+    certificate_revoked = "CertificateRevoked"
+    domain_validation_complete = "DomainValidationComplete"
+    fraud_detected = "FraudDetected"
+    org_name_change = "OrgNameChange"
+    org_validation_complete = "OrgValidationComplete"
+    san_drop = "SanDrop"
+    fraud_cleared = "FraudCleared"
+    certificate_expired = "CertificateExpired"
+    certificate_expiration_warning = "CertificateExpirationWarning"
+    fraud_documentation_required = "FraudDocumentationRequired"
+    unknown = "Unknown"
+
+
 class RouteType(str, Enum):
 
     default = "DEFAULT"
@@ -171,10 +218,342 @@ class StatusOptions(str, Enum):
     creating = "Creating"
 
 
-class ProvisioningState(str, Enum):
+class DomainStatus(str, Enum):
 
-    succeeded = "Succeeded"
+    active = "Active"
+    awaiting = "Awaiting"
+    cancelled = "Cancelled"
+    confiscated = "Confiscated"
+    disabled = "Disabled"
+    excluded = "Excluded"
+    expired = "Expired"
     failed = "Failed"
-    canceled = "Canceled"
-    in_progress = "InProgress"
+    held = "Held"
+    locked = "Locked"
+    parked = "Parked"
+    pending = "Pending"
+    reserved = "Reserved"
+    reverted = "Reverted"
+    suspended = "Suspended"
+    transferred = "Transferred"
+    unknown = "Unknown"
+    unlocked = "Unlocked"
+    unparked = "Unparked"
+    updated = "Updated"
+    json_converter_failed = "JsonConverterFailed"
+
+
+class AzureResourceType(str, Enum):
+
+    website = "Website"
+    traffic_manager = "TrafficManager"
+
+
+class CustomHostNameDnsRecordType(str, Enum):
+
+    cname = "CName"
+    a = "A"
+
+
+class HostNameType(str, Enum):
+
+    verified = "Verified"
+    managed = "Managed"
+
+
+class DnsType(str, Enum):
+
+    azure_dns = "AzureDns"
+    default_domain_registrar_dns = "DefaultDomainRegistrarDns"
+
+
+class DomainType(str, Enum):
+
+    regular = "Regular"
+    soft_deleted = "SoftDeleted"
+
+
+class HostingEnvironmentStatus(str, Enum):
+
+    preparing = "Preparing"
+    ready = "Ready"
+    scaling = "Scaling"
     deleting = "Deleting"
+
+
+class InternalLoadBalancingMode(str, Enum):
+
+    none = "None"
+    web = "Web"
+    publishing = "Publishing"
+
+
+class ComputeModeOptions(str, Enum):
+
+    shared = "Shared"
+    dedicated = "Dedicated"
+    dynamic = "Dynamic"
+
+
+class WorkerSizeOptions(str, Enum):
+
+    small = "Small"
+    medium = "Medium"
+    large = "Large"
+    d1 = "D1"
+    d2 = "D2"
+    d3 = "D3"
+    default = "Default"
+
+
+class AccessControlEntryAction(str, Enum):
+
+    permit = "Permit"
+    deny = "Deny"
+
+
+class OperationStatus(str, Enum):
+
+    in_progress = "InProgress"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    timed_out = "TimedOut"
+    created = "Created"
+
+
+class IssueType(str, Enum):
+
+    service_incident = "ServiceIncident"
+    app_deployment = "AppDeployment"
+    app_crash = "AppCrash"
+    runtime_issue_detected = "RuntimeIssueDetected"
+    ase_deployment = "AseDeployment"
+    user_issue = "UserIssue"
+    platform_issue = "PlatformIssue"
+    other = "Other"
+
+
+class SolutionType(str, Enum):
+
+    quick_solution = "QuickSolution"
+    deep_investigation = "DeepInvestigation"
+    best_practices = "BestPractices"
+
+
+class RenderingType(str, Enum):
+
+    no_graph = "NoGraph"
+    table = "Table"
+    time_series = "TimeSeries"
+    time_series_per_instance = "TimeSeriesPerInstance"
+
+
+class ResourceScopeType(str, Enum):
+
+    server_farm = "ServerFarm"
+    subscription = "Subscription"
+    web_site = "WebSite"
+
+
+class NotificationLevel(str, Enum):
+
+    critical = "Critical"
+    warning = "Warning"
+    information = "Information"
+    non_urgent_suggestion = "NonUrgentSuggestion"
+
+
+class Channels(str, Enum):
+
+    notification = "Notification"
+    api = "Api"
+    email = "Email"
+    webhook = "Webhook"
+    all = "All"
+
+
+class AppServicePlanRestrictions(str, Enum):
+
+    none = "None"
+    free = "Free"
+    shared = "Shared"
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+
+
+class InAvailabilityReasonType(str, Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
+
+
+class CheckNameResourceTypes(str, Enum):
+
+    site = "Site"
+    slot = "Slot"
+    hosting_environment = "HostingEnvironment"
+    publishing_user = "PublishingUser"
+    microsoft_websites = "Microsoft.Web/sites"
+    microsoft_websitesslots = "Microsoft.Web/sites/slots"
+    microsoft_webhosting_environments = "Microsoft.Web/hostingEnvironments"
+    microsoft_webpublishing_users = "Microsoft.Web/publishingUsers"
+
+
+class ValidateResourceTypes(str, Enum):
+
+    server_farm = "ServerFarm"
+    site = "Site"
+
+
+class LogLevel(str, Enum):
+
+    off = "Off"
+    verbose = "Verbose"
+    information = "Information"
+    warning = "Warning"
+    error = "Error"
+
+
+class BackupItemStatus(str, Enum):
+
+    in_progress = "InProgress"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    timed_out = "TimedOut"
+    created = "Created"
+    skipped = "Skipped"
+    partially_succeeded = "PartiallySucceeded"
+    delete_in_progress = "DeleteInProgress"
+    delete_failed = "DeleteFailed"
+    deleted = "Deleted"
+
+
+class DatabaseType(str, Enum):
+
+    sql_azure = "SqlAzure"
+    my_sql = "MySql"
+    local_my_sql = "LocalMySql"
+    postgre_sql = "PostgreSql"
+
+
+class FrequencyUnit(str, Enum):
+
+    day = "Day"
+    hour = "Hour"
+
+
+class ContinuousWebJobStatus(str, Enum):
+
+    initializing = "Initializing"
+    starting = "Starting"
+    running = "Running"
+    pending_restart = "PendingRestart"
+    stopped = "Stopped"
+
+
+class WebJobType(str, Enum):
+
+    continuous = "Continuous"
+    triggered = "Triggered"
+
+
+class PublishingProfileFormat(str, Enum):
+
+    file_zilla3 = "FileZilla3"
+    web_deploy = "WebDeploy"
+    ftp = "Ftp"
+
+
+class DnsVerificationTestResult(str, Enum):
+
+    passed = "Passed"
+    failed = "Failed"
+    skipped = "Skipped"
+
+
+class MSDeployLogEntryType(str, Enum):
+
+    message = "Message"
+    warning = "Warning"
+    error = "Error"
+
+
+class MSDeployProvisioningState(str, Enum):
+
+    accepted = "accepted"
+    running = "running"
+    succeeded = "succeeded"
+    failed = "failed"
+    canceled = "canceled"
+
+
+class MySqlMigrationType(str, Enum):
+
+    local_to_remote = "LocalToRemote"
+    remote_to_local = "RemoteToLocal"
+
+
+class PublicCertificateLocation(str, Enum):
+
+    current_user_my = "CurrentUserMy"
+    local_machine_my = "LocalMachineMy"
+    unknown = "Unknown"
+
+
+class BackupRestoreOperationType(str, Enum):
+
+    default = "Default"
+    clone = "Clone"
+    relocation = "Relocation"
+    snapshot = "Snapshot"
+    cloud_fs = "CloudFS"
+
+
+class UnauthenticatedClientAction(str, Enum):
+
+    redirect_to_login_page = "RedirectToLoginPage"
+    allow_anonymous = "AllowAnonymous"
+
+
+class BuiltInAuthenticationProvider(str, Enum):
+
+    azure_active_directory = "AzureActiveDirectory"
+    facebook = "Facebook"
+    google = "Google"
+    microsoft_account = "MicrosoftAccount"
+    twitter = "Twitter"
+
+
+class CloneAbilityResult(str, Enum):
+
+    cloneable = "Cloneable"
+    partially_cloneable = "PartiallyCloneable"
+    not_cloneable = "NotCloneable"
+
+
+class SiteExtensionType(str, Enum):
+
+    gallery = "Gallery"
+    web_root = "WebRoot"
+
+
+class TriggeredWebJobStatus(str, Enum):
+
+    success = "Success"
+    failed = "Failed"
+    error = "Error"
+
+
+class SkuName(str, Enum):
+
+    free = "Free"
+    shared = "Shared"
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+    dynamic = "Dynamic"
+    isolated = "Isolated"
+    premium_v2 = "PremiumV2"
+    elastic_premium = "ElasticPremium"
+    elastic_isolated = "ElasticIsolated"
