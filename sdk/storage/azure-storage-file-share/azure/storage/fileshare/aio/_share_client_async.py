@@ -539,7 +539,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         await directory.create_directory(**kwargs)
         return directory # type: ignore
 
-    @distributed_trace
+    @distributed_trace_async
     async def delete_directory(self, directory_name, **kwargs):
         # type: (str, Any) -> None
         """Marks the directory for deletion. The directory is
