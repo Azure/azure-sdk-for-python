@@ -4001,15 +4001,16 @@ class OSProfile(Model):
      guidelines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions).
     :type computer_name: str
     :param admin_username: Specifies the name of the administrator account.
-     <br><br> **Windows-only restriction:** Cannot end in "." <br><br>
-     **Disallowed values:** "administrator", "admin", "user", "user1", "test",
-     "user2", "test1", "user3", "admin1", "1", "123", "a", "actuser", "adm",
-     "admin2", "aspnet", "backup", "console", "david", "guest", "john",
-     "owner", "root", "server", "sql", "support", "support_388945a0", "sys",
-     "test2", "test3", "user4", "user5". <br><br> **Minimum-length (Linux):** 1
-     character <br><br> **Max-length (Linux):** 64 characters <br><br>
-     **Max-length (Windows):** 20 characters  <br><br><li> For root access to
-     the Linux VM, see [Using root privileges on Linux virtual machines in
+     <br><br> This property cannot be updated after the VM is created. <br><br>
+     **Windows-only restriction:** Cannot end in "." <br><br> **Disallowed
+     values:** "administrator", "admin", "user", "user1", "test", "user2",
+     "test1", "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2",
+     "aspnet", "backup", "console", "david", "guest", "john", "owner", "root",
+     "server", "sql", "support", "support_388945a0", "sys", "test2", "test3",
+     "user4", "user5". <br><br> **Minimum-length (Linux):** 1  character
+     <br><br> **Max-length (Linux):** 64 characters <br><br> **Max-length
+     (Windows):** 20 characters  <br><br><li> For root access to the Linux VM,
+     see [Using root privileges on Linux virtual machines in
      Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)<br><li>
      For a list of built-in system users on Linux that should not be used in
      this field, see [Selecting User Names for Linux on
@@ -4034,8 +4035,9 @@ class OSProfile(Model):
     :param custom_data: Specifies a base-64 encoded string of custom data. The
      base-64 encoded string is decoded to a binary array that is saved as a
      file on the Virtual Machine. The maximum length of the binary array is
-     65535 bytes. <br><br> For using cloud-init for your VM, see [Using
-     cloud-init to customize a Linux VM during
+     65535 bytes. <br><br> This property cannot be updated after the VM is
+     created. <br><br> For using cloud-init for your VM, see [Using cloud-init
+     to customize a Linux VM during
      creation](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)
     :type custom_data: str
     :param windows_configuration: Specifies Windows operating system settings
@@ -5729,8 +5731,9 @@ class VirtualMachine(Resource):
      or disabled on the virtual machine.
     :type additional_capabilities:
      ~azure.mgmt.compute.v2019_07_01.models.AdditionalCapabilities
-    :param os_profile: Specifies the operating system settings for the virtual
-     machine.
+    :param os_profile: Specifies the operating system settings used while
+     creating the virtual machine. Some of the settings cannot be changed once
+     VM is provisioned.
     :type os_profile: ~azure.mgmt.compute.v2019_07_01.models.OSProfile
     :param network_profile: Specifies the network interfaces of the virtual
      machine.
@@ -6790,15 +6793,17 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
     :vartype id: str
     :param name: The name of the extension.
     :type name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param force_update_tag: If a value is provided and is different from the
      previous value, the extension handler will be forced to update even if the
      extension configuration has not changed.
     :type force_update_tag: str
     :param publisher: The name of the extension handler publisher.
     :type publisher: str
-    :param type: Specifies the type of the extension; an example is
+    :param type1: Specifies the type of the extension; an example is
      "CustomScriptExtension".
-    :type type: str
+    :type type1: str
     :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
     :param auto_upgrade_minor_version: Indicates whether the extension should
@@ -6822,15 +6827,17 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
 
     _validation = {
         'id': {'readonly': True},
+        'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
         'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'type': {'key': 'properties.type', 'type': 'str'},
+        'type1': {'key': 'properties.type', 'type': 'str'},
         'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
         'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
         'settings': {'key': 'properties.settings', 'type': 'object'},
@@ -6839,12 +6846,13 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
         'provision_after_extensions': {'key': 'properties.provisionAfterExtensions', 'type': '[str]'},
     }
 
-    def __init__(self, *, name: str=None, force_update_tag: str=None, publisher: str=None, type: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, provision_after_extensions=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, force_update_tag: str=None, publisher: str=None, type1: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, provision_after_extensions=None, **kwargs) -> None:
         super(VirtualMachineScaleSetExtension, self).__init__(**kwargs)
         self.name = name
+        self.type = None
         self.force_update_tag = force_update_tag
         self.publisher = publisher
-        self.type = type
+        self.type1 = type1
         self.type_handler_version = type_handler_version
         self.auto_upgrade_minor_version = auto_upgrade_minor_version
         self.settings = settings
@@ -6869,6 +6877,85 @@ class VirtualMachineScaleSetExtensionProfile(Model):
     def __init__(self, *, extensions=None, **kwargs) -> None:
         super(VirtualMachineScaleSetExtensionProfile, self).__init__(**kwargs)
         self.extensions = extensions
+
+
+class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
+    """Describes a Virtual Machine Scale Set Extension.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: The name of the extension.
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param force_update_tag: If a value is provided and is different from the
+     previous value, the extension handler will be forced to update even if the
+     extension configuration has not changed.
+    :type force_update_tag: str
+    :param publisher: The name of the extension handler publisher.
+    :type publisher: str
+    :param type1: Specifies the type of the extension; an example is
+     "CustomScriptExtension".
+    :type type1: str
+    :param type_handler_version: Specifies the version of the script handler.
+    :type type_handler_version: str
+    :param auto_upgrade_minor_version: Indicates whether the extension should
+     use a newer minor version if one is available at deployment time. Once
+     deployed, however, the extension will not upgrade minor versions unless
+     redeployed, even with this property set to true.
+    :type auto_upgrade_minor_version: bool
+    :param settings: Json formatted public settings for the extension.
+    :type settings: object
+    :param protected_settings: The extension can contain either
+     protectedSettings or protectedSettingsFromKeyVault or no protected
+     settings at all.
+    :type protected_settings: object
+    :ivar provisioning_state: The provisioning state, which only appears in
+     the response.
+    :vartype provisioning_state: str
+    :param provision_after_extensions: Collection of extension names after
+     which this extension needs to be provisioned.
+    :type provision_after_extensions: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
+        'publisher': {'key': 'properties.publisher', 'type': 'str'},
+        'type1': {'key': 'properties.type', 'type': 'str'},
+        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
+        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
+        'settings': {'key': 'properties.settings', 'type': 'object'},
+        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'provision_after_extensions': {'key': 'properties.provisionAfterExtensions', 'type': '[str]'},
+    }
+
+    def __init__(self, *, force_update_tag: str=None, publisher: str=None, type1: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, provision_after_extensions=None, **kwargs) -> None:
+        super(VirtualMachineScaleSetExtensionUpdate, self).__init__(**kwargs)
+        self.name = None
+        self.type = None
+        self.force_update_tag = force_update_tag
+        self.publisher = publisher
+        self.type1 = type1
+        self.type_handler_version = type_handler_version
+        self.auto_upgrade_minor_version = auto_upgrade_minor_version
+        self.settings = settings
+        self.protected_settings = protected_settings
+        self.provisioning_state = None
+        self.provision_after_extensions = provision_after_extensions
 
 
 class VirtualMachineScaleSetIdentity(Model):
@@ -8594,8 +8681,9 @@ class VirtualMachineUpdate(UpdateResource):
      or disabled on the virtual machine.
     :type additional_capabilities:
      ~azure.mgmt.compute.v2019_07_01.models.AdditionalCapabilities
-    :param os_profile: Specifies the operating system settings for the virtual
-     machine.
+    :param os_profile: Specifies the operating system settings used while
+     creating the virtual machine. Some of the settings cannot be changed once
+     VM is provisioned.
     :type os_profile: ~azure.mgmt.compute.v2019_07_01.models.OSProfile
     :param network_profile: Specifies the network interfaces of the virtual
      machine.
