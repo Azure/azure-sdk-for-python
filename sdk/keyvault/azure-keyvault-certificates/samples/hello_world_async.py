@@ -54,7 +54,7 @@ async def run_sample():
         # our certificate creation method
         cert_policy = CertificatePolicy(
             issuer_name=WellKnownIssuerNames.Self,
-            subject_name="CN=*.microsoft.com",
+            subject="CN=*.microsoft.com",
             san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",

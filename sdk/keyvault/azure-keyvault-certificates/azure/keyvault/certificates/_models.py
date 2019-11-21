@@ -555,15 +555,15 @@ class CertificatePolicy(object):
 
     :param str issuer_name: Name of the referenced issuer object or reserved names; for example,
         'Self' or 'Unknown"
-    :keyword str subject_name: The subject name of the certificate. Should be a valid X509
-        distinguished name. Either subject_name or one of the subject alternative name parameters
+    :keyword str subject: The subject name of the certificate. Should be a valid X509
+        distinguished name. Either subject or one of the subject alternative name parameters
         are required.
     :keyword Iterable[str] san_emails: Subject alternative emails of the X509 object. Either
-        subject_name or one of the subject alternative name parameters are required.
+        subject or one of the subject alternative name parameters are required.
     :keyword Iterable[str] san_dns_names: Subject alternative DNS names of the X509 object. Either
-        subject_name or one of the subject alternative name parameters are required.
+        subject or one of the subject alternative name parameters are required.
     :keyword Iterable[str] san_user_principal_names: Subject alternative user principal names of the X509 object.
-        Either subject_name or one of the subject alternative name parameters are required.
+        Either subject or one of the subject alternative name parameters are required.
     :keyword bool exportable: Indicates if the private key can be exported. For valid values,
         see KeyType.
     :keyword key_type: The type of key pair to be used for the certificate.
@@ -598,7 +598,7 @@ class CertificatePolicy(object):
     ):
         # type: (...) -> None
         self._issuer_name = issuer_name
-        self._subject_name = kwargs.pop("subject_name", None)
+        self._subject = kwargs.pop("subject", None)
         self._attributes = kwargs.pop("attributes", None)
         self._id = kwargs.pop("cert_policy_id", None)
         self._exportable = kwargs.pop("exportable", None)
@@ -617,13 +617,13 @@ class CertificatePolicy(object):
         self._san_dns_names = kwargs.pop("san_dns_names", None) or None
         self._san_upns = kwargs.pop("san_user_principal_names", None) or None
 
-        if not (self._san_emails or self._san_upns or self._san_dns_names or self._subject_name):
-            raise ValueError("You need to set either subject_name or one of the subject alternative names " +
+        if not (self._san_emails or self._san_upns or self._san_dns_names or self._subject):
+            raise ValueError("You need to set either subject or one of the subject alternative names " +
                             "parameters")
 
     @classmethod
     def get_default(cls):
-        return cls(issuer_name=WellKnownIssuerNames.Self, subject_name="CN=DefaultPolicy")
+        return cls(issuer_name=WellKnownIssuerNames.Self, subject="CN=DefaultPolicy")
 
     def __repr__(self):
         # type () -> str
@@ -679,7 +679,7 @@ class CertificatePolicy(object):
 
         # pylint:disable=too-many-boolean-expressions
         if (
-            self.subject_name
+            self.subject
             or self.enhanced_key_usage
             or self.key_usage
             or self.san_emails
@@ -693,7 +693,7 @@ class CertificatePolicy(object):
                 key_usage = None
 
             x509_certificate_properties = models.X509CertificateProperties(
-                subject=self.subject_name,
+                subject=self.subject,
                 ekus=self.enhanced_key_usage,
                 subject_alternative_names=models.SubjectAlternativeNames(
                     emails=self.san_emails, upns=self.san_user_principal_names, dns_names=self.san_dns_names
@@ -756,7 +756,7 @@ class CertificatePolicy(object):
             issuer_name=(certificate_policy_bundle.issuer_parameters.name
                 if certificate_policy_bundle.issuer_parameters else None
             ),
-            subject_name=(x509_certificate_properties.subject if x509_certificate_properties else None),
+            subject=(x509_certificate_properties.subject if x509_certificate_properties else None),
             cert_policy_id=certificate_policy_bundle.id,
             certificate_type=(
                 certificate_policy_bundle.issuer_parameters.certificate_type
@@ -882,10 +882,13 @@ class CertificatePolicy(object):
         return self._content_type
 
     @property
-    def subject_name(self):
+    def subject(self):
         # type: () -> str
-        """:rtype: str"""
-        return self._subject_name
+        """The subject name of the certificate.
+
+        :rtype: str
+        """
+        return self._subject
 
     @property
     def san_emails(self):

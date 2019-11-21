@@ -126,7 +126,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
     def _validate_x509_properties(self, policy, cert_policy_x509_props):
         self.assertIsNotNone(policy)
-        self.assertEqual(cert_policy_x509_props.subject, policy.subject_name)
+        self.assertEqual(cert_policy_x509_props.subject, policy.subject)
         if not cert_policy_x509_props.subject_alternative_names:
             return
         if cert_policy_x509_props.subject_alternative_names.emails:
