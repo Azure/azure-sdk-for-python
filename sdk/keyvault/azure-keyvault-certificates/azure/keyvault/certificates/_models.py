@@ -623,7 +623,7 @@ class CertificatePolicy(object):
 
     @classmethod
     def get_default(cls):
-        return cls(issuer_name=WellKnownIssuerNames.Self, subject="CN=DefaultPolicy")
+        return cls(issuer_name=WellKnownIssuerNames.self, subject="CN=DefaultPolicy")
 
     def __repr__(self):
         # type () -> str

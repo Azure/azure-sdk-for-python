@@ -46,7 +46,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
-            issuer_name=WellKnownIssuerNames.Self,
+            issuer_name=WellKnownIssuerNames.self,
             subject="CN=*.microsoft.com",
             san_dns_names=["sdk.azure-int.net"],
             exportable=True,
@@ -114,7 +114,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
-            issuer_name=WellKnownIssuerNames.Self,
+            issuer_name=WellKnownIssuerNames.self,
             subject="CN=*.microsoft.com",
             san_dns_names=["sdk.azure-int.net"],
             exportable=True,
@@ -185,7 +185,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
-            issuer_name=WellKnownIssuerNames.Self,
+            issuer_name=WellKnownIssuerNames.self,
             subject="CN=*.microsoft.com",
             san_dns_names=["sdk.azure-int.net"],
             exportable=True,
@@ -238,7 +238,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
-            issuer_name=WellKnownIssuerNames.Self,
+            issuer_name=WellKnownIssuerNames.self,
             subject="CN=*.microsoft.com",
             san_dns_names=["sdk.azure-int.net"],
             exportable=True,

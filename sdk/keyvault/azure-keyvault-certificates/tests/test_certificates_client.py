@@ -629,7 +629,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertIsNotNone(vault_client)
         client = vault_client.certificates
         cert_name = "mergeCertificate"
-        issuer_name = WellKnownIssuerNames.Unknown
+        issuer_name = WellKnownIssuerNames.unknown
         cert_policy = CertificatePolicyGenerated(
             issuer_parameters=IssuerParameters(name=issuer_name, certificate_transparency=False),
             x509_certificate_properties=X509CertificateProperties(subject="CN=MyCert"),
