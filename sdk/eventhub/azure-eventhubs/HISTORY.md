@@ -6,15 +6,26 @@
 
 - `EventData`
     - Renamed property `application_properties` to `properties`.
+    - `EventData` no longer has attribute `last_enqueued_event_properties` - use this on `PartitionContext` instead.
+- `EvenDataBatch`
+    - `EventDataBatch.try_add` has been renamed to `EventDataBatch.add`.
+    - Renamed property `size` to `size_in_bytes`.
+    - Renamed atrribute `max_size` to `max_size_in_bytes`.
 - `EventHubConsumerClient` and `EventHubProducerClient`
     - Renamed method `get_properties` to `get_eventhub_properties`.
     - Renamed parameters in constructor: `host` to `fully_qualified_namespace`, `event_hub_path` to `eventhub_name`.
     - Renamed parameters in `get_partition_properties`: `partition` to `partition_id`.
-- Moved `consumer_group` parameter from `receive` method to the constructor of `EventHubConsumerClient`.
+    - Renamed parameter `consumer_group_name` to `consumer_group` and moved that parameter from `receive` method to the constructor of `EventHubConsumerClient`.
+    - Renamed parameter `event_hub_path` to `eventhub_name` in constructor and `from_connection_string` method of the client object.
+    - `EventHubProducerClient.send` has been renamed to `send_batch` which will only accept `EventDataBatch` object as input.
+    - `EventHubProducerClient.create_batch` now also takes the `partition_id` and `partition_key` as optional parameters (which are no longer specified at send).
 - Renamed module `PartitionManager` to `CheckpointStore`.
 - Removed class `EventPostition`.
     - The `initial_event_position` parameter of the `receive` method accepts offset(`str`), sequence number(`int`), datetime (`datetime.datetime`) or `dict` of these types.
     - The `initial_event_position_inclusive` parameter of the `receive` method accepts `bool` or `dict` indicating whether the given event position is inclusive or not.
+- `PartitionContext` no longer has attribute `owner_id`.
+- `PartitionContext` now has attribute `last_enqueued_event_properties` which is populated if `track_last_enqueued_event_properties` is set to `True` in the `receive` method.
+
 
 ## 2019-11-04 5.0.0b5
 
