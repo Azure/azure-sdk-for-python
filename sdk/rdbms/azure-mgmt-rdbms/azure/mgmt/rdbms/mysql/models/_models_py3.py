@@ -511,6 +511,40 @@ class PerformanceTierServiceLevelObjectives(Model):
         self.min_storage_mb = min_storage_mb
 
 
+class ResourceIdentity(Model):
+    """Azure Active Directory identity configuration for a resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id: The Azure Active Directory principal id.
+    :vartype principal_id: str
+    :param type: The identity type. Set this to 'SystemAssigned' in order to
+     automatically create and assign an Azure Active Directory principal for
+     the resource. Possible values include: 'SystemAssigned', 'None'
+    :type type: str or ~azure.mgmt.rdbms.mysql.models.IdentityType
+    :ivar tenant_id: The Azure Active Directory tenant id.
+    :vartype tenant_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(self, *, type=None, **kwargs) -> None:
+        super(ResourceIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.type = type
+        self.tenant_id = None
+
+
 class TrackedResource(ProxyResource):
     """Resource properties including location and tags for track resources.
 
@@ -570,6 +604,9 @@ class Server(TrackedResource):
     :type location: str
     :param tags: Application-specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
+    :param resource_identity: The Azure Active Directory identity of the
+     server.
+    :type resource_identity: ~azure.mgmt.rdbms.mysql.models.ResourceIdentity
     :param sku: The SKU (pricing tier) of the server.
     :type sku: ~azure.mgmt.rdbms.mysql.models.Sku
     :param administrator_login: The administrator's login name of a server.
@@ -617,6 +654,7 @@ class Server(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'resource_identity': {'key': 'ResourceIdentity', 'type': 'ResourceIdentity'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
@@ -630,8 +668,9 @@ class Server(TrackedResource):
         'replica_capacity': {'key': 'properties.replicaCapacity', 'type': 'int'},
     }
 
-    def __init__(self, *, location: str, tags=None, sku=None, administrator_login: str=None, version=None, ssl_enforcement=None, user_visible_state=None, fully_qualified_domain_name: str=None, earliest_restore_date=None, storage_profile=None, replication_role: str=None, master_server_id: str=None, replica_capacity: int=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, resource_identity=None, sku=None, administrator_login: str=None, version=None, ssl_enforcement=None, user_visible_state=None, fully_qualified_domain_name: str=None, earliest_restore_date=None, storage_profile=None, replication_role: str=None, master_server_id: str=None, replica_capacity: int=None, **kwargs) -> None:
         super(Server, self).__init__(location=location, tags=tags, **kwargs)
+        self.resource_identity = resource_identity
         self.sku = sku
         self.administrator_login = administrator_login
         self.version = version
