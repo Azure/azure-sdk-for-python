@@ -10,7 +10,7 @@
 - `EvenDataBatch`
     - `EventDataBatch.try_add` has been renamed to `EventDataBatch.add`.
     - Renamed property `size` to `size_in_bytes`.
-    - Renamed atrribute `max_size` to `max_size_in_bytes`.
+    - Renamed attribute `max_size` to `max_size_in_bytes`.
 - `EventHubConsumerClient` and `EventHubProducerClient`
     - Renamed method `get_properties` to `get_eventhub_properties`.
     - Renamed parameters in constructor: `host` to `fully_qualified_namespace`, `event_hub_path` to `eventhub_name`.
