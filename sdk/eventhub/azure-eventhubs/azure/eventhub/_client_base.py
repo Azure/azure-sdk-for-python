@@ -12,7 +12,7 @@ import collections
 from base64 import b64encode, b64decode
 from hashlib import sha256
 from hmac import HMAC
-from typing import Any, TYPE_CHECKING
+from typing import Any
 try:
     from urlparse import urlparse  # type: ignore
     from urllib import urlencode, quote_plus  # type: ignore

@@ -8,7 +8,7 @@ import logging
 import asyncio
 import time
 import functools
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
 from uamqp import (
     authentication,
