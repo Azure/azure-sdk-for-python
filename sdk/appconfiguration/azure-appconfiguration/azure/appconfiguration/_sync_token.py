@@ -32,13 +32,13 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 class SyncToken(object):
     """The sync token structure
         """
-    def __init__(self, id, value, sequence_number):
-        self.id = id
+    def __init__(self, token_id, value, sequence_number):
+        self.token_id = token_id
         self.value = value
         self.sequence_number = sequence_number
 
     def __str__(self):
-        return "{}={}".format(self.id, self.value)
+        return "{}={}".format(self.token_id, self.value)
 
     @classmethod
     def from_sync_token_string(cls, sync_token):
@@ -47,9 +47,9 @@ class SyncToken(object):
             sequence_number = int(sync_token[position+4:])
             id_value = sync_token[:position]
             position = id_value.index('=')
-            id = id_value[:position]
+            token_id = id_value[:position]
             value = id_value[position+1:]
-            return SyncToken(id, value, sequence_number)
+            return SyncToken(token_id, value, sequence_number)
         except ValueError:
             return None
 
@@ -92,15 +92,15 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
         if not sync_token_header:
             return
         sync_token_strings = sync_token_header.split(',')
-        if len(sync_token_strings) == 0:
+        if not sync_token_strings:
             return
         for sync_token_string in sync_token_strings:
             sync_token = SyncToken.from_sync_token_string(sync_token_string)
             if not sync_token:
                 pass
-            existing_token = self._sync_tokens.get(sync_token.id, None)
+            existing_token = self._sync_tokens.get(sync_token.token_id, None)
             if not existing_token:
-                self._sync_tokens[sync_token.id] = sync_token
+                self._sync_tokens[sync_token.token_id] = sync_token
                 continue
             if existing_token.sequence_number < sync_token.sequence_number:
-                self._sync_tokens[sync_token.id] = sync_token
+                self._sync_tokens[sync_token.token_id] = sync_token

@@ -11,7 +11,7 @@ from azure.appconfiguration._sync_token import SyncToken, SyncTokenPolicy
 def test_parse_sync_token():
     test_sync_token = "jtqGc1I4=MDoyOA==;sn=28"
     sync_token = SyncToken.from_sync_token_string(test_sync_token)
-    assert  sync_token.id == 'jtqGc1I4'
+    assert  sync_token.token_id == 'jtqGc1I4'
     assert  sync_token.value == 'MDoyOA=='
     assert  sync_token.sequence_number == 28
 
@@ -25,7 +25,7 @@ def test_save_sync_token():
     sync_token_policy = SyncTokenPolicy()
     sync_token_policy.on_response(None, pipeline_response)
     sync_token = sync_token_policy._sync_tokens['jtqGc1I4']
-    assert sync_token.id == 'jtqGc1I4'
+    assert sync_token.token_id == 'jtqGc1I4'
     assert sync_token.value == 'MDoyOA=='
     assert sync_token.sequence_number == 28
 
@@ -53,11 +53,11 @@ def test_save_multi_sync_token():
     sync_token_policy = SyncTokenPolicy()
     sync_token_policy.on_response(None, pipeline_response)
     sync_token = sync_token_policy._sync_tokens['syncToken1']
-    assert sync_token.id == 'syncToken1'
+    assert sync_token.token_id == 'syncToken1'
     assert sync_token.value == 'val1'
     assert sync_token.sequence_number == 6
     sync_token = sync_token_policy._sync_tokens['syncToken2']
-    assert sync_token.id == 'syncToken2'
+    assert sync_token.token_id == 'syncToken2'
     assert sync_token.value == 'val2'
     assert sync_token.sequence_number == 10
 
@@ -73,7 +73,8 @@ def test_set_multi_sync_token():
     sync_token_policy.on_response(None, pipeline_response)
     sync_token_policy.on_request(pipeline_request)
     sync_token_header = pipeline_request.http_request.headers.get("Sync-Token")
-    assert sync_token_header == 'syncToken1=val1,syncToken2=val2'
+    assert 'syncToken1=val1' in sync_token_header
+    assert 'syncToken2=val2' in sync_token_header
 
 def test_save_multi_sync_token():
     test_sync_token = "syncToken1=val1;sn=6"
@@ -85,7 +86,7 @@ def test_save_multi_sync_token():
     sync_token_policy = SyncTokenPolicy()
     sync_token_policy.on_response(None, pipeline_response)
     sync_token = sync_token_policy._sync_tokens['syncToken1']
-    assert sync_token.id == 'syncToken1'
+    assert sync_token.token_id == 'syncToken1'
     assert sync_token.value == 'val1'
     assert sync_token.sequence_number == 6
     test_new_sync_token = "syncToken1=val2;sn=10"
@@ -94,6 +95,6 @@ def test_save_multi_sync_token():
     pipeline_response = PipelineResponse(request, response, None)
     sync_token_policy.on_response(None, pipeline_response)
     sync_token = sync_token_policy._sync_tokens['syncToken1']
-    assert sync_token.id == 'syncToken1'
+    assert sync_token.token_id == 'syncToken1'
     assert sync_token.value == 'val2'
     assert sync_token.sequence_number == 10
