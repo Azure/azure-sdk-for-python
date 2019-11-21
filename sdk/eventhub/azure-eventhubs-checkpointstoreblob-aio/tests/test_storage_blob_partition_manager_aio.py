@@ -11,7 +11,7 @@ import uuid
 import warnings
 import asyncio
 
-from azure.eventhub.extensions.checkpointstoreblobaio import BlobPartitionManager
+from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
 
 def get_live_storage_blob_client():
@@ -45,15 +45,15 @@ def remove_live_storage_blob_client(container_str):
 async def _claim_and_list_ownership(live_storage_blob_client):
     fully_qualified_namespace = 'test_namespace'
     eventhub_name = 'eventhub'
-    consumer_group_name = '$default'
+    consumer_group = '$default'
     ownership_cnt = 8
     async with live_storage_blob_client:
-        partition_manager = BlobPartitionManager(container_client=live_storage_blob_client)
+        checkpoint_store = BlobCheckpointStore(container_client=live_storage_blob_client)
 
-        ownership_list = await partition_manager.list_ownership(
+        ownership_list = await checkpoint_store.list_ownership(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
-            consumer_group_name=consumer_group_name)
+            consumer_group=consumer_group)
         assert len(ownership_list) == 0
 
         ownership_list = []
@@ -62,18 +62,18 @@ async def _claim_and_list_ownership(live_storage_blob_client):
             ownership = {}
             ownership['fully_qualified_namespace'] = fully_qualified_namespace
             ownership['eventhub_name'] = eventhub_name
-            ownership['consumer_group_name'] = consumer_group_name
+            ownership['consumer_group'] = consumer_group
             ownership['owner_id'] = 'ownerid'
             ownership['partition_id'] = str(i)
             ownership['last_modified_time'] = time.time()
             ownership_list.append(ownership)
 
-        await partition_manager.claim_ownership(ownership_list)
+        await checkpoint_store.claim_ownership(ownership_list)
 
-        ownership_list = await partition_manager.list_ownership(
+        ownership_list = await checkpoint_store.list_ownership(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
-            consumer_group_name=consumer_group_name)
+            consumer_group=consumer_group)
         assert len(ownership_list) == ownership_cnt
 
 
@@ -92,20 +92,20 @@ def test_claim_and_list_ownership():
 async def _update_checkpoint(live_storage_blob_client):
     fully_qualified_namespace = 'test_namespace'
     eventhub_name = 'eventhub'
-    consumer_group_name = '$default'
+    consumer_group = '$default'
     partition_cnt = 8
 
     async with live_storage_blob_client:
-        partition_manager = BlobPartitionManager(container_client=live_storage_blob_client)
+        checkpoint_store = BlobCheckpointStore(container_client=live_storage_blob_client)
         for i in range(partition_cnt):
-            await partition_manager.update_checkpoint(
-                fully_qualified_namespace, eventhub_name, consumer_group_name, str(i),
+            await checkpoint_store.update_checkpoint(
+                fully_qualified_namespace, eventhub_name, consumer_group, str(i),
                 '2', 20)
 
-        checkpoint_list = await partition_manager.list_checkpoints(
+        checkpoint_list = await checkpoint_store.list_checkpoints(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
-            consumer_group_name=consumer_group_name)
+            consumer_group=consumer_group)
         assert len(checkpoint_list) == partition_cnt
         for checkpoint in checkpoint_list:
             assert checkpoint['offset'] == '2'

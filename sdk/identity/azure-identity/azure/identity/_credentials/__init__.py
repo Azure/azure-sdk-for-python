@@ -9,7 +9,8 @@ from .client_credential import CertificateCredential, ClientSecretCredential
 from .default import DefaultAzureCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
-from .user import DeviceCodeCredential, SharedTokenCacheCredential, UsernamePasswordCredential
+from .shared_cache import SharedTokenCacheCredential
+from .user import DeviceCodeCredential, UsernamePasswordCredential
 
 
 __all__ = [

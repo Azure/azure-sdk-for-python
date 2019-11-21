@@ -7,6 +7,17 @@
 ### Features
 
 - New RequestIdPolicy   #8437
+- Enable logging policy in default pipeline #8053
+- Normalize transport timeout.   #8000
+  Now we have:
+  * 'connection_timeout' - a single float in seconds for the connection timeout. Default 5min
+  * 'read_timeout' - a single float in seconds for the read timeout. Default 5min
+
+### Bug fixes
+
+- Retry: rewind body position if possible  #8307
+- RequestHistory: deepcopy fails if request contains a stream  #7732
+- Retry: retry raises error if response does not have http_response #8629
 
 ## Version 1.0.1
 

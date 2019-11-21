@@ -22,9 +22,9 @@ async def test_receive_end_of_stream_async(connstr_senders):
             on_event.called = True
     on_event.called = False
     connection_str, senders = connstr_senders
-    client = EventHubConsumerClient.from_connection_string(connection_str)
+    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     async with client:
-        task = asyncio.ensure_future(client.receive(on_event, "$default", partition_id="0", initial_event_position="-1"))
+        task = asyncio.ensure_future(client.receive(on_event, partition_id="0", initial_event_position="-1"))
         await asyncio.sleep(10)
         assert on_event.called is False
         senders[0].send(EventData(b"Receiving only a single event"))
@@ -59,19 +59,19 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
     on_event.event_position = None
     connection_str, senders = connstr_senders
     senders[0].send(EventData(b"Inclusive"))
-    client = EventHubConsumerClient.from_connection_string(connection_str)
+    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     async with client:
-        task = asyncio.ensure_future(client.receive(on_event, "$default",
-                                  initial_event_position="-1",
-                                  track_last_enqueued_event_properties=True))
+        task = asyncio.ensure_future(client.receive(on_event,
+                                                    initial_event_position="-1",
+                                                    track_last_enqueued_event_properties=True))
         await asyncio.sleep(10)
         assert on_event.event_position is not None
     task.cancel()
     senders[0].send(EventData(expected_result))
-    client2 = EventHubConsumerClient.from_connection_string(connection_str)
+    client2 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     async with client2:
         task = asyncio.ensure_future(
-            client2.receive(on_event, "$default",
+            client2.receive(on_event,
                             initial_event_position= EventPosition(on_event.event_position, inclusive),
                             track_last_enqueued_event_properties=True))
         await asyncio.sleep(10)
@@ -91,26 +91,22 @@ async def test_receive_owner_level_async(connstr_senders):
 
     on_error.error = None
     connection_str, senders = connstr_senders
-    client1 = EventHubConsumerClient.from_connection_string(connection_str)
-    client2 = EventHubConsumerClient.from_connection_string(connection_str)
+    client1 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
+    client2 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     async with client1, client2:
-        task1 = asyncio.ensure_future(client1.receive(on_event, "$default",
-                                                    partition_id="0", initial_event_position="-1",
-                                                    on_error=on_error))
-        event_list = []
+        task1 = asyncio.ensure_future(client1.receive(on_event,
+                                                      partition_id="0", initial_event_position="-1",
+                                                      on_error=on_error))
         for i in range(5):
             ed = EventData("Event Number {}".format(i))
-            event_list.append(ed)
-        senders[0].send(event_list)
+            senders[0].send(ed)
         await asyncio.sleep(10)
-        task2 = asyncio.ensure_future(client2.receive(on_event, "$default",
-                                                    partition_id="0", initial_event_position="-1",
-                                                    owner_level=1))
-        event_list = []
+        task2 = asyncio.ensure_future(client2.receive(on_event,
+                                                      partition_id="0", initial_event_position="-1",
+                                                      owner_level=1))
         for i in range(5):
             ed = EventData("Event Number {}".format(i))
-            event_list.append(ed)
-        senders[0].send(event_list)
+            senders[0].send(ed)
         await asyncio.sleep(10)
     task1.cancel()
     task2.cancel()
@@ -120,30 +116,31 @@ async def test_receive_owner_level_async(connstr_senders):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_over_websocket_async(connstr_senders):
+    pytest.skip("Waiting on uAMQP release on the message reading properties")
     app_prop = {"raw_prop": "raw_value"}
 
     async def on_event(partition_context, event):
         on_event.received.append(event)
-        on_event.app_prop = event.application_properties
+        on_event.app_prop = event.properties
 
     on_event.received = []
     on_event.app_prop = None
     connection_str, senders = connstr_senders
-    client = EventHubConsumerClient.from_connection_string(connection_str,
+    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default',
                                                            transport_type=TransportType.AmqpOverWebsocket)
 
     event_list = []
     for i in range(5):
         ed = EventData("Event Number {}".format(i))
-        ed.application_properties = app_prop
+        ed.properties = app_prop
         event_list.append(ed)
     senders[0].send(event_list)
 
     async with client:
-        task = asyncio.ensure_future(client.receive(on_event, "$default",
-                                  partition_id="0", initial_event_position="-1"))
+        task = asyncio.ensure_future(client.receive(on_event,
+                                                    partition_id="0", initial_event_position="-1"))
         await asyncio.sleep(10)
     task.cancel()
     assert len(on_event.received) == 5
     for ed in on_event.received:
-        assert ed.application_properties[b"raw_prop"] == b"raw_value"
+        assert ed.properties[b"raw_prop"] == b"raw_value"

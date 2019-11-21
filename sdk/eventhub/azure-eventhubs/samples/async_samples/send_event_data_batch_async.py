@@ -20,7 +20,7 @@ from azure.eventhub import EventData
 
 
 EVENT_HUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
-EVENT_HUB = os.environ['EVENT_HUB_NAME']
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
 async def create_batch_data(producer_client):
@@ -42,7 +42,7 @@ async def run(producer):
 
 
 loop = asyncio.get_event_loop()
-producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONNECTION_STR, event_hub_path=EVENT_HUB)
+producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONNECTION_STR, eventhub_name=EVENTHUB_NAME)
 tasks = asyncio.gather(
     run(producer))
 start_time = time.time()

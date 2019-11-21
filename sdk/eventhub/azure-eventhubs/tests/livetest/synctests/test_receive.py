@@ -23,9 +23,9 @@ def test_receive_end_of_stream(connstr_senders):
             on_event.called = True
     on_event.called = False
     connection_str, senders = connstr_senders
-    client = EventHubConsumerClient.from_connection_string(connection_str)
+    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     with client:
-        thread = threading.Thread(target=client.receive, args=(on_event, "$default"),
+        thread = threading.Thread(target=client.receive, args=(on_event,),
                                   kwargs={"partition_id": "0", "initial_event_position": "@latest"})
         thread.daemon = True
         thread.start()
@@ -63,9 +63,9 @@ def test_receive_with_event_position_sync(connstr_senders, position, inclusive, 
     connection_str, senders = connstr_senders
     senders[0].send(EventData(b"Inclusive"))
     senders[1].send(EventData(b"Inclusive"))
-    client = EventHubConsumerClient.from_connection_string(connection_str)
+    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     with client:
-        thread = threading.Thread(target=client.receive, args=(on_event, "$default"),
+        thread = threading.Thread(target=client.receive, args=(on_event,),
                                   kwargs={"initial_event_position": "-1",
                                   "track_last_enqueued_event_properties": True})
         thread.daemon = True
@@ -75,9 +75,9 @@ def test_receive_with_event_position_sync(connstr_senders, position, inclusive, 
     thread.join()
     senders[0].send(EventData(expected_result))
     senders[1].send(EventData(expected_result))
-    client2 = EventHubConsumerClient.from_connection_string(connection_str)
+    client2 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     with client2:
-        thread = threading.Thread(target=client2.receive, args=(on_event, "$default"),
+        thread = threading.Thread(target=client2.receive, args=(on_event,),
                                   kwargs={"initial_event_position": EventPosition(on_event.event_position, inclusive),
                                           "track_last_enqueued_event_properties": True})
         thread.daemon = True
@@ -96,27 +96,23 @@ def test_receive_owner_level(connstr_senders):
 
     on_error.error = None
     connection_str, senders = connstr_senders
-    client1 = EventHubConsumerClient.from_connection_string(connection_str)
-    client2 = EventHubConsumerClient.from_connection_string(connection_str)
+    client1 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
+    client2 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     with client1, client2:
-        thread1 = threading.Thread(target=client1.receive, args=(on_event, "$default"),
+        thread1 = threading.Thread(target=client1.receive, args=(on_event,),
                                    kwargs={"partition_id": "0", "initial_event_position": "-1",
                                            "on_error": on_error})
         thread1.start()
-        event_list = []
         for i in range(5):
             ed = EventData("Event Number {}".format(i))
-            event_list.append(ed)
-        senders[0].send(event_list)
+            senders[0].send(ed)
         time.sleep(10)
-        thread2 = threading.Thread(target=client2.receive, args=(on_event, "$default"),
+        thread2 = threading.Thread(target=client2.receive, args=(on_event,),
                                    kwargs = {"partition_id": "0", "initial_event_position": "-1", "owner_level": 1})
         thread2.start()
-        event_list = []
         for i in range(5):
             ed = EventData("Event Number {}".format(i))
-            event_list.append(ed)
-        senders[0].send(event_list)
+            senders[0].send(ed)
         time.sleep(20)
     thread1.join()
     thread2.join()
@@ -125,6 +121,7 @@ def test_receive_owner_level(connstr_senders):
 
 @pytest.mark.liveTest
 def test_receive_over_websocket_sync(connstr_senders):
+    pytest.skip("Waiting on uAMQP release on the message reading properties")
     app_prop = {"raw_prop": "raw_value"}
 
     def on_event(partition_context, event):
@@ -134,7 +131,9 @@ def test_receive_over_websocket_sync(connstr_senders):
     on_event.received = []
     on_event.app_prop = None
     connection_str, senders = connstr_senders
-    client = EventHubConsumerClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket)
+    client = EventHubConsumerClient.from_connection_string(connection_str,
+                                                           consumer_group='$default',
+                                                           transport_type=TransportType.AmqpOverWebsocket)
 
     event_list = []
     for i in range(5):
@@ -144,7 +143,7 @@ def test_receive_over_websocket_sync(connstr_senders):
     senders[0].send(event_list)
 
     with client:
-        thread = threading.Thread(target=client.receive, args=(on_event, "$default"),
+        thread = threading.Thread(target=client.receive, args=(on_event,),
                                   kwargs={"partition_id": "0", "initial_event_position": "-1"})
         thread.start()
         time.sleep(10)
