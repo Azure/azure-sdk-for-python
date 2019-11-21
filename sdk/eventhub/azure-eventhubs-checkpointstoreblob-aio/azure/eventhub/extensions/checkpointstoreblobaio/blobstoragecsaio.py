@@ -33,7 +33,7 @@ class BlobCheckpointStore(CheckpointStore):
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
     """
-    def __init__(self, blob_account_url, container_name, credential=None, **kwargs):
+    def __init__(self, blob_account_url, container_name, *, credential=None, **kwargs):
         # type(str, str, Optional[Any], Any) -> None
         container_client = kwargs.pop('container_client', None)
         self._container_client = container_client or ContainerClient(
@@ -42,7 +42,7 @@ class BlobCheckpointStore(CheckpointStore):
         self._cached_blob_clients = defaultdict()  # type: Dict[str, BlobClient]
 
     @classmethod
-    def from_connection_string(cls, conn_str, container_name, credential=None, **kwargs):
+    def from_connection_string(cls, conn_str, container_name, *, credential=None, **kwargs):
         # type: (str, str, Optional[Any], str) -> BlobCheckpointStore
         """Create BlobCheckpointStore from a storage connection string.
 

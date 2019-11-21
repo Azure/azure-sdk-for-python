@@ -1,6 +1,6 @@
 # Release History
 
-## 2019-12-04 5.0.0b6
+## 2019-12-04 1.0.0b6
 
 **Breaking changes**
 
