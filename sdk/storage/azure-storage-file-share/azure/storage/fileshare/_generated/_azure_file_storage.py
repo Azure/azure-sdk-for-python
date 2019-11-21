@@ -26,13 +26,13 @@ class AzureFileStorage(object):
 
 
     :ivar service: Service operations
-    :vartype service: azure.storage.fileshare._generated.operations.ServiceOperations
+    :vartype service: azure.storage.fileshare.operations.ServiceOperations
     :ivar share: Share operations
-    :vartype share: azure.storage.fileshare._generated.operations.ShareOperations
+    :vartype share: azure.storage.fileshare.operations.ShareOperations
     :ivar directory: Directory operations
-    :vartype directory: azure.storage.fileshare._generated.operations.DirectoryOperations
+    :vartype directory: azure.storage.fileshare.operations.DirectoryOperations
     :ivar file: File operations
-    :vartype file: azure.storage.fileshare._generated.operations.FileOperations
+    :vartype file: azure.storage.fileshare.operations.FileOperations
 
     :param version: Specifies the version of the operation to use for this
      request.
@@ -62,6 +62,8 @@ class AzureFileStorage(object):
         self.file = FileOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
+    def close(self):
+        self._client.close()
     def __enter__(self):
         self._client.__enter__()
         return self
