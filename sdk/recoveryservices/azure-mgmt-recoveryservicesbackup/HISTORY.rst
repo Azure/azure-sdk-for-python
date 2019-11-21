@@ -3,6 +3,95 @@
 Release History
 ===============
 
+0.5.0 (2019-11-21)
+++++++++++++++++++
+
+**Features**
+
+- Model AzureVmWorkloadProtectedItem has a new parameter deferred_delete_time_remaining
+- Model AzureVmWorkloadProtectedItem has a new parameter is_deferred_delete_schedule_upcoming
+- Model AzureVmWorkloadProtectedItem has a new parameter is_rehydrate
+- Model AzureVmWorkloadProtectedItem has a new parameter deferred_delete_time_in_utc
+- Model AzureVmWorkloadProtectedItem has a new parameter is_scheduled_for_deferred_delete
+- Model AzureFileshareProtectedItemExtendedInfo has a new parameter resource_state
+- Model AzureFileshareProtectedItemExtendedInfo has a new parameter resource_state_sync_time
+- Model AzureIaaSClassicComputeVMProtectedItem has a new parameter deferred_delete_time_remaining
+- Model AzureIaaSClassicComputeVMProtectedItem has a new parameter is_deferred_delete_schedule_upcoming
+- Model AzureIaaSClassicComputeVMProtectedItem has a new parameter extended_properties
+- Model AzureIaaSClassicComputeVMProtectedItem has a new parameter is_rehydrate
+- Model AzureIaaSClassicComputeVMProtectedItem has a new parameter deferred_delete_time_in_utc
+- Model AzureIaaSClassicComputeVMProtectedItem has a new parameter is_scheduled_for_deferred_delete
+- Model AzureWorkloadSAPHanaPointInTimeRestoreRequest has a new parameter recovery_mode
+- Model AzureVmWorkloadProtectionPolicy has a new parameter make_policy_consistent
+- Model AzureIaaSVMProtectedItem has a new parameter deferred_delete_time_remaining
+- Model AzureIaaSVMProtectedItem has a new parameter is_deferred_delete_schedule_upcoming
+- Model AzureIaaSVMProtectedItem has a new parameter extended_properties
+- Model AzureIaaSVMProtectedItem has a new parameter is_rehydrate
+- Model AzureIaaSVMProtectedItem has a new parameter deferred_delete_time_in_utc
+- Model AzureIaaSVMProtectedItem has a new parameter is_scheduled_for_deferred_delete
+- Model DPMProtectedItem has a new parameter deferred_delete_time_in_utc
+- Model DPMProtectedItem has a new parameter is_rehydrate
+- Model DPMProtectedItem has a new parameter deferred_delete_time_remaining
+- Model DPMProtectedItem has a new parameter is_deferred_delete_schedule_upcoming
+- Model AzureWorkloadRestoreRequest has a new parameter recovery_mode
+- Model AzureWorkloadSAPHanaRestoreRequest has a new parameter recovery_mode
+- Model ProtectedItem has a new parameter deferred_delete_time_remaining
+- Model ProtectedItem has a new parameter is_deferred_delete_schedule_upcoming
+- Model ProtectedItem has a new parameter is_rehydrate
+- Model ProtectedItem has a new parameter deferred_delete_time_in_utc
+- Model ProtectedItem has a new parameter is_scheduled_for_deferred_delete
+- Model AzureWorkloadSQLRestoreRequest has a new parameter recovery_mode
+- Model InquiryValidation has a new parameter additional_detail
+- Model AzureVmWorkloadSQLDatabaseProtectedItem has a new parameter deferred_delete_time_remaining
+- Model AzureVmWorkloadSQLDatabaseProtectedItem has a new parameter is_deferred_delete_schedule_upcoming
+- Model AzureVmWorkloadSQLDatabaseProtectedItem has a new parameter is_rehydrate
+- Model AzureVmWorkloadSQLDatabaseProtectedItem has a new parameter deferred_delete_time_in_utc
+- Model AzureVmWorkloadSQLDatabaseProtectedItem has a new parameter is_scheduled_for_deferred_delete
+- Model AzureVmWorkloadSAPAseDatabaseProtectedItem has a new parameter deferred_delete_time_remaining
+- Model AzureVmWorkloadSAPAseDatabaseProtectedItem has a new parameter is_deferred_delete_schedule_upcoming
+- Model AzureVmWorkloadSAPAseDatabaseProtectedItem has a new parameter is_rehydrate
+- Model AzureVmWorkloadSAPAseDatabaseProtectedItem has a new parameter deferred_delete_time_in_utc
+- Model AzureVmWorkloadSAPAseDatabaseProtectedItem has a new parameter is_scheduled_for_deferred_delete
+- Model AzureWorkloadSQLPointInTimeRestoreRequest has a new parameter recovery_mode
+- Model AzureIaaSComputeVMProtectedItem has a new parameter deferred_delete_time_remaining
+- Model AzureIaaSComputeVMProtectedItem has a new parameter is_deferred_delete_schedule_upcoming
+- Model AzureIaaSComputeVMProtectedItem has a new parameter extended_properties
+- Model AzureIaaSComputeVMProtectedItem has a new parameter is_rehydrate
+- Model AzureIaaSComputeVMProtectedItem has a new parameter deferred_delete_time_in_utc
+- Model AzureIaaSComputeVMProtectedItem has a new parameter is_scheduled_for_deferred_delete
+- Model IaasVMRestoreRequest has a new parameter restore_disk_lun_list
+- Model AzureFileShareRecoveryPoint has a new parameter recovery_point_size_in_gb
+- Model BackupResourceVaultConfig has a new parameter soft_delete_feature_state
+- Model AzureVmWorkloadSAPHanaDatabaseProtectedItem has a new parameter deferred_delete_time_remaining
+- Model AzureVmWorkloadSAPHanaDatabaseProtectedItem has a new parameter is_deferred_delete_schedule_upcoming
+- Model AzureVmWorkloadSAPHanaDatabaseProtectedItem has a new parameter is_rehydrate
+- Model AzureVmWorkloadSAPHanaDatabaseProtectedItem has a new parameter deferred_delete_time_in_utc
+- Model AzureVmWorkloadSAPHanaDatabaseProtectedItem has a new parameter is_scheduled_for_deferred_delete
+- Model MabFileFolderProtectedItem has a new parameter last_backup_time
+- Model MabFileFolderProtectedItem has a new parameter deferred_delete_time_remaining
+- Model MabFileFolderProtectedItem has a new parameter is_deferred_delete_schedule_upcoming
+- Model MabFileFolderProtectedItem has a new parameter is_rehydrate
+- Model MabFileFolderProtectedItem has a new parameter deferred_delete_time_in_utc
+- Model IaasVMRecoveryPoint has a new parameter recovery_point_disk_configuration
+- Model GenericProtectedItem has a new parameter deferred_delete_time_remaining
+- Model GenericProtectedItem has a new parameter is_deferred_delete_schedule_upcoming
+- Model GenericProtectedItem has a new parameter is_rehydrate
+- Model GenericProtectedItem has a new parameter deferred_delete_time_in_utc
+- Model GenericProtectedItem has a new parameter is_scheduled_for_deferred_delete
+- Model AzureWorkloadPointInTimeRestoreRequest has a new parameter recovery_mode
+- Model ExportJobsOperationResultInfo has a new parameter excel_file_blob_sas_key
+- Model ExportJobsOperationResultInfo has a new parameter excel_file_blob_url
+- Model AzureFileshareProtectedItem has a new parameter deferred_delete_time_remaining
+- Model AzureFileshareProtectedItem has a new parameter is_deferred_delete_schedule_upcoming
+- Model AzureFileshareProtectedItem has a new parameter is_rehydrate
+- Model AzureFileshareProtectedItem has a new parameter deferred_delete_time_in_utc
+- Model AzureFileshareProtectedItem has a new parameter is_scheduled_for_deferred_delete
+- Model AzureSqlProtectedItem has a new parameter deferred_delete_time_remaining
+- Model AzureSqlProtectedItem has a new parameter is_deferred_delete_schedule_upcoming
+- Model AzureSqlProtectedItem has a new parameter is_rehydrate
+- Model AzureSqlProtectedItem has a new parameter deferred_delete_time_in_utc
+- Model AzureSqlProtectedItem has a new parameter is_scheduled_for_deferred_delete
+
 0.4.0 (2019-05-21)
 ++++++++++++++++++
 
