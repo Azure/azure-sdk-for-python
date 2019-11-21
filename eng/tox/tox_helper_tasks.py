@@ -13,6 +13,8 @@ import ast
 import os
 import textwrap
 import io
+import glob
+import zipfile
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -61,4 +63,21 @@ def get_package_details(setup_filename):
 
     return package_name, name_space, kwargs["version"]
 
-    
+def unzip_sdist_to_directory(containing_folder):
+    # grab the first one
+    path_to_zip_file = glob.glob(os.path.join(containing_folder, "*.zip"))[0]
+    return unzip_file_to_directory(path_to_zip_file, containing_folder)
+
+def unzip_file_to_directory(path_to_zip_file, extract_location):
+    # unzip file in given path
+    # dump into given path
+    with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
+        zip_ref.extractall(extract_location)
+        extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
+        return os.path.join(extract_location, extracted_dir)
+
+def move_and_rename(source_location):
+    new_location = os.path.join(os.path.dirname(source_location), "unzipped")
+    os.rename(source_location, new_location)
+
+    return new_location
