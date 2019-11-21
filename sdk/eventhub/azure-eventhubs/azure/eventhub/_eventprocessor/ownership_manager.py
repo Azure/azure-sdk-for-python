@@ -9,7 +9,7 @@ from typing import List
 from collections import Counter, defaultdict
 
 
-class OwnershipManager(object):
+class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
     """Increases or decreases the number of partitions owned by an EventProcessor
     so the number of owned partitions are balanced among multiple EventProcessors
 
@@ -60,7 +60,7 @@ class OwnershipManager(object):
 
     def release_ownership(self, partition_id):
         """Explicitly release ownership of a partition if we still have it.
-        
+
         This is called when a consumer is shutdown, and is achieved by resetting the associated
         owner ID.
         """
@@ -90,7 +90,7 @@ class OwnershipManager(object):
         released_partitions = [
             x for x in ownership_list if x["last_modified_time"] + self.ownership_timeout < now or not x["owner_id"]
         ]
-        
+
         if self._initializing:  # greedily claim all available partitions when an EventProcessor is started.
             to_claim = released_partitions
             for to_claim_item in to_claim:

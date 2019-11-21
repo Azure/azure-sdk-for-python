@@ -235,8 +235,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     '''
                     ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
                     when there are load balancing and/or checkpointing (checkpoint_store isn't None).
-                    They're swallowed here to retry every self._load_balancing_interval seconds. Meanwhile this event processor
-                    won't lose the partitions it has claimed before.
+                    They're swallowed here to retry every self._load_balancing_interval seconds. Meanwhile this event
+                    processor won't lose the partitions it has claimed before.
                     If it keeps failing, other EventProcessors will start to claim ownership of the partitions
                     that this EventProcessor is working on. So two or multiple EventProcessors may be working
                     on the same partition.

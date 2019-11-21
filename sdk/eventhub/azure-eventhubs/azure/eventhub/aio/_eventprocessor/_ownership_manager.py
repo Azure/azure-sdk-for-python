@@ -10,7 +10,7 @@ from collections import Counter, defaultdict
 from .checkpoint_store import CheckpointStore
 
 
-class OwnershipManager(object):
+class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
     """Increases or decreases the number of partitions owned by an EventProcessor
     so the number of owned partitions are balanced among multiple EventProcessors
 
@@ -62,7 +62,7 @@ class OwnershipManager(object):
 
     async def release_ownership(self, partition_id):
         """Explicitly release ownership of a partition if we still have it.
-        
+
         This is called when a consumer is shutdown, and is achieved by resetting the associated
         owner ID.
         """
