@@ -626,7 +626,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def create_contacts(self, contacts, **kwargs):
+    def set_contacts(self, contacts, **kwargs):
         # type: (Iterable[CertificateContact], **Any) -> List[CertificateContact]
         """Sets the certificate contacts for the key vault.
 
@@ -641,8 +641,8 @@ class CertificateClient(KeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
-                :start-after: [START create_contacts]
-                :end-before: [END create_contacts]
+                :start-after: [START set_contacts]
+                :end-before: [END set_contacts]
                 :language: python
                 :caption: Create contacts
                 :dedent: 8

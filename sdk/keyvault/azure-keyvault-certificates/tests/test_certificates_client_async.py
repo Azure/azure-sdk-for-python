@@ -371,7 +371,7 @@ class CertificateClientTests(KeyVaultTestCase):
         ]
 
         # create certificate contacts
-        contacts = await client.create_contacts(contacts=contact_list)
+        contacts = await client.set_contacts(contacts=contact_list)
         self._validate_certificate_contacts(contacts=contacts, expected=contact_list)
 
         # get certificate contacts

@@ -284,7 +284,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     async def test_example_contacts(self, vault_client, **kwargs):
         certificate_client = vault_client.certificates
 
-        # [START create_contacts]
+        # [START set_contacts]
         from azure.keyvault.certificates import CertificateContact
 
         # Create a list of the contacts that you want to set for this key vault.
@@ -293,13 +293,13 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
         ]
 
-        contacts = await certificate_client.create_contacts(contact_list)
+        contacts = await certificate_client.set_contacts(contact_list)
         for contact in contacts:
             print(contact.name)
             print(contact.email)
             print(contact.phone)
 
-        # [END create_contacts]
+        # [END set_contacts]
 
         # [START get_contacts]
 

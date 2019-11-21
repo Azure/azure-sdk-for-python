@@ -578,7 +578,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def create_contacts(
+    async def set_contacts(
         self, contacts: Iterable[CertificateContact], **kwargs: "**Any"
     ) -> List[CertificateContact]:
         # pylint:disable=unsubscriptable-object
@@ -598,8 +598,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates_async.py
-                :start-after: [START create_contacts]
-                :end-before: [END create_contacts]
+                :start-after: [START set_contacts]
+                :end-before: [END set_contacts]
                 :language: python
                 :caption: Create contacts
                 :dedent: 8
