@@ -13,6 +13,7 @@ from base64 import b64encode, b64decode
 from hashlib import sha256
 from hmac import HMAC
 from typing import Any
+from datetime import timedelta
 try:
     from urlparse import urlparse  # type: ignore
     from urllib import urlencode, quote_plus  # type: ignore
@@ -25,7 +26,8 @@ from uamqp import (
     authentication,
     constants,
     errors,
-    compat
+    compat,
+    utils
 )
 
 from .exceptions import _handle_exception, ClientClosedError
@@ -74,19 +76,15 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     :rtype: str
     """
     if not expiry:
-        expiry = time.time() + 3600  # Default to 1 hour.
-    encoded_uri = quote_plus(uri)
-    ttl = int(expiry)
-    sign_key = '{}\n{}'.format(encoded_uri, ttl)
-    signature = b64encode(HMAC(b64decode(key), sign_key.encode('utf-8'), sha256).digest())
-    result = {
-        'sr': uri,
-        'sig': signature,
-        'se': str(ttl)}
-    if policy:
-        result['skn'] = policy
-    token = 'SharedAccessSignature ' + urlencode(result)
-    return _AccessToken(token=token, expires_on=ttl)
+        expiry = timedelta(hours=1)  # Default to 1 hour.
+
+    abs_expiry = int(time.time()) + expiry.seconds
+    encoded_uri = quote_plus(uri).encode('utf-8')  # pylint: disable=no-member
+    encoded_policy = quote_plus(policy).encode('utf-8')  # pylint: disable=no-member
+    encoded_key = key.encode('utf-8')
+
+    token = utils.create_sas_token(encoded_policy, encoded_key, encoded_uri, expiry)
+    return _AccessToken(token=token, expires_on=abs_expiry)
 
 
 def _build_uri(address, entity):
