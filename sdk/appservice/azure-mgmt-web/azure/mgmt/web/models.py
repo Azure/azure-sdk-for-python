@@ -5,5 +5,5 @@
 # license information.
 # --------------------------------------------------------------------------
 from .v2016_03_01.models import *
-from .v2018_02_01.models import *
+from .v2018_11_01.models import *
 from .v2019_08_01.models import *
