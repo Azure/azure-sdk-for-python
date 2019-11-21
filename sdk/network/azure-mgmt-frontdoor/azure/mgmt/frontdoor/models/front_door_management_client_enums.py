@@ -12,6 +12,51 @@
 from enum import Enum
 
 
+class NetworkOperationStatus(str, Enum):
+
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
+
+
+class NetworkExperimentResourceState(str, Enum):
+
+    creating = "Creating"
+    enabling = "Enabling"
+    enabled = "Enabled"
+    disabling = "Disabling"
+    disabled = "Disabled"
+    deleting = "Deleting"
+
+
+class State(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class AggregationInterval(str, Enum):
+
+    hourly = "Hourly"
+    daily = "Daily"
+
+
+class TimeseriesType(str, Enum):
+
+    measurement_counts = "MeasurementCounts"
+    latency_p50 = "LatencyP50"
+    latency_p75 = "LatencyP75"
+    latency_p95 = "LatencyP95"
+
+
+class EndpointType(str, Enum):
+
+    afd = "AFD"
+    azure_region = "AzureRegion"
+    cdn = "CDN"
+    atm = "ATM"
+
+
 class FrontDoorResourceState(str, Enum):
 
     creating = "Creating"
@@ -210,13 +255,6 @@ class Availability(str, Enum):
     unavailable = "Unavailable"
 
 
-class NetworkOperationStatus(str, Enum):
-
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
-
-
 class PolicyEnabledState(str, Enum):
 
     disabled = "Disabled"
@@ -251,6 +289,7 @@ class MatchVariable(str, Enum):
     request_header = "RequestHeader"
     request_body = "RequestBody"
     cookies = "Cookies"
+    socket_addr = "SocketAddr"
 
 
 class Operator(str, Enum):
@@ -287,6 +326,23 @@ class ActionType(str, Enum):
     redirect = "Redirect"
 
 
+class ManagedRuleExclusionMatchVariable(str, Enum):
+
+    request_header_names = "RequestHeaderNames"
+    request_cookie_names = "RequestCookieNames"
+    query_string_arg_names = "QueryStringArgNames"
+    request_body_post_arg_names = "RequestBodyPostArgNames"
+
+
+class ManagedRuleExclusionSelectorMatchOperator(str, Enum):
+
+    equals = "Equals"
+    contains = "Contains"
+    starts_with = "StartsWith"
+    ends_with = "EndsWith"
+    equals_any = "EqualsAny"
+
+
 class ManagedRuleEnabledState(str, Enum):
 
     disabled = "Disabled"
@@ -301,3 +357,16 @@ class PolicyResourceState(str, Enum):
     disabling = "Disabling"
     disabled = "Disabled"
     deleting = "Deleting"
+
+
+class LatencyScorecardAggregationInterval(str, Enum):
+
+    daily = "Daily"
+    weekly = "Weekly"
+    monthly = "Monthly"
+
+
+class TimeseriesAggregationInterval(str, Enum):
+
+    hourly = "Hourly"
+    daily = "Daily"

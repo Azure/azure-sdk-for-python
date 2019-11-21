@@ -22,6 +22,9 @@ class ManagedRuleSet(Model):
     :param rule_set_version: Required. Defines the version of the rule set to
      use.
     :type rule_set_version: str
+    :param exclusions: Describes the exclusions that are applied to all rules
+     in the set.
+    :type exclusions: list[~azure.mgmt.frontdoor.models.ManagedRuleExclusion]
     :param rule_group_overrides: Defines the rule group overrides to apply to
      the rule set.
     :type rule_group_overrides:
@@ -36,6 +39,7 @@ class ManagedRuleSet(Model):
     _attribute_map = {
         'rule_set_type': {'key': 'ruleSetType', 'type': 'str'},
         'rule_set_version': {'key': 'ruleSetVersion', 'type': 'str'},
+        'exclusions': {'key': 'exclusions', 'type': '[ManagedRuleExclusion]'},
         'rule_group_overrides': {'key': 'ruleGroupOverrides', 'type': '[ManagedRuleGroupOverride]'},
     }
 
@@ -43,4 +47,5 @@ class ManagedRuleSet(Model):
         super(ManagedRuleSet, self).__init__(**kwargs)
         self.rule_set_type = kwargs.get('rule_set_type', None)
         self.rule_set_version = kwargs.get('rule_set_version', None)
+        self.exclusions = kwargs.get('exclusions', None)
         self.rule_group_overrides = kwargs.get('rule_group_overrides', None)

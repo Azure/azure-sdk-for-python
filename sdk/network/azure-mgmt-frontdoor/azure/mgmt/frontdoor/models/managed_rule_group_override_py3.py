@@ -20,6 +20,9 @@ class ManagedRuleGroupOverride(Model):
     :param rule_group_name: Required. Describes the managed rule group to
      override.
     :type rule_group_name: str
+    :param exclusions: Describes the exclusions that are applied to all rules
+     in the group.
+    :type exclusions: list[~azure.mgmt.frontdoor.models.ManagedRuleExclusion]
     :param rules: List of rules that will be disabled. If none specified, all
      rules in the group will be disabled.
     :type rules: list[~azure.mgmt.frontdoor.models.ManagedRuleOverride]
@@ -31,10 +34,12 @@ class ManagedRuleGroupOverride(Model):
 
     _attribute_map = {
         'rule_group_name': {'key': 'ruleGroupName', 'type': 'str'},
+        'exclusions': {'key': 'exclusions', 'type': '[ManagedRuleExclusion]'},
         'rules': {'key': 'rules', 'type': '[ManagedRuleOverride]'},
     }
 
-    def __init__(self, *, rule_group_name: str, rules=None, **kwargs) -> None:
+    def __init__(self, *, rule_group_name: str, exclusions=None, rules=None, **kwargs) -> None:
         super(ManagedRuleGroupOverride, self).__init__(**kwargs)
         self.rule_group_name = rule_group_name
+        self.exclusions = exclusions
         self.rules = rules

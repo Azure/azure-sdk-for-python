@@ -18,6 +18,10 @@ from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 import uuid
+from .operations.network_experiment_profiles_operations import NetworkExperimentProfilesOperations
+from .operations.preconfigured_endpoints_operations import PreconfiguredEndpointsOperations
+from .operations.experiments_operations import ExperimentsOperations
+from .operations.reports_operations import ReportsOperations
 from .operations.front_doors_operations import FrontDoorsOperations
 from .operations.routing_rules_operations import RoutingRulesOperations
 from .operations.frontend_endpoints_operations import FrontendEndpointsOperations
@@ -68,6 +72,14 @@ class FrontDoorManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: FrontDoorManagementClientConfiguration
 
+    :ivar network_experiment_profiles: NetworkExperimentProfiles operations
+    :vartype network_experiment_profiles: azure.mgmt.frontdoor.operations.NetworkExperimentProfilesOperations
+    :ivar preconfigured_endpoints: PreconfiguredEndpoints operations
+    :vartype preconfigured_endpoints: azure.mgmt.frontdoor.operations.PreconfiguredEndpointsOperations
+    :ivar experiments: Experiments operations
+    :vartype experiments: azure.mgmt.frontdoor.operations.ExperimentsOperations
+    :ivar reports: Reports operations
+    :vartype reports: azure.mgmt.frontdoor.operations.ReportsOperations
     :ivar front_doors: FrontDoors operations
     :vartype front_doors: azure.mgmt.frontdoor.operations.FrontDoorsOperations
     :ivar routing_rules: RoutingRules operations
@@ -103,6 +115,14 @@ class FrontDoorManagementClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.network_experiment_profiles = NetworkExperimentProfilesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.preconfigured_endpoints = PreconfiguredEndpointsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.experiments = ExperimentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.reports = ReportsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.front_doors = FrontDoorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.routing_rules = RoutingRulesOperations(

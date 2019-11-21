@@ -10,6 +10,23 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .error_details_py3 import ErrorDetails
+    from .error_py3 import Error
+    from .azure_async_operation_result_py3 import AzureAsyncOperationResult
+    from .resource_py3 import Resource
+    from .sub_resource_py3 import SubResource
+    from .tags_object_py3 import TagsObject
+    from .profile_py3 import Profile
+    from .endpoint_py3 import Endpoint
+    from .profile_update_model_py3 import ProfileUpdateModel
+    from .experiment_update_model_py3 import ExperimentUpdateModel
+    from .experiment_py3 import Experiment
+    from .latency_metric_py3 import LatencyMetric
+    from .latency_scorecard_py3 import LatencyScorecard
+    from .timeseries_data_point_py3 import TimeseriesDataPoint
+    from .timeseries_py3 import Timeseries
+    from .preconfigured_endpoint_py3 import PreconfiguredEndpoint
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .front_door_py3 import FrontDoor
     from .routing_rule_py3 import RoutingRule
     from .load_balancing_settings_model_py3 import LoadBalancingSettingsModel
@@ -22,7 +39,6 @@ try:
     from .backend_pools_settings_py3 import BackendPoolsSettings
     from .front_door_update_parameters_py3 import FrontDoorUpdateParameters
     from .purge_parameters_py3 import PurgeParameters
-    from .sub_resource_py3 import SubResource
     from .route_configuration_py3 import RouteConfiguration
     from .routing_rule_update_parameters_py3 import RoutingRuleUpdateParameters
     from .cache_configuration_py3 import CacheConfiguration
@@ -44,18 +60,13 @@ try:
     from .rules_engine_update_parameters_py3 import RulesEngineUpdateParameters
     from .validate_custom_domain_input_py3 import ValidateCustomDomainInput
     from .validate_custom_domain_output_py3 import ValidateCustomDomainOutput
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .check_name_availability_input_py3 import CheckNameAvailabilityInput
     from .check_name_availability_output_py3 import CheckNameAvailabilityOutput
-    from .resource_py3 import Resource
-    from .error_details_py3 import ErrorDetails
-    from .error_py3 import Error
-    from .azure_async_operation_result_py3 import AzureAsyncOperationResult
-    from .tags_object_py3 import TagsObject
     from .policy_settings_py3 import PolicySettings
     from .match_condition_py3 import MatchCondition
     from .custom_rule_py3 import CustomRule
     from .custom_rule_list_py3 import CustomRuleList
+    from .managed_rule_exclusion_py3 import ManagedRuleExclusion
     from .managed_rule_override_py3 import ManagedRuleOverride
     from .managed_rule_group_override_py3 import ManagedRuleGroupOverride
     from .managed_rule_set_py3 import ManagedRuleSet
@@ -66,6 +77,23 @@ try:
     from .managed_rule_group_definition_py3 import ManagedRuleGroupDefinition
     from .managed_rule_set_definition_py3 import ManagedRuleSetDefinition
 except (SyntaxError, ImportError):
+    from .error_details import ErrorDetails
+    from .error import Error
+    from .azure_async_operation_result import AzureAsyncOperationResult
+    from .resource import Resource
+    from .sub_resource import SubResource
+    from .tags_object import TagsObject
+    from .profile import Profile
+    from .endpoint import Endpoint
+    from .profile_update_model import ProfileUpdateModel
+    from .experiment_update_model import ExperimentUpdateModel
+    from .experiment import Experiment
+    from .latency_metric import LatencyMetric
+    from .latency_scorecard import LatencyScorecard
+    from .timeseries_data_point import TimeseriesDataPoint
+    from .timeseries import Timeseries
+    from .preconfigured_endpoint import PreconfiguredEndpoint
+    from .error_response import ErrorResponse, ErrorResponseException
     from .front_door import FrontDoor
     from .routing_rule import RoutingRule
     from .load_balancing_settings_model import LoadBalancingSettingsModel
@@ -78,7 +106,6 @@ except (SyntaxError, ImportError):
     from .backend_pools_settings import BackendPoolsSettings
     from .front_door_update_parameters import FrontDoorUpdateParameters
     from .purge_parameters import PurgeParameters
-    from .sub_resource import SubResource
     from .route_configuration import RouteConfiguration
     from .routing_rule_update_parameters import RoutingRuleUpdateParameters
     from .cache_configuration import CacheConfiguration
@@ -100,18 +127,13 @@ except (SyntaxError, ImportError):
     from .rules_engine_update_parameters import RulesEngineUpdateParameters
     from .validate_custom_domain_input import ValidateCustomDomainInput
     from .validate_custom_domain_output import ValidateCustomDomainOutput
-    from .error_response import ErrorResponse, ErrorResponseException
     from .check_name_availability_input import CheckNameAvailabilityInput
     from .check_name_availability_output import CheckNameAvailabilityOutput
-    from .resource import Resource
-    from .error_details import ErrorDetails
-    from .error import Error
-    from .azure_async_operation_result import AzureAsyncOperationResult
-    from .tags_object import TagsObject
     from .policy_settings import PolicySettings
     from .match_condition import MatchCondition
     from .custom_rule import CustomRule
     from .custom_rule_list import CustomRuleList
+    from .managed_rule_exclusion import ManagedRuleExclusion
     from .managed_rule_override import ManagedRuleOverride
     from .managed_rule_group_override import ManagedRuleGroupOverride
     from .managed_rule_set import ManagedRuleSet
@@ -121,6 +143,9 @@ except (SyntaxError, ImportError):
     from .managed_rule_definition import ManagedRuleDefinition
     from .managed_rule_group_definition import ManagedRuleGroupDefinition
     from .managed_rule_set_definition import ManagedRuleSetDefinition
+from .profile_paged import ProfilePaged
+from .preconfigured_endpoint_paged import PreconfiguredEndpointPaged
+from .experiment_paged import ExperimentPaged
 from .front_door_paged import FrontDoorPaged
 from .routing_rule_paged import RoutingRulePaged
 from .frontend_endpoint_paged import FrontendEndpointPaged
@@ -128,6 +153,12 @@ from .rules_engine_paged import RulesEnginePaged
 from .web_application_firewall_policy_paged import WebApplicationFirewallPolicyPaged
 from .managed_rule_set_definition_paged import ManagedRuleSetDefinitionPaged
 from .front_door_management_client_enums import (
+    NetworkOperationStatus,
+    NetworkExperimentResourceState,
+    State,
+    AggregationInterval,
+    TimeseriesType,
+    EndpointType,
     FrontDoorResourceState,
     CustomHttpsProvisioningState,
     CustomHttpsProvisioningSubstate,
@@ -154,7 +185,6 @@ from .front_door_management_client_enums import (
     MatchProcessingBehavior,
     ResourceType,
     Availability,
-    NetworkOperationStatus,
     PolicyEnabledState,
     PolicyMode,
     CustomRuleEnabledState,
@@ -163,11 +193,32 @@ from .front_door_management_client_enums import (
     Operator,
     TransformType,
     ActionType,
+    ManagedRuleExclusionMatchVariable,
+    ManagedRuleExclusionSelectorMatchOperator,
     ManagedRuleEnabledState,
     PolicyResourceState,
+    LatencyScorecardAggregationInterval,
+    TimeseriesAggregationInterval,
 )
 
 __all__ = [
+    'ErrorDetails',
+    'Error',
+    'AzureAsyncOperationResult',
+    'Resource',
+    'SubResource',
+    'TagsObject',
+    'Profile',
+    'Endpoint',
+    'ProfileUpdateModel',
+    'ExperimentUpdateModel',
+    'Experiment',
+    'LatencyMetric',
+    'LatencyScorecard',
+    'TimeseriesDataPoint',
+    'Timeseries',
+    'PreconfiguredEndpoint',
+    'ErrorResponse', 'ErrorResponseException',
     'FrontDoor',
     'RoutingRule',
     'LoadBalancingSettingsModel',
@@ -180,7 +231,6 @@ __all__ = [
     'BackendPoolsSettings',
     'FrontDoorUpdateParameters',
     'PurgeParameters',
-    'SubResource',
     'RouteConfiguration',
     'RoutingRuleUpdateParameters',
     'CacheConfiguration',
@@ -202,18 +252,13 @@ __all__ = [
     'RulesEngineUpdateParameters',
     'ValidateCustomDomainInput',
     'ValidateCustomDomainOutput',
-    'ErrorResponse', 'ErrorResponseException',
     'CheckNameAvailabilityInput',
     'CheckNameAvailabilityOutput',
-    'Resource',
-    'ErrorDetails',
-    'Error',
-    'AzureAsyncOperationResult',
-    'TagsObject',
     'PolicySettings',
     'MatchCondition',
     'CustomRule',
     'CustomRuleList',
+    'ManagedRuleExclusion',
     'ManagedRuleOverride',
     'ManagedRuleGroupOverride',
     'ManagedRuleSet',
@@ -223,12 +268,21 @@ __all__ = [
     'ManagedRuleDefinition',
     'ManagedRuleGroupDefinition',
     'ManagedRuleSetDefinition',
+    'ProfilePaged',
+    'PreconfiguredEndpointPaged',
+    'ExperimentPaged',
     'FrontDoorPaged',
     'RoutingRulePaged',
     'FrontendEndpointPaged',
     'RulesEnginePaged',
     'WebApplicationFirewallPolicyPaged',
     'ManagedRuleSetDefinitionPaged',
+    'NetworkOperationStatus',
+    'NetworkExperimentResourceState',
+    'State',
+    'AggregationInterval',
+    'TimeseriesType',
+    'EndpointType',
     'FrontDoorResourceState',
     'CustomHttpsProvisioningState',
     'CustomHttpsProvisioningSubstate',
@@ -255,7 +309,6 @@ __all__ = [
     'MatchProcessingBehavior',
     'ResourceType',
     'Availability',
-    'NetworkOperationStatus',
     'PolicyEnabledState',
     'PolicyMode',
     'CustomRuleEnabledState',
@@ -264,6 +317,10 @@ __all__ = [
     'Operator',
     'TransformType',
     'ActionType',
+    'ManagedRuleExclusionMatchVariable',
+    'ManagedRuleExclusionSelectorMatchOperator',
     'ManagedRuleEnabledState',
     'PolicyResourceState',
+    'LatencyScorecardAggregationInterval',
+    'TimeseriesAggregationInterval',
 ]

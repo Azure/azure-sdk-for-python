@@ -9,6 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .network_experiment_profiles_operations import NetworkExperimentProfilesOperations
+from .preconfigured_endpoints_operations import PreconfiguredEndpointsOperations
+from .experiments_operations import ExperimentsOperations
+from .reports_operations import ReportsOperations
 from .front_doors_operations import FrontDoorsOperations
 from .routing_rules_operations import RoutingRulesOperations
 from .frontend_endpoints_operations import FrontendEndpointsOperations
@@ -18,6 +22,10 @@ from .policies_operations import PoliciesOperations
 from .managed_rule_sets_operations import ManagedRuleSetsOperations
 
 __all__ = [
+    'NetworkExperimentProfilesOperations',
+    'PreconfiguredEndpointsOperations',
+    'ExperimentsOperations',
+    'ReportsOperations',
     'FrontDoorsOperations',
     'RoutingRulesOperations',
     'FrontendEndpointsOperations',

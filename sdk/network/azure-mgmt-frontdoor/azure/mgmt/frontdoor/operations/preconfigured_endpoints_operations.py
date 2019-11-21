@@ -15,14 +15,14 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ManagedRuleSetsOperations(object):
-    """ManagedRuleSetsOperations operations.
+class PreconfiguredEndpointsOperations(object):
+    """PreconfiguredEndpointsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2019-10-01".
+    :ivar api_version: Client API version. Constant value: "2019-11-01".
     """
 
     models = models
@@ -32,22 +32,28 @@ class ManagedRuleSetsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-10-01"
+        self.api_version = "2019-11-01"
 
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all available managed rule sets.
+            self, resource_group_name, profile_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of Preconfigured Endpoints.
 
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
+        :type resource_group_name: str
+        :param profile_name: The Profile identifier associated with the Tenant
+         and Partner
+        :type profile_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ManagedRuleSetDefinition
+        :return: An iterator like instance of PreconfiguredEndpoint
         :rtype:
-         ~azure.mgmt.frontdoor.models.ManagedRuleSetDefinitionPaged[~azure.mgmt.frontdoor.models.ManagedRuleSetDefinition]
+         ~azure.mgmt.frontdoor.models.PreconfiguredEndpointPaged[~azure.mgmt.frontdoor.models.PreconfiguredEndpoint]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.frontdoor.models.ErrorResponseException>`
         """
@@ -57,7 +63,9 @@ class ManagedRuleSetsOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
+                    'profileName': self._serialize.url("profile_name", profile_name, 'str', pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -89,12 +97,12 @@ class ManagedRuleSetsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ManagedRuleSetDefinitionPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.PreconfiguredEndpointPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ManagedRuleSetDefinitionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.PreconfiguredEndpointPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/FrontDoorWebApplicationFirewallManagedRuleSets'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/NetworkExperimentProfiles/{profileName}/PreconfiguredEndpoints'}
