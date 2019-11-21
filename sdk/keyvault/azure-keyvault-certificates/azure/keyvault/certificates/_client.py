@@ -194,7 +194,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_delete_certificate(self, certificate_name, **kwargs):
-        # type: (str, **Any) -> DeletedCertificate
+        # type: (str, **Any) -> LROPoller
         """Delete all versions of a certificate. Requires certificates/delete permission.
 
         When this method returns Key Vault has begun deleting the certificate. Deletion may take several seconds in a
@@ -290,7 +290,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_recover_deleted_certificate(self, certificate_name, **kwargs):
-        # type: (str, **Any) -> KeyVaultCertificate
+        # type: (str, **Any) -> LROPoller
         """Recover a deleted certificate to its latest version. Possible only in a vault with soft-delete enabled.
 
         Requires certificates/recover permission.
