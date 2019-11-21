@@ -23,15 +23,12 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-"""
-This module is the requests implementation of Pipeline ABC
-"""
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 class SyncToken(object):
     """The sync token structure
-        """
+    """
     def __init__(self, token_id, value, sequence_number):
         self.token_id = token_id
         self.value = value
@@ -73,9 +70,9 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
         sync_token_header = ''
         for sync_token in self._sync_tokens.values():
             if sync_token_header != '':
-                sync_token_header = sync_token_header + ',' + sync_token.__str__()
+                sync_token_header += ',' + str(sync_token)
             else:
-                sync_token_header = sync_token.__str__()
+                sync_token_header = str(sync_token)
         if sync_token_header != '':
             request.http_request.headers.update({self._sync_token_header: sync_token_header})
 
@@ -97,7 +94,7 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
         for sync_token_string in sync_token_strings:
             sync_token = SyncToken.from_sync_token_string(sync_token_string)
             if not sync_token:
-                pass
+                continue
             existing_token = self._sync_tokens.get(sync_token.token_id, None)
             if not existing_token:
                 self._sync_tokens[sync_token.token_id] = sync_token
