@@ -22,7 +22,6 @@ try:
     from ._models_py3 import PerformanceTierProperties
     from ._models_py3 import PerformanceTierServiceLevelObjectives
     from ._models_py3 import ProxyResource
-    from ._models_py3 import ResourceIdentity
     from ._models_py3 import Server
     from ._models_py3 import ServerForCreate
     from ._models_py3 import ServerPropertiesForCreate
@@ -49,7 +48,6 @@ except (SyntaxError, ImportError):
     from ._models import PerformanceTierProperties
     from ._models import PerformanceTierServiceLevelObjectives
     from ._models import ProxyResource
-    from ._models import ResourceIdentity
     from ._models import Server
     from ._models import ServerForCreate
     from ._models import ServerPropertiesForCreate
@@ -77,7 +75,6 @@ from ._my_sql_management_client_enums import (
     GeoRedundantBackup,
     StorageAutogrow,
     SkuTier,
-    IdentityType,
     VirtualNetworkRuleState,
     OperationOrigin,
     ServerSecurityAlertPolicyState,
@@ -96,7 +93,6 @@ __all__ = [
     'PerformanceTierProperties',
     'PerformanceTierServiceLevelObjectives',
     'ProxyResource',
-    'ResourceIdentity',
     'Server',
     'ServerForCreate',
     'ServerPropertiesForCreate',
@@ -123,7 +119,6 @@ __all__ = [
     'GeoRedundantBackup',
     'StorageAutogrow',
     'SkuTier',
-    'IdentityType',
     'VirtualNetworkRuleState',
     'OperationOrigin',
     'ServerSecurityAlertPolicyState',
