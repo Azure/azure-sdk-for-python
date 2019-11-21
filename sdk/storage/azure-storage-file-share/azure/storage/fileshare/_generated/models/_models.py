@@ -174,7 +174,7 @@ class FileItem(Model):
     :param name: Required.
     :type name: str
     :param properties: Required.
-    :type properties: ~azure.storage.fileshare._generated.models.FileProperty
+    :type properties: ~azure.storage.fileshare.models.FileProperty
     """
 
     _validation = {
@@ -230,9 +230,9 @@ class FilesAndDirectoriesListSegment(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param directory_items: Required.
-    :type directory_items: list[~azure.storage.fileshare._generated.models.DirectoryItem]
+    :type directory_items: list[~azure.storage.fileshare.models.DirectoryItem]
     :param file_items: Required.
-    :type file_items: list[~azure.storage.fileshare._generated.models.FileItem]
+    :type file_items: list[~azure.storage.fileshare.models.FileItem]
     """
 
     _validation = {
@@ -337,7 +337,8 @@ class ListFilesAndDirectoriesSegmentResponse(Model):
     :param max_results:
     :type max_results: int
     :param segment: Required.
-    :type segment: ~azure.storage.fileshare._generated.models.FilesAndDirectoriesListSegment
+    :type segment:
+     ~azure.storage.fileshare.models.FilesAndDirectoriesListSegment
     :param next_marker: Required.
     :type next_marker: str
     """
@@ -385,7 +386,7 @@ class ListHandlesResponse(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param handle_list:
-    :type handle_list: list[~azure.storage.fileshare._generated.models.HandleItem]
+    :type handle_list: list[~azure.storage.fileshare.models.HandleItem]
     :param next_marker: Required.
     :type next_marker: str
     """
@@ -422,7 +423,7 @@ class ListSharesResponse(Model):
     :param max_results:
     :type max_results: int
     :param share_items:
-    :type share_items: list[~azure.storage.fileshare._generated.models.ShareItem]
+    :type share_items: list[~azure.storage.fileshare.models.ShareItem]
     :param next_marker: Required.
     :type next_marker: str
     """
@@ -468,7 +469,7 @@ class Metrics(Model):
      statistics for called API operations.
     :type include_apis: bool
     :param retention_policy:
-    :type retention_policy: ~azure.storage.fileshare._generated.models.RetentionPolicy
+    :type retention_policy: ~azure.storage.fileshare.models.RetentionPolicy
     """
 
     _validation = {
@@ -566,7 +567,7 @@ class ShareItem(Model):
     :param snapshot:
     :type snapshot: str
     :param properties: Required.
-    :type properties: ~azure.storage.fileshare._generated.models.ShareProperties
+    :type properties: ~azure.storage.fileshare.models.ShareProperties
     :param metadata:
     :type metadata: dict[str, str]
     """
@@ -687,7 +688,7 @@ class SignedIdentifier(Model):
     :param id: Required. A unique id.
     :type id: str
     :param access_policy: The access policy.
-    :type access_policy: ~azure.storage.fileshare._generated.models.AccessPolicy
+    :type access_policy: ~azure.storage.fileshare.models.AccessPolicy
     """
 
     _validation = {
@@ -770,12 +771,12 @@ class StorageServiceProperties(Model):
 
     :param hour_metrics: A summary of request statistics grouped by API in
      hourly aggregates for files.
-    :type hour_metrics: ~azure.storage.fileshare._generated.models.Metrics
+    :type hour_metrics: ~azure.storage.fileshare.models.Metrics
     :param minute_metrics: A summary of request statistics grouped by API in
      minute aggregates for files.
-    :type minute_metrics: ~azure.storage.fileshare._generated.models.Metrics
+    :type minute_metrics: ~azure.storage.fileshare.models.Metrics
     :param cors: The set of CORS rules.
-    :type cors: list[~azure.storage.fileshare._generated.models.CorsRule]
+    :type cors: list[~azure.storage.fileshare.models.CorsRule]
     """
 
     _attribute_map = {

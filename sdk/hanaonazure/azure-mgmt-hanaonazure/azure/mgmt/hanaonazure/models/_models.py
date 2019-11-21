@@ -506,9 +506,18 @@ class SapMonitor(Resource):
     :ivar managed_resource_group_name: The name of the resource group the SAP
      Monitor resources get deployed into.
     :vartype managed_resource_group_name: str
-    :ivar log_analytics_workspace_arm_id: The ARM ID of the Log Analytics
+    :param log_analytics_workspace_arm_id: The ARM ID of the Log Analytics
      Workspace that is used for monitoring
-    :vartype log_analytics_workspace_arm_id: str
+    :type log_analytics_workspace_arm_id: str
+    :param enable_customer_analytics: The value indicating whether to send
+     analytics to Microsoft
+    :type enable_customer_analytics: bool
+    :param log_analytics_workspace_id: The workspace ID of the log analytics
+     workspace to be used for monitoring
+    :type log_analytics_workspace_id: str
+    :param log_analytics_workspace_shared_key: The shared key of the log
+     analytics workspace that is used for monitoring
+    :type log_analytics_workspace_shared_key: str
     """
 
     _validation = {
@@ -518,7 +527,6 @@ class SapMonitor(Resource):
         'tags': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'managed_resource_group_name': {'readonly': True},
-        'log_analytics_workspace_arm_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -539,6 +547,9 @@ class SapMonitor(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_resource_group_name': {'key': 'properties.managedResourceGroupName', 'type': 'str'},
         'log_analytics_workspace_arm_id': {'key': 'properties.logAnalyticsWorkspaceArmId', 'type': 'str'},
+        'enable_customer_analytics': {'key': 'properties.enableCustomerAnalytics', 'type': 'bool'},
+        'log_analytics_workspace_id': {'key': 'properties.logAnalyticsWorkspaceId', 'type': 'str'},
+        'log_analytics_workspace_shared_key': {'key': 'properties.logAnalyticsWorkspaceSharedKey', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -554,7 +565,10 @@ class SapMonitor(Resource):
         self.key_vault_id = kwargs.get('key_vault_id', None)
         self.provisioning_state = None
         self.managed_resource_group_name = None
-        self.log_analytics_workspace_arm_id = None
+        self.log_analytics_workspace_arm_id = kwargs.get('log_analytics_workspace_arm_id', None)
+        self.enable_customer_analytics = kwargs.get('enable_customer_analytics', None)
+        self.log_analytics_workspace_id = kwargs.get('log_analytics_workspace_id', None)
+        self.log_analytics_workspace_shared_key = kwargs.get('log_analytics_workspace_shared_key', None)
 
 
 class StorageProfile(Model):

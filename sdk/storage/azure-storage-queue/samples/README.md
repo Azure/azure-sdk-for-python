@@ -1,10 +1,10 @@
 ---
-topic: sample
+page_type: sample
 languages:
   - python
 products:
   - azure
-  - azure-storage-queue
+  - azure-storage
 ---
 
 # Azure Storage Queues client library for Python Samples

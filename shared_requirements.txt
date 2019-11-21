@@ -110,11 +110,10 @@ six>=1.6
 #override azure-storage-queue msrest>=0.6.10
 #override azure-storage-file-share msrest>=0.6.10
 #override azure-storage-file-datalake msrest>=0.6.10
-#override azure-storage-file-datalake azure-storage-blob~=12.0.0
+#override azure-storage-file-datalake azure-storage-blob~=12.0
 opencensus>=0.6.0
 opencensus-ext-threading
 opencensus-ext-azure>=0.3.1
-#override azure-cognitiveservices-inkrecognizer azure-core<2.0.0,>=1.0.0b2
 #override azure-eventhub-checkpointstoreblob-aio azure-storage-blob<13.0.0,>=12.0.0
 #override azure-eventhub-checkpointstoreblob azure-storage-blob<13.0.0,>=12.0.0
 #override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0

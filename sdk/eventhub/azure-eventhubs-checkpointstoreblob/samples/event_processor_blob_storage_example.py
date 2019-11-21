@@ -1,7 +1,7 @@
 import logging
 import os
 from azure.eventhub import EventHubConsumerClient
-from azure.eventhub.extensions.checkpointstoreblob import BlobPartitionManager
+from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 from azure.storage.blob import ContainerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
@@ -25,8 +25,8 @@ def process_events(partition_context, events):
 
 if __name__ == '__main__':
     container_client = ContainerClient.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
-    partition_manager = BlobPartitionManager(container_client=container_client)
-    client = EventHubConsumerClient.from_connection_string(CONNECTION_STR, partition_manager=partition_manager)
+    checkpoint_store = BlobCheckpointStore(container_client=container_client)
+    client = EventHubConsumerClient.from_connection_string(CONNECTION_STR, checkpoint_store=checkpoint_store)
     try:
         client.receive(process_events, "$default")
     except KeyboardInterrupt:

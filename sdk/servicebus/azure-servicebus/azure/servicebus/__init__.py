@@ -4,7 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 
-__version__ = '0.50.1'
+from ._version import VERSION
+__version__ = VERSION
 
 
 from azure.servicebus.common.message import Message, BatchMessage, PeekMessage, DeferredMessage

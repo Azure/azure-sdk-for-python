@@ -13,7 +13,7 @@ import time
 from azure.eventhub import EventPosition, EventData, EventHubConsumerClient, EventHubProducerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENT_HUB = os.environ['EVENT_HUB_NAME']
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 EVENT_POSITION = EventPosition("-1")
 PARTITION = "0"
@@ -25,21 +25,16 @@ HTTP_PROXY = {
 }
 
 
-def do_operation(event):
+def on_event(partition_context, event):
+    print("received event from partition: {}".format(partition_context.partition_id))
     # do some operations on the event
     print(event)
 
 
-def on_events(partition_context, events):
-    print("received events: {} from partition: {}".format(len(events), partition_context.partition_id))
-    for event in events:
-        do_operation(event)
-
-
 consumer_client = EventHubConsumerClient.from_connection_string(
-    conn_str=CONNECTION_STR, event_hub_path=EVENT_HUB, http_proxy=HTTP_PROXY)
+    conn_str=CONNECTION_STR, eventhub_name=EVENTHUB_NAME, http_proxy=HTTP_PROXY)
 producer_client = EventHubProducerClient.from_connection_string(
-    conn_str=CONNECTION_STR, event_hub_path=EVENT_HUB, http_proxy=HTTP_PROXY)
+    conn_str=CONNECTION_STR, eventhub_name=EVENTHUB_NAME, http_proxy=HTTP_PROXY)
 
 with producer_client:
     producer_client.send(EventData("A single event"))
@@ -47,7 +42,6 @@ with producer_client:
 
 with consumer_client:
     receiving_time = 5
-    consumer_client.receive(on_events=on_events, consumer_group='$Default')
-    time.sleep(receiving_time)
+    consumer_client.receive(on_event=on_event, consumer_group='$Default')
     print('Finish receiving.')
 

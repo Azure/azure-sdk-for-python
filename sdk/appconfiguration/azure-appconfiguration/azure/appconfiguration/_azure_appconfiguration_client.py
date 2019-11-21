@@ -35,6 +35,7 @@ from ._utils import (
     prep_if_match,
     prep_if_none_match,
 )
+from ._sync_token import SyncTokenPolicy
 from ._user_agent import USER_AGENT
 
 
@@ -106,6 +107,7 @@ class AzureAppConfigurationClient:
                 self._config.headers_policy,
                 self._config.user_agent_policy,
                 AppConfigRequestsCredentialsPolicy(self._config.credentials),
+                SyncTokenPolicy(),
                 self._config.retry_policy,
                 self._config.logging_policy,  # HTTP request/response log
                 DistributedTracingPolicy(**kwargs),

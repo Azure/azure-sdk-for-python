@@ -38,7 +38,7 @@ from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 
 def Execute(client, global_endpoint_manager, function, *args, **kwargs):
-    """Exectutes the function with passed parameters applying all retry policies
+    """Executes the function with passed parameters applying all retry policies
 
     :param object client:
         Document client instance
@@ -125,7 +125,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
 
 
 def ExecuteFunction(function, *args, **kwargs):
-    """ Stub method so that it can be used for mocking purposes as well.
+    """Stub method so that it can be used for mocking purposes as well.
     """
     return function(*args, **kwargs)
 

@@ -74,7 +74,7 @@ class DirectoryOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
@@ -150,7 +150,7 @@ class DirectoryOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
@@ -216,7 +216,7 @@ class DirectoryOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
@@ -289,7 +289,7 @@ class DirectoryOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "properties"
@@ -364,7 +364,7 @@ class DirectoryOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "metadata"
@@ -442,9 +442,9 @@ class DirectoryOperations(object):
         :return: ListFilesAndDirectoriesSegmentResponse or the result of
          cls(response)
         :rtype:
-         ~azure.storage.fileshare._generated.models.ListFilesAndDirectoriesSegmentResponse
+         ~azure.storage.fileshare.models.ListFilesAndDirectoriesSegmentResponse
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "list"
@@ -531,9 +531,9 @@ class DirectoryOperations(object):
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: ListHandlesResponse or the result of cls(response)
-        :rtype: ~azure.storage.fileshare._generated.models.ListHandlesResponse
+        :rtype: ~azure.storage.fileshare.models.ListHandlesResponse
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "listhandles"
@@ -620,7 +620,7 @@ class DirectoryOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "forceclosehandles"

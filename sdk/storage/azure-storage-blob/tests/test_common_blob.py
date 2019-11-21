@@ -247,6 +247,35 @@ class StorageCommonBlobTest(StorageTestCase):
         content = blob.download_blob(lease=lease).readall()
         self.assertEqual(content, data)
 
+    @GlobalStorageAccountPreparer()
+    def test_create_blob_with_generator(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
+
+        # Act
+        def gen():
+            yield "hello"
+            yield "world!"
+            yield " eom"
+        blob = self.bsc.get_blob_client(self.container_name, "gen_blob")
+        resp = blob.upload_blob(data=gen())
+
+        # Assert
+        self.assertIsNotNone(resp.get('etag'))
+        content = blob.download_blob().readall()
+        self.assertEqual(content, b"helloworld! eom")
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_create_blob_with_requests(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
+
+        # Act
+        uri = "http://www.gutenberg.org/files/59466/59466-0.txt"
+        data = requests.get(uri, stream=True)
+        blob = self.bsc.get_blob_client(self.container_name, "gutenberg")
+        resp = blob.upload_blob(data=data.raw)
+
+        self.assertIsNotNone(resp.get('etag'))
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_metadata(self, resource_group, location, storage_account, storage_account_key):

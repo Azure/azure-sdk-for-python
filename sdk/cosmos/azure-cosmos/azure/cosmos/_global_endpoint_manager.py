@@ -19,7 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for global endpoint manager implementation in the Azure Cosmos database service.
+"""Internal class for global endpoint manager implementation in the Azure Cosmos
+database service.
 """
 
 import threading
@@ -35,8 +36,8 @@ from ._location_cache import LocationCache
 
 class _GlobalEndpointManager(object):
     """
-    This internal class implements the logic for endpoint management for geo-replicated
-    database accounts.
+    This internal class implements the logic for endpoint management for
+    geo-replicated database accounts.
     """
 
     def __init__(self, client):
@@ -113,9 +114,11 @@ class _GlobalEndpointManager(object):
                 self.refresh_needed = False
 
     def _GetDatabaseAccount(self, **kwargs):
-        """Gets the database account first by using the default endpoint, and if that doesn't returns
-           use the endpoints for the preferred locations in the order they are specified to get
-           the database account.
+        """Gets the database account.
+
+        First tries by using the default endpoint, and if that doesn't work,
+        use the endpoints for the preferred locations in the order they are
+        specified, to get the database account.
         """
         try:
             database_account = self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
@@ -138,8 +141,9 @@ class _GlobalEndpointManager(object):
             return None
 
     def _GetDatabaseAccountStub(self, endpoint, **kwargs):
-        """Stub for getting database account from the client
-           which can be used for mocking purposes as well.
+        """Stub for getting database account from the client.
+
+        This can be used for mocking purposes as well.
         """
         return self.Client.GetDatabaseAccount(endpoint, **kwargs)
 
