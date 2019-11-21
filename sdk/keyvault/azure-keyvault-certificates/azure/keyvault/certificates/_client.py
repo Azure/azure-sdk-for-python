@@ -379,7 +379,7 @@ class CertificateClient(KeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def get_policy(self, certificate_name, **kwargs):
+    def get_certificate_policy(self, certificate_name, **kwargs):
         # type: (str, **Any) -> CertificatePolicy
         """Gets the policy for a certificate.
 

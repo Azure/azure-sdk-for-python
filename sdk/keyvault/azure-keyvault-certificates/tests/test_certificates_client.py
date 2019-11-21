@@ -527,7 +527,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # get certificate policy
         self._import_common_certificate(client=client, cert_name=cert_name)
-        retrieved_policy = client.get_policy(cert_name)
+        retrieved_policy = client.get_certificate_policy(cert_name)
         self.assertIsNotNone(retrieved_policy)
 
         # update certificate policy
@@ -543,7 +543,7 @@ class CertificateClientTests(KeyVaultTestCase):
         client.update_policy(
             certificate_name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy)
         )
-        updated_cert_policy = client.get_policy(certificate_name=cert_name)
+        updated_cert_policy = client.get_certificate_policy(certificate_name=cert_name)
         self.assertIsNotNone(updated_cert_policy)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
