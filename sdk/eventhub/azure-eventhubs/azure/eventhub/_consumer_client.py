@@ -225,7 +225,7 @@ class EventHubConsumerClient(ClientBase):
             event_processor = EventProcessor(
                 self, self._consumer_group, on_event,
                 checkpoint_store=self._checkpoint_store,
-                polling_interval=self._load_balancing_interval,
+                load_balancing_interval=self._load_balancing_interval,
                 **kwargs
             )
             self._event_processors[(self._consumer_group, partition_id or ALL_PARTITIONS)] = event_processor

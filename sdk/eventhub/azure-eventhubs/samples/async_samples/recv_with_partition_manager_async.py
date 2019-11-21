@@ -8,8 +8,8 @@
 """
 An example to show receiving events from an Event Hub with partition manager asynchronously.
 In the `receive` method of `EventHubConsumerClient`:
-If no partition id is specified, the partition_manager are used for load-balance and checkpoint.
-If partition id is specified, the partition_manager can only be used for checkpoint.
+If no partition id is specified, the checkpoint_store are used for load-balance and checkpoint.
+If partition id is specified, the checkpoint_store can only be used for checkpoint.
 """
 
 import asyncio
@@ -50,10 +50,10 @@ async def receive(client):
 
 async def main():
     container_client = ContainerClient.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
-    partition_manager = BlobPartitionManager(container_client)
+    checkpoint_store = BlobCheckpointStore(container_client)
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
-        partition_manager=partition_manager,  # For load balancing and checkpoint. Leave None for no load balancing
+        checkpoint_store=checkpoint_store,  # For load balancing and checkpoint. Leave None for no load balancing
     )
     async with client:
         await receive(client)

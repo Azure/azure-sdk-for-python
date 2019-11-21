@@ -14,7 +14,7 @@ class OwnershipManager(object):
     so the number of owned partitions are balanced among multiple EventProcessors
 
     An EventProcessor calls claim_ownership() of this class every x seconds,
-    where x is set by keyword argument "polling_interval" in EventProcessor,
+    where x is set by keyword argument "load_balancing_interval" in EventProcessor,
     to claim the ownership of partitions, create tasks for the claimed ownership, and cancel tasks that no longer belong
     to the claimed ownership.
 
@@ -24,6 +24,7 @@ class OwnershipManager(object):
             checkpoint_store, ownership_timeout, partition_id,
     ):
         self.cached_parition_ids = []  # type: List[str]
+        self.owned_patitions = {}
         self.eventhub_client = eventhub_client
         self.fully_qualified_namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
         self.eventhub_name = eventhub_client.eventhub_name
@@ -54,8 +55,26 @@ class OwnershipManager(object):
             self.fully_qualified_namespace, self.eventhub_name, self.consumer_group
         )
         to_claim = self._balance_ownership(ownership_list, self.cached_parition_ids)
-        claimed_list = self.checkpoint_store.claim_ownership(to_claim) if to_claim else []
-        return [x["partition_id"] for x in claimed_list]
+        self.owned_patitions = self.checkpoint_store.claim_ownership(to_claim) if to_claim else []
+        return [x["partition_id"] for x in self.owned_patitions]
+
+    def release_ownership(self, partition_id):
+        """Explicitly release ownership of a partition if we still have it.
+        
+        This is called when a consumer is shutdown, and is achieved by resetting the associated
+        owner ID.
+        """
+        now = time.time()
+        partition_ownership = [
+            o for o in self.owned_patitions \
+                if o["partition_id"] == partition_id \
+                    and o["owner_id"] == self.owner_id \
+                        and o["last_modified_time"] + self.ownership_timeout < now
+        ]
+        if not partition_ownership:
+            return
+        partition_ownership[0]["owner_id"] = ""
+        self.checkpoint_store.claim_ownership(partition_ownership)
 
     def _retrieve_partition_ids(self):
         """List all partition ids of the event hub that the EventProcessor is working on.
@@ -65,17 +84,18 @@ class OwnershipManager(object):
     def _balance_ownership(self, ownership_list, all_partition_ids):
         """Balances and claims ownership of partitions for this EventProcessor.
         """
-
         now = time.time()
         ownership_dict = {x["partition_id"]: x for x in ownership_list}  # put the list to dict for fast lookup
-        not_owned_partition_ids = [pid for pid in all_partition_ids if pid not in ownership_dict]
-        timed_out_partitions = [x for x in ownership_list
-                                if x["last_modified_time"] + self.ownership_timeout < now]
+        unclaimed_partition_ids = [pid for pid in all_partition_ids if pid not in ownership_dict]
+        released_partitions = [
+            x for x in ownership_list if x["last_modified_time"] + self.ownership_timeout < now or not x["owner_id"]
+        ]
+        
         if self._initializing:  # greedily claim all available partitions when an EventProcessor is started.
-            to_claim = timed_out_partitions
+            to_claim = released_partitions
             for to_claim_item in to_claim:
                 to_claim_item["owner_id"] = self.owner_id
-            for pid in not_owned_partition_ids:
+            for pid in unclaimed_partition_ids:
                 to_claim.append(
                     {
                         "fully_qualified_namespace": self.fully_qualified_namespace,
@@ -86,14 +106,13 @@ class OwnershipManager(object):
                     }
                 )
             self._initializing = False
-            if to_claim:  # if no expired or unclaimed partitions, go ahead with balancing
+            if to_claim:  # if no expired, released or unclaimed partitions, go ahead with balancing
                 return to_claim
 
-        timed_out_partition_ids = [ownership["partition_id"] for ownership in timed_out_partitions]
-        claimable_partition_ids = not_owned_partition_ids + timed_out_partition_ids
+        released_partition_ids = [ownership["partition_id"] for ownership in released_partitions]
+        claimable_partition_ids = unclaimed_partition_ids + released_partition_ids
 
-        active_ownership = [ownership for ownership in ownership_list
-                            if ownership["last_modified_time"] + self.ownership_timeout >= now]
+        active_ownership = [o for o in ownership_list if o not in released_partitions]
         active_ownership_by_owner = defaultdict(list)
         for ownership in active_ownership:
             active_ownership_by_owner[ownership["owner_id"]].append(ownership)

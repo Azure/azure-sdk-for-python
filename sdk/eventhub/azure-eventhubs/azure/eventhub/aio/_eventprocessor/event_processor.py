@@ -31,7 +31,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             *,
             partition_id: str = None,
             checkpoint_store: CheckpointStore = None,
-            initial_event_position=EventPosition("-1"), polling_interval: float = 10.0,
+            initial_event_position=EventPosition("-1"), load_balancing_interval: float = 10.0,
             owner_level=None, prefetch=None, track_last_enqueued_event_properties=False,
             error_handler,
             partition_initialize_handler,
@@ -48,8 +48,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         self._partition_close_handler = partition_close_handler
         self._checkpoint_store = checkpoint_store
         self._initial_event_position = initial_event_position  # will be replaced by reset event position in preview 4
-        self._polling_interval = polling_interval
-        self._ownership_timeout = self._polling_interval * 2
+        self._load_balancing_interval = load_balancing_interval
+        self._ownership_timeout = self._load_balancing_interval * 2
         self._tasks = {}  # type: Dict[str, asyncio.Task]
         self._partition_contexts = {}  # type: Dict[str, PartitionContext]
         self._owner_level = owner_level
@@ -60,6 +60,14 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         self._running = False
 
         self._consumers = {}
+        self._ownership_manager = OwnershipManager(
+            self._eventhub_client,
+            self._consumer_group,
+            self._id,
+            self._checkpoint_store,
+            self._ownership_timeout,
+            self._partition_id
+        )
 
     def __repr__(self):
         return 'EventProcessor: id {}'.format(self._id)
@@ -196,6 +204,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 partition_context,
                 CloseReason.OWNERSHIP_LOST if self._running else CloseReason.SHUTDOWN
             )
+            await self._ownership_manager.release_ownership(partition_id)
             if partition_id in self._tasks:
                 del self._tasks[partition_id]
 
@@ -209,14 +218,12 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
 
         """
         _LOGGER.info("EventProcessor %r is being started", self._id)
-        ownership_manager = OwnershipManager(self._eventhub_client, self._consumer_group, self._id,
-                                             self._checkpoint_store, self._ownership_timeout, self._partition_id)
         if not self._running:
             self._running = True
             while self._running:
                 try:
-                    checkpoints = await ownership_manager.get_checkpoints() if self._checkpoint_store else None
-                    claimed_partition_ids = await ownership_manager.claim_ownership()
+                    checkpoints = await self._ownership_manager.get_checkpoints() if self._checkpoint_store else None
+                    claimed_partition_ids = await self._ownership_manager.claim_ownership()
                     if claimed_partition_ids:
                         to_cancel_list = self._tasks.keys() - claimed_partition_ids
                         self._create_tasks_for_claimed_ownership(claimed_partition_ids, checkpoints)
@@ -228,7 +235,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     '''
                     ownership_manager.get_checkpoints() and ownership_manager.claim_ownership() may raise exceptions
                     when there are load balancing and/or checkpointing (checkpoint_store isn't None).
-                    They're swallowed here to retry every self._polling_interval seconds. Meanwhile this event processor
+                    They're swallowed here to retry every self._load_balancing_interval seconds. Meanwhile this event processor
                     won't lose the partitions it has claimed before.
                     If it keeps failing, other EventProcessors will start to claim ownership of the partitions
                     that this EventProcessor is working on. So two or multiple EventProcessors may be working
@@ -236,8 +243,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     '''  # pylint:disable=pointless-string-statement
                     _LOGGER.warning("An exception (%r) occurred during balancing and claiming ownership for "
                                     "eventhub %r consumer group %r. Retrying after %r seconds",
-                                    err, self._eventhub_name, self._consumer_group, self._polling_interval)
-                await asyncio.sleep(self._polling_interval)
+                                    err, self._eventhub_name, self._consumer_group, self._load_balancing_interval)
+                await asyncio.sleep(self._load_balancing_interval)
 
     async def stop(self):
         """Stop the EventProcessor.

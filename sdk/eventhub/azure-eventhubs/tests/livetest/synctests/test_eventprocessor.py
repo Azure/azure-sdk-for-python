@@ -53,7 +53,7 @@ def test_loadbalancer_balance():
                                       consumer_group='$default',
                                       checkpoint_store=checkpoint_store,
                                       on_event=event_handler,
-                                      polling_interval=3,
+                                      load_balancing_interval=3,
                                       receive_timeout=1)
 
     thread1 = threading.Thread(target=event_processor1.start)
@@ -66,7 +66,7 @@ def test_loadbalancer_balance():
                                       consumer_group='$default',
                                       checkpoint_store=checkpoint_store,
                                       on_event=event_handler,
-                                      polling_interval=3,
+                                      load_balancing_interval=3,
                                       receive_timeout=1)
 
     thread2 = threading.Thread(target=event_processor2.start)
@@ -121,7 +121,7 @@ def test_loadbalancer_list_ownership_error():
                                      consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
                                      on_event=event_handler,
-                                     polling_interval=1)
+                                     load_balancing_interval=1)
 
     thread = threading.Thread(target=event_processor.start)
     thread.start()
@@ -188,7 +188,7 @@ def test_partition_processor():
                                      on_error=error_handler,
                                      on_partition_initialize=partition_initialize_handler,
                                      on_partition_close=partition_close_handler,
-                                     polling_interval=1)
+                                     load_balancing_interval=1)
 
     thread = threading.Thread(target=event_processor.start)
     thread.start()
@@ -254,7 +254,7 @@ def test_partition_processor_process_events_error():
                                      on_event=event_handler,
                                      on_error=error_handler,
                                      on_partition_close=partition_close_handler,
-                                     polling_interval=1)
+                                     load_balancing_interval=1)
     thread = threading.Thread(target=event_processor.start)
     thread.start()
     time.sleep(2)
@@ -306,7 +306,7 @@ def test_partition_processor_process_eventhub_consumer_error():
                                      on_event=event_handler,
                                      on_error=error_handler,
                                      on_partition_close=partition_close_handler,
-                                     polling_interval=1)
+                                     load_balancing_interval=1)
     thread = threading.Thread(target=event_processor.start)
     thread.start()
     time.sleep(2)
@@ -370,7 +370,7 @@ def test_partition_processor_process_error_close_error():
                                      on_error=error_handler,
                                      on_partition_initialize=partition_initialize_handler,
                                      on_partition_close=partition_close_handler,
-                                     polling_interval=1)
+                                     load_balancing_interval=1)
     thread = threading.Thread(target=event_processor.start)
     thread.start()
     time.sleep(2)
@@ -435,7 +435,7 @@ def test_partition_processor_process_update_checkpoint_error():
                                      on_event=event_handler,
                                      on_error=error_handler,
                                      on_partition_close=partition_close_handler,
-                                     polling_interval=1)
+                                     load_balancing_interval=1)
     thread = threading.Thread(target=event_processor.start)
     thread.start()
     time.sleep(2)
