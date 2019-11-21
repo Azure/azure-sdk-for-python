@@ -1324,7 +1324,7 @@ class DeletedCertificate(KeyVaultCertificate):
     :param policy: The management policy of the deleted certificate.
     :type policy: ~azure.keyvault.certificates.CertificatePolicy
     :param bytearray cer: CER contents of the X509 certificate.
-    :param datetime deleted_date: The time when the certificate was deleted, in UTC
+    :param datetime deleted_on: The time when the certificate was deleted, in UTC
     :param str recovery_id: The url of the recovery object, used to identify and
         recover the deleted certificate.
     :param datetime scheduled_purge_date: The time when the certificate is scheduled to
@@ -1340,7 +1340,7 @@ class DeletedCertificate(KeyVaultCertificate):
     ):
         # type: (...) -> None
         super(DeletedCertificate, self).__init__(properties=properties, policy=policy, cer=cer, **kwargs)
-        self._deleted_date = kwargs.get("deleted_date", None)
+        self._deleted_on = kwargs.get("deleted_on", None)
         self._recovery_id = kwargs.get("recovery_id", None)
         self._scheduled_purge_date = kwargs.get("scheduled_purge_date", None)
 
@@ -1360,7 +1360,7 @@ class DeletedCertificate(KeyVaultCertificate):
             secret_id=None,
             policy=None,
             cer=None,
-            deleted_date=deleted_certificate_item.deleted_date,
+            deleted_on=deleted_certificate_item.deleted_date,
             recovery_id=deleted_certificate_item.recovery_id,
             scheduled_purge_date=deleted_certificate_item.scheduled_purge_date,
         )
@@ -1376,19 +1376,19 @@ class DeletedCertificate(KeyVaultCertificate):
             secret_id=deleted_certificate_bundle.sid,
             policy=CertificatePolicy._from_certificate_policy_bundle(deleted_certificate_bundle.policy),
             cer=deleted_certificate_bundle.cer,
-            deleted_date=deleted_certificate_bundle.deleted_date,
+            deleted_on=deleted_certificate_bundle.deleted_date,
             recovery_id=deleted_certificate_bundle.recovery_id,
             scheduled_purge_date=deleted_certificate_bundle.scheduled_purge_date,
         )
 
     @property
-    def deleted_date(self):
+    def deleted_on(self):
         # type: () -> datetime
         """The datetime that the certificate was deleted.
 
         :rtype: datetime
         """
-        return self._deleted_date
+        return self._deleted_on
 
     @property
     def recovery_id(self):

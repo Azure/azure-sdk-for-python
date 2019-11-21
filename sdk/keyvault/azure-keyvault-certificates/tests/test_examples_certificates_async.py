@@ -99,8 +99,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(deleted_certificate.name)
 
         # if the vault has soft-delete enabled, the certificate's
-        # scheduled purge date, deleted_date, and recovery id are available
-        print(deleted_certificate.deleted_date)
+        # scheduled purge date, deleted_on, and recovery id are available
+        print(deleted_certificate.deleted_on)
         print(deleted_certificate.scheduled_purge_date)
         print(deleted_certificate.recovery_id)
 
@@ -173,7 +173,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(certificate.name)
             print(certificate.scheduled_purge_date)
             print(certificate.recovery_id)
-            print(certificate.deleted_date)
+            print(certificate.deleted_on)
 
         # [END list_deleted_certificates]
 

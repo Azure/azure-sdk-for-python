@@ -108,7 +108,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # if the vault has soft-delete enabled, the certificate's deleted date,
         # scheduled purge date, and recovery id are available
-        print(deleted_certificate.deleted_date)
+        print(deleted_certificate.deleted_on)
         print(deleted_certificate.scheduled_purge_date)
         print(deleted_certificate.recovery_id)
 
@@ -173,9 +173,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         for certificate in deleted_certificates:
             print(certificate.id)
             print(certificate.name)
-            print(certificate.deleted_date)
+            print(certificate.deleted_on)
             print(certificate.scheduled_purge_date)
-            print(certificate.deleted_date)
+            print(certificate.deleted_on)
 
         # [END list_deleted_certificates]
 
@@ -263,7 +263,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # if the vault has soft-delete enabled, the certificate's deleted date,
         # scheduled purge date, and recovery id are available
-        print(deleted_certificate.deleted_date)
+        print(deleted_certificate.deleted_on)
         print(deleted_certificate.scheduled_purge_date)
         print(deleted_certificate.recovery_id)
 
