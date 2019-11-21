@@ -143,11 +143,11 @@ class CertificateProperties(object):
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self._attributes = kwargs.get("attributes", None)
-        self._id = kwargs.get("cert_id", None)
+        self._attributes = kwargs.pop("attributes", None)
+        self._id = kwargs.pop("cert_id", None)
         self._vault_id = parse_vault_id(self._id) if self._id else None
-        self._thumbprint = kwargs.get("thumbprint", None)
-        self._tags = kwargs.get("tags", None)
+        self._x509_thumbprint = kwargs.pop("x509_thumbprint", None)
+        self._tags = kwargs.pop("tags", None)
 
     def __repr__(self):
         # type () -> str
@@ -160,7 +160,7 @@ class CertificateProperties(object):
         return cls(
             attributes=certificate_item.attributes,
             cert_id=certificate_item.id,
-            thumbprint=certificate_item.x509_thumbprint,
+            x509_thumbprint=certificate_item.x509_thumbprint,
             tags=certificate_item.tags,
         )
 
@@ -246,13 +246,13 @@ class CertificateProperties(object):
         return self._vault_id.vault_url
 
     @property
-    def thumbprint(self):
+    def x509_thumbprint(self):
         # type: () -> bytes
         """Thumbprint of the certificate.
 
         :rtype: bytes
         """
-        return self._thumbprint
+        return self._x509_thumbprint
 
     @property
     def tags(self):
