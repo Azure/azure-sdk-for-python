@@ -604,9 +604,8 @@ class Server(TrackedResource):
     :type location: str
     :param tags: Application-specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
-    :param resource_identity: The Azure Active Directory identity of the
-     server.
-    :type resource_identity: ~azure.mgmt.rdbms.mysql.models.ResourceIdentity
+    :param identity: The Azure Active Directory identity of the server.
+    :type identity: ~azure.mgmt.rdbms.mysql.models.ResourceIdentity
     :param sku: The SKU (pricing tier) of the server.
     :type sku: ~azure.mgmt.rdbms.mysql.models.Sku
     :param administrator_login: The administrator's login name of a server.
@@ -654,7 +653,7 @@ class Server(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'resource_identity': {'key': 'ResourceIdentity', 'type': 'ResourceIdentity'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
@@ -670,7 +669,7 @@ class Server(TrackedResource):
 
     def __init__(self, **kwargs):
         super(Server, self).__init__(**kwargs)
-        self.resource_identity = kwargs.get('resource_identity', None)
+        self.identity = kwargs.get('identity', None)
         self.sku = kwargs.get('sku', None)
         self.administrator_login = kwargs.get('administrator_login', None)
         self.version = kwargs.get('version', None)

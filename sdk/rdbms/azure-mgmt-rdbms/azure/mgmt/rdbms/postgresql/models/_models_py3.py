@@ -605,10 +605,8 @@ class Server(TrackedResource):
     :type location: str
     :param tags: Application-specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
-    :param resource_identity: The Azure Active Directory identity of the
-     server.
-    :type resource_identity:
-     ~azure.mgmt.rdbms.postgresql.models.ResourceIdentity
+    :param identity: The Azure Active Directory identity of the server.
+    :type identity: ~azure.mgmt.rdbms.postgresql.models.ResourceIdentity
     :param sku: The SKU (pricing tier) of the server.
     :type sku: ~azure.mgmt.rdbms.postgresql.models.Sku
     :param administrator_login: The administrator's login name of a server.
@@ -657,7 +655,7 @@ class Server(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'resource_identity': {'key': 'ResourceIdentity', 'type': 'ResourceIdentity'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
@@ -671,9 +669,9 @@ class Server(TrackedResource):
         'replica_capacity': {'key': 'properties.replicaCapacity', 'type': 'int'},
     }
 
-    def __init__(self, *, location: str, tags=None, resource_identity=None, sku=None, administrator_login: str=None, version=None, ssl_enforcement=None, user_visible_state=None, fully_qualified_domain_name: str=None, earliest_restore_date=None, storage_profile=None, replication_role: str=None, master_server_id: str=None, replica_capacity: int=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, sku=None, administrator_login: str=None, version=None, ssl_enforcement=None, user_visible_state=None, fully_qualified_domain_name: str=None, earliest_restore_date=None, storage_profile=None, replication_role: str=None, master_server_id: str=None, replica_capacity: int=None, **kwargs) -> None:
         super(Server, self).__init__(location=location, tags=tags, **kwargs)
-        self.resource_identity = resource_identity
+        self.identity = identity
         self.sku = sku
         self.administrator_login = administrator_login
         self.version = version

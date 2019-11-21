@@ -50,6 +50,12 @@ class SkuTier(str, Enum):
     memory_optimized = "MemoryOptimized"
 
 
+class IdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    none = "None"
+
+
 class VirtualNetworkRuleState(str, Enum):
 
     initializing = "Initializing"
