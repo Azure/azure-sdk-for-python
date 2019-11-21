@@ -1,5 +1,7 @@
-recursive-include tests *.py *.yaml
+recursive-include tests *.py
+recursive-include samples *.py *.md
 include *.rst
+include *.md
 include azure/__init__.py
 include azure/cognitiveservices/__init__.py
 include azure/cognitiveservices/language/__init__.py
