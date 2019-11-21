@@ -1893,8 +1893,6 @@ class ResourceTypeSku(Model):
     :vartype kind: str
     :ivar tier: The Sku tier. Possible values include: 'Standard'
     :vartype tier: str or ~azure.mgmt.databoxedge.models.SkuTier
-    :ivar size: The Sku kind
-    :vartype size: str
     :ivar family: The Sku family
     :vartype family: str
     :ivar locations: Availability of the SKU for the region
@@ -1915,7 +1913,6 @@ class ResourceTypeSku(Model):
         'name': {'readonly': True},
         'kind': {'readonly': True},
         'tier': {'readonly': True},
-        'size': {'readonly': True},
         'family': {'readonly': True},
         'locations': {'readonly': True},
         'api_versions': {'readonly': True},
@@ -1929,7 +1926,6 @@ class ResourceTypeSku(Model):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'tier': {'key': 'tier', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
         'family': {'key': 'family', 'type': 'str'},
         'locations': {'key': 'locations', 'type': '[str]'},
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
@@ -1944,7 +1940,6 @@ class ResourceTypeSku(Model):
         self.name = None
         self.kind = None
         self.tier = None
-        self.size = None
         self.family = None
         self.locations = None
         self.api_versions = None
