@@ -165,8 +165,7 @@ class ImdsCredential(_ManagedIdentityBase):
 class MsiCredential(_ManagedIdentityBase):
     """Authenticates via the MSI endpoint in an App Service or Cloud Shell environment.
 
-
-  :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
+    :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
     def __init__(self, **kwargs):
@@ -207,7 +206,7 @@ class MsiCredential(_ManagedIdentityBase):
     def _request_app_service_token(self, scopes, resource, secret):
         params = {"api-version": "2017-09-01", "resource": resource}
         if self._client_id:
-            params["client_id"] = self._client_id
+            params["clientid"] = self._client_id
         return self._client.request_token(scopes, method="GET", headers={"secret": secret}, params=params)
 
     def _request_legacy_token(self, scopes, resource):

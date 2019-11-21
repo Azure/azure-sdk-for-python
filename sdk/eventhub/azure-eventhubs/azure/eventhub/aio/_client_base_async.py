@@ -51,9 +51,13 @@ class EventHubSharedKeyCredential(object):
 
 
 class ClientBaseAsync(ClientBase):
-    def __init__(self, host, event_hub_path, credential, **kwargs):
-        super(ClientBaseAsync, self).__init__(host=host, event_hub_path=event_hub_path,
-                                              credential=credential, **kwargs)
+    def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
+        super(ClientBaseAsync, self).__init__(
+            fully_qualified_namespace=fully_qualified_namespace,
+            eventhub_name=eventhub_name,
+            credential=credential,
+            **kwargs
+        )
         self._conn_manager = get_connection_manager(**kwargs)
 
     async def __aenter__(self):
@@ -133,25 +137,25 @@ class ClientBaseAsync(ClientBase):
             finally:
                 await mgmt_client.close_async()
 
-    async def get_properties(self):
+    async def get_eventhub_properties(self):
         # type:() -> Dict[str, Any]
         """
         Get properties of the specified EventHub async.
         Keys in the details dictionary include:
 
-            - path
+            - eventhub_name
             - created_at
             - partition_ids
 
         :rtype: dict
         :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
-        mgmt_msg = Message(application_properties={'name': self.eh_name})
+        mgmt_msg = Message(application_properties={'name': self.eventhub_name})
         response = await self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
         output = {}
         eh_info = response.get_data()
         if eh_info:
-            output['path'] = eh_info[b'name'].decode('utf-8')
+            output['eventhub_name'] = eh_info[b'name'].decode('utf-8')
             output['created_at'] = utc_from_timestamp(float(eh_info[b'created_at']) / 1000)
             output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
         return output
@@ -164,15 +168,15 @@ class ClientBaseAsync(ClientBase):
         :rtype: list[str]
         :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
-        return (await self.get_properties())['partition_ids']
+        return (await self.get_eventhub_properties())['partition_ids']
 
-    async def get_partition_properties(self, partition):
+    async def get_partition_properties(self, partition_id):
         # type:(str) -> Dict[str, str]
         """
         Get properties of the specified partition async.
         Keys in the details dictionary include:
 
-            - event_hub_path
+            - eventhub_name
             - id
             - beginning_sequence_number
             - last_enqueued_sequence_number
@@ -180,18 +184,18 @@ class ClientBaseAsync(ClientBase):
             - last_enqueued_time_utc
             - is_empty
 
-        :param partition: The target partition id.
-        :type partition: str
+        :param partition_id: The target partition id.
+        :type partition_id: str
         :rtype: dict
         :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
         """
-        mgmt_msg = Message(application_properties={'name': self.eh_name,
-                                                   'partition': partition})
+        mgmt_msg = Message(application_properties={'name': self.eventhub_name,
+                                                   'partition': partition_id})
         response = await self._management_request(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
         partition_info = response.get_data()
         output = {}
         if partition_info:
-            output['event_hub_path'] = partition_info[b'name'].decode('utf-8')
+            output['eventhub_name'] = partition_info[b'name'].decode('utf-8')
             output['id'] = partition_info[b'partition'].decode('utf-8')
             output['beginning_sequence_number'] = partition_info[b'begin_sequence_number']
             output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']

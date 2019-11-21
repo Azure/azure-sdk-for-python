@@ -20,12 +20,13 @@ async def test_client_secret_credential_async(aad_credential, live_eventhub):
         pytest.skip("No azure identity library")
 
     credential = EnvironmentCredential()
-    producer_client = EventHubProducerClient(host=live_eventhub['hostname'],
-                                             event_hub_path=live_eventhub['event_hub'],
+    producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
+                                             eventhub_name=live_eventhub['event_hub'],
                                              credential=credential,
                                              user_agent='customized information')
-    consumer_client = EventHubConsumerClient(host=live_eventhub['hostname'],
-                                             event_hub_path=live_eventhub['event_hub'],
+    consumer_client = EventHubConsumerClient(fully_qualified_namespace=live_eventhub['hostname'],
+                                             eventhub_name=live_eventhub['event_hub'],
+                                             consumer_group='$default',
                                              credential=credential,
                                              user_agent='customized information')
 
@@ -38,7 +39,7 @@ async def test_client_secret_credential_async(aad_credential, live_eventhub):
         on_event.event = event
     on_event.called = False
     async with consumer_client:
-        task = asyncio.ensure_future(consumer_client.receive(on_event, '$default', partition_id='0'))
+        task = asyncio.ensure_future(consumer_client.receive(on_event, partition_id='0'))
         await asyncio.sleep(6)
     await task
     assert on_event.called is True

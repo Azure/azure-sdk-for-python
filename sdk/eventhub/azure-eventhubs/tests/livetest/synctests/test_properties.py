@@ -11,16 +11,16 @@ from azure.eventhub import EventHubConsumerClient
 
 @pytest.mark.liveTest
 def test_get_properties(live_eventhub):
-    client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'],
+    client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'], '$default',
                             EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key']))
-    properties = client.get_properties()
-    assert properties['path'] == live_eventhub['event_hub'] and properties['partition_ids'] == ['0', '1']
+    properties = client.get_eventhub_properties()
+    assert properties['eventhub_name'] == live_eventhub['event_hub'] and properties['partition_ids'] == ['0', '1']
     client.close()
 
 
 @pytest.mark.liveTest
 def test_get_partition_ids(live_eventhub):
-    client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'],
+    client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'], '$default',
                             EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key']))
     partition_ids = client.get_partition_ids()
     assert partition_ids == ['0', '1']
@@ -29,10 +29,10 @@ def test_get_partition_ids(live_eventhub):
 
 @pytest.mark.liveTest
 def test_get_partition_properties(live_eventhub):
-    client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'],
+    client = EventHubConsumerClient(live_eventhub['hostname'], live_eventhub['event_hub'], '$default',
                             EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key']))
     properties = client.get_partition_properties('0')
-    assert properties['event_hub_path'] == live_eventhub['event_hub'] \
+    assert properties['eventhub_name'] == live_eventhub['event_hub'] \
         and properties['id'] == '0' \
         and 'beginning_sequence_number' in properties \
         and 'last_enqueued_sequence_number' in properties \
