@@ -181,7 +181,7 @@ class EventHubProducerClient(ClientBase):
             self._producers[partition_id].send(event_data_batch, timeout=send_timeout)
 
     def create_batch(self, **kwargs):
-        # type:(Any,  int) -> EventDataBatch
+        # type:(Any) -> EventDataBatch
         """
         Create an EventDataBatch object with max size being max_size.
         The max_size should be no greater than the max allowed message size defined by the service side.

@@ -15,7 +15,7 @@ from uamqp.message import MessageHeader  # type: ignore
 
 from azure.core.settings import settings  # type: ignore
 
-from azure.eventhub import __version__
+from ._version import VERSION
 from ._constants import (
     PROP_PARTITION_KEY_AMQP_SYMBOL,
     MAX_USER_AGENT_LENGTH,
@@ -63,7 +63,7 @@ def create_properties(user_agent=None):
     """
     properties = {}
     properties[types.AMQPSymbol("product")] = USER_AGENT_PREFIX
-    properties[types.AMQPSymbol("version")] = __version__
+    properties[types.AMQPSymbol("version")] = VERSION
     framework = "Python {}.{}.{}, {}".format(
         sys.version_info[0], sys.version_info[1], sys.version_info[2], platform.python_implementation()
     )
@@ -71,7 +71,7 @@ def create_properties(user_agent=None):
     platform_str = platform.platform()
     properties[types.AMQPSymbol("platform")] = platform_str
 
-    final_user_agent = '{}/{} ({}, {})'.format(USER_AGENT_PREFIX, __version__, framework, platform_str)
+    final_user_agent = '{}/{} ({}, {})'.format(USER_AGENT_PREFIX, VERSION, framework, platform_str)
     if user_agent:
         final_user_agent = '{}, {}'.format(final_user_agent, user_agent)
 
