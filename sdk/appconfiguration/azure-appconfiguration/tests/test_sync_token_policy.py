@@ -76,7 +76,7 @@ def test_set_multi_sync_token():
     assert 'syncToken1=val1' in sync_token_header
     assert 'syncToken2=val2' in sync_token_header
 
-def test_save_multi_sync_token():
+def test_update_cached_sync_token():
     test_sync_token = "syncToken1=val1;sn=6"
     header = {"Sync-Token": test_sync_token}
     request = HttpRequest("GET", "https://bing.com/")
