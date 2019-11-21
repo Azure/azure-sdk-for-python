@@ -138,10 +138,10 @@ class CertificateClientTests(KeyVaultTestCase):
                         break
             self.assertFalse(policy_emails)
         if cert_policy_x509_props.subject_alternative_names.upns:
-            policy_upns_list = policy.san_upns
-            for san_upns in cert_policy_x509_props.subject_alternative_names.upns:
+            policy_upns_list = policy.san_user_principal_names
+            for san_user_principal_names in cert_policy_x509_props.subject_alternative_names.upns:
                 for policy_upns in policy_upns_list:
-                    if san_upns == policy_upns:
+                    if san_user_principal_names == policy_upns:
                         policy_upns_list.remove(policy_upns)
                         break
             self.assertFalse(policy_upns_list)

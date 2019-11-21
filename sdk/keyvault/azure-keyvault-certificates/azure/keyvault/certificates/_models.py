@@ -562,7 +562,7 @@ class CertificatePolicy(object):
         subject_name or one of the subject alternative name parameters are required.
     :keyword Iterable[str] san_dns_names: Subject alternative DNS names of the X509 object. Either
         subject_name or one of the subject alternative name parameters are required.
-    :keyword Iterable[str] san_upns: Subject alternative user principal names of the X509 object.
+    :keyword Iterable[str] san_user_principal_names: Subject alternative user principal names of the X509 object.
         Either subject_name or one of the subject alternative name parameters are required.
     :keyword bool exportable: Indicates if the private key can be exported. For valid values,
         see KeyType.
@@ -616,7 +616,7 @@ class CertificatePolicy(object):
         self._certificate_transparency = kwargs.pop("certificate_transparency", None)
         self._san_emails = kwargs.pop("san_emails", None) or None
         self._san_dns_names = kwargs.pop("san_dns_names", None) or None
-        self._san_upns = kwargs.pop("san_upns", None) or None
+        self._san_upns = kwargs.pop("san_user_principal_names", None) or None
 
         if not (self._san_emails or self._san_upns or self._san_dns_names or self._subject_name):
             raise ValueError("You need to set either subject_name or one of the subject alternative names " +
@@ -688,7 +688,7 @@ class CertificatePolicy(object):
             or self.ekus
             or self.key_usage
             or self.san_emails
-            or self.san_upns
+            or self.san_user_principal_names
             or self.san_dns_names
             or self.validity_in_months
         ):
@@ -701,7 +701,7 @@ class CertificatePolicy(object):
                 subject=self.subject_name,
                 ekus=self.ekus,
                 subject_alternative_names=models.SubjectAlternativeNames(
-                    emails=self.san_emails, upns=self.san_upns, dns_names=self.san_dns_names
+                    emails=self.san_emails, upns=self.san_user_principal_names, dns_names=self.san_dns_names
                 ),
                 key_usage=key_usage,
                 validity_in_months=self.validity_in_months,
@@ -799,7 +799,7 @@ class CertificatePolicy(object):
                 if x509_certificate_properties and x509_certificate_properties.subject_alternative_names
                 else None
             ),
-            san_upns=(
+            san_user_principal_names=(
                 x509_certificate_properties.subject_alternative_names.upns
                 if x509_certificate_properties and x509_certificate_properties.subject_alternative_names
                 else None
@@ -917,7 +917,7 @@ class CertificatePolicy(object):
         return self._san_dns_names
 
     @property
-    def san_upns(self):
+    def san_user_principal_names(self):
         # type: () -> list[str]
         """The subject alternative user principal names.
 

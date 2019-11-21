@@ -130,10 +130,10 @@ class CertificateClientTests(KeyVaultTestCase):
             ):
                 self.assertEqual(san_email, policy_email)
         if cert_policy_x509_props.subject_alternative_names.upns:
-            for (san_upns, policy_upns) in itertools.zip_longest(
-                cert_policy_x509_props.subject_alternative_names.upns, cert_bundle_policy.san_upns
+            for (san_user_principal_names, policy_upns) in itertools.zip_longest(
+                cert_policy_x509_props.subject_alternative_names.upns, cert_bundle_policy.san_user_principal_names
             ):
-                self.assertEqual(san_upns, policy_upns)
+                self.assertEqual(san_user_principal_names, policy_upns)
         if cert_policy_x509_props.subject_alternative_names.dns_names:
             for (san_dns_name, policy_dns_name) in itertools.zip_longest(
                 cert_policy_x509_props.subject_alternative_names.dns_names, cert_bundle_policy.san_dns_names
