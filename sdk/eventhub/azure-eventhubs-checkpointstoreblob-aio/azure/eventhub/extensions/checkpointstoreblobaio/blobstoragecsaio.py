@@ -7,7 +7,7 @@ import logging
 from collections import defaultdict
 import asyncio
 from azure.eventhub import OwnershipLostError  # type: ignore  #pylint:disable=no-name-in-module
-from azure.eventhub.aio import PartitionManager  # type: ignore
+from azure.eventhub.aio import CheckpointStore  # type: ignore
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError  # type: ignore
 from azure.core import MatchConditions
 from azure.storage.blob.aio import ContainerClient, BlobClient  # type: ignore
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 UPLOAD_DATA = ""
 
 
-class BlobCheckpointStore(PartitionManager):
+class BlobCheckpointStore(CheckpointStore):
     """A CheckpointStore that uses Azure Blob Storage to store the partition ownership and checkpoint data.
 
     This class implements methods list_ownership, claim_ownership, update_checkpoint and list_checkpoints that are

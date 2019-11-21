@@ -9,7 +9,7 @@ import calendar
 from datetime import datetime
 from collections import defaultdict
 
-from azure.eventhub import PartitionManager, OwnershipLostError  # type: ignore # pylint:disable=no-name-in-module
+from azure.eventhub import CheckpointStore, OwnershipLostError  # type: ignore # pylint:disable=no-name-in-module
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError  # type: ignore
 from azure.core import MatchConditions
 from azure.storage.blob import BlobClient, ContainerClient  # type: ignore
@@ -36,11 +36,11 @@ def _to_timestamp(date):
     return timestamp
 
 
-class BlobCheckpointStore(PartitionManager):
-    """An PartitionManager that uses Azure Blob Storage to store the partition ownership and checkpoint data.
+class BlobCheckpointStore(CheckpointStore):
+    """A CheckpointStore that uses Azure Blob Storage to store the partition ownership and checkpoint data.
 
     This class implements methods list_ownership, claim_ownership, update_checkpoint and list_checkpoints that are
-    defined in class azure.eventhub.aio.PartitionManager of package azure-eventhub.
+    defined in class azure.eventhub.aio.CheckpointStore of package azure-eventhub.
 
     """
     def __init__(self, blob_account_url, container_name, credential=None, **kwargs):
