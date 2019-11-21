@@ -12,7 +12,7 @@ class CertificatePolicyAction(str, Enum):
     auto_renew = "AutoRenew"
 
 
-class SecretContentType(str, Enum):
+class CertificateContentType(str, Enum):
     """Content type of the secrets as specified in Certificate Policy"""
 
     PKCS12 = "application/x-pkcs12"

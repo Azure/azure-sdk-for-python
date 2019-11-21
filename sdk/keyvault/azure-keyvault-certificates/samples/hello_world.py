@@ -4,7 +4,7 @@
 # ------------------------------------
 import os
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import CertificateClient, CertificatePolicy, SecretContentType, WellKnownIssuerNames
+from azure.keyvault.certificates import CertificateClient, CertificatePolicy, CertificateContentType, WellKnownIssuerNames
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ try:
         key_type="RSA",
         key_size=2048,
         reuse_key=False,
-        content_type=SecretContentType.PKCS12,
+        content_type=CertificateContentType.PKCS12,
         validity_in_months=24,
     )
     cert_name = "HelloWorldCertificate"

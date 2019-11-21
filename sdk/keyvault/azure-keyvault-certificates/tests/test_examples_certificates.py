@@ -10,7 +10,7 @@ import os
 from devtools_testutils import ResourceGroupPreparer
 from certificates_preparer import VaultClientPreparer
 from certificates_test_case import KeyVaultTestCase
-from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
+from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
 
 
 def print(*args):
@@ -43,7 +43,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         certificate_client = vault_client.certificates
 
         # [START create_certificate]
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
+        from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
@@ -54,7 +54,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=SecretContentType.PKCS12,
+            content_type=CertificateContentType.PKCS12,
             validity_in_months=24,
         )
 
@@ -128,7 +128,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=SecretContentType.PKCS12,
+            content_type=CertificateContentType.PKCS12,
             validity_in_months=24,
         )
 
@@ -193,7 +193,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=SecretContentType.PKCS12,
+            content_type=CertificateContentType.PKCS12,
             validity_in_months=24,
         )
         polling_interval = 0 if self.is_playback() else None
@@ -241,7 +241,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=SecretContentType.PKCS12,
+            content_type=CertificateContentType.PKCS12,
             validity_in_months=24,
         )
 

@@ -6,7 +6,7 @@ import asyncio
 import os
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
-from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
+from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ async def run_sample():
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=SecretContentType.PKCS12,
+            content_type=CertificateContentType.PKCS12,
             validity_in_months=24,
         )
         cert_name = "HelloWorldCertificate"

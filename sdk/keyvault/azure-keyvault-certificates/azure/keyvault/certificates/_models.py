@@ -11,7 +11,7 @@ from ._enums import(
     KeyUsageType,
     KeyCurveName,
     KeyType,
-    SecretContentType,
+    CertificateContentType,
     WellKnownIssuerNames
 )
 
@@ -579,8 +579,7 @@ class CertificatePolicy(object):
     :keyword key_usage: List of key usages.
     :paramtype key_usage: list[str or ~azure.keyvault.certificates.KeyUsageType]
     :keyword content_type: The media type (MIME type) of the secret backing the certificate.
-        For valid values, see SecretContentType.
-    :paramtype content_type: ~azure.keyvault.certificates.SecretContentType or str
+    :paramtype content_type: ~azure.keyvault.certificates.CertificateContentType or str
     :keyword int validity_in_months: The duration that the certificate is valid in months.
     :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime
         of a certificate
@@ -788,7 +787,7 @@ class CertificatePolicy(object):
             enhanced_key_usage=x509_certificate_properties.ekus if x509_certificate_properties else None,
             key_usage=key_usage,
             content_type=(
-                SecretContentType(certificate_policy_bundle.secret_properties.content_type)
+                CertificateContentType(certificate_policy_bundle.secret_properties.content_type)
                 if certificate_policy_bundle.secret_properties and
                 certificate_policy_bundle.secret_properties.content_type
                 else None
@@ -885,10 +884,10 @@ class CertificatePolicy(object):
 
     @property
     def content_type(self):
-        # type: () -> SecretContentType
+        # type: () -> CertificateContentType
         """The media type (MIME type).
 
-        :rtype: ~azure.keyvault.certificates.SecretContentType
+        :rtype: ~azure.keyvault.certificates.CertificateContentType
         """
         return self._content_type
 
