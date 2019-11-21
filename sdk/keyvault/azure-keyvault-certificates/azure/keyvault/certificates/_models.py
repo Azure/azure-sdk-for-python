@@ -572,8 +572,8 @@ class CertificatePolicy(object):
         for RSA.
     :keyword bool reuse_key: Indicates if the same key pair will be used on certificate
         renewal.
-    :keyword curve: Elliptic curve name. For valid values, see KeyCurveName.
-    :paramtype curve: str or ~azure.keyvault.certificates.KeyCurveName
+    :keyword key_curve_name: Elliptic curve name. For valid values, see KeyCurveName.
+    :paramtype key_curve_name: str or ~azure.keyvault.certificates.KeyCurveName
     :keyword enhanced_key_usage: Ways the enhanced key can be used
     :paramtype enhanced_key_usage: list[str]
     :keyword key_usage: List of key usages.
@@ -605,7 +605,7 @@ class CertificatePolicy(object):
         self._key_type = kwargs.pop("key_type", None)
         self._key_size = kwargs.pop("key_size", None)
         self._reuse_key = kwargs.pop("reuse_key", None)
-        self._curve = kwargs.pop("curve", None)
+        self._key_curve_name = kwargs.pop("key_curve_name", None)
         self._enhanced_key_usage = kwargs.pop("enhanced_key_usage", None)
         self._key_usage = kwargs.pop("key_usage", None)
         self._content_type = kwargs.pop("content_type", None)
@@ -635,7 +635,7 @@ class CertificatePolicy(object):
         """Construct a version emulating the generated CertificatePolicy from a wrapped CertificatePolicy"""
         if self.issuer_name or self.certificate_type or self.certificate_transparency:
             issuer_parameters = models.IssuerParameters(
-                name=self.issuer_name.value if not isinstance(self.issuer_name, str) else self.issuer_name,
+                name=self.issuer_name,
                 certificate_type=self.certificate_type,
                 certificate_transparency=self.certificate_transparency,
             )
@@ -671,11 +671,7 @@ class CertificatePolicy(object):
                             lifetime_percentage=lifetime_action.lifetime_percentage,
                             days_before_expiry=lifetime_action.days_before_expiry,
                         ),
-                        action=models.Action(
-                            action_type=lifetime_action.action.value
-                            if not isinstance(lifetime_action.action, str) and lifetime_action.action
-                            else lifetime_action.action
-                        ),
+                        action=models.Action(action_type=lifetime_action.action),
                     )
                 )
         else:
@@ -708,25 +704,19 @@ class CertificatePolicy(object):
         else:
             x509_certificate_properties = None
 
-        if self.exportable or self.key_type or self.key_size or self.reuse_key or self.curve:
+        if self.exportable or self.key_type or self.key_size or self.reuse_key or self.key_curve_name:
             key_properties = models.KeyProperties(
                 exportable=self.exportable,
-                key_type=(
-                    self.key_type.value if not isinstance(self.key_type, str) and self.key_type else self.key_type
-                ),
+                key_type=self.key_type,
                 key_size=self.key_size,
                 reuse_key=self.reuse_key,
-                curve=(self.curve.value if not isinstance(self.curve, str) and self.curve else self.curve),
+                curve=self.key_curve_name,
             )
         else:
             key_properties = None
 
         if self.content_type:
-            secret_properties = models.SecretProperties(
-                content_type=self.content_type.value
-                if not isinstance(self.content_type, str) and self.content_type
-                else self.content_type
-            )
+            secret_properties = models.SecretProperties(content_type=self.content_type)
         else:
             secret_properties = None
 
@@ -783,7 +773,7 @@ class CertificatePolicy(object):
             key_type=KeyType(key_properties.key_type) if key_properties and key_properties.key_type else None,
             key_size=key_properties.key_size if key_properties else None,
             reuse_key=key_properties.reuse_key if key_properties else None,
-            curve=KeyCurveName(key_properties.curve) if key_properties and key_properties.curve else None,
+            key_curve_name=KeyCurveName(key_properties.curve) if key_properties and key_properties.curve else None,
             enhanced_key_usage=x509_certificate_properties.ekus if x509_certificate_properties else None,
             key_usage=key_usage,
             content_type=(
@@ -856,13 +846,13 @@ class CertificatePolicy(object):
         return self._reuse_key
 
     @property
-    def curve(self):
+    def key_curve_name(self):
         # type: () -> KeyCurveName
         """Elliptic curve name.
 
         :rtype: ~azure.keyvault.certificates.KeyCurveName
         """
-        return self._curve
+        return self._key_curve_name
 
     @property
     def enhanced_key_usage(self):

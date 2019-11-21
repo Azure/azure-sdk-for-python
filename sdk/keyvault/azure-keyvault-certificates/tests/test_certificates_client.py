@@ -161,7 +161,7 @@ class CertificateClientTests(KeyVaultTestCase):
             self.assertEqual(policy.key_type, cert_policy_key_props.key_type)
             self.assertEqual(policy.key_size, cert_policy_key_props.key_size)
             self.assertEqual(policy.reuse_key, cert_policy_key_props.reuse_key)
-            self.assertEqual(policy.curve, cert_policy_key_props.curve)
+            self.assertEqual(policy.key_curve_name, cert_policy_key_props.curve)
 
     def _validate_lifetime_actions(self, cert_bundle_lifetime_actions, cert_policy_lifetime_actions):
         self.assertIsNotNone(cert_bundle_lifetime_actions)
