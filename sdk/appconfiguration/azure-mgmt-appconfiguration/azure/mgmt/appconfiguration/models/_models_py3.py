@@ -169,6 +169,8 @@ class ConfigurationStore(Resource):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
+    :param identity: The managed identity information, if configured.
+    :type identity: ~azure.mgmt.appconfiguration.models.ResourceIdentity
     :ivar provisioning_state: The provisioning state of the configuration
      store. Possible values include: 'Creating', 'Updating', 'Deleting',
      'Succeeded', 'Failed', 'Canceled'
@@ -179,6 +181,8 @@ class ConfigurationStore(Resource):
     :ivar endpoint: The DNS endpoint where the configuration store API will be
      available.
     :vartype endpoint: str
+    :param sku: Required. The sku of the configuration store.
+    :type sku: ~azure.mgmt.appconfiguration.models.Sku
     """
 
     _validation = {
@@ -189,6 +193,7 @@ class ConfigurationStore(Resource):
         'provisioning_state': {'readonly': True},
         'creation_date': {'readonly': True},
         'endpoint': {'readonly': True},
+        'sku': {'required': True},
     }
 
     _attribute_map = {
@@ -197,16 +202,20 @@ class ConfigurationStore(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str, sku, tags=None, identity=None, **kwargs) -> None:
         super(ConfigurationStore, self).__init__(location=location, tags=tags, **kwargs)
+        self.identity = identity
         self.provisioning_state = None
         self.creation_date = None
         self.endpoint = None
+        self.sku = sku
 
 
 class ConfigurationStoreUpdateParameters(Model):
@@ -214,18 +223,27 @@ class ConfigurationStoreUpdateParameters(Model):
 
     :param properties: The properties for updating a configuration store.
     :type properties: object
+    :param identity: The managed identity information for the configuration
+     store.
+    :type identity: ~azure.mgmt.appconfiguration.models.ResourceIdentity
+    :param sku: The SKU of the configuration store.
+    :type sku: ~azure.mgmt.appconfiguration.models.Sku
     :param tags: The ARM resource tags.
     :type tags: dict[str, str]
     """
 
     _attribute_map = {
         'properties': {'key': 'properties', 'type': 'object'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, properties=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, properties=None, identity=None, sku=None, tags=None, **kwargs) -> None:
         super(ConfigurationStoreUpdateParameters, self).__init__(**kwargs)
         self.properties = properties
+        self.identity = identity
+        self.sku = sku
         self.tags = tags
 
 
@@ -460,3 +478,99 @@ class RegenerateKeyParameters(Model):
     def __init__(self, *, id: str=None, **kwargs) -> None:
         super(RegenerateKeyParameters, self).__init__(**kwargs)
         self.id = id
+
+
+class ResourceIdentity(Model):
+    """ResourceIdentity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param type: The type of managed identity used. The type 'SystemAssigned,
+     UserAssigned' includes both an implicitly created identity and a set of
+     user-assigned identities. The type 'None' will remove any identities.
+     Possible values include: 'None', 'SystemAssigned', 'UserAssigned',
+     'SystemAssigned, UserAssigned'
+    :type type: str or ~azure.mgmt.appconfiguration.models.IdentityType
+    :param user_assigned_identities: The list of user-assigned identities
+     associated with the resource. The user-assigned identity dictionary keys
+     will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.appconfiguration.models.UserIdentity]
+    :ivar principal_id: The principal id of the identity. This property will
+     only be provided for a system-assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant id associated with the resource's identity.
+     This property will only be provided for a system-assigned identity.
+    :vartype tenant_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserIdentity}'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(self, *, type=None, user_assigned_identities=None, **kwargs) -> None:
+        super(ResourceIdentity, self).__init__(**kwargs)
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
+        self.principal_id = None
+        self.tenant_id = None
+
+
+class Sku(Model):
+    """Describes a configuration store SKU.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The SKU name of the configuration store.
+    :type name: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str, **kwargs) -> None:
+        super(Sku, self).__init__(**kwargs)
+        self.name = name
+
+
+class UserIdentity(Model):
+    """UserIdentity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id: The principal ID of the user-assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the user-assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(UserIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None

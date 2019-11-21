@@ -294,9 +294,10 @@ class HttpContextProperties(object):
 
 
 class _ErrorCodes(object):
-    """Windows Socket Error Codes
+    """Constants of error codes.
     """
 
+    # Windows Socket Error Codes
     WindowsInterruptedFunctionCall = 10004
     WindowsFileHandleNotValid = 10009
     WindowsPermissionDenied = 10013
@@ -313,8 +314,7 @@ class _ErrorCodes(object):
     WindowsHostIsDown = 10064
     WindowsNoRouteTohost = 10065
 
-    """Linux Error Codes
-    """
+    # Linux Error Codes
     LinuxConnectionReset = 131
 
 
@@ -406,7 +406,6 @@ class ResourceType(object):
     Offer = "offers"
     Topology = "topology"
     DatabaseAccount = "databaseaccount"
-    Media = "media"
 
     @staticmethod
     def IsCollectionChild(resourceType):

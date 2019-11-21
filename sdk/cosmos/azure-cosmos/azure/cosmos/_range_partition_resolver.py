@@ -26,8 +26,8 @@ from . import _range as prange
 
 
 class RangePartitionResolver(object):
-    """RangePartitionResolver implements partitioning based on the ranges, allowing you to
-    distribute requests and data across a number of partitions.
+    """RangePartitionResolver implements partitioning based on the ranges,
+    allowing you to distribute requests and data across a number of partitions.
     """
 
     def __init__(self, partition_key_extractor, partition_map):
@@ -48,13 +48,9 @@ class RangePartitionResolver(object):
     def ResolveForCreate(self, document):
         """Resolves the collection for creating the document based on the partition key.
 
-        :param dict document:
-            The document to be created.
-
-        :return:
-            Collection Self link or Name based link which should handle the Create operation.
-        :rtype:
-            str
+        :param dict document: The document to be created.
+        :return: Collection Self link or Name based link which should handle the Create operation.
+        :rtype: str
         """
         if document is None:
             raise ValueError("document is None.")
@@ -70,13 +66,9 @@ class RangePartitionResolver(object):
     def ResolveForRead(self, partition_key):
         """Resolves the collection for reading/querying the documents based on the partition key.
 
-        :param dict document:
-            The document to be read/queried.
-
-        :return:
-            Collection Self link(s) or Name based link(s) which should handle the Read operation.
-        :rtype:
-            list
+        :param dict document: The document to be read/queried.
+        :return: Collection Self link(s) or Name based link(s) which should handle the Read operation.
+        :rtype: list
         """
         intersecting_ranges = self._GetIntersectingRanges(partition_key)
 
@@ -87,7 +79,7 @@ class RangePartitionResolver(object):
         return collection_links
 
     def _GetContainingRange(self, partition_key):
-        """Gets the containing range based on the partition key.
+        """Get the containing range based on the partition key.
         """
         for keyrange in self.partition_map.keys():
             if keyrange.Contains(partition_key):
@@ -96,7 +88,7 @@ class RangePartitionResolver(object):
         return None
 
     def _GetIntersectingRanges(self, partition_key):
-        """Gets the intersecting ranges based on the partition key.
+        """Get the intersecting ranges based on the partition key.
         """
         partitionkey_ranges = set()
         intersecting_ranges = set()

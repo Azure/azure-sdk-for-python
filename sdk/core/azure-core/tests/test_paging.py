@@ -129,3 +129,16 @@ class TestPaging(object):
         pager = ItemPaged(get_next, extract_data)
         result_iterated = list(pager)
         assert len(result_iterated) == 0
+
+    def test_print(self):
+        def get_next(continuation_token=None):
+            return {
+                'nextLink': None,
+                'value': None
+            }
+        def extract_data(response):
+            return response['nextLink'], iter(response['value'] or [])
+
+        pager = ItemPaged(get_next, extract_data)
+        output = repr(pager)
+        assert output.startswith('<iterator object azure.core.paging.ItemPaged at')

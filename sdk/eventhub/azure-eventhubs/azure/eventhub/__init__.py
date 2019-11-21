@@ -4,17 +4,27 @@
 # --------------------------------------------------------------------------------------------
 
 __path__ = __import__('pkgutil').extend_path(__path__, __name__)  # type: ignore
-__version__ = "5.0.0b5"
+
 from uamqp import constants  # type: ignore
-from .common import EventData, EventDataBatch, EventPosition
-from .error import EventHubError, EventDataError, ConnectError, \
-    AuthenticationError, EventDataSendError, ConnectionLostError
+
+from ._version import VERSION
+__version__ = VERSION
+
+from ._common import EventData, EventDataBatch, EventPosition
 from ._producer_client import EventHubProducerClient
 from ._consumer_client import EventHubConsumerClient
-from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential
-from ._eventprocessor.partition_manager import PartitionManager
+from ._common import EventHubSharedKeyCredential, EventHubSASTokenCredential
+from ._eventprocessor.checkpoint_store import CheckpointStore
 from ._eventprocessor.common import CloseReason, OwnershipLostError
 from ._eventprocessor.partition_context import PartitionContext
+from .exceptions import (
+    EventHubError,
+    EventDataError,
+    ConnectError,
+    AuthenticationError,
+    EventDataSendError,
+    ConnectionLostError
+)
 
 TransportType = constants.TransportType
 
@@ -33,7 +43,7 @@ __all__ = [
     "TransportType",
     "EventHubSharedKeyCredential",
     "EventHubSASTokenCredential",
-    "PartitionManager",
+    "CheckpointStore",
     "CloseReason",
     "OwnershipLostError",
     "PartitionContext",

@@ -77,9 +77,7 @@ def _build_connection_policy(kwargs):
     policy.RequestTimeout = kwargs.pop('request_timeout', None) or \
         kwargs.pop('connection_timeout', None) or \
         policy.RequestTimeout
-    policy.MediaRequestTimeout = kwargs.pop('media_request_timeout', None) or policy.MediaRequestTimeout
     policy.ConnectionMode = kwargs.pop('connection_mode', None) or policy.ConnectionMode
-    policy.MediaReadMode = kwargs.pop('media_read_mode', None) or policy.MediaReadMode
     policy.ProxyConfiguration = kwargs.pop('proxy_config', None) or policy.ProxyConfiguration
     policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', None) or policy.EnableEndpointDiscovery
     policy.PreferredLocations = kwargs.pop('preferred_locations', None) or policy.PreferredLocations
@@ -121,8 +119,8 @@ def _build_connection_policy(kwargs):
 
 
 class CosmosClient(object):
-    """
-    Provides a client-side logical representation of an Azure Cosmos DB account.
+    """A client-side logical representation of an Azure Cosmos DB account.
+
     Use this client to configure and execute requests to the Azure Cosmos DB service.
 
     :param str url: The URL of the Cosmos DB account.
@@ -131,9 +129,7 @@ class CosmosClient(object):
     :param str consistency_level: Consistency level to use for the session. The default value is "Session".
     :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
     :keyword int request_timeout: The HTTP request timeout in seconds.
-    :keyword int media_request_timeout: The media request timeout in seconds.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
-    :keyword str media_read_mode: The mode for use with downloading attachment content - default value is `Buffered`.
     :keyword proxy_config: Connection proxy configuration.
     :paramtype proxy_config: ~azure.cosmos.ProxyConfiguration
     :keyword ssl_config: Connection SSL configuration.
@@ -148,8 +144,8 @@ class CosmosClient(object):
     :keyword int retry_status: Maximum number of retry attempts on error status codes.
     :keyword list[int] retry_on_status_codes: A list of specific status codes to retry on.
     :keyword float retry_backoff_factor: Factor to calculate wait time between retry attempts.
-    :keyword bool enable_endpoint_discovery: Enable endpoint discovery for geo-replicated database accounts.
-     Default is True.
+    :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
+        geo-replicated database accounts. (Default: True)
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
 
     .. admonition:: Example:
@@ -165,7 +161,7 @@ class CosmosClient(object):
 
     def __init__(self, url, credential, consistency_level="Session", **kwargs):
         # type: (str, Any, str, Any) -> None
-        """ Instantiate a new CosmosClient."""
+        """Instantiate a new CosmosClient."""
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
@@ -186,17 +182,17 @@ class CosmosClient(object):
     @classmethod
     def from_connection_string(cls, conn_str, credential=None, consistency_level="Session", **kwargs):
         # type: (str, Optional[Any], str, Any) -> CosmosClient
-        """
-        Create CosmosClient from a connection string.
+        """Create a CosmosClient instance from a connection string.
 
-        This can be retrieved from the Azure portal.For full list of optional keyword
-        arguments, see the CosmosClient constructor.
+        This can be retrieved from the Azure portal.For full list of optional
+        keyword arguments, see the CosmosClient constructor.
 
         :param str conn_str: The connection string.
-        :param credential: Alternative credentials to use instead of the key provided in the
-            connection string.
+        :param credential: Alternative credentials to use instead of the key
+            provided in the connection string.
         :type credential: str or dict(str, str)
-        :param str consistency_level: Consistency level to use for the session. The default value is "Session".
+        :param str consistency_level:
+            Consistency level to use for the session. The default value is "Session".
         """
         settings = _parse_connection_str(conn_str, credential)
         return cls(
@@ -279,8 +275,10 @@ class CosmosClient(object):
         Create the database if it does not exist already.
 
         If the database already exists, the existing settings are returned.
-        Note: it does not check or update the existing database settings or offer throughput
-        if they differ from what was passed into the method.
+
+        ..note::
+            This function does not check or update existing database settings or
+            offer throughput if they differ from what is passed in.
 
         :param id: ID (name) of the database to read or create.
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
@@ -314,8 +312,8 @@ class CosmosClient(object):
         # type: (Union[str, DatabaseProxy, Dict[str, Any]]) -> DatabaseProxy
         """Retrieve an existing database with the ID (name) `id`.
 
-        :param database: The ID (name), dict representing the properties or `DatabaseProxy`
-            instance of the database to read.
+        :param database: The ID (name), dict representing the properties or
+            `DatabaseProxy` instance of the database to read.
         :type database: str or dict(str, str) or ~azure.cosmos.DatabaseProxy
         :returns: A `DatabaseProxy` instance representing the retrieved database.
         :rtype: ~azure.cosmos.DatabaseProxy
@@ -443,8 +441,7 @@ class CosmosClient(object):
     @distributed_trace
     def get_database_account(self, **kwargs):
         # type: (Any) -> DatabaseAccount
-        """
-        Retrieve the database account information.
+        """Retrieve the database account information.
 
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.

@@ -30,11 +30,14 @@ class MgmtAppConfigurationTest(AzureMgmtTestCase):
         # ConfigurationStores_Create[put]
         BODY = {
           "location": "westus",
+          "sku": {
+            "name": "Free"
+          },
           "tags": {
             "my_tag": "myTagValue"
           }
         }
-        result = self.mgmt_client.configuration_stores.create(resource_group.name, CONFIGURATION_STORE_NAME, BODY["location"], BODY["tags"])
+        result = self.mgmt_client.configuration_stores.create(resource_group.name, CONFIGURATION_STORE_NAME, BODY)
         result = result.result()
         self.assertEqual(result.name, CONFIGURATION_STORE_NAME)
         self.assertEqual(result.provisioning_state, "Succeeded")

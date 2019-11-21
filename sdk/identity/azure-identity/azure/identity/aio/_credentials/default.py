@@ -2,13 +2,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import logging
 import os
 
-from ..._constants import EnvironmentVariables
+from ..._constants import EnvironmentVariables, KnownAuthorities
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
-from .user import SharedTokenCacheCredential
+from .shared_cache import SharedTokenCacheCredential
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class DefaultAzureCredential(ChainedTokenCredential):
@@ -24,21 +27,49 @@ class DefaultAzureCredential(ChainedTokenCredential):
        identities are in the cache, then the value of  the environment variable ``AZURE_USERNAME`` is used to select
        which identity to use. See :class:`~azure.identity.aio.SharedTokenCacheCredential` for more details.
 
+    This default behavior is configurable with keyword arguments.
+
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
           defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
+    :keyword bool exclude_environment_credential: Whether to exclude a service principal configured by environment
+        variables from the credential. Defaults to **False**.
+    :keyword bool exclude_managed_identity_credential: Whether to exclude managed identity from the credential.
+        Defaults to **False**.
+    :keyword bool exclude_shared_token_cache_credential: Whether to exclude the shared token cache. Defaults to
+        **False**.
+    :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.SharedTokenCacheCredential`.
+        Defaults to the value of environment variable AZURE_USERNAME, if any.
+    :keyword str shared_cache_tenant_id: Preferred tenant for :class:`~azure.identity.SharedTokenCacheCredential`.
+        Defaults to the value of environment variable AZURE_TENANT_ID, if any.
     """
 
     def __init__(self, **kwargs):
-        authority = kwargs.pop("authority", None)
-        credentials = [EnvironmentCredential(authority=authority, **kwargs), ManagedIdentityCredential(**kwargs)]
+        authority = kwargs.pop("authority", None) or KnownAuthorities.AZURE_PUBLIC_CLOUD
 
-        # SharedTokenCacheCredential is part of the default only on supported platforms.
-        if SharedTokenCacheCredential.supported():
-            credentials.append(
-                SharedTokenCacheCredential(
-                    username=os.environ.get(EnvironmentVariables.AZURE_USERNAME), authority=authority, **kwargs
+        shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
+        shared_cache_tenant_id = kwargs.pop(
+            "shared_cache_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
+        )
+
+        exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
+        exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
+        exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
+
+        credentials = []
+        if not exclude_environment_credential:
+            credentials.append(EnvironmentCredential(authority=authority, **kwargs))
+        if not exclude_managed_identity_credential:
+            credentials.append(ManagedIdentityCredential(**kwargs))
+        if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
+            try:
+                # username and/or tenant_id are only required when the cache contains tokens for multiple identities
+                shared_cache = SharedTokenCacheCredential(
+                    username=shared_cache_username, tenant_id=shared_cache_tenant_id, authority=authority, **kwargs
                 )
-            )
+                credentials.append(shared_cache)
+            except Exception as ex:  # pylint:disable=broad-except
+                # transitive dependency pywin32 doesn't support 3.8 (https://github.com/mhammond/pywin32/issues/1431)
+                _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
 
         super().__init__(*credentials)

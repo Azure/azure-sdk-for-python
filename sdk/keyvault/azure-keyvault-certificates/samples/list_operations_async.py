@@ -48,10 +48,10 @@ async def run_sample():
         storage_cert_name = "StorageListCertificate"
 
         bank_certificate = await client.create_certificate(
-            name=bank_cert_name, policy=CertificatePolicy.get_default()
+            certificate_name=bank_cert_name, policy=CertificatePolicy.get_default()
         )
         storage_certificate = await client.create_certificate(
-            name=storage_cert_name, policy=CertificatePolicy.get_default()
+            certificate_name=storage_cert_name, policy=CertificatePolicy.get_default()
         )
 
         print("Certificate with name '{0}' was created.".format(bank_certificate.name))
@@ -69,7 +69,7 @@ async def run_sample():
         tags = {"a": "b"}
 
         updated_bank_certificate_poller = await client.create_certificate(
-            name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags
+            certificate_name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags
         )
         bank_certificate = await updated_bank_certificate_poller
         print(
@@ -89,8 +89,8 @@ async def run_sample():
             )
 
         # The bank account and storage accounts got closed. Let's delete bank and storage accounts certificates.
-        await client.delete_certificate(name=bank_cert_name)
-        await client.delete_certificate(name=storage_cert_name)
+        await client.delete_certificate(bank_cert_name)
+        await client.delete_certificate(storage_cert_name)
 
         # You can list all the deleted and non-purged certificates, assuming Key Vault is soft-delete enabled.
         print("\n.. List deleted certificates from the Key Vault")

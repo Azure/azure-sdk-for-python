@@ -209,7 +209,7 @@ class IpGroupsOperations(object):
 
     def update_groups(
             self, resource_group_name, ip_groups_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Updates an IpGroups.
+        """Updates tags of an IpGroups resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

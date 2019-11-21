@@ -10,7 +10,7 @@ steps:
 
   - script: |
      pip install setuptools wheel Jinja2 packaging
-     pip install doc-warden==0.3.0
+     pip install doc-warden==0.3.1
      ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml
     displayName: 'Verify Readmes'
 
@@ -25,6 +25,16 @@ steps:
     inputs:
      scriptPath: 'scripts/devops_tasks/verify_change_log.py'
      arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}}'
+
+    # Using --always-succeed so as not to block the build. Once package
+    # target is based on data available per-package the --always-succeed should
+    # be removed so this script can help enforce correct practices
+    # (https://github.com/Azure/azure-sdk-for-python/issues/8697)
+  - script: |
+      cd eng/versioning
+      pip install -r requirements.txt
+      python find_invalid_versions.py --always-succeed --service-directory ${{parameters.ServiceDirectory}}
+    displayName: Find Invalid Versions
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR

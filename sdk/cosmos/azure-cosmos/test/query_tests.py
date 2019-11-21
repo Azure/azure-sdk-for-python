@@ -30,7 +30,7 @@ class QueryTest(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        
+
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
         cls.created_db = cls.config.create_database_if_not_exist(cls.client)
 
@@ -108,7 +108,7 @@ class QueryTest(unittest.TestCase):
             expected_ids = 'doc2.doc3.'
             actual_ids = ''
             for item in it:
-                actual_ids += item['id'] + '.'    
+                actual_ids += item['id'] + '.'
             self.assertEqual(actual_ids, expected_ids)
 
             # verify by_page
@@ -145,7 +145,7 @@ class QueryTest(unittest.TestCase):
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
         continuation3 = created_collection.client_connection.last_response_headers['etag']
 
-        # verify reading empty change feed 
+        # verify reading empty change feed
         query_iterable = created_collection.query_items_change_feed(
             partition_key_range_id=pkRangeId,
             continuation=continuation3,
@@ -177,6 +177,7 @@ class QueryTest(unittest.TestCase):
         self.assertTrue(len(metrics) > 1)
         self.assertTrue(all(['=' in x for x in metrics]))
 
+    @pytest.mark.xfail
     def test_max_item_count_honored_in_order_by_query(self):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
         docs = []
