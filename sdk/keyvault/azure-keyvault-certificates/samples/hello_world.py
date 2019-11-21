@@ -56,7 +56,7 @@ try:
         key_type="RSA",
         key_size=2048,
         reuse_key=False,
-        content_type=CertificateContentType.PKCS12,
+        content_type=CertificateContentType.pkcs12,
         validity_in_months=24,
     )
     cert_name = "HelloWorldCertificate"

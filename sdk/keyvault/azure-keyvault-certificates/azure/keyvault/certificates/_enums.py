@@ -15,8 +15,8 @@ class CertificatePolicyAction(str, Enum):
 class CertificateContentType(str, Enum):
     """Content type of the secrets as specified in Certificate Policy"""
 
-    PKCS12 = "application/x-pkcs12"
-    PEM = "application/x-pem-file"
+    pkcs12 = "application/x-pkcs12"
+    pem = "application/x-pem-file"
 
 
 class KeyUsageType(str, Enum):

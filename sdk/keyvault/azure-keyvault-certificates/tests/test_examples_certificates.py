@@ -54,7 +54,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=CertificateContentType.PKCS12,
+            content_type=CertificateContentType.pkcs12,
             validity_in_months=24,
         )
 
@@ -128,7 +128,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=CertificateContentType.PKCS12,
+            content_type=CertificateContentType.pkcs12,
             validity_in_months=24,
         )
 
@@ -193,7 +193,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=CertificateContentType.PKCS12,
+            content_type=CertificateContentType.pkcs12,
             validity_in_months=24,
         )
         polling_interval = 0 if self.is_playback() else None
@@ -241,7 +241,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=CertificateContentType.PKCS12,
+            content_type=CertificateContentType.pkcs12,
             validity_in_months=24,
         )
 
