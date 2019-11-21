@@ -45,6 +45,7 @@ class MgmtRecoveryServicesBackupTests(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_iaasvm_e2e(self, resource_group, location):
+        raise unittest.SkipTest("Skipping IAA VM test")
         with self.vault():
             self.test_helper.enable_protection(self.test_definition.container_name, self.test_definition.vm_name, "DefaultPolicy")
 
