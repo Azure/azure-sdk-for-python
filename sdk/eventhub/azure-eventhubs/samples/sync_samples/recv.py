@@ -33,7 +33,7 @@ def on_error(partition_context, error):
     print("Partition: {} met an exception during receiving: {}".format(partition_context.partition_id,
                                                                        error))
 
-def on_event(partition_context, event):
+def on_events(partition_context, event):
     # put your code here
     print("Received event from partition: {}".format(partition_context.partition_id))
 
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     try:
         with consumer_client:
             consumer_client.receive(
-                on_events=on_event,
+                on_events=on_events,
                 consumer_group='$Default',
                 on_partition_initialize=on_partition_initialize,
                 on_partition_close=on_partition_close,
