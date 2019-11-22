@@ -21,7 +21,7 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import AsyncHttpTransport
 
-from .constants import STORAGE_OAUTH_SCOPE, DEFAULT_SOCKET_TIMEOUT
+from .constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT
 from .authentication import SharedKeyCredentialPolicy
 from .base_client import create_configuration
 from .policies import (
@@ -72,7 +72,7 @@ class AsyncStorageAccountHostsMixin(object):
             return config, kwargs['_pipeline']
         config.transport = kwargs.get('transport')  # type: ignore
         if 'connection_timeout' not in kwargs:
-            kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT[0] # type: ignore
+            kwargs['connection_timeout'] = CONNECTION_TIMEOUT # type: ignore
         if not config.transport:
             try:
                 from azure.core.pipeline.transport import AioHttpTransport

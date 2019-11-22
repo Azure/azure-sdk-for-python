@@ -38,7 +38,7 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
 )
 
-from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TIMEOUT
+from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT
 from .models import LocationMode
 from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
@@ -210,7 +210,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             return config, kwargs["_pipeline"]
         config.transport = kwargs.get("transport")  # type: ignore
         if "connection_timeout" not in kwargs:
-            kwargs["connection_timeout"] = DEFAULT_SOCKET_TIMEOUT
+            kwargs["connection_timeout"] = CONNECTION_TIMEOUT
         if not config.transport:
             config.transport = RequestsTransport(**kwargs)
         policies = [
