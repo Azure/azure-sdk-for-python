@@ -70,7 +70,9 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             for partition_id in claimed_partitions:
                 if partition_id not in self._consumers:
 
-                    if partition_id not in self._partition_contexts:
+                    if partition_id in self._partition_contexts:
+                        partition_context = self._partition_contexts[partition_id]
+                    else:
                         partition_context = PartitionContext(
                             self._namespace,
                             self._eventhub_name,
