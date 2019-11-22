@@ -4,12 +4,11 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals
 
-import time
 import uuid
 import logging
 
 import uamqp  # type: ignore
-from uamqp import types, errors, utils, constants  # type: ignore
+from uamqp import types, errors, utils  # type: ignore
 from uamqp import ReceiveClient, Source  # type: ignore
 
 from .exceptions import _error_handler
