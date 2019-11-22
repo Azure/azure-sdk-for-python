@@ -401,7 +401,7 @@ def test_timeout(caplog):
 
     assert "Tuple timeout setting is deprecated" not in caplog.text
 
-def test_timeout(caplog):
+def test_conflict_timeout(caplog):
     transport = RequestsTransport()
 
     request = HttpRequest("GET", "https://www.bing.com")
