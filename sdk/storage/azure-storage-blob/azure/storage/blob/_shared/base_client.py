@@ -113,6 +113,9 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
+    def close(self):
+        self._client.close()
+
     @property
     def url(self):
         """The full endpoint URL to this entity, including SAS token if used.

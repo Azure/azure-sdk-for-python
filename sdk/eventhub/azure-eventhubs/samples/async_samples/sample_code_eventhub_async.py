@@ -20,8 +20,7 @@ def create_async_eventhub_producer_client():
 
     # [START create_eventhub_producer_client_async]
     import os
-    from azure.eventhub import EventHubSharedKeyCredential
-    from azure.eventhub.aio import EventHubProducerClient
+    from azure.eventhub.aio import EventHubProducerClient, EventHubSharedKeyCredential
 
     fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
     eventhub_name = os.environ['EVENT_HUB_NAME']
@@ -47,8 +46,7 @@ def create_async_eventhub_consumer_client():
 
     # [START create_eventhub_consumer_client_async]
     import os
-    from azure.eventhub import EventHubSharedKeyCredential
-    from azure.eventhub.aio import EventHubConsumerClient
+    from azure.eventhub.aio import EventHubConsumerClient, EventHubSharedKeyCredential
 
     fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
     eventhub_name = os.environ['EVENT_HUB_NAME']

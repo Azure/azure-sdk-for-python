@@ -51,7 +51,7 @@ class StorageFileClientTest(FileTestCase):
         super(StorageFileClientTest, self).setUp()
         self.account_name = self.settings.STORAGE_ACCOUNT_NAME
         self.account_key = self.settings.STORAGE_ACCOUNT_KEY
-        self.sas_token = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
+        self.sas_token = self.generate_sas_token()
         self.token_credential = self.generate_oauth_token()
 
     # --Helpers-----------------------------------------------------------------
@@ -408,6 +408,28 @@ class StorageFileClientTest(FileTestCase):
     def test_user_agent_append_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_user_agent_append_async())
+
+    async def test_closing_pipeline_client_async(self):
+        # Arrange
+
+        for client, url in SERVICES.items():
+            # Act
+            service = client(
+                self.get_file_url(), credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
+
+            # Assert
+            async with service:
+                assert hasattr(service, 'close')
+                service.close()
+
+    async def test_closing_pipeline_client_simple_async(self):
+        # Arrange
+
+        for client, url in SERVICES.items():
+            # Act
+            service = client(
+                self.get_file_url(), credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
+            service.close()
 
 
 # ------------------------------------------------------------------------------

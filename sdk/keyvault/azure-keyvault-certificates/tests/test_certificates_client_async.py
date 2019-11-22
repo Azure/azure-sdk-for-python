@@ -21,7 +21,7 @@ from azure.keyvault.certificates import (
     KeyType,
     KeyCurveName,
     KeyUsageType,
-    SecretContentType,
+    CertificateContentType,
     LifetimeAction,
     WellKnownIssuerNames,
     CertificateIssuer,
@@ -95,14 +95,14 @@ class CertificateClientTests(KeyVaultTestCase):
 
     def _validate_certificate_policy(self, original_policy, returned_policy):
         self.assertEqual(original_policy.issuer_name, returned_policy.issuer_name)
-        self.assertEqual(original_policy.subject_name, returned_policy.subject_name)
+        self.assertEqual(original_policy.subject, returned_policy.subject)
         self.assertEqual(original_policy.exportable, returned_policy.exportable)
         self.assertEqual(original_policy.key_type, returned_policy.key_type)
         self.assertEqual(original_policy.key_size, returned_policy.key_size)
         self.assertEqual(original_policy.reuse_key, returned_policy.reuse_key)
-        self.assertEqual(original_policy.curve, returned_policy.curve)
-        if original_policy.ekus:
-            self.assertEqual(set(original_policy.ekus), set(returned_policy.ekus))
+        self.assertEqual(original_policy.key_curve_name, returned_policy.key_curve_name)
+        if original_policy.enhanced_key_usage:
+            self.assertEqual(set(original_policy.enhanced_key_usage), set(returned_policy.enhanced_key_usage))
         if original_policy.key_usage:
             self.assertEqual(set(original_policy.key_usage), set(returned_policy.key_usage))
         self.assertEqual(original_policy.content_type, returned_policy.content_type)
@@ -124,8 +124,8 @@ class CertificateClientTests(KeyVaultTestCase):
             self.assertEqual(set(original_policy.san_dns_names), set(returned_policy.san_dns_names))
         if original_policy.san_emails:
             self.assertEqual(set(original_policy.san_emails), set(returned_policy.san_emails))
-        if original_policy.san_upns:
-            self.assertEqual(set(original_policy.san_upns), set(returned_policy.san_upns))
+        if original_policy.san_user_principal_names:
+            self.assertEqual(set(original_policy.san_user_principal_names), set(returned_policy.san_user_principal_names))
 
     def _validate_lifetime_actions(self, original_lifetime_actions, returned_lifetime_actions):
         self.assertEqual(len(original_lifetime_actions), len(returned_lifetime_actions))
@@ -149,26 +149,23 @@ class CertificateClientTests(KeyVaultTestCase):
             self.assertEqual(original_contact.name, returned_contact.name)
             self.assertEqual(original_contact.phone, returned_contact.phone)
 
-    def _admin_detail_equal(self, original_admin_detail, returned_admin_detail):
+    def _admin_contact_equal(self, a, b):
         return (
-            original_admin_detail.first_name == returned_admin_detail.first_name
-            and original_admin_detail.last_name == returned_admin_detail.last_name
-            and original_admin_detail.email == returned_admin_detail.email
-            and original_admin_detail.phone == returned_admin_detail.phone
+            a.first_name == b.first_name
+            and a.last_name == b.last_name
+            and a.email == b.email
+            and a.phone == b.phone
         )
 
     def _validate_certificate_issuer(self, original_issuer, returned_issuer):
-        self._validate_certificate_issuer_properties(
-            original_issuer=original_issuer.properties,
-            returned_issuer=returned_issuer.properties
-        )
+        self.assertEqual(original_issuer.provider, returned_issuer.provider)
         self.assertEqual(original_issuer.account_id, returned_issuer.account_id)
-        self.assertEqual(len(original_issuer.admin_details), len(returned_issuer.admin_details))
-        for original_admin_detail in original_issuer.admin_details:
-            returned_admin_detail = next(
-                (ad for ad in returned_issuer.admin_details if self._admin_detail_equal(original_admin_detail, ad)), None
+        self.assertEqual(len(original_issuer.admin_contacts), len(returned_issuer.admin_contacts))
+        for original_admin_contact in original_issuer.admin_contacts:
+            returned_admin_contact = next(
+                (ad for ad in returned_issuer.admin_contacts if self._admin_contact_equal(original_admin_contact, ad)), None
             )
-            self.assertIsNotNone(returned_admin_detail)
+            self.assertIsNotNone(returned_admin_contact)
         self.assertEqual(original_issuer.password, returned_issuer.password)
         self.assertEqual(original_issuer.organization_id, returned_issuer.organization_id)
 
@@ -190,12 +187,12 @@ class CertificateClientTests(KeyVaultTestCase):
         ]
         cert_policy = CertificatePolicy(
             issuer_name="Self",
-            subject_name="CN=DefaultPolicy",
+            subject="CN=DefaultPolicy",
             exportable=True,
             key_type=KeyType.rsa,
             key_size=2048,
             reuse_key=False,
-            content_type=SecretContentType.PKCS12,
+            content_type=CertificateContentType.pkcs12,
             lifetime_actions=lifetime_actions,
             validity_in_months=12,
             key_usage=[KeyUsageType.digital_signature, KeyUsageType.key_encipherment]
@@ -336,7 +333,7 @@ class CertificateClientTests(KeyVaultTestCase):
         ]
 
         # create certificate contacts
-        contacts = await client.create_contacts(contacts=contact_list)
+        contacts = await client.set_contacts(contacts=contact_list)
         self._validate_certificate_contacts(original_contacts=contact_list, returned_contacts=contacts)
 
         # get certificate contacts
@@ -491,14 +488,14 @@ class CertificateClientTests(KeyVaultTestCase):
         cert_name = "policyCertificate"
         cert_policy = CertificatePolicy(
             issuer_name="Self",
-            subject_name="CN=DefaultPolicy",
+            subject="CN=DefaultPolicy",
             exportable=True,
             key_type=KeyType.rsa,
             key_size=2048,
             reuse_key=True,
-            ekus=["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],
+            enhanced_key_usage=["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],
             key_usage=[KeyUsageType.decipher_only],
-            content_type=SecretContentType.PKCS12,
+            content_type=CertificateContentType.pkcs12,
             validity_in_months=12,
             lifetime_actions=[LifetimeAction(
                 action=CertificatePolicyAction.email_contacts,
@@ -517,15 +514,15 @@ class CertificateClientTests(KeyVaultTestCase):
             _polling_interval=polling_interval
         )
 
-        returned_policy = await client.get_policy(certificate_name=cert_name)
+        returned_policy = await client.get_certificate_policy(certificate_name=cert_name)
 
         self._validate_certificate_policy(original_policy=cert_policy, returned_policy=returned_policy)
 
         cert_policy._key_type = KeyType.ec
         cert_policy._key_size = 256
-        cert_policy._curve = KeyCurveName.p_256
+        cert_policy._key_curve_name = KeyCurveName.p_256
 
-        returned_policy = await client.update_policy(certificate_name=cert_name, policy=cert_policy)
+        returned_policy = await client.update_certificate_policy(certificate_name=cert_name, policy=cert_policy)
 
         self._validate_certificate_policy(original_policy=cert_policy, returned_policy=returned_policy)
 
@@ -591,8 +588,8 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
         cert_name = "mergeCertificate"
         cert_policy = CertificatePolicy(
-            issuer_name=WellKnownIssuerNames.Unknown,
-            subject_name="CN=MyCert",
+            issuer_name=WellKnownIssuerNames.unknown,
+            subject="CN=MyCert",
             certificate_transparency=False
         )
 
@@ -642,23 +639,20 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertIsNotNone(vault_client)
         client = vault_client.certificates
         issuer_name = "issuer"
-        admin_details = [
+        admin_contacts = [
             AdministratorContact(first_name="John", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
 
         # create certificate issuer
         issuer = await client.create_issuer(
-            issuer_name, "Test", account_id="keyvaultuser", admin_details=admin_details, enabled=True
-        )
-
-        properties = IssuerProperties(
-            issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name, provider="Test"
+            issuer_name, "Test", account_id="keyvaultuser", admin_contacts=admin_contacts, enabled=True
         )
 
         expected = CertificateIssuer(
-            properties=properties,
+            provider="Test",
             account_id="keyvaultuser",
-            admin_details=admin_details
+            admin_contacts=admin_contacts,
+            issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name
         )
 
         self._validate_certificate_issuer(original_issuer=expected, returned_issuer=issuer)
@@ -673,7 +667,7 @@ class CertificateClientTests(KeyVaultTestCase):
             issuer_name=issuer_name + "2",
             provider="Test",
             account_id="keyvaultuser2",
-            admin_details=admin_details,
+            admin_contacts=admin_contacts,
             enabled=True,
         )
 
@@ -695,16 +689,17 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(len(expected_issuers), 0)
 
         # update certificate issuer
-        admin_details = [
+        admin_contacts = [
             AdministratorContact(first_name="Jane", last_name="Doe", email="admin@microsoft.com", phone="4255555555")
         ]
 
         expected = CertificateIssuer(
-            properties=properties,
+            provider="Test",
             account_id="keyvaultuser",
-            admin_details=admin_details
+            admin_contacts=admin_contacts,
+            issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name
         )
-        issuer = await client.update_issuer(issuer_name, admin_details=admin_details)
+        issuer = await client.update_issuer(issuer_name, admin_contacts=admin_contacts)
         self._validate_certificate_issuer(original_issuer=expected, returned_issuer=issuer)
 
         # delete certificate issuer
