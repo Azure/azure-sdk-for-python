@@ -199,7 +199,7 @@ print(certificate.name)
 print(certificate.properties.version)
 ```
 
-### Update properties of an existing Certificate]
+### Update properties of an existing Certificate
 [update_certificate_properties](https://aka.ms/azsdk-python-keyvault-certificates-updatecertprops-ref) updates a certificate previously stored in the Key Vault.
 ```python
 from azure.identity import DefaultAzureCredential
