@@ -90,64 +90,57 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(cert_name, cert.name)
         self.assertIsNotNone(cert.cer)
         self.assertIsNotNone(cert.policy)
-        self._validate_certificate_policy(original_policy=cert_policy, returned_policy=cert_policy)
+        self._validate_certificate_policy(cert_policy, cert_policy)
 
+    def _validate_certificate_policy(self, a, b):
+        self.assertEqual(a.issuer_name, b.issuer_name)
+        self.assertEqual(a.subject, b.subject)
+        self.assertEqual(a.exportable, b.exportable)
+        self.assertEqual(a.key_type, b.key_type)
+        self.assertEqual(a.key_size, b.key_size)
+        self.assertEqual(a.reuse_key, b.reuse_key)
+        self.assertEqual(a.key_curve_name, b.key_curve_name)
+        if a.enhanced_key_usage:
+            self.assertEqual(set(a.enhanced_key_usage), set(b.enhanced_key_usage))
+        if a.key_usage:
+            self.assertEqual(set(a.key_usage), set(b.key_usage))
+        self.assertEqual(a.content_type, b.content_type)
+        self.assertEqual(a.validity_in_months, b.validity_in_months)
+        self.assertEqual(a.certificate_type, b.certificate_type)
+        self.assertEqual(a.certificate_transparency, b.certificate_transparency)
+        self._validate_sans(a, b)
+        if a.lifetime_actions:
+            self._validate_lifetime_actions(a.lifetime_actions, b.lifetime_actions)
 
-    def _validate_certificate_policy(self, original_policy, returned_policy):
-        self.assertEqual(original_policy.issuer_name, returned_policy.issuer_name)
-        self.assertEqual(original_policy.subject, returned_policy.subject)
-        self.assertEqual(original_policy.exportable, returned_policy.exportable)
-        self.assertEqual(original_policy.key_type, returned_policy.key_type)
-        self.assertEqual(original_policy.key_size, returned_policy.key_size)
-        self.assertEqual(original_policy.reuse_key, returned_policy.reuse_key)
-        self.assertEqual(original_policy.key_curve_name, returned_policy.key_curve_name)
-        if original_policy.enhanced_key_usage:
-            self.assertEqual(set(original_policy.enhanced_key_usage), set(returned_policy.enhanced_key_usage))
-        if original_policy.key_usage:
-            self.assertEqual(set(original_policy.key_usage), set(returned_policy.key_usage))
-        self.assertEqual(original_policy.content_type, returned_policy.content_type)
-        self.assertEqual(original_policy.validity_in_months, returned_policy.validity_in_months)
-        self.assertEqual(original_policy.certificate_type, returned_policy.certificate_type)
-        self.assertEqual(original_policy.certificate_transparency, returned_policy.certificate_transparency)
-        self._validate_sans(
-            original_policy=original_policy,
-            returned_policy=returned_policy
-        )
-        if original_policy.lifetime_actions:
-            self._validate_lifetime_actions(
-                original_lifetime_actions=original_policy.lifetime_actions,
-                returned_lifetime_actions=returned_policy.lifetime_actions,
-            )
+    def _validate_sans(self, a, b):
+        if a.san_dns_names:
+            self.assertEqual(set(a.san_dns_names), set(b.san_dns_names))
+        if a.san_emails:
+            self.assertEqual(set(a.san_emails), set(b.san_emails))
+        if a.san_user_principal_names:
+            self.assertEqual(set(a.san_user_principal_names), set(b.san_user_principal_names))
 
-    def _validate_sans(self, original_policy, returned_policy):
-        if original_policy.san_dns_names:
-            self.assertEqual(set(original_policy.san_dns_names), set(returned_policy.san_dns_names))
-        if original_policy.san_emails:
-            self.assertEqual(set(original_policy.san_emails), set(returned_policy.san_emails))
-        if original_policy.san_user_principal_names:
-            self.assertEqual(set(original_policy.san_user_principal_names), set(returned_policy.san_user_principal_names))
+    def _validate_lifetime_actions(self, a, b):
+        self.assertEqual(len(a), len(b))
+        for a_entry in a:
+            b_entry = next(x for x in b if x.action == a_entry.action)
+            self.assertEqual(a_entry.lifetime_percentage, b_entry.lifetime_percentage)
+            self.assertEqual(a_entry.days_before_expiry, b_entry.days_before_expiry)
 
-    def _validate_lifetime_actions(self, original_lifetime_actions, returned_lifetime_actions):
-        self.assertEqual(len(original_lifetime_actions), len(returned_lifetime_actions))
-        for original_lifetime_action in original_lifetime_actions:
-            returned_lifetime_action = next(x for x in returned_lifetime_actions if x.action == original_lifetime_action.action)
-            self.assertEqual(original_lifetime_action.lifetime_percentage, returned_lifetime_action.lifetime_percentage)
-            self.assertEqual(original_lifetime_action.days_before_expiry, returned_lifetime_action.days_before_expiry)
-
-    async def _validate_certificate_list(self, original_certificates, returned_certificates):
-        async for cert in returned_certificates:
-            if cert.id in original_certificates.keys():
-                del original_certificates[cert.id]
+    async def _validate_certificate_list(self, a, b):
+        async for cert in b:
+            if cert.id in a.keys():
+                del a[cert.id]
             else:
                 assert False, "Returned certificate with id {} not found in list of original certificates".format(cert.id)
-        self.assertEqual(len(original_certificates), 0)
+        self.assertEqual(len(a), 0)
 
-    def _validate_certificate_contacts(self, original_contacts, returned_contacts):
-        self.assertEqual(len(original_contacts), len(returned_contacts))
-        for original_contact in original_contacts:
-            returned_contact = next(x for x in returned_contacts if x.email == original_contact.email)
-            self.assertEqual(original_contact.name, returned_contact.name)
-            self.assertEqual(original_contact.phone, returned_contact.phone)
+    def _validate_certificate_contacts(self, a, b):
+        self.assertEqual(len(a), len(b))
+        for a_entry in a:
+            b_entry = next(x for x in b if x.email == a_entry.email)
+            self.assertEqual(a_entry.name, b_entry.name)
+            self.assertEqual(a_entry.phone, b_entry.phone)
 
     def _admin_contact_equal(self, a, b):
         return (
@@ -157,23 +150,23 @@ class CertificateClientTests(KeyVaultTestCase):
             and a.phone == b.phone
         )
 
-    def _validate_certificate_issuer(self, original_issuer, returned_issuer):
-        self.assertEqual(original_issuer.provider, returned_issuer.provider)
-        self.assertEqual(original_issuer.account_id, returned_issuer.account_id)
-        self.assertEqual(len(original_issuer.admin_contacts), len(returned_issuer.admin_contacts))
-        for original_admin_contact in original_issuer.admin_contacts:
-            returned_admin_contact = next(
-                (ad for ad in returned_issuer.admin_contacts if self._admin_contact_equal(original_admin_contact, ad)), None
+    def _validate_certificate_issuer(self, a, b):
+        self.assertEqual(a.provider, b.provider)
+        self.assertEqual(a.account_id, b.account_id)
+        self.assertEqual(len(a.admin_contacts), len(b.admin_contacts))
+        for a_admin_contact in a.admin_contacts:
+            b_admin_contact = next(
+                (ad for ad in b.admin_contacts if self._admin_contact_equal(a_admin_contact, ad)), None
             )
-            self.assertIsNotNone(returned_admin_contact)
-        self.assertEqual(original_issuer.password, returned_issuer.password)
-        self.assertEqual(original_issuer.organization_id, returned_issuer.organization_id)
+            self.assertIsNotNone(b_admin_contact)
+        self.assertEqual(a.password, b.password)
+        self.assertEqual(a.organization_id, b.organization_id)
 
-    def _validate_certificate_issuer_properties(self, original_issuer, returned_issuer):
-        self.assertEqual(original_issuer.id, returned_issuer.id)
-        self.assertEqual(original_issuer.name, returned_issuer.name)
-        self.assertEqual(original_issuer.provider, returned_issuer.provider)
-        self.assertEqual(original_issuer.vault_url, returned_issuer.vault_url)
+    def _validate_certificate_issuer_properties(self, a, b):
+        self.assertEqual(a.id, b.id)
+        self.assertEqual(a.name, b.name)
+        self.assertEqual(a.provider, b.provider)
+        self.assertEqual(a.vault_url, b.vault_url)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
@@ -275,7 +268,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # list certificates
         returned_certificates = client.list_properties_of_certificates(max_page_size=max_certificates - 1)
-        await self._validate_certificate_list(original_certificates=expected, returned_certificates=returned_certificates)
+        await self._validate_certificate_list(expected, returned_certificates)
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer()
@@ -314,8 +307,8 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # list certificate versions
         await self._validate_certificate_list(
-            original_certificates=expected,
-            returned_certificates=(client.list_properties_of_certificate_versions(
+            expected,
+            (client.list_properties_of_certificate_versions(
                 certificate_name=cert_name, max_page_size=max_certificates - 1
             ))
         )
@@ -334,15 +327,15 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # create certificate contacts
         contacts = await client.set_contacts(contacts=contact_list)
-        self._validate_certificate_contacts(original_contacts=contact_list, returned_contacts=contacts)
+        self._validate_certificate_contacts(contact_list, contacts)
 
         # get certificate contacts
         contacts = await client.get_contacts()
-        self._validate_certificate_contacts(original_contacts=contact_list, returned_contacts=contacts)
+        self._validate_certificate_contacts(contact_list, contacts)
 
         # delete certificate contacts
         contacts = await client.delete_contacts()
-        self._validate_certificate_contacts(original_contacts=contact_list, returned_contacts=contacts)
+        self._validate_certificate_contacts(contact_list, contacts)
 
         # get certificate contacts returns not found
         try:
@@ -516,7 +509,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         returned_policy = await client.get_certificate_policy(certificate_name=cert_name)
 
-        self._validate_certificate_policy(original_policy=cert_policy, returned_policy=returned_policy)
+        self._validate_certificate_policy(cert_policy, returned_policy)
 
         cert_policy._key_type = KeyType.ec
         cert_policy._key_size = 256
@@ -524,7 +517,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         returned_policy = await client.update_certificate_policy(certificate_name=cert_name, policy=cert_policy)
 
-        self._validate_certificate_policy(original_policy=cert_policy, returned_policy=returned_policy)
+        self._validate_certificate_policy(cert_policy, returned_policy)
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
     @AsyncVaultClientPreparer()
@@ -550,17 +543,18 @@ class CertificateClientTests(KeyVaultTestCase):
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_backup_restore(self, vault_client, **kwargs):
-        # TODO: server side issue with not restoring san names
         self.assertIsNotNone(vault_client)
         client = vault_client.certificates
         cert_name = self.get_resource_name("cert")
+        policy = CertificatePolicy.get_default()
+        policy._san_upns = ["user_principal"]
 
         polling_interval = 0 if self.is_playback() else None
 
         # create certificate
         await client.create_certificate(
             certificate_name=cert_name,
-            policy=CertificatePolicy.get_default(),
+            policy=policy,
             _polling_interval=polling_interval
         )
 
@@ -573,7 +567,7 @@ class CertificateClientTests(KeyVaultTestCase):
         # restore certificate
         restored_certificate = await client.restore_certificate_backup(backup=certificate_backup)
         self._validate_certificate_bundle(
-            cert=restored_certificate, cert_name=cert_name, cert_policy=CertificatePolicy.get_default()
+            cert=restored_certificate, cert_name=cert_name, cert_policy=policy
         )
 
     @ResourceGroupPreparer(name_prefix=name_prefix)
@@ -655,11 +649,11 @@ class CertificateClientTests(KeyVaultTestCase):
             issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name
         )
 
-        self._validate_certificate_issuer(original_issuer=expected, returned_issuer=issuer)
+        self._validate_certificate_issuer(expected, issuer)
 
         # get certificate issuer
         issuer = await client.get_issuer(issuer_name=issuer_name)
-        self._validate_certificate_issuer(original_issuer=expected, returned_issuer=issuer)
+        self._validate_certificate_issuer(expected, issuer)
 
         # list certificate issuers
 
@@ -684,7 +678,7 @@ class CertificateClientTests(KeyVaultTestCase):
         async for issuer in issuers:
             exp_issuer = next((i for i in expected_issuers if i.name == issuer.name), None)
             self.assertIsNotNone(exp_issuer)
-            self._validate_certificate_issuer_properties(original_issuer=exp_issuer, returned_issuer=issuer)
+            self._validate_certificate_issuer_properties(exp_issuer, issuer)
             expected_issuers.remove(exp_issuer)
         self.assertEqual(len(expected_issuers), 0)
 
@@ -700,7 +694,7 @@ class CertificateClientTests(KeyVaultTestCase):
             issuer_id=client.vault_url + "/certificates/issuers/" + issuer_name
         )
         issuer = await client.update_issuer(issuer_name, admin_contacts=admin_contacts)
-        self._validate_certificate_issuer(original_issuer=expected, returned_issuer=issuer)
+        self._validate_certificate_issuer(expected, issuer)
 
         # delete certificate issuer
         await client.delete_issuer(issuer_name=issuer_name)
