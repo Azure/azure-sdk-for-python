@@ -32,9 +32,7 @@ class EventProcessorMixin(object):
         else:
             event_position = self._initial_event_position
 
-        initial_event_position = event_position
-
-        return initial_event_position, event_position_inclusive
+        return event_position, event_position_inclusive
 
     def create_consumer(
             self,
