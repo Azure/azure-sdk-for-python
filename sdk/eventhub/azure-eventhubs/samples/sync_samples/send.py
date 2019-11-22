@@ -24,19 +24,24 @@ producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONN
 
 start_time = time.time()
 with producer:
-    ed = EventData("msg")
-    producer.send(ed)  # The event will be distributed to available partitions via round-robin.
+    # Without specifying partition_id or partition_key
+    # The events will be distributed to available partitions via round-robin.
+    event_data_batch = producer.create_batch(max_size_in_bytes=10000)
 
-    ed = EventData("msg sent to partition_id 0")
-    producer.send(ed, partition_id='0')  # Specifying partition_id
+    # Specifying partition_id
+    # event_data_batch = producer.create_batch(partition_id='0')
 
-    ed = EventData("msg sent with partition_key")
-    producer.send(ed, partition_key="p_key")  # Specifying partition_key
+    # Specifying partition_key
+    # event_data_batch = producer.create_batch(partition_key='pkey')
 
-    # Send a list of events
-    event_list = []
-    for i in range(1500):
-        event_list.append(EventData('Hello World'))
-    producer.send(event_list)
+    while True:
+        try:
+            event_data_batch.add(EventData('Message inside EventBatchData'))
+        except ValueError:
+            # EventDataBatch object reaches max_size.
+            # New EventDataBatch object can be created here to send more data
+            break
+
+    producer.send_batch(event_data_batch)
 
 print("Send messages in {} seconds".format(time.time() - start_time))

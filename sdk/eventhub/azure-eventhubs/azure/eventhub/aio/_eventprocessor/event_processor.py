@@ -8,7 +8,7 @@ import asyncio
 import logging
 from functools import partial
 
-from azure.eventhub import EventPosition, EventData, EventHubError
+from azure.eventhub import EventData, EventHubError
 from ..._eventprocessor.common import CloseReason
 from ..._eventprocessor._eventprocessor_mixin import EventProcessorMixin
 from .partition_context import PartitionContext
@@ -31,7 +31,9 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             *,
             partition_id: str = None,
             checkpoint_store: CheckpointStore = None,
-            initial_event_position=EventPosition("-1"), polling_interval: float = 10.0,
+            initial_event_position="-1",
+            initial_event_position_inclusive=False,
+            polling_interval: float = 10.0,
             owner_level=None, prefetch=None, track_last_enqueued_event_properties=False,
             error_handler,
             partition_initialize_handler,
@@ -47,15 +49,17 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         self._partition_initialize_handler = partition_initialize_handler
         self._partition_close_handler = partition_close_handler
         self._checkpoint_store = checkpoint_store
-        self._initial_event_position = initial_event_position  # will be replaced by reset event position in preview 4
+        self._initial_event_position = initial_event_position
+        self._initial_event_position_inclusive = initial_event_position_inclusive
         self._polling_interval = polling_interval
         self._ownership_timeout = self._polling_interval * 2
         self._tasks = {}  # type: Dict[str, asyncio.Task]
         self._partition_contexts = {}  # type: Dict[str, PartitionContext]
         self._owner_level = owner_level
+        if self._checkpoint_store and self._owner_level is None:
+            self._owner_level = 0
         self._prefetch = prefetch
         self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
-        self._last_enqueued_event_properties = {}  # type: Dict[str, Dict[str, Any]]
         self._id = str(uuid.uuid4())
         self._running = False
 
@@ -63,11 +67,6 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
 
     def __repr__(self):
         return 'EventProcessor: id {}'.format(self._id)
-
-    def _get_last_enqueued_event_properties(self, partition_id):
-        if partition_id in self._tasks and partition_id in self._last_enqueued_event_properties:
-            return self._last_enqueued_event_properties[partition_id]
-        raise ValueError("You're not receiving events from partition {}".format(partition_id))
 
     async def _cancel_tasks_for_partitions(self, to_cancel_partitions):
         for partition_id in to_cancel_partitions:
@@ -87,7 +86,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         _LOGGER.warning(
             "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
             " has met an error. The exception is %r.",
-            partition_context.owner_id,
+            self._id,
             partition_context.eventhub_name,
             partition_context.partition_id,
             partition_context.consumer_group,
@@ -100,7 +99,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 _LOGGER.warning(
                     "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
                     "An error occurred while running process_error(). The exception is %r.",
-                    partition_context.owner_id,
+                    self._id,
                     partition_context.eventhub_name,
                     partition_context.partition_id,
                     partition_context.consumer_group,
@@ -112,7 +111,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             _LOGGER.info(
                 "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                 " is being closed. Reason is: %r",
-                partition_context.owner_id,
+                self._id,
                 partition_context.eventhub_name,
                 partition_context.partition_id,
                 partition_context.consumer_group,
@@ -124,7 +123,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 _LOGGER.warning(
                     "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
                     "An error occurred while running close(). The exception is %r.",
-                    partition_context.owner_id,
+                    self._id,
                     partition_context.eventhub_name,
                     partition_context.partition_id,
                     partition_context.consumer_group,
@@ -134,6 +133,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
     async def _on_event_received(self, partition_context, event):
         with self._context(event):
             try:
+                if self._track_last_enqueued_event_properties:
+                    partition_context._last_received_event = event  # pylint: disable=protected-access
                 await self._event_handler(partition_context, event)
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise
@@ -143,7 +144,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
     async def _receive(self, partition_id, checkpoint=None):  # pylint: disable=too-many-statements
         try:  # pylint:disable=too-many-nested-blocks
             _LOGGER.info("start ownership %r, checkpoint %r", partition_id, checkpoint)
-            initial_event_position = self.get_init_event_position(partition_id, checkpoint)
+            initial_event_position, event_position_inclusive = self.get_init_event_position(partition_id, checkpoint)
             if partition_id in self._partition_contexts:
                 partition_context = self._partition_contexts[partition_id]
             else:
@@ -152,7 +153,6 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                     self._eventhub_name,
                     self._consumer_group,
                     partition_id,
-                    self._id,
                     self._checkpoint_store
                 )
                 self._partition_contexts[partition_id] = partition_context
@@ -160,6 +160,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             event_received_callback = partial(self._on_event_received, partition_context)
             self._consumers[partition_id] = self.create_consumer(partition_id,
                                                                  initial_event_position,
+                                                                 event_position_inclusive,
                                                                  event_received_callback)
 
             if self._partition_initialize_handler:

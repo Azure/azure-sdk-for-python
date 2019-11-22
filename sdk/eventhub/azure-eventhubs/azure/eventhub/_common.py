@@ -4,8 +4,6 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals
 
-import datetime
-import calendar
 import json
 import logging
 import six
@@ -18,11 +16,7 @@ from ._constants import (
     PROP_OFFSET,
     PROP_PARTITION_KEY,
     PROP_PARTITION_KEY_AMQP_SYMBOL,
-    PROP_TIMESTAMP,
-    PROP_LAST_ENQUEUED_SEQUENCE_NUMBER,
-    PROP_LAST_ENQUEUED_OFFSET,
-    PROP_LAST_ENQUEUED_TIME_UTC,
-    PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC,
+    PROP_TIMESTAMP
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -97,33 +91,8 @@ class EventData(object):
         event_data.message = message
         return event_data
 
-    def _get_last_enqueued_event_properties(self):
-        """Extracts the last enqueued event in from the received event delivery annotations.
-
-        :rtype: Dict[str, Any]
-        """
-        if self._last_enqueued_event_properties:
-            return self._last_enqueued_event_properties
-
-        if self.message.delivery_annotations:
-            sequence_number = self.message.delivery_annotations.get(PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None)
-            enqueued_time_stamp = self.message.delivery_annotations.get(PROP_LAST_ENQUEUED_TIME_UTC, None)
-            if enqueued_time_stamp:
-                enqueued_time_stamp = utc_from_timestamp(float(enqueued_time_stamp)/1000)
-            retrieval_time_stamp = self.message.delivery_annotations.get(PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
-            if retrieval_time_stamp:
-                retrieval_time_stamp = utc_from_timestamp(float(retrieval_time_stamp)/1000)
-            offset_bytes = self.message.delivery_annotations.get(PROP_LAST_ENQUEUED_OFFSET, None)
-            offset = offset_bytes.decode('UTF-8') if offset_bytes else None
-            self._last_enqueued_event_properties = {
-                "sequence_number": sequence_number,
-                "offset": offset,
-                "enqueued_time": enqueued_time_stamp,
-                "retrieval_time": retrieval_time_stamp
-            }
-            return self._last_enqueued_event_properties
-
-        return None
+    def _encode_message(self):
+        return self.message.encode_message()
 
     @property
     def sequence_number(self):
@@ -210,22 +179,6 @@ class EventData(object):
         except TypeError:
             raise ValueError("Message data empty.")
 
-    @property
-    def last_enqueued_event_properties(self):
-        """
-        The latest enqueued event information. This property will be updated each time an event is received when
-        the receiver is created with `track_last_enqueued_event_properties` being `True`.
-        The dict includes following information of the partition:
-
-            - `sequence_number`
-            - `offset`
-            - `enqueued_time`
-            - `retrieval_time`
-
-        :rtype: dict or None
-        """
-        return self._get_last_enqueued_event_properties()
-
     def body_as_str(self, encoding='UTF-8'):
         """
         The body of the event data as a string if the data is of a
@@ -261,8 +214,20 @@ class EventData(object):
         except Exception as e:
             raise TypeError("Event data is not compatible with JSON type: {}".format(e))
 
+    @property
+    def application_properties(self):
+        # TODO: This method is for the purpose of livetest, because uamqp v.1.2.4 hasn't been released
+        # The gather() in uamqp.message of v1.2.3 depends on application_properties attribute,
+        # the livetest would all break if removing this property.
+        # It should be removed after uamqp v.1.2.4 is released
+        return self.properties
+
     def encode_message(self):
-        return self.message.encode_message()
+        # TODO: This method is for the purpose of livetest, because uamqp v.1.2.4 hasn't been released
+        # The gather() in uamqp.message of v1.2.3 depends on encode_message method,
+        # the livetest would all break if removing this method.
+        # It should be removed after uamqp v.1.2.4 is released
+        return self._encode_message()
 
 
 class EventDataBatch(object):
@@ -270,7 +235,7 @@ class EventDataBatch(object):
     Sending events in batch get better performance than sending individual events.
     EventDataBatch helps you create the maximum allowed size batch of `EventData` to improve sending performance.
 
-    Use `try_add` method to add events until the maximum batch size limit in bytes has been reached -
+    Use `add` method to add events until the maximum batch size limit in bytes has been reached -
     a `ValueError` will be raised.
     Use `send` method of :class:`EventHubProducerClient<azure.eventhub.EventHubProducerClient>`
     or the async :class:`EventHubProducerClient<azure.eventhub.aio.EventHubProducerClient>`
@@ -279,15 +244,17 @@ class EventDataBatch(object):
     **Please use the create_batch method of EventHubProducerClient
     to create an EventDataBatch object instead of instantiating an EventDataBatch object directly.**
 
-    :param int max_size: The maximum size of bytes data that an EventDataBatch object can hold.
+    :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold.
+    :param str partition_id: The specific partition ID to send to.
     :param str partition_key: With the given partition_key, event data will land to a particular partition of the
      Event Hub decided by the service.
     """
 
-    def __init__(self, max_size=None, partition_key=None):
-        self.max_size = max_size or constants.MAX_MESSAGE_LENGTH_BYTES
-        self._partition_key = partition_key
+    def __init__(self, max_size_in_bytes=None, partition_id=None, partition_key=None):
+        self.max_size_in_bytes = max_size_in_bytes or constants.MAX_MESSAGE_LENGTH_BYTES
         self.message = BatchMessage(data=[], multi_messages=False, properties=None)
+        self._partition_id = partition_id
+        self._partition_key = partition_key
 
         set_message_partition_key(self.message, self._partition_key)
         self._size = self.message.gather()[0].get_message_encoded_size()
@@ -303,14 +270,14 @@ class EventDataBatch(object):
         return batch_data_instance
 
     @property
-    def size(self):
+    def size_in_bytes(self):
         """The size of EventDataBatch object in bytes
 
         :rtype: int
         """
         return self._size
 
-    def try_add(self, event_data):
+    def add(self, event_data):
         """
         Try to add an EventData object, the size of EventData is a sum up of body, application_properties, etc.
 
@@ -333,55 +300,9 @@ class EventDataBatch(object):
         size_after_add = self._size + event_data_size \
             + _BATCH_MESSAGE_OVERHEAD_COST[0 if (event_data_size < 256) else 1]
 
-        if size_after_add > self.max_size:
-            raise ValueError("EventDataBatch has reached its size limit: {}".format(self.max_size))
+        if size_after_add > self.max_size_in_bytes:
+            raise ValueError("EventDataBatch has reached its size limit: {}".format(self.max_size_in_bytes))
 
         self.message._body_gen.append(event_data)  # pylint: disable=protected-access
         self._size = size_after_add
         self._count += 1
-
-
-class EventPosition(object):
-    """
-    The position(offset, sequence or timestamp) where a consumer starts.
-
-    :param value: The event position value. The value can be type of datetime.datetime or int or str.
-    :type value: int, str or datetime.datetime
-    :param bool inclusive: Whether to include the supplied value as the start point.
-
-    Examples:
-
-    Beginning of the event stream:
-      >>> event_pos = EventPosition("-1")
-    End of the event stream:
-      >>> event_pos = EventPosition("@latest")
-    Events after the specified offset:
-      >>> event_pos = EventPosition("12345")
-    Events from the specified offset:
-      >>> event_pos = EventPosition("12345", True)
-    Events after a datetime:
-      >>> event_pos = EventPosition(datetime.datetime.utcnow())
-    Events after a specific sequence number:
-      >>> event_pos = EventPosition(1506968696002)
-    """
-
-    def __init__(self, value, inclusive=False):
-        self.value = value if value is not None else "-1"
-        self.inclusive = inclusive
-
-    def __str__(self):
-        return str(self.value)
-
-    def _selector(self):
-        """
-        Creates a selector expression of the offset.
-
-        :rtype: bytes
-        """
-        operator = ">=" if self.inclusive else ">"
-        if isinstance(self.value, datetime.datetime):  # pylint:disable=no-else-return
-            timestamp = (calendar.timegm(self.value.utctimetuple()) * 1000) + (self.value.microsecond/1000)
-            return ("amqp.annotation.x-opt-enqueued-time {} '{}'".format(operator, int(timestamp))).encode('utf-8')
-        elif isinstance(self.value, six.integer_types):
-            return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, self.value)).encode('utf-8')
-        return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
