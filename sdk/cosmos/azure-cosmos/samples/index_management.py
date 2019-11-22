@@ -15,23 +15,23 @@ DATABASE_ID = config.settings['database_id']
 CONTAINER_ID = "index-samples"
 PARTITION_KEY = PartitionKey(path='/id', kind='Hash')
 
-# A typical collection has the following properties within it's indexingPolicy property
+# A typical container has the following properties within it's indexingPolicy property
 #   indexingMode
 #   automatic
 #   includedPaths
 #   excludedPaths
-#   
+#
 # We can toggle 'automatic' to eiher be True or False depending upon whether we want to have indexing over all columns by default or not.
 # indexingMode can be either of consistent, lazy or none
-#   
-# We can provide options while creating documents. indexingDirective is one such, 
-# by which we can tell whether it should be included or excluded in the index of the parent collection.
+#
+# We can provide options while creating documents. indexingDirective is one such,
+# by which we can tell whether it should be included or excluded in the index of the parent container.
 # indexingDirective can be either 'Include', 'Exclude' or 'Default'
 
 
 # To run this Demo, please provide your own CA certs file or download one from
 #     http://curl.haxx.se/docs/caextract.html
-# Setup the certificate file in .pem format. 
+# Setup the certificate file in .pem format.
 # If you still get an SSLError, try disabling certificate verification and suppress warnings
 
 def obtain_client():
@@ -62,7 +62,7 @@ def query_entities(parent, entity_type, id = None):
             else:
                 entities = list(parent.query_databases(find_entity_by_id_query))
 
-        elif entity_type == 'collection':
+        elif entity_type == 'container':
             if id == None:
                 entities = list(parent.list_containers())
             else:
@@ -95,15 +95,15 @@ def create_database_if_not_exists(client, database_id):
         pass
 
 
-def delete_container_if_exists(db, collection_id):
+def delete_container_if_exists(db, container_id):
     try:
-        db.delete_container(collection_id)
-        print('Collection with id \'{0}\' was deleted'.format(collection_id))
+        db.delete_container(container_id)
+        print('Container with id \'{0}\' was deleted'.format(container_id))
     except exceptions.CosmosResourceNotFoundError:
         pass
     except exceptions.CosmosHttpResponseError as e:
         if e.status_code == 400:
-            print("Bad request for collection link", collection_id)
+            print("Bad request for container link", container_id)
         raise
 
 
@@ -144,19 +144,19 @@ def query_documents_with_custom_query(container, query_with_optional_parameters,
 
 def explicitly_exclude_from_index(db):
     """ The default index policy on a DocumentContainer will AUTOMATICALLY index ALL documents added.
-        There may be scenarios where you want to exclude a specific doc from the index even though all other 
-        documents are being indexed automatically. 
+        There may be scenarios where you want to exclude a specific doc from the index even though all other
+        documents are being indexed automatically.
         This method demonstrates how to use an index directive to control this
 
     """
     try:
         delete_container_if_exists(db, CONTAINER_ID)
 
-        # Create a collection with default index policy (i.e. automatic = true)
+        # Create a container with default index policy (i.e. automatic = true)
         created_Container = db.create_container(id=CONTAINER_ID, partition_key=PARTITION_KEY)
         print(created_Container)
 
-        print("\n" + "-" * 25 + "\n1. Collection created with index policy")
+        print("\n" + "-" * 25 + "\n1. Container created with index policy")
         properties = created_Container.read()
         print_dictionary_items(properties["indexingPolicy"])
 
@@ -172,7 +172,7 @@ def explicitly_exclude_from_index(db):
             }
         query_documents_with_custom_query(created_Container, query)
 
-        # Now, create a document but this time explictly exclude it from the collection using IndexingDirective
+        # Now, create a document but this time explictly exclude it from the container using IndexingDirective
         # Then query for that document
         # Shoud NOT find it, because we excluded it from the index
         # BUT, the document is there and doing a ReadDocument by Id will prove it
@@ -203,14 +203,14 @@ def explicitly_exclude_from_index(db):
 
 def use_manual_indexing(db):
     """The default index policy on a DocumentContainer will AUTOMATICALLY index ALL documents added.
-       There may be cases where you can want to turn-off automatic indexing and only selectively add only specific documents to the index. 
+       There may be cases where you can want to turn-off automatic indexing and only selectively add only specific documents to the index.
        This method demonstrates how to control this by setting the value of automatic within indexingPolicy to False
 
     """
     try:
         delete_container_if_exists(db, CONTAINER_ID)
 
-        # Create a collection with manual (instead of automatic) indexing
+        # Create a container with manual (instead of automatic) indexing
         created_Container = db.create_container(
             id=CONTAINER_ID,
             indexing_policy={"automatic" : False},
@@ -219,12 +219,12 @@ def use_manual_indexing(db):
         properties = created_Container.read()
         print(created_Container)
 
-        print("\n" + "-" * 25 + "\n2. Collection created with index policy")
+        print("\n" + "-" * 25 + "\n2. Container created with index policy")
         print_dictionary_items(properties["indexingPolicy"])
 
         # Create a document
         # Then query for that document
-        # We should find nothing, because automatic indexing on the collection level is False
+        # We should find nothing, because automatic indexing on the container level is False
         # BUT, the document is there and doing a ReadDocument by Id will prove it
         doc = created_Container.create_item(body={ "id" : "doc1", "orderId" : "order1" })
         print("\n" + "-" * 25 + "Document doc1 created with order1" +  "-" * 25)
@@ -266,9 +266,9 @@ def use_manual_indexing(db):
 def exclude_paths_from_index(db):
     """The default behavior is for Cosmos to index every attribute in every document automatically.
        There are times when a document contains large amounts of information, in deeply nested structures
-       that you know you will never search on. In extreme cases like this, you can exclude paths from the 
+       that you know you will never search on. In extreme cases like this, you can exclude paths from the
        index to save on storage cost, improve write performance and also improve read performance because the index is smaller
-       
+
        This method demonstrates how to set excludedPaths within indexingPolicy
     """
     try:
@@ -281,28 +281,28 @@ def exclude_paths_from_index(db):
             "subDoc" : { "searchable" : "searchable", "nonSearchable" : "value" },
             "excludedNode" : { "subExcluded" : "something",  "subExcludedNode" : { "someProperty" : "value" } }
             }
-        collection_to_create = { "id" : CONTAINER_ID ,
-                                "indexingPolicy" : 
-                                { 
+        container_to_create = { "id" : CONTAINER_ID ,
+                                "indexingPolicy" :
+                                {
                                     "includedPaths" : [ {'path' : "/*"} ], # Special mandatory path of "/*" required to denote include entire tree
                                     "excludedPaths" : [ {'path' : "/metaData/*"}, # exclude metaData node, and anything under it
-                                                        {'path' : "/subDoc/nonSearchable/*"}, # exclude ONLY a part of subDoc    
+                                                        {'path' : "/subDoc/nonSearchable/*"}, # exclude ONLY a part of subDoc
                                                         {'path' : "/\"excludedNode\"/*"} # exclude excludedNode node, and anything under it
                                                       ]
-                                    } 
+                                    }
                                 }
-        print(collection_to_create)
+        print(container_to_create)
         print(doc_with_nested_structures)
-        # Create a collection with the defined properties
+        # Create a container with the defined properties
         # The effect of the above IndexingPolicy is that only id, foo, and the subDoc/searchable are indexed
         created_Container = db.create_container(
-            id=collection_to_create['id'],
-            indexing_policy=collection_to_create['indexingPolicy'],
+            id=container_to_create['id'],
+            indexing_policy=container_to_create['indexingPolicy'],
             partition_key=PARTITION_KEY
         )
         properties = created_Container.read()
         print(created_Container)
-        print("\n" + "-" * 25 + "\n4. Collection created with index policy")
+        print("\n" + "-" * 25 + "\n4. Container created with index policy")
         print_dictionary_items(properties["indexingPolicy"])
 
         # The effect of the above IndexingPolicy is that only id, foo, and the subDoc/searchable are indexed
@@ -337,35 +337,35 @@ def exclude_paths_from_index(db):
 
 
 def range_scan_on_hash_index(db):
-    """When a range index is not available (i.e. Only hash or no index found on the path), comparisons queries can still 
+    """When a range index is not available (i.e. Only hash or no index found on the path), comparisons queries can still
        be performed as scans using Allow scan request headers passed through options
 
        This method demonstrates how to force a scan when only hash indexes exist on the path
 
        ===== Warning=====
-       This was made an opt-in model by design. 
-       Scanning is an expensive operation and doing this will have a large impact 
+       This was made an opt-in model by design.
+       Scanning is an expensive operation and doing this will have a large impact
        on RequstUnits charged for an operation and will likely result in queries being throttled sooner.
     """
     try:
         delete_container_if_exists(db, CONTAINER_ID)
 
         # Force a range scan operation on a hash indexed path
-        collection_to_create = { "id" : CONTAINER_ID ,
-                                "indexingPolicy" : 
-                                { 
+        container_to_create = { "id" : CONTAINER_ID ,
+                                "indexingPolicy" :
+                                {
                                     "includedPaths" : [ {'path' : "/"} ],
                                     "excludedPaths" : [ {'path' : "/length/*"} ] # exclude length
-                                    } 
+                                    }
                                 }
         created_Container = db.create_container(
-            id=collection_to_create['id'],
-            indexing_policy=collection_to_create['indexingPolicy'],
+            id=container_to_create['id'],
+            indexing_policy=container_to_create['indexingPolicy'],
             partition_key=PARTITION_KEY
         )
         properties = created_Container.read()
         print(created_Container)
-        print("\n" + "-" * 25 + "\n5. Collection created with index policy")
+        print("\n" + "-" * 25 + "\n5. Container created with index policy")
         print_dictionary_items(properties["indexingPolicy"])
 
         doc1 = created_Container.create_item(body={ "id" : "dyn1", "length" : 10, "width" : 5, "height" : 15 })
@@ -404,14 +404,14 @@ def use_range_indexes_on_strings(db):
     """
     try:
         delete_container_if_exists(db, CONTAINER_ID)
-        # collections = query_entities(client, 'collection', parent_link = database_link)
-        # print(collections)
+        # containers = query_entities(client, 'container', parent_link = database_link)
+        # print(containers)
 
         # Use range indexes on strings
-        
+
         # This is how you can specify a range index on strings (and numbers) for all properties.
-        # This is the recommended indexing policy for collections. i.e. precision -1
-        #indexingPolicy = { 
+        # This is the recommended indexing policy for containers. i.e. precision -1
+        #indexingPolicy = {
         #    'indexingPolicy': {
         #        'includedPaths': [
         #            {
@@ -429,7 +429,7 @@ def use_range_indexes_on_strings(db):
 
         # For demo purposes, we are going to use the default (range on numbers, hash on strings) for the whole document (/* )
         # and just include a range index on strings for the "region".
-        collection_definition = {
+        container_definition = {
             'id': CONTAINER_ID,
             'indexingPolicy': {
                 'includedPaths': [
@@ -451,13 +451,13 @@ def use_range_indexes_on_strings(db):
         }
 
         created_Container = db.create_container(
-            id=collection_definition['id'],
-            indexing_policy=collection_definition['indexingPolicy'],
+            id=container_definition['id'],
+            indexing_policy=container_definition['indexingPolicy'],
             partition_key=PARTITION_KEY
         )
         properties = created_Container.read()
         print(created_Container)
-        print("\n" + "-" * 25 + "\n6. Collection created with index policy")
+        print("\n" + "-" * 25 + "\n6. Container created with index policy")
         print_dictionary_items(properties["indexingPolicy"])
 
         created_Container.create_item(body={ "id" : "doc1", "region" : "USA" })
@@ -470,7 +470,7 @@ def use_range_indexes_on_strings(db):
         message = "Documents ordered by region"
         query_documents_with_custom_query(created_Container, query, message)
 
-        # You can also perform filters against string comparison like >= 'UK'. Note that you can perform a prefix query, 
+        # You can also perform filters against string comparison like >= 'UK'. Note that you can perform a prefix query,
         # the equivalent of LIKE 'U%' (is >= 'U' AND < 'U')
         query = { "query" : "SELECT * FROM r WHERE r.region >= 'U'" }
         message = "Documents with region begining with U"
@@ -489,12 +489,12 @@ def perform_index_transformations(db):
     try:
         delete_container_if_exists(db, CONTAINER_ID)
 
-        # Create a collection with default indexing policy
+        # Create a container with default indexing policy
         created_Container = db.create_container(id=CONTAINER_ID, partition_key=PARTITION_KEY)
         properties = created_Container.read()
         print(created_Container)
 
-        print("\n" + "-" * 25 + "\n7. Collection created with index policy")
+        print("\n" + "-" * 25 + "\n7. Container created with index policy")
         print_dictionary_items(properties["indexingPolicy"])
 
         # Insert some documents
@@ -507,8 +507,8 @@ def perform_index_transformations(db):
         print("Changing to string & number range indexing with maximum precision (needed for Order By).")
 
         properties['indexingPolicy']['includedPaths'][0]['indexes'] = [{
-            'kind': documents.IndexKind.Range, 
-            'dataType': documents.DataType.String, 
+            'kind': documents.IndexKind.Range,
+            'dataType': documents.DataType.String,
             'precision': -1
         }]
 
@@ -520,7 +520,7 @@ def perform_index_transformations(db):
         properties = created_Container.read()
 
         # Check progress and wait for completion - should be instantaneous since we have only a few documents, but larger
-        # collections will take time.
+        # containers will take time.
         print_dictionary_items(properties["indexingPolicy"])
 
         # Now exclude a path from indexing to save on storage space.
@@ -548,7 +548,7 @@ def perform_multi_orderby_query(db):
     try:
         delete_container_if_exists(db, CONTAINER_ID)
 
-        # Create a collection with composite indexes
+        # Create a container with composite indexes
         indexing_policy = {
             "compositeIndexes": [
                 [
@@ -590,7 +590,7 @@ def perform_multi_orderby_query(db):
         properties = created_container.read()
         print(created_container)
 
-        print("\n" + "-" * 25 + "\n8. Collection created with index policy")
+        print("\n" + "-" * 25 + "\n8. Container created with index policy")
         print_dictionary_items(properties["indexingPolicy"])
 
         # Insert some documents

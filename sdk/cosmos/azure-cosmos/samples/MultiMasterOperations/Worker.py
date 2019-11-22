@@ -19,7 +19,7 @@ class Worker(object):
             start = int(round(time.time() * 1000))
             self.client.CreateItem(self.document_collection_link, document)
             end = int(round(time.time() * 1000))
-            
+
             latency.append(end - start)
 
         latency = sorted(latency)
