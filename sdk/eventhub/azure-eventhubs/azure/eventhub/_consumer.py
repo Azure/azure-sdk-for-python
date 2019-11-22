@@ -101,6 +101,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._handler = None
         self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
         self._last_received_event = None
+        self._max_message_size_on_link = 0
 
     def _create_handler(self, auth):
         source = Source(self._source)
@@ -148,20 +149,21 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         if not self.running:
             if self._handler:
                 self._handler.close()
-            self._create_handler()
-            self._handler.open(connection=self._client._conn_manager.get_connection(  # pylint: disable=protected-access
-                self._client._address.hostname,
-                self._client._create_auth()
-            ))
+            auth = self._client._create_auth()
+            self._create_handler(auth)
+            self._handler.open(
+                connection=self._client._conn_manager.get_connection(self._client._address.hostname, auth)  # pylint: disable=protected-access
+            )
             self.running = True
 
         if self._handler.client_ready():
             self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
                                              or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
-            return True
+            opened = True
         else:
             time.sleep(0.01)
-            return False
+            opened = False
+        return opened
 
     def receive(self):
         retried_times = 0
