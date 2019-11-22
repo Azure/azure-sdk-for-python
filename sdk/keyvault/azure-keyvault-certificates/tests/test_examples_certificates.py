@@ -10,7 +10,7 @@ import os
 from devtools_testutils import ResourceGroupPreparer
 from certificates_preparer import VaultClientPreparer
 from certificates_test_case import KeyVaultTestCase
-from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
+from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
 
 
 def print(*args):
@@ -43,18 +43,18 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         certificate_client = vault_client.certificates
 
         # [START create_certificate]
-        from azure.keyvault.certificates import CertificatePolicy, SecretContentType, WellKnownIssuerNames
+        from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
-            issuer_name=WellKnownIssuerNames.Self,
-            subject_name="CN=*.microsoft.com",
+            issuer_name=WellKnownIssuerNames.self,
+            subject="CN=*.microsoft.com",
             san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=SecretContentType.PKCS12,
+            content_type=CertificateContentType.pkcs12,
             validity_in_months=24,
         )
 
@@ -108,7 +108,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # if the vault has soft-delete enabled, the certificate's deleted date,
         # scheduled purge date, and recovery id are available
-        print(deleted_certificate.deleted_date)
+        print(deleted_certificate.deleted_on)
         print(deleted_certificate.scheduled_purge_date)
         print(deleted_certificate.recovery_id)
 
@@ -121,14 +121,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
-            issuer_name=WellKnownIssuerNames.Self,
-            subject_name="CN=*.microsoft.com",
+            issuer_name=WellKnownIssuerNames.self,
+            subject="CN=*.microsoft.com",
             san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=SecretContentType.PKCS12,
+            content_type=CertificateContentType.pkcs12,
             validity_in_months=24,
         )
 
@@ -173,9 +173,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         for certificate in deleted_certificates:
             print(certificate.id)
             print(certificate.name)
-            print(certificate.deleted_date)
+            print(certificate.deleted_on)
             print(certificate.scheduled_purge_date)
-            print(certificate.deleted_date)
+            print(certificate.deleted_on)
 
         # [END list_deleted_certificates]
 
@@ -186,14 +186,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
-            issuer_name=WellKnownIssuerNames.Self,
-            subject_name="CN=*.microsoft.com",
+            issuer_name=WellKnownIssuerNames.self,
+            subject="CN=*.microsoft.com",
             san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=SecretContentType.PKCS12,
+            content_type=CertificateContentType.pkcs12,
             validity_in_months=24,
         )
         polling_interval = 0 if self.is_playback() else None
@@ -234,14 +234,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(
-            issuer_name=WellKnownIssuerNames.Self,
-            subject_name="CN=*.microsoft.com",
+            issuer_name=WellKnownIssuerNames.self,
+            subject="CN=*.microsoft.com",
             san_dns_names=["sdk.azure-int.net"],
             exportable=True,
             key_type="RSA",
             key_size=2048,
             reuse_key=False,
-            content_type=SecretContentType.PKCS12,
+            content_type=CertificateContentType.pkcs12,
             validity_in_months=24,
         )
 
@@ -263,7 +263,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # if the vault has soft-delete enabled, the certificate's deleted date,
         # scheduled purge date, and recovery id are available
-        print(deleted_certificate.deleted_date)
+        print(deleted_certificate.deleted_on)
         print(deleted_certificate.scheduled_purge_date)
         print(deleted_certificate.recovery_id)
 
@@ -283,7 +283,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     def test_example_contacts(self, vault_client, **kwargs):
         certificate_client = vault_client.certificates
 
-        # [START create_contacts]
+        # [START set_contacts]
         from azure.keyvault.certificates import CertificateContact
         # Create a list of the contacts that you want to set for this key vault.
         contact_list = [
@@ -291,13 +291,13 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             CertificateContact(email="admin2@contoso.com", name="John Doe2", phone="2222222222"),
         ]
 
-        contacts = certificate_client.create_contacts(contact_list)
+        contacts = certificate_client.set_contacts(contact_list)
         for contact in contacts:
             print(contact.name)
             print(contact.email)
             print(contact.phone)
 
-        # [END create_contacts]
+        # [END set_contacts]
 
         # [START get_contacts]
 
@@ -340,7 +340,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         )
 
         print(issuer.name)
-        print(issuer.properties.provider)
+        print(issuer.provider)
         print(issuer.account_id)
 
         for contact in issuer.admin_contacts:
@@ -356,7 +356,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         issuer = certificate_client.get_issuer("issuer1")
 
         print(issuer.name)
-        print(issuer.properties.provider)
+        print(issuer.provider)
         print(issuer.account_id)
 
         for contact in issuer.admin_contacts:
@@ -384,7 +384,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         deleted_issuer = certificate_client.delete_issuer("issuer1")
 
         print(deleted_issuer.name)
-        print(deleted_issuer.properties.provider)
+        print(deleted_issuer.provider)
         print(deleted_issuer.account_id)
 
         for contact in deleted_issuer.admin_contacts:

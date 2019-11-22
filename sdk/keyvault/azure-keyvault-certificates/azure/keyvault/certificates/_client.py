@@ -194,7 +194,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_delete_certificate(self, certificate_name, **kwargs):
-        # type: (str, **Any) -> DeletedCertificate
+        # type: (str, **Any) -> LROPoller
         """Delete all versions of a certificate. Requires certificates/delete permission.
 
         When this method returns Key Vault has begun deleting the certificate. Deletion may take several seconds in a
@@ -290,7 +290,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_recover_deleted_certificate(self, certificate_name, **kwargs):
-        # type: (str, **Any) -> KeyVaultCertificate
+        # type: (str, **Any) -> LROPoller
         """Recover a deleted certificate to its latest version. Possible only in a vault with soft-delete enabled.
 
         Requires certificates/recover permission.
@@ -379,7 +379,7 @@ class CertificateClient(KeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def get_policy(self, certificate_name, **kwargs):
+    def get_certificate_policy(self, certificate_name, **kwargs):
         # type: (str, **Any) -> CertificatePolicy
         """Gets the policy for a certificate.
 
@@ -397,7 +397,7 @@ class CertificateClient(KeyVaultClientBase):
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
     @distributed_trace
-    def update_policy(self, certificate_name, policy, **kwargs):
+    def update_certificate_policy(self, certificate_name, policy, **kwargs):
         # type: (str, CertificatePolicy, **Any) -> CertificatePolicy
         """Updates the policy for a certificate.
 
@@ -626,7 +626,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def create_contacts(self, contacts, **kwargs):
+    def set_contacts(self, contacts, **kwargs):
         # type: (Iterable[CertificateContact], **Any) -> List[CertificateContact]
         """Sets the certificate contacts for the key vault.
 
@@ -641,8 +641,8 @@ class CertificateClient(KeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
-                :start-after: [START create_contacts]
-                :end-before: [END create_contacts]
+                :start-after: [START set_contacts]
+                :end-before: [END set_contacts]
                 :language: python
                 :caption: Create contacts
                 :dedent: 8

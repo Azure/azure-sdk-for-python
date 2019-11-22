@@ -12,11 +12,11 @@ class CertificatePolicyAction(str, Enum):
     auto_renew = "AutoRenew"
 
 
-class SecretContentType(str, Enum):
+class CertificateContentType(str, Enum):
     """Content type of the secrets as specified in Certificate Policy"""
 
-    PKCS12 = "application/x-pkcs12"
-    PEM = "application/x-pem-file"
+    pkcs12 = "application/x-pkcs12"
+    pem = "application/x-pem-file"
 
 
 class KeyUsageType(str, Enum):
@@ -40,7 +40,6 @@ class KeyType(str, Enum):
     ec_hsm = "EC-HSM"  #: Elliptic Curve with a private key which is not exportable from the HSM
     rsa = "RSA"  #: RSA (https://tools.ietf.org/html/rfc3447)
     rsa_hsm = "RSA-HSM"  #: RSA with a private key which is not exportable from the HSM
-    oct = "oct"  #: Octet sequence (used to represent symmetric keys)
 
 
 class KeyCurveName(str, Enum):
@@ -55,8 +54,8 @@ class KeyCurveName(str, Enum):
 class WellKnownIssuerNames(str, Enum):
     """Collection of well-known issuer names"""
 
-    Self = "Self"  #: Use this issuer for a self-signed certificate
-    Unknown = "Unknown"
+    self = "Self"  #: Use this issuer for a self-signed certificate
+    unknown = "Unknown"
     """
     If you use this issuer, you must manually get an x509 certificate from the issuer of your choice.
     You must then call :func:`~azure.keyvault.certificates.CertificateClient.merge_certificate` to

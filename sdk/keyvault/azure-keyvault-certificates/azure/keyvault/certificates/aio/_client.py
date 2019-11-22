@@ -341,7 +341,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace_async
-    async def get_policy(self, certificate_name: str, **kwargs: "**Any") -> CertificatePolicy:
+    async def get_certificate_policy(self, certificate_name: str, **kwargs: "**Any") -> CertificatePolicy:
         """Gets the policy for a certificate.
 
         Returns the specified certificate policy resources in the key
@@ -358,7 +358,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
     @distributed_trace_async
-    async def update_policy(
+    async def update_certificate_policy(
         self, certificate_name: str, policy: CertificatePolicy, **kwargs: "**Any"
     ) -> CertificatePolicy:
         """Updates the policy for a certificate.
@@ -578,7 +578,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def create_contacts(
+    async def set_contacts(
         self, contacts: Iterable[CertificateContact], **kwargs: "**Any"
     ) -> List[CertificateContact]:
         # pylint:disable=unsubscriptable-object
@@ -598,8 +598,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates_async.py
-                :start-after: [START create_contacts]
-                :end-before: [END create_contacts]
+                :start-after: [START set_contacts]
+                :end-before: [END set_contacts]
                 :language: python
                 :caption: Create contacts
                 :dedent: 8
