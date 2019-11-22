@@ -17,7 +17,7 @@ from azure.core.pipeline.transport import HttpRequest, HttpResponse, RequestsTra
 from azure.core.pipeline.transport._base import HttpClientTransportResponse, HttpTransport, _deserialize_response
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
-
+import logging
 import pytest
 
 
@@ -389,3 +389,14 @@ def test_recursive_multipart_receive():
 def test_close_unopened_transport():
     transport = RequestsTransport()
     transport.close()
+
+def test_timeout(caplog):
+    transport = RequestsTransport()
+
+    request = HttpRequest("GET", "https://www.bing.com")
+
+    with caplog.at_level(logging.WARNING, logger="azure.core.pipeline.transport"):
+        with Pipeline(transport) as pipeline:
+            pipeline.run(request, connection_timeout=100)
+
+    assert "Tuple timeout setting is deprecated" not in caplog.text
