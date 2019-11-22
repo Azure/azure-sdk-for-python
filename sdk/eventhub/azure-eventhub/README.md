@@ -13,7 +13,7 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 - Observe interesting operations and interactions happening within your business or other ecosystem, allowing loosely coupled systems to interact without the need to bind them together.
 - Receive events from one or more publishers, transform them to better meet the needs of your ecosystem, then publish the transformed events to a new stream for consumers to observe.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/5.0.0b6) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b6/azure.eventhub.html) | [Product documentation](https://docs.microsoft.com/en-us/azure/event-hubs/)
+[Source code](./) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/5.0.0b6) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b6/azure.eventhub.html) | [Product documentation](https://docs.microsoft.com/en-us/azure/event-hubs/)
 
 ## Getting started
 
@@ -82,7 +82,7 @@ consumer_client = EventHubConsumerClient(host, eventhub_name, consumer_group, cr
 ```
 
 - This constructor takes the host name and entity name of your Event Hub instance and credential that implements the
-[TokenCredential](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/azure/core/credentials.py) 
+[TokenCredential](../../core/azure-core/azure/core/credentials.py)
 protocol. There are implementations of the `TokenCredential` protocol available in the
 [azure-identity package](https://pypi.org/project/azure-identity/). The host name is of the format `<yournamespace.servicebus.windows.net>`.
 
@@ -187,7 +187,7 @@ with client:
 
 ### Publish events to an Event Hub asynchronously
 
-Publish events to an Event Hub asynchronously 
+Publish events to an Event Hub asynchronously
 Use the `create_batch` method on `EventHubProcuer` to create an `EventDataBatch` object which can then be sent using the `send_batch` method.
 Events may be added to the `EventDataBatch` using the `add` method until the maximum batch size limit in bytes has been reached.
 ```python
@@ -253,7 +253,7 @@ if __name__ == '__main__':
 
 ### Consume events and save checkpoints using a checkpoint store
 
-`EventHubConsumerClient` is a high level construct which allows you to receive events from multiple partitions at once 
+`EventHubConsumerClient` is a high level construct which allows you to receive events from multiple partitions at once
 and load balance with other consumers using the same Event Hub and consumer group.
 
 This also allows the user to track progress when events are processed using checkpoints.
@@ -269,8 +269,8 @@ In the below example, we create an instance of `EventHubConsumerClient` and use 
 to [create an Azure Storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal)
 and a [Blob Container](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container) to run the code.
 
-[Azure Blob Storage Checkpoint Store Async](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio)
-and [Azure Blob Storage Checkpoint Store Sync](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob)
+[Azure Blob Storage Checkpoint Store Async](../azure-eventhub-checkpointstoreblob-aio)
+and [Azure Blob Storage Checkpoint Store Sync](../azure-eventhub-checkpointstoreblob)
 are one of the `CheckpointStore` implementations we provide that applies Azure Blob Storage as the persistent store.
 
 
@@ -349,12 +349,12 @@ The Event Hubs APIs generate the following exceptions in azure.eventhub.exceptio
 
 ### Examples
 
-There are [more samples](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/samples) in our repo demonstrating the usage of the library.
+There are [more samples](./samples) in our repo demonstrating the usage of the library.
 
-- [./samples/sync_samples/send.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/samples/sync_samples/send.py) - use EventHubProducerClient to publish events
-- [./samples/sync_samples/recv.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/samples/sync_samples/recv.py) - use EventHubConsumerClient to consume events
-- [./samples/async_samples/send_async.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/samples/async_samples/send_async.py) - async/await support of a EventHubProducerClient
-- [./samples/async_samples/recv_async.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/samples/async_samples/recv_async.py) - async/await support of a EventHubConsumerClient
+- [./samples/sync_samples/send.py](./samples/sync_samples/send.py) - use EventHubProducerClient to publish events
+- [./samples/sync_samples/recv.py](./samples/sync_samples/recv.py) - use EventHubConsumerClient to consume events
+- [./samples/async_samples/send_async.py](./samples/async_samples/send_async.py) - async/await support of a EventHubProducerClient
+- [./samples/async_samples/recv_async.py](./samples/async_samples/recv_async.py) - async/await support of a EventHubConsumerClient
 
 ### Documentation
 
@@ -381,4 +381,4 @@ PR appropriately (e.g., label, comment). Simply follow the instructions provided
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhubs/README.png)
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhub/README.png)

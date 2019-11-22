@@ -14,13 +14,11 @@ from setuptools import find_packages, setup
 
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-eventhub"
-PACKAGE_PPRINT_NAME = "Event Hubs"
+PACKAGE_NAME = "azure-eventhub-checkpointstoreblob"
+PACKAGE_PPRINT_NAME = "Event Hubs checkpointer implementation with Blob Storage"
 
-# a-b-c => a/b/c
-package_folder_path = PACKAGE_NAME.replace('-', '/')
-# a-b-c => a.b.c
-namespace_name = PACKAGE_NAME.replace('-', '.')
+package_folder_path = "azure/eventhub/extensions/checkpointstoreblob"
+namespace_name = "azure.eventhub.extensions.checkpointstoreblob"
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
@@ -37,10 +35,11 @@ with open('HISTORY.md') as f:
 
 exclude_packages = [
         'tests',
-        'stress',
         'samples',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
+        'azure.eventhub',
+        'azure.eventhub.extensions',
     ]
 
 setup(
@@ -52,7 +51,7 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub-checkpointstoreblob',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Programming Language :: Python',
@@ -68,12 +67,10 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
-        "azure-core<2.0.0,>=1.0.0",
-        "uamqp<2.0,>=1.2.3",
-        'azure-common~=1.1',
+        'azure-storage-blob<13.0.0,>=12.0.0',
+        'azure-eventhub<6.0.0,>=5.0.0b5',
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-nspkg'],
-        ":python_version<'3.5'": ["typing"],
+
     }
 )

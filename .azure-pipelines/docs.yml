@@ -22,7 +22,7 @@ jobs:
         displayName: 'Install All Packages'
         inputs:
           scriptPath: 'scripts/dev_setup.py'
-          arguments: '--exceptionlist=azure-eventhubs,azure-eventhubs-checkpointstoreblob-aio'
+          arguments: '--exceptionlist=azure-eventhub,azure-eventhub-checkpointstoreblob-aio'
 
       - pwsh: |
           cd $(Build.SourcesDirectory)/doc/sphinx

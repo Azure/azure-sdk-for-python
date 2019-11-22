@@ -14,11 +14,11 @@ from setuptools import find_packages, setup
 
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-eventhub-checkpointstoreblob"
+PACKAGE_NAME = "azure-eventhub-checkpointstoreblob-aio"
 PACKAGE_PPRINT_NAME = "Event Hubs checkpointer implementation with Blob Storage"
 
-package_folder_path = "azure/eventhub/extensions/checkpointstoreblob"
-namespace_name = "azure.eventhub.extensions.checkpointstoreblob"
+package_folder_path = "azure/eventhub/extensions/checkpointstoreblobaio"
+namespace_name = "azure.eventhub.extensions.checkpointstoreblobaio"
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
@@ -51,12 +51,10 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub-checkpointstoreblob-aio',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
@@ -66,9 +64,11 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
+    python_requires=">=3.5.3",
     install_requires=[
         'azure-storage-blob<13.0.0,>=12.0.0',
         'azure-eventhub<6.0.0,>=5.0.0b5',
+        'aiohttp<4.0,>=3.0',
     ],
     extras_require={
 
