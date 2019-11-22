@@ -401,6 +401,17 @@ def test_timeout(caplog):
 
     assert "Tuple timeout setting is deprecated" not in caplog.text
 
+def test_tuple_timeout(caplog):
+    transport = RequestsTransport()
+
+    request = HttpRequest("GET", "https://www.bing.com")
+
+    with caplog.at_level(logging.WARNING, logger="azure.core.pipeline.transport"):
+        with Pipeline(transport) as pipeline:
+            pipeline.run(request, connection_timeout=(100, 100))
+
+    assert "Tuple timeout setting is deprecated" in caplog.text
+
 def test_conflict_timeout(caplog):
     transport = RequestsTransport()
 

@@ -225,14 +225,16 @@ class RequestsTransport(HttpTransport):
         error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
 
         try:
-            timeout = kwargs.pop('connection_timeout', self.connection_config.timeout)
-            if not isinstance(timeout, tuple):
-                read_timeout = kwargs.pop('read_timeout', self.connection_config.read_timeout)
-                timeout = (timeout, read_timeout)
-            else:
+            connection_timeout = kwargs.pop('connection_timeout', self.connection_config.timeout)
+
+            if isinstance(connection_timeout, tuple):
                 if 'read_timeout' in kwargs:
-                    raise ValueError('Conflict, cannot set tuple connection_timeout and read_timeout together')
+                    raise ValueError('Cannot set tuple connection_timeout and read_timeout together')
                 _LOGGER.warning("Tuple timeout setting is deprecated")
+                timeout = connection_timeout
+            else:
+                read_timeout = kwargs.pop('read_timeout', self.connection_config.read_timeout)
+                timeout = (connection_timeout, read_timeout)
             response = self.session.request(  # type: ignore
                 request.method,
                 request.url,
