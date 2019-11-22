@@ -28,7 +28,6 @@
 This module is the requests implementation of Pipeline ABC
 """
 from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
-from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
 import email
