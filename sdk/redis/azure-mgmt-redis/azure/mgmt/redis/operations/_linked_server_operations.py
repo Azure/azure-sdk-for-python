@@ -21,11 +21,13 @@ from .. import models
 class LinkedServerOperations(object):
     """LinkedServerOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2018-03-01".
+    :ivar api_version: Client Api Version. Constant value: "2019-07-01-preview".
     """
 
     models = models
@@ -35,7 +37,7 @@ class LinkedServerOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01"
+        self.api_version = "2019-07-01-preview"
 
         self.config = config
 
@@ -262,7 +264,6 @@ class LinkedServerOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('RedisLinkedServerWithProperties', response)
 
@@ -292,8 +293,7 @@ class LinkedServerOperations(object):
          ~azure.mgmt.redis.models.RedisLinkedServerWithPropertiesPaged[~azure.mgmt.redis.models.RedisLinkedServerWithProperties]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -324,6 +324,11 @@ class LinkedServerOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -334,12 +339,10 @@ class LinkedServerOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.RedisLinkedServerWithPropertiesPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.RedisLinkedServerWithPropertiesPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.RedisLinkedServerWithPropertiesPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/linkedServers'}
