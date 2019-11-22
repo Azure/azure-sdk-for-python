@@ -10,6 +10,8 @@ from azure.core.settings import settings  # type: ignore
 
 from azure.eventhub import EventPosition
 
+from .._utils import trace_link_message
+
 
 class EventProcessorMixin(object):
 
@@ -48,6 +50,6 @@ class EventProcessorMixin(object):
             self._eventhub_client._add_span_request_attributes(child)  # pylint: disable=protected-access
             child.kind = SpanKind.SERVER
 
-            event._trace_link_message(child)  # pylint: disable=protected-access
+            trace_link_message(event, child)
             with child:
                 yield
