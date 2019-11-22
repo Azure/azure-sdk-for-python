@@ -163,8 +163,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
                                                  or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
                 self.handler_ready = True
-            else:
-                time.sleep(0.01)
         return self.handler_ready
 
     def receive(self):
