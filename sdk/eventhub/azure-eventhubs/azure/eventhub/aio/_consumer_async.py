@@ -161,7 +161,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 raise
             except Exception as exception:  # pylint: disable=broad-except
                 if isinstance(exception, uamqp.errors.LinkDetach) and \
-                        exception.condition == uamqp.constants.ErrorCodes.LinkStolen:
+                        exception.condition == uamqp.constants.ErrorCodes.LinkStolen:  # pylint: disable=no-member
                     raise self._handle_exception(exception)
                 if not self.running:  # exit by close
                     return
