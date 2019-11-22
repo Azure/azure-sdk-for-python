@@ -400,3 +400,12 @@ def test_timeout(caplog):
             pipeline.run(request, connection_timeout=100)
 
     assert "Tuple timeout setting is deprecated" not in caplog.text
+
+def test_timeout(caplog):
+    transport = RequestsTransport()
+
+    request = HttpRequest("GET", "https://www.bing.com")
+
+    with pytest.raises(ValueError):
+        with Pipeline(transport) as pipeline:
+            pipeline.run(request, connection_timeout=(100, 100), read_timeout = 100)
