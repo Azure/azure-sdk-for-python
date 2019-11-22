@@ -38,11 +38,10 @@ import pytest
 
 from requests import Request, Response
 
-from msrest import Deserializer, Configuration
+from msrest import Deserializer
 
 from azure.core.polling import LROPoller
 from azure.core.exceptions import DecodeError
-from azure.core.configuration import Configuration
 from azure.core import PipelineClient
 from azure.core.pipeline import PipelineResponse, Pipeline
 from azure.core.pipeline.transport import RequestsTransportResponse, HttpTransport
@@ -85,7 +84,7 @@ RESOURCE_URL = 'http://subscriptions/sub1/resourcegroups/g1/resourcetype1/resour
 ERROR = 'http://dummyurl_ReturnError'
 POLLING_STATUS = 200
 
-CLIENT = PipelineClient("http://example.org", Configuration())
+CLIENT = PipelineClient("http://example.org")
 def mock_run(client_self, request, **kwargs):
     return TestArmPolling.mock_update(request.url, request.headers)
 CLIENT._pipeline.run = types.MethodType(mock_run, CLIENT)
@@ -108,7 +107,6 @@ def pipeline_client_builder():
 
         return PipelineClient(
             'http://example.org/',
-            Configuration(),
             pipeline=Pipeline(
                 transport=TestHttpTransport()
             )

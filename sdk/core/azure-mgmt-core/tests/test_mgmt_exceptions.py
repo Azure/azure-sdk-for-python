@@ -26,7 +26,7 @@
 
 import json
 
-from azure.core.pipeline.transport.base import _HttpResponseBase
+from azure.core.pipeline.transport._base import _HttpResponseBase
 
 from azure.mgmt.core.exceptions import ARMError, TypedErrorInfo
 

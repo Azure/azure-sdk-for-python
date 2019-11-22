@@ -37,11 +37,10 @@ import pytest
 
 from requests import Request, Response
 
-from msrest import Deserializer, Configuration
+from msrest import Deserializer
 
 from azure.core.polling import async_poller
 from azure.core.exceptions import DecodeError
-from azure.core.configuration import Configuration
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import PipelineResponse, AsyncPipeline
 from azure.core.pipeline.transport import AsyncioRequestsTransportResponse, AsyncHttpTransport
@@ -86,7 +85,7 @@ RESOURCE_URL = 'http://subscriptions/sub1/resourcegroups/g1/resourcetype1/resour
 ERROR = 'http://dummyurl_ReturnError'
 POLLING_STATUS = 200
 
-CLIENT = AsyncPipelineClient("http://example.org", Configuration())
+CLIENT = AsyncPipelineClient("http://example.org")
 async def mock_run(client_self, request, **kwargs):
     return TestArmPolling.mock_update(request.url)
 CLIENT._pipeline.run = types.MethodType(mock_run, CLIENT)
@@ -109,7 +108,6 @@ def async_pipeline_client_builder():
 
         return AsyncPipelineClient(
             'http://example.org/',
-            Configuration(),
             pipeline=AsyncPipeline(
                 transport=TestHttpTransport()
             )
