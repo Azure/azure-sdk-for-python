@@ -9,7 +9,7 @@ import calendar
 import json
 import logging
 import six
-
+import uamqp
 from uamqp import BatchMessage, Message, constants  # type: ignore
 
 from ._utils import set_message_partition_key, trace_message, utc_from_timestamp
@@ -263,6 +263,10 @@ class EventData(object):
 
     def encode_message(self):
         return self.message.encode_message()
+
+    if uamqp.__version__ <= "1.2.3":
+        application_properties = properties
+
 
 
 class EventDataBatch(object):
