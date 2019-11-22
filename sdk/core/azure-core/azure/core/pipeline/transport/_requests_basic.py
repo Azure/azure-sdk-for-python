@@ -231,7 +231,7 @@ class RequestsTransport(HttpTransport):
                 timeout = (timeout, read_timeout)
             else:
                 if 'read_timeout' in kwargs:
-                    raise ValueError('Conflict, set tuple connection_timeout and read_timeout together')
+                    raise ValueError('Conflict, cannot set tuple connection_timeout and read_timeout together')
                 _LOGGER.warning("Tuple timeout setting is deprecated")
             response = self.session.request(  # type: ignore
                 request.method,
