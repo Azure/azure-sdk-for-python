@@ -24,7 +24,7 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
             checkpoint_store, ownership_timeout, partition_id,
     ):
         self.cached_parition_ids = []  # type: List[str]
-        self.owned_patitions = {}
+        self.owned_partitions = {}
         self.eventhub_client = eventhub_client
         self.fully_qualified_namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
         self.eventhub_name = eventhub_client.eventhub_name
@@ -55,8 +55,8 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
             self.fully_qualified_namespace, self.eventhub_name, self.consumer_group
         )
         to_claim = self._balance_ownership(ownership_list, self.cached_parition_ids)
-        self.owned_patitions = self.checkpoint_store.claim_ownership(to_claim) if to_claim else []
-        return [x["partition_id"] for x in self.owned_patitions]
+        self.owned_partitions = self.checkpoint_store.claim_ownership(to_claim) if to_claim else []
+        return [x["partition_id"] for x in self.owned_partitions]
 
     def release_ownership(self, partition_id):
         """Explicitly release ownership of a partition if we still have it.
@@ -66,7 +66,7 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         """
         now = time.time()
         partition_ownership = [
-            o for o in self.owned_patitions \
+            o for o in self.owned_partitions \
                 if o["partition_id"] == partition_id \
                     and o["owner_id"] == self.owner_id \
                         and o["last_modified_time"] + self.ownership_timeout < now
