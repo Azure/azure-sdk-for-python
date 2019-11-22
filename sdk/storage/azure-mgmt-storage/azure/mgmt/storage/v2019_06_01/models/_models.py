@@ -974,7 +974,8 @@ class FileShare(AzureEntityResource):
      metadata.
     :type metadata: dict[str, str]
     :param share_quota: The maximum size of the share, in gigabytes. Must be
-     greater than 0, and less than or equal to 5TB (5120).
+     greater than 0, and less than or equal to 5TB (5120). For Large File
+     Shares, the maximum size is 100000.
     :type share_quota: int
     """
 
@@ -984,7 +985,7 @@ class FileShare(AzureEntityResource):
         'type': {'readonly': True},
         'etag': {'readonly': True},
         'last_modified_time': {'readonly': True},
-        'share_quota': {'maximum': 5120, 'minimum': 1},
+        'share_quota': {'maximum': 100000, 'minimum': 1},
     }
 
     _attribute_map = {
@@ -1027,7 +1028,8 @@ class FileShareItem(AzureEntityResource):
      metadata.
     :type metadata: dict[str, str]
     :param share_quota: The maximum size of the share, in gigabytes. Must be
-     greater than 0, and less than or equal to 5TB (5120).
+     greater than 0, and less than or equal to 5TB (5120). For Large File
+     Shares, the maximum size is 100000.
     :type share_quota: int
     """
 
@@ -1037,7 +1039,7 @@ class FileShareItem(AzureEntityResource):
         'type': {'readonly': True},
         'etag': {'readonly': True},
         'last_modified_time': {'readonly': True},
-        'share_quota': {'maximum': 5120, 'minimum': 1},
+        'share_quota': {'maximum': 100000, 'minimum': 1},
     }
 
     _attribute_map = {
