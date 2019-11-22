@@ -104,6 +104,46 @@ class HeadersPolicy(SansIOHTTPPolicy):
         if additional_headers:
             request.http_request.headers.update(additional_headers)
 
+class RequestIdPolicy(SansIOHTTPPolicy):
+    """A simple policy that sets the given request id in the header.
+
+    This will overwrite request id that is already defined in the request. Request id can be
+    configured up front, where the request id will be applied to all outgoing
+    operations, and additional request id can also be set dynamically per operation.
+
+    :param dict base_headers: Headers to send with the request.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/test_example_sansio.py
+            :start-after: [START request_id_policy]
+            :end-before: [END request_id_policy]
+            :language: python
+            :dedent: 4
+            :caption: Configuring a request id policy.
+    """
+    def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
+        # type: (dict) -> None
+        self._request_id = kwargs.pop('request_id', None)
+
+    def set_request_id(self, value):
+        """Add the request id to the configuration to be applied to all requests.
+
+        :param str value: The request id value.
+        """
+        self._request_id = value
+
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
+        """Updates with the given request id before sending the request to the next policy.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
+        request_id = request.context.options.pop('request_id', self._request_id)
+        if request_id:
+            header = {"x-ms-client-request-id":request_id}
+            request.http_request.headers.update(header)
 
 class UserAgentPolicy(SansIOHTTPPolicy):
     """User-Agent Policy. Allows custom values to be added to the User-Agent header.
@@ -205,8 +245,9 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
         """
         http_request = request.http_request
         options = request.context.options
-        if options.pop("logging_enable", self.enable_http_logger):
-            request.context["logging_enable"] = True
+        logging_enable = options.pop("logging_enable", self.enable_http_logger)
+        request.context["logging_enable"] = logging_enable
+        if logging_enable:
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
 
@@ -237,35 +278,37 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
         :param response: The PipelineResponse object.
         :type response: ~azure.core.pipeline.PipelineResponse
         """
-        if response.context.pop("logging_enable", self.enable_http_logger):
-            if not _LOGGER.isEnabledFor(logging.DEBUG):
-                return
+        http_response = response.http_response
+        try:
+            logging_enable = response.context["logging_enable"]
+            if logging_enable:
+                if not _LOGGER.isEnabledFor(logging.DEBUG):
+                    return
 
-            try:
-                _LOGGER.debug("Response status: %r", response.http_response.status_code)
+                _LOGGER.debug("Response status: %r", http_response.status_code)
                 _LOGGER.debug("Response headers:")
-                for res_header, value in response.http_response.headers.items():
+                for res_header, value in http_response.headers.items():
                     _LOGGER.debug("    %r: %r", res_header, value)
 
                 # We don't want to log binary data if the response is a file.
                 _LOGGER.debug("Response content:")
                 pattern = re.compile(r'attachment; ?filename=["\w.]+', re.IGNORECASE)
-                header = response.http_response.headers.get('content-disposition')
+                header = http_response.headers.get('content-disposition')
 
                 if header and pattern.match(header):
                     filename = header.partition('=')[2]
                     _LOGGER.debug("File attachments: %s", filename)
-                elif response.http_response.headers.get("content-type", "").endswith("octet-stream"):
+                elif http_response.headers.get("content-type", "").endswith("octet-stream"):
                     _LOGGER.debug("Body contains binary data.")
-                elif response.http_response.headers.get("content-type", "").startswith("image"):
+                elif http_response.headers.get("content-type", "").startswith("image"):
                     _LOGGER.debug("Body contains image data.")
                 else:
                     if response.context.options.get('stream', False):
                         _LOGGER.debug("Body is streamable")
                     else:
                         _LOGGER.debug(response.http_response.text())
-            except Exception as err:  # pylint: disable=broad-except
-                _LOGGER.debug("Failed to log response: %s", repr(err))
+        except Exception as err:  # pylint: disable=broad-except
+            _LOGGER.debug("Failed to log response: %s", repr(err))
 
 
 class HttpLoggingPolicy(SansIOHTTPPolicy):
