@@ -11,12 +11,12 @@ the last enqueued event properties of specific partition.
 """
 import os
 import time
-from azure.eventhub import EventPosition, EventHubConsumerClient
+from azure.eventhub import EventHubConsumerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-EVENT_POSITION = EventPosition("-1")
+EVENT_POSITION = "-1"
 PARTITION = "0"
 
 
@@ -29,13 +29,14 @@ def on_event(partition_context, event):
 
     print("Last enqueued event properties from partition: {} is: {}".format(
         partition_context.partition_id,
-        event.last_enqueued_event_properties)
+        partition_context.last_enqueued_event_properties)
     )
 
 
 if __name__ == '__main__':
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
+        consumer_group='$Default',
         eventhub_name=EVENTHUB_NAME,
     )
 
@@ -43,7 +44,6 @@ if __name__ == '__main__':
         with consumer_client:
             consumer_client.receive(
                 on_event=on_event,
-                consumer_group='$Default',
                 partition_id='0',
                 track_last_enqueued_event_properties=True
             )

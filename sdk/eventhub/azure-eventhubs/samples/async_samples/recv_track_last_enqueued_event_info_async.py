@@ -25,7 +25,7 @@ async def on_event(partition_context, event):
 
     print("Last enqueued event properties from partition: {} is: {}".format(
         partition_context.partition_id,
-        event.last_enqueued_event_properties)
+        partition_context.last_enqueued_event_properties)
     )
 
 
@@ -33,7 +33,6 @@ async def receive(client):
     try:
         await client.receive(
             on_event=on_event,
-            consumer_group="$default",
             partition_id='0',
             track_last_enqueued_event_properties=True
         )
@@ -44,6 +43,7 @@ async def receive(client):
 async def main():
     client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
+        consumer_group="$default",
         eventhub_name=EVENTHUB_NAME,
     )
     async with client:

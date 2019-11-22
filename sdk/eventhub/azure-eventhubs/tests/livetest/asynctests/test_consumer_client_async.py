@@ -1,6 +1,6 @@
 import pytest
 import asyncio
-from azure.eventhub import EventData, EventPosition
+from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.aio._eventprocessor.local_checkpoint_store import InMemoryCheckpointStore
 from azure.eventhub._constants import ALL_PARTITIONS
@@ -20,7 +20,7 @@ async def test_receive_no_partition_async(connstr_senders):
     on_event.received = 0
     async with client:
         task = asyncio.ensure_future(
-            client.receive(on_event, initial_event_position="-1"))
+            client.receive(on_event, starting_position="-1"))
         await asyncio.sleep(10)
         assert on_event.received == 2
     task.cancel()
@@ -43,7 +43,7 @@ async def test_receive_partition_async(connstr_senders):
     on_event.received = 0
     async with client:
         task = asyncio.ensure_future(
-            client.receive(on_event, partition_id="0", initial_event_position="-1"))
+            client.receive(on_event, partition_id="0", starting_position="-1"))
         await asyncio.sleep(10)
         assert on_event.received == 1
     task.cancel()
@@ -64,9 +64,9 @@ async def test_receive_load_balancing_async(connstr_senders):
 
     async with client1, client2:
         task1 = asyncio.ensure_future(
-            client1.receive(on_event, initial_event_position="-1"))
+            client1.receive(on_event, starting_position="-1"))
         task2 = asyncio.ensure_future(
-            client2.receive(on_event, initial_event_position="-1"))
+            client2.receive(on_event, starting_position="-1"))
         await asyncio.sleep(10)
         assert len(client1._event_processors[("$default", ALL_PARTITIONS)]._tasks) == 1
         assert len(client2._event_processors[("$default", ALL_PARTITIONS)]._tasks) == 1

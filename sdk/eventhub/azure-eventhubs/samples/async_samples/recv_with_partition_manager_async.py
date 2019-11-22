@@ -41,7 +41,7 @@ async def receive(client):
         partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
         which also try to receive events from all partitions and use the same storage resource.
         """
-        await client.receive(on_event=on_event, consumer_group="$Default")
+        await client.receive(on_event=on_event)
         # With specified partition_id, load-balance will be disabled
         # await client.receive(on_event=on_event, consumer_group="$default", partition_id = '0'))
     except KeyboardInterrupt:
@@ -52,6 +52,7 @@ async def main():
     checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
+        consumer_group="$Default",
         checkpoint_store=checkpoint_store,  # For load balancing and checkpoint. Leave None for no load balancing
     )
     async with client:

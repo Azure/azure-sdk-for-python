@@ -41,7 +41,7 @@ class AiohttpTestTransport(AioHttpTransport):
 class StorageQueueClientTestAsync(AsyncStorageTestCase):
     def setUp(self):
         super(StorageQueueClientTestAsync, self).setUp()
-        self.sas_token = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
+        self.sas_token = self.generate_sas_token()
         self.token_credential = self.generate_oauth_token()
 
     # --Helpers-----------------------------------------------------------------
@@ -469,6 +469,28 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
 
         custom_headers = {'User-Agent': 'customer_user_agent'}
         await service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
+
+    @GlobalStorageAccountPreparer()
+    async def test_closing_pipeline_client_async(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        for client, url in SERVICES.items():
+            # Act
+            service = client(
+                self.account_url(storage_account.name, "queue"), credential=storage_account_key, queue_name='queue')
+
+            # Assert
+            async with service:
+                assert hasattr(service, 'close')
+                service.close()
+
+    @GlobalStorageAccountPreparer()
+    async def test_closing_pipeline_client_simple_async(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        for client, url in SERVICES.items():
+            # Act
+            service = client(
+                self.account_url(storage_account.name, "queue"), credential=storage_account_key, queue_name='queue')
+            service.close()
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

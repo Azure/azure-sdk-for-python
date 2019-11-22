@@ -35,6 +35,7 @@ if __name__ == '__main__':
     checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
+        consumer_group='$Default',
         checkpoint_store=checkpoint_store,  # For load balancing and checkpoint. Leave None for no load balancing
     )
 
@@ -45,7 +46,7 @@ if __name__ == '__main__':
             partition manager, the client will load-balance partition assignment with other EventHubConsumerClient instances
             which also try to receive events from all partitions and use the same storage resource.
             """
-            consumer_client.receive(on_event=on_event, consumer_group='$Default')
+            consumer_client.receive(on_event=on_event)
             # With specified partition_id, load-balance will be disabled
             # client.receive(on_event=on_event, consumer_group='$Default', partition_id='0')
     except KeyboardInterrupt:

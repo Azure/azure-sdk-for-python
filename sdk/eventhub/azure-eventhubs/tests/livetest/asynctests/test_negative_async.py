@@ -10,8 +10,8 @@ import sys
 
 from azure.eventhub import (
     EventData,
-    EventPosition,
     EventHubError,
+    EventDataBatch,
     ConnectError,
     AuthenticationError,
     EventDataSendError,
@@ -29,7 +29,9 @@ async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receiv
     client = EventHubProducerClient.from_connection_string(invalid_hostname)
     async with client:
         with pytest.raises(ConnectError):
-            await client.send(EventData("test data"))
+            batch = EventDataBatch()
+            batch.add(EventData("test data"))
+            await client.send_batch(batch)
 
 
 @pytest.mark.parametrize("invalid_place",
@@ -54,10 +56,10 @@ async def test_receive_with_invalid_param_async(live_eventhub_config, invalid_pl
     async with client:
         if invalid_place == "partition":
             task = asyncio.ensure_future(client.receive(on_event, partition_id=invalid_place,
-                                         initial_event_position=EventPosition("-1")))
+                                         starting_position="-1"))
         else:
             task = asyncio.ensure_future(client.receive(on_event, partition_id="0",
-                                                        initial_event_position=EventPosition("-1")))
+                                                        starting_position="-1"))
         await asyncio.sleep(10)
         assert len(client._event_processors) == 1
     await task
@@ -69,7 +71,9 @@ async def test_send_with_invalid_key_async(invalid_key):
     client = EventHubProducerClient.from_connection_string(invalid_key)
     async with client:
         with pytest.raises(ConnectError):
-            await client.send(EventData("test data"))
+            batch = EventDataBatch()
+            batch.add(EventData("test data"))
+            await client.send_batch(batch)
 
 
 @pytest.mark.liveTest
@@ -78,7 +82,9 @@ async def test_send_with_invalid_policy_async(invalid_policy):
     client = EventHubProducerClient.from_connection_string(invalid_policy)
     async with client:
         with pytest.raises(ConnectError):
-            await client.send(EventData("test data"))
+            batch = EventDataBatch()
+            batch.add(EventData("test data"))
+            await client.send_batch(batch)
 
 
 @pytest.mark.liveTest
@@ -87,7 +93,9 @@ async def test_non_existing_entity_sender_async(connection_str):
     client = EventHubProducerClient.from_connection_string(connection_str, eventhub_name="nemo")
     async with client:
         with pytest.raises(ConnectError):
-            await client.send(EventData("test data"))
+            batch = EventDataBatch()
+            batch.add(EventData("test data"))
+            await client.send_batch(batch)
 
 
 @pytest.mark.liveTest
@@ -98,7 +106,9 @@ async def test_send_to_invalid_partitions_async(connection_str):
         client = EventHubProducerClient.from_connection_string(connection_str)
         try:
             with pytest.raises(ConnectError):
-                await client.send(EventData("test data"), partition_id=p)
+                batch = await client.create_batch(partition_id=p)
+                batch.add(EventData("test data"))
+                await client.send_batch(batch)
         finally:
             await client.close()
 
@@ -111,8 +121,9 @@ async def test_send_too_large_message_async(connection_str):
     client = EventHubProducerClient.from_connection_string(connection_str)
     try:
         data = EventData(b"A" * 1100000)
-        with pytest.raises(EventDataSendError):
-            await client.send(data)
+        with pytest.raises(ValueError):
+            batch = await client.create_batch()
+            batch.add(data)
     finally:
         await client.close()
 
@@ -124,7 +135,9 @@ async def test_send_null_body_async(connection_str):
     try:
         with pytest.raises(ValueError):
             data = EventData(None)
-            await client.send(data)
+            batch = await client.create_batch()
+            batch.add(data)
+            await client.send_batch(batch)
     finally:
         await client.close()
 
@@ -138,7 +151,7 @@ async def test_create_batch_with_invalid_hostname_async(invalid_hostname):
     client = EventHubProducerClient.from_connection_string(invalid_hostname)
     async with client:
         with pytest.raises(ConnectError):
-            await client.create_batch(max_size=300)
+            await client.create_batch(max_size_in_bytes=300)
 
 
 @pytest.mark.liveTest
@@ -147,4 +160,4 @@ async def test_create_batch_with_too_large_size_async(connection_str):
     client = EventHubProducerClient.from_connection_string(connection_str)
     async with client:
         with pytest.raises(ValueError):
-            await client.create_batch(max_size=5 * 1024 * 1024)
+            await client.create_batch(max_size_in_bytes=5 * 1024 * 1024)

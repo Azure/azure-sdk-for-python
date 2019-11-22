@@ -19,7 +19,7 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates basic CRUD operations for the certificate contacts for a key vault.
 #
-# 1. Create contacts (create_contacts)
+# 1. Create contacts (set_contacts)
 #
 # 2. Get contacts (get_contacts)
 #
@@ -41,7 +41,7 @@ try:
     ]
 
     # Creates and sets the certificate contacts for this key vault.
-    client.create_contacts(contact_list)
+    client.set_contacts(contact_list)
 
     # Gets the certificate contacts for this key vault.
     contacts = client.get_contacts()
