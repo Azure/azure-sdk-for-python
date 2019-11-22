@@ -9,6 +9,7 @@ from typing import (  # pylint: disable=unused-import
     Optional,
     Any,
     List,
+    Dict,
     TYPE_CHECKING,
 )
 from azure.core.tracing.decorator import distributed_trace
@@ -66,7 +67,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def detect_language(
         self,
-        documents,  # type: List[str] or List[LanguageInput]
+        documents,  # type: Union[List[str], List[LanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         country_hint=None,  # type: Optional[str]
@@ -110,7 +111,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def recognize_entities(
         self,
-        documents,  # type: List[str] or List[MultiLanguageInput]
+        documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         language=None,  # type: Optional[str]
@@ -155,7 +156,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def recognize_pii_entities(
         self,
-        documents,  # type: List[str] or List[MultiLanguageInput]
+        documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         language=None,  # type: Optional[str]
@@ -199,7 +200,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def recognize_linked_entities(
         self,
-        documents,  # type: List[str] or List[MultiLanguageInput]
+        documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         language=None,  # type: Optional[str]
@@ -242,7 +243,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def extract_key_phrases(
         self,
-        documents,  # type: List[str] or List[MultiLanguageInput]
+        documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         language=None,  # type: Optional[str]
@@ -285,7 +286,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     def analyze_sentiment(
         self,
-        documents,  # type: List[str] or List[MultiLanguageInput]
+        documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
         show_stats=False,  # type:  Optional[bool]
         language=None,  # type: Optional[str]
