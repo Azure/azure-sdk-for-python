@@ -3,12 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import datetime
 from contextlib import contextmanager
+import six
 
 from azure.core.tracing import SpanKind  # type: ignore
 from azure.core.settings import settings  # type: ignore
-
-from azure.eventhub import EventPosition
 
 from .._utils import trace_link_message
 
@@ -17,21 +17,37 @@ class EventProcessorMixin(object):
 
     def get_init_event_position(self, partition_id, checkpoint):
         checkpoint_offset = checkpoint.get("offset") if checkpoint else None
-        if checkpoint_offset:
-            initial_event_position = EventPosition(checkpoint_offset)
-        elif isinstance(self._initial_event_position, EventPosition):
-            initial_event_position = self._initial_event_position
-        elif isinstance(self._initial_event_position, dict):
-            initial_event_position = self._initial_event_position.get(partition_id, EventPosition("-1"))
-        else:
-            initial_event_position = EventPosition(self._initial_event_position)
-        return initial_event_position
 
-    def create_consumer(self, partition_id, initial_event_position, on_event_received):
+        event_position_inclusive = False
+        if isinstance(self._initial_event_position_inclusive, dict):
+            event_position_inclusive = self._initial_event_position_inclusive.get(partition_id, False)
+        elif isinstance(self._initial_event_position_inclusive, bool):
+            event_position_inclusive = self._initial_event_position_inclusive
+
+        event_position = "-1"
+        if checkpoint_offset:
+            event_position = checkpoint_offset
+        elif isinstance(self._initial_event_position, (str, six.integer_types, datetime.datetime)):
+            event_position = self._initial_event_position
+        elif isinstance(self._initial_event_position, dict):
+            event_position = self._initial_event_position.get(partition_id, "-1")
+        else:
+            event_position = self._initial_event_position
+
+        return event_position, event_position_inclusive
+
+    def create_consumer(
+            self,
+            partition_id,
+            initial_event_position,
+            initial_event_position_inclusive,
+            on_event_received
+    ):
         consumer = self._eventhub_client._create_consumer(  # pylint: disable=protected-access
             self._consumer_group,
             partition_id,
             initial_event_position,
+            event_position_inclusive=initial_event_position_inclusive,
             on_event_received=on_event_received,
             owner_level=self._owner_level,
             track_last_enqueued_event_properties=self._track_last_enqueued_event_properties,

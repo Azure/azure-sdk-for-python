@@ -7,7 +7,7 @@ from ._enums import(
     CertificatePolicyAction,
     KeyCurveName,
     KeyType,
-    SecretContentType,
+    CertificateContentType,
     KeyUsageType,
     WellKnownIssuerNames
 )
@@ -42,8 +42,10 @@ __all__ = [
     "KeyVaultCertificate",
     "KeyUsageType",
     "LifetimeAction",
-    "SecretContentType",
+    "CertificateContentType",
     "WellKnownIssuerNames",
+    "CertificateIssuer",
+    "IssuerProperties"
 ]
 
 from ._version import VERSION

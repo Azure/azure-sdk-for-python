@@ -20,8 +20,7 @@ def create_async_eventhub_producer_client():
 
     # [START create_eventhub_producer_client_async]
     import os
-    from azure.eventhub import EventHubSharedKeyCredential
-    from azure.eventhub.aio import EventHubProducerClient
+    from azure.eventhub.aio import EventHubProducerClient, EventHubSharedKeyCredential
 
     fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
     eventhub_name = os.environ['EVENT_HUB_NAME']
@@ -42,13 +41,13 @@ def create_async_eventhub_consumer_client():
     event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
     eventhub_name = os.environ['EVENT_HUB_NAME']
     consumer = EventHubConsumerClient.from_connection_string(conn_str=event_hub_connection_str,
+                                                             consumer_group='$Default',
                                                              eventhub_name=eventhub_name)
     # [END create_eventhub_consumer_client_from_conn_str_async]
 
     # [START create_eventhub_consumer_client_async]
     import os
-    from azure.eventhub import EventHubSharedKeyCredential
-    from azure.eventhub.aio import EventHubConsumerClient
+    from azure.eventhub.aio import EventHubConsumerClient, EventHubSharedKeyCredential
 
     fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
     eventhub_name = os.environ['EVENT_HUB_NAME']
@@ -56,6 +55,7 @@ def create_async_eventhub_consumer_client():
     shared_access_key = os.environ['EVENT_HUB_SAS_KEY']
 
     consumer = EventHubConsumerClient(fully_qualified_namespace=fully_qualified_namespace,
+                                      consumer_group='$Default',
                                       eventhub_name=eventhub_name,
                                       credential=EventHubSharedKeyCredential(shared_access_policy, shared_access_key))
     # [END create_eventhub_consumer_client_async]
@@ -68,10 +68,10 @@ async def example_eventhub_async_send_and_receive():
     try:
         # [START eventhub_producer_client_create_batch_async]
         from azure.eventhub import EventData
-        event_data_batch = await producer.create_batch(max_size=10000)
+        event_data_batch = await producer.create_batch(max_size_in_bytes=10000)
         while True:
             try:
-                event_data_batch.try_add(EventData('Message inside EventBatchData'))
+                event_data_batch.add(EventData('Message inside EventBatchData'))
             except ValueError:
                 # The EventDataBatch object reaches its max_size.
                 # You can send the full EventDataBatch object and create a new one here.
@@ -80,8 +80,15 @@ async def example_eventhub_async_send_and_receive():
 
         # [START eventhub_producer_client_send_async]
         async with producer:
-            event_data = EventData(b"A single event")
-            await producer.send(event_data)
+            event_data_batch = await producer.create_batch(max_size_in_bytes=10000)
+            while True:
+                try:
+                    event_data_batch.add(EventData('Message inside EventBatchData'))
+                except ValueError:
+                    # The EventDataBatch object reaches its max_size.
+                    # You can send the full EventDataBatch object and create a new one here.
+                    break
+            await producer.send_batch(event_data_batch)
         # [END eventhub_producer_client_send_async]
         await asyncio.sleep(1)
 
@@ -93,7 +100,7 @@ async def example_eventhub_async_send_and_receive():
             # Do asnchronous ops on received events
 
         async with consumer:
-            await consumer.receive(on_event=on_event, consumer_group="$default")
+            await consumer.receive(on_event=on_event)
         # [END eventhub_consumer_client_receive_async]
     finally:
         pass
@@ -113,7 +120,15 @@ async def example_eventhub_async_producer_ops():
         eventhub_name=eventhub_name
     )
     try:
-        await producer.send(EventData(b"A single event"))
+        event_data_batch = await producer.create_batch(max_size_in_bytes=10000)
+        while True:
+            try:
+                event_data_batch.add(EventData('Message inside EventBatchData'))
+            except ValueError:
+                # The EventDataBatch object reaches its max_size.
+                # You can send the full EventDataBatch object and create a new one here.
+                break
+        await producer.send_batch(event_data_batch)
     finally:
         # Close down the producer handler.
         await producer.close()
@@ -130,6 +145,7 @@ async def example_eventhub_async_consumer_ops():
     from azure.eventhub.aio import EventHubConsumerClient
     consumer = EventHubConsumerClient.from_connection_string(
         conn_str=event_hub_connection_str,
+        consumer_group='$Default',
         eventhub_name=eventhub_name
     )
 
@@ -142,7 +158,7 @@ async def example_eventhub_async_consumer_ops():
     # The receive method is a coroutine method which can be called by `await consumer.receive(...)` and it will block.
     # so execute it in an async task to better demonstrate how to stop the receiving by calling he close method.
 
-    recv_task = asyncio.ensure_future(consumer.receive(on_event=on_event, consumer_group='$Default'))
+    recv_task = asyncio.ensure_future(consumer.receive(on_event=on_event))
     await asyncio.sleep(3)  # keep receiving for 3 seconds
     recv_task.cancel()  # stop receiving
 
