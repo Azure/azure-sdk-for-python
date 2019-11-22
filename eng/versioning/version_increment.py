@@ -13,8 +13,6 @@ from packaging.version import parse
 
 from version_shared import get_packages, set_version_py, set_dev_classifier
 
-root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-
 def increment_version(old_version):
     parsed_version = parse(old_version)
     release = parsed_version.release
@@ -41,12 +39,7 @@ if __name__ == '__main__':
 
     package_name = args.package_name.replace('_', '-')
 
-    if args.service:
-        target_dir = os.path.join(root_dir, "sdk", args.service)
-    else:
-        target_dir = os.path.join(root_dir, "sdk")
-
-    packages = get_packages(args.glob_string, target_dir)
+    packages = get_packages(args)
 
     package_map = { pkg[1][0]: pkg for pkg in packages }
 

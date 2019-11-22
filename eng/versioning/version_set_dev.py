@@ -14,8 +14,6 @@ from packaging.version import parse
 
 from version_shared import get_packages, set_version_py, set_dev_classifier
 
-root_dir = path.abspath(path.join(path.abspath(__file__), "..", "..", ".."))
-
 MAX_R_DIGITS = 3
 
 def format_build_id(build_id):
@@ -53,12 +51,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    if args.service:
-        target_dir = path.join(root_dir, "sdk", args.service)
-    else:
-        target_dir = path.join(root_dir, "sdk")
-
-    target_packages = get_packages(args.glob_string, target_dir)
+    target_packages = get_packages(args)
     build_id = format_build_id(args.build_id)
     
     if not target_packages:

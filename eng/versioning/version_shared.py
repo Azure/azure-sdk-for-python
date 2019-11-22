@@ -40,13 +40,18 @@ def is_metapackage(package_path):
 
 def get_setup_py_paths(glob_string, base_path):
     setup_paths = process_glob_string(glob_string, base_path)
-
     filtered_paths = [path.join(p, 'setup.py') for p in setup_paths if not path_excluded(p)]
     return filtered_paths
 
 
-def get_packages(glob_string, sdk_location):
-    paths = get_setup_py_paths(glob_string, sdk_location)
+def get_packages(args):
+
+    if args.service:
+        target_dir = path.join(root_dir, "sdk", args.service)
+    else:
+        target_dir = root_dir
+
+    paths = get_setup_py_paths(args.glob_string, target_dir)
     packages = []
     for setup_path in paths:
         try:

@@ -14,12 +14,10 @@ import sys
 
 from version_shared import get_packages, get_version_py
 
-root_dir = path.abspath(path.join(path.abspath(__file__), "..", "..", ".."))
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('--always-succeed', action='store_true', help='return exit code 0 even if incorrect versions are detected')
-    parser.add_argument('--service-directory', help='name of a service directory to target packages')
+    parser.add_argument('--service', help='name of a service directory to target packages')
     parser.add_argument(
         "glob_string",
         nargs="?",
@@ -32,12 +30,7 @@ if __name__ == '__main__':
 
     always_succeed = args.always_succeed
 
-    if args.service_directory:
-        target_dir = path.join(root_dir, "sdk", args.service_directory)
-    else:
-        target_dir = path.join(root_dir, "sdk")
-
-    packages = get_packages(args.glob_string, target_dir)
+    packages = get_packages(args)
 
     invalid_packages = []
     for package in packages:
@@ -46,6 +39,10 @@ if __name__ == '__main__':
             try:
                 version_py_path = get_version_py(package[0])
             except:
+                invalid_packages.append((package_name, 'Could not find _version.py file'))
+                continue
+
+            if not version_py_path:
                 invalid_packages.append((package_name, 'Could not find _version.py file'))
                 continue
 
@@ -73,7 +70,7 @@ if __name__ == '__main__':
 
                 # TODO: Try evaling __init__.py next to _version.py to ensure version match
         except:
-            invalid_packages.append(package_name, f'Unknown error {sys.exc_info()}')
+            invalid_packages.append((package_name, 'Unknown error {}'.format(sys.exc_info())))
 
     if invalid_packages:
         print("=================\nInvalid Packages:\n=================")
