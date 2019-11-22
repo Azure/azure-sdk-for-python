@@ -61,16 +61,16 @@ class StressTestRunner(object):
         if self.args.conn_str:
             client = client_class.from_connection_string(
                 self.args.conn_str,
-                event_hub_path=self.args.eventhub, logging_enable=False)
+                eventhub_name=self.args.eventhub, logging_enable=False)
         elif self.args.address:
             client = client_class(host=self.args.address,
-                                    event_hub_path=self.args.eventhub,
+                                    eventhub_name=self.args.eventhub,
                                     credential=EventHubSharedKeyCredential(self.args.sas_policy, self.args.sas_key),
                                     auth_timeout=240,
                                     logging_enable=False)
         elif self.args.aad_client_id:
             client = client_class(host=self.args.address,
-                                  event_hub_path=self.args.eventhub,
+                                  eventhub_name=self.args.eventhub,
                                   credential=ClientSecretCredential(self.args.tenant_id, self.args.aad_client_id,
                                                                     self.args.aad_secret),
                                   logging_enable=False)
