@@ -15,9 +15,10 @@
 
 ### Bug fixes
 
-- Retry: rewind body position if possible  #8307
 - RequestHistory: deepcopy fails if request contains a stream  #7732
 - Retry: retry raises error if response does not have http_response #8629
+- Client kwargs are now passed to DistributedTracingPolicy correctly    #8051
+- NetworkLoggingPolicy now logs correctly all requests in case of retry #8262
 
 ## Version 1.0.1
 

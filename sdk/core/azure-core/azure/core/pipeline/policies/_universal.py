@@ -111,7 +111,7 @@ class RequestIdPolicy(SansIOHTTPPolicy):
     configured up front, where the request id will be applied to all outgoing
     operations, and additional request id can also be set dynamically per operation.
 
-    :param dict base_headers: Headers to send with the request.
+    :keyword str request_id: The request id to be added into header.
 
     .. admonition:: Example:
 
