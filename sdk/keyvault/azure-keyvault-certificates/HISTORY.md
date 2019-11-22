@@ -1,10 +1,24 @@
 # Release History
 
 ### 4.0.0b6
-- Renamed `AdministratorDetails` to `AdministratorContact`
-- Added `WellKnownIssuerNames` enum class that holds popular issuer names
+- Renamed `get_policy` to `get_certificate_policy`
+- Renamed `update_policy` to `update_certificate_policy`
+- Renamed `create_contacts` to `set_contacts`
 - Renamed all `name` parameters to include the name of the object whose name we are referring to.
 For example, the `name` parameter of `get_certificate` is now `certificate_name`
+- Renamed `AdministratorDetails` to `AdministratorContact`
+- Renamed the `ekus` property of `CertificatePolicy` to `enhanced_key_usage`
+- Renamed the `curve` property of `CertificatePolicy` to `key_curve_name`
+- Renamed the `san_upns` property of `CertificatePolicy` to `san_user_principal_names`
+- Made the `subject_name` property of `CertificatePolicy` a kwarg and renamed it to `subject`
+- Renamed the `deleted_date` property of `DeletedCertificate` to `deleted_on`
+- Removed the `issuer_properties` property from `CertificateIssuer` and added the `provider` property
+directly onto `CertificateIssuer`
+- Renamed the `thumbprint` property of `CertificateProperties` to `x509_thumbprint`
+- Added `WellKnownIssuerNames` enum class that holds popular issuer names
+- Renamed `SecretContentType` enum class to `CertificateContentType`
+
+
 
 ### 4.0.0b5
 - Removed redundant method `get_pending_certificate_signing_request()`. A pending CSR can be retrieved via `get_certificate_operation()`.
