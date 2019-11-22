@@ -116,7 +116,7 @@ def _update_checkpoint(storage_connection_str, container_name):
         assert len(checkpoint_list) == partition_cnt
         for checkpoint in checkpoint_list:
             assert checkpoint['offset'] == '2'
-            assert checkpoint['sequence_number'] == '20'
+            assert checkpoint['sequence_number'] == 20
 
 
 @pytest.mark.liveTest
