@@ -226,12 +226,13 @@ class RequestsTransport(HttpTransport):
 
         try:
             timeout = kwargs.pop('connection_timeout', self.connection_config.timeout)
-            if isinstance(timeout, tuple):
+            if not isinstance(timeout, tuple):
+                read_timeout = kwargs.pop('read_timeout', self.connection_config.read_timeout)
+                timeout = (timeout, read_timeout)
+            else:
                 if 'read_timeout' in kwargs:
                     raise ValueError()
                 _LOGGER.warning("Tuple timeout setting is deprecated")
-                read_timeout = kwargs.pop('read_timeout', self.connection_config.read_timeout)
-                timeout = (timeout, read_timeout)
             response = self.session.request(  # type: ignore
                 request.method,
                 request.url,
