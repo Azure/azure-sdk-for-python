@@ -65,6 +65,12 @@ class StorageErrorCode(str, Enum):
     queue_disabled = "QueueDisabled"
     queue_not_empty = "QueueNotEmpty"
     queue_not_found = "QueueNotFound"
+    authorization_source_ip_mismatch = "AuthorizationSourceIPMismatch"
+    authorization_protocol_mismatch = "AuthorizationProtocolMismatch"
+    authorization_permission_mismatch = "AuthorizationPermissionMismatch"
+    authorization_service_mismatch = "AuthorizationServiceMismatch"
+    authorization_resource_type_mismatch = "AuthorizationResourceTypeMismatch"
+    feature_version_mismatch = "FeatureVersionMismatch"
 
 
 class GeoReplicationStatusType(str, Enum):

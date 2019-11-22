@@ -385,34 +385,3 @@ class EventPosition(object):
         elif isinstance(self.value, six.integer_types):
             return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, self.value)).encode('utf-8')
         return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
-
-
-# TODO: move some behaviors to these two classes.
-class EventHubSASTokenCredential(object):
-    """
-    SAS token used for authentication.
-
-    :param token: A SAS token or function that returns a SAS token. If a function is supplied,
-     it will be used to retrieve subsequent tokens in the case of token expiry. The function should
-     take no arguments. The token can be type of str or Callable object.
-    """
-    def __init__(self, token):
-        self.token = token
-
-    def get_sas_token(self):
-        if callable(self.token):  # pylint:disable=no-else-return
-            return self.token()
-        else:
-            return self.token
-
-
-class EventHubSharedKeyCredential(object):
-    """
-    The shared access key credential used for authentication.
-
-    :param str policy: The name of the shared access policy.
-    :param str key: The shared access key.
-    """
-    def __init__(self, policy, key):
-        self.policy = policy
-        self.key = key

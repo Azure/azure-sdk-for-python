@@ -44,7 +44,7 @@ class ServiceOperations:
 
         :param storage_service_properties: The StorageService properties.
         :type storage_service_properties:
-         ~azure.storage.fileshare._generated.models.StorageServiceProperties
+         ~azure.storage.fileshare.models.StorageServiceProperties
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -55,7 +55,7 @@ class ServiceOperations:
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "properties"
@@ -113,9 +113,9 @@ class ServiceOperations:
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: StorageServiceProperties or the result of cls(response)
-        :rtype: ~azure.storage.fileshare._generated.models.StorageServiceProperties
+        :rtype: ~azure.storage.fileshare.models.StorageServiceProperties
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "properties"
@@ -185,7 +185,7 @@ class ServiceOperations:
         :param include: Include this parameter to specify one or more datasets
          to include in the response.
         :type include: list[str or
-         ~azure.storage.fileshare._generated.models.ListSharesIncludeType]
+         ~azure.storage.fileshare.models.ListSharesIncludeType]
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -194,9 +194,9 @@ class ServiceOperations:
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: ListSharesResponse or the result of cls(response)
-        :rtype: ~azure.storage.fileshare._generated.models.ListSharesResponse
+        :rtype: ~azure.storage.fileshare.models.ListSharesResponse
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "list"
