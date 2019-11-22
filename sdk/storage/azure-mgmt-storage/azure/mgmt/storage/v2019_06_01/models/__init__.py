@@ -33,11 +33,7 @@ try:
     from ._models_py3 import FileServiceItems
     from ._models_py3 import FileServiceProperties
     from ._models_py3 import FileShare
-    from ._models_py3 import FileShareCreateParameters
     from ._models_py3 import FileShareItem
-    from ._models_py3 import FileSharePropertiesCreateParameters
-    from ._models_py3 import FileSharePropertiesUpdateParameters
-    from ._models_py3 import FileShareUpdateParameters
     from ._models_py3 import GeoReplicationStats
     from ._models_py3 import Identity
     from ._models_py3 import ImmutabilityPolicy
@@ -116,11 +112,7 @@ except (SyntaxError, ImportError):
     from ._models import FileServiceItems
     from ._models import FileServiceProperties
     from ._models import FileShare
-    from ._models import FileShareCreateParameters
     from ._models import FileShareItem
-    from ._models import FileSharePropertiesCreateParameters
-    from ._models import FileSharePropertiesUpdateParameters
-    from ._models import FileShareUpdateParameters
     from ._models import GeoReplicationStats
     from ._models import Identity
     from ._models import ImmutabilityPolicy
@@ -245,11 +237,7 @@ __all__ = [
     'FileServiceItems',
     'FileServiceProperties',
     'FileShare',
-    'FileShareCreateParameters',
     'FileShareItem',
-    'FileSharePropertiesCreateParameters',
-    'FileSharePropertiesUpdateParameters',
-    'FileShareUpdateParameters',
     'GeoReplicationStats',
     'Identity',
     'ImmutabilityPolicy',
