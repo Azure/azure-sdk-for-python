@@ -25,7 +25,6 @@ from ._export_jobs_operation_results_operations import ExportJobsOperationResult
 from ._jobs_operations import JobsOperations
 from ._backup_protected_items_operations import BackupProtectedItemsOperations
 from ._operation_operations import OperationOperations
-from ._operations import Operations
 
 __all__ = [
     'BackupResourceVaultConfigsOperations',
@@ -44,5 +43,4 @@ __all__ = [
     'JobsOperations',
     'BackupProtectedItemsOperations',
     'OperationOperations',
-    'Operations',
 ]

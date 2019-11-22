@@ -64,16 +64,3 @@ class ProtectedItemResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ProtectedItemResourcePaged, self).__init__(*args, **kwargs)
-class ClientDiscoveryValueForSingleApiPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ClientDiscoveryValueForSingleApi <azure.mgmt.recoveryservicesbackup.models.ClientDiscoveryValueForSingleApi>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ClientDiscoveryValueForSingleApi]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ClientDiscoveryValueForSingleApiPaged, self).__init__(*args, **kwargs)

@@ -59,11 +59,6 @@ try:
     from ._models_py3 import BackupResourceVaultConfigResource
     from ._models_py3 import BEKDetails
     from ._models_py3 import BMSRPQueryObject
-    from ._models_py3 import ClientDiscoveryDisplay
-    from ._models_py3 import ClientDiscoveryForLogSpecification
-    from ._models_py3 import ClientDiscoveryForProperties
-    from ._models_py3 import ClientDiscoveryForServiceSpecification
-    from ._models_py3 import ClientDiscoveryValueForSingleApi
     from ._models_py3 import DailyRetentionFormat
     from ._models_py3 import DailyRetentionSchedule
     from ._models_py3 import Day
@@ -190,11 +185,6 @@ except (SyntaxError, ImportError):
     from ._models import BackupResourceVaultConfigResource
     from ._models import BEKDetails
     from ._models import BMSRPQueryObject
-    from ._models import ClientDiscoveryDisplay
-    from ._models import ClientDiscoveryForLogSpecification
-    from ._models import ClientDiscoveryForProperties
-    from ._models import ClientDiscoveryForServiceSpecification
-    from ._models import ClientDiscoveryValueForSingleApi
     from ._models import DailyRetentionFormat
     from ._models import DailyRetentionSchedule
     from ._models import Day
@@ -271,7 +261,6 @@ except (SyntaxError, ImportError):
     from ._models import WeeklyRetentionFormat
     from ._models import WeeklyRetentionSchedule
     from ._models import YearlyRetentionSchedule
-from ._paged_models import ClientDiscoveryValueForSingleApiPaged
 from ._paged_models import JobResourcePaged
 from ._paged_models import ProtectedItemResourcePaged
 from ._paged_models import ProtectionPolicyResourcePaged
@@ -365,11 +354,6 @@ __all__ = [
     'BackupResourceVaultConfigResource',
     'BEKDetails',
     'BMSRPQueryObject',
-    'ClientDiscoveryDisplay',
-    'ClientDiscoveryForLogSpecification',
-    'ClientDiscoveryForProperties',
-    'ClientDiscoveryForServiceSpecification',
-    'ClientDiscoveryValueForSingleApi',
     'DailyRetentionFormat',
     'DailyRetentionSchedule',
     'Day',
@@ -450,7 +434,6 @@ __all__ = [
     'ProtectionPolicyResourcePaged',
     'JobResourcePaged',
     'ProtectedItemResourcePaged',
-    'ClientDiscoveryValueForSingleApiPaged',
     'ProtectionState',
     'HealthStatus',
     'RecoveryType',
