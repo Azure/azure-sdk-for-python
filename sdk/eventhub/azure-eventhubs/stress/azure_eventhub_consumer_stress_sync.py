@@ -28,8 +28,8 @@ parser.add_argument("--aad_client_id", help="AAD client id")
 parser.add_argument("--aad_secret", help="AAD secret")
 parser.add_argument("--aad_tenant_id", help="AAD tenant id")
 parser.add_argument("--payload", help="payload size", type=int, default=1024)
-parser.add_argument("--storage_conn_str", default=os.environ.get("AZURE_STORAGE_CONN_STR"))
-parser.add_argument("--storage_container_name", default=os.environ.get("AZURE_STORAGE_CONTAINER"))
+parser.add_argument("--storage_conn_str", help="conn str of storage blob to store ownership and checkpoint data")
+parser.add_argument("--storage_container_name", help="storage container name to store ownership and checkpoint data")
 parser.add_argument("--print_console", help="print to console", type=bool, default=False)
 
 args = parser.parse_args()
@@ -66,8 +66,11 @@ def run(args):
             else:
                 return super(EventHubConsumerClientTest, self).get_partition_ids()
 
-    checkpoint_store = BlobCheckpointStore(
-        ContainerClient.from_connection_string(args.storage_conn_str, args.storage_container_name))
+    if args.storage_conn_str:
+        checkpoint_store = BlobCheckpointStore(
+            ContainerClient.from_connection_string(args.storage_conn_str, args.storage_container_name))
+    else:
+        checkpoint_store = None
     client = EventHubConsumerClientTest.from_connection_string(
         args.conn_str, args.consumer, eventhub_name=args.eventhub, checkpoint_store=checkpoint_store,
         load_balancing_interval=args.load_balancing_interval
