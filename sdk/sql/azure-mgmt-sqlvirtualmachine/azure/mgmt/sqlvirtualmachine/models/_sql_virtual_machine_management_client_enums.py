@@ -48,6 +48,7 @@ class SqlServerLicenseType(str, Enum):
 
     payg = "PAYG"
     ahub = "AHUB"
+    dr = "DR"
 
 
 class SqlManagementMode(str, Enum):

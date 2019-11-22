@@ -642,7 +642,7 @@ class SqlVirtualMachine(TrackedResource):
      SQL2017-WS2016.
     :type sql_image_offer: str
     :param sql_server_license_type: SQL Server license type. Possible values
-     include: 'PAYG', 'AHUB'
+     include: 'PAYG', 'AHUB', 'DR'
     :type sql_server_license_type: str or
      ~azure.mgmt.sqlvirtualmachine.models.SqlServerLicenseType
     :param sql_management: SQL Server Management type. Possible values
