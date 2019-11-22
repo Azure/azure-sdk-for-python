@@ -19,6 +19,8 @@ directly onto `CertificateIssuer`
 - Renamed the `thumbprint` property of `CertificateProperties` to `x509_thumbprint`
 - Added `WellKnownIssuerNames` enum class that holds popular issuer names
 - Renamed `SecretContentType` enum class to `CertificateContentType`
+- Made enums of `CertificateContentType` lowercase
+- Renamed enum `p_256_k` of `KeyCurveName` `p_256k`
 
 
 
