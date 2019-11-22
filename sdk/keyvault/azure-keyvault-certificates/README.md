@@ -232,7 +232,7 @@ certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azu
 deleted_certificate = certificate_client.begin_delete_certificate("cert-name")
 
 print(deleted_certificate.name)
-print(deleted_certificate.deleted_date)
+print(deleted_certificate.deleted_on)
 ```
 ### List properties of Certificates
 [list_properties_of_certificates](https://aka.ms/azsdk-python-keyvault-certs-listcerts-ref) lists the properties of all certificates in the specified Key Vault.

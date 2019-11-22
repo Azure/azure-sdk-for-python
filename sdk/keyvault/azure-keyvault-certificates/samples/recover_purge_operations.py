@@ -66,7 +66,7 @@ try:
 
     print(
         "Certificate with name '{0}' was deleted on date {1}.".format(
-            deleted_bank_certificate.name, deleted_bank_certificate.deleted_date
+            deleted_bank_certificate.name, deleted_bank_certificate.deleted_on
         )
     )
 

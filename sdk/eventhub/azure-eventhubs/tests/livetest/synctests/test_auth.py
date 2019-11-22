@@ -27,7 +27,9 @@ def test_client_secret_credential(aad_credential, live_eventhub):
                                              credential=credential,
                                              user_agent='customized information')
     with producer_client:
-        producer_client.send(EventData(body='A single message'), partition_id="0")
+        batch = producer_client.create_batch(partition_id='0')
+        batch.add(EventData(body='A single message'))
+        producer_client.send_batch(batch)
 
     def on_event(partition_context, event):
         on_event.called = True

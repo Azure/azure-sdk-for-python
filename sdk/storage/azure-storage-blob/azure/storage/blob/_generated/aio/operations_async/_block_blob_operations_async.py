@@ -37,7 +37,7 @@ class BlockBlobOperations:
         self._config = config
         self.x_ms_blob_type = "BlockBlob"
 
-    async def upload(self, body, content_length, timeout=None, metadata=None, tier=None, request_id=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, *, cls=None, **kwargs):
+    async def upload(self, body, content_length, timeout=None, transactional_content_md5=None, metadata=None, tier=None, request_id=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, *, cls=None, **kwargs):
         """The Upload Block Blob operation updates the content of an existing
         block blob. Updating an existing block blob overwrites any existing
         metadata on the blob. Partial updates are not supported with Put Blob;
@@ -54,6 +54,9 @@ class BlockBlobOperations:
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
+        :param transactional_content_md5: Specify the transactional md5 for
+         the body, to be validated by the service.
+        :type transactional_content_md5: bytearray
         :param metadata: Optional. Specifies a user-defined name-value pair
          associated with the blob. If no name-value pairs are specified, the
          operation will copy the metadata from the source blob or file to the
@@ -150,6 +153,8 @@ class BlockBlobOperations:
         # Construct headers
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/octet-stream'
+        if transactional_content_md5 is not None:
+            header_parameters['Content-MD5'] = self._serialize.header("transactional_content_md5", transactional_content_md5, 'bytearray')
         header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')

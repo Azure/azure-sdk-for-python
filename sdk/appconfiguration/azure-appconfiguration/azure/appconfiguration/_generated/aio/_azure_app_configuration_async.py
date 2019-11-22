@@ -20,18 +20,19 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param endpoint: The endpoint of the App Configuration instance to send
+     requests to.
+    :type endpoint: str
     :param sync_token: Used to guarantee real-time consistency between
      requests.
     :type sync_token: str
-    :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, sync_token=None, base_url=None, **kwargs):
+            self, credentials, endpoint, sync_token=None, **kwargs):
 
-        if not base_url:
-            base_url = 'http://localhost'
-        self._config = AzureAppConfigurationConfiguration(credentials, sync_token, **kwargs)
+        base_url = '{endpoint}'
+        self._config = AzureAppConfigurationConfiguration(credentials, endpoint, sync_token, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

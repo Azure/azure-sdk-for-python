@@ -5,7 +5,7 @@ This Checkpoint Store package works as a plug-in package to `EventHubConsumerCli
 
 Please note that this is a sync library, for async version of the Azure EventHubs Checkpoint Store client library, please refer to [azure-eventhubs-checkpointstoreblob-aio](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio).
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob) | [Package (PyPi)](https://pypi.org/project/azure-eventhub-checkpointstoreblob/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b5/azure.eventhub.html#azure.eventhub.PartitionManager) | [Azure Eventhubs documentation](https://docs.microsoft.com/en-us/azure/event-hubs/) | [Azure Storage documentation](https://docs.microsoft.com/en-us/azure/storage/)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob) | [Package (PyPi)](https://pypi.org/project/azure-eventhub-checkpointstoreblob/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b6/azure.eventhub.html#azure.eventhub.CheckpointStore) | [Azure Eventhubs documentation](https://docs.microsoft.com/en-us/azure/event-hubs/) | [Azure Storage documentation](https://docs.microsoft.com/en-us/azure/storage/)
 
 ## Getting started
 
@@ -48,17 +48,8 @@ storing their own offset values outside of the Event Hubs service. Within a part
 sequence number and the timestamp of when it was enqueued.
 
 ## Examples
-- [Create an Azure Storage Blobs `ContainerClient`](#create-an-azure-storage-blobs-containerclient)
 - [Create an Azure EventHubs `EventHubConsumerClient`](#create-an-eventhubconsumerclient)
-- [Consume events using a `BlobPartitionManager`](#consume-events-using-a-blobpartitionmanager-to-do-checkpoint)
-
-### Create an Azure Storage Blobs `ContainerClient`
-The easiest way to create a `ContainerClient` is to use a connection string.
-```python
-from azure.storage.blob import ContainerClient
-container_client = ContainerClient.from_connection_string("my_storageacount_connection_string", "mycontainer")
-```
-For other ways of creating a `ContainerClient`, go to [Blob Storage library](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob) for more details.
+- [Consume events using a `BlobCheckpointStore`](#consume-events-using-a-blobcheckpointstore-to-do-checkpoint)
 
 ### Create an `EventHubConsumerClient`
 The easiest way to create a `EventHubConsumerClient` is to use a connection string.
@@ -68,12 +59,11 @@ eventhub_client = EventHubConsumerClient.from_connection_string("my_eventhub_nam
 ```
 For other ways of creating a `EventHubConsumerClient`, refer to [EventHubs library](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) for more details.
 
-### Consume events using a `BlobPartitionManager` to do checkpoint
+### Consume events using a `BlobCheckpointStore` to do checkpoint
 ```python
 
 from azure.eventhub import EventHubConsumerClient
-from azure.storage.blob import ContainerClient
-from azure.eventhub.extensions.checkpointstoreblob import BlobPartitionManager
+from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 
 eventhub_connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 storage_container_connection_str = '<< CONNECTION STRING OF THE STORAGE >>'
@@ -88,9 +78,15 @@ def process_events(partition_context, events):
     partition_context.update_checkpoint(events[-1])
 
 def main():
-    storage_container_client = ContainerClient.from_connection_string(storage_container_connection_str, storage_container_name)
-    partition_manager = BlobPartitionManager(storage_container_client)  # use the BlobPartitonManager to save
-    client = EventHubConsumerClient.from_connection_string(eventhub_connection_str, partition_manager=partition_manager, receive_timeout=5, retry_total=3)
+    checkpoint_store = BlobCheckpointStore.from_connection_string(
+        storage_container_connection_str,
+        storage_container_name
+    )
+    client = EventHubConsumerClient.from_connection_string(
+        eventhub_connection_str,
+        checkpoint_store=checkpoint_store,
+        retry_total=3
+    )
 
     try:
         client.receive(process_events, "$default")
@@ -114,7 +110,7 @@ Refer to [Logging](#logging) to enable loggers for related libraries.
 
 ### Documentation
 
-Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b5/azure.eventhub.html#azure.eventhub.PartitionManager)
+Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.0.0b6/azure.eventhub.html#azure.eventhub.CheckpointStore)
 
 ### Logging
 

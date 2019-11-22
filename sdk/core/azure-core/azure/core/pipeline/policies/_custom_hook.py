@@ -23,9 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-"""
-This module is the requests implementation of Pipeline ABC
-"""
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from ._base import SansIOHTTPPolicy
 

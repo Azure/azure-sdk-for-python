@@ -56,7 +56,7 @@ class ShareOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
@@ -119,7 +119,7 @@ class ShareOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
@@ -181,13 +181,13 @@ class ShareOperations(object):
          base share and all of its snapshots. Possible values include:
          'include'
         :type delete_snapshots: str or
-         ~azure.storage.fileshare._generated.models.DeleteSnapshotsOptionType
+         ~azure.storage.fileshare.models.DeleteSnapshotsOptionType
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL
@@ -246,7 +246,7 @@ class ShareOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "snapshot"
@@ -298,7 +298,8 @@ class ShareOperations(object):
 
         :param share_permission: A permission (a security descriptor) at the
          share level.
-        :type share_permission: ~azure.storage.fileshare._generated.models.SharePermission
+        :type share_permission:
+         ~azure.storage.fileshare.models.SharePermission
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -309,7 +310,7 @@ class ShareOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "filepermission"
@@ -356,12 +357,11 @@ class ShareOperations(object):
             return cls(response, None, response_headers)
     create_permission.metadata = {'url': '/{shareName}'}
 
-    def get_permission(self, file_permission_key=None, timeout=None, cls=None, **kwargs):
+    def get_permission(self, file_permission_key, timeout=None, cls=None, **kwargs):
         """Returns the permission (security descriptor) for a given key.
 
         :param file_permission_key: Key of the permission to be set for the
-         directory/file. Note: Only one of the x-ms-file-permission or
-         x-ms-file-permission-key should be specified.
+         directory/file.
         :type file_permission_key: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
@@ -371,9 +371,9 @@ class ShareOperations(object):
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: SharePermission or the result of cls(response)
-        :rtype: ~azure.storage.fileshare._generated.models.SharePermission
+        :rtype: ~azure.storage.fileshare.models.SharePermission
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "filepermission"
@@ -395,8 +395,7 @@ class ShareOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        if file_permission_key is not None:
-            header_parameters['x-ms-file-permission-key'] = self._serialize.header("file_permission_key", file_permission_key, 'str')
+        header_parameters['x-ms-file-permission-key'] = self._serialize.header("file_permission_key", file_permission_key, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct and send request
@@ -440,7 +439,7 @@ class ShareOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "properties"
@@ -502,7 +501,7 @@ class ShareOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "metadata"
@@ -560,9 +559,9 @@ class ShareOperations(object):
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: list or the result of cls(response)
-        :rtype: list[~azure.storage.fileshare._generated.models.SignedIdentifier]
+        :rtype: list[~azure.storage.fileshare.models.SignedIdentifier]
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "acl"
@@ -618,7 +617,8 @@ class ShareOperations(object):
         """Sets a stored access policy for use with shared access signatures.
 
         :param share_acl: The ACL for the share.
-        :type share_acl: list[~azure.storage.fileshare._generated.models.SignedIdentifier]
+        :type share_acl:
+         list[~azure.storage.fileshare.models.SignedIdentifier]
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -629,7 +629,7 @@ class ShareOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "acl"
@@ -692,9 +692,9 @@ class ShareOperations(object):
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: ShareStats or the result of cls(response)
-        :rtype: ~azure.storage.fileshare._generated.models.ShareStats
+        :rtype: ~azure.storage.fileshare.models.ShareStats
         :raises:
-         :class:`StorageErrorException<azure.storage.fileshare._generated.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         comp = "stats"
