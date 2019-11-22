@@ -797,7 +797,9 @@ class VirtualMachinesOperations(object):
 
     def generalize(
             self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
-        """Sets the state of the virtual machine to generalized.
+        """Sets the OS state of the virtual machine to generalized. It is
+        recommended to sysprep the virtual machine before performing this
+        operation.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
