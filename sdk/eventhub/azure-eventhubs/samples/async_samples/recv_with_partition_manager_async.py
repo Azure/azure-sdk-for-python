@@ -49,12 +49,11 @@ async def receive(client):
 
 
 async def main():
-    container_client = ContainerClient.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
-    partition_manager = BlobCheckpointStore(container_client)
+    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
         consumer_group="$Default",
-        partition_manager=partition_manager,  # For load balancing and checkpoint. Leave None for no load balancing
+        checkpoint_store=checkpoint_store,  # For load balancing and checkpoint. Leave None for no load balancing
     )
     async with client:
         await receive(client)

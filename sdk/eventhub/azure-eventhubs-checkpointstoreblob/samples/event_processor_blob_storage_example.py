@@ -24,9 +24,10 @@ def process_events(partition_context, events):
 
 
 if __name__ == '__main__':
-    container_client = ContainerClient.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
-    checkpoint_store = BlobCheckpointStore(container_client=container_client)
-    client = EventHubConsumerClient.from_connection_string(CONNECTION_STR, checkpoint_store=checkpoint_store)
+    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, "eventprocessor")
+    client = EventHubConsumerClient.from_connection_string(
+        CONNECTION_STR, checkpoint_store=checkpoint_store)
+
     try:
         client.receive(process_events, "$default")
     except KeyboardInterrupt:
