@@ -1310,3 +1310,17 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(permission.list, True)
         self.assertEqual(permission.write, True)
         self.assertEqual(permission._str, 'wrlx')
+
+    @GlobalStorageAccountPreparer()
+    def test_download_blob(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+        blob_name =  self.get_resource_name("blob")
+
+        container.get_blob_client(blob_name).upload_blob(data)
+
+        # Act
+        downloaded = container.download_blob(blob_name)
+        
+        assert downloaded.readall() == data

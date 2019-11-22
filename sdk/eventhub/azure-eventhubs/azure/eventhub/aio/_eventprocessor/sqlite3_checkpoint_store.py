@@ -125,17 +125,15 @@ class Sqlite3CheckpointStore(CheckpointStore):
         finally:
             cursor.close()
 
-    async def update_checkpoint(
-            self, fully_qualified_namespace, eventhub_name, consumer_group, partition_id, offset, sequence_number):
+    async def update_checkpoint(self, checkpoint):
         cursor = self.conn.cursor()
-        localvars = locals()
         try:
             cursor.execute("insert or replace into " + self.checkpoint_table + "("
                            + ",".join([field for field in self.checkpoint_fields])
                            + ") values ("
                            + ",".join(["?"] * len(self.checkpoint_fields))
                            + ")",
-                           tuple(localvars[field] for field in self.checkpoint_fields)
+                           tuple(checkpoint[field] for field in self.checkpoint_fields)
                            )
             self.conn.commit()
         finally:

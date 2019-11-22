@@ -21,6 +21,7 @@
     - `EventHubProducerClient.send` has been renamed to `send_batch` which will only accept `EventDataBatch` object as input.
     - `EventHubProducerClient.create_batch` now also takes the `partition_id` and `partition_key` as optional parameters (which are no longer specified at send).
 - Renamed module `PartitionManager` to `CheckpointStore`.
+- Receive event callback parameter has been renamed to `on_event` and now operates on a single event rather than a list of events.
 - Removed class `EventPostition`.
     - The `starting_position` parameter of the `receive` method accepts offset(`str`), sequence number(`int`), datetime (`datetime.datetime`) or `dict` of these types.
     - The `starting_position_inclusive` parameter of the `receive` method accepts `bool` or `dict` indicating whether the given event position is inclusive or not.
