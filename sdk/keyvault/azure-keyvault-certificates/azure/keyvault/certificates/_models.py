@@ -145,7 +145,7 @@ class CertificateProperties(object):
         # type: (**Any) -> None
         self._attributes = kwargs.pop("attributes", None)
         self._id = kwargs.pop("cert_id", None)
-        self._vault_id = parse_vault_id(self._id) if self._id else None
+        self._vault_id = parse_vault_id(self._id)
         self._x509_thumbprint = kwargs.pop("x509_thumbprint", None)
         self._tags = kwargs.pop("tags", None)
 
@@ -410,7 +410,7 @@ class CertificateOperation(object):
     ):
         # type: (...) -> None
         self._id = cert_operation_id
-        self._vault_id = parse_vault_id(cert_operation_id) if self._id else None
+        self._vault_id = parse_vault_id(cert_operation_id)
         self._issuer_name = issuer_name
         self._certificate_type = certificate_type
         self._certificate_transparency = certificate_transparency
@@ -574,7 +574,7 @@ class CertificatePolicy(object):
         renewal.
     :keyword key_curve_name: Elliptic curve name. For valid values, see KeyCurveName.
     :paramtype key_curve_name: str or ~azure.keyvault.certificates.KeyCurveName
-    :keyword enhanced_key_usage: Ways the enhanced key can be used
+    :keyword enhanced_key_usage: The extended ways the key of the certificate can be used.
     :paramtype enhanced_key_usage: list[str]
     :keyword key_usage: List of key usages.
     :paramtype key_usage: list[str or ~azure.keyvault.certificates.KeyUsageType]
@@ -1076,7 +1076,7 @@ class IssuerProperties(object):
     def __init__(self, provider=None, **kwargs):
         # type: (Optional[str], **Any) -> None
         self._id = kwargs.pop("issuer_id", None)
-        self._vault_id = parse_vault_id(self._id) if self._id else None
+        self._vault_id = parse_vault_id(self._id)
         self._provider = provider
 
     def __repr__(self):
@@ -1147,7 +1147,7 @@ class CertificateIssuer(object):
         self._organization_id = organization_id
         self._admin_details = admin_details
         self._id = kwargs.pop("issuer_id", None)
-        self._vault_id = parse_vault_id(self._id) if self._id else None
+        self._vault_id = parse_vault_id(self._id)
 
     def __repr__(self):
         # type () -> str
@@ -1185,6 +1185,9 @@ class CertificateIssuer(object):
     def name(self):
         # type: () -> str
         # Issuer name is listed under version under vault_id
+        # This is because the id we pass to parse_vault_id has an extra segment, so where most cases the version of
+        # The general pattern is certificates/name/version, but here we have certificates/issuers/name/version
+        # Issuers are not versioned.
         """:rtype: str"""
         return self._vault_id.version
 
