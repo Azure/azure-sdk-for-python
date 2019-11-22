@@ -59,7 +59,7 @@ class FileSharedAccessSignature(SharedAccessSignature):
         :param ~azure.storage.fileshare.FileSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
-            Permissions must be ordered read, create, write, delete, list.
+            Permissions must be ordered read, create, write, delete.
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
@@ -137,7 +137,7 @@ class FileSharedAccessSignature(SharedAccessSignature):
         :param ShareSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
-            Permissions must be ordered read, create, write, delete, list.
+            Permissions must be ordered read, write, delete, list.
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
@@ -334,7 +334,7 @@ def generate_share_sas(
     :param ~azure.storage.fileshare.ShareSasPermissions permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Permissions must be ordered read, create, write, delete, list.
+        Permissions must be ordered read, write, delete, list.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
@@ -425,7 +425,7 @@ def generate_file_sas(
     :param ~azure.storage.fileshare.FileSasPermissions permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Permissions must be ordered read, write, delete, list.
+        Permissions must be ordered read, create, write, delete.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
