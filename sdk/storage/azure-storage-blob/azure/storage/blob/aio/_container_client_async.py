@@ -760,7 +760,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
     @distributed_trace_async
     async def download_blob(self, blob, offset=None, length=None, **kwargs):
         # type: (Union[str, BlobProperties], Optional[int], Optional[int], Any) -> StorageStreamDownloader
-        """Downloads a blob to a stream with automatic chunking.
+        """Downloads a blob to the StorageStreamDownloader. The readall() method must
+        be used to read all the content or readinto() must be used to download the blob into
+        a stream.
 
         :param blob: The blob with which to interact. If specified, this value will override
             a blob value specified in the blob URL.
@@ -815,7 +817,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
-        :returns: A iterable data generator (stream)
+        :returns: A streaming object. (StorageStreamDownloader)
         :rtype: ~azure.storage.blob.StorageStreamDownloader
         """
         blob_client = self.get_blob_client(blob) # type: ignore

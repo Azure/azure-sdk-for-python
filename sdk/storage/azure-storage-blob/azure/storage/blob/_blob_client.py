@@ -528,7 +528,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     @distributed_trace
     def download_blob(self, offset=None, length=None, **kwargs):
         # type: (Optional[int], Optional[int], **Any) -> StorageStreamDownloader
-        """Downloads a blob to a stream with automatic chunking.
+        """Downloads a blob to the StorageStreamDownloader. The readall() method must
+        be used to read all the content or readinto() must be used to download the blob into
+        a stream.
 
         :param int offset:
             Start of byte range to use for downloading a section of the blob.
@@ -580,7 +582,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
-        :returns: A iterable data generator (stream)
+        :returns: A streaming object (StorageStreamDownloader)
         :rtype: ~azure.storage.blob.StorageStreamDownloader
 
         .. admonition:: Example:
