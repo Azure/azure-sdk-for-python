@@ -1053,7 +1053,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             length=length,
             **kwargs)
         try:
-            await self._client.block_blob.stage_block(**options)
+            return await self._client.block_blob.stage_block(**options)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -1103,7 +1103,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             source_content_md5=source_content_md5,
             **kwargs)
         try:
-            await self._client.block_blob.stage_block_from_url(**options)
+            return await self._client.block_blob.stage_block_from_url(**options)
         except StorageErrorException as error:
             process_storage_error(error)
 

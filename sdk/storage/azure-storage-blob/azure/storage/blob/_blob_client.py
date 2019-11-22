@@ -1706,7 +1706,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             source_content_md5=source_content_md5,
             **kwargs)
         try:
-            self._client.block_blob.stage_block_from_url(**options)
+            return self._client.block_blob.stage_block_from_url(**options)
         except StorageErrorException as error:
             process_storage_error(error)
 
