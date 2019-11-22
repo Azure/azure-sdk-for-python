@@ -41,6 +41,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
     from .._models import ContainerSasPermissions, PublicAccess
+    from ._download_async import StorageStreamDownloader
     from datetime import datetime
     from .._models import ( # pylint: disable=unused-import
         AccessPolicy,
@@ -818,7 +819,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
         :returns: A streaming object. (StorageStreamDownloader)
-        :rtype: ~azure.storage.blob.StorageStreamDownloader
+        :rtype: ~azure.storage.blob.aio.StorageStreamDownloader
         """
         blob_client = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)

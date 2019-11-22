@@ -300,7 +300,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
         :returns: A streaming object (StorageStreamDownloader)
-        :rtype: ~azure.storage.blob.StorageStreamDownloader
+        :rtype: ~azure.storage.blob.aio.StorageStreamDownloader
 
         .. admonition:: Example:
 
