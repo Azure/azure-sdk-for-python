@@ -58,6 +58,9 @@ class CheckpointStore(ABC):
         Updates the checkpoint using the given information for the associated partition and
         consumer group in the chosen storage service.
 
+        Note: If you plan to implement a custom checkpoint store with the intention of running between
+        cross-language EventHubs SDKs, it is recommended to persist the offset value as an integer.
+
         :param Dict[str,Any] checkpoint: A dict containing checkpoint information:
 
                 - fully_qualified_namespace (str): The fully qualified namespace that the event hub belongs to.
@@ -85,10 +88,14 @@ class CheckpointStore(ABC):
         :param str consumer_group: The name of the consumer group the ownership are associated with.
         :rtype: Iterable[Dict[str,Any]], Iterable of dictionaries containing partition ownership information:
 
-                - fully_qualified_namespace
-                - eventhub_name
-                - consumer_group
-                - partition_id
-                - sequence_number
-                - offset
+                - fully_qualified_namespace (str): The fully qualified namespace that the event hub belongs to.
+                  The format is like "<namespace>.servicebus.windows.net"
+                - eventhub_name (str): The name of the specific Event Hub the checkpoint is associated with, relative to
+                  the Event Hubs namespace that contains it.
+                - consumer_group (str): The name of the consumer group the ownership are associated with.
+                - partition_id (str): The partition id which the checkpoint is created for.
+                - sequence_number (int): The sequence_number of the :class:`EventData<azure.eventhub.EventData>`
+                  the new checkpoint will be associated with.
+                - offset (str): The offset of the :class:`EventData<azure.eventhub.EventData>`
+                  the new checkpoint will be associated with.
         """
