@@ -87,7 +87,7 @@ class StorageBlockBlobTest(StorageTestCase):
         # Act
         for i in range(5):
             resp = blob.stage_block(i, 'block {0}'.format(i).encode('utf-8'))
-            self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
 
         # Assert
 
@@ -98,7 +98,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Act
         resp = blob.stage_block('1', u'啊齄丂狛狜')
-        self.assertIsNone(resp)
+        self.assertIsNotNone(resp)
 
         # Assert
 

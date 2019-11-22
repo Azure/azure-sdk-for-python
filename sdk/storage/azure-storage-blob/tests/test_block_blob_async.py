@@ -112,7 +112,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         # Act
         for i in range(5):
             resp = await blob.stage_block(i, 'block {0}'.format(i).encode('utf-8'))
-            self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
 
         # Assert
     @GlobalStorageAccountPreparer()
@@ -124,7 +124,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
 
         # Act
         resp = await blob.stage_block('1', u'啊齄丂狛狜')
-        self.assertIsNone(resp)
+        self.assertIsNotNone(resp)
 
         # Assert
 
