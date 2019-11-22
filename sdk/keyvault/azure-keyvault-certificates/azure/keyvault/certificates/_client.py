@@ -204,7 +204,7 @@ class CertificateClient(KeyVaultClientBase):
         :param str certificate_name: The name of the certificate to delete.
         :returns: A poller for the delete certificate operation. The poller's `result` method returns the
          :class:`~azure.keyvault.certificates.DeletedCertificate` without waiting for deletion to complete. If the vault
-         has soft-delete enabled and you want to permanently delete the certificate with
+         has soft-delete enabled and you want to immediately permanently delete the certificate with
          :func:`purge_deleted_certificate`, call the poller's `wait` method first. It will block until the deletion is
          complete. The `wait` method requires certificates/get permission.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.certificates.DeletedCertificate]
@@ -276,8 +276,10 @@ class CertificateClient(KeyVaultClientBase):
 
         Performs an irreversible deletion of the specified certificate, without
         possibility for recovery. The operation is not available if the recovery
-        level does not specified 'Purgeable'. This operation requires the
-        certificate/purge permission.
+        level does not specified 'Purgeable'. This method is only necessary for
+        immediate purging of a certificate, as a certificate will still eventually
+        purge on its :py:attr:`~azure.keyvault.certificates.DeletedCertificate.scheduled_purge_date`
+        without calling this method. This operation requires the certificate/purge permission.
 
         :param str certificate_name: The name of the certificate
         :return: None

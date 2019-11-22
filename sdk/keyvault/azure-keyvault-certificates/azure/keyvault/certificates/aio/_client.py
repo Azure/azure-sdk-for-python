@@ -246,8 +246,10 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         Performs an irreversible deletion of the specified certificate, without
         possibility for recovery. The operation is not available if the recovery
-        level does not specified 'Purgeable'. This operation requires the
-        certificate/purge permission.
+        level does not specified 'Purgeable'. This method is only necessary for
+        immediate purging of a certificate, as a certificate will still eventually
+        purge on its :py:attr:`~azure.keyvault.certificates.DeletedCertificate.scheduled_purge_date`
+        without calling this method. This operation requires the certificate/purge permission.
 
         :param str certificate_name: The name of the certificate
         :return: None
