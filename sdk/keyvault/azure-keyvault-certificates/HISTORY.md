@@ -4,6 +4,7 @@
 - Renamed `get_policy` to `get_certificate_policy`
 - Renamed `update_policy` to `update_certificate_policy`
 - Renamed `create_contacts` to `set_contacts`
+- Renamed parameter `admin_details` of `create_issuer` and `update_issuer` to `admin_contacts`
 - Renamed all `name` parameters to include the name of the object whose name we are referring to.
 For example, the `name` parameter of `get_certificate` is now `certificate_name`
 - Renamed `AdministratorDetails` to `AdministratorContact`
@@ -14,6 +15,7 @@ For example, the `name` parameter of `get_certificate` is now `certificate_name`
 - Renamed the `deleted_date` property of `DeletedCertificate` to `deleted_on`
 - Removed the `issuer_properties` property from `CertificateIssuer` and added the `provider` property
 directly onto `CertificateIssuer`
+- Renamed property `admin_details` of `CertificateIssuer` to `admin_contacts`
 - Renamed the `thumbprint` property of `CertificateProperties` to `x509_thumbprint`
 - Added `WellKnownIssuerNames` enum class that holds popular issuer names
 - Renamed `SecretContentType` enum class to `CertificateContentType`
