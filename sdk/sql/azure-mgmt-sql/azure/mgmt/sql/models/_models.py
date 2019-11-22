@@ -1372,9 +1372,9 @@ class DatabaseVulnerabilityAssessment(ProxyResource):
      is required if server level vulnerability assessment policy doesn't set
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
@@ -4440,7 +4440,7 @@ class ManagedDatabase(TrackedResource):
     :param collation: Collation of the managed database.
     :type collation: str
     :ivar status: Status of the database. Possible values include: 'Online',
-     'Offline', 'Shutdown', 'Creating', 'Inaccessible', 'Updating'
+     'Offline', 'Shutdown', 'Creating', 'Inaccessible', 'Restoring', 'Updating'
     :vartype status: str or ~azure.mgmt.sql.models.ManagedDatabaseStatus
     :ivar creation_date: Creation date of the database.
     :vartype creation_date: datetime
@@ -4543,6 +4543,86 @@ class ManagedDatabase(TrackedResource):
         self.recoverable_database_id = kwargs.get('recoverable_database_id', None)
 
 
+class ManagedDatabaseRestoreDetailsResult(ProxyResource):
+    """A managed database restore details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar status: Restore status.
+    :vartype status: str
+    :ivar current_restoring_file_name: Current restoring file name.
+    :vartype current_restoring_file_name: str
+    :ivar last_restored_file_name: Last restored file name.
+    :vartype last_restored_file_name: str
+    :ivar last_restored_file_time: Last restored file time.
+    :vartype last_restored_file_time: datetime
+    :ivar percent_completed: Percent completed.
+    :vartype percent_completed: float
+    :ivar unrestorable_files: List of unrestorable files.
+    :vartype unrestorable_files: list[str]
+    :ivar number_of_files_detected: Number of files detected.
+    :vartype number_of_files_detected: long
+    :ivar last_uploaded_file_name: Last uploaded file name.
+    :vartype last_uploaded_file_name: str
+    :ivar last_uploaded_file_time: Last uploaded file time.
+    :vartype last_uploaded_file_time: datetime
+    :ivar block_reason: The reason why restore is in Blocked state.
+    :vartype block_reason: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'status': {'readonly': True},
+        'current_restoring_file_name': {'readonly': True},
+        'last_restored_file_name': {'readonly': True},
+        'last_restored_file_time': {'readonly': True},
+        'percent_completed': {'readonly': True},
+        'unrestorable_files': {'readonly': True},
+        'number_of_files_detected': {'readonly': True},
+        'last_uploaded_file_name': {'readonly': True},
+        'last_uploaded_file_time': {'readonly': True},
+        'block_reason': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'current_restoring_file_name': {'key': 'properties.currentRestoringFileName', 'type': 'str'},
+        'last_restored_file_name': {'key': 'properties.lastRestoredFileName', 'type': 'str'},
+        'last_restored_file_time': {'key': 'properties.lastRestoredFileTime', 'type': 'iso-8601'},
+        'percent_completed': {'key': 'properties.percentCompleted', 'type': 'float'},
+        'unrestorable_files': {'key': 'properties.unrestorableFiles', 'type': '[str]'},
+        'number_of_files_detected': {'key': 'properties.numberOfFilesDetected', 'type': 'long'},
+        'last_uploaded_file_name': {'key': 'properties.lastUploadedFileName', 'type': 'str'},
+        'last_uploaded_file_time': {'key': 'properties.lastUploadedFileTime', 'type': 'iso-8601'},
+        'block_reason': {'key': 'properties.blockReason', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedDatabaseRestoreDetailsResult, self).__init__(**kwargs)
+        self.status = None
+        self.current_restoring_file_name = None
+        self.last_restored_file_name = None
+        self.last_restored_file_time = None
+        self.percent_completed = None
+        self.unrestorable_files = None
+        self.number_of_files_detected = None
+        self.last_uploaded_file_name = None
+        self.last_uploaded_file_time = None
+        self.block_reason = None
+
+
 class ManagedDatabaseSecurityAlertPolicy(ProxyResource):
     """A managed database security alert policy.
 
@@ -4628,7 +4708,7 @@ class ManagedDatabaseUpdate(Model):
     :param collation: Collation of the managed database.
     :type collation: str
     :ivar status: Status of the database. Possible values include: 'Online',
-     'Offline', 'Shutdown', 'Creating', 'Inaccessible', 'Updating'
+     'Offline', 'Shutdown', 'Creating', 'Inaccessible', 'Restoring', 'Updating'
     :vartype status: str or ~azure.mgmt.sql.models.ManagedDatabaseStatus
     :ivar creation_date: Creation date of the database.
     :vartype creation_date: datetime
@@ -5410,9 +5490,9 @@ class ManagedInstanceVulnerabilityAssessment(ProxyResource):
      https://myStorage.blob.core.windows.net/VaScans/).
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If
@@ -7685,9 +7765,9 @@ class ServerVulnerabilityAssessment(ProxyResource):
      https://myStorage.blob.core.windows.net/VaScans/).
     :type storage_container_path: str
     :param storage_container_sas_key: A shared access signature (SAS Key) that
-     has write access to the blob container specified in 'storageContainerPath'
-     parameter. If 'storageAccountAccessKey' isn't specified,
-     StorageContainerSasKey is required.
+     has read and write access to the blob container specified in
+     'storageContainerPath' parameter. If 'storageAccountAccessKey' isn't
+     specified, StorageContainerSasKey is required.
     :type storage_container_sas_key: str
     :param storage_account_access_key: Specifies the identifier key of the
      storage account for vulnerability assessment scan results. If

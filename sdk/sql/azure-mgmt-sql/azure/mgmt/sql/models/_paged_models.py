@@ -480,6 +480,32 @@ class VirtualNetworkRulePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(VirtualNetworkRulePaged, self).__init__(*args, **kwargs)
+class ServerBlobAuditingPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ServerBlobAuditingPolicy <azure.mgmt.sql.models.ServerBlobAuditingPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServerBlobAuditingPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServerBlobAuditingPolicyPaged, self).__init__(*args, **kwargs)
+class DatabaseBlobAuditingPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`DatabaseBlobAuditingPolicy <azure.mgmt.sql.models.DatabaseBlobAuditingPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DatabaseBlobAuditingPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DatabaseBlobAuditingPolicyPaged, self).__init__(*args, **kwargs)
 class DatabaseVulnerabilityAssessmentPaged(Paged):
     """
     A paging container for iterating over a list of :class:`DatabaseVulnerabilityAssessment <azure.mgmt.sql.models.DatabaseVulnerabilityAssessment>` object
@@ -610,19 +636,6 @@ class ManagedBackupShortTermRetentionPolicyPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ManagedBackupShortTermRetentionPolicyPaged, self).__init__(*args, **kwargs)
-class ManagedDatabasePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ManagedDatabase <azure.mgmt.sql.models.ManagedDatabase>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ManagedDatabase]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ManagedDatabasePaged, self).__init__(*args, **kwargs)
 class ServerDnsAliasPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ServerDnsAlias <azure.mgmt.sql.models.ServerDnsAlias>` object
@@ -896,6 +909,19 @@ class ManagedInstancePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ManagedInstancePaged, self).__init__(*args, **kwargs)
+class ManagedDatabasePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ManagedDatabase <azure.mgmt.sql.models.ManagedDatabase>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ManagedDatabase]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ManagedDatabasePaged, self).__init__(*args, **kwargs)
 class PrivateEndpointConnectionPaged(Paged):
     """
     A paging container for iterating over a list of :class:`PrivateEndpointConnection <azure.mgmt.sql.models.PrivateEndpointConnection>` object

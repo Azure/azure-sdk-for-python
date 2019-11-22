@@ -31,7 +31,7 @@ from .._upload_helpers import _convert_mod_error, _any_conditions
 
 if TYPE_CHECKING:
     from datetime import datetime # pylint: disable=unused-import
-    LeaseClient = TypeVar("LeaseClient")
+    BlobLeaseClient = TypeVar("BlobLeaseClient")
 
 
 async def upload_block_blob(  # pylint: disable=too-many-locals
@@ -42,7 +42,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
         overwrite=None,
         headers=None,
         validate_content=None,
-        max_connections=None,
+        max_concurrency=None,
         blob_settings=None,
         encryption_options=None,
         **kwargs):
@@ -53,6 +53,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
         if (encryption_options.get('key') is not None) and (adjusted_count is not None):
             adjusted_count += (16 - (length % 16))
         blob_headers = kwargs.pop('blob_headers', None)
+        tier = kwargs.pop('standard_blob_tier', None)
 
         # Do single put if the size is smaller than config.max_single_put_size
         if adjusted_count is not None and (adjusted_count < blob_settings.max_single_put_size):
@@ -74,6 +75,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 validate_content=validate_content,
                 data_stream_total=adjusted_count,
                 upload_stream_current=0,
+                tier=tier.value if tier else None,
                 **kwargs)
 
         use_original_upload_path = blob_settings.use_byte_buffer or \
@@ -93,7 +95,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 uploader_class=BlockBlobChunkUploader,
                 total_size=length,
                 chunk_size=blob_settings.max_block_size,
-                max_connections=max_connections,
+                max_concurrency=max_concurrency,
                 stream=stream,
                 validate_content=validate_content,
                 encryption_options=encryption_options,
@@ -105,7 +107,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 uploader_class=BlockBlobChunkUploader,
                 total_size=length,
                 chunk_size=blob_settings.max_block_size,
-                max_connections=max_connections,
+                max_concurrency=max_concurrency,
                 stream=stream,
                 validate_content=validate_content,
                 **kwargs
@@ -119,6 +121,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
             cls=return_response_headers,
             validate_content=validate_content,
             headers=headers,
+            tier=tier.value if tier else None,
             **kwargs)
     except StorageErrorException as error:
         try:
@@ -136,7 +139,7 @@ async def upload_page_blob(
         overwrite=None,
         headers=None,
         validate_content=None,
-        max_connections=None,
+        max_concurrency=None,
         blob_settings=None,
         encryption_options=None,
         **kwargs):
@@ -174,7 +177,7 @@ async def upload_page_blob(
             total_size=length,
             chunk_size=blob_settings.max_page_size,
             stream=stream,
-            max_connections=max_connections,
+            max_concurrency=max_concurrency,
             validate_content=validate_content,
             encryption_options=encryption_options,
             **kwargs)
@@ -195,7 +198,7 @@ async def upload_append_blob(  # pylint: disable=unused-argument
         overwrite=None,
         headers=None,
         validate_content=None,
-        max_connections=None,
+        max_concurrency=None,
         blob_settings=None,
         encryption_options=None,
         **kwargs):
@@ -219,7 +222,7 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 total_size=length,
                 chunk_size=blob_settings.max_block_size,
                 stream=stream,
-                max_connections=max_connections,
+                max_concurrency=max_concurrency,
                 validate_content=validate_content,
                 append_position_access_conditions=append_conditions,
                 **kwargs)
@@ -245,7 +248,7 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 total_size=length,
                 chunk_size=blob_settings.max_block_size,
                 stream=stream,
-                max_connections=max_connections,
+                max_concurrency=max_concurrency,
                 validate_content=validate_content,
                 append_position_access_conditions=append_conditions,
                 **kwargs)

@@ -19,17 +19,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for proxy query execution context implementation in the Azure Cosmos database service.
+"""Internal class for proxy query execution context implementation in the Azure
+Cosmos database service.
 """
 
 import json
 from six.moves import xrange
-from azure.cosmos.errors import CosmosHttpResponseError
+from azure.cosmos.exceptions import CosmosHttpResponseError
+from azure.cosmos._execution_context import multi_execution_aggregator
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos._execution_context import endpoint_component
-from azure.cosmos._execution_context import multi_execution_aggregator
+from azure.cosmos.documents import _DistinctType
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
 
 # pylint: disable=protected-access
@@ -47,11 +49,12 @@ def _get_partitioned_execution_info(e):
 
 
 class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disable=abstract-method
-    """
-    This class represents a proxy execution context wrapper:
-        - By default uses _DefaultQueryExecutionContext
-        - if backend responds a 400 error code with a Query Execution Info
-            it switches to _MultiExecutionContextAggregator
+    """Represents a proxy execution context wrapper.
+
+    By default, uses _DefaultQueryExecutionContext.
+
+    If backend responds a 400 error code with a Query Execution Info, switches
+    to _MultiExecutionContextAggregator
     """
 
     def __init__(self, client, resource_link, query, options, fetch_function):
@@ -68,8 +71,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
     def next(self):
         """Returns the next query result.
 
-        :return:
-            The next query result.
+        :return: The next query result.
         :rtype: dict
         :raises StopIteration: If no more result is left.
 
@@ -78,7 +80,9 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
             return next(self._execution_context)
         except CosmosHttpResponseError as e:
             if _is_partitioned_execution_info(e):
-                query_execution_info = _get_partitioned_execution_info(e)
+                query_to_use = self._query if self._query is not None else "Select * from root r"
+                query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway
+                                                                      (query_to_use, self._resource_link))
                 self._execution_context = self._create_pipelined_execution_context(query_execution_info)
             else:
                 raise e
@@ -88,18 +92,19 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
     def fetch_next_block(self):
         """Returns a block of results.
 
-        This method only exists for backward compatibility reasons. (Because QueryIterable
-        has exposed fetch_next_block api).
+        This method only exists for backward compatibility reasons. (Because
+        QueryIterable has exposed fetch_next_block api).
 
-        :return:
-            List of results.
+        :return: List of results.
         :rtype: list
         """
         try:
             return self._execution_context.fetch_next_block()
         except CosmosHttpResponseError as e:
             if _is_partitioned_execution_info(e):
-                query_execution_info = _get_partitioned_execution_info(e)
+                query_to_use = self._query if self._query is not None else "Select * from root r"
+                query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway
+                                                                      (query_to_use, self._resource_link))
                 self._execution_context = self._create_pipelined_execution_context(query_execution_info)
             else:
                 raise e
@@ -108,23 +113,26 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
 
     def _create_pipelined_execution_context(self, query_execution_info):
 
-        assert self._resource_link, "code bug, resource_link has is required."
-        execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(
-            self._client, self._resource_link, self._query, self._options, query_execution_info
-        )
-        return _PipelineExecutionContext(
-            self._client, self._options, execution_context_aggregator, query_execution_info
-        )
+        assert self._resource_link, "code bug, resource_link is required."
+        if query_execution_info.has_aggregates() and not query_execution_info.has_select_value():
+            if self._options and ("enableCrossPartitionQuery" in self._options
+                                  and self._options["enableCrossPartitionQuery"]):
+                raise CosmosHttpResponseError(StatusCodes.BAD_REQUEST,
+                                  "Cross partition query only supports 'VALUE <AggreateFunc>' for aggregates")
 
+        execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
+                                                                                                   self._resource_link,
+                                                                                                   self._query,
+                                                                                                   self._options,
+                                                                                                   query_execution_info)
+        return _PipelineExecutionContext(self._client, self._options, execution_context_aggregator,
+                                         query_execution_info)
 
 class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=abstract-method
 
     DEFAULT_PAGE_SIZE = 1000
 
     def __init__(self, client, options, execution_context, query_execution_info):
-        """
-        Constructor
-        """
         super(_PipelineExecutionContext, self).__init__(client, options)
 
         if options.get("maxItemCount"):
@@ -140,36 +148,48 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=
         if order_by:
             self._endpoint = endpoint_component._QueryExecutionOrderByEndpointComponent(self._endpoint)
 
-        top = query_execution_info.get_top()
-        if top is not None:
-            self._endpoint = endpoint_component._QueryExecutionTopEndpointComponent(self._endpoint, top)
-
         aggregates = query_execution_info.get_aggregates()
         if aggregates:
             self._endpoint = endpoint_component._QueryExecutionAggregateEndpointComponent(self._endpoint, aggregates)
 
+        offset = query_execution_info.get_offset()
+        if offset is not None:
+            self._endpoint = endpoint_component._QueryExecutionOffsetEndpointComponent(self._endpoint, offset)
+
+        top = query_execution_info.get_top()
+        if top is not None:
+            self._endpoint = endpoint_component._QueryExecutionTopEndpointComponent(self._endpoint, top)
+
+        limit = query_execution_info.get_limit()
+        if limit is not None:
+            self._endpoint = endpoint_component._QueryExecutionTopEndpointComponent(self._endpoint, limit)
+
+        distinct_type = query_execution_info.get_distinct_type()
+        if distinct_type != _DistinctType.NoneType:
+            if distinct_type == _DistinctType.Ordered:
+                self._endpoint = endpoint_component._QueryExecutionDistinctOrderedEndpointComponent(self._endpoint)
+            else:
+                self._endpoint = endpoint_component._QueryExecutionDistinctUnorderedEndpointComponent(self._endpoint)
+
     def next(self):
         """Returns the next query result.
 
-        :return:
-            The next query result.
+        :return: The next query result.
         :rtype: dict
         :raises StopIteration: If no more result is left.
-
         """
         return next(self._endpoint)
 
     def fetch_next_block(self):
         """Returns a block of results.
 
-        This method only exists for backward compatibility reasons. (Because QueryIterable
-        has exposed fetch_next_block api).
+        This method only exists for backward compatibility reasons. (Because
+        QueryIterable has exposed fetch_next_block api).
 
-        This method internally invokes next() as many times required to collect the
-        requested fetch size.
+        This method internally invokes next() as many times required to collect
+        the requested fetch size.
 
-        :return:
-            List of results.
+        :return: List of results.
         :rtype: list
         """
 

@@ -1,13 +1,13 @@
-certificates.aio package
+azure.keyvault.certificates.aio package
 ========================
 
 Submodules
 ----------
 
-certificates.aio.client module
+azure.keyvault.certificates.aio.client module
 ------------------------------
 
-.. automodule:: certificates.aio.client
+.. automodule:: azure.keyvault.certificates.aio.client
    :members:
    :undoc-members:
    :show-inheritance:
@@ -16,7 +16,7 @@ certificates.aio.client module
 Module contents
 ---------------
 
-.. automodule:: certificates.aio
+.. automodule:: azure.keyvault.certificates.aio
    :members:
    :undoc-members:
    :show-inheritance:

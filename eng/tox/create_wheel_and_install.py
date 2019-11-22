@@ -51,6 +51,14 @@ if __name__ == "__main__":
         help="The path to the setup.py (not including the file) for the package we want to package into a wheel and install.",
         required=True,
     )
+    
+    parser.add_argument(
+        "-s",
+        "--skip-install",
+        dest="skip_install",
+        help="Create whl in distribution directory and skip installing it",
+        default=False
+    )
 
     args = parser.parse_args()
 
@@ -70,38 +78,43 @@ if __name__ == "__main__":
 
     cleanup_build_artifacts(args.target_setup)
 
-    for wheel in discovered_wheels:
-        # if the environment variable is set, that means that this is running where we
-        # want to use the pre-built wheels
-        if os.getenv("PREBUILT_WHEEL_DIR") is not None:
-            # find the wheel in the set of prebuilt wheels
-            if os.path.isfile(os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)):
+    if args.skip_install:
+        logging.info("Flag to skip install whl is passed. Skipping package installation")
+    else:        
+        for wheel in discovered_wheels:
+            # if the environment variable is set, that means that this is running where we
+            # want to use the pre-built wheels
+            if os.getenv("PREBUILT_WHEEL_DIR") is not None:
+                # find the wheel in the set of prebuilt wheels
+                if os.path.isfile(os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)):
+                    check_call(
+                        [
+                            sys.executable,
+                            "-m",
+                            "pip",
+                            "install",
+                            os.path.join(
+                                os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)
+                            ),
+                        ]
+                    )
+                    logging.info("Installed {w} from wheel directory".format(w=wheel))
+                # it does't exist, so we need to error out
+                else:
+                    logging.error(
+                        "{w} not present in the prebuilt wheels directory. Exiting.".format(
+                            w=wheel
+                        )
+                    )
+                    exit(1)
+            else:
                 check_call(
                     [
                         sys.executable,
                         "-m",
                         "pip",
                         "install",
-                        os.path.join(
-                            os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)
-                        ),
+                        os.path.join(args.distribution_directory, wheel),
                     ]
                 )
-                logging.info("Installed {w} from wheel directory".format(w=wheel))
-            # it does't exist, so we need to error out
-            else:
-                logging.error(
-                    "{w} not present in the prebuilt wheels directory. Exiting.".format(w=wheel)
-                )
-                exit(1)
-        else:
-            check_call(
-                [
-                    sys.executable,
-                    "-m",
-                    "pip",
-                    "install",
-                    os.path.join(args.distribution_directory, wheel),
-                ]
-            )
-            logging.info("Installed {w} from fresh wheel.".format(w=wheel))
+                logging.info("Installed {w} from fresh wheel.".format(w=wheel))

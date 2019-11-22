@@ -1,8 +1,8 @@
--e ../../servicebus/azure-servicebus
--e ../../core/azure-core
 -e ../../../tools/azure-sdk-tools
+../../core/azure-core
 -e ../../identity/azure-identity
-pytest-asyncio>=0.8.0; python_version > '3.4'
+-e ../../servicebus/azure-servicebus
+aiohttp>=3.0; python_version >= '3.5'
 docutils>=0.14
 pygments>=2.2.0
 behave==1.2.6

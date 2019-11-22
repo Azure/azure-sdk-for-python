@@ -88,6 +88,7 @@ except (SyntaxError, ImportError):
     from ._models import TextRecognitionResult
     from ._models import Word
 from ._computer_vision_client_enums import (
+    DescriptionExclude,
     Details,
     Gender,
     OcrLanguages,
@@ -141,6 +142,7 @@ __all__ = [
     'TextOperationStatusCodes',
     'TextRecognitionResultDimensionUnit',
     'TextRecognitionResultConfidenceClass',
+    'DescriptionExclude',
     'OcrLanguages',
     'VisualFeatureTypes',
     'TextRecognitionMode',

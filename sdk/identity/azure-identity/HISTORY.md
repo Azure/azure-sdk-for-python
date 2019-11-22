@@ -1,11 +1,94 @@
 # Release History
 
-## 1.0.0b4
+### 1.1.0b1 Unreleased
+- Constructing `DefaultAzureCredential` no longer raises `ImportError` on Python
+3.8 on Windows ([8294](https://github.com/Azure/azure-sdk-for-python/pull/8294))
+- `InteractiveBrowserCredential` raises when unable to open a web browser
+([8465](https://github.com/Azure/azure-sdk-for-python/pull/8465))
+- `InteractiveBrowserCredential` prompts for account selection
+([8470](https://github.com/Azure/azure-sdk-for-python/pull/8470))
+- The credentials composing `DefaultAzureCredential` are configurable by keyword
+arguments ([8514](https://github.com/Azure/azure-sdk-for-python/pull/8514))
+- `SharedTokenCacheCredential` accepts an optional `tenant_id` keyword argument
+([8689](https://github.com/Azure/azure-sdk-for-python/pull/8689))
+
+
+### 2019-11-05 1.0.1
+
+- `ClientCertificateCredential` uses application and tenant IDs correctly
+([8315](https://github.com/Azure/azure-sdk-for-python/pull/8315))
+- `InteractiveBrowserCredential` properly caches tokens
+([8352](https://github.com/Azure/azure-sdk-for-python/pull/8352))
+- Adopted msal 1.0.0 and msal-extensions 0.1.3
+([8359](https://github.com/Azure/azure-sdk-for-python/pull/8359))
+
+
+## 1.0.0 (2019-10-29)
+### Breaking changes:
+- Async credentials now default to [`aiohttp`](https://pypi.org/project/aiohttp/)
+for transport but the library does not require it as a dependency because the
+async API is optional. To use async credentials, please install
+[`aiohttp`](https://pypi.org/project/aiohttp/) or see
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+for information about customizing the transport.
+- Renamed `ClientSecretCredential` parameter "`secret`" to "`client_secret`"
+- All credentials with `tenant_id` and `client_id` positional parameters now accept them in that order
+- Changes to `InteractiveBrowserCredential` parameters
+  - positional parameter `client_id` is now an optional keyword argument. If no value is provided,
+the Azure CLI's client ID will be used.
+  - Optional keyword argument `tenant` renamed `tenant_id`
+- Changes to `DeviceCodeCredential`
+  - optional positional parameter `prompt_callback` is now a keyword argument
+  - `prompt_callback`'s third argument is now a `datetime` representing the
+  expiration time of the device code
+  - optional keyword argument `tenant` renamed `tenant_id`
+- Changes to `ManagedIdentityCredential`
+  - now accepts no positional arguments, and only one keyword argument:
+  `client_id`
+  - transport configuration is now done through keyword arguments as
+  described in
+  [`azure-core` documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/configuration.md)
+
+### Fixes and improvements:
+- Authenticating with a single sign-on shared with other Microsoft applications
+only requires a username when multiple users have signed in
+([#8095](https://github.com/Azure/azure-sdk-for-python/pull/8095))
+- `DefaultAzureCredential` accepts an `authority` keyword argument, enabling
+its use in national clouds
+([#8154](https://github.com/Azure/azure-sdk-for-python/pull/8154))
+
+### Dependency changes
+- Adopted [`msal_extensions`](https://pypi.org/project/msal-extensions/) 0.1.2
+- Constrained [`msal`](https://pypi.org/project/msal/) requirement to >=0.4.1,
+<1.0.0
+
+
+## 1.0.0b4 (2019-10-07)
+### New features:
+- `AuthorizationCodeCredential` authenticates with a previously obtained
+authorization code. See Azure Active Directory's
+[authorization code documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow)
+for more information about this authentication flow.
+- Multi-cloud support: client credentials accept the authority of an Azure Active
+Directory authentication endpoint as an `authority` keyword argument. Known
+authorities are defined in `azure.identity.KnownAuthorities`. The default
+authority is for Azure Public Cloud, `login.microsoftonline.com`
+(`KnownAuthorities.AZURE_PUBLIC_CLOUD`). An application running in Azure
+Government would use `KnownAuthorities.AZURE_GOVERNMENT` instead:
+>```
+>from azure.identity import DefaultAzureCredential, KnownAuthorities
+>credential = DefaultAzureCredential(authority=KnownAuthorities.AZURE_GOVERNMENT)
+>```
+
+### Breaking changes:
+- Removed `client_secret` parameter from `InteractiveBrowserCredential`
+
 ### Fixes and improvements:
 - `UsernamePasswordCredential` correctly handles environment configuration with
-no tenant information (#7260)
-- MSAL's user realm discovery requests are sent through credential
-pipelines (#7260)
+no tenant information ([#7260](https://github.com/Azure/azure-sdk-for-python/pull/7260))
+- user realm discovery requests are sent through credential pipelines
+([#7260](https://github.com/Azure/azure-sdk-for-python/pull/7260))
+
 
 ## 1.0.0b3 (2019-09-10)
 ### New features:

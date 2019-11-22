@@ -18,7 +18,7 @@ from devtools_testutils.cognitiveservices_testcase import CognitiveServiceTest, 
 class TextAnalyticsTest(CognitiveServiceTest):
 
     @ResourceGroupPreparer()
-    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    @CognitiveServicesAccountPreparer(name_prefix="pycog", legacy=True)
     def test_detect_language(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 

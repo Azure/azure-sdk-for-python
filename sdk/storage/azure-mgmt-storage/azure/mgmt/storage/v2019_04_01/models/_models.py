@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
 
 
 class AccountSasParameters(Model):
@@ -78,6 +79,56 @@ class AccountSasParameters(Model):
         self.shared_access_start_time = kwargs.get('shared_access_start_time', None)
         self.shared_access_expiry_time = kwargs.get('shared_access_expiry_time', None)
         self.key_to_sign = kwargs.get('key_to_sign', None)
+
+
+class ActiveDirectoryProperties(Model):
+    """Settings properties for Active Directory (AD).
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param domain_name: Required. Specifies the primary domain that the AD DNS
+     server is authoritative for.
+    :type domain_name: str
+    :param net_bios_domain_name: Required. Specifies the NetBIOS domain name.
+    :type net_bios_domain_name: str
+    :param forest_name: Required. Specifies the Active Directory forest to
+     get.
+    :type forest_name: str
+    :param domain_guid: Required. Specifies the domain GUID.
+    :type domain_guid: str
+    :param domain_sid: Required. Specifies the security identifier (SID).
+    :type domain_sid: str
+    :param azure_storage_sid: Required. Specifies the security identifier
+     (SID) for Azure Storage.
+    :type azure_storage_sid: str
+    """
+
+    _validation = {
+        'domain_name': {'required': True},
+        'net_bios_domain_name': {'required': True},
+        'forest_name': {'required': True},
+        'domain_guid': {'required': True},
+        'domain_sid': {'required': True},
+        'azure_storage_sid': {'required': True},
+    }
+
+    _attribute_map = {
+        'domain_name': {'key': 'domainName', 'type': 'str'},
+        'net_bios_domain_name': {'key': 'netBiosDomainName', 'type': 'str'},
+        'forest_name': {'key': 'forestName', 'type': 'str'},
+        'domain_guid': {'key': 'domainGuid', 'type': 'str'},
+        'domain_sid': {'key': 'domainSid', 'type': 'str'},
+        'azure_storage_sid': {'key': 'azureStorageSid', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ActiveDirectoryProperties, self).__init__(**kwargs)
+        self.domain_name = kwargs.get('domain_name', None)
+        self.net_bios_domain_name = kwargs.get('net_bios_domain_name', None)
+        self.forest_name = kwargs.get('forest_name', None)
+        self.domain_guid = kwargs.get('domain_guid', None)
+        self.domain_sid = kwargs.get('domain_sid', None)
+        self.azure_storage_sid = kwargs.get('azure_storage_sid', None)
 
 
 class Resource(Model):
@@ -159,9 +210,12 @@ class AzureFilesIdentityBasedAuthentication(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param directory_service_options: Required. Indicates the directory
-     service used. Possible values include: 'None', 'AADDS'
+     service used. Possible values include: 'None', 'AADDS', 'AD'
     :type directory_service_options: str or
      ~azure.mgmt.storage.v2019_04_01.models.DirectoryServiceOptions
+    :param active_directory_properties: Required if choose AD.
+    :type active_directory_properties:
+     ~azure.mgmt.storage.v2019_04_01.models.ActiveDirectoryProperties
     """
 
     _validation = {
@@ -170,11 +224,13 @@ class AzureFilesIdentityBasedAuthentication(Model):
 
     _attribute_map = {
         'directory_service_options': {'key': 'directoryServiceOptions', 'type': 'str'},
+        'active_directory_properties': {'key': 'activeDirectoryProperties', 'type': 'ActiveDirectoryProperties'},
     }
 
     def __init__(self, **kwargs):
         super(AzureFilesIdentityBasedAuthentication, self).__init__(**kwargs)
         self.directory_service_options = kwargs.get('directory_service_options', None)
+        self.active_directory_properties = kwargs.get('active_directory_properties', None)
 
 
 class BlobContainer(AzureEntityResource):
@@ -315,6 +371,8 @@ class BlobServiceProperties(Resource):
     :param automatic_snapshot_policy_enabled: Automatic Snapshot is enabled if
      set to true.
     :type automatic_snapshot_policy_enabled: bool
+    :param change_feed: The blob service properties for change feed events.
+    :type change_feed: ~azure.mgmt.storage.v2019_04_01.models.ChangeFeed
     """
 
     _validation = {
@@ -331,6 +389,7 @@ class BlobServiceProperties(Resource):
         'default_service_version': {'key': 'properties.defaultServiceVersion', 'type': 'str'},
         'delete_retention_policy': {'key': 'properties.deleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
         'automatic_snapshot_policy_enabled': {'key': 'properties.automaticSnapshotPolicyEnabled', 'type': 'bool'},
+        'change_feed': {'key': 'properties.changeFeed', 'type': 'ChangeFeed'},
     }
 
     def __init__(self, **kwargs):
@@ -339,6 +398,24 @@ class BlobServiceProperties(Resource):
         self.default_service_version = kwargs.get('default_service_version', None)
         self.delete_retention_policy = kwargs.get('delete_retention_policy', None)
         self.automatic_snapshot_policy_enabled = kwargs.get('automatic_snapshot_policy_enabled', None)
+        self.change_feed = kwargs.get('change_feed', None)
+
+
+class ChangeFeed(Model):
+    """The blob service properties for change feed events.
+
+    :param enabled: Indicates whether change feed event logging is enabled for
+     the Blob service.
+    :type enabled: bool
+    """
+
+    _attribute_map = {
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ChangeFeed, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
 
 
 class CheckNameAvailabilityResult(Model):
@@ -380,11 +457,62 @@ class CheckNameAvailabilityResult(Model):
 
 
 class CloudError(Model):
-    """CloudError.
+    """An error response from the Storage service.
+
+    :param error:
+    :type error: ~azure.mgmt.storage.v2019_04_01.models.CloudErrorBody
     """
 
     _attribute_map = {
+        'error': {'key': 'error', 'type': 'CloudErrorBody'},
     }
+
+    def __init__(self, **kwargs):
+        super(CloudError, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class CloudErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'CloudError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(CloudErrorException, self).__init__(deserialize, response, 'CloudError', *args)
+
+
+class CloudErrorBody(Model):
+    """An error response from the Storage service.
+
+    :param code: An identifier for the error. Codes are invariant and are
+     intended to be consumed programmatically.
+    :type code: str
+    :param message: A message describing the error, intended to be suitable
+     for display in a user interface.
+    :type message: str
+    :param target: The target of the particular error. For example, the name
+     of the property in error.
+    :type target: str
+    :param details: A list of additional details about the error.
+    :type details: list[~azure.mgmt.storage.v2019_04_01.models.CloudErrorBody]
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[CloudErrorBody]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CloudErrorBody, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
+        self.details = kwargs.get('details', None)
 
 
 class CorsRule(Model):
@@ -488,17 +616,17 @@ class DateAfterCreation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param days_after_creation_greater_than: Required. Integer value
-     indicating the age in days after creation
-    :type days_after_creation_greater_than: int
+    :param days_after_creation_greater_than: Required. Value indicating the
+     age in days after creation
+    :type days_after_creation_greater_than: float
     """
 
     _validation = {
-        'days_after_creation_greater_than': {'required': True, 'minimum': 0},
+        'days_after_creation_greater_than': {'required': True, 'minimum': 0, 'multiple': 1},
     }
 
     _attribute_map = {
-        'days_after_creation_greater_than': {'key': 'daysAfterCreationGreaterThan', 'type': 'int'},
+        'days_after_creation_greater_than': {'key': 'daysAfterCreationGreaterThan', 'type': 'float'},
     }
 
     def __init__(self, **kwargs):
@@ -511,17 +639,17 @@ class DateAfterModification(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param days_after_modification_greater_than: Required. Integer value
-     indicating the age in days after last modification
-    :type days_after_modification_greater_than: int
+    :param days_after_modification_greater_than: Required. Value indicating
+     the age in days after last modification
+    :type days_after_modification_greater_than: float
     """
 
     _validation = {
-        'days_after_modification_greater_than': {'required': True, 'minimum': 0},
+        'days_after_modification_greater_than': {'required': True, 'minimum': 0, 'multiple': 1},
     }
 
     _attribute_map = {
-        'days_after_modification_greater_than': {'key': 'daysAfterModificationGreaterThan', 'type': 'int'},
+        'days_after_modification_greater_than': {'key': 'daysAfterModificationGreaterThan', 'type': 'float'},
     }
 
     def __init__(self, **kwargs):
@@ -724,6 +852,176 @@ class Endpoints(Model):
         self.file = None
         self.web = None
         self.dfs = None
+
+
+class FileServiceItems(Model):
+    """FileServiceItems.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: List of file services returned.
+    :vartype value:
+     list[~azure.mgmt.storage.v2019_04_01.models.FileServiceProperties]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[FileServiceProperties]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FileServiceItems, self).__init__(**kwargs)
+        self.value = None
+
+
+class FileServiceProperties(Resource):
+    """The properties of File services in storage account.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param cors: Specifies CORS rules for the File service. You can include up
+     to five CorsRule elements in the request. If no CorsRule elements are
+     included in the request body, all CORS rules will be deleted, and CORS
+     will be disabled for the File service.
+    :type cors: ~azure.mgmt.storage.v2019_04_01.models.CorsRules
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'cors': {'key': 'properties.cors', 'type': 'CorsRules'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FileServiceProperties, self).__init__(**kwargs)
+        self.cors = kwargs.get('cors', None)
+
+
+class FileShare(AzureEntityResource):
+    """Properties of the file share, including Id, resource name, resource type,
+    Etag.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :ivar last_modified_time: Returns the date and time the share was last
+     modified.
+    :vartype last_modified_time: datetime
+    :param metadata: A name-value pair to associate with the share as
+     metadata.
+    :type metadata: dict[str, str]
+    :param share_quota: The maximum size of the share, in gigabytes. Must be
+     greater than 0, and less than or equal to 5TB (5120).
+    :type share_quota: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'last_modified_time': {'readonly': True},
+        'share_quota': {'maximum': 5120, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
+        'metadata': {'key': 'properties.metadata', 'type': '{str}'},
+        'share_quota': {'key': 'properties.shareQuota', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FileShare, self).__init__(**kwargs)
+        self.last_modified_time = None
+        self.metadata = kwargs.get('metadata', None)
+        self.share_quota = kwargs.get('share_quota', None)
+
+
+class FileShareItem(AzureEntityResource):
+    """The file share properties be listed out.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :ivar last_modified_time: Returns the date and time the share was last
+     modified.
+    :vartype last_modified_time: datetime
+    :param metadata: A name-value pair to associate with the share as
+     metadata.
+    :type metadata: dict[str, str]
+    :param share_quota: The maximum size of the share, in gigabytes. Must be
+     greater than 0, and less than or equal to 5TB (5120).
+    :type share_quota: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'last_modified_time': {'readonly': True},
+        'share_quota': {'maximum': 5120, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
+        'metadata': {'key': 'properties.metadata', 'type': '{str}'},
+        'share_quota': {'key': 'properties.shareQuota', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FileShareItem, self).__init__(**kwargs)
+        self.last_modified_time = None
+        self.metadata = kwargs.get('metadata', None)
+        self.share_quota = kwargs.get('share_quota', None)
 
 
 class GeoReplicationStats(Model):
@@ -2083,6 +2381,11 @@ class StorageAccount(TrackedResource):
     :ivar failover_in_progress: If the failover is in progress, the value will
      be true, otherwise, it will be null.
     :vartype failover_in_progress: bool
+    :param large_file_shares_state: Allow large file shares if sets to
+     Enabled. It cannot be disabled once it is enabled. Possible values
+     include: 'Disabled', 'Enabled'
+    :type large_file_shares_state: str or
+     ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
     """
 
     _validation = {
@@ -2136,6 +2439,7 @@ class StorageAccount(TrackedResource):
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
         'geo_replication_stats': {'key': 'properties.geoReplicationStats', 'type': 'GeoReplicationStats'},
         'failover_in_progress': {'key': 'properties.failoverInProgress', 'type': 'bool'},
+        'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -2161,6 +2465,7 @@ class StorageAccount(TrackedResource):
         self.is_hns_enabled = kwargs.get('is_hns_enabled', None)
         self.geo_replication_stats = None
         self.failover_in_progress = None
+        self.large_file_shares_state = kwargs.get('large_file_shares_state', None)
 
 
 class StorageAccountCheckNameAvailabilityParameters(Model):
@@ -2226,9 +2531,8 @@ class StorageAccountCreateParameters(Model):
      at this time. To clear the existing custom domain, use an empty string for
      the custom domain name property.
     :type custom_domain: ~azure.mgmt.storage.v2019_04_01.models.CustomDomain
-    :param encryption: Provides the encryption settings on the account. If
-     left unspecified the account encryption settings will remain the same. The
-     default setting is unencrypted.
+    :param encryption: Not applicable. Azure Storage encryption is enabled for
+     all storage accounts and cannot be disabled.
     :type encryption: ~azure.mgmt.storage.v2019_04_01.models.Encryption
     :param network_rule_set: Network rule set
     :type network_rule_set:
@@ -2249,6 +2553,11 @@ class StorageAccountCreateParameters(Model):
     :param is_hns_enabled: Account HierarchicalNamespace enabled if sets to
      true.
     :type is_hns_enabled: bool
+    :param large_file_shares_state: Allow large file shares if sets to
+     Enabled. It cannot be disabled once it is enabled. Possible values
+     include: 'Disabled', 'Enabled'
+    :type large_file_shares_state: str or
+     ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
     """
 
     _validation = {
@@ -2270,6 +2579,7 @@ class StorageAccountCreateParameters(Model):
         'azure_files_identity_based_authentication': {'key': 'properties.azureFilesIdentityBasedAuthentication', 'type': 'AzureFilesIdentityBasedAuthentication'},
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
+        'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -2286,6 +2596,7 @@ class StorageAccountCreateParameters(Model):
         self.azure_files_identity_based_authentication = kwargs.get('azure_files_identity_based_authentication', None)
         self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', None)
         self.is_hns_enabled = kwargs.get('is_hns_enabled', None)
+        self.large_file_shares_state = kwargs.get('large_file_shares_state', None)
 
 
 class StorageAccountKey(Model):
@@ -2354,7 +2665,7 @@ class StorageAccountRegenerateKeyParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param key_name: Required. The name of storage keys that want to be
-     regenerated, possible values are key1, key2.
+     regenerated, possible values are key1, key2, kerb1, kerb2.
     :type key_name: str
     """
 
@@ -2410,6 +2721,11 @@ class StorageAccountUpdateParameters(Model):
     :param network_rule_set: Network rule set
     :type network_rule_set:
      ~azure.mgmt.storage.v2019_04_01.models.NetworkRuleSet
+    :param large_file_shares_state: Allow large file shares if sets to
+     Enabled. It cannot be disabled once it is enabled. Possible values
+     include: 'Disabled', 'Enabled'
+    :type large_file_shares_state: str or
+     ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
     :param kind: Optional. Indicates the type of storage account. Currently
      only StorageV2 value supported by server. Possible values include:
      'Storage', 'StorageV2', 'BlobStorage', 'FileStorage', 'BlockBlobStorage'
@@ -2426,6 +2742,7 @@ class StorageAccountUpdateParameters(Model):
         'azure_files_identity_based_authentication': {'key': 'properties.azureFilesIdentityBasedAuthentication', 'type': 'AzureFilesIdentityBasedAuthentication'},
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
+        'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
@@ -2440,6 +2757,7 @@ class StorageAccountUpdateParameters(Model):
         self.azure_files_identity_based_authentication = kwargs.get('azure_files_identity_based_authentication', None)
         self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', None)
         self.network_rule_set = kwargs.get('network_rule_set', None)
+        self.large_file_shares_state = kwargs.get('large_file_shares_state', None)
         self.kind = kwargs.get('kind', None)
 
 

@@ -20,7 +20,7 @@ from cryptography.hazmat.primitives.padding import PKCS7
 
 from azure.core.exceptions import HttpResponseError
 
-from ..version import VERSION
+from .._version import VERSION
 from . import encode_base64, decode_base64_to_bytes
 
 

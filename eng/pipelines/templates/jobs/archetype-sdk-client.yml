@@ -21,6 +21,7 @@ jobs:
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
 
   - job: 'Analyze'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
     variables:
     - template: ../variables/globals.yml
 
@@ -32,8 +33,12 @@ jobs:
 
     steps:
     - template: ../steps/analyze.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'Test'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     variables:
     - template: ../variables/globals.yml
@@ -62,6 +67,11 @@ jobs:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.7'
+          CoverageArg: ''
+        Linux_Python38:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.8'
           CoverageArg: ''
         Windows_Python35:
           OSName: 'Windows'
@@ -98,3 +108,41 @@ jobs:
             inputs:
               artifactName: 'artifacts' 
               targetPath: $(Build.ArtifactStagingDirectory)
+
+  - job: 'RunMyPy'
+    condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'], 'true'))
+    displayName: 'Run MyPy'
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+    - template: ../steps/run_mypy.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+
+  - job: 'RunPyLint'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'], 'true'))
+    displayName: 'Run Pylint'
+    variables:
+    - template: ../variables/globals.yml
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+    - template: ../steps/run_pylint.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}

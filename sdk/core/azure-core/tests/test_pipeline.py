@@ -44,21 +44,22 @@ import sys
 import requests
 import pytest
 
-from azure.core import Configuration
+from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,
-    RedirectPolicy
+    RedirectPolicy,
+    RetryPolicy
 )
-from azure.core.pipeline.transport.base import PipelineClientBase
+from azure.core.pipeline.transport._base import PipelineClientBase
 from azure.core.pipeline.transport import (
     HttpRequest,
     HttpTransport,
     RequestsTransport
 )
 
-from azure.core.configuration import Configuration
+from azure.core.exceptions import AzureError
 
 
 def test_sans_io_exception():
@@ -107,6 +108,27 @@ class TestRequestsTransport(unittest.TestCase):
         assert pipeline._transport.session is None
         assert response.http_response.status_code == 200
 
+    def test_requests_socket_timeout(self):
+        conf = Configuration()
+        request = HttpRequest("GET", "https://bing.com")
+        policies = [
+            UserAgentPolicy("myusergant"),
+            RedirectPolicy()
+        ]
+        # Sometimes this will raise a read timeout, sometimes a socket timeout depending on timing.
+        # Either way, the error should always be wrapped as an AzureError to ensure it's caught
+        # by the retry policy.
+        with pytest.raises(AzureError):
+            with Pipeline(RequestsTransport(), policies=policies) as pipeline:
+                response = pipeline.run(request, connection_timeout=0.000001)
+
+    def test_retry_code_class_variables(self):
+        retry_policy = RetryPolicy()
+        assert retry_policy._RETRY_CODES is not None
+        assert len(retry_policy._RETRY_CODES) == 498
+        assert 408 in retry_policy._RETRY_CODES
+        assert 501 not in retry_policy._RETRY_CODES
+
     def test_basic_requests_separate_session(self):
 
         session = requests.Session()
@@ -124,7 +146,6 @@ class TestRequestsTransport(unittest.TestCase):
         transport.close()
         assert transport.session
         transport.session.close()
-
 
 class TestClientPipelineURLFormatting(unittest.TestCase):
 

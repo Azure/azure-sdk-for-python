@@ -69,16 +69,16 @@ def upload_blob(service, name, connections):
     start_time = datetime.datetime.now()
     if isinstance(service, BlockBlobService):
         service.create_blob_from_path(
-            CONTAINER_NAME, blob_name, file_name, max_connections=connections)
+            CONTAINER_NAME, blob_name, file_name, max_concurrency=connections)
     elif isinstance(service, PageBlobService):
         service.create_blob_from_path(
-            CONTAINER_NAME, blob_name, file_name, max_connections=connections)
+            CONTAINER_NAME, blob_name, file_name, max_concurrency=connections)
     elif isinstance(service, AppendBlobService):
         service.append_blob_from_path(
-            CONTAINER_NAME, blob_name, file_name, max_connections=connections)
+            CONTAINER_NAME, blob_name, file_name, max_concurrency=connections)
     else:
         service.create_blob_from_path(
-            CONTAINER_NAME, blob_name, file_name, max_connections=connections)
+            CONTAINER_NAME, blob_name, file_name, max_concurrency=connections)
     elapsed_time = datetime.datetime.now() - start_time
     sys.stdout.write('{0}s'.format(elapsed_time.total_seconds()))
 
@@ -90,7 +90,7 @@ def download_blob(service, name, connections):
     sys.stdout.write('\tDn:')
     start_time = datetime.datetime.now()
     service.get_blob_to_path(
-        CONTAINER_NAME, blob_name, target_file_name, max_connections=connections)
+        CONTAINER_NAME, blob_name, target_file_name, max_concurrency=connections)
     elapsed_time = datetime.datetime.now() - start_time
     sys.stdout.write('{0}s'.format(elapsed_time.total_seconds()))
 

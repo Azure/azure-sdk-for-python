@@ -34,20 +34,21 @@ class Configuration(object):
     Configuration to construct the pipeline correctly, as well as inserting any
     unexposed/non-configurable policies.
 
-    :param headers_policy: Provides parameters for custom or additional headers to be sent with the request.
-    :param proxy_policy: Provides configuration parameters for proxy.
-    :param redirect_policy: Provides configuration parameters for redirects.
-    :param retry_policy: Provides configuration parameters for retries in the pipeline.
-    :param custom_hook_policy: Provides configuration parameters for a custom hook.
-    :param logging_policy: Provides configuration parameters for logging.
-    :param user_agent_policy: Provides configuration parameters to append custom values to the
+    :keyword headers_policy: Provides parameters for custom or additional headers to be sent with the request.
+    :keyword proxy_policy: Provides configuration parameters for proxy.
+    :keyword redirect_policy: Provides configuration parameters for redirects.
+    :keyword retry_policy: Provides configuration parameters for retries in the pipeline.
+    :keyword custom_hook_policy: Provides configuration parameters for a custom hook.
+    :keyword logging_policy: Provides configuration parameters for logging.
+    :keyword user_agent_policy: Provides configuration parameters to append custom values to the
      User-Agent header.
-    :param authentication_policy: Provides configuration parameters for adding a bearer token Authorization
+    :keyword authentication_policy: Provides configuration parameters for adding a bearer token Authorization
      header to requests.
-    :param polling_interval: Polling interval while doing LRO operations, if Retry-After is not set.
+    :keyword polling_interval: Polling interval while doing LRO operations, if Retry-After is not set.
 
-    Example:
-        .. literalinclude:: ../examples/test_example_config.py
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/test_example_config.py
             :start-after: [START configuration]
             :end-before: [END configuration]
             :language: python
@@ -89,15 +90,17 @@ class ConnectionConfiguration(object):
     Common properties that can be configured on all transports. Found in the
     Configuration object.
 
-    :param int connection_timeout: The connect and read timeout value. Defaults to 100 seconds.
-    :param bool connection_verify: SSL certificate verification. Enabled by default. Set to False to disable,
+    :keyword int connection_timeout: A single float in seconds for the connection timeout. Defaults to 300 seconds.
+    :keyword int read_timeout: A single float in seconds for the read timeout. Defaults to 300 seconds.
+    :keyword bool connection_verify: SSL certificate verification. Enabled by default. Set to False to disable,
      alternatively can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs.
-    :param str connection_cert: Client-side certificates. You can specify a local cert to use as client side
+    :keyword str connection_cert: Client-side certificates. You can specify a local cert to use as client side
      certificate, as a single file (containing the private key and the certificate) or as a tuple of both files' paths.
-    :param int connection_data_block_size: The block size of data sent over the connection. Defaults to 4096 bytes.
+    :keyword int connection_data_block_size: The block size of data sent over the connection. Defaults to 4096 bytes.
 
-    Example:
-        .. literalinclude:: ../examples/test_example_config.py
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/test_example_config.py
             :start-after: [START connection_configuration]
             :end-before: [END connection_configuration]
             :language: python
@@ -106,7 +109,8 @@ class ConnectionConfiguration(object):
     """
 
     def __init__(self, **kwargs):
-        self.timeout = kwargs.pop('connection_timeout', 100)
+        self.timeout = kwargs.pop('connection_timeout', 300)
+        self.read_timeout = kwargs.pop('read_timeout', 300)
         self.verify = kwargs.pop('connection_verify', True)
         self.cert = kwargs.pop('connection_cert', None)
         self.data_block_size = kwargs.pop('connection_data_block_size', 4096)

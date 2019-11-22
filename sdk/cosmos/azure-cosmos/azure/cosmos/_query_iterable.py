@@ -23,13 +23,13 @@
 """
 from azure.core.paging import PageIterator  # type: ignore
 from azure.cosmos._execution_context import execution_dispatcher
-from azure.cosmos._execution_context import base_execution_context
 
 # pylint: disable=protected-access
 
 
 class QueryIterable(PageIterator):
     """Represents an iterable object of the query results.
+
     QueryIterable is a wrapper for query execution context.
     """
 
@@ -44,18 +44,17 @@ class QueryIterable(PageIterator):
         partition_key=None,
         continuation_token=None,
     ):
-        """
-        Instantiates a QueryIterable for non-client side partitioning queries.
-        _ProxyQueryExecutionContext will be used as the internal query execution context
+        """Instantiates a QueryIterable for non-client side partitioning queries.
 
-        :param CosmosClient client:
-            Instance of document client.
+        _ProxyQueryExecutionContext will be used as the internal query execution
+        context.
+
+        :param CosmosClient client: Instance of document client.
         :param (str or dict) query:
-        :param dict options:
-            The request options for the request.
+        :param dict options: The request options for the request.
         :param method fetch_function:
-        :param str collection_link:
-            If this is a Document query/feed collection_link is required.
+        :param method resource_type: The type of the resource being queried
+        :param str resource_link: If this is a Document query/feed collection_link is required.
 
         Example of `fetch_function`:
 
@@ -73,20 +72,10 @@ class QueryIterable(PageIterator):
         self._collection_link = collection_link
         self._database_link = database_link
         self._partition_key = partition_key
-        self._ex_context = self._create_execution_context()
-        super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
-
-    def _create_execution_context(self):
-        """instantiates the internal query execution context based.
-        """
-        if self._database_link:
-            # client side partitioning query
-            return base_execution_context._MultiCollectionQueryExecutionContext(
-                self._client, self._options, self._database_link, self._query, self._partition_key
-            )
-        return execution_dispatcher._ProxyQueryExecutionContext(
+        self._ex_context = execution_dispatcher._ProxyQueryExecutionContext(
             self._client, self._collection_link, self._query, self._options, self._fetch_function
         )
+        super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
     def _unpack(self, block):
         continuation = None
@@ -98,15 +87,13 @@ class QueryIterable(PageIterator):
         return continuation, block
 
     def _fetch_next(self, *args):  # pylint: disable=unused-argument
-        """Returns a block of results with respecting retry policy.
+        """Return a block of results with respecting retry policy.
 
-        This method only exists for backward compatibility reasons. (Because QueryIterable
-        has exposed fetch_next_block api).
+        This method only exists for backward compatibility reasons. (Because
+        QueryIterable has exposed fetch_next_block api).
 
-        :return:
-            List of results.
-        :rtype:
-            list
+        :return: List of results.
+        :rtype: list
         """
         block = self._ex_context.fetch_next_block()
         if not block:

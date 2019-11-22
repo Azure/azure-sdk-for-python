@@ -33,7 +33,24 @@ from typing import Callable, Any, Dict, Optional, List, Union, TYPE_CHECKING
 _LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport.base import _HttpResponseBase
+    from azure.core.pipeline.transport._base import _HttpResponseBase
+
+
+__all__ = [
+    'AzureError',
+    'ServiceRequestError',
+    'ServiceResponseError',
+    'HttpResponseError',
+    'DecodeError',
+    'ResourceExistsError',
+    'ResourceNotFoundError',
+    'ClientAuthenticationError',
+    'ResourceModifiedError',
+    'ResourceNotModifiedError',
+    'TooManyRedirectsError',
+    'ODataV4Format',
+    'ODataV4Error',
+]
 
 
 def raise_with_traceback(exception, *args, **kwargs):
@@ -43,11 +60,7 @@ def raise_with_traceback(exception, *args, **kwargs):
 
     :param Exception exception: Error type to be raised.
     :param args: Any additional args to be included with exception.
-    :param kwargs: Keyword arguments to include with the exception.
-
-    **Keyword argument:**
-
-    *message (str)* - Message to be associated with the exception. If omitted, defaults to an empty string.
+    :keyword str message: Message to be associated with the exception. If omitted, defaults to an empty string.
     """
     message = kwargs.pop('message', '')
     exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -103,8 +116,14 @@ class ServiceResponseError(AzureError):
 class HttpResponseError(AzureError):
     """A request was made, and a non-success status code was received from the service.
 
-    :param status_code: HttpResponse's status code
+    :param message: HttpResponse's error message
+    :type message: string
     :param response: The response that triggered the exception.
+    :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
+    :ivar status_code: HttpResponse's status code
+    :type status_code: int
+    :ivar response: The response that triggered the exception.
+    :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
     """
 
     def __init__(self, message=None, response=None, **kwargs):
@@ -156,6 +175,9 @@ class ResourceModifiedError(HttpResponseError):
     """An error response with status code 4xx, typically 412 Conflict.
     This will not be raised directly by the Azure core pipeline."""
 
+class ResourceNotModifiedError(HttpResponseError):
+    """An error response with status code 304.
+    This will not be raised directly by the Azure core pipeline."""
 
 class TooManyRedirectsError(HttpResponseError):
     """Reached the maximum number of redirect attempts."""
@@ -171,7 +193,7 @@ class ODataV4Format(object):
     http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Toc372793091
 
     :param dict json_object: A Python dict representing a ODataV4 JSON
-    :ivar str code: Its value is a service-defined error code.
+    :ivar str ~.code: Its value is a service-defined error code.
      This code serves as a sub-status for the HTTP error code specified in the response.
     :ivar str message: Human-readable, language-dependent representation of the error.
     :ivar str target: The target of the particular error (for example, the name of the property in error).
@@ -223,7 +245,7 @@ class ODataV4Error(HttpResponseError):
     http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Toc372793091
 
     :ivar dict odata_json: The parsed JSON body as attribute for convenience.
-    :ivar str code: Its value is a service-defined error code.
+    :ivar str ~.code: Its value is a service-defined error code.
      This code serves as a sub-status for the HTTP error code specified in the response.
     :ivar str message: Human-readable, language-dependent representation of the error.
     :ivar str target: The target of the particular error (for example, the name of the property in error).

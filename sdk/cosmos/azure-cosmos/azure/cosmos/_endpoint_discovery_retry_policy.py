@@ -19,7 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for endpoint discovery retry policy implementation in the Azure Cosmos database service.
+"""Internal class for endpoint discovery retry policy implementation in the
+Azure Cosmos database service.
 """
 
 import logging
@@ -61,10 +62,8 @@ class EndpointDiscoveryRetryPolicy(object):
     def ShouldRetry(self, exception):  # pylint: disable=unused-argument
         """Returns true if should retry based on the passed-in exception.
 
-        :param (errors.CosmosHttpResponseError instance) exception:
-
-        :rtype:
-            boolean
+        :param (exceptions.CosmosHttpResponseError instance) exception:
+        :rtype: boolean
 
         """
         if not self.connection_policy.EnableEndpointDiscovery:

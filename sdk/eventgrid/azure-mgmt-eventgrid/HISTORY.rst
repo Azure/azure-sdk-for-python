@@ -3,6 +3,42 @@
 Release History
 ===============
 
+3.0.0rc2 (2019-11-11)
++++++++++++++++++++++
+
+**Features**
+
+- Model WebHookEventSubscriptionDestination has a new parameter azure_active_directory_tenant_id
+
+3.0.0rc1 (2019-10-24)
++++++++++++++++++++++
+
+**Features**
+
+- Model Domain has a new parameter input_schema
+- Model Domain has a new parameter input_schema_mapping
+- Model Domain has a new parameter metric_resource_id
+- Model EventSubscription has a new parameter event_delivery_schema
+- Model Topic has a new parameter input_schema
+- Model Topic has a new parameter input_schema_mapping
+- Model Topic has a new parameter metric_resource_id
+- Model WebHookEventSubscriptionDestination has a new parameter preferred_batch_size_in_kilobytes
+- Model WebHookEventSubscriptionDestination has a new parameter azure_active_directory_application_id_or_uri
+- Model WebHookEventSubscriptionDestination has a new parameter max_events_per_batch
+- Model EventSubscriptionUpdateParameters has a new parameter event_delivery_schema
+
+**General Breaking Changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- EventGridManagementClient cannot be imported from `azure.mgmt.eventgrid.event_grid_management_client` anymore (import from `azure.mgmt.eventgrid` works like before)
+- EventGridManagementClientConfiguration import has been moved from `azure.mgmt.eventgrid.event_grid_management_client` to `azure.mgmt.eventgrid`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.eventgrid.models.my_class` (import from `azure.mgmt.eventgrid.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.eventgrid.operations.my_class_operations` (import from `azure.mgmt.eventgrid.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
 2.1.0 (2019-05-22)
 ++++++++++++++++++
 

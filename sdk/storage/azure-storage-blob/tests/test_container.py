@@ -7,99 +7,73 @@
 # --------------------------------------------------------------------------
 import pytest
 import unittest
+import re
+import sys
 from dateutil.tz import tzutc
 
 import requests
 from datetime import datetime, timedelta
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    LeaseClient,
-    ContainerPermissions,
+    ContainerSasPermissions,
     PublicAccess,
-    ContainerPermissions,
-    AccessPolicy
+    ContainerSasPermissions,
+    AccessPolicy,
+    StandardBlobTier,
+    PremiumPageBlobTier,
+    generate_container_sas,
+    PartialBatchErrorException
 )
-
 from azure.identity import ClientSecretCredential
-from testcase import StorageTestCase, TestMode, record, LogCaptured
+
+from _shared.testcase import StorageTestCase, LogCaptured, GlobalStorageAccountPreparer
+import pytest
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
 #------------------------------------------------------------------------------
 
+
 class StorageContainerTest(StorageTestCase):
-
-    def setUp(self):
-        super(StorageContainerTest, self).setUp()
-        url = self._get_account_url()
-        credential = self._get_shared_key_credential()
-        self.bsc = BlobServiceClient(url, credential=credential)
-        self.test_containers = []
-
-    def tearDown(self):
-        if not self.is_playback():
-            for container_name in self.test_containers:
-                try:
-                    container = self.bsc.get_container_client(container_name)
-                    container.delete_container()
-                except HttpResponseError:
-                    try:
-                        lease = LeaseClient(container)
-                        lease.break_lease(0)
-                        container.delete_container()
-                    except:
-                        pass
-                except:
-                    pass
-        return super(StorageContainerTest, self).tearDown()
 
     #--Helpers-----------------------------------------------------------------
     def _get_container_reference(self, prefix=TEST_CONTAINER_PREFIX):
         container_name = self.get_resource_name(prefix)
-        self.test_containers.append(container_name)
         return container_name
 
-    def _create_container(self, prefix=TEST_CONTAINER_PREFIX):
+    def _create_container(self, bsc, prefix=TEST_CONTAINER_PREFIX):
         container_name = self._get_container_reference(prefix)
-        container = self.bsc.get_container_client(container_name)
+        container = bsc.get_container_client(container_name)
         try:
             container.create_container()
         except ResourceExistsError:
             pass
         return container
 
-    def _generate_oauth_token(self):
-
-        return ClientSecretCredential(
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
-            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
-            self.settings.ACTIVE_DIRECTORY_TENANT_ID
-        )
-
     #--Test cases for containers -----------------------------------------
-    @record
-    def test_create_container(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_create_container(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         container_name = self._get_container_reference()
 
         # Act
-        container = self.bsc.get_container_client(container_name)
+        container = bsc.get_container_client(container_name)
         created = container.create_container()
 
         # Assert
         self.assertTrue(created)
 
-    @record
-    def test_create_container_with_already_existing_container_fail_on_exist(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_create_container_with_already_existing_container_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         container_name = self._get_container_reference()
 
         # Act
-        container = self.bsc.get_container_client(container_name)
+        container = bsc.get_container_client(container_name)
         created = container.create_container()
         with self.assertRaises(HttpResponseError):
             container.create_container()
@@ -107,47 +81,47 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         self.assertTrue(created)
 
-    @record
-    def test_create_container_with_public_access_container(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_create_container_with_public_access_container(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         container_name = self._get_container_reference()
 
         # Act
-        container = self.bsc.get_container_client(container_name)
+        container = bsc.get_container_client(container_name)
         created = container.create_container(public_access='container')
 
         # Assert
         self.assertTrue(created)
 
-    @record
-    def test_create_container_with_public_access_blob(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_create_container_with_public_access_blob(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         container_name = self._get_container_reference()
 
         # Act
-        container = self.bsc.get_container_client(container_name)
+        container = bsc.get_container_client(container_name)
         created = container.create_container(public_access='blob')
 
         blob = container.get_blob_client("blob1")
         blob.upload_blob(u'xyz')
 
         anonymous_service = BlobClient(
-            self._get_account_url(),
-            container=container_name,
-            blob="blob1")
+            self.account_url(storage_account.name, "blob"),
+            container_name=container_name,
+            blob_name="blob1")
 
         # Assert
         self.assertTrue(created)
         anonymous_service.download_blob()
 
-    @record
-    def test_create_container_with_metadata(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_create_container_with_metadata(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         container_name = self._get_container_reference()
         metadata = {'hello': 'world', 'number': '42'}
 
         # Act
-        container = self.bsc.get_container_client(container_name)
+        container = bsc.get_container_client(container_name)
         created = container.create_container(metadata)
 
         # Assert
@@ -155,10 +129,10 @@ class StorageContainerTest(StorageTestCase):
         md = container.get_container_properties().metadata
         self.assertDictEqual(md, metadata)
 
-    @record
-    def test_container_exists_with_lease(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_container_exists_with_lease(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         container.acquire_lease()
 
         # Act
@@ -167,12 +141,12 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         self.assertTrue(exists)
 
-    @record
-    def test_unicode_create_container_unicode_name(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_unicode_create_container_unicode_name(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         container_name = u'啊齄丂狛狜'
 
-        container = self.bsc.get_container_client(container_name)
+        container = bsc.get_container_client(container_name)
         # Act
         with self.assertRaises(HttpResponseError):
             # not supported - container name must be alphanumeric, lowercase
@@ -180,13 +154,13 @@ class StorageContainerTest(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_list_containers(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_list_containers(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
 
         # Act
-        containers = list(self.bsc.list_containers())
+        containers = list(bsc.list_containers())
 
         # Assert
         self.assertIsNotNone(containers)
@@ -196,13 +170,13 @@ class StorageContainerTest(StorageTestCase):
         self.assertIsNotNone(containers[0].has_immutability_policy)
         self.assertIsNotNone(containers[0].has_legal_hold)
 
-    @record
-    def test_list_containers_with_prefix(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_list_containers_with_prefix(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
 
         # Act
-        containers = list(self.bsc.list_containers(name_starts_with=container.container_name))
+        containers = list(bsc.list_containers(name_starts_with=container.container_name))
 
         # Assert
         self.assertIsNotNone(containers)
@@ -211,15 +185,15 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(containers[0].name, container.container_name)
         self.assertIsNone(containers[0].metadata)
 
-    @record
-    def test_list_containers_with_include_metadata(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_list_containers_with_include_metadata(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         metadata = {'hello': 'world', 'number': '42'}
         resp = container.set_container_metadata(metadata)
 
         # Act
-        containers = list(self.bsc.list_containers(
+        containers = list(bsc.list_containers(
             name_starts_with=container.container_name,
             include_metadata=True))
 
@@ -230,14 +204,18 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(containers, container.container_name)
         self.assertDictEqual(containers[0].metadata, metadata)
 
-    @record
-    def test_list_containers_with_public_access(self):
-        # Arrange
-        container = self._create_container()
-        resp = container.set_container_access_policy(public_access=PublicAccess.Blob)
+    @GlobalStorageAccountPreparer()
+    def test_list_containers_with_public_access(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifiers = {'testid': access_policy}
+        resp = container.set_container_access_policy(signed_identifiers, public_access=PublicAccess.Blob)
 
         # Act
-        containers = list(self.bsc.list_containers(name_starts_with=container.container_name))
+        containers = list(bsc.list_containers(name_starts_with=container.container_name))
 
         # Assert
         self.assertIsNotNone(containers)
@@ -246,21 +224,21 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(containers, container.container_name)
         self.assertEqual(containers[0].public_access, PublicAccess.Blob)
 
-    @record
-    def test_list_containers_with_num_results_and_marker(self):
-        # Arrange
-        prefix = 'listcontainer'
+    @GlobalStorageAccountPreparer()
+    def test_list_containers_with_num_results_and_marker(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        prefix = 'listcontainersync'
         container_names = []
         for i in range(0, 4):
-            container_names.append(self._create_container(prefix + str(i)).container_name)
+            container_names.append(self._create_container(bsc, prefix + str(i)).container_name)
 
         container_names.sort()
 
         # Act
-        generator1 = self.bsc.list_containers(name_starts_with=prefix, results_per_page=2).by_page()
+        generator1 = bsc.list_containers(name_starts_with=prefix, results_per_page=2).by_page()
         containers1 = list(next(generator1))
 
-        generator2 = self.bsc.list_containers(
+        generator2 = bsc.list_containers(
             name_starts_with=prefix, results_per_page=2).by_page(generator1.continuation_token)
         containers2 = list(next(generator2))
 
@@ -274,11 +252,11 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(containers2, container_names[2])
         self.assertNamedItemInContainer(containers2, container_names[3])
 
-    @record
-    def test_set_container_metadata(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_set_container_metadata(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         metadata = {'hello': 'world', 'number': '43'}
-        container = self._create_container()
+        container = self._create_container(bsc)
 
         # Act
         container.set_container_metadata(metadata)
@@ -286,25 +264,25 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         self.assertDictEqual(metadata_from_response, metadata)
 
-    @record
-    def test_set_container_metadata_with_lease_id(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_set_container_metadata_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         metadata = {'hello': 'world', 'number': '43'}
-        container = self._create_container()
+        container = self._create_container(bsc)
         lease_id = container.acquire_lease()
 
         # Act
-        container.set_container_metadata(metadata, lease_id)
+        container.set_container_metadata(metadata, lease=lease_id)
 
         # Assert
         md = container.get_container_properties().metadata
         self.assertDictEqual(md, metadata)
 
-    @record
-    def test_set_container_metadata_with_non_existing_container(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_set_container_metadata_with_non_existing_container(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         container_name = self._get_container_reference()
-        container = self.bsc.get_container_client(container_name)
+        container = bsc.get_container_client(container_name)
 
         # Act
         with self.assertRaises(ResourceNotFoundError):
@@ -312,11 +290,11 @@ class StorageContainerTest(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_get_container_metadata(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_get_container_metadata(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         metadata = {'hello': 'world', 'number': '42'}
-        container = self._create_container()
+        container = self._create_container(bsc)
         container.set_container_metadata(metadata)
 
         # Act
@@ -325,25 +303,25 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         self.assertDictEqual(md, metadata)
 
-    @record
-    def test_get_container_metadata_with_lease_id(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_get_container_metadata_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         metadata = {'hello': 'world', 'number': '42'}
-        container = self._create_container()
+        container = self._create_container(bsc)
         container.set_container_metadata(metadata)
         lease_id = container.acquire_lease()
 
         # Act
-        md = container.get_container_properties(lease_id).metadata
+        md = container.get_container_properties(lease=lease_id).metadata
 
         # Assert
         self.assertDictEqual(md, metadata)
 
-    @record
-    def test_get_container_properties(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_get_container_properties(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         metadata = {'hello': 'world', 'number': '42'}
-        container = self._create_container()
+        container = self._create_container(bsc)
         container.set_container_metadata(metadata)
 
         # Act
@@ -359,16 +337,16 @@ class StorageContainerTest(StorageTestCase):
         self.assertIsNotNone(props.has_immutability_policy)
         self.assertIsNotNone(props.has_legal_hold)
 
-    @record
-    def test_get_container_properties_with_lease_id(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_get_container_properties_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         metadata = {'hello': 'world', 'number': '42'}
-        container = self._create_container()
+        container = self._create_container(bsc)
         container.set_container_metadata(metadata)
         lease_id = container.acquire_lease()
 
         # Act
-        props = container.get_container_properties(lease_id)
+        props = container.get_container_properties(lease=lease_id)
         lease_id.break_lease()
 
         # Assert
@@ -378,10 +356,10 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(props.lease.state, 'leased')
         self.assertEqual(props.lease.status, 'locked')
 
-    @record
-    def test_get_container_acl(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_get_container_acl(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
 
         # Act
         acl = container.get_container_access_policy()
@@ -391,26 +369,30 @@ class StorageContainerTest(StorageTestCase):
         self.assertIsNone(acl.get('public_access'))
         self.assertEqual(len(acl.get('signed_identifiers')), 0)
 
-    @record
-    def test_get_container_acl_with_lease_id(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_get_container_acl_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         lease_id = container.acquire_lease()
 
         # Act
-        acl = container.get_container_access_policy(lease_id)
+        acl = container.get_container_access_policy(lease=lease_id)
 
         # Assert
         self.assertIsNotNone(acl)
         self.assertIsNone(acl.get('public_access'))
 
-    @record
-    def test_set_container_acl(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_set_container_acl(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
 
         # Act
-        response = container.set_container_access_policy()
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifier = {'testid': access_policy}
+        response = container.set_container_access_policy(signed_identifier)
 
         self.assertIsNotNone(response.get('etag'))
         self.assertIsNotNone(response.get('last_modified'))
@@ -418,17 +400,17 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         acl = container.get_container_access_policy()
         self.assertIsNotNone(acl)
-        self.assertEqual(len(acl.get('signed_identifiers')), 0)
+        self.assertEqual(len(acl.get('signed_identifiers')), 1)
         self.assertIsNone(acl.get('public_access'))
 
-    @record
-    def test_set_container_acl_with_one_signed_identifier(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_set_container_acl_with_one_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         from dateutil.tz import tzutc
-        container = self._create_container()
+        container = self._create_container(bsc)
 
         # Act
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow())
         signed_identifier = {'testid': access_policy}
@@ -438,13 +420,14 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(response.get('etag'))
         self.assertIsNotNone(response.get('last_modified'))
-    @record
-    def test_set_container_acl_with_one_signed_identifier(self):
-        # Arrange
-        container = self._create_container()
+
+    @GlobalStorageAccountPreparer()
+    def test_set_container_acl_with_one_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
 
         # Act
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow())
         signed_identifiers = {'testid': access_policy}
@@ -455,37 +438,42 @@ class StorageContainerTest(StorageTestCase):
         self.assertIsNotNone(response.get('etag'))
         self.assertIsNotNone(response.get('last_modified'))
 
-    @record
-    def test_set_container_acl_with_lease_id(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_set_container_acl_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         lease_id = container.acquire_lease()
 
         # Act
-        container.set_container_access_policy(lease=lease_id)
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifiers = {'testid': access_policy}
+
+        container.set_container_access_policy(signed_identifiers, lease=lease_id)
 
         # Assert
         acl = container.get_container_access_policy()
         self.assertIsNotNone(acl)
         self.assertIsNone(acl.get('public_access'))
 
-    @record
-    def test_set_container_acl_with_public_access(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_set_container_acl_with_public_access(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
 
         # Act
-        container.set_container_access_policy(public_access='container')
+        container.set_container_access_policy(signed_identifiers=dict(), public_access='container')
 
         # Assert
         acl = container.get_container_access_policy()
         self.assertIsNotNone(acl)
         self.assertEqual('container', acl.get('public_access'))
 
-    @record
-    def test_set_container_acl_with_empty_signed_identifiers(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_set_container_acl_with_empty_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
 
         # Act
         container.set_container_access_policy(signed_identifiers=dict())
@@ -496,10 +484,10 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(len(acl.get('signed_identifiers')), 0)
         self.assertIsNone(acl.get('public_access'))
 
-    @record
-    def test_set_container_acl_with_empty_access_policy(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_set_container_acl_with_empty_access_policy(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         identifier = {'empty': None}
 
         # Act
@@ -511,13 +499,13 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual('empty', acl.get('signed_identifiers')[0].id)
         self.assertIsNone(acl.get('signed_identifiers')[0].access_policy)
 
-    @record
-    def test_set_container_acl_with_signed_identifiers(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_set_container_acl_with_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
 
         # Act
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow() - timedelta(minutes=1))
         identifiers = {'testid': access_policy}
@@ -529,10 +517,10 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual('testid', acl.get('signed_identifiers')[0].id)
         self.assertIsNone(acl.get('public_access'))
 
-    @record
-    def test_set_container_acl_with_empty_identifiers(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_set_container_acl_with_empty_identifiers(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         identifiers = {i: None for i in range(2)}
 
         # Act
@@ -546,14 +534,14 @@ class StorageContainerTest(StorageTestCase):
         self.assertIsNone(acl.get('signed_identifiers')[0].access_policy)
         self.assertIsNone(acl.get('public_access'))
 
-    @record
-    def test_set_container_acl_with_three_identifiers(self):
-        # Arrange
-        container = self._create_container()
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+    @GlobalStorageAccountPreparer()
+    def test_set_container_acl_with_three_identifiers(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow() - timedelta(minutes=1))
-        identifiers = {str(i): access_policy for i in range(0, 3)}
+        identifiers = {i: access_policy for i in range(3)}
 
         # Act
         container.set_container_access_policy(identifiers)
@@ -566,10 +554,10 @@ class StorageContainerTest(StorageTestCase):
         self.assertIsNone(acl.get('public_access'))
 
 
-    @record
-    def test_set_container_acl_too_many_ids(self):
-        # Arrange
-        container_name = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_set_container_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container_name = self._create_container(bsc)
 
         # Act
         identifiers = dict()
@@ -584,10 +572,10 @@ class StorageContainerTest(StorageTestCase):
             'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
         )
 
-    @record
-    def test_lease_container_acquire_and_release(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_lease_container_acquire_and_release(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
 
         # Act
         lease = container.acquire_lease()
@@ -595,10 +583,10 @@ class StorageContainerTest(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_lease_container_renew(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_lease_container_renew(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         lease = container.acquire_lease(lease_duration=15)
         self.sleep(10)
         lease_id_start = lease.id
@@ -614,10 +602,10 @@ class StorageContainerTest(StorageTestCase):
         self.sleep(10)
         container.delete_container()
 
-    @record
-    def test_lease_container_break_period(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_lease_container_break_period(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
 
         # Act
         lease = container.acquire_lease(lease_duration=15)
@@ -628,10 +616,10 @@ class StorageContainerTest(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             container.delete_container(lease=lease)
 
-    @record
-    def test_lease_container_break_released_lease_fails(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_lease_container_break_released_lease_fails(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         lease = container.acquire_lease()
         lease.release()
 
@@ -641,10 +629,10 @@ class StorageContainerTest(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_lease_container_with_duration(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_lease_container_with_duration(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
 
         # Act
         lease = container.acquire_lease(lease_duration=15)
@@ -655,10 +643,10 @@ class StorageContainerTest(StorageTestCase):
         self.sleep(15)
         container.acquire_lease()
 
-    @record
-    def test_lease_container_twice(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_lease_container_twice(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
 
         # Act
         lease = container.acquire_lease(lease_duration=15)
@@ -667,10 +655,10 @@ class StorageContainerTest(StorageTestCase):
         lease2 = container.acquire_lease(lease_id=lease.id)
         self.assertEqual(lease.id, lease2.id)
 
-    @record
-    def test_lease_container_with_proposed_lease_id(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_lease_container_with_proposed_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
 
         # Act
         proposed_lease_id = '55e97f64-73e8-4390-838d-d9e84a374321'
@@ -679,10 +667,10 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         self.assertEqual(proposed_lease_id, lease.id)
 
-    @record
-    def test_lease_container_change_lease_id(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_lease_container_change_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
 
         # Act
         lease_id = '29e0b239-ecda-4f69-bfa3-95f6af91464c'
@@ -698,10 +686,10 @@ class StorageContainerTest(StorageTestCase):
         self.assertNotEqual(lease_id1, lease_id)
         self.assertEqual(lease_id2, lease_id)
 
-    @record
-    def test_delete_container_with_existing_container(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_delete_container_with_existing_container(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
 
         # Act
         deleted = container.delete_container()
@@ -709,11 +697,11 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         self.assertIsNone(deleted)
 
-    @record
-    def test_delete_container_with_non_existing_container_fail_not_exist(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_delete_container_with_non_existing_container_fail_not_exist(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         container_name = self._get_container_reference()
-        container = self.bsc.get_container_client(container_name)
+        container = bsc.get_container_client(container_name)
 
         # Act
         with LogCaptured(self) as log_captured:
@@ -725,10 +713,10 @@ class StorageContainerTest(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_delete_container_with_lease_id(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_delete_container_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         lease = container.acquire_lease(lease_duration=15)
 
         # Act
@@ -739,10 +727,10 @@ class StorageContainerTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             container.get_container_properties()
 
-    @record
-    def test_list_names(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_list_names(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         data = b'hello world'
 
         container.get_blob_client('blob1').upload_blob(data)
@@ -755,10 +743,10 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(blobs, ['blob1', 'blob2'])
 
 
-    @record
-    def test_list_blobs(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_list_blobs(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         data = b'hello world'
         container.get_blob_client('blob1').upload_blob(data)
         container.get_blob_client('blob2').upload_blob(data)
@@ -777,10 +765,10 @@ class StorageContainerTest(StorageTestCase):
                          'application/octet-stream')
         self.assertIsNotNone(blobs[0].creation_time)
 
-    @record
-    def test_list_blobs_leased_blob(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_list_blobs_leased_blob(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
         blob1.upload_blob(data)
@@ -799,10 +787,10 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(resp[0].lease.status, 'locked')
         self.assertEqual(resp[0].lease.state, 'leased')
 
-    @record
-    def test_list_blobs_with_prefix(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_list_blobs_with_prefix(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         data = b'hello world'
         container.get_blob_client('blob_a1').upload_blob(data)
         container.get_blob_client('blob_a2').upload_blob(data)
@@ -817,10 +805,10 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(resp, 'blob_a1')
         self.assertNamedItemInContainer(resp, 'blob_a2')
 
-    @record
-    def test_list_blobs_with_num_results(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_list_blobs_with_num_results(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         data = b'hello world'
         container.get_blob_client('blob_a1').upload_blob(data)
         container.get_blob_client('blob_a2').upload_blob(data)
@@ -837,10 +825,10 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(blobs, 'blob_a1')
         self.assertNamedItemInContainer(blobs, 'blob_a2')
 
-    @record
-    def test_list_blobs_with_include_snapshots(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_list_blobs_with_include_snapshots(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
         blob1.upload_blob(data)
@@ -859,11 +847,11 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(blobs[2].name, 'blob2')
         self.assertIsNone(blobs[2].snapshot)
 
-    @record
-    def test_list_blobs_with_include_metadata(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_list_blobs_with_include_metadata(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         pytest.skip("Waiting on metadata XML fix in msrest")
-        container = self._create_container()
+        container = self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
         blob1.upload_blob(data, metadata={'number': '1', 'name': 'bob'})
@@ -882,10 +870,10 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(blobs[1].metadata['number'], '2')
         self.assertEqual(blobs[1].metadata['name'], 'car')
 
-    @record
-    def test_list_blobs_with_include_uncommittedblobs(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_list_blobs_with_include_uncommittedblobs(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
         blob1.stage_block('1', b'AAA')
@@ -903,14 +891,14 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(blobs[0].name, 'blob1')
         self.assertEqual(blobs[1].name, 'blob2')
 
-    @record
-    def test_list_blobs_with_include_copy(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_list_blobs_with_include_copy(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         data = b'hello world'
         container.get_blob_client('blob1').upload_blob(data, metadata={'status': 'original'})
         sourceblob = 'https://{0}.blob.core.windows.net/{1}/blob1'.format(
-            self.settings.STORAGE_ACCOUNT_NAME,
+            storage_account.name,
             container.container_name)
 
         blobcopy = container.get_blob_client('blob1copy')
@@ -940,10 +928,10 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(blobs[1].copy.progress, '11/11')
         self.assertNotEqual(blobs[1].copy.completion_time, None)
 
-    @record
-    def test_list_blobs_with_delimiter(self):
-        # Arrange
-        container = self._create_container()
+    @GlobalStorageAccountPreparer()
+    def test_list_blobs_with_delimiter(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         data = b'hello world'
 
         container.get_blob_client('a/blob1').upload_blob(data)
@@ -961,10 +949,205 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(resp, 'b/')
         self.assertNamedItemInContainer(resp, 'blob4')
 
-    @record
-    def test_walk_blobs_with_delimiter(self):
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @GlobalStorageAccountPreparer()
+    def test_delete_blobs_simple(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        container = self._create_container()
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+
+        try:
+            blob_client1 = container.get_blob_client('blob1')
+            blob_client1.upload_blob(data)
+            container.get_blob_client('blob2').upload_blob(data)
+            container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+
+        # Act
+        response = container.delete_blobs(
+            blob_client1.get_blob_properties(),
+            'blob2',
+            'blob3',
+        )
+        response = list(response)
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @GlobalStorageAccountPreparer()
+    def test_delete_blobs_simple_no_raise(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+
+        try:
+            container.get_blob_client('blob1').upload_blob(data)
+            container.get_blob_client('blob2').upload_blob(data)
+            container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+
+        # Act
+        response = container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            raise_on_any_failure=False
+        )
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @GlobalStorageAccountPreparer()
+    def test_delete_blobs_snapshot(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+
+        try:
+            blob1_client = container.get_blob_client('blob1')
+            blob1_client.upload_blob(data)
+            blob1_client.create_snapshot()
+            container.get_blob_client('blob2').upload_blob(data)
+            container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+        blobs = list(container.list_blobs(include='snapshots'))
+        assert len(blobs) == 4  # 3 blobs + 1 snapshot
+
+        # Act
+        try:
+            response = container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+                delete_snapshots='only'
+            )
+        except PartialBatchErrorException as err:
+            parts = list(err.parts)
+            assert len(parts) == 3
+            assert parts[0].status_code == 202
+            assert parts[1].status_code == 404  # There was no snapshot
+            assert parts[2].status_code == 404  # There was no snapshot
+
+            blobs = list(container.list_blobs(include='snapshots'))
+            assert len(blobs) == 3  # 3 blobs
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @GlobalStorageAccountPreparer()
+    def test_standard_blob_tier_set_tier_api_batch(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
+
+        for tier in tiers:
+            response = container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+                raise_on_any_failure=False
+            )
+            blob = container.get_blob_client('blob1')
+            data = b'hello world'
+            blob.upload_blob(data)
+            container.get_blob_client('blob2').upload_blob(data)
+            container.get_blob_client('blob3').upload_blob(data)
+
+            blob_ref = blob.get_blob_properties()
+            assert blob_ref.blob_tier is not None
+            assert blob_ref.blob_tier_inferred
+            assert blob_ref.blob_tier_change_time is None
+
+            parts = container.set_standard_blob_tier_blobs(
+                tier,
+                'blob1',
+                'blob2',
+                'blob3',
+            )
+
+            parts = list(parts)
+            assert len(parts) == 3
+
+            assert parts[0].status_code in [200, 202]
+            assert parts[1].status_code in [200, 202]
+            assert parts[2].status_code in [200, 202]
+
+            blob_ref2 = blob.get_blob_properties()
+            assert tier == blob_ref2.blob_tier
+            assert not blob_ref2.blob_tier_inferred
+            assert blob_ref2.blob_tier_change_time is not None
+
+        response = container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            raise_on_any_failure=False
+        )
+
+    @pytest.mark.skip(reason="Wasn't able to get premium account with batch enabled")
+    # once we have premium tests, still we don't want to test Py 2.7
+    # @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @GlobalStorageAccountPreparer()
+    def test_premium_tier_set_tier_api_batch(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        url = self._get_premium_account_url()
+        credential = self._get_premium_shared_key_credential()
+        pbs = BlobServiceClient(url, credential=credential)
+
+        try:
+            container_name = self.get_resource_name('utpremiumcontainer')
+            container = pbs.get_container_client(container_name)
+
+            if not self.is_playback():
+                try:
+                    container.create_container()
+                except ResourceExistsError:
+                    pass
+
+            pblob = container.get_blob_client('blob1')
+            pblob.create_page_blob(1024)
+            container.get_blob_client('blob2').create_page_blob(1024)
+            container.get_blob_client('blob3').create_page_blob(1024)
+
+            blob_ref = pblob.get_blob_properties()
+            assert PremiumPageBlobTier.P10 == blob_ref.blob_tier
+            assert blob_ref.blob_tier is not None
+            assert blob_ref.blob_tier_inferred
+
+            parts = container.set_premium_page_blob_tier_blobs(
+                PremiumPageBlobTier.P50,
+                'blob1',
+                'blob2',
+                'blob3',
+            )
+
+            parts = list(parts)
+            assert len(parts) == 3
+
+            assert parts[0].status_code in [200, 202]
+            assert parts[1].status_code in [200, 202]
+            assert parts[2].status_code in [200, 202]
+
+
+            blob_ref2 = pblob.get_blob_properties()
+            assert PremiumPageBlobTier.P50 == blob_ref2.blob_tier
+            assert not blob_ref2.blob_tier_inferred
+
+        finally:
+            container.delete_container()
+
+    @GlobalStorageAccountPreparer()
+    def test_walk_blobs_with_delimiter(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         data = b'hello world'
 
         container.get_blob_client('a/blob1').upload_blob(data)
@@ -987,11 +1170,11 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(len(blob_list), 4)
         self.assertEqual(blob_list, ['a/blob1', 'a/blob2', 'b/c/blob3', 'blob4'])
 
-    @record
-    def test_list_blobs_with_include_multiple(self):
-        # Arrange
+    @GlobalStorageAccountPreparer()
+    def test_list_blobs_with_include_multiple(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         pytest.skip("Waiting on metadata XML fix in msrest")
-        container = self._create_container()
+        container = self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
         blob1.upload_blob(data, metadata={'number': '1', 'name': 'bob'})
@@ -1017,26 +1200,26 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(blobs[2].metadata['number'], '2')
         self.assertEqual(blobs[2].metadata['name'], 'car')
 
-
-    @record
-    def test_shared_access_container(self):
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_shared_access_container(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
-            return
-
-        # Arrange
-        container = self._create_container()
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
         blob_name  = 'blob1'
         data = b'hello world'
 
         blob = container.get_blob_client(blob_name)
         blob.upload_blob(data)
 
-        token = container.generate_shared_access_signature(
+        token = generate_container_sas(
+            container.account_name,
+            container.container_name,
+            account_key=container.credential.account_key,
             expiry=datetime.utcnow() + timedelta(hours=1),
-            permission=ContainerPermissions.READ,
+            permission=ContainerSasPermissions(read=True),
         )
-        blob = BlobClient(blob.url, credential=token)
+        blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
         response = requests.get(blob.url)
@@ -1045,12 +1228,13 @@ class StorageContainerTest(StorageTestCase):
         self.assertTrue(response.ok)
         self.assertEqual(data, response.content)
 
-    @record
-    def test_web_container_normal_operations_working(self):
+    @GlobalStorageAccountPreparer()
+    def test_web_container_normal_operations_working(self, resource_group, location, storage_account, storage_account_key):
         web_container = "$web"
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
 
         # create the web container in case it does not exist yet
-        container = self.bsc.get_container_client(web_container)
+        container = bsc.get_container_client(web_container)
         try:
             try:
                 created = container.create_container()
@@ -1069,30 +1253,34 @@ class StorageContainerTest(StorageTestCase):
             blob.upload_blob(blob_content)
 
             # get a blob
-            blob_data = blob.download_blob()
+            blob_data = blob.download_blob(encoding='utf-8')
             self.assertIsNotNone(blob)
-            self.assertEqual(b"".join(list(blob_data)).decode('utf-8'), blob_content)
+            self.assertEqual(blob_data.readall(), blob_content)
 
         finally:
             # delete container
             container.delete_container()
 
-    def test_user_delegation_sas_for_container(self):
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_user_delegation_sas_for_container(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         pytest.skip("Current Framework Cannot Support OAUTH")
-        if TestMode.need_recording_file(self.test_mode):
-            return
 
         # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account.name, "blob"), storage_account_key)
         token_credential = self.generate_oauth_token()
         service_client = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential)
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
 
         container_client = service_client.create_container(self.get_resource_name('oauthcontainer'))
-        token = container_client.generate_shared_access_signature(
+        token = generate_container_sas(
+            container_client.account_name,
+            container_client.container_name,
+            account_key=container_client.credential.account_key,
             expiry=datetime.utcnow() + timedelta(hours=1),
-            permission=ContainerPermissions.READ,
+            permission=ContainerSasPermissions(read=True),
             user_delegation_key=user_delegation_key,
             account_name='emilydevtest'
         )
@@ -1102,14 +1290,23 @@ class StorageContainerTest(StorageTestCase):
         blob_client.upload_blob(blob_content, length=len(blob_content))
 
         # Act
-        new_blob_client = BlobClient(blob_client.url, credential=token)
-        content = new_blob_client.download_blob()
+        new_blob_client = BlobClient.from_blob_url(blob_client.url, credential=token)
+        content = new_blob_client.download_blob(encoding='utf-8')
 
         # Assert
-        self.assertEqual(blob_content, b"".join(list(content)).decode('utf-8'))
+        self.assertEqual(blob_content, content.readall())
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
-    import unittest
+    def test_set_container_permission_from_string(self):
+        # Arrange
+        permission1 = ContainerSasPermissions(read=True, write=True)
+        permission2 = ContainerSasPermissions.from_string('wr')
+        self.assertEqual(permission1.read, permission2.read)
+        self.assertEqual(permission1.write, permission2.write)
 
-    unittest.main()
+    def test_set_container_permission(self):
+        # Arrange
+        permission = ContainerSasPermissions.from_string('wrlx')
+        self.assertEqual(permission.read, True)
+        self.assertEqual(permission.list, True)
+        self.assertEqual(permission.write, True)
+        self.assertEqual(permission._str, 'wrlx')

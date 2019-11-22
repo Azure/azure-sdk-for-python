@@ -11,123 +11,30 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - d7cdbe58-8ecb-11e9-9596-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 14 Jun 2019 17:42:56 GMT
+      - Fri, 25 Oct 2019 17:59:48 GMT
       x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=container
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The\
-        \ specifed resource name contains invalid characters.\nRequestId:d82f948a-301e-006f-61d8-22ccd4000000\n\
-        Time:2019-06-14T17:42:57.1140459Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '243'
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 17:42:56 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - InvalidResourceName
-      x-ms-request-id:
-      - d82f948a-301e-006f-61d8-22ccd4000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 400
-      message: The specifed resource name contains invalid characters.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 2855bc30-8ed5-11e9-b821-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 18:49:36 GMT
-      x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.blob.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The\
-        \ specifed resource name contains invalid characters.\nRequestId:e82053de-001e-006c-53e1-22cfd3000000\n\
-        Time:2019-06-14T18:49:36.9122160Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
+        specifed resource name contains invalid characters.\nRequestId:118ca966-801e-00c2-1a5d-8bb8c8000000\nTime:2019-10-25T17:59:48.3990677Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '243'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Fri, 14 Jun 2019 18:49:36 GMT
-      Server:
+      date:
+      - Fri, 25 Oct 2019 17:59:47 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - InvalidResourceName
-      x-ms-request-id:
-      - e82053de-001e-006c-53e1-22cfd3000000
       x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 400
-      message: The specifed resource name contains invalid characters.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 2c148e5a-8eda-11e9-a73b-f45c89a7d159
-      x-ms-date:
-      - Fri, 14 Jun 2019 19:25:30 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=container
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The\
-        \ specifed resource name contains invalid characters.\nRequestId:b66fe11e-101e-001e-11e6-22beed000000\n\
-        Time:2019-06-14T19:25:30.6927881Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '243'
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 19:25:29 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - InvalidResourceName
-      x-ms-request-id:
-      - b66fe11e-101e-001e-11e6-22beed000000
-      x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 400
       message: The specifed resource name contains invalid characters.

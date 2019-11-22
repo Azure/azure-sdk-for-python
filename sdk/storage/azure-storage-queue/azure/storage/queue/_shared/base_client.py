@@ -25,11 +25,18 @@ except ImportError:
 
 import six
 
-from azure.core import Configuration
+from azure.core.configuration import Configuration
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
-from azure.core.pipeline.policies import RedirectPolicy, ContentDecodePolicy, BearerTokenCredentialPolicy, ProxyPolicy
+from azure.core.pipeline.transport import RequestsTransport, HttpTransport
+from azure.core.pipeline.policies import (
+    RedirectPolicy,
+    ContentDecodePolicy,
+    BearerTokenCredentialPolicy,
+    ProxyPolicy,
+    DistributedTracingPolicy,
+    HttpLoggingPolicy,
+)
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TIMEOUT
 from .models import LocationMode
@@ -46,6 +53,8 @@ from .policies import (
     QueueMessagePolicy,
     ExponentialRetry,
 )
+from .._generated.models import StorageErrorException
+from .response_handlers import process_storage_error, PartialBatchErrorException
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -56,7 +65,7 @@ _SERVICE_PARAMS = {
 }
 
 
-class StorageAccountHostsMixin(object):
+class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         parsed_url,  # type: Any
@@ -69,22 +78,28 @@ class StorageAccountHostsMixin(object):
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
 
-        if service not in ["blob", "queue", "file"]:
+        if service not in ["blob", "queue", "file-share"]:
             raise ValueError("Invalid service: {}".format(service))
-        account = parsed_url.netloc.split(".{}.core.".format(service))
+        service_name = service.split('-')[0]
+        account = parsed_url.netloc.split(".{}.core.".format(service_name))
+        self.account_name = account[0] if len(account) > 1 else None
         secondary_hostname = None
+
         self.credential = format_shared_key_credential(account, credential)
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, "account_name"):
-            secondary_hostname = "{}-secondary.{}.{}".format(self.credential.account_name, service, SERVICE_HOST_BASE)
+            self.account_name = self.credential.account_name
+            secondary_hostname = "{}-secondary.{}.{}".format(
+                self.credential.account_name, service_name, SERVICE_HOST_BASE)
 
         if not self._hosts:
             if len(account) > 1:
                 secondary_hostname = parsed_url.netloc.replace(account[0], account[0] + "-secondary")
             if kwargs.get("secondary_hostname"):
                 secondary_hostname = kwargs["secondary_hostname"]
-            self._hosts = {LocationMode.PRIMARY: parsed_url.netloc, LocationMode.SECONDARY: secondary_hostname}
+            primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip('/')
+            self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
         self.require_encryption = kwargs.get("require_encryption", False)
         self.key_encryption_key = kwargs.get("key_encryption_key")
@@ -98,30 +113,68 @@ class StorageAccountHostsMixin(object):
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
+    def close(self):
+        self._client.close()
+
     @property
     def url(self):
+        """The full endpoint URL to this entity, including SAS token if used.
+
+        This could be either the primary endpoint,
+        or the secondary endpoint depending on the current :func:`location_mode`.
+        """
         return self._format_url(self._hosts[self._location_mode])
 
     @property
     def primary_endpoint(self):
+        """The full primary endpoint URL.
+
+        :type: str
+        """
         return self._format_url(self._hosts[LocationMode.PRIMARY])
 
     @property
     def primary_hostname(self):
+        """The hostname of the primary endpoint.
+
+        :type: str
+        """
         return self._hosts[LocationMode.PRIMARY]
 
     @property
     def secondary_endpoint(self):
+        """The full secondary endpoint URL if configured.
+
+        If not available a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+
+        :type: str
+        :raise ValueError:
+        """
         if not self._hosts[LocationMode.SECONDARY]:
             raise ValueError("No secondary host configured.")
         return self._format_url(self._hosts[LocationMode.SECONDARY])
 
     @property
     def secondary_hostname(self):
+        """The hostname of the secondary endpoint.
+
+        If not available this will be None. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+
+        :type: str or None
+        """
         return self._hosts[LocationMode.SECONDARY]
 
     @property
     def location_mode(self):
+        """The location mode that the client is currently using.
+
+        By default this will be "primary". Options include "primary" and "secondary".
+
+        :type: str
+        """
+
         return self._location_mode
 
     @location_mode.setter
@@ -147,11 +200,11 @@ class StorageAccountHostsMixin(object):
 
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
-        credential_policy = None
+        self._credential_policy = None
         if hasattr(credential, "get_token"):
-            credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
-            credential_policy = credential
+            self._credential_policy = credential
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
@@ -166,19 +219,89 @@ class StorageAccountHostsMixin(object):
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,
+            config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),
             StorageRequestHook(**kwargs),
-            credential_policy,
+            self._credential_policy,
             ContentDecodePolicy(),
             RedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs),
             config.retry_policy,
             config.logging_policy,
             StorageResponseHook(**kwargs),
-            DistributedTracingPolicy(),
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs)
         ]
         return config, Pipeline(config.transport, policies=policies)
+
+    def _batch_send(
+        self, *reqs,  # type: HttpRequest
+        **kwargs
+    ):
+        """Given a series of request, do a Storage batch call.
+        """
+        # Pop it here, so requests doesn't feel bad about additional kwarg
+        raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
+        request = self._client._client.post(  # pylint: disable=protected-access
+            url='https://{}/?comp=batch'.format(self.primary_hostname),
+            headers={
+                'x-ms-version': self._client._config.version  # pylint: disable=protected-access
+            }
+        )
+
+        request.set_multipart_mixed(
+            *reqs,
+            policies=[
+                StorageHeadersPolicy(),
+                self._credential_policy
+            ]
+        )
+
+        pipeline_response = self._pipeline.run(
+            request, **kwargs
+        )
+        response = pipeline_response.http_response
+
+        try:
+            if response.status_code not in [202]:
+                raise HttpResponseError(response=response)
+            parts = response.parts()
+            if raise_on_any_failure:
+                parts = list(response.parts())
+                if any(p for p in parts if not 200 <= p.status_code < 300):
+                    error = PartialBatchErrorException(
+                        message="There is a partial failure in the batch operation.",
+                        response=response, parts=parts
+                    )
+                    raise error
+                return iter(parts)
+            return parts
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+class TransportWrapper(HttpTransport):
+    """Wrapper class that ensures that an inner client created
+    by a `get_client` method does not close the outer transport for the parent
+    when used in a context manager.
+    """
+    def __init__(self, transport):
+        self._transport = transport
+
+    def send(self, request, **kwargs):
+        return self._transport.send(request, **kwargs)
+
+    def open(self):
+        pass
+
+    def close(self):
+        pass
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, *args):  # pylint: disable=arguments-differ
+        pass
 
 
 def format_shared_key_credential(account, credential):
@@ -197,9 +320,10 @@ def format_shared_key_credential(account, credential):
 
 def parse_connection_str(conn_str, credential, service):
     conn_str = conn_str.rstrip(";")
-    conn_settings = dict( # pylint: disable=consider-using-dict-comprehension
-        [s.split("=", 1) for s in conn_str.split(";")]
-    )
+    conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
+    if  any(len(tup) != 2 for tup in conn_settings):
+        raise ValueError("Connection string is either blank or malformed.")
+    conn_settings = dict(conn_settings)
     endpoints = _SERVICE_PARAMS[service]
     primary = None
     secondary = None
@@ -271,7 +395,7 @@ def create_configuration(**kwargs):
 def parse_query(query_str):
     sas_values = QueryStringConstants.to_list()
     parsed_query = {k: v[0] for k, v in parse_qs(query_str).items()}
-    sas_params = ["{}={}".format(k, quote(v)) for k, v in parsed_query.items() if k in sas_values]
+    sas_params = ["{}={}".format(k, quote(v, safe='')) for k, v in parsed_query.items() if k in sas_values]
     sas_token = None
     if sas_params:
         sas_token = "&".join(sas_params)

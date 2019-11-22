@@ -19,7 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for partition key range cache implementation in the Azure Cosmos database service.
+"""Internal class for partition key range cache implementation in the Azure
+Cosmos database service.
 """
 
 from .. import _base
@@ -32,9 +33,11 @@ from .routing_range import PartitionKeyRange
 
 class PartitionKeyRangeCache(object):
     """
-    PartitionKeyRangeCache provides list of effective partition key ranges for a collection.
-    This implementation loads and caches the collection routing map per collection on demand.
+    PartitionKeyRangeCache provides list of effective partition key ranges for a
+    collection.
 
+    This implementation loads and caches the collection routing map per
+    collection on demand.
     """
 
     def __init__(self, client):
@@ -48,17 +51,12 @@ class PartitionKeyRangeCache(object):
         self._collection_routing_map_by_item = {}
 
     def get_overlapping_ranges(self, collection_link, partition_key_ranges):
-        """
-        Given a partition key range and a collection,
-        returns the list of overlapping partition key ranges
+        """Given a partition key range and a collection, return the list of
+        overlapping partition key ranges.
 
-        :param str collection_link:
-            The name of the collection.
-        :param list partition_key_range:
-            List of partition key range.
-
-        :return:
-            List of overlapping partition key ranges.
+        :param str collection_link: The name of the collection.
+        :param list partition_key_range: List of partition key range.
+        :return: List of overlapping partition key ranges.
         :rtype: list
         """
         cl = self._documentClient
@@ -93,7 +91,7 @@ def _second_range_is_after_first_range(range1, range2):
         ##r.min < #previous_r.max
         return False
 
-    if range2.min == range2.min and range1.isMaxInclusive and range2.isMinInclusive:
+    if range2.min == range1.max and range1.isMaxInclusive and range2.isMinInclusive:
         # the inclusive ending endpoint of previous_r is the same as the inclusive beginning endpoint of r
         return False
 
@@ -109,13 +107,11 @@ def _is_sorted_and_non_overlapping(ranges):
 
 
 def _subtract_range(r, partition_key_range):
-    """
-    Evaluates and returns r - partition_key_range
-    :param dict partition_key_range:
-        Partition key range.
+    """Evaluates and returns r - partition_key_range
+
+    :param dict partition_key_range: Partition key range.
     :param routing_range.Range r: query range.
-    :return:
-        The subtract r - partition_key_range.
+    :return: The subtract r - partition_key_range.
     :rtype: routing_range.Range
     """
 
@@ -132,8 +128,8 @@ def _subtract_range(r, partition_key_range):
 
 class SmartRoutingMapProvider(PartitionKeyRangeCache):
     """
-    Efficiently uses PartitionKeyRangeCach and minimizes the unnecessary invocation of
-    CollectionRoutingMap.get_overlapping_ranges()
+    Efficiently uses PartitionKeyRangeCach and minimizes the unnecessary
+    invocation of CollectionRoutingMap.get_overlapping_ranges()
     """
 
     def get_overlapping_ranges(self, collection_link, partition_key_ranges):
@@ -141,13 +137,13 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
         Given the sorted ranges and a collection,
         Returns the list of overlapping partition key ranges
 
-        :param str collection_link:
-            The collection link.
-        :param (list of routing_range.Range) partition_key_ranges: The sorted list of non-overlapping ranges.
-        :return:
-            List of partition key ranges.
+        :param str collection_link: The collection link.
+        :param (list of routing_range.Range) partition_key_ranges:
+            The sorted list of non-overlapping ranges.
+        :return: List of partition key ranges.
         :rtype: list of dict
-        :raises ValueError: If two ranges in partition_key_ranges overlap or if the list is not sorted
+        :raises ValueError:
+            If two ranges in partition_key_ranges overlap or if the list is not sorted
         """
 
         # validate if the list is non-overlapping and sorted

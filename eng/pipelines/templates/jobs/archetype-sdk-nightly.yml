@@ -13,7 +13,7 @@ jobs:
       vmImage: 'ubuntu-16.04'
 
     steps:
-    - template: ../steps/build-artifacts.yml
+    - template: ../steps/build-package-artifacts.yml
       parameters: 
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
@@ -31,6 +31,9 @@ jobs:
 
     steps:
     - template: ../steps/analyze.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'Test'
     variables:
@@ -39,7 +42,7 @@ jobs:
     dependsOn:
        - 'Build'
 
-    timeoutInMinutes: 270
+    timeoutInMinutes: 300
 
     strategy:
       matrix:
@@ -63,6 +66,11 @@ jobs:
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.5'
           CoverageArg: '--disablecov'
+        Linux_Python38:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.8'
+          CoverageArg: '--disablecov'
         Linux_PyPy3:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
@@ -83,7 +91,7 @@ jobs:
 
     steps:
     - template: ../steps/test-nightly.yml
-      parameters: 
+      parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         OSName: $(OSName)

@@ -27,9 +27,8 @@
 
 import functools
 
-import azure.core.tracing.common as common
-from azure.core.settings import settings
-from azure.core.tracing.context import tracing_context
+from .common import change_context, get_function_and_class_name
+from ..settings import settings
 
 try:
     from typing import TYPE_CHECKING
@@ -42,36 +41,33 @@ if TYPE_CHECKING:
 
 def distributed_trace_async(func=None, name_of_span=None):
     # type: (Callable, str) -> Callable[[Any], Any]
+    """Decorator to apply to async function to get traced automatically.
+
+    Span will use the func name or "name_of_span".
+
+    :param callable func: A function to decorate
+    :param str name_of_span: The span name to replace func name if necessary
+    """
     if func is None:
         return functools.partial(distributed_trace_async, name_of_span=name_of_span)
 
     @functools.wraps(func)
     async def wrapper_use_tracer(*args, **kwargs):
         # type: (Any, Any) -> Any
+        merge_span = kwargs.pop('merge_span', False)
         passed_in_parent = kwargs.pop("parent_span", None)
-        orig_wrapped_span = tracing_context.current_span.get()
-        wrapper_class = settings.tracing_implementation()
-        original_span_instance = None
-        if wrapper_class is not None:
-            original_span_instance = wrapper_class.get_current_span()
-        parent_span = common.get_parent_span(passed_in_parent)
-        ans = None
-        if parent_span is not None and orig_wrapped_span is None:
-            common.set_span_contexts(parent_span)
-            name = name_of_span or common.get_function_and_class_name(func, *args)  # type: ignore
-            child = parent_span.span(name=name)
-            child.start()
-            common.set_span_contexts(child)
-            try:
-                ans = await func(*args, **kwargs)   # type: ignore
-            finally:
-                child.finish()
-                common.set_span_contexts(parent_span)
-                if orig_wrapped_span is None and passed_in_parent is None and original_span_instance is None:
-                    parent_span.finish()
-                common.set_span_contexts(orig_wrapped_span, span_instance=original_span_instance)
-        else:
-            ans = await func(*args, **kwargs)   # type: ignore
-        return ans
+
+        span_impl_type = settings.tracing_implementation()
+        if span_impl_type is None:
+            return await func(*args, **kwargs) # type: ignore
+
+        # Merge span is parameter is set, but only if no explicit parent are passed
+        if merge_span and not passed_in_parent:
+            return await func(*args, **kwargs) # type: ignore
+
+        with change_context(passed_in_parent):
+            name = name_of_span or get_function_and_class_name(func, *args)  # type: ignore
+            with span_impl_type(name=name):
+                return await func(*args, **kwargs)  # type: ignore
 
     return wrapper_use_tracer

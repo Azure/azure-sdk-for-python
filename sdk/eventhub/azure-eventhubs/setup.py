@@ -23,8 +23,8 @@ package_folder_path = PACKAGE_NAME.replace('-', '/')
 namespace_name = PACKAGE_NAME.replace('-', '.')
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, '__init__.py'), 'r') as fd:
-    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
 if not version:
@@ -37,8 +37,8 @@ with open('HISTORY.md') as f:
 
 exclude_packages = [
         'tests',
-        "tests.asynctests",
-        'examples',
+        'stress',
+        'samples',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
     ]
@@ -62,12 +62,14 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
-        'uamqp~=1.2.0',
+        "azure-core<2.0.0,>=1.0.0",
+        "uamqp<2.0,>=1.2.3",
         'azure-common~=1.1',
     ],
     extras_require={

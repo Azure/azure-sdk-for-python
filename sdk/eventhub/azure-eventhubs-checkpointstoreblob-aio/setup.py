@@ -21,8 +21,8 @@ package_folder_path = "azure/eventhub/extensions/checkpointstoreblobaio"
 namespace_name = "azure.eventhub.extensions.checkpointstoreblobaio"
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, '__init__.py'), 'r') as fd:
-    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
 if not version:
@@ -35,7 +35,7 @@ with open('HISTORY.md') as f:
 
 exclude_packages = [
         'tests',
-        'examples',
+        'samples',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'azure.eventhub',
@@ -59,14 +59,15 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     python_requires=">=3.5.3",
     install_requires=[
-        'azure-storage-blob<12.0.0b4,>=12.0.0b2',
-        'azure-eventhub<6.0.0,>=5.0.0b3',
+        'azure-storage-blob<13.0.0,>=12.0.0',
+        'azure-eventhub<6.0.0,>=5.0.0b5',
         'aiohttp<4.0,>=3.0',
     ],
     extras_require={

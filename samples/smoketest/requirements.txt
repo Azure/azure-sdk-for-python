@@ -1,8 +1,0 @@
-azure-common==1.1.23
-azure-core==1.0.0b1
-azure-cosmos==4.0.0b1
-azure-eventhub==5.0.0b1
-azure-identity==1.0.0b1
-azure-keyvault-secrets==4.0.0b1
-azure-storage-blob==12.0.0b1
-azure-storage-common==2.0.0

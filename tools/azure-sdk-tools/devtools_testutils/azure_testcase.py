@@ -3,15 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-
 import inspect
 import os.path
 import zlib
+import pytest
 
 from azure_devtools.scenario_tests import (
     ReplayableTest, AzureTestError,
     GeneralNameReplacer, RequestUrlNormalizer,
+    OAuthRequestResponsesFilter
 )
+from azure_devtools.scenario_tests.config import TestConfig
 
 from .config import TEST_SETTING_FILENAME
 from . import mgmt_settings_fake as fake_settings
@@ -44,6 +46,17 @@ def get_qualified_method_name(obj, method_name):
     _, filename = os.path.split(inspect.getsourcefile(type(obj)))
     module_name, _ = os.path.splitext(filename)
     return '{0}.{1}'.format(module_name, method_name)
+
+
+def is_live():
+    """A module version of is_live, that could be used in pytest marker.
+    """
+    if not hasattr(is_live, '_cache'):
+        config_file = os.path.join(os.path.dirname(__file__), TEST_SETTING_FILENAME)
+        if not os.path.exists(config_file):
+            config_file = None
+        is_live._cache = TestConfig(config_file=config_file).record_mode
+    return is_live._cache
 
 
 class AzureTestCase(ReplayableTest):
@@ -89,6 +102,7 @@ class AzureTestCase(ReplayableTest):
     def _get_recording_processors(self):
         return [
             self.scrubber,
+            OAuthRequestResponsesFilter(),
             RequestUrlNormalizer()
         ]
 
@@ -99,6 +113,24 @@ class AzureTestCase(ReplayableTest):
 
     def is_playback(self):
         return not self.is_live
+
+    def get_settings_value(self, key):
+        key_value = os.environ.get("AZURE_"+key, None)
+
+        if key_value and self._real_settings and getattr(self._real_settings, key) != key_value:
+            raise ValueError("You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to difference values".format(key=key))
+
+        if not key_value:
+            key_value = getattr(self.settings, key)
+        return key_value
+
+    def set_value_to_scrub(self, key, default_value):
+        if self.is_live:
+            value = self.get_settings_value(key)
+            self.scrubber.register_name_pair(value, default_value)
+            return value
+        else:
+            return default_value
 
 
     def setUp(self):
@@ -130,9 +162,23 @@ class AzureTestCase(ReplayableTest):
                 **kwargs
             )
 
+        tenant_id = os.environ.get("AZURE_TENANT_ID", None)
+        client_id = os.environ.get("AZURE_CLIENT_ID", None)
+        secret = os.environ.get("AZURE_CLIENT_SECRET", None)
+
+        if tenant_id and client_id and secret and self.is_live:
+            from msrestazure.azure_active_directory import ServicePrincipalCredentials
+            credentials = ServicePrincipalCredentials(
+                tenant=tenant_id,
+                client_id=client_id,
+                secret=secret
+            )
+        else:
+            credentials = self.settings.get_credentials()
+
         # Real client creation
         client = client_class(
-            credentials=self.settings.get_credentials(),
+            credentials=credentials,
             **kwargs
         )
         if self.is_playback():

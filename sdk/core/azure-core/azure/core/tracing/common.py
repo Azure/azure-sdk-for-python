@@ -24,10 +24,11 @@
 #
 # --------------------------------------------------------------------------
 """Common functions shared by both the sync and the async decorators."""
+from contextlib import contextmanager
+import warnings
 
-from azure.core.tracing.context import tracing_context
-from azure.core.tracing.abstract_span import AbstractSpan
-from azure.core.settings import settings
+from ._abstract_span import AbstractSpan
+from ..settings import settings
 
 
 try:
@@ -36,7 +37,13 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, Union, Callable, List
+    from typing import Any, Optional, Union, Callable, List, Type, Generator
+
+
+__all__ = [
+    'change_context',
+    'with_current_context',
+]
 
 
 def get_function_and_class_name(func, *args):
@@ -46,9 +53,8 @@ def get_function_and_class_name(func, *args):
     is `self`. If there are no arguments then it only returns the function name.
 
     :param func: the function passed in
-    :type func: `collections.abc.Callable`
+    :type func: callable
     :param args: List of arguments passed into the function
-    :type args: List[Any]
     """
     try:
         return func.__qualname__
@@ -57,48 +63,48 @@ def get_function_and_class_name(func, *args):
             return "{}.{}".format(args[0].__class__.__name__, func.__name__)  # pylint: disable=protected-access
         return func.__name__
 
+@contextmanager
+def change_context(span):
+    # type: (Optional[AbstractSpan]) -> Generator
+    """Execute this block inside the given context and restore it afterwards.
 
-def set_span_contexts(wrapped_span, span_instance=None):
-    # type: (Union[AbstractSpan, None], Optional[AbstractSpan]) -> None
+    This does not start and ends the span, but just make sure all code is executed within
+    that span.
+
+    If span is None, no-op.
+
+    :param span: A span
+    :type span: AbstractSpan
+    :rtype: contextmanager
     """
-    Set the sdk context and the implementation context. `span_instance` will be used to set the implementation context
-    if passed in else will use `wrapped_span.span_instance`.
+    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+    if span_impl_type is None or span is None:
+        yield
+    else:
+        try:
+            with span_impl_type.change_context(span):
+                yield
+        except AttributeError:
+            # This plugin does not support "change_context"
+            warnings.warn('Your tracing plugin should be updated to support "change_context"', DeprecationWarning)
+            original_span = span_impl_type.get_current_span()
+            try:
+                span_impl_type.set_current_span(span)
+                yield
+            finally:
+                span_impl_type.set_current_span(original_span)
 
-    :param wrapped_span: The `AbstractSpan` to set as the sdk context
-    :type wrapped_span: `azure.core.tracing.abstract_span.AbstractSpan`
-    :param span_instance: The span to set as the current span for the implementation context
+
+def with_current_context(func):
+    # type: (Callable) -> Any
+    """Passes the current spans to the new context the function will be run in.
+
+    :param func: The function that will be run in the new context
+    :return: The func wrapped with correct context
+    :rtype: callable
     """
-    tracing_context.current_span.set(wrapped_span)
-    impl_wrapper = settings.tracing_implementation()
-    if wrapped_span is not None:
-        span_instance = wrapped_span.span_instance
-    if impl_wrapper is not None:
-        impl_wrapper.set_current_span(span_instance)
+    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+    if span_impl_type is None:
+        return func
 
-
-def get_parent_span(parent_span):
-    # type: (Any) -> Optional[AbstractSpan]
-    """
-    Returns the current span so that the function's span will be its child. It will create a new span if there is
-    no current span in any of the context.
-
-    :param parent_span: The parent_span arg that the user passes into the top level function
-    :returns: the parent_span of the function to be traced
-    :rtype: `azure.core.tracing.abstract_span.AbstractSpan`
-    """
-    wrapper_class = settings.tracing_implementation()
-    if wrapper_class is None:
-        return None
-
-    orig_wrapped_span = tracing_context.current_span.get()
-    # parent span is given, get from my context, get from the implementation context or make our own
-    parent_span = orig_wrapped_span if parent_span is None else wrapper_class(parent_span)
-    if parent_span is None:
-        current_span = wrapper_class.get_current_span()
-        parent_span = (
-            wrapper_class(span=current_span)
-            if current_span
-            else wrapper_class(name="azure-sdk-for-python-first_parent_span")
-        )
-
-    return parent_span
+    return span_impl_type.with_current_context(func)

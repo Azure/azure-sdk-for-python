@@ -80,6 +80,7 @@ try:
     from ._models_py3 import LongTermRetentionBackup
     from ._models_py3 import ManagedBackupShortTermRetentionPolicy
     from ._models_py3 import ManagedDatabase
+    from ._models_py3 import ManagedDatabaseRestoreDetailsResult
     from ._models_py3 import ManagedDatabaseSecurityAlertPolicy
     from ._models_py3 import ManagedDatabaseUpdate
     from ._models_py3 import ManagedInstance
@@ -242,6 +243,7 @@ except (SyntaxError, ImportError):
     from ._models import LongTermRetentionBackup
     from ._models import ManagedBackupShortTermRetentionPolicy
     from ._models import ManagedDatabase
+    from ._models import ManagedDatabaseRestoreDetailsResult
     from ._models import ManagedDatabaseSecurityAlertPolicy
     from ._models import ManagedDatabaseUpdate
     from ._models import ManagedInstance
@@ -334,6 +336,7 @@ except (SyntaxError, ImportError):
     from ._models import VulnerabilityAssessmentScanError
     from ._models import VulnerabilityAssessmentScanRecord
 from ._paged_models import BackupShortTermRetentionPolicyPaged
+from ._paged_models import DatabaseBlobAuditingPolicyPaged
 from ._paged_models import DatabaseOperationPaged
 from ._paged_models import DatabasePaged
 from ._paged_models import DatabaseUsagePaged
@@ -381,6 +384,7 @@ from ._paged_models import RestorableDroppedManagedDatabasePaged
 from ._paged_models import RestorePointPaged
 from ._paged_models import SensitivityLabelPaged
 from ._paged_models import ServerAzureADAdministratorPaged
+from ._paged_models import ServerBlobAuditingPolicyPaged
 from ._paged_models import ServerCommunicationLinkPaged
 from ._paged_models import ServerDnsAliasPaged
 from ._paged_models import ServerKeyPaged
@@ -456,9 +460,6 @@ from ._sql_management_client_enums import (
     JobStepActionSource,
     JobStepOutputType,
     JobTargetGroupMembershipType,
-    ManagedDatabaseStatus,
-    CatalogCollationType,
-    ManagedDatabaseCreateMode,
     AutomaticTuningServerMode,
     AutomaticTuningServerReason,
     RestorePointType,
@@ -470,6 +471,7 @@ from ._sql_management_client_enums import (
     CreateMode,
     SampleName,
     DatabaseStatus,
+    CatalogCollationType,
     DatabaseLicenseType,
     DatabaseReadScale,
     ElasticPoolState,
@@ -481,10 +483,13 @@ from ._sql_management_client_enums import (
     ManagedServerCreateMode,
     ManagedInstanceLicenseType,
     ManagedInstanceProxyOverride,
+    ManagedDatabaseStatus,
+    ManagedDatabaseCreateMode,
     LongTermRetentionDatabaseState,
     VulnerabilityAssessmentPolicyBaselineName,
     SensitivityLabelSource,
     CapabilityGroup,
+    ReplicaType,
 )
 
 __all__ = [
@@ -558,6 +563,7 @@ __all__ = [
     'LongTermRetentionBackup',
     'ManagedBackupShortTermRetentionPolicy',
     'ManagedDatabase',
+    'ManagedDatabaseRestoreDetailsResult',
     'ManagedDatabaseSecurityAlertPolicy',
     'ManagedDatabaseUpdate',
     'ManagedInstance',
@@ -685,6 +691,8 @@ __all__ = [
     'SubscriptionUsagePaged',
     'VirtualClusterPaged',
     'VirtualNetworkRulePaged',
+    'ServerBlobAuditingPolicyPaged',
+    'DatabaseBlobAuditingPolicyPaged',
     'DatabaseVulnerabilityAssessmentPaged',
     'JobAgentPaged',
     'JobCredentialPaged',
@@ -695,7 +703,6 @@ __all__ = [
     'JobVersionPaged',
     'LongTermRetentionBackupPaged',
     'ManagedBackupShortTermRetentionPolicyPaged',
-    'ManagedDatabasePaged',
     'ServerDnsAliasPaged',
     'ServerSecurityAlertPolicyPaged',
     'RestorableDroppedManagedDatabasePaged',
@@ -717,6 +724,7 @@ __all__ = [
     'InstancePoolPaged',
     'UsagePaged',
     'ManagedInstancePaged',
+    'ManagedDatabasePaged',
     'PrivateEndpointConnectionPaged',
     'PrivateLinkResourcePaged',
     'CheckNameAvailabilityReason',
@@ -771,9 +779,6 @@ __all__ = [
     'JobStepActionSource',
     'JobStepOutputType',
     'JobTargetGroupMembershipType',
-    'ManagedDatabaseStatus',
-    'CatalogCollationType',
-    'ManagedDatabaseCreateMode',
     'AutomaticTuningServerMode',
     'AutomaticTuningServerReason',
     'RestorePointType',
@@ -785,6 +790,7 @@ __all__ = [
     'CreateMode',
     'SampleName',
     'DatabaseStatus',
+    'CatalogCollationType',
     'DatabaseLicenseType',
     'DatabaseReadScale',
     'ElasticPoolState',
@@ -796,8 +802,11 @@ __all__ = [
     'ManagedServerCreateMode',
     'ManagedInstanceLicenseType',
     'ManagedInstanceProxyOverride',
+    'ManagedDatabaseStatus',
+    'ManagedDatabaseCreateMode',
     'LongTermRetentionDatabaseState',
     'VulnerabilityAssessmentPolicyBaselineName',
     'SensitivityLabelSource',
     'CapabilityGroup',
+    'ReplicaType',
 ]

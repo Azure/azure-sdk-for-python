@@ -77,4 +77,4 @@ Indices and tables
   exceptions
   Service Management (Legacy) <servicemanagement>
 
-.. include:: autorest_generated_packages.rst
+.. include:: toc_tree.rst

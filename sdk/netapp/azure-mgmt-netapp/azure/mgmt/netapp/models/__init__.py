@@ -10,80 +10,86 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .operation_display_py3 import OperationDisplay
-    from .dimension_py3 import Dimension
-    from .metric_specification_py3 import MetricSpecification
-    from .service_specification_py3 import ServiceSpecification
-    from .operation_py3 import Operation
-    from .resource_name_availability_py3 import ResourceNameAvailability
-    from .resource_name_availability_request_py3 import ResourceNameAvailabilityRequest
-    from .active_directory_py3 import ActiveDirectory
-    from .net_app_account_py3 import NetAppAccount
-    from .net_app_account_patch_py3 import NetAppAccountPatch
-    from .capacity_pool_py3 import CapacityPool
-    from .capacity_pool_patch_py3 import CapacityPoolPatch
-    from .export_policy_rule_py3 import ExportPolicyRule
-    from .volume_properties_export_policy_py3 import VolumePropertiesExportPolicy
-    from .volume_py3 import Volume
-    from .volume_patch_properties_export_policy_py3 import VolumePatchPropertiesExportPolicy
-    from .volume_patch_py3 import VolumePatch
-    from .mount_target_py3 import MountTarget
-    from .snapshot_py3 import Snapshot
-    from .snapshot_patch_py3 import SnapshotPatch
+    from ._models_py3 import ActiveDirectory
+    from ._models_py3 import CapacityPool
+    from ._models_py3 import CapacityPoolPatch
+    from ._models_py3 import Dimension
+    from ._models_py3 import ExportPolicyRule
+    from ._models_py3 import MetricSpecification
+    from ._models_py3 import MountTarget
+    from ._models_py3 import NetAppAccount
+    from ._models_py3 import NetAppAccountPatch
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import ReplicationObject
+    from ._models_py3 import ResourceNameAvailability
+    from ._models_py3 import ResourceNameAvailabilityRequest
+    from ._models_py3 import ServiceSpecification
+    from ._models_py3 import Snapshot
+    from ._models_py3 import SnapshotPatch
+    from ._models_py3 import Volume
+    from ._models_py3 import VolumePatch
+    from ._models_py3 import VolumePatchPropertiesExportPolicy
+    from ._models_py3 import VolumePropertiesDataProtection
+    from ._models_py3 import VolumePropertiesExportPolicy
 except (SyntaxError, ImportError):
-    from .operation_display import OperationDisplay
-    from .dimension import Dimension
-    from .metric_specification import MetricSpecification
-    from .service_specification import ServiceSpecification
-    from .operation import Operation
-    from .resource_name_availability import ResourceNameAvailability
-    from .resource_name_availability_request import ResourceNameAvailabilityRequest
-    from .active_directory import ActiveDirectory
-    from .net_app_account import NetAppAccount
-    from .net_app_account_patch import NetAppAccountPatch
-    from .capacity_pool import CapacityPool
-    from .capacity_pool_patch import CapacityPoolPatch
-    from .export_policy_rule import ExportPolicyRule
-    from .volume_properties_export_policy import VolumePropertiesExportPolicy
-    from .volume import Volume
-    from .volume_patch_properties_export_policy import VolumePatchPropertiesExportPolicy
-    from .volume_patch import VolumePatch
-    from .mount_target import MountTarget
-    from .snapshot import Snapshot
-    from .snapshot_patch import SnapshotPatch
-from .operation_paged import OperationPaged
-from .net_app_account_paged import NetAppAccountPaged
-from .capacity_pool_paged import CapacityPoolPaged
-from .volume_paged import VolumePaged
-from .mount_target_paged import MountTargetPaged
-from .snapshot_paged import SnapshotPaged
-from .azure_net_app_files_management_client_enums import (
+    from ._models import ActiveDirectory
+    from ._models import CapacityPool
+    from ._models import CapacityPoolPatch
+    from ._models import Dimension
+    from ._models import ExportPolicyRule
+    from ._models import MetricSpecification
+    from ._models import MountTarget
+    from ._models import NetAppAccount
+    from ._models import NetAppAccountPatch
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import ReplicationObject
+    from ._models import ResourceNameAvailability
+    from ._models import ResourceNameAvailabilityRequest
+    from ._models import ServiceSpecification
+    from ._models import Snapshot
+    from ._models import SnapshotPatch
+    from ._models import Volume
+    from ._models import VolumePatch
+    from ._models import VolumePatchPropertiesExportPolicy
+    from ._models import VolumePropertiesDataProtection
+    from ._models import VolumePropertiesExportPolicy
+from ._paged_models import CapacityPoolPaged
+from ._paged_models import MountTargetPaged
+from ._paged_models import NetAppAccountPaged
+from ._paged_models import OperationPaged
+from ._paged_models import SnapshotPaged
+from ._paged_models import VolumePaged
+from ._azure_net_app_files_management_client_enums import (
     InAvailabilityReasonType,
     CheckNameResourceTypes,
     ServiceLevel,
 )
 
 __all__ = [
-    'OperationDisplay',
-    'Dimension',
-    'MetricSpecification',
-    'ServiceSpecification',
-    'Operation',
-    'ResourceNameAvailability',
-    'ResourceNameAvailabilityRequest',
     'ActiveDirectory',
-    'NetAppAccount',
-    'NetAppAccountPatch',
     'CapacityPool',
     'CapacityPoolPatch',
+    'Dimension',
     'ExportPolicyRule',
-    'VolumePropertiesExportPolicy',
-    'Volume',
-    'VolumePatchPropertiesExportPolicy',
-    'VolumePatch',
+    'MetricSpecification',
     'MountTarget',
+    'NetAppAccount',
+    'NetAppAccountPatch',
+    'Operation',
+    'OperationDisplay',
+    'ReplicationObject',
+    'ResourceNameAvailability',
+    'ResourceNameAvailabilityRequest',
+    'ServiceSpecification',
     'Snapshot',
     'SnapshotPatch',
+    'Volume',
+    'VolumePatch',
+    'VolumePatchPropertiesExportPolicy',
+    'VolumePropertiesDataProtection',
+    'VolumePropertiesExportPolicy',
     'OperationPaged',
     'NetAppAccountPaged',
     'CapacityPoolPaged',

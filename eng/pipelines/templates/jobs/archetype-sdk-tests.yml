@@ -4,7 +4,9 @@ parameters:
   MaxParallel: 0
   BeforeTestSteps: []
   BuildTargetingString: 'azure-*'
+  AdditionalTestArgs: ''
   TestMarkArgument: ''
+  JobName: Test
   Matrix:
     Linux_Python35:
       OSName: 'Linux'
@@ -18,9 +20,17 @@ parameters:
       OSName: 'Windows'
       OSVmImage: 'windows-2019'
       PythonVersion: '2.7'
+    Linux_PyPy3:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: 'pypy3'
+    Linux_Python38:
+      OSName: 'Linux'
+      OSVmImage: 'ubuntu-16.04'
+      PythonVersion: '3.8'
 
 jobs:
-  - job: 'Test'
+  - job: ${{ parameters.JobName }}
     variables:
       skipComponentGovernanceDetection: true
       CoverageArg: --disablecov
@@ -45,4 +55,6 @@ jobs:
           PythonVersion: $(PythonVersion)
           OSName: $(OSName)
           ToxTestEnv: "whl"
+          AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
+  

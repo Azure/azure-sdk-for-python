@@ -17,12 +17,19 @@ steps:
   - script: |
       pip install wheel setuptools packaging
     displayName: 'Prep Py2 Environment'
+    
+  - template: eng/pipelines/templates/scripts/replace-relative-links.yml@azure-sdk-tools
+    parameters:
+      TargetFolder: $(Build.SourcesDirectory)
+      RootFolder: $(Build.SourcesDirectory)
+      BuildSHA: $(Build.SourceVersion)
+      RepoId: 'Azure/azure-sdk-for-python'
 
   - task: PythonScript@0
     displayName: 'Generate Python2 Applicable Namespace Packages'
     inputs:
       scriptPath: 'scripts/devops_tasks/build_packages.py'
-      arguments: '-d "$(Build.ArtifactStagingDirectory)" "*-nspkg" --service=${{parameters.ServiceDirectory}}'
+      arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --pkgfilter="nspkg" --service=${{parameters.ServiceDirectory}}'
 
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
@@ -30,7 +37,7 @@ steps:
       versionSpec: $(PythonVersion)
 
   - script: |
-      pip install wheel setuptools pathlib twine readme-renderer[md] packaging
+      pip install wheel setuptools pathlib twine readme-renderer[md] packaging tox tox-monorepo
     displayName: 'Prep Environment'
 
   - task: PythonScript@0
@@ -43,6 +50,15 @@ steps:
       twine check $(Build.ArtifactStagingDirectory)/*
     displayName: 'Verify Readme'
 
+  - task: PythonScript@0
+    displayName: 'Generate Docs'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}" 
+        --service="${{ parameters.ServiceDirectory }}" 
+        --toxenv=sphinx
+
   - ${{ parameters.BeforePublishSteps }}
 
   - task: PublishPipelineArtifact@0
@@ -50,8 +66,16 @@ steps:
       artifactName: 'artifacts' 
       targetPath: $(Build.ArtifactStagingDirectory)
 
+  # Duplicating  the task above to introduce a packages artifact for consistency
+  # with the other pipelines. Also using the newer YAML shortcut. Once we get
+  # past release successfully with unified pipelines we'll look at getting rid
+  # of the duplicated "artifacts" artifact.
+  - publish: $(Build.ArtifactStagingDirectory)
+    artifact: packages 
+
   - task: PublishBuildArtifacts@1
     condition: succeededOrFailed()
     displayName: 'Publish Artifacts'
     inputs:
-      artifactName: packages
+      artifactName: 'docs'
+      pathtoPublish: '$(Build.SourcesDirectory)/_docs'

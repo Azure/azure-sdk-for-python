@@ -29,5 +29,6 @@ class {{ client_name }}OperationsMixin(object):
         mixin_instance.config = self.config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        mixin_instance.api_version = api_version
         return mixin_instance.{{ operation_name }}({{ metadata['call'] }}, **operation_config)
 {% endfor %}

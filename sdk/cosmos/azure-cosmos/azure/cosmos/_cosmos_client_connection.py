@@ -26,19 +26,18 @@
 """
 from typing import Dict, Any, Optional
 import six
-import requests
-from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from azure.core.paging import ItemPaged  # type: ignore
 from azure.core import PipelineClient  # type: ignore
-from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies import (  # type: ignore
+    HTTPPolicy,
     ContentDecodePolicy,
     HeadersPolicy,
     UserAgentPolicy,
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
+    DistributedTracingPolicy,
     ProxyPolicy)
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy  # type: ignore
 
 from . import _base as base
 from . import documents
@@ -51,6 +50,7 @@ from . import _request_object
 from . import _synchronized_request as synchronized_request
 from . import _global_endpoint_manager as global_endpoint_manager
 from ._routing import routing_map_provider
+from ._retry_utility import ConnectionRetryPolicy
 from . import _session
 from . import _utils
 from .partition_key import _Undefined, _Empty
@@ -151,15 +151,24 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         self._useMultipleWriteLocations = False
         self._global_endpoint_manager = global_endpoint_manager._GlobalEndpointManager(self)
 
-        # creating a requests session used for connection pooling and re-used by all requests
-        requests_session = requests.Session()
-
-        transport = None
-        if self.connection_policy.ConnectionRetryConfiguration is not None:
-            adapter = HTTPAdapter(max_retries=self.connection_policy.ConnectionRetryConfiguration)
-            requests_session.mount('http://', adapter)
-            requests_session.mount('https://', adapter)
-            transport = RequestsTransport(session=requests_session)
+        retry_policy = None
+        if isinstance(self.connection_policy.ConnectionRetryConfiguration, HTTPPolicy):
+            retry_policy = self.connection_policy.ConnectionRetryConfiguration
+        elif isinstance(self.connection_policy.ConnectionRetryConfiguration, int):
+            retry_policy = ConnectionRetryPolicy(total=self.connection_policy.ConnectionRetryConfiguration)
+        elif isinstance(self.connection_policy.ConnectionRetryConfiguration, Retry):
+            # Convert a urllib3 retry policy to a Pipeline policy
+            retry_policy = ConnectionRetryPolicy(
+                retry_total=self.connection_policy.ConnectionRetryConfiguration.total,
+                retry_connect=self.connection_policy.ConnectionRetryConfiguration.connect,
+                retry_read=self.connection_policy.ConnectionRetryConfiguration.read,
+                retry_status=self.connection_policy.ConnectionRetryConfiguration.status,
+                retry_backoff_max=self.connection_policy.ConnectionRetryConfiguration.BACKOFF_MAX,
+                retry_on_status_codes=list(self.connection_policy.ConnectionRetryConfiguration.status_forcelist),
+                retry_backoff_factor=self.connection_policy.ConnectionRetryConfiguration.backoff_factor
+            )
+        else:
+            TypeError("Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
 
         proxies = kwargs.pop('proxies', {})
         if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
@@ -173,12 +182,14 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             ProxyPolicy(proxies=proxies),
             UserAgentPolicy(base_user_agent=_utils.get_user_agent(), **kwargs),
             ContentDecodePolicy(),
+            retry_policy,
             CustomHookPolicy(**kwargs),
             DistributedTracingPolicy(),
             NetworkTraceLoggingPolicy(**kwargs),
             ]
 
-        self.pipeline_client = PipelineClient(url_connection, "empty-config", transport=transport, policies=policies)
+        transport = kwargs.pop("transport", None)
+        self.pipeline_client = PipelineClient(base_url=url_connection, transport=transport, policies=policies)
 
         # Query compatibility mode.
         # Allows to specify compatibility mode used by client when making query requests. Should be removed when
@@ -188,18 +199,19 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Routing map provider
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
-        database_account = self._global_endpoint_manager._GetDatabaseAccount()
+        database_account = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
         self._global_endpoint_manager.force_refresh(database_account)
 
     @property
     def Session(self):
-        """ Gets the session object from the client """
+        """Gets the session object from the client. """
         return self.session
 
     @Session.setter
     def Session(self, session):
-        """ Sets a session object on the document client
-            This will override the existing session
+        """Sets a session object on the document client.
+
+        This will override the existing session
         """
         self.session = session
 
@@ -1294,7 +1306,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self.Read(path, "triggers", trigger_id, None, options, **kwargs)
 
     def ReadUserDefinedFunctions(self, collection_link, options=None, **kwargs):
-        """Reads all user defined functions in a collection.
+        """Reads all user-defined functions in a collection.
 
         :param str collection_link:
             The link to the document collection.
@@ -1313,7 +1325,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self.QueryUserDefinedFunctions(collection_link, None, options, **kwargs)
 
     def QueryUserDefinedFunctions(self, collection_link, query, options=None, **kwargs):
-        """Queries user defined functions in a collection.
+        """Queries user-defined functions in a collection.
 
         :param str collection_link:
             The link to the collection.
@@ -1347,7 +1359,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         )
 
     def CreateUserDefinedFunction(self, collection_link, udf, options=None, **kwargs):
-        """Creates a user defined function in a collection.
+        """Creates a user-defined function in a collection.
 
         :param str collection_link:
             The link to the collection.
@@ -1368,7 +1380,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self.Create(udf, path, "udfs", collection_id, None, options, **kwargs)
 
     def UpsertUserDefinedFunction(self, collection_link, udf, options=None, **kwargs):
-        """Upserts a user defined function in a collection.
+        """Upserts a user-defined function in a collection.
 
         :param str collection_link:
             The link to the collection.
@@ -1401,10 +1413,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return collection_id, path, udf
 
     def ReadUserDefinedFunction(self, udf_link, options=None, **kwargs):
-        """Reads a user defined function.
+        """Reads a user-defined function.
 
         :param str udf_link:
-            The link to the user defined function.
+            The link to the user-defined function.
         :param dict options:
             The request options for the request.
 
@@ -1697,301 +1709,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return self.DeleteResource(path, "docs", document_id, None, options, **kwargs)
 
-    def CreateAttachment(self, document_link, attachment, options=None, **kwargs):
-        """Creates an attachment in a document.
-
-        :param str document_link:
-            The link to the document.
-        :param dict attachment:
-            The Azure Cosmos attachment to create.
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The created Attachment.
-        :rtype:
-            dict
-
-        """
-        if options is None:
-            options = {}
-
-        document_id, path = self._GetItemIdWithPathForAttachment(attachment, document_link)
-        return self.Create(attachment, path, "attachments", document_id, None, options, **kwargs)
-
-    def UpsertAttachment(self, document_link, attachment, options=None, **kwargs):
-        """Upserts an attachment in a document.
-
-        :param str document_link:
-            The link to the document.
-        :param dict attachment:
-            The Azure Cosmos attachment to upsert.
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The upserted Attachment.
-        :rtype:
-            dict
-
-        """
-        if options is None:
-            options = {}
-
-        document_id, path = self._GetItemIdWithPathForAttachment(attachment, document_link)
-        return self.Upsert(attachment, path, "attachments", document_id, None, options, **kwargs)
-
-    def _GetItemIdWithPathForAttachment(self, attachment, document_link):  # pylint: disable=no-self-use
-        CosmosClientConnection.__ValidateResource(attachment)
-        path = base.GetPathFromLink(document_link, "attachments")
-        document_id = base.GetResourceIdOrFullNameFromLink(document_link)
-        return document_id, path
-
-    def CreateAttachmentAndUploadMedia(self, document_link, readable_stream, options=None, **kwargs):
-        """Creates an attachment and upload media.
-
-        :param str document_link:
-            The link to the document.
-        :param (file-like stream object) readable_stream:
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The created Attachment.
-        :rtype:
-            dict
-
-        """
-        if options is None:
-            options = {}
-
-        document_id, initial_headers, path = self._GetItemIdWithPathForAttachmentMedia(document_link, options)
-        return self.Create(readable_stream, path, "attachments", document_id, initial_headers, options, **kwargs)
-
-    def UpsertAttachmentAndUploadMedia(self, document_link, readable_stream, options=None, **kwargs):
-        """Upserts an attachment and upload media.
-
-        :param str document_link:
-            The link to the document.
-        :param (file-like stream object) readable_stream:
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The upserted Attachment.
-        :rtype:
-            dict
-
-        """
-        if options is None:
-            options = {}
-
-        document_id, initial_headers, path = self._GetItemIdWithPathForAttachmentMedia(document_link, options)
-        return self.Upsert(readable_stream, path, "attachments", document_id, initial_headers, options, **kwargs)
-
-    def _GetItemIdWithPathForAttachmentMedia(self, document_link, options):
-        initial_headers = dict(self.default_headers)
-
-        # Add required headers slug and content-type.
-        if options.get("slug"):
-            initial_headers[http_constants.HttpHeaders.Slug] = options["slug"]
-
-        if options.get("contentType"):
-            initial_headers[http_constants.HttpHeaders.ContentType] = options["contentType"]
-        else:
-            initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.OctetStream
-
-        path = base.GetPathFromLink(document_link, "attachments")
-        document_id = base.GetResourceIdOrFullNameFromLink(document_link)
-        return document_id, initial_headers, path
-
-    def ReadAttachment(self, attachment_link, options=None, **kwargs):
-        """Reads an attachment.
-
-        :param str attachment_link:
-            The link to the attachment.
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The read Attachment.
-        :rtype:
-            dict
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(attachment_link)
-        attachment_id = base.GetResourceIdOrFullNameFromLink(attachment_link)
-        return self.Read(path, "attachments", attachment_id, None, options, **kwargs)
-
-    def ReadAttachments(self, document_link, options=None, **kwargs):
-        """Reads all attachments in a document.
-
-        :param str document_link:
-            The link to the document.
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            Query Iterable of Attachments.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        return self.QueryAttachments(document_link, None, options, **kwargs)
-
-    def QueryAttachments(self, document_link, query, options=None, **kwargs):
-        """Queries attachments in a document.
-
-        :param str document_link:
-            The link to the document.
-        :param (str or dict) query:
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            Query Iterable of Attachments.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(document_link, "attachments")
-        document_id = base.GetResourceIdOrFullNameFromLink(document_link)
-
-        def fetch_fn(options):
-            return (
-                self.__QueryFeed(
-                    path, "attachments", document_id, lambda r: r["Attachments"],
-                    lambda _, b: b, query, options, **kwargs
-                ),
-                self.last_response_headers,
-            )
-
-        return ItemPaged(
-            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
-        )
-
-    def ReadMedia(self, media_link, **kwargs):
-        """Reads a media.
-
-        When self.connection_policy.MediaReadMode ==
-        documents.MediaReadMode.Streamed, returns a file-like stream object;
-        otherwise, returns a str.
-
-        :param str media_link:
-            The link to the media.
-
-        :return:
-            The read Media.
-        :rtype:
-            str or file-like stream object
-
-        """
-        default_headers = self.default_headers
-
-        path = base.GetPathFromLink(media_link)
-        media_id = base.GetResourceIdOrFullNameFromLink(media_link)
-        attachment_id = base.GetAttachmentIdFromMediaId(media_id)
-        headers = base.GetHeaders(self, default_headers, "get", path, attachment_id, "media", {})
-
-        # ReadMedia will always use WriteEndpoint since it's not replicated in readable Geo regions
-        request_params = _request_object.RequestObject("media", documents._OperationType.Read)
-        result, self.last_response_headers = self.__Get(path, request_params, headers, **kwargs)
-        return result
-
-    def UpdateMedia(self, media_link, readable_stream, options=None, **kwargs):
-        """Updates a media and returns it.
-
-        :param str media_link:
-            The link to the media.
-        :param (file-like stream object) readable_stream:
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The updated Media.
-        :rtype:
-            str or file-like stream object
-
-        """
-        if options is None:
-            options = {}
-
-        initial_headers = dict(self.default_headers)
-
-        # Add required headers slug and content-type in case the body is a stream
-        if options.get("slug"):
-            initial_headers[http_constants.HttpHeaders.Slug] = options["slug"]
-
-        if options.get("contentType"):
-            initial_headers[http_constants.HttpHeaders.ContentType] = options["contentType"]
-        else:
-            initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.OctetStream
-
-        path = base.GetPathFromLink(media_link)
-        media_id = base.GetResourceIdOrFullNameFromLink(media_link)
-        attachment_id = base.GetAttachmentIdFromMediaId(media_id)
-        headers = base.GetHeaders(self, initial_headers, "put", path, attachment_id, "media", options)
-
-        # UpdateMedia will use WriteEndpoint since it uses PUT operation
-        request_params = _request_object.RequestObject("media", documents._OperationType.Update)
-        result, self.last_response_headers = self.__Put(path, request_params, readable_stream, headers, **kwargs)
-
-        self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
-        return result
-
-    def ReplaceAttachment(self, attachment_link, attachment, options=None, **kwargs):
-        """Replaces an attachment and returns it.
-
-        :param str attachment_link:
-            The link to the attachment.
-        :param dict attachment:
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The replaced Attachment
-        :rtype:
-            dict
-
-        """
-        if options is None:
-            options = {}
-
-        CosmosClientConnection.__ValidateResource(attachment)
-        path = base.GetPathFromLink(attachment_link)
-        attachment_id = base.GetResourceIdOrFullNameFromLink(attachment_link)
-        return self.Replace(attachment, path, "attachments", attachment_id, None, options, **kwargs)
-
-    def DeleteAttachment(self, attachment_link, options=None, **kwargs):
-        """Deletes an attachment.
-
-        :param str attachment_link:
-            The link to the attachment.
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The deleted Attachment.
-        :rtype:
-            dict
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(attachment_link)
-        attachment_id = base.GetResourceIdOrFullNameFromLink(attachment_link)
-        return self.DeleteResource(path, "attachments", attachment_id, None, options, **kwargs)
-
     def ReplaceTrigger(self, trigger_link, trigger, options=None, **kwargs):
         """Replaces a trigger and returns it.
 
@@ -2043,10 +1760,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self.DeleteResource(path, "triggers", trigger_id, None, options, **kwargs)
 
     def ReplaceUserDefinedFunction(self, udf_link, udf, options=None, **kwargs):
-        """Replaces a user defined function and returns it.
+        """Replaces a user-defined function and returns it.
 
         :param str udf_link:
-            The link to the user defined function.
+            The link to the user-defined function.
         :param dict udf:
         :param dict options:
             The request options for the request.
@@ -2072,10 +1789,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self.Replace(udf, path, "udfs", udf_id, None, options, **kwargs)
 
     def DeleteUserDefinedFunction(self, udf_link, options=None, **kwargs):
-        """Deletes a user defined function.
+        """Deletes a user-defined function.
 
         :param str udf_link:
-            The link to the user defined function.
+            The link to the user-defined function.
         :param dict options:
             The request options for the request.
 
@@ -2614,6 +2331,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         options=None,
         partition_key_range_id=None,
         response_hook=None,
+        is_query_plan=False,
         **kwargs
     ):
         """Query for more than one Azure Cosmos resources.
@@ -2628,6 +2346,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The request options for the request.
         :param str partition_key_range_id:
             Specifies partition key range id.
+        :param function response_hook:
+        :param bool is_query_plan:
+            Specififes if the call is to fetch query plan
 
         :rtype:
             list
@@ -2653,7 +2374,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Copy to make sure that default_headers won't be changed.
         if query is None:
             # Query operations will use ReadEndpoint even though it uses GET(for feed requests)
-            request_params = _request_object.RequestObject(typ, documents._OperationType.ReadFeed)
+            request_params = _request_object.RequestObject(typ,
+                        documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed)
             headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
             result, self.last_response_headers = self.__Get(path, request_params, headers, **kwargs)
             if response_hook:
@@ -2663,6 +2385,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         query = self.__CheckAndUnifyQueryFormat(query)
 
         initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
+        if not is_query_plan:
+            initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
+
         if (
             self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
             or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
@@ -2682,6 +2407,36 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             response_hook(self.last_response_headers, result)
 
         return __GetBodiesFromQueryResult(result)
+
+    def _GetQueryPlanThroughGateway(self, query, resource_link, **kwargs):
+        supported_query_features = (documents._QueryFeature.Aggregate + "," +
+                                    documents._QueryFeature.CompositeAggregate + "," +
+                                    documents._QueryFeature.Distinct + "," +
+                                    documents._QueryFeature.MultipleOrderBy + "," +
+                                    documents._QueryFeature.OffsetAndLimit + "," +
+                                    documents._QueryFeature.OrderBy + "," +
+                                    documents._QueryFeature.Top)
+
+        options = {
+            "contentType": runtime_constants.MediaTypes.Json,
+            "isQueryPlanRequest": True,
+            "supportedQueryFeatures": supported_query_features,
+            "queryVersion": http_constants.Versions.QueryVersion
+            }
+
+        resource_link = base.TrimBeginningAndEndingSlashes(resource_link)
+        path = base.GetPathFromLink(resource_link, "docs")
+        resource_id = base.GetResourceIdOrFullNameFromLink(resource_link)
+
+        return self.__QueryFeed(path,
+                                "docs",
+                                resource_id,
+                                lambda r: r,
+                                None,
+                                query,
+                                options,
+                                is_query_plan=True,
+                                **kwargs)
 
     def __CheckAndUnifyQueryFormat(self, query_body):
         """Checks and unifies the format of the query body.

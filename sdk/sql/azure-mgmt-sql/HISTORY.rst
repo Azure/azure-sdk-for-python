@@ -3,6 +3,26 @@
 Release History
 ===============
 
+0.15.0 (2019-11-12)
++++++++++++++++++++
+
+**Breaking changes**
+
+- Operation DatabasesOperations.failover has a new signature
+- Operation ManagedInstanceAdministratorsOperations.get has a new signature
+- Operation ManagedInstanceAdministratorsOperations.delete has a new signature
+- Operation ManagedInstanceAdministratorsOperations.create_or_update has a new signature
+
+0.14.0 (2019-10-04)
++++++++++++++++++++
+
+**Features**
+
+- Added operation ServerBlobAuditingPoliciesOperations.list_by_server
+- Added operation ManagedDatabasesOperations.complete_restore
+- Added operation DatabaseBlobAuditingPoliciesOperations.list_by_database
+- Added operation group ManagedDatabaseRestoreDetailsOperations
+
 0.13.0 (2019-09-03)
 +++++++++++++++++++
 

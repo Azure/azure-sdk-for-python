@@ -25,7 +25,7 @@ import time
 import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes
 import test_config
 from azure.cosmos.partition_key import PartitionKey
@@ -60,7 +60,7 @@ class Test_ttl_tests(unittest.TestCase):
         try:
             func(*args, **kwargs)
             self.assertFalse(True, 'function should fail.')
-        except errors.CosmosHttpResponseError as inst:
+        except exceptions.CosmosHttpResponseError as inst:
             self.assertEqual(inst.status_code, status_code)
 
     @classmethod

@@ -8,7 +8,7 @@
 from azure.core.exceptions import ResourceExistsError
 
 from ._shared.models import StorageErrorCode
-from .models import QueueProperties
+from ._models import QueueProperties
 
 
 def deserialize_metadata(response, obj, headers):

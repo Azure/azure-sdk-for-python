@@ -32,6 +32,8 @@ from typing import Dict, Any
 import six
 from six.moves.urllib.parse import quote as urllib_quote
 
+from azure.core import MatchConditions
+
 from . import auth
 from . import documents
 from . import partition_key
@@ -63,8 +65,37 @@ _COMMON_OPTIONS = {
     'continuation': 'continuation',
     'is_start_from_beginning': 'isStartFromBeginning',
     'populate_partition_key_range_statistics': 'populatePartitionKeyRangeStatistics',
-    'populate_quota_info': 'populateQuotaInfo'
+    'populate_quota_info': 'populateQuotaInfo',
+    'content_type': 'contentType',
+    'is_query_plan_request': 'isQueryPlanRequest',
+    'supported_query_features': 'supportedQueryFeatures',
+    'query_version': 'queryVersion'
 }
+
+def _get_match_headers(kwargs):
+    # type: (Dict[str, Any]) -> Tuple(Optional[str], Optional[str])
+    if_match = kwargs.pop('if_match', None)
+    if_none_match = kwargs.pop('if_none_match', None)
+    match_condition = kwargs.pop('match_condition', None)
+    if match_condition == MatchConditions.IfNotModified:
+        if_match = kwargs.pop('etag', None)
+        if not if_match:
+            raise ValueError("'match_condition' specified without 'etag'.")
+    elif match_condition == MatchConditions.IfPresent:
+        if_match = '*'
+    elif match_condition == MatchConditions.IfModified:
+        if_none_match = kwargs.pop('etag', None)
+        if not if_none_match:
+            raise ValueError("'match_condition' specified without 'etag'.")
+    elif match_condition == MatchConditions.IfMissing:
+        if_none_match = '*'
+    elif match_condition is None:
+        if 'etag' in kwargs:
+            raise ValueError("'etag' specified without 'match_condition'.")
+    else:
+        raise TypeError("Invalid match condition: {}".format(match_condition))
+    return if_match, if_none_match
+
 
 def build_options(kwargs):
     # type: (Dict[str, Any]) -> Dict[str, Any]
@@ -73,10 +104,11 @@ def build_options(kwargs):
         if key in kwargs:
             options[value] = kwargs.pop(key)
 
-    if 'if_match' in kwargs:
-        options['accessCondition'] = {'type': 'IfMatch', 'condition': kwargs.pop('if_match')}
-    if 'if_none_match' in kwargs:
-        options['accessCondition'] = {'type': 'IfNoneMatch', 'condition': kwargs.pop('if_none_match')}
+    if_match, if_none_match = _get_match_headers(kwargs)
+    if if_match:
+        options['accessCondition'] = {'type': 'IfMatch', 'condition': if_match}
+    if if_none_match:
+        options['accessCondition'] = {'type': 'IfNoneMatch', 'condition': if_none_match}
     return options
 
 
@@ -100,9 +132,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     :param str resource_type:
     :param dict options:
     :param str partition_key_range_id:
-
-    :return:
-        The HTTP request headers.
+    :return: The HTTP request headers.
     :rtype: dict
     """
     headers = dict(default_headers)
@@ -177,6 +207,18 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if options.get("offerThroughput"):
         headers[http_constants.HttpHeaders.OfferThroughput] = options["offerThroughput"]
+
+    if options.get("contentType"):
+        headers[http_constants.HttpHeaders.ContentType] = options['contentType']
+
+    if options.get("isQueryPlanRequest"):
+        headers[http_constants.HttpHeaders.IsQueryPlanRequest] = options['isQueryPlanRequest']
+
+    if options.get("supportedQueryFeatures"):
+        headers[http_constants.HttpHeaders.SupportedQueryFeatures] = options['supportedQueryFeatures']
+
+    if options.get("queryVersion"):
+        headers[http_constants.HttpHeaders.QueryVersion] = options['queryVersion']
 
     if "partitionKey" in options:
         # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
@@ -258,9 +300,7 @@ def GetResourceIdOrFullNameFromLink(resource_link):
     """Gets resource id or full name from resource link.
 
     :param str resource_link:
-
-    :return:
-        The resource id or full name from the resource link.
+    :return: The resource id or full name from the resource link.
     :rtype: str
     """
     # For named based, the resource link is the full name
@@ -292,33 +332,6 @@ def GetResourceIdOrFullNameFromLink(resource_link):
     return None
 
 
-def GetAttachmentIdFromMediaId(media_id):
-    """Gets attachment id from media id.
-
-    :param str media_id:
-
-    :return:
-        The attachment id from the media id.
-    :rtype: str
-    """
-    altchars = "+-"
-    if not six.PY2:
-        altchars = altchars.encode("utf-8")
-    # altchars for '+' and '/'. We keep '+' but replace '/' with '-'
-    buffer = base64.b64decode(str(media_id), altchars)
-    resoure_id_length = 20
-    attachment_id = ""
-    if len(buffer) > resoure_id_length:
-        # We are cutting off the storage index.
-        attachment_id = base64.b64encode(buffer[0:resoure_id_length], altchars)
-        if not six.PY2:
-            attachment_id = attachment_id.decode("utf-8")
-    else:
-        attachment_id = media_id
-
-    return attachment_id
-
-
 def GenerateGuidId():
     """Gets a random GUID.
 
@@ -337,9 +350,7 @@ def GetPathFromLink(resource_link, resource_type=""):
 
     :param str resource_link:
     :param str resource_type:
-
-    :return:
-        Path from resource link with resource type appended (if provided).
+    :return: Path from resource link with resource type appended (if provided).
     :rtype: str
     """
     resource_link = TrimBeginningAndEndingSlashes(resource_link)
@@ -410,11 +421,8 @@ def IsMasterResource(resourceType):
 def IsDatabaseLink(link):
     """Finds whether the link is a database Self Link or a database ID based link
 
-    :param str link:
-        Link to analyze
-
-    :return:
-        True or False.
+    :param str link: Link to analyze
+    :return: True or False.
     :rtype: boolean
     """
     if not link:
@@ -443,11 +451,8 @@ def IsDatabaseLink(link):
 def IsItemContainerLink(link):  # pylint: disable=too-many-return-statements
     """Finds whether the link is a document colllection Self Link or a document colllection ID based link
 
-    :param str link:
-        Link to analyze
-
-    :return:
-        True or False.
+    :param str link: Link to analyze
+    :return: True or False.
     :rtype: boolean
     """
     if not link:
@@ -482,24 +487,21 @@ def IsItemContainerLink(link):  # pylint: disable=too-many-return-statements
 
 
 def GetItemContainerInfo(self_link, alt_content_path, id_from_response):
-    """ Given the self link and alt_content_path from the reponse header and result
-        extract the collection name and collection id
+    """Given the self link and alt_content_path from the reponse header and
+    result extract the collection name and collection id.
 
-        Ever response header has alt-content-path that is the
-        owner's path in ascii. For document create / update requests, this can be used
-        to get the collection name, but for collection create response, we can't use it.
-        So we also rely on
+    Every response header has an alt-content-path that is the owner's path in
+    ASCII. For document create / update requests, this can be used to get the
+    collection name, but for collection create response, we can't use it.
 
     :param str self_link:
         Self link of the resource, as obtained from response result.
     :param str alt_content_path:
         Owner path of the resource, as obtained from response header.
     :param str resource_id:
-        'id' as returned from the response result. This is only used if it is deduced that the
-         request was to create a collection.
-
-    :return:
-        tuple of (collection rid, collection name)
+        'id' as returned from the response result. This is only used if it is
+        deduced that the request was to create a collection.
+    :return: tuple of (collection rid, collection name)
     :rtype: tuple
     """
 
@@ -528,15 +530,11 @@ def GetItemContainerInfo(self_link, alt_content_path, id_from_response):
 
 
 def GetItemContainerLink(link):
-    """Gets the document collection link
+    """Gets the document collection link.
 
-    :param str link:
-        Resource link
-
-    :return:
-        Document collection link.
+    :param str link: Resource link
+    :return: Document collection link.
     :rtype: str
-
     """
     link = TrimBeginningAndEndingSlashes(link) + "/"
 
@@ -548,19 +546,13 @@ def GetItemContainerLink(link):
 
 
 def IndexOfNth(s, value, n):
-    """Gets the index of Nth occurance of a given character in a string
+    """Gets the index of Nth occurance of a given character in a string.
 
-    :param str s:
-        Input string
-    :param char value:
-        Input char to be searched.
-    :param int n:
-        Nth occurrence of char to be searched.
-
-    :return:
-        Index of the Nth occurrence in the string.
+    :param str s: Input string
+    :param char value: Input char to be searched.
+    :param int n: Nth occurrence of char to be searched.
+    :return: Index of the Nth occurrence in the string.
     :rtype: int
-
     """
     remaining = n
     for i, elt in enumerate(s):
@@ -572,13 +564,11 @@ def IndexOfNth(s, value, n):
 
 
 def IsValidBase64String(string_to_validate):
-    """Verifies if a string is a valid Base64 encoded string, after replacing '-' with '/'
+    """Verifies if a string is a valid Base64 encoded string, after
+    replacing '-' with '/'
 
-    :param string string_to_validate:
-        String to validate.
-
-    :return:
-        Whether given string is a valid base64 string or not.
+    :param string string_to_validate: String to validate.
+    :return: Whether given string is a valid base64 string or not.
     :rtype: str
     """
     # '-' is not supported char for decoding in Python(same as C# and Java) which has
