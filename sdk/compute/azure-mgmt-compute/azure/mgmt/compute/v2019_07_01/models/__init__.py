@@ -169,6 +169,7 @@ try:
     from ._models_py3 import VirtualMachineScaleSetDataDisk
     from ._models_py3 import VirtualMachineScaleSetExtension
     from ._models_py3 import VirtualMachineScaleSetExtensionProfile
+    from ._models_py3 import VirtualMachineScaleSetExtensionUpdate
     from ._models_py3 import VirtualMachineScaleSetIdentity
     from ._models_py3 import VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue
     from ._models_py3 import VirtualMachineScaleSetInstanceView
@@ -372,6 +373,7 @@ except (SyntaxError, ImportError):
     from ._models import VirtualMachineScaleSetDataDisk
     from ._models import VirtualMachineScaleSetExtension
     from ._models import VirtualMachineScaleSetExtensionProfile
+    from ._models import VirtualMachineScaleSetExtensionUpdate
     from ._models import VirtualMachineScaleSetIdentity
     from ._models import VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue
     from ._models import VirtualMachineScaleSetInstanceView
@@ -645,6 +647,7 @@ __all__ = [
     'VirtualMachineScaleSetDataDisk',
     'VirtualMachineScaleSetExtension',
     'VirtualMachineScaleSetExtensionProfile',
+    'VirtualMachineScaleSetExtensionUpdate',
     'VirtualMachineScaleSetIdentity',
     'VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue',
     'VirtualMachineScaleSetInstanceView',
