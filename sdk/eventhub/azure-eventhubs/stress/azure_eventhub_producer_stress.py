@@ -41,7 +41,7 @@ class StressTestRunner(object):
         self.argument_parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
         self.argument_parser.add_argument("--consumer", help="Consumer group name", default="$default")
         self.argument_parser.add_argument("--offset", help="Starting offset", default="-1")
-        self.argument_parser.add_argument("--partitions", help="Number of partitions. 0 means to get partitions from eventhubs", default="0")
+        self.argument_parser.add_argument("--partitions", help="Number of partitions. 0 means to get partitions from eventhubs", type=int, default=0)
         self.argument_parser.add_argument("--conn_str", help="EventHub connection string",
                             default=os.environ.get('EVENT_HUB_PERF_32_CONN_STR'))
         self.argument_parser.add_argument("--eventhub", help="Name of EventHub")
