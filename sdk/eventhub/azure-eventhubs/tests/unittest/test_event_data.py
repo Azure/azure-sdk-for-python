@@ -49,6 +49,6 @@ def test_app_properties():
 def test_event_data_batch():
     batch = EventDataBatch(max_size_in_bytes=100, partition_key="par")
     batch.add(EventData("A"))
-    assert batch.size == 89 and len(batch) == 1
+    assert batch.size_in_bytes == 89 and len(batch) == 1
     with pytest.raises(ValueError):
         batch.add(EventData("A"))
