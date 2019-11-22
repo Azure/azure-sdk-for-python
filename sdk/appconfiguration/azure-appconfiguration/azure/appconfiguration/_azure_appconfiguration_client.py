@@ -35,6 +35,7 @@ from ._utils import (
     prep_if_match,
     prep_if_none_match,
 )
+from ._sync_token import SyncTokenPolicy
 from ._user_agent import USER_AGENT
 
 
@@ -54,7 +55,7 @@ class AzureAppConfigurationClient:
 
     def __init__(self, base_url, credential, **kwargs):
         # type: (str, AppConfigConnectionStringCredential, dict) -> None
-        self._config = AzureAppConfigurationConfiguration(credential, **kwargs)
+        self._config = AzureAppConfigurationConfiguration(credential, base_url, **kwargs)
         self._config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs
         )
@@ -65,7 +66,7 @@ class AzureAppConfigurationClient:
             pipeline = self._create_appconfig_pipeline(**kwargs)
 
         self._impl = AzureAppConfiguration(
-            credentials=credential, base_url=base_url, pipeline=pipeline
+            credentials=credential, endpoint=base_url, pipeline=pipeline
         )
 
     @classmethod
@@ -106,6 +107,7 @@ class AzureAppConfigurationClient:
                 self._config.headers_policy,
                 self._config.user_agent_policy,
                 AppConfigRequestsCredentialsPolicy(self._config.credentials),
+                SyncTokenPolicy(),
                 self._config.retry_policy,
                 self._config.logging_policy,  # HTTP request/response log
                 DistributedTracingPolicy(**kwargs),

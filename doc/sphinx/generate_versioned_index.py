@@ -89,7 +89,8 @@ LANDING_PAGE_LOCATION = "ref/{}.rst"
 
 PACKAGE_REDIRECTIONS = {
     "azure-eventhubs": "azure-eventhub",
-    "azure-eventhubs-checkpointstoreblob-aio": "azure-eventhub-checkpointstoreblob-aio"
+    "azure-eventhubs-checkpointstoreblob-aio": "azure-eventhub-checkpointstoreblob-aio",
+    "azure-eventhubs-checkpointstoreblob": "azure-eventhub-checkpointstoreblob"
 }
 
 def read_config_file(config_path=CONFIG_FILE):

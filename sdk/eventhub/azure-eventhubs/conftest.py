@@ -21,7 +21,6 @@ if sys.version_info < (3, 5):
     collect_ignore.append("samples/async_samples")
     collect_ignore.append("examples/async_examples")
 
-# from azure.eventhub.client import EventHubClient
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub import EventHubProducerClient
 import uamqp

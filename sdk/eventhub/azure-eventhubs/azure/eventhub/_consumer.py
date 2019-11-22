@@ -101,7 +101,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
         self._last_received_event = None
 
-    def _create_handler(self):
+    def _create_handler(self, auth):
         source = Source(self._source)
         if self._offset is not None:
             source.set_filter(event_position_selector(self._offset, self._offset_inclusive))
@@ -113,7 +113,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         properties = create_properties(self._client._config.user_agent)  # pylint:disable=protected-access
         self._handler = ReceiveClient(
             source,
-            auth=self._client._create_auth(),  # pylint:disable=protected-access
+            auth=auth,
             debug=self._client._config.network_tracing,  # pylint:disable=protected-access
             prefetch=self._prefetch,
             link_properties=self._link_properties,

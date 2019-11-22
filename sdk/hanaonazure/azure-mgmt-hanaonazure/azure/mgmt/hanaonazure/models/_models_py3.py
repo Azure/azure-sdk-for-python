@@ -506,9 +506,18 @@ class SapMonitor(Resource):
     :ivar managed_resource_group_name: The name of the resource group the SAP
      Monitor resources get deployed into.
     :vartype managed_resource_group_name: str
-    :ivar log_analytics_workspace_arm_id: The ARM ID of the Log Analytics
+    :param log_analytics_workspace_arm_id: The ARM ID of the Log Analytics
      Workspace that is used for monitoring
-    :vartype log_analytics_workspace_arm_id: str
+    :type log_analytics_workspace_arm_id: str
+    :param enable_customer_analytics: The value indicating whether to send
+     analytics to Microsoft
+    :type enable_customer_analytics: bool
+    :param log_analytics_workspace_id: The workspace ID of the log analytics
+     workspace to be used for monitoring
+    :type log_analytics_workspace_id: str
+    :param log_analytics_workspace_shared_key: The shared key of the log
+     analytics workspace that is used for monitoring
+    :type log_analytics_workspace_shared_key: str
     """
 
     _validation = {
@@ -518,7 +527,6 @@ class SapMonitor(Resource):
         'tags': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'managed_resource_group_name': {'readonly': True},
-        'log_analytics_workspace_arm_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -539,9 +547,12 @@ class SapMonitor(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_resource_group_name': {'key': 'properties.managedResourceGroupName', 'type': 'str'},
         'log_analytics_workspace_arm_id': {'key': 'properties.logAnalyticsWorkspaceArmId', 'type': 'str'},
+        'enable_customer_analytics': {'key': 'properties.enableCustomerAnalytics', 'type': 'bool'},
+        'log_analytics_workspace_id': {'key': 'properties.logAnalyticsWorkspaceId', 'type': 'str'},
+        'log_analytics_workspace_shared_key': {'key': 'properties.logAnalyticsWorkspaceSharedKey', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, hana_subnet: str=None, hana_hostname: str=None, hana_db_name: str=None, hana_db_sql_port: int=None, hana_db_username: str=None, hana_db_password: str=None, hana_db_password_key_vault_url: str=None, hana_db_credentials_msi_id: str=None, key_vault_id: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, hana_subnet: str=None, hana_hostname: str=None, hana_db_name: str=None, hana_db_sql_port: int=None, hana_db_username: str=None, hana_db_password: str=None, hana_db_password_key_vault_url: str=None, hana_db_credentials_msi_id: str=None, key_vault_id: str=None, log_analytics_workspace_arm_id: str=None, enable_customer_analytics: bool=None, log_analytics_workspace_id: str=None, log_analytics_workspace_shared_key: str=None, **kwargs) -> None:
         super(SapMonitor, self).__init__(location=location, **kwargs)
         self.hana_subnet = hana_subnet
         self.hana_hostname = hana_hostname
@@ -554,7 +565,10 @@ class SapMonitor(Resource):
         self.key_vault_id = key_vault_id
         self.provisioning_state = None
         self.managed_resource_group_name = None
-        self.log_analytics_workspace_arm_id = None
+        self.log_analytics_workspace_arm_id = log_analytics_workspace_arm_id
+        self.enable_customer_analytics = enable_customer_analytics
+        self.log_analytics_workspace_id = log_analytics_workspace_id
+        self.log_analytics_workspace_shared_key = log_analytics_workspace_shared_key
 
 
 class StorageProfile(Model):

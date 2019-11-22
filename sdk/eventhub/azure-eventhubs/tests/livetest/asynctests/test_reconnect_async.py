@@ -8,8 +8,8 @@
 import asyncio
 import pytest
 
-from azure.eventhub import EventData, EventHubSharedKeyCredential
-from azure.eventhub.aio import EventHubProducerClient
+from azure.eventhub import EventData
+from azure.eventhub.aio import EventHubProducerClient, EventHubSharedKeyCredential
 
 import uamqp
 from uamqp import authentication
