@@ -44,6 +44,8 @@ __all__ = [
     "LifetimeAction",
     "CertificateContentType",
     "WellKnownIssuerNames",
+    "CertificateIssuer",
+    "IssuerProperties"
 ]
 
 from ._version import VERSION
