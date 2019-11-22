@@ -90,8 +90,7 @@ class ConnectionConfiguration(object):
     Common properties that can be configured on all transports. Found in the
     Configuration object.
 
-    :keyword int connection_timeout: A single float in seconds for the connection timeout. Defaults to 300 seconds.
-    :keyword int read_timeout: A single float in seconds for the read timeout. Defaults to 300 seconds.
+    :keyword int connection_timeout: The connect and read timeout value. Defaults to 100 seconds.
     :keyword bool connection_verify: SSL certificate verification. Enabled by default. Set to False to disable,
      alternatively can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs.
     :keyword str connection_cert: Client-side certificates. You can specify a local cert to use as client side
@@ -109,8 +108,7 @@ class ConnectionConfiguration(object):
     """
 
     def __init__(self, **kwargs):
-        self.timeout = kwargs.pop('connection_timeout', 300)
-        self.read_timeout = kwargs.pop('read_timeout', 300)
+        self.timeout = kwargs.pop('connection_timeout', 100)
         self.verify = kwargs.pop('connection_verify', True)
         self.cert = kwargs.pop('connection_cert', None)
         self.data_block_size = kwargs.pop('connection_data_block_size', 4096)
