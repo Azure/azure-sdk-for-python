@@ -52,6 +52,9 @@ class EventHubConsumerClient(ClientBaseAsync):
     :keyword str user_agent: The user agent that needs to be appended to the built in user agent string.
     :keyword int retry_total: The total number of attempts to redo the failed operation when an error happened. Default
      value is 3.
+    :keyword float idle_timeout: Timeout in seconds after which the underlying connection will close
+     if there is no further activity. By default the value is None and is determined by the service side when
+     to close an idle connection.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Event Hubs service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.eventhub.TransportType
@@ -118,7 +121,10 @@ class EventHubConsumerClient(ClientBaseAsync):
             event_position_inclusive=event_position_inclusive,
             owner_level=owner_level,
             prefetch=prefetch,
-            track_last_enqueued_event_properties=track_last_enqueued_event_properties, loop=loop)
+            idle_timeout=self._idle_timeout,
+            track_last_enqueued_event_properties=track_last_enqueued_event_properties,
+            loop=loop
+        )
         return handler
 
     @classmethod
@@ -152,6 +158,9 @@ class EventHubConsumerClient(ClientBaseAsync):
         :keyword str user_agent: The user agent that needs to be appended to the built in user agent string.
         :keyword int retry_total: The total number of attempts to redo the failed operation when an error happened.
          Default value is 3.
+        :keyword float idle_timeout: Timeout in seconds after which the underlying connection will close
+         if there is no further activity. By default the value is None and is determined by the service side when
+         to close an idle connection.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType

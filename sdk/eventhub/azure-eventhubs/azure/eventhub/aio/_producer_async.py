@@ -63,6 +63,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         keep_alive = kwargs.get("keep_alive", None)
         auto_reconnect = kwargs.get("auto_reconnect", True)
         loop = kwargs.get("loop", None)
+        idle_timeout = kwargs.get("idle_timeout", None)
 
         self.running = False
         self.closed = False
@@ -75,6 +76,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
         self._timeout = send_timeout
+        self._idle_timeout = (idle_timeout * 1000) if idle_timeout else None
         self._retry_policy = errors.ErrorPolicy(
             max_retries=self._client._config.max_retries, on_error=_error_handler)  # pylint:disable=protected-access
         self._reconnect_backoff = 1
@@ -96,6 +98,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             auth=auth,
             debug=self._client._config.network_tracing,  # pylint:disable=protected-access
             msg_timeout=self._timeout * 1000,
+            idle_timeout=self._idle_timeout,
             error_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
