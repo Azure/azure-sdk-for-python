@@ -42,6 +42,7 @@ def create_async_eventhub_consumer_client():
     event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
     eventhub_name = os.environ['EVENT_HUB_NAME']
     consumer = EventHubConsumerClient.from_connection_string(conn_str=event_hub_connection_str,
+                                                             consumer_group='$Default',
                                                              eventhub_name=eventhub_name)
     # [END create_eventhub_consumer_client_from_conn_str_async]
 
@@ -56,6 +57,7 @@ def create_async_eventhub_consumer_client():
     shared_access_key = os.environ['EVENT_HUB_SAS_KEY']
 
     consumer = EventHubConsumerClient(fully_qualified_namespace=fully_qualified_namespace,
+                                      consumer_group='$Default',
                                       eventhub_name=eventhub_name,
                                       credential=EventHubSharedKeyCredential(shared_access_policy, shared_access_key))
     # [END create_eventhub_consumer_client_async]
@@ -100,7 +102,7 @@ async def example_eventhub_async_send_and_receive():
             # Do asnchronous ops on received events
 
         async with consumer:
-            await consumer.receive(on_event=on_event, consumer_group="$default")
+            await consumer.receive(on_event=on_event)
         # [END eventhub_consumer_client_receive_async]
     finally:
         pass
@@ -145,6 +147,7 @@ async def example_eventhub_async_consumer_ops():
     from azure.eventhub.aio import EventHubConsumerClient
     consumer = EventHubConsumerClient.from_connection_string(
         conn_str=event_hub_connection_str,
+        consumer_group='$Default',
         eventhub_name=eventhub_name
     )
 
@@ -157,7 +160,7 @@ async def example_eventhub_async_consumer_ops():
     # The receive method is a coroutine method which can be called by `await consumer.receive(...)` and it will block.
     # so execute it in an async task to better demonstrate how to stop the receiving by calling he close method.
 
-    recv_task = asyncio.ensure_future(consumer.receive(on_event=on_event, consumer_group='$Default'))
+    recv_task = asyncio.ensure_future(consumer.receive(on_event=on_event))
     await asyncio.sleep(3)  # keep receiving for 3 seconds
     recv_task.cancel()  # stop receiving
 

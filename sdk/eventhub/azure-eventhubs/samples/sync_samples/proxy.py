@@ -10,12 +10,12 @@ An example to show sending and receiving events behind a proxy
 """
 import os
 import time
-from azure.eventhub import EventPosition, EventData, EventHubConsumerClient, EventHubProducerClient
+from azure.eventhub import EventData, EventHubConsumerClient, EventHubProducerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-EVENT_POSITION = EventPosition("-1")
+EVENT_POSITION = "-1"
 PARTITION = "0"
 HTTP_PROXY = {
     'proxy_hostname': '127.0.0.1',  # proxy hostname
@@ -32,7 +32,7 @@ def on_event(partition_context, event):
 
 
 consumer_client = EventHubConsumerClient.from_connection_string(
-    conn_str=CONNECTION_STR, eventhub_name=EVENTHUB_NAME, http_proxy=HTTP_PROXY)
+    conn_str=CONNECTION_STR, consumer_group='$Default', eventhub_name=EVENTHUB_NAME, http_proxy=HTTP_PROXY)
 producer_client = EventHubProducerClient.from_connection_string(
     conn_str=CONNECTION_STR, eventhub_name=EVENTHUB_NAME, http_proxy=HTTP_PROXY)
 
@@ -45,11 +45,10 @@ with producer_client:
             # EventDataBatch object reaches max_size.
             # New EventDataBatch object can be created here to send more data
             break
-    producer.send_batch(event_data_batch)
+    producer_client.send_batch(event_data_batch)
     print('Finish sending.')
 
 with consumer_client:
-    receiving_time = 5
-    consumer_client.receive(on_event=on_event, consumer_group='$Default')
+    consumer_client.receive(on_event=on_event)
     print('Finish receiving.')
 
