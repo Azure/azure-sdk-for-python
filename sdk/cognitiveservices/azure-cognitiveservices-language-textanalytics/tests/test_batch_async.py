@@ -462,6 +462,38 @@ class BatchTextAnalyticsTestAsync(AsyncCognitiveServiceTestCase):
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
     @AsyncCognitiveServiceTestCase.await_prepared_test
+    async def test_whole_batch_language_hint_and_per_item_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
+
+        def callback(resp):
+            lang = resp.http_request.body.count("fr")
+            self.assertEqual(lang, 3)
+
+        docs = [{"id": "1", "language": "fr", "text": "I will go to the park."},
+                {"id": "2", "language": "fr", "text": "I did not like the hotel we stayed it."},
+                {"id": "3", "language": "fr", "text": "The restaurant had really good food."}]
+
+        response = await text_analytics.analyze_sentiment(docs, language="en", response_hook=callback)
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    @AsyncCognitiveServiceTestCase.await_prepared_test
+    async def test_whole_batch_country_hint_and_per_item_hint_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
+        text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
+
+        def callback(resp):
+            country = resp.http_request.body.count("US")
+            self.assertEqual(country, 3)
+
+        docs = [{"id": "1", "country_hint": "US", "text": "I will go to the park."},
+                {"id": "2", "country_hint": "US", "text": "I did not like the hotel we stayed it."},
+                {"id": "3", "country_hint": "US", "text": "The restaurant had really good food."}]
+
+        response = await text_analytics.detect_language(docs, country_hint="CA", response_hook=callback)
+
+    @ResourceGroupPreparer()
+    @CognitiveServicesAccountPreparer(name_prefix="pycog")
+    @AsyncCognitiveServiceTestCase.await_prepared_test
     async def test_bad_document_input_async(self, resource_group, location, cognitiveservices_account, cognitiveservices_account_key):
         text_analytics = TextAnalyticsClient(cognitiveservices_account, cognitiveservices_account_key)
 

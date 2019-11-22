@@ -8,18 +8,67 @@ from ._generated.models._models import LanguageInput as GeneratedLanguageInput
 from ._generated.models._models import MultiLanguageInput as GeneratedMultiLanguageInput
 
 
-class DetectedLanguage(object):
+class DictMixin(object):
+
+    def __setitem__(self, key, item):
+        self.__dict__[key] = item
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __repr__(self):
+        return str(self)
+
+    def __len__(self):
+        return len(self.keys())
+
+    def __delitem__(self, key):
+        self.__dict__[key] = None
+
+    def __eq__(self, other):
+        """Compare objects by comparing all attributes."""
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other):
+        """Compare objects by comparing all attributes."""
+        return not self.__eq__(other)
+
+    def __str__(self):
+        return str({k: v for k, v in self.__dict__.items() if not k.startswith('_')})
+
+    def has_key(self, k):
+        return k in self.__dict__
+
+    def update(self, *args, **kwargs):
+        return self.__dict__.update(*args, **kwargs)
+
+    def keys(self):
+        return [k for k in self.__dict__ if not k.startswith('_')]
+
+    def values(self):
+        return [v for k, v in self.__dict__.items() if not k.startswith('_')]
+
+    def items(self):
+        return [(k, v) for k, v in self.__dict__.items() if not k.startswith('_')]
+
+    def get(self, key, default=None):
+        if key in self.__dict__:
+            return self.__dict__[key]
+        return default
+
+
+class DetectedLanguage(DictMixin):
     """DetectedLanguage.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. Long name of a detected language (e.g. English,
+    :param name: Long name of a detected language (e.g. English,
      French).
     :type name: str
-    :param iso6391_name: Required. A two letter representation of the detected
+    :param iso6391_name: A two letter representation of the detected
      language according to the ISO 639-1 standard (e.g. en, fr).
     :type iso6391_name: str
-    :param score: Required. A confidence score between 0 and 1. Scores close
+    :param score: A confidence score between 0 and 1. Scores close
      to 1 indicate 100% certainty that the identified language is true.
     :type score: float
     """
@@ -36,17 +85,15 @@ class DetectedLanguage(object):
         )
 
 
-class DocumentEntities(object):
+class DocumentEntities(DictMixin):
     """DocumentEntities.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. Unique, non-empty document identifier.
+    :param id: Unique, non-empty document identifier.
     :type id: str
-    :param entities: Required. Recognized entities in the document.
+    :param entities: Recognized entities in the document.
     :type entities:
      list[~azure.cognitiveservices.language.textanalytics.models.Entity]
-    :param statistics: if showStats=true was specified in the request this
+    :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
      ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
@@ -61,17 +108,15 @@ class DocumentEntities(object):
         self.is_error = False
 
 
-class DocumentLanguage(object):
+class DocumentLanguage(DictMixin):
     """DocumentLanguage.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. Unique, non-empty document identifier.
+    :param id: Unique, non-empty document identifier.
     :type id: str
-    :param detected_language: Required. The extracted language.
+    :param detected_language: The extracted language.
     :type detected_language:
      ~azure.cognitiveservices.language.textanalytics.models.DetectedLanguage
-    :param statistics: if showStats=true was specified in the request this
+    :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
      ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
@@ -86,24 +131,22 @@ class DocumentLanguage(object):
         self.is_error = False
 
 
-class Entity(object):
+class Entity(DictMixin):
     """Entity.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param text: Required. Entity text as appears in the request.
+    :param text: Entity text as appears in the request.
     :type text: str
-    :param type: Required. Entity type, such as Person/Location/Org/SSN etc
+    :param type: Entity type, such as Person/Location/Org/SSN etc
     :type type: str
     :param subtype: Entity sub type, such as Age/Year/TimeRange etc
     :type subtype: str
-    :param offset: Required. Start position (in Unicode characters) for the
+    :param offset: Start position (in Unicode characters) for the
      entity text.
     :type offset: int
-    :param length: Required. Length (in Unicode characters) for the entity
+    :param length: Length (in Unicode characters) for the entity
      text.
     :type length: int
-    :param score: Required. Confidence score between 0 and 1 of the extracted
+    :param score: Confidence score between 0 and 1 of the extracted
      entity.
     :type score: float
     """
@@ -128,17 +171,14 @@ class Entity(object):
         )
 
 
-class Error(object):
+class Error(DictMixin):
     """Error.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param code: Required. Error code. Possible values include:
+    :param code: Error code. Possible values include:
      'invalidRequest', 'invalidArgument', 'internalServerError',
      'serviceUnavailable'
-    :type code: str or
-     ~azure.cognitiveservices.language.textanalytics.models.enum
-    :param message: Required. Error message.
+    :type code: str
+    :param message: Error message.
     :type message: str
     :param target: Error target.
     :type target: str
@@ -162,18 +202,15 @@ class Error(object):
         self.is_error = True
 
 
-class InnerError(object):
+class InnerError(DictMixin):
     """InnerError.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param code: Required. Error code. Possible values include:
+    :param code: Error code. Possible values include:
      'invalidParameterValue', 'invalidRequestBodyFormat', 'emptyRequest',
      'missingInputRecords', 'invalidDocument', 'modelVersionIncorrect',
      'invalidDocumentBatch', 'unsupportedLanguageCode', 'invalidCountryHint'
-    :type code: str or
-     ~azure.cognitiveservices.language.textanalytics.models.enum
-    :param message: Required. Error message.
+    :type code: str
+    :param message: Error message.
     :type message: str
     :param target: Error target.
     :type target: str
@@ -189,18 +226,16 @@ class InnerError(object):
         self.innererror = kwargs.get("innererror", None)
 
 
-class DocumentKeyPhrases(object):
+class DocumentKeyPhrases(DictMixin):
     """DocumentKeyPhrases.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. Unique, non-empty document identifier.
+    :param id: Unique, non-empty document identifier.
     :type id: str
-    :param key_phrases: Required. A list of representative words or phrases.
+    :param key_phrases: A list of representative words or phrases.
      The number of key phrases returned is proportional to the number of words
      in the input document.
     :type key_phrases: list[str]
-    :param statistics: if showStats=true was specified in the request this
+    :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
      ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
@@ -215,17 +250,15 @@ class DocumentKeyPhrases(object):
         self.is_error = False
 
 
-class DocumentLinkedEntities(object):
+class DocumentLinkedEntities(DictMixin):
     """DocumentLinkedEntities.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. Unique, non-empty document identifier.
+    :param id: Unique, non-empty document identifier.
     :type id: str
-    :param entities: Required. Recognized well-known entities in the document.
+    :param entities: Recognized well-known entities in the document.
     :type entities:
      list[~azure.cognitiveservices.language.textanalytics.models.LinkedEntity]
-    :param statistics: if showStats=true was specified in the request this
+    :param statistics: If show_stats=true was specified in the request this
      field will contain information about the document payload.
     :type statistics:
      ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
@@ -240,25 +273,23 @@ class DocumentLinkedEntities(object):
         self.is_error = False
 
 
-class DocumentSentiment(object):
+class DocumentSentiment(DictMixin):
     """DocumentSentiment.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. Unique, non-empty document identifier.
+    :param id: Unique, non-empty document identifier.
     :type id: str
-    :param sentiment: Required. Predicted sentiment for document (Negative,
+    :param sentiment: Predicted sentiment for document (Negative,
      Neutral, Positive, or Mixed). Possible values include: 'positive',
      'neutral', 'negative', 'mixed'
-    :type sentiment: str or
-     ~azure.cognitiveservices.language.textanalytics.models.enum
-    :param statistics: The document statistics.
+    :type sentiment: str
+    :param statistics: If show_stats=true was specified in the request this
+     field will contain information about the document payload.
     :type statistics:
      ~azure.cognitiveservices.language.textanalytics.models.DocumentStatistics
-    :param document_scores: Required. Document level sentiment confidence
+    :param document_scores: Document level sentiment confidence
      scores between 0 and 1 for each sentiment class.
-    :type document_scores: object
-    :param sentences: Required. Sentence level sentiment analysis.
+    :type document_scores: dict
+    :param sentences: Sentence level sentiment analysis.
     :type sentences:
      list[~azure.cognitiveservices.language.textanalytics.models.SentenceSentiment]
     :param bool is_error: Boolean check for error item when iterating over list of
@@ -274,16 +305,14 @@ class DocumentSentiment(object):
         self.is_error = False
 
 
-class DocumentStatistics(object):
-    """if showStats=true was specified in the request this field will contain
+class DocumentStatistics(DictMixin):
+    """If showStats=true was specified in the request this field will contain
     information about the document payload.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param characters_count: Required. Number of text elements recognized in
+    :param characters_count: Number of text elements recognized in
      the document.
     :type characters_count: int
-    :param transactions_count: Required. Number of transactions for the
+    :param transactions_count: Number of transactions for the
      document.
     :type transactions_count: int
     """
@@ -302,15 +331,13 @@ class DocumentStatistics(object):
         )
 
 
-class DocumentError(object):
+class DocumentError(DictMixin):
     """DocumentError.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. Document Id.
+    :param id: Document Id.
     :type id: str
-    :param error: Required. Document Error.
-    :type error: object
+    :param error: Document Error.
+    :type error: dict
     :param bool is_error: Boolean check for error item when iterating over list of
      results. Always True for an instance of a DocumentError.
     """
@@ -322,15 +349,16 @@ class DocumentError(object):
 
 
 class LanguageInput(GeneratedLanguageInput):
-    """LanguageInput.
-
-    All required parameters must be populated in order to send to Azure.
+    """Contains an input document to be analyzed for type of language.
 
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
-    :param text: Required.
+    :param text: Required. The input text to process.
     :type text: str
-    :param country_hint:
+    :param country_hint: A country hint to help better detect
+     the language of the text. Accepts two letter country codes
+     specified by ISO 3166-1 alpha-2. If empty string specified
+     will default to "US".
     :type country_hint: str
     """
 
@@ -341,25 +369,23 @@ class LanguageInput(GeneratedLanguageInput):
         self.country_hint = kwargs.get("country_hint", None)
 
 
-class LinkedEntity(object):
+class LinkedEntity(DictMixin):
     """LinkedEntity.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. Entity Linking formal name.
+    :param name: Entity Linking formal name.
     :type name: str
-    :param matches: Required. List of instances this entity appears in the
+    :param matches: List of instances this entity appears in the
      text.
     :type matches:
      list[~azure.cognitiveservices.language.textanalytics.models.Match]
-    :param language: Required. Language used in the data source.
+    :param language: Language used in the data source.
     :type language: str
     :param id: Unique identifier of the recognized entity from the data
      source.
     :type id: str
-    :param url: Required. URL for the entity's page from the data source.
+    :param url: URL for the entity's page from the data source.
     :type url: str
-    :param data_source: Required. Data source used to extract entity linking,
+    :param data_source: Data source used to extract entity linking,
      such as Wiki/Bing etc.
     :type data_source: str
     :param bool is_error: Boolean check for error item when iterating over list of
@@ -387,21 +413,19 @@ class LinkedEntity(object):
         )
 
 
-class Match(object):
+class Match(DictMixin):
     """Match.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param score: Required. (Optional) If a well-known item is recognized, a
+    :param score: If a well-known item is recognized, a
      decimal number denoting the confidence level between 0 and 1 will be
      returned.
     :type score: float
-    :param text: Required. Entity text as appears in the request.
+    :param text: Entity text as appears in the request.
     :type text: str
-    :param offset: Required. Start position (in Unicode characters) for the
+    :param offset: Start position (in Unicode characters) for the
      entity match text.
     :type offset: int
-    :param length: Required. Length (in Unicode characters) for the entity
+    :param length: Length (in Unicode characters) for the entity
      match text.
     :type length: int
     """
@@ -422,13 +446,11 @@ class Match(object):
 class MultiLanguageInput(GeneratedMultiLanguageInput):
     """Contains an input document to be analyzed by the service.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param id: Required. A unique, non-empty document identifier.
     :type id: str
     :param text: Required. The input text to process.
     :type text: str
-    :param language: (Optional) This is the 2 letter ISO 639-1 representation
+    :param language: This is the 2 letter ISO 639-1 representation
      of a language. For example, use "en" for English; "es" for Spanish etc. If
      not set, use "en" for English as default.
     :type language: str
@@ -441,23 +463,20 @@ class MultiLanguageInput(GeneratedMultiLanguageInput):
         self.language = kwargs.get("language", None)
 
 
-class RequestStatistics(object):
-    """if showStats=true was specified in the request this field will contain
-    information about the request payload.
+class RequestStatistics(DictMixin):
+    """If show_stats=true was specified in the request this field will contain
+    information about the request payload. Note: This object is not returned
+    in the response and needs to be retrieved by a response hook.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param documents_count: Required. Number of documents submitted in the
-     request.
+    :param documents_count: Number of documents submitted in the request.
     :type documents_count: int
-    :param valid_documents_count: Required. Number of valid documents. This
+    :param valid_documents_count: Number of valid documents. This
      excludes empty, over-size limit or non-supported languages documents.
     :type valid_documents_count: int
-    :param erroneous_documents_count: Required. Number of invalid documents.
+    :param erroneous_documents_count: Number of invalid documents.
      This includes empty, over-size limit or non-supported languages documents.
     :type erroneous_documents_count: int
-    :param transactions_count: Required. Number of transactions for the
-     request.
+    :param transactions_count: Number of transactions for the request.
     :type transactions_count: long
     """
 
@@ -479,22 +498,19 @@ class RequestStatistics(object):
         )
 
 
-class SentenceSentiment(object):
+class SentenceSentiment(DictMixin):
     """SentenceSentiment.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param sentiment: Required. The predicted Sentiment for the sentence.
+    :param sentiment: The predicted Sentiment for the sentence.
      Possible values include: 'positive', 'neutral', 'negative'
-    :type sentiment: str or
-     ~azure.cognitiveservices.language.textanalytics.models.enum
-    :param sentence_scores: Required. The sentiment confidence score between 0
+    :type sentiment: str
+    :param sentence_scores: The sentiment confidence score between 0
      and 1 for the sentence for all classes.
-    :type sentence_scores: object
-    :param offset: Required. The sentence offset from the start of the
+    :type sentence_scores: dict
+    :param offset: The sentence offset from the start of the
      document.
     :type offset: int
-    :param length: Required. The length of the sentence by Unicode standard.
+    :param length: The length of the sentence by Unicode standard.
     :type length: int
     :param warnings: The warnings generated for the sentence.
     :type warnings: list[str]

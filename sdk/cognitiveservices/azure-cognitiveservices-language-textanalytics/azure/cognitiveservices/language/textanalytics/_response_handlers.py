@@ -48,6 +48,7 @@ def process_batch_error(error):
     if error.status_code == 401:
         raise_error = ClientAuthenticationError
     error_message = error.message
+    error_code = error.status_code
     error_body = None
 
     try:
@@ -59,13 +60,15 @@ def process_batch_error(error):
         error_resp = error_body["error"]
         try:
             error_message = error_resp["innerError"]["message"]
+            error_code = error_resp["innerError"]["code"]
         except KeyError:
             error_message = error_resp["message"]
+            error_code = error_resp["code"]
 
-        error_message += "\nErrorCode:{}".format(error.status_code)
+        error_message += "\nErrorCode:{}".format(error_code)
 
     error = raise_error(message=error_message, response=error.response)
-    error.error_code = error.status_code
+    error.error_code = error_code
     raise error
 
 

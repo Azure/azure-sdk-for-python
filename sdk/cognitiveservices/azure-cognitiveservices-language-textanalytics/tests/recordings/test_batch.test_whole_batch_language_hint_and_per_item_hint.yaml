@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
+      "fr"}, {"id": "2", "text": "I did not like the hotel we stayed it.", "language":
+      "fr"}, {"id": "3", "text": "The restaurant had really good food.", "language":
+      "fr"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '240'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-core/1.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0) azsdk-python-azure-cognitiveservices-language-textanalytics/3.0.0b1
+      X-BingApis-SDK-Client:
+      - Python-SDK
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","sentiment":"neutral","documentScores":{"positive":0.0018960759043694,"neutral":0.99725985527038574,"negative":0.0008440568926744},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.0018960759043694,"neutral":0.99725985527038574,"negative":0.0008440568926744},"offset":0,"length":22}]},{"id":"2","sentiment":"neutral","documentScores":{"positive":0.005002910271287,"neutral":0.84634476900100708,"negative":0.1486522555351257},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.005002910271287,"neutral":0.84634476900100708,"negative":0.1486522555351257},"offset":0,"length":38}]},{"id":"3","sentiment":"neutral","documentScores":{"positive":0.34965091943740839,"neutral":0.61871951818466187,"negative":0.0316295698285103},"sentences":[{"sentiment":"neutral","sentenceScores":{"positive":0.34965091943740839,"neutral":0.61871951818466187,"negative":0.0316295698285103},"offset":0,"length":36}]}],"errors":[],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id:
+      - 5e763f6f-48b6-460f-b94c-762bef256551
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=3
+      date:
+      - Fri, 22 Nov 2019 01:00:38 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-aml-ta-request-id:
+      - 609c0ff5-cbdc-4c55-a8f9-528df39823a3
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '76'
+    status:
+      code: 200
+      message: OK
+version: 1
