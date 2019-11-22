@@ -141,17 +141,13 @@ class EventHubProducerClient(ClientBase):
         """
         return super(EventHubProducerClient, cls).from_connection_string(conn_str, **kwargs)
 
-    def send(self, event_data, **kwargs):
-        # type: (Union[EventData, EventDataBatch, Iterable[EventData]], Any) -> None
+    def send_batch(self, event_data_batch, **kwargs):
+        # type: (EventDataBatch, Any) -> None
         """
         Sends event data and blocks until acknowledgement is received or operation times out.
 
-        :param event_data: The event to be sent. It can be an EventData object, or iterable of EventData objects.
-        :type event_data: ~azure.eventhub.EventData, ~azure.eventhub.EventDataBatch, EventData Iterator/Generator/list
-        :keyword str partition_key: With the given partition_key, event data will land to
-         a particular partition of the Event Hub decided by the service.
-        :keyword str partition_id: The specific partition ID to send to. Default is None, in which case the service
-         will assign to all partitions using round-robin.
+        :param event_data_batch: The EventDataBatch object to be sent.
+        :type event_data_batch: ~azure.eventhub.EventDataBatch
         :keyword float timeout: The maximum wait time to send the event data.
          If not specified, the default wait time specified when the producer was created will be used.
         :rtype: None
@@ -172,21 +168,25 @@ class EventHubProducerClient(ClientBase):
                 :caption: Sends event data
 
         """
-        partition_id = kwargs.pop("partition_id", None) or ALL_PARTITIONS
+        partition_id = event_data_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
         send_timeout = kwargs.pop("timeout", None)
         try:
-            self._producers[partition_id].send(event_data, **kwargs)
+            self._producers[partition_id].send(event_data_batch, timeout=send_timeout)
         except (KeyError, AttributeError, EventHubError):
             self._start_producer(partition_id, send_timeout)
-            self._producers[partition_id].send(event_data, **kwargs)
+            self._producers[partition_id].send(event_data_batch, timeout=send_timeout)
 
-    def create_batch(self, max_size=None):
-        # type:(int) -> EventDataBatch
+    def create_batch(self, **kwargs):
+        # type:(Any) -> EventDataBatch
         """
         Create an EventDataBatch object with max size being max_size.
         The max_size should be no greater than the max allowed message size defined by the service side.
 
-        :param int max_size: The maximum size of bytes data that an EventDataBatch object can hold.
+        :keyword str partition_id: The specific partition ID to send to. Default is None, in which case the service
+         will assign to all partitions using round-robin.
+        :keyword str partition_key: With the given partition_key, event data will land to
+         a particular partition of the Event Hub decided by the service.
+        :keyword int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold.
         :rtype: ~azure.eventhub.EventDataBatch
 
         .. admonition:: Example:
@@ -199,15 +199,24 @@ class EventHubProducerClient(ClientBase):
                 :caption: Create EventDataBatch object within limited size
 
         """
-        # pylint: disable=protected-access
         if not self._max_message_size_on_link:
             self._get_max_mesage_size()
 
-        if max_size and max_size > self._max_message_size_on_link:
-            raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
-                             .format(max_size, self._max_message_size_on_link))
+        max_size_in_bytes = kwargs.get("max_size_in_bytes", None)
+        partition_id = kwargs.get("partition_id", None)
+        partition_key = kwargs.get("partition_key", None)
 
-        return EventDataBatch(max_size=(max_size or self._max_message_size_on_link))
+        if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
+            raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
+                             .format(max_size_in_bytes, self._max_message_size_on_link))
+
+        event_data_batch = EventDataBatch(
+            max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
+            partition_id=partition_id,
+            partition_key=partition_key
+        )
+
+        return event_data_batch
 
     def close(self):
         # type: () -> None

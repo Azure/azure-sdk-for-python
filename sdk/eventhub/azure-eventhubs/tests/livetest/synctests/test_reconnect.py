@@ -17,13 +17,17 @@ def test_send_with_long_interval_sync(live_eventhub, sleep):
     sender = EventHubProducerClient(live_eventhub['hostname'], live_eventhub['event_hub'],
                                     EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key']))
     with sender:
-        sender.send(EventData(b"A single event"))
+        batch = sender.create_batch()
+        batch.add(EventData(b"A single event"))
+        sender.send_batch(batch)
         for _ in range(1):
             if sleep:
                 time.sleep(300)
             else:
                 sender._producers[-1]._handler._connection._conn.destroy()
-            sender.send(EventData(b"A single event"))
+            batch = sender.create_batch()
+            batch.add(EventData(b"A single event"))
+            sender.send_batch(batch)
         partition_ids = sender.get_partition_ids()
 
     received = []

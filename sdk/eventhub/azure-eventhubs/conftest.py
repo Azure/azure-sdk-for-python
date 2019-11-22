@@ -23,7 +23,6 @@ if sys.version_info < (3, 5):
 
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub import EventHubProducerClient
-from azure.eventhub import EventPosition
 import uamqp
 from uamqp import authentication
 

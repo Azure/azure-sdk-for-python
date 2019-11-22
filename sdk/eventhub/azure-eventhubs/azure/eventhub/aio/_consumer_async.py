@@ -12,9 +12,9 @@ from uamqp import ReceiveClientAsync, Source  # type: ignore
 from uamqp.compat import queue
 
 from ._client_base_async import ConsumerProducerMixin
-from .._common import EventData, EventPosition
+from .._common import EventData
 from ..exceptions import _error_handler
-from .._utils import create_properties, trace_link_message
+from .._utils import create_properties, trace_link_message, event_position_selector
 from .._constants import (
     EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
@@ -51,7 +51,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         :param source: The source EventHub from which to receive events.
         :type source: ~uamqp.address.Source
         :param event_position: The position from which to start receiving.
-        :type event_position: ~azure.eventhub.common.EventPosition
+        :type event_position: int, str, datetime.datetime
         :param prefetch: The number of events to prefetch from the service
          for processing. Default is 300.
         :type prefetch: int
@@ -84,6 +84,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._client = client
         self._source = source
         self._offset = event_position
+        self._offset_inclusive = kwargs.get("event_position_inclusive", False)
         self._prefetch = prefetch
         self._owner_level = owner_level
         self._keep_alive = keep_alive
@@ -101,14 +102,13 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._link_properties[types.AMQPSymbol(TIMEOUT_SYMBOL)] = types.AMQPLong(int(link_property_timeout_ms))
         self._handler = None
         self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
-        self._last_enqueued_event_properties = {}
         self._event_queue = queue.Queue()
         self._last_received_event = None
 
     def _create_handler(self, auth):
         source = Source(self._source)
         if self._offset is not None:
-            source.set_filter(self._offset._selector())  # pylint:disable=protected-access
+            source.set_filter(event_position_selector(self._offset, self._offset_inclusive))
         desired_capabilities = None
         if self._track_last_enqueued_event_properties:
             symbol_array = [types.AMQPSymbol(RECEIVER_RUNTIME_METRIC_SYMBOL)]
@@ -166,7 +166,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 if not self.running:  # exit by close
                     return
                 if self._last_received_event:
-                    self._offset = EventPosition(self._last_received_event.offset)
+                    self._offset = self._last_received_event.offset
                 last_exception = await self._handle_exception(exception)
                 retried_times += 1
                 if retried_times > max_retries:

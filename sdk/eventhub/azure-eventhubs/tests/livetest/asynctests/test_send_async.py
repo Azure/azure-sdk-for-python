@@ -25,9 +25,10 @@ async def test_send_with_partition_key_async(connstr_receivers):
         for partition in [b"a", b"b", b"c", b"d", b"e", b"f"]:
             partition_key = b"test_partition_" + partition
             for i in range(50):
-                data = EventData(str(data_val))
+                batch = await client.create_batch(partition_key=partition_key)
+                batch.add(EventData(str(data_val)))
                 data_val += 1
-                await client.send(data, partition_key=partition_key)
+                await client.send_batch(batch)
 
     found_partition_keys = {}
     for index, partition in enumerate(receivers):
@@ -48,7 +49,9 @@ async def test_send_and_receive_small_body_async(connstr_receivers, payload):
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(connection_str)
     async with client:
-        await client.send(EventData(payload))
+        batch = await client.create_batch()
+        batch.add(EventData(payload))
+        await client.send_batch(batch)
     received = []
     for r in receivers:
         received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=5000)])
@@ -63,7 +66,9 @@ async def test_send_partition_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(connection_str)
     async with client:
-        await client.send(EventData(b"Data"), partition_id="1")
+        batch = await client.create_batch(partition_id="1")
+        batch.add(EventData(b"Data"))
+        await client.send_batch(batch)
 
     partition_0 = receivers[0].receive_message_batch(timeout=5000)
     assert len(partition_0) == 0
@@ -77,8 +82,10 @@ async def test_send_non_ascii_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(connection_str)
     async with client:
-        await client.send(EventData(u"é,è,à,ù,â,ê,î,ô,û"), partition_id="0")
-        await client.send(EventData(json.dumps({"foo": u"漢字"})), partition_id="0")
+        batch = await client.create_batch(partition_id="0")
+        batch.add(EventData(u"é,è,à,ù,â,ê,î,ô,û"))
+        batch.add(EventData(json.dumps({"foo": u"漢字"})))
+        await client.send_batch(batch)
     await asyncio.sleep(1)
     partition_0 = [EventData._from_message(x) for x in receivers[0].receive_message_batch(timeout=5000)]
     assert len(partition_0) == 2
@@ -97,10 +104,15 @@ async def test_send_multiple_partition_with_app_prop_async(connstr_receivers):
     async with client:
         ed0 = EventData(b"Message 0")
         ed0.properties = app_prop
-        await client.send(ed0, partition_id="0")
+        batch = await client.create_batch(partition_id="0")
+        batch.add(ed0)
+        await client.send_batch(batch)
+
         ed1 = EventData(b"Message 1")
         ed1.properties = app_prop
-        await client.send(ed1, partition_id="1")
+        batch = await client.create_batch(partition_id="1")
+        batch.add(ed1)
+        await client.send_batch(batch)
 
     partition_0 = [EventData._from_message(x) for x in receivers[0].receive_message_batch(timeout=5000)]
     assert len(partition_0) == 1
@@ -118,8 +130,10 @@ async def test_send_over_websocket_async(connstr_receivers):
                                                            transport_type=TransportType.AmqpOverWebsocket)
 
     async with client:
+        batch = await client.create_batch()
         for i in range(20):
-            await client.send(EventData("Event Number {}".format(i)))
+            batch.add(EventData("Event Number {}".format(i)))
+        await client.send_batch(batch)
 
     time.sleep(1)
     received = []
@@ -131,7 +145,6 @@ async def test_send_over_websocket_async(connstr_receivers):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_with_create_event_batch_async(connstr_receivers):
-    pytest.skip("Waiting on uAMQP release")
     connection_str, receivers = connstr_receivers
     app_prop_key = "raw_prop"
     app_prop_value = "raw_value"
@@ -139,15 +152,15 @@ async def test_send_with_create_event_batch_async(connstr_receivers):
     client = EventHubProducerClient.from_connection_string(connection_str,
                                                            transport_type=TransportType.AmqpOverWebsocket)
     async with client:
-        event_data_batch = await client.create_batch(max_size=100000)
+        event_data_batch = await client.create_batch(max_size_in_bytes=100000)
         while True:
             try:
                 ed = EventData('A single event data')
                 ed.properties = app_prop
-                event_data_batch.try_add(ed)
+                event_data_batch.add(ed)
             except ValueError:
                 break
-        await client.send(event_data_batch)
+        await client.send_batch(event_data_batch)
         received = []
         for r in receivers:
             received.extend(r.receive_message_batch(timeout=5000))
