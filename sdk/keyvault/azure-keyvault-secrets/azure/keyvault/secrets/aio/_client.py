@@ -320,8 +320,12 @@ class SecretClient(AsyncKeyVaultClientBase):
     async def purge_deleted_secret(self, name: str, **kwargs: "Any") -> None:
         """Permanently delete a deleted secret. Possible only in vaults with soft-delete enabled.
 
-        If the vault doesn't have soft-delete enabled, :func:`delete_secret` is permanent, and this method will raise
-        an error.
+        Performs an irreversible deletion of the specified secret, without
+        possibility for recovery. The operation is not available if the recovery
+        level does not specified 'Purgeable'. This method is only necessary for
+        immediate purging of a secret, as a secret will still eventually
+        purge on its :py:attr:`~azure.keyvault.secrets.DeletedSecret.scheduled_purge_date`
+        without calling this method.
 
         Requires secrets/purge permission.
 

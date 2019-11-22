@@ -272,14 +272,16 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def purge_deleted_certificate(self, certificate_name, **kwargs):
         # type: (str, **Any) -> None
-        """Permanently deletes the specified deleted certificate.
+        """Permanently delete a certificate. Possible only in vaults with soft-delete enabled.
 
         Performs an irreversible deletion of the specified certificate, without
         possibility for recovery. The operation is not available if the recovery
         level does not specified 'Purgeable'. This method is only necessary for
         immediate purging of a certificate, as a certificate will still eventually
         purge on its :py:attr:`~azure.keyvault.certificates.DeletedCertificate.scheduled_purge_date`
-        without calling this method. This operation requires the certificate/purge permission.
+        without calling this method.
+
+        Requires certificates/purge permission.
 
         :param str certificate_name: The name of the certificate
         :return: None

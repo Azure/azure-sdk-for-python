@@ -318,8 +318,12 @@ class KeyClient(AsyncKeyVaultClientBase):
     async def purge_deleted_key(self, name: str, **kwargs: "Any") -> None:
         """Permanently delete a deleted key. Only possible in a vault with soft-delete enabled.
 
-        If the vault does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will
-        return an error.
+        Performs an irreversible deletion of the specified key, without
+        possibility for recovery. The operation is not available if the recovery
+        level does not specified 'Purgeable'. This method is only necessary for
+        immediate purging of a key, as a key will still eventually
+        purge on its :py:attr:`~azure.keyvault.keys.DeletedKey.scheduled_purge_date`
+        without calling this method.
 
         Requires keys/purge permission.
 
