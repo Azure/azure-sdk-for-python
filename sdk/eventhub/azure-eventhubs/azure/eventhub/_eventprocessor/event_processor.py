@@ -81,11 +81,13 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                         self._partition_contexts[partition_id] = partition_context
 
                     checkpoint = checkpoints.get(partition_id) if checkpoints else None
-                    initial_event_position = self.get_init_event_position(partition_id, checkpoint)
+                    initial_event_position, event_postition_inclusive =\
+                        self.get_init_event_position(partition_id, checkpoint)
                     event_received_callback = partial(self._on_event_received, partition_context)
 
                     self._consumers[partition_id] = self.create_consumer(partition_id,
                                                                          initial_event_position,
+                                                                         event_postition_inclusive,
                                                                          event_received_callback)
 
                     if self._partition_initialize_handler:

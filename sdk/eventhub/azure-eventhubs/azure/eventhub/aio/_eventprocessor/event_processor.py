@@ -144,7 +144,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
     async def _receive(self, partition_id, checkpoint=None):  # pylint: disable=too-many-statements
         try:  # pylint:disable=too-many-nested-blocks
             _LOGGER.info("start ownership %r, checkpoint %r", partition_id, checkpoint)
-            initial_event_position = self.get_init_event_position(partition_id, checkpoint)
+            initial_event_position, event_position_inclusive = self.get_init_event_position(partition_id, checkpoint)
             if partition_id in self._partition_contexts:
                 partition_context = self._partition_contexts[partition_id]
             else:
@@ -160,6 +160,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             event_received_callback = partial(self._on_event_received, partition_context)
             self._consumers[partition_id] = self.create_consumer(partition_id,
                                                                  initial_event_position,
+                                                                 event_position_inclusive,
                                                                  event_received_callback)
 
             if self._partition_initialize_handler:

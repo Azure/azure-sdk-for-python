@@ -26,7 +26,7 @@ def test_receive_end_of_stream(connstr_senders):
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     with client:
         thread = threading.Thread(target=client.receive, args=(on_event,),
-                                  kwargs={"partition_id": "0", "initial_event_position": "@latest"})
+                                  kwargs={"partition_id": "0", "starting_position": "@latest"})
         thread.daemon = True
         thread.start()
         time.sleep(10)
@@ -66,8 +66,9 @@ def test_receive_with_event_position_sync(connstr_senders, position, inclusive, 
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     with client:
         thread = threading.Thread(target=client.receive, args=(on_event,),
-                                  kwargs={"initial_event_position": "-1",
-                                  "track_last_enqueued_event_properties": True})
+                                  kwargs={"starting_position": "-1",
+                                          "starting_position_inclusive": inclusive,
+                                          "track_last_enqueued_event_properties": True})
         thread.daemon = True
         thread.start()
         time.sleep(10)
@@ -78,8 +79,8 @@ def test_receive_with_event_position_sync(connstr_senders, position, inclusive, 
     client2 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     with client2:
         thread = threading.Thread(target=client2.receive, args=(on_event,),
-                                  kwargs={"initial_event_position": on_event.event_position,
-                                          "initial_event_position_inclusive": inclusive,
+                                  kwargs={"starting_position": on_event.event_position,
+                                          "starting_position_inclusive": inclusive,
                                           "track_last_enqueued_event_properties": True})
         thread.daemon = True
         thread.start()
@@ -101,7 +102,7 @@ def test_receive_owner_level(connstr_senders):
     client2 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     with client1, client2:
         thread1 = threading.Thread(target=client1.receive, args=(on_event,),
-                                   kwargs={"partition_id": "0", "initial_event_position": "-1",
+                                   kwargs={"partition_id": "0", "starting_position": "-1",
                                            "on_error": on_error})
         thread1.start()
         for i in range(5):
@@ -109,7 +110,7 @@ def test_receive_owner_level(connstr_senders):
             senders[0].send(ed)
         time.sleep(10)
         thread2 = threading.Thread(target=client2.receive, args=(on_event,),
-                                   kwargs = {"partition_id": "0", "initial_event_position": "-1", "owner_level": 1})
+                                   kwargs = {"partition_id": "0", "starting_position": "-1", "owner_level": 1})
         thread2.start()
         for i in range(5):
             ed = EventData("Event Number {}".format(i))
@@ -144,7 +145,7 @@ def test_receive_over_websocket_sync(connstr_senders):
 
     with client:
         thread = threading.Thread(target=client.receive, args=(on_event,),
-                                  kwargs={"partition_id": "0", "initial_event_position": "-1"})
+                                  kwargs={"partition_id": "0", "starting_position": "-1"})
         thread.start()
         time.sleep(10)
     assert len(on_event.received) == 5

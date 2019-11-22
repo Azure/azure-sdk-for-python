@@ -24,7 +24,7 @@ async def test_receive_end_of_stream_async(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     async with client:
-        task = asyncio.ensure_future(client.receive(on_event, partition_id="0", initial_event_position="-1"))
+        task = asyncio.ensure_future(client.receive(on_event, partition_id="0", starting_position="-1"))
         await asyncio.sleep(10)
         assert on_event.called is False
         senders[0].send(EventData(b"Receiving only a single event"))
@@ -62,7 +62,8 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     async with client:
         task = asyncio.ensure_future(client.receive(on_event,
-                                                    initial_event_position="-1",
+                                                    starting_position="-1",
+                                                    starting_position_inclusive=inclusive,
                                                     track_last_enqueued_event_properties=True))
         await asyncio.sleep(10)
         assert on_event.event_position is not None
@@ -72,7 +73,7 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
     async with client2:
         task = asyncio.ensure_future(
             client2.receive(on_event,
-                            initial_event_position= on_event.event_position, initial_event_position_inclusive=inclusive,
+                            starting_position= on_event.event_position, starting_position_inclusive=inclusive,
                             track_last_enqueued_event_properties=True))
         await asyncio.sleep(10)
         assert on_event.event.body_as_str() == expected_result
@@ -95,14 +96,14 @@ async def test_receive_owner_level_async(connstr_senders):
     client2 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
     async with client1, client2:
         task1 = asyncio.ensure_future(client1.receive(on_event,
-                                                      partition_id="0", initial_event_position="-1",
+                                                      partition_id="0", starting_position="-1",
                                                       on_error=on_error))
         for i in range(5):
             ed = EventData("Event Number {}".format(i))
             senders[0].send(ed)
         await asyncio.sleep(10)
         task2 = asyncio.ensure_future(client2.receive(on_event,
-                                                      partition_id="0", initial_event_position="-1",
+                                                      partition_id="0", starting_position="-1",
                                                       owner_level=1))
         for i in range(5):
             ed = EventData("Event Number {}".format(i))
@@ -137,7 +138,7 @@ async def test_receive_over_websocket_async(connstr_senders):
 
     async with client:
         task = asyncio.ensure_future(client.receive(on_event,
-                                                    partition_id="0", initial_event_position="-1"))
+                                                    partition_id="0", starting_position="-1"))
         await asyncio.sleep(10)
     task.cancel()
     assert len(on_event.received) == 5

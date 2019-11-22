@@ -16,6 +16,12 @@ class EventProcessorMixin(object):
     def get_init_event_position(self, partition_id, checkpoint):
         checkpoint_offset = checkpoint.get("offset") if checkpoint else None
 
+        event_position_inclusive = False
+        if isinstance(self._initial_event_position_inclusive, dict):
+            event_position_inclusive = self._initial_event_position_inclusive.get(partition_id, False)
+        elif isinstance(self._initial_event_position_inclusive, bool):
+            event_position_inclusive = self._initial_event_position_inclusive
+
         event_position = "-1"
         if checkpoint_offset:
             event_position = checkpoint_offset
@@ -28,13 +34,20 @@ class EventProcessorMixin(object):
 
         initial_event_position = event_position
 
-        return initial_event_position
+        return initial_event_position, event_position_inclusive
 
-    def create_consumer(self, partition_id, initial_event_position, on_event_received):
+    def create_consumer(
+            self,
+            partition_id,
+            initial_event_position,
+            initial_event_position_inclusive,
+            on_event_received
+    ):
         consumer = self._eventhub_client._create_consumer(  # pylint: disable=protected-access
             self._consumer_group,
             partition_id,
             initial_event_position,
+            event_position_inclusive=initial_event_position_inclusive,
             on_event_received=on_event_received,
             owner_level=self._owner_level,
             track_last_enqueued_event_properties=self._track_last_enqueued_event_properties,

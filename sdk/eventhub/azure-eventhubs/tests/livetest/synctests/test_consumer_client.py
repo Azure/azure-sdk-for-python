@@ -22,7 +22,7 @@ def test_receive_no_partition(connstr_senders):
     with client:
         worker = threading.Thread(target=client.receive,
                                   args=(on_event,),
-                                  kwargs={"initial_event_position": "-1"})
+                                  kwargs={"starting_position": "-1"})
         worker.start()
         time.sleep(10)
         assert on_event.received == 2
@@ -45,7 +45,7 @@ def test_receive_partition(connstr_senders):
     with client:
         worker = threading.Thread(target=client.receive,
                                   args=(on_event,),
-                                  kwargs={"initial_event_position": "-1",
+                                  kwargs={"starting_position": "-1",
                                           "partition_id": "0"})
         worker.start()
         time.sleep(10)
@@ -74,11 +74,11 @@ def test_receive_load_balancing(connstr_senders):
     with client1, client2:
         worker1 = threading.Thread(target=client1.receive,
                                    args=(on_event,),
-                                   kwargs={"initial_event_position": "-1"})
+                                   kwargs={"starting_position": "-1"})
 
         worker2 = threading.Thread(target=client2.receive,
                                    args=(on_event,),
-                                   kwargs={"initial_event_position": "-1"})
+                                   kwargs={"starting_position": "-1"})
 
         worker1.start()
         worker2.start()

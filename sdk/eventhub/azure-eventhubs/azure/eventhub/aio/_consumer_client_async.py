@@ -105,6 +105,7 @@ class EventHubConsumerClient(ClientBaseAsync):
         prefetch = kwargs.get("prefetch") or self._config.prefetch
         track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
         on_event_received = kwargs.get("on_event_received")
+        event_position_inclusive = kwargs.get("event_position_inclusive", False)
         loop = kwargs.get("loop")
 
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
@@ -113,6 +114,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             self, source_url,
             on_event_received=on_event_received,
             event_position=event_position,
+            event_position_inclusive=event_position_inclusive,
             owner_level=owner_level,
             prefetch=prefetch,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties, loop=loop)
@@ -193,8 +195,8 @@ class EventHubConsumerClient(ClientBaseAsync):
             owner_level: int = None,
             prefetch: int = 300,
             track_last_enqueued_event_properties: bool = False,
-            initial_event_position=None,
-            initial_event_position_inclusive=None,
+            starting_position=None,
+            starting_position_inclusive=False,
             on_error=None,
             on_partition_initialize=None,
             on_partition_close=None
@@ -221,16 +223,16 @@ class EventHubConsumerClient(ClientBaseAsync):
          network bandwidth consumption that is generally a favorable trade-off when considered against periodically
          making requests for partition properties using the Event Hub client.
          It is set to `False` by default.
-        :keyword initial_event_position: Start receiving from this initial_event_position
+        :keyword starting_position: Start receiving from this starting_position
          if there isn't checkpoint data for a partition. Use the checkpoint data if there it's available. This can be a
          a dict with partition id as the key and position as the value for individual partitions, or a single
          value for all partitions. The value type can be str, int, datetime.datetime.
-        :paramtype initial_event_position: str, int, datetime.datetime or dict[str, Any]
-        :keyword initial_event_position_inclusive: Determine the given initial_event_position is inclusive(>=) or
+        :paramtype starting_position: str, int, datetime.datetime or dict[str, Any]
+        :keyword starting_position_inclusive: Determine the given starting_position is inclusive(>=) or
          not (>). True for inclusive and False for exclusive. This can be a dict with partition id as the key and
-         bool as the value indicating individual initial_event_position of specific partition is inclusive or not.
-         This can also be a single bool value for all initial_event_position. By default it's false.
-        :paramtype initial_event_position_inclusive: bool or dict[str, bool]
+         bool as the value indicating individual starting_position of specific partition is inclusive or not.
+         This can also be a single bool value for all starting_position. By default it's false.
+        :paramtype starting_position_inclusive: bool or dict[str, bool]
         :keyword on_error: The callback function which would be called when there is an error met during the receiving
          time. The callback takes two parameters: `partition_context` which contains partition information
          and `error` being the exception. Please define the callback like `on_error(partition_context, error)`.
@@ -278,8 +280,8 @@ class EventHubConsumerClient(ClientBaseAsync):
                 error_handler=on_error,
                 partition_initialize_handler=on_partition_initialize,
                 partition_close_handler=on_partition_close,
-                initial_event_position=initial_event_position or "-1",
-                initial_event_position_inclusive=initial_event_position_inclusive or False,
+                initial_event_position=starting_position or "-1",
+                initial_event_position_inclusive=starting_position_inclusive or False,
                 polling_interval=self._load_balancing_interval,
                 owner_level=owner_level,
                 prefetch=prefetch,

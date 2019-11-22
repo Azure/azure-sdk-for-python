@@ -56,10 +56,10 @@ async def test_receive_with_invalid_param_async(live_eventhub_config, invalid_pl
     async with client:
         if invalid_place == "partition":
             task = asyncio.ensure_future(client.receive(on_event, partition_id=invalid_place,
-                                         initial_event_position="-1"))
+                                         starting_position="-1"))
         else:
             task = asyncio.ensure_future(client.receive(on_event, partition_id="0",
-                                                        initial_event_position="-1"))
+                                                        starting_position="-1"))
         await asyncio.sleep(10)
         assert len(client._event_processors) == 1
     await task
