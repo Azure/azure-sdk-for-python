@@ -102,7 +102,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._handler = None
         self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
         self._last_received_event = None
-        self._max_message_size_on_link = 0
 
     def _create_handler(self, auth):
         source = Source(self._source)
@@ -160,8 +159,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
         if not self.handler_ready:
             if self._handler.client_ready():
-                self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
-                                                 or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
                 self.handler_ready = True
         return self.handler_ready
 
