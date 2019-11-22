@@ -25,7 +25,7 @@ async def on_event(partition_context, event):
 
 async def receive(client):
     try:
-        await client.receive(on_event=on_event, consumer_group="$default")
+        await client.receive(on_event=on_event)
     except KeyboardInterrupt:
         await client.close()
 
@@ -33,6 +33,7 @@ async def receive(client):
 async def main():
     client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
+        consumer_group="$default",
         eventhub_name=EVENTHUB_NAME
     )
     async with client:

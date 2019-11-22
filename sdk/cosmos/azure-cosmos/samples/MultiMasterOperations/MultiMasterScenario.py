@@ -48,7 +48,7 @@ class MultiMasterScenario(object):
         print("####################################################")
 
         print("1) Starting insert loops across multiple regions ...")
-        
+
         documents_to_insert_per_worker = 100
 
         run_loop_futures = []

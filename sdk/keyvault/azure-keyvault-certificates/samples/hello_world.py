@@ -4,7 +4,7 @@
 # ------------------------------------
 import os
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import CertificateClient, CertificatePolicy, SecretContentType, WellKnownIssuerNames
+from azure.keyvault.certificates import CertificateClient, CertificatePolicy, CertificateContentType, WellKnownIssuerNames
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -49,14 +49,14 @@ try:
     # Alternatively, if you would like to use our default policy, don't pass a policy parameter to
     # our certificate creation method
     cert_policy = CertificatePolicy(
-        issuer_name=WellKnownIssuerNames.Self,
-        subject_name="CN=*.microsoft.com",
+        issuer_name=WellKnownIssuerNames.self,
+        subject="CN=*.microsoft.com",
         san_dns_names=["sdk.azure-int.net"],
         exportable=True,
         key_type="RSA",
         key_size=2048,
         reuse_key=False,
-        content_type=SecretContentType.PKCS12,
+        content_type=CertificateContentType.pkcs12,
         validity_in_months=24,
     )
     cert_name = "HelloWorldCertificate"

@@ -4,12 +4,12 @@ import azure.cosmos.exceptions as exceptions
 import config
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes - 
-# 
-# 1. An Azure Cosmos account - 
+# Prerequistes -
+#
+# 1. An Azure Cosmos account -
 #    https://docs.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
 #
-# 2. Microsoft Azure Cosmos PyPi package - 
+# 2. Microsoft Azure Cosmos PyPi package -
 #    https://pypi.python.org/pypi/azure-cosmos/
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic CRUD operations on a Database resource for Azure Cosmos
@@ -43,17 +43,17 @@ def find_database(client, id):
         print('Database with id \'{0}\' was found'.format(id))
     else:
         print('No database with id \'{0}\' was found'. format(id))
-    
+
 
 def create_database(client, id):
     print("\n2. Create Database")
-    
+
     try:
         client.create_database(id=id)
         print('Database with id \'{0}\' created'.format(id))
 
     except exceptions.CosmosResourceExistsError:
-        print('A database with id \'{0}\' already exists'.format(id))             
+        print('A database with id \'{0}\' already exists'.format(id))
 
 
 def read_database(client, id):
@@ -64,26 +64,26 @@ def read_database(client, id):
         print('Database with id \'{0}\' was found, it\'s link is {1}'.format(id, database.database_link))
 
     except exceptions.CosmosResourceNotFoundError:
-        print('A database with id \'{0}\' does not exist'.format(id))   
+        print('A database with id \'{0}\' does not exist'.format(id))
 
 
 def list_databases(client):
     print("\n4. List all Databases on an account")
-    
+
     print('Databases:')
-    
+
     databases = list(client.list_databases())
-    
+
     if not databases:
         return
 
     for database in databases:
-        print(database['id'])          
+        print(database['id'])
 
 
 def delete_database(client, id):
     print("\n5. Delete Database")
-    
+
     try:
         client.delete_database(id)
 
@@ -93,15 +93,15 @@ def delete_database(client, id):
         print('A database with id \'{0}\' does not exist'.format(id))
 
 
-def run_sample():     
+def run_sample():
     client = cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY} )
     try:
         # query for a database
         find_database(client, DATABASE_ID)
-        
+
         # create a database
         create_database(client, DATABASE_ID)
-                    
+
         # get a database using its id
         read_database(client, DATABASE_ID)
 
@@ -113,7 +113,7 @@ def run_sample():
 
     except exceptions.CosmosHttpResponseError as e:
         print('\nrun_sample has caught an error. {0}'.format(e.message))
-    
+
     finally:
         print("\nrun_sample done")
 
