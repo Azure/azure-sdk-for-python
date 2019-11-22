@@ -4,11 +4,12 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals
 
+import time
 import uuid
 import logging
 
 import uamqp  # type: ignore
-from uamqp import types, errors, utils  # type: ignore
+from uamqp import types, errors, utils, constants  # type: ignore
 from uamqp import ReceiveClient, Source  # type: ignore
 
 from .exceptions import _error_handler
@@ -139,6 +140,29 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._last_received_event = event_data
         self._on_event_received(event_data)
 
+    def _open(self):
+        """Open the EventHubConsumer/EventHubProducer using the supplied connection.
+
+        """
+        # pylint: disable=protected-access
+        if not self.running:
+            if self._handler:
+                self._handler.close()
+            self._create_handler()
+            self._handler.open(connection=self._client._conn_manager.get_connection(  # pylint: disable=protected-access
+                self._client._address.hostname,
+                self._client._create_auth()
+            ))
+            self.running = True
+
+        if self._handler.client_ready():
+            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
+                                             or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
+            return True
+        else:
+            time.sleep(0.01)
+            return False
+
     def receive(self):
         retried_times = 0
         last_exception = None
@@ -146,8 +170,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
         while retried_times <= max_retries:
             try:
-                self._open()
-                self._handler.do_work()
+                if self._open():
+                    self._handler.do_work()
                 return
             except uamqp.errors.LinkDetach as ld_error:
                 if ld_error.condition == uamqp.constants.ErrorCodes.LinkStolen:
