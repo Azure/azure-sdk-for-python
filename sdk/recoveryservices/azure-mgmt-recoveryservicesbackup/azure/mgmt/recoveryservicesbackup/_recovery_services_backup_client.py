@@ -29,27 +29,6 @@ from .operations import ExportJobsOperationResultsOperations
 from .operations import JobsOperations
 from .operations import BackupProtectedItemsOperations
 from .operations import OperationOperations
-from .operations import ProtectionIntentOperations
-from .operations import BackupStatusOperations
-from .operations import FeatureSupportOperations
-from .operations import BackupProtectionIntentOperations
-from .operations import BackupUsageSummariesOperations
-from .operations import BackupEnginesOperations
-from .operations import ProtectionContainerRefreshOperationResultsOperations
-from .operations import ProtectableContainersOperations
-from .operations import ProtectionContainersOperations
-from .operations import BackupWorkloadItemsOperations
-from .operations import ProtectionContainerOperationResultsOperations
-from .operations import BackupsOperations
-from .operations import ProtectedItemOperationStatusesOperations
-from .operations import ItemLevelRecoveryConnectionsOperations
-from .operations import BackupOperationResultsOperations
-from .operations import BackupOperationStatusesOperations
-from .operations import ProtectionPolicyOperationStatusesOperations
-from .operations import BackupProtectableItemsOperations
-from .operations import BackupProtectionContainersOperations
-from .operations import SecurityPINsOperations
-from .operations import BackupResourceStorageConfigsOperations
 from .operations import Operations
 from . import models
 
@@ -92,48 +71,6 @@ class RecoveryServicesBackupClient(SDKClient):
     :vartype backup_protected_items: azure.mgmt.recoveryservicesbackup.operations.BackupProtectedItemsOperations
     :ivar operation: Operation operations
     :vartype operation: azure.mgmt.recoveryservicesbackup.operations.OperationOperations
-    :ivar protection_intent: ProtectionIntent operations
-    :vartype protection_intent: azure.mgmt.recoveryservicesbackup.operations.ProtectionIntentOperations
-    :ivar backup_status: BackupStatus operations
-    :vartype backup_status: azure.mgmt.recoveryservicesbackup.operations.BackupStatusOperations
-    :ivar feature_support: FeatureSupport operations
-    :vartype feature_support: azure.mgmt.recoveryservicesbackup.operations.FeatureSupportOperations
-    :ivar backup_protection_intent: BackupProtectionIntent operations
-    :vartype backup_protection_intent: azure.mgmt.recoveryservicesbackup.operations.BackupProtectionIntentOperations
-    :ivar backup_usage_summaries: BackupUsageSummaries operations
-    :vartype backup_usage_summaries: azure.mgmt.recoveryservicesbackup.operations.BackupUsageSummariesOperations
-    :ivar backup_engines: BackupEngines operations
-    :vartype backup_engines: azure.mgmt.recoveryservicesbackup.operations.BackupEnginesOperations
-    :ivar protection_container_refresh_operation_results: ProtectionContainerRefreshOperationResults operations
-    :vartype protection_container_refresh_operation_results: azure.mgmt.recoveryservicesbackup.operations.ProtectionContainerRefreshOperationResultsOperations
-    :ivar protectable_containers: ProtectableContainers operations
-    :vartype protectable_containers: azure.mgmt.recoveryservicesbackup.operations.ProtectableContainersOperations
-    :ivar protection_containers: ProtectionContainers operations
-    :vartype protection_containers: azure.mgmt.recoveryservicesbackup.operations.ProtectionContainersOperations
-    :ivar backup_workload_items: BackupWorkloadItems operations
-    :vartype backup_workload_items: azure.mgmt.recoveryservicesbackup.operations.BackupWorkloadItemsOperations
-    :ivar protection_container_operation_results: ProtectionContainerOperationResults operations
-    :vartype protection_container_operation_results: azure.mgmt.recoveryservicesbackup.operations.ProtectionContainerOperationResultsOperations
-    :ivar backups: Backups operations
-    :vartype backups: azure.mgmt.recoveryservicesbackup.operations.BackupsOperations
-    :ivar protected_item_operation_statuses: ProtectedItemOperationStatuses operations
-    :vartype protected_item_operation_statuses: azure.mgmt.recoveryservicesbackup.operations.ProtectedItemOperationStatusesOperations
-    :ivar item_level_recovery_connections: ItemLevelRecoveryConnections operations
-    :vartype item_level_recovery_connections: azure.mgmt.recoveryservicesbackup.operations.ItemLevelRecoveryConnectionsOperations
-    :ivar backup_operation_results: BackupOperationResults operations
-    :vartype backup_operation_results: azure.mgmt.recoveryservicesbackup.operations.BackupOperationResultsOperations
-    :ivar backup_operation_statuses: BackupOperationStatuses operations
-    :vartype backup_operation_statuses: azure.mgmt.recoveryservicesbackup.operations.BackupOperationStatusesOperations
-    :ivar protection_policy_operation_statuses: ProtectionPolicyOperationStatuses operations
-    :vartype protection_policy_operation_statuses: azure.mgmt.recoveryservicesbackup.operations.ProtectionPolicyOperationStatusesOperations
-    :ivar backup_protectable_items: BackupProtectableItems operations
-    :vartype backup_protectable_items: azure.mgmt.recoveryservicesbackup.operations.BackupProtectableItemsOperations
-    :ivar backup_protection_containers: BackupProtectionContainers operations
-    :vartype backup_protection_containers: azure.mgmt.recoveryservicesbackup.operations.BackupProtectionContainersOperations
-    :ivar security_pi_ns: SecurityPINs operations
-    :vartype security_pi_ns: azure.mgmt.recoveryservicesbackup.operations.SecurityPINsOperations
-    :ivar backup_resource_storage_configs: BackupResourceStorageConfigs operations
-    :vartype backup_resource_storage_configs: azure.mgmt.recoveryservicesbackup.operations.BackupResourceStorageConfigsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.recoveryservicesbackup.operations.Operations
 
@@ -186,48 +123,6 @@ class RecoveryServicesBackupClient(SDKClient):
         self.backup_protected_items = BackupProtectedItemsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operation = OperationOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.protection_intent = ProtectionIntentOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_status = BackupStatusOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.feature_support = FeatureSupportOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_protection_intent = BackupProtectionIntentOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_usage_summaries = BackupUsageSummariesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_engines = BackupEnginesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.protection_container_refresh_operation_results = ProtectionContainerRefreshOperationResultsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.protectable_containers = ProtectableContainersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.protection_containers = ProtectionContainersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_workload_items = BackupWorkloadItemsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.protection_container_operation_results = ProtectionContainerOperationResultsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backups = BackupsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.protected_item_operation_statuses = ProtectedItemOperationStatusesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.item_level_recovery_connections = ItemLevelRecoveryConnectionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_operation_results = BackupOperationResultsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_operation_statuses = BackupOperationStatusesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.protection_policy_operation_statuses = ProtectionPolicyOperationStatusesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_protectable_items = BackupProtectableItemsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_protection_containers = BackupProtectionContainersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.security_pi_ns = SecurityPINsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_resource_storage_configs = BackupResourceStorageConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
