@@ -7,6 +7,7 @@
 import pytest
 import asyncio
 import time
+import copy
 
 
 from azure.eventhub import EventData, EventHubError
@@ -16,6 +17,53 @@ from azure.eventhub.aio._eventprocessor.local_checkpoint_store import InMemoryCh
 from azure.eventhub.aio._eventprocessor._ownership_manager import OwnershipManager
 from azure.eventhub import OwnershipLostError
 from azure.eventhub._client_base import _Address
+
+
+TEST_NAMESPACE = "test_namespace"
+TEST_EVENTHUB = "test_eventhub"
+TEST_CONSUMER_GROUP = "test_consumer_group"
+TEST_OWNER = "test_owner_id"
+
+ownership_active0 = {
+    "fully_qualified_namespace": TEST_NAMESPACE,
+    "partition_id": "0",
+    "eventhub_name": TEST_EVENTHUB,
+    "consumer_group": TEST_CONSUMER_GROUP,
+    "owner_id": "owner_0",
+    "last_modified_time": time.time()
+}
+ownership_active1 = {
+    "fully_qualified_namespace": TEST_NAMESPACE,
+    "partition_id": "1",
+    "eventhub_name": TEST_EVENTHUB,
+    "consumer_group": TEST_CONSUMER_GROUP,
+    "owner_id": "owner_1",
+    "last_modified_time": time.time()
+}
+ownership_self_owned = {
+    "fully_qualified_namespace": TEST_NAMESPACE,
+    "partition_id": "1",
+    "eventhub_name": TEST_EVENTHUB,
+    "consumer_group": TEST_CONSUMER_GROUP,
+    "owner_id": TEST_OWNER,
+    "last_modified_time": time.time()
+}
+ownership_expired = {
+    "fully_qualified_namespace": TEST_NAMESPACE,
+    "partition_id": "2",
+    "eventhub_name": TEST_EVENTHUB,
+    "consumer_group": TEST_CONSUMER_GROUP,
+    "owner_id": "owner_1",
+    "last_modified_time": time.time() - 100000
+}
+ownership_released = {
+    "fully_qualified_namespace": TEST_NAMESPACE,
+    "partition_id": "3",
+    "eventhub_name": TEST_EVENTHUB,
+    "consumer_group": TEST_CONSUMER_GROUP,
+    "owner_id": "",
+    "last_modified_time": time.time()
+}
 
 
 async def event_handler(partition_context, event):
@@ -380,7 +428,93 @@ async def test_ownership_manager_release_partition():
     ownership_manager.owned_partitions = [{"partition_id": "0", "owner_id": "owner", "last_modified_time": time.time()}]
     await ownership_manager.release_ownership("0")
     assert checkpoint_store.released[0]["owner_id"] == ""
-    
+
+
+def test_ownership_manager_balance_released_partition():
+    class MockEventHubClient(object):
+        eventhub_name = "test_eh_name"
+
+        def __init__(self):
+            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
+
+        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
+            return MockEventhubConsumer(**kwargs)
+
+        async def get_partition_ids(self):
+            return ["0", "1", "2", "3"]
+
+    ownership_manager = OwnershipManager(MockEventHubClient(), "$Default", "owner", None, 10.0, "0")
+    parition_ids = ["0", "1", "2", "3"]
+    # TODO
+
+
+@pytest.mark.parametrize(
+    "ownerships, partitions, expected_result",
+    [
+        ([], ["0", "1", "2"], 3),
+        ([ownership_active0, ownership_active1], ["0", "1", "2"], 1),
+        ([ownership_active0, ownership_expired], ["0", "1", "2"], 2),
+        ([ownership_active0, ownership_expired, ownership_released], ["0", "1", "2", "3"], 3),
+        ([ownership_active0], ["0", "1", "2", "3"], 3),
+        ([ownership_expired, ownership_released], ["0", "1", "2", "3"], 4),
+        ([ownership_active0, ownership_active1], ["0", "1"], 0),
+        ([ownership_active0, ownership_self_owned], ["0", "1"], 1),
+    ]
+)
+def test_balance_ownership_on_init(ownerships, partitions, expected_result):
+
+    class MockEventHubClient(object):
+        eventhub_name = TEST_EVENTHUB
+
+        def __init__(self):
+            self._address = _Address(hostname=TEST_NAMESPACE, path=MockEventHubClient.eventhub_name)
+
+        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
+            return MockEventhubConsumer(**kwargs)
+
+        def get_partition_ids(self):
+            return ["0", "1"]
+
+    mock_client = MockEventHubClient()
+    om = OwnershipManager(mock_client, TEST_CONSUMER_GROUP, TEST_OWNER, None, 10, None)
+    om._initializing = True
+    to_claim_ownership = om._balance_ownership(copy.deepcopy(ownerships), partitions)
+    assert len(to_claim_ownership) == expected_result
+
+
+@pytest.mark.parametrize(
+    "ownerships, partitions, expected_result",
+    [
+        ([], ["0", "1", "2"], 1),
+        ([ownership_active0, ownership_active1], ["0", "1", "2"], 1),
+        ([ownership_active0, ownership_expired], ["0", "1", "2"], 1),
+        ([ownership_active0, ownership_expired, ownership_released], ["0", "1", "2", "3"], 1),
+        ([ownership_active0], ["0", "1", "2", "3"], 1),
+        ([ownership_expired, ownership_released], ["0", "1", "2", "3"], 1),
+        ([ownership_active0, ownership_active1], ["0", "1"], 0),
+        ([ownership_active0, ownership_self_owned], ["0", "1"], 1),
+    ]
+)
+def test_balance_ownership_with_no_partition_id(ownerships, partitions, expected_result):
+
+    class MockEventHubClient(object):
+        eventhub_name = TEST_EVENTHUB
+
+        def __init__(self):
+            self._address = _Address(hostname=TEST_NAMESPACE, path=MockEventHubClient.eventhub_name)
+
+        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
+            return MockEventhubConsumer(**kwargs)
+
+        def get_partition_ids(self):
+            return ["0", "1"]
+
+    mock_client = MockEventHubClient()
+    om = OwnershipManager(mock_client, TEST_CONSUMER_GROUP, TEST_OWNER, None, 10, None)
+    om._initializing = False
+    to_claim_ownership = om._balance_ownership(copy.deepcopy(ownerships), partitions)
+    assert len(to_claim_ownership) == expected_result
+
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
@@ -423,73 +557,3 @@ async def test_partition_processor_process_update_checkpoint_error(connstr_sende
     await asyncio.sleep(1)
     await eventhub_client.close()
     assert partition_close_handler.called
-
-# @pytest.mark.asyncio
-# async def test_release_partition_ownership():
-#     async def partition_initialize_handler(partition_context):
-#         partition_initialize_handler.called = True
-#         raise RuntimeError("initialize error")
-
-#     async def event_handler(partition_context, event):
-#         event_handler.called = True
-#         raise RuntimeError("process_events error")
-
-#     async def error_handler(partition_context, error):
-#         assert isinstance(error, RuntimeError)
-#         error_handler.called = True
-#         raise RuntimeError("process_error error")
-
-#     async def partition_close_handler(partition_context, reason):
-#         assert reason == CloseReason.SHUTDOWN
-#         partition_close_handler.called = True
-#         raise RuntimeError("close error")
-
-#     class ErrorCheckpointStore(InMemoryCheckpointStore):
-#         async def update_checkpoint(self, checkpoint):
-#             if checkpoint['partition_id'] == "1":
-#                 raise OwnershipLostError("Mocked ownership lost")
-
-#     class MockEventHubClient(object):
-#         eventhub_name = "test_eh_name"
-
-#         def __init__(self):
-#             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
-
-#         def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-#             return MockEventhubConsumer(**kwargs)
-
-#         async def get_partition_ids(self):
-#             return ["0", "1"]
-
-#     class MockEventhubConsumer(object):
-#         def __init__(self, **kwargs):
-#             self.stop = False
-#             self._on_event_received = kwargs.get("on_event_received")
-
-#         async def receive(self):
-#             await asyncio.sleep(0.1)
-#             await self._on_event_received(EventData("mock events"))
-
-#         async def close(self):
-#             pass
-
-
-#     eventhub_client = MockEventHubClient() #EventHubClient.from_connection_string(connection_str, receive_timeout=3)
-#     checkpoint_store = InMemoryCheckpointStore()
-
-#     event_processor = EventProcessor(eventhub_client=eventhub_client,
-#                                      consumer_group='$default',
-#                                      checkpoint_store=checkpoint_store,
-#                                      event_handler=event_handler,
-#                                      error_handler=error_handler,
-#                                      partition_initialize_handler=partition_initialize_handler,
-#                                      partition_close_handler=partition_close_handler,
-#                                      load_balancing_interval=1)
-#     task = asyncio.ensure_future(event_processor.start())
-#     await asyncio.sleep(5)
-#     await event_processor.stop()
-#     # task.cancel()
-#     assert partition_initialize_handler.called
-#     assert event_handler.called
-#     assert error_handler.called
-#     # assert partition_close_handler.called

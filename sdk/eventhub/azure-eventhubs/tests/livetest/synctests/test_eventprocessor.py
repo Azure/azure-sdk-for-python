@@ -7,6 +7,7 @@
 import pytest
 import threading
 import time
+import copy
 
 from azure.eventhub import EventData, EventHubError
 from azure.eventhub._eventprocessor.event_processor import EventProcessor
@@ -14,6 +15,53 @@ from azure.eventhub import CloseReason
 from azure.eventhub._eventprocessor.ownership_manager import OwnershipManager
 from azure.eventhub._eventprocessor.local_checkpoint_store import InMemoryCheckpointStore
 from azure.eventhub._client_base import _Address
+
+
+TEST_NAMESPACE = "test_namespace"
+TEST_EVENTHUB = "test_eventhub"
+TEST_CONSUMER_GROUP = "test_consumer_group"
+TEST_OWNER = "test_owner_id"
+
+ownership_active0 = {
+    "fully_qualified_namespace": TEST_NAMESPACE,
+    "partition_id": "0",
+    "eventhub_name": TEST_EVENTHUB,
+    "consumer_group": TEST_CONSUMER_GROUP,
+    "owner_id": "owner_0",
+    "last_modified_time": time.time()
+}
+ownership_active1 = {
+    "fully_qualified_namespace": TEST_NAMESPACE,
+    "partition_id": "1",
+    "eventhub_name": TEST_EVENTHUB,
+    "consumer_group": TEST_CONSUMER_GROUP,
+    "owner_id": "owner_1",
+    "last_modified_time": time.time()
+}
+ownership_self_owned = {
+    "fully_qualified_namespace": TEST_NAMESPACE,
+    "partition_id": "1",
+    "eventhub_name": TEST_EVENTHUB,
+    "consumer_group": TEST_CONSUMER_GROUP,
+    "owner_id": TEST_OWNER,
+    "last_modified_time": time.time()
+}
+ownership_expired = {
+    "fully_qualified_namespace": TEST_NAMESPACE,
+    "partition_id": "2",
+    "eventhub_name": TEST_EVENTHUB,
+    "consumer_group": TEST_CONSUMER_GROUP,
+    "owner_id": "owner_1",
+    "last_modified_time": time.time() - 100000
+}
+ownership_released = {
+    "fully_qualified_namespace": TEST_NAMESPACE,
+    "partition_id": "3",
+    "eventhub_name": TEST_EVENTHUB,
+    "consumer_group": TEST_CONSUMER_GROUP,
+    "owner_id": "",
+    "last_modified_time": time.time()
+}
 
 
 def event_handler(partition_context, events):
@@ -452,7 +500,7 @@ def test_ownership_manager_release_partition():
         def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
             return MockEventhubConsumer(**kwargs)
 
-        async def get_partition_ids(self):
+        def get_partition_ids(self):
             return ["0", "1"]
 
     class MockCheckpointStore(InMemoryCheckpointStore):
@@ -488,3 +536,73 @@ def test_ownership_manager_release_partition():
     ownership_manager.owned_partitions = [{"partition_id": "0", "owner_id": "owner", "last_modified_time": time.time()}]
     ownership_manager.release_ownership("0")
     assert checkpoint_store.released[0]["owner_id"] == ""
+
+
+@pytest.mark.parametrize(
+    "ownerships, partitions, expected_result",
+    [
+        ([], ["0", "1", "2"], 3),
+        ([ownership_active0, ownership_active1], ["0", "1", "2"], 1),
+        ([ownership_active0, ownership_expired], ["0", "1", "2"], 2),
+        ([ownership_active0, ownership_expired, ownership_released], ["0", "1", "2", "3"], 3),
+        ([ownership_active0], ["0", "1", "2", "3"], 3),
+        ([ownership_expired, ownership_released], ["0", "1", "2", "3"], 4),
+        ([ownership_active0, ownership_active1], ["0", "1"], 0),
+        ([ownership_active0, ownership_self_owned], ["0", "1"], 1),
+    ]
+)
+def test_balance_ownership_on_init(ownerships, partitions, expected_result):
+
+    class MockEventHubClient(object):
+        eventhub_name = TEST_EVENTHUB
+
+        def __init__(self):
+            self._address = _Address(hostname=TEST_NAMESPACE, path=MockEventHubClient.eventhub_name)
+
+        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
+            return MockEventhubConsumer(**kwargs)
+
+        def get_partition_ids(self):
+            return ["0", "1"]
+
+    mock_client = MockEventHubClient()
+    om = OwnershipManager(mock_client, TEST_CONSUMER_GROUP, TEST_OWNER, None, 10, None)
+    om._initializing = True
+    to_claim_ownership = om._balance_ownership(copy.deepcopy(ownerships), partitions)
+    assert len(to_claim_ownership) == expected_result
+
+
+@pytest.mark.parametrize(
+    "ownerships, partitions, expected_result",
+    [
+        ([], ["0", "1", "2"], 1),
+        ([ownership_active0, ownership_active1], ["0", "1", "2"], 1),
+        ([ownership_active0, ownership_expired], ["0", "1", "2"], 1),
+        ([ownership_active0, ownership_expired, ownership_released], ["0", "1", "2", "3"], 1),
+        ([ownership_active0], ["0", "1", "2", "3"], 1),
+        ([ownership_expired, ownership_released], ["0", "1", "2", "3"], 1),
+        ([ownership_active0, ownership_active1], ["0", "1"], 0),
+        ([ownership_active0, ownership_self_owned], ["0", "1"], 1),
+    ]
+)
+def test_balance_ownership_with_no_partition_id(ownerships, partitions, expected_result):
+
+    class MockEventHubClient(object):
+        eventhub_name = TEST_EVENTHUB
+
+        def __init__(self):
+            self._address = _Address(hostname=TEST_NAMESPACE, path=MockEventHubClient.eventhub_name)
+
+        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
+            return MockEventhubConsumer(**kwargs)
+
+        def get_partition_ids(self):
+            return ["0", "1"]
+
+    mock_client = MockEventHubClient()
+    om = OwnershipManager(mock_client, TEST_CONSUMER_GROUP, TEST_OWNER, None, 10, None)
+    om._initializing = False
+    to_claim_ownership = om._balance_ownership(copy.deepcopy(ownerships), partitions)
+    assert len(to_claim_ownership) == expected_result
+
+
