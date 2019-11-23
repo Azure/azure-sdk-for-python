@@ -64,16 +64,16 @@ def create_properties(user_agent=None):
     properties = {}
     properties[types.AMQPSymbol("product")] = USER_AGENT_PREFIX
     properties[types.AMQPSymbol("version")] = VERSION
-    framework = "Python {}.{}.{}, {}".format(
-        sys.version_info[0], sys.version_info[1], sys.version_info[2], platform.python_implementation()
+    framework = "Python/{}.{}.{}".format(
+        sys.version_info[0], sys.version_info[1], sys.version_info[2]
     )
     properties[types.AMQPSymbol("framework")] = framework
     platform_str = platform.platform()
     properties[types.AMQPSymbol("platform")] = platform_str
 
-    final_user_agent = '{}/{} ({}, {})'.format(USER_AGENT_PREFIX, VERSION, framework, platform_str)
+    final_user_agent = '{}/{} {} ({})'.format(USER_AGENT_PREFIX, VERSION, framework, platform_str)
     if user_agent:
-        final_user_agent = '{}, {}'.format(final_user_agent, user_agent)
+        final_user_agent = '{} {}'.format(final_user_agent, user_agent)
 
     if len(final_user_agent) > MAX_USER_AGENT_LENGTH:
         raise ValueError("The user-agent string cannot be more than {} in length."
