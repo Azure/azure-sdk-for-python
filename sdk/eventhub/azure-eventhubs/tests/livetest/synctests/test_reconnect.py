@@ -80,7 +80,7 @@ def test_send_connection_idle_timeout_and_reconnect_sync(connstr_receivers):
     sender.close()
     client.close()
 
-    messages = receivers[0].receive_message_batch(max_batch_size=10, timeout=6000)
+    messages = receivers[0].receive_message_batch(max_batch_size=10, timeout=10000)
     received_ed1 = EventData._from_message(messages[0])
     assert received_ed1.body_as_str() == 'data'
 
@@ -108,7 +108,7 @@ def test_receive_connection_idle_timeout_and_reconnect_sync(connstr_senders):
     consumer._handler.do_work()
     assert consumer._handler._connection._state == c_uamqp.ConnectionState.DISCARDING
 
-    duration = 5
+    duration = 10
     now_time = time.time()
     end_time = now_time + duration
 
