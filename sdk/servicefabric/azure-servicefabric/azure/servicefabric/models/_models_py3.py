@@ -15488,14 +15488,14 @@ class Probe(Model):
     """Probes have a number of fields that you can use to control their behavior.
 
     :param initial_delay_seconds: The initial delay in seconds to start
-     executing probe once codepackage has started.
+     executing probe once code package has started.
     :type initial_delay_seconds: int
     :param period_seconds: Periodic seconds to execute probe.
     :type period_seconds: int
     :param timeout_seconds: Period after which probe is considered as failed
      if it hasn't completed successfully.
     :type timeout_seconds: int
-    :param success_threshold: The count of succcessful probe executions after
+    :param success_threshold: The count of successful probe executions after
      which probe is considered success.
     :type success_threshold: int
     :param failure_threshold: The count of failures after which probe is
@@ -15537,7 +15537,7 @@ class ProbeExec(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param command: Required. Comma seperated command to run inside the
+    :param command: Required. Comma separated command to run inside the
      container for example "sh, -c, echo hello world".
     :type command: str
     """

@@ -967,7 +967,7 @@ class SettingType(str, Enum):
 class Scheme(str, Enum):
 
     http = "http"  #: Indicates that the probe is http.
-    https = "https"  #: Indicates that the probe is https. No cert validaton.
+    https = "https"  #: Indicates that the probe is https. No cert validation.
 
 
 class ApplicationResourceUpgradeState(str, Enum):
