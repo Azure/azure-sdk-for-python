@@ -69,7 +69,7 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
             o for o in self.owned_partitions \
                 if o["partition_id"] == partition_id \
                     and o["owner_id"] == self.owner_id \
-                        and o["last_modified_time"] + self.ownership_timeout < now
+                        and o["last_modified_time"] + self.ownership_timeout > now
         ]
         if not partition_ownership:
             return

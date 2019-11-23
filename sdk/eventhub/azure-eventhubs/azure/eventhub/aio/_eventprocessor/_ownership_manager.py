@@ -71,12 +71,12 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
             o for o in self.owned_partitions \
                 if o["partition_id"] == partition_id \
                     and o["owner_id"] == self.owner_id \
-                        and o["last_modified_time"] + self.ownership_timeout < now
+                        and o["last_modified_time"] + self.ownership_timeout > now
         ]
         if not partition_ownership:
             return
         partition_ownership[0]["owner_id"] = ""
-        self.checkpoint_store.claim_ownership(partition_ownership)
+        await self.checkpoint_store.claim_ownership(partition_ownership)
 
     async def _retrieve_partition_ids(self):
         """List all partition ids of the event hub that the EventProcessor is working on.
