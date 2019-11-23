@@ -83,7 +83,7 @@ try:
     # If the keyvault is soft-delete enabled, then for permanent deletion deleted certificate needs to be purged.
     client.begin_delete_certificate(storage_cert_name).wait()
 
-    # Certificates will still purge eventually on their scheduled purge date, but calling `purge_deleted_key` immediately
+    # Certificates will still purge eventually on their scheduled purge date, but calling `purge_deleted_certificate` immediately
     # purges.
     print("\n.. Purge Deleted Certificate")
     client.purge_deleted_certificate(storage_cert_name)
