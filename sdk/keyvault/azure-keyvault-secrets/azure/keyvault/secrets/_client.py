@@ -361,14 +361,13 @@ class SecretClient(KeyVaultClientBase):
     @distributed_trace
     def purge_deleted_secret(self, name, **kwargs):
         # type: (str, **Any) -> None
-        """Permanently delete a secret. Possible only in vaults with soft-delete enabled.
+        """Permanently deletes a deleted secret. Possible only in vaults with soft-delete enabled.
 
         Performs an irreversible deletion of the specified secret, without
-        possibility for recovery. The operation is not available if the recovery
-        level does not specified 'Purgeable'. This method is only necessary for
-        immediate purging of a secret, as a secret will still eventually
-        purge on its :py:attr:`~azure.keyvault.secrets.DeletedSecret.scheduled_purge_date`
-        without calling this method.
+        possibility for recovery. The operation is not available if the
+        :py:attr:`~azure.keyvault.secrets.SecretProperties.recovery_level` does not specify 'Purgeable'.
+        This method is only necessary for purging a secret before its
+        :py:attr:`~azure.keyvault.secrets.DeletedSecret.scheduled_purge_date`.
 
         Requires secrets/purge permission.
 

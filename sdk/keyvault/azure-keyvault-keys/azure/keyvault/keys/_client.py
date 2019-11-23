@@ -334,14 +334,14 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def purge_deleted_key(self, name, **kwargs):
         # type: (str, **Any) -> None
-        """Permanently delete a key. Only possible in a vault with soft-delete enabled. Requires keys/purge permission.
+        """Permanently deletes a deleted key. Only possible in a vault with soft-delete enabled.
 
         Performs an irreversible deletion of the specified key, without
-        possibility for recovery. The operation is not available if the recovery
-        level does not specified 'Purgeable'. This method is only necessary for
-        immediate purging of a key, as a key will still eventually
-        purge on its :py:attr:`~azure.keyvault.keys.DeletedKey.scheduled_purge_date`
-        without calling this method.
+        possibility for recovery. The operation is not available if the
+        :py:attr:`~azure.keyvault.keys.KeyProperties.recovery_level` does not specify 'Purgeable'.
+        This method is only necessary for purging a key before its
+        :py:attr:`~azure.keyvault.keys.DeletedKey.scheduled_purge_date`.
+
 
         Requires keys/purge permission.
 
