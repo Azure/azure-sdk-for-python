@@ -66,7 +66,7 @@ def test_github_issue_7079(live_servicebus_config, standard_queue):
 
     with queue.get_sender() as sender:
         for i in range(5):
-            sender.send(Message(f"Message {i}"))
+            sender.send(Message("Message {}".format(i)))
     messages = queue.get_receiver(mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
     batch = messages.fetch_next()
     count = len(batch)
@@ -84,7 +84,7 @@ def test_github_issue_6178(live_servicebus_config, standard_queue):
     queue = sb_client.get_queue(standard_queue)
 
     for i in range(3):
-        queue.send(Message(f"Message {i}"))
+        queue.send(Message("Message {}".format(i)))
 
     messages = queue.get_receiver(idle_timeout=60)
     for message in messages:
