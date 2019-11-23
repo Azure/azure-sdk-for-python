@@ -54,7 +54,9 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     _x_OPT_SCHEDULED_ENQUEUE_TIME = b'x-opt-scheduled-enqueue-time'
 
     def __init__(self, body, encoding='UTF-8', **kwargs):
-        self.properties = uamqp.message.MessageProperties(encoding=encoding, **kwargs)
+        subject = kwargs.pop('subject', None)
+        # Although we might normally thread through **kwargs this causes problems as MessageProperties won't absorb spurious args.
+        self.properties = uamqp.message.MessageProperties(encoding=encoding, subject=subject)
         self.header = uamqp.message.MessageHeader()
         self.received_timestamp = None
         self.auto_renew_error = None
