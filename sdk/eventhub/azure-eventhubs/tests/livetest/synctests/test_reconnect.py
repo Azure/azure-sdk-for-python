@@ -64,21 +64,16 @@ def test_send_with_long_interval_sync(live_eventhub, sleep):
 def test_send_connection_idle_timeout_and_reconnect_sync(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(conn_str=connection_str, idle_timeout=10)
-
-    ed = EventData('data')
-    sender = client._create_producer(partition_id='0')
-    sender._unsent_events = [ed.message]
-
-    sender._open_with_retry()
-
-    time.sleep(11)
-
-    with pytest.raises(uamqp.errors.ConnectionClose):
-        sender._send_event_data()
-
-    sender._send_event_data_with_retry()
-    sender.close()
-    client.close()
+    with client:
+        ed = EventData('data')
+        sender = client._create_producer(partition_id='0')
+    with sender:
+            sender._unsent_events = [ed.message]
+            sender._open_with_retry()
+            time.sleep(11)
+            with pytest.raises(uamqp.errors.ConnectionClose):
+                sender._send_event_data()
+            sender._send_event_data_with_retry()
 
     messages = receivers[0].receive_message_batch(max_batch_size=10, timeout=10000)
     received_ed1 = EventData._from_message(messages[0])
@@ -96,26 +91,25 @@ def test_receive_connection_idle_timeout_and_reconnect_sync(connstr_senders):
 
     def on_event_received(event):
         on_event_received.event = event
+    with client:
+        consumer = client._create_consumer("$default", "0", "-1", on_event_received=on_event_received)
+        with consumer:
+            consumer._open()
+            time.sleep(11)
 
-    consumer = client._create_consumer("$default", "0", "-1", on_event_received=on_event_received)
-    consumer._open_with_retry()
+            ed = EventData("Event")
+            senders[0].send(ed)
 
-    time.sleep(11)
+            consumer._handler.do_work()
+            assert consumer._handler._connection._state == c_uamqp.ConnectionState.DISCARDING
 
-    ed = EventData("Event")
-    senders[0].send(ed)
+            duration = 10
+            now_time = time.time()
+            end_time = now_time + duration
 
-    consumer._handler.do_work()
-    assert consumer._handler._connection._state == c_uamqp.ConnectionState.DISCARDING
+            while now_time < end_time:
+                consumer.receive()
+                time.sleep(0.01)
+                now_time = time.time()
 
-    duration = 10
-    now_time = time.time()
-    end_time = now_time + duration
-
-    while now_time < end_time:
-        consumer.receive()
-        time.sleep(0.01)
-        now_time = time.time()
-
-    assert on_event_received.event.body_as_str() == "Event"
-    consumer.close()
+            assert on_event_received.event.body_as_str() == "Event"
