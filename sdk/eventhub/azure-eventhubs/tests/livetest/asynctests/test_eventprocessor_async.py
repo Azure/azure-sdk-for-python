@@ -6,12 +6,14 @@
 
 import pytest
 import asyncio
+import time
 
 
 from azure.eventhub import EventData, EventHubError
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.aio._eventprocessor.event_processor import EventProcessor, CloseReason
 from azure.eventhub.aio._eventprocessor.local_checkpoint_store import InMemoryCheckpointStore
+from azure.eventhub.aio._eventprocessor._ownership_manager import OwnershipManager
 from azure.eventhub import OwnershipLostError
 from azure.eventhub._client_base import _Address
 
@@ -331,9 +333,59 @@ async def test_partition_processor_process_error_close_error():
     # assert partition_close_handler.called
 
 
+@pytest.mark.asyncio
+async def test_ownership_manager_release_partition():
+    class MockEventHubClient(object):
+        eventhub_name = "test_eh_name"
+
+        def __init__(self):
+            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
+
+        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
+            return MockEventhubConsumer(**kwargs)
+
+        async def get_partition_ids(self):
+            return ["0", "1"]
+
+    class MockCheckpointStore(InMemoryCheckpointStore):
+
+        released = None
+
+        async def claim_ownership(self, ownsership):
+            self.released = ownsership
+
+    checkpoint_store = MockCheckpointStore()
+    ownership_manager = OwnershipManager(MockEventHubClient(), "$Default", "owner", checkpoint_store, 10.0, "0")
+    ownership_manager.cached_parition_ids = ["0", "1"]
+    ownership_manager.owned_partitions = []
+    await ownership_manager.release_ownership("1")
+    assert checkpoint_store.released is None
+
+    ownership_manager.owned_partitions = [
+        {"partition_id": "0", "owner_id": "foo", "last_modified_time": time.time() + 31}
+    ]
+    await ownership_manager.release_ownership("0")
+    assert checkpoint_store.released is None
+
+    ownership_manager.owned_partitions = [
+        {"partition_id": "0", "owner_id": "", "last_modified_time": time.time()}
+    ]
+    await ownership_manager.release_ownership("0")
+    assert checkpoint_store.released is None
+
+    ownership_manager.owned_partitions = [{"partition_id": "0", "owner_id": "foo", "last_modified_time": time.time()}]
+    await ownership_manager.release_ownership("0")
+    assert checkpoint_store.released is None
+
+    ownership_manager.owned_partitions = [{"partition_id": "0", "owner_id": "owner", "last_modified_time": time.time()}]
+    await ownership_manager.release_ownership("0")
+    assert checkpoint_store.released[0]["owner_id"] == ""
+    
+
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_partition_processor_process_update_checkpoint_error(connstr_senders):
+
     class ErrorCheckpointStore(InMemoryCheckpointStore):
         async def update_checkpoint(self, checkpoint):
             if checkpoint['partition_id'] == "1":
@@ -371,3 +423,73 @@ async def test_partition_processor_process_update_checkpoint_error(connstr_sende
     await asyncio.sleep(1)
     await eventhub_client.close()
     assert partition_close_handler.called
+
+# @pytest.mark.asyncio
+# async def test_release_partition_ownership():
+#     async def partition_initialize_handler(partition_context):
+#         partition_initialize_handler.called = True
+#         raise RuntimeError("initialize error")
+
+#     async def event_handler(partition_context, event):
+#         event_handler.called = True
+#         raise RuntimeError("process_events error")
+
+#     async def error_handler(partition_context, error):
+#         assert isinstance(error, RuntimeError)
+#         error_handler.called = True
+#         raise RuntimeError("process_error error")
+
+#     async def partition_close_handler(partition_context, reason):
+#         assert reason == CloseReason.SHUTDOWN
+#         partition_close_handler.called = True
+#         raise RuntimeError("close error")
+
+#     class ErrorCheckpointStore(InMemoryCheckpointStore):
+#         async def update_checkpoint(self, checkpoint):
+#             if checkpoint['partition_id'] == "1":
+#                 raise OwnershipLostError("Mocked ownership lost")
+
+#     class MockEventHubClient(object):
+#         eventhub_name = "test_eh_name"
+
+#         def __init__(self):
+#             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
+
+#         def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
+#             return MockEventhubConsumer(**kwargs)
+
+#         async def get_partition_ids(self):
+#             return ["0", "1"]
+
+#     class MockEventhubConsumer(object):
+#         def __init__(self, **kwargs):
+#             self.stop = False
+#             self._on_event_received = kwargs.get("on_event_received")
+
+#         async def receive(self):
+#             await asyncio.sleep(0.1)
+#             await self._on_event_received(EventData("mock events"))
+
+#         async def close(self):
+#             pass
+
+
+#     eventhub_client = MockEventHubClient() #EventHubClient.from_connection_string(connection_str, receive_timeout=3)
+#     checkpoint_store = InMemoryCheckpointStore()
+
+#     event_processor = EventProcessor(eventhub_client=eventhub_client,
+#                                      consumer_group='$default',
+#                                      checkpoint_store=checkpoint_store,
+#                                      event_handler=event_handler,
+#                                      error_handler=error_handler,
+#                                      partition_initialize_handler=partition_initialize_handler,
+#                                      partition_close_handler=partition_close_handler,
+#                                      load_balancing_interval=1)
+#     task = asyncio.ensure_future(event_processor.start())
+#     await asyncio.sleep(5)
+#     await event_processor.stop()
+#     # task.cancel()
+#     assert partition_initialize_handler.called
+#     assert event_handler.called
+#     assert error_handler.called
+#     # assert partition_close_handler.called

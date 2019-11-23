@@ -11,6 +11,7 @@ import time
 from azure.eventhub import EventData, EventHubError
 from azure.eventhub._eventprocessor.event_processor import EventProcessor
 from azure.eventhub import CloseReason
+from azure.eventhub._eventprocessor.ownership_manager import OwnershipManager
 from azure.eventhub._eventprocessor.local_checkpoint_store import InMemoryCheckpointStore
 from azure.eventhub._client_base import _Address
 
@@ -439,3 +440,51 @@ def test_partition_processor_process_update_checkpoint_error():
     time.sleep(2)
     event_processor.stop()
     assert isinstance(assert_map["error"], ValueError)
+
+
+def test_ownership_manager_release_partition():
+    class MockEventHubClient(object):
+        eventhub_name = "test_eh_name"
+
+        def __init__(self):
+            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
+
+        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
+            return MockEventhubConsumer(**kwargs)
+
+        async def get_partition_ids(self):
+            return ["0", "1"]
+
+    class MockCheckpointStore(InMemoryCheckpointStore):
+
+        released = None
+
+        def claim_ownership(self, ownsership):
+            self.released = ownsership
+
+    checkpoint_store = MockCheckpointStore()
+    ownership_manager = OwnershipManager(MockEventHubClient(), "$Default", "owner", checkpoint_store, 10.0, "0")
+    ownership_manager.cached_parition_ids = ["0", "1"]
+    ownership_manager.owned_partitions = []
+    ownership_manager.release_ownership("1")
+    assert checkpoint_store.released is None
+
+    ownership_manager.owned_partitions = [
+        {"partition_id": "0", "owner_id": "foo", "last_modified_time": time.time() + 31}
+    ]
+    ownership_manager.release_ownership("0")
+    assert checkpoint_store.released is None
+
+    ownership_manager.owned_partitions = [
+        {"partition_id": "0", "owner_id": "", "last_modified_time": time.time()}
+    ]
+    ownership_manager.release_ownership("0")
+    assert checkpoint_store.released is None
+
+    ownership_manager.owned_partitions = [{"partition_id": "0", "owner_id": "foo", "last_modified_time": time.time()}]
+    ownership_manager.release_ownership("0")
+    assert checkpoint_store.released is None
+
+    ownership_manager.owned_partitions = [{"partition_id": "0", "owner_id": "owner", "last_modified_time": time.time()}]
+    ownership_manager.release_ownership("0")
+    assert checkpoint_store.released[0]["owner_id"] == ""
