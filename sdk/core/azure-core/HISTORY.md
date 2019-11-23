@@ -20,8 +20,6 @@
 - Client kwargs are now passed to DistributedTracingPolicy correctly    #8051
 - NetworkLoggingPolicy now logs correctly all requests in case of retry #8262
 
-## Version 1.0.1
-
 ## 2019-10-29 Version 1.0.0
 
 ### Features
