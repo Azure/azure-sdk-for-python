@@ -163,6 +163,6 @@ async def test_send_with_create_event_batch_async(connstr_receivers):
         await client.send_batch(event_data_batch)
         received = []
         for r in receivers:
-            received.extend(r.receive_message_batch(timeout=5000))
+            received.extend(r.receive_message_batch(timeout=10000))
         assert len(received) > 1
         assert EventData._from_message(received[0]).properties[b"raw_prop"] == b"raw_value"

@@ -75,6 +75,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self.running = False
         self.closed = False
         self.stop = False  # used by event processor
+        self.handler_ready = False
 
         self._on_event_received = kwargs.get("on_event_received")
         self._client = client
@@ -139,6 +140,27 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._last_received_event = event_data
         self._on_event_received(event_data)
 
+    def _open(self):
+        """Open the EventHubConsumer/EventHubProducer using the supplied connection.
+
+        """
+        # pylint: disable=protected-access
+        if not self.running:
+            if self._handler:
+                self._handler.close()
+            auth = self._client._create_auth()
+            self._create_handler(auth)
+            self._handler.open(
+                connection=self._client._conn_manager.get_connection(self._client._address.hostname, auth)  # pylint: disable=protected-access
+            )
+            self.handler_ready = False
+            self.running = True
+
+        if not self.handler_ready:
+            if self._handler.client_ready():
+                self.handler_ready = True
+        return self.handler_ready
+
     def receive(self):
         retried_times = 0
         last_exception = None
@@ -146,13 +168,13 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
         while retried_times <= max_retries:
             try:
-                self._open()
-                self._handler.do_work()
+                if self._open():
+                    self._handler.do_work()
                 return
-            except uamqp.errors.LinkDetach as ld_error:
-                if ld_error.condition == uamqp.constants.ErrorCodes.LinkStolen:
-                    raise self._handle_exception(ld_error)
             except Exception as exception:  # pylint: disable=broad-except
+                if isinstance(exception, uamqp.errors.LinkDetach) and \
+                        exception.condition == uamqp.constants.ErrorCodes.LinkStolen:  # pylint: disable=no-member
+                    raise self._handle_exception(exception)
                 if not self.running:  # exit by close
                     return
                 if self._last_received_event:
