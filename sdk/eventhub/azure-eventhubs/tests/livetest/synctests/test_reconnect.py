@@ -71,7 +71,9 @@ def test_send_connection_idle_timeout_and_reconnect_sync(connstr_receivers):
             time.sleep(11)
             sender._unsent_events = [ed.message]
             ed.message.on_send_complete = sender._on_outcome
-            with pytest.raises((uamqp.errors.ConnectionClose, OperationTimeoutError)):  # Mac raises OperationTimeoutError
+            with pytest.raises((uamqp.errors.ConnectionClose,
+                                uamqp.errors.MessageHandlerError, OperationTimeoutError)):
+                # Mac may raise OperationTimeoutError or MessageHandlerError
                 sender._send_event_data()
             sender._send_event_data_with_retry()
 
