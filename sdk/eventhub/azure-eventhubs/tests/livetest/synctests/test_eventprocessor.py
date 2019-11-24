@@ -367,9 +367,16 @@ def test_partition_processor_process_error_close_error():
         def close(self):
             pass
 
+    class MockOwnershipManager(OwnershipManager):
+
+        called = False
+
+        def release_ownership(self, partition_id):
+            self.called = True
+
     eventhub_client = MockEventHubClient()  # EventHubClient.from_connection_string(connection_str, receive_timeout=3)
     checkpoint_store = InMemoryCheckpointStore()
-
+    ownership_manager = MockOwnershipManager(eventhub_client, "$Default", "owner", checkpoint_store, 10.0, "0")
     event_processor = EventProcessor(eventhub_client=eventhub_client,
                                      consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
@@ -378,6 +385,7 @@ def test_partition_processor_process_error_close_error():
                                      on_partition_initialize=partition_initialize_handler,
                                      on_partition_close=partition_close_handler,
                                      load_balancing_interval=1)
+    event_processor._ownership_manager = ownership_manager
     thread = threading.Thread(target=event_processor.start)
     thread.start()
     time.sleep(2)
@@ -388,6 +396,7 @@ def test_partition_processor_process_error_close_error():
     assert event_handler.called
     assert error_handler.called
     assert partition_close_handler.called
+    assert ownership_manager.called
 
 
 def test_partition_processor_process_update_checkpoint_error():
