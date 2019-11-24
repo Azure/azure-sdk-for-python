@@ -43,7 +43,6 @@ from .operations import RegulatoryComplianceAssessmentsOperations
 from .operations import ServerVulnerabilityAssessmentOperations
 from .operations import SubAssessmentsOperations
 from .operations import AutoDismissAlertsRulesOperations
-from .operations import AutoDismissAlertsRulesSimulationOperations
 from . import models
 
 
@@ -113,8 +112,6 @@ class SecurityCenter(SDKClient):
     :vartype sub_assessments: azure.mgmt.security.operations.SubAssessmentsOperations
     :ivar auto_dismiss_alerts_rules: AutoDismissAlertsRules operations
     :vartype auto_dismiss_alerts_rules: azure.mgmt.security.operations.AutoDismissAlertsRulesOperations
-    :ivar auto_dismiss_alerts_rules_simulation: AutoDismissAlertsRulesSimulation operations
-    :vartype auto_dismiss_alerts_rules_simulation: azure.mgmt.security.operations.AutoDismissAlertsRulesSimulationOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -196,6 +193,4 @@ class SecurityCenter(SDKClient):
         self.sub_assessments = SubAssessmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.auto_dismiss_alerts_rules = AutoDismissAlertsRulesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.auto_dismiss_alerts_rules_simulation = AutoDismissAlertsRulesSimulationOperations(
             self._client, self.config, self._serialize, self._deserialize)

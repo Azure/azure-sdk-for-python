@@ -1008,61 +1008,6 @@ class AutoDismissAlertsRule(Resource):
         self.auto_dismiss_alerts_scope = auto_dismiss_alerts_scope
 
 
-class AutoDismissAlertsRulesSimulation(Model):
-    """Auto dismiss rules simulation result for subscription.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param location: Required.
-    :type location: str
-    :param scanned_alerts_number: Required.
-    :type scanned_alerts_number: int
-    :param dismissed_alerts_number: Required.
-    :type dismissed_alerts_number: int
-    """
-
-    _validation = {
-        'location': {'required': True},
-        'scanned_alerts_number': {'required': True},
-        'dismissed_alerts_number': {'required': True},
-    }
-
-    _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'scanned_alerts_number': {'key': 'scannedAlertsNumber', 'type': 'int'},
-        'dismissed_alerts_number': {'key': 'dismissedAlertsNumber', 'type': 'int'},
-    }
-
-    def __init__(self, *, location: str, scanned_alerts_number: int, dismissed_alerts_number: int, **kwargs) -> None:
-        super(AutoDismissAlertsRulesSimulation, self).__init__(**kwargs)
-        self.location = location
-        self.scanned_alerts_number = scanned_alerts_number
-        self.dismissed_alerts_number = dismissed_alerts_number
-
-
-class AutoDismissAlertsRulesSimulationList(Model):
-    """Auto dismiss rules simulation result list for subscription.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required.
-    :type value:
-     list[~azure.mgmt.security.models.AutoDismissAlertsRulesSimulation]
-    """
-
-    _validation = {
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[AutoDismissAlertsRulesSimulation]'},
-    }
-
-    def __init__(self, *, value, **kwargs) -> None:
-        super(AutoDismissAlertsRulesSimulationList, self).__init__(**kwargs)
-        self.value = value
-
-
 class AutoDismissAlertsScope(Model):
     """AutoDismissAlertsScope.
 

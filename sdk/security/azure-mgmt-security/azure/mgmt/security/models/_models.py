@@ -1008,61 +1008,6 @@ class AutoDismissAlertsRule(Resource):
         self.auto_dismiss_alerts_scope = kwargs.get('auto_dismiss_alerts_scope', None)
 
 
-class AutoDismissAlertsRulesSimulation(Model):
-    """Auto dismiss rules simulation result for subscription.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param location: Required.
-    :type location: str
-    :param scanned_alerts_number: Required.
-    :type scanned_alerts_number: int
-    :param dismissed_alerts_number: Required.
-    :type dismissed_alerts_number: int
-    """
-
-    _validation = {
-        'location': {'required': True},
-        'scanned_alerts_number': {'required': True},
-        'dismissed_alerts_number': {'required': True},
-    }
-
-    _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'scanned_alerts_number': {'key': 'scannedAlertsNumber', 'type': 'int'},
-        'dismissed_alerts_number': {'key': 'dismissedAlertsNumber', 'type': 'int'},
-    }
-
-    def __init__(self, **kwargs):
-        super(AutoDismissAlertsRulesSimulation, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.scanned_alerts_number = kwargs.get('scanned_alerts_number', None)
-        self.dismissed_alerts_number = kwargs.get('dismissed_alerts_number', None)
-
-
-class AutoDismissAlertsRulesSimulationList(Model):
-    """Auto dismiss rules simulation result list for subscription.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required.
-    :type value:
-     list[~azure.mgmt.security.models.AutoDismissAlertsRulesSimulation]
-    """
-
-    _validation = {
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[AutoDismissAlertsRulesSimulation]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(AutoDismissAlertsRulesSimulationList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-
-
 class AutoDismissAlertsScope(Model):
     """AutoDismissAlertsScope.
 

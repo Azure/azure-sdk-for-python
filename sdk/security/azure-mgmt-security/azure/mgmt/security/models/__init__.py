@@ -28,8 +28,6 @@ try:
     from ._models_py3 import AtaExternalSecuritySolution
     from ._models_py3 import AtaSolutionProperties
     from ._models_py3 import AutoDismissAlertsRule
-    from ._models_py3 import AutoDismissAlertsRulesSimulation
-    from ._models_py3 import AutoDismissAlertsRulesSimulationList
     from ._models_py3 import AutoDismissAlertsScope
     from ._models_py3 import AutoProvisioningSetting
     from ._models_py3 import AwsResourceDetails
@@ -136,8 +134,6 @@ except (SyntaxError, ImportError):
     from ._models import AtaExternalSecuritySolution
     from ._models import AtaSolutionProperties
     from ._models import AutoDismissAlertsRule
-    from ._models import AutoDismissAlertsRulesSimulation
-    from ._models import AutoDismissAlertsRulesSimulationList
     from ._models import AutoDismissAlertsScope
     from ._models import AutoProvisioningSetting
     from ._models import AwsResourceDetails
@@ -297,8 +293,6 @@ __all__ = [
     'AtaExternalSecuritySolution',
     'AtaSolutionProperties',
     'AutoDismissAlertsRule',
-    'AutoDismissAlertsRulesSimulation',
-    'AutoDismissAlertsRulesSimulationList',
     'AutoDismissAlertsScope',
     'AutoProvisioningSetting',
     'AwsResourceDetails',
