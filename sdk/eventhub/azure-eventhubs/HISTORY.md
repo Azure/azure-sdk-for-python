@@ -29,6 +29,11 @@
 - `PartitionContext` now has attribute `last_enqueued_event_properties` which is populated if `track_last_enqueued_event_properties` is set to `True` in the `receive` method.
 
 
+** New features **
+
+- Added new parameter `idle_timeout` in construct and `from_connection_string` to `EventHubConsumerClient` and `EventHubProducerClient`
+after which the underlying connection will close if there is no further activity.
+
 ## 2019-11-04 5.0.0b5
 
 **Breaking changes**

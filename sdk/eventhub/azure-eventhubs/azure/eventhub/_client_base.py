@@ -135,6 +135,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._config = Configuration(**kwargs)
         self._debug = self._config.network_tracing
         self._conn_manager = get_connection_manager(**kwargs)
+        self._idle_timeout = kwargs.get("idle_timeout", None)
 
     def __enter__(self):
         return self

@@ -74,6 +74,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         send_timeout = kwargs.get("send_timeout", 60)
         keep_alive = kwargs.get("keep_alive", None)
         auto_reconnect = kwargs.get("auto_reconnect", True)
+        idle_timeout = kwargs.get("idle_timeout", None)
 
         self.running = False
         self.closed = False
@@ -83,6 +84,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._target = target
         self._partition = partition
         self._timeout = send_timeout
+        self._idle_timeout = (idle_timeout * 1000) if idle_timeout else None
         self._error = None
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
@@ -105,6 +107,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             auth=auth,
             debug=self._client._config.network_tracing,  # pylint:disable=protected-access
             msg_timeout=self._timeout * 1000,
+            idle_timeout=self._idle_timeout,
             error_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
