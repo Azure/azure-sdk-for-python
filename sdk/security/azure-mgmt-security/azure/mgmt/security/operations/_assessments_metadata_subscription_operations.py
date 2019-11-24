@@ -237,7 +237,7 @@ class AssessmentsMetadataSubscriptionOperations(object):
             self, assessment_metadata_name, custom_headers=None, raw=False, **operation_config):
         """Delete metadata information on an assessment type in a specific
         subscription, will cause the deletion of all the assessments of that
-        type in that subscrtipion.
+        type in that subscription.
 
         :param assessment_metadata_name: The Assessment Key - Unique key for
          the assessment type
