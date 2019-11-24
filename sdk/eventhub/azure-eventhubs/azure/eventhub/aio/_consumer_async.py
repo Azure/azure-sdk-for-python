@@ -74,6 +74,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         keep_alive = kwargs.get("keep_alive", None)
         auto_reconnect = kwargs.get("auto_reconnect", True)
         track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
+        idle_timeout = kwargs.get("idle_timeout", None)
         loop = kwargs.get("loop", None)
 
         self.running = False
@@ -92,6 +93,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._retry_policy = errors.ErrorPolicy(max_retries=self._client._config.max_retries, on_error=_error_handler)  # pylint:disable=protected-access
         self._reconnect_backoff = 1
         self._timeout = 0
+        self._idle_timeout = (idle_timeout * 1000) if idle_timeout else None
         self._link_properties = {}
         partition = self._source.split('/')[-1]
         self._partition = partition
@@ -122,6 +124,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             prefetch=self._prefetch,
             link_properties=self._link_properties,
             timeout=self._timeout,
+            idle_timeout=self._idle_timeout,
             error_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
