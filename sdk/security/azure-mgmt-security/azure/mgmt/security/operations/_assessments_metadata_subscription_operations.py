@@ -167,13 +167,16 @@ class AssessmentsMetadataSubscriptionOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/assessmentMetadata/{assessmentMetadataName}'}
 
     def create(
-            self, assessment_metadata_name, custom_headers=None, raw=False, **operation_config):
+            self, assessment_metadata_name, assessment_metadata, custom_headers=None, raw=False, **operation_config):
         """Create metadata information on an assessment type in a specific
         subscription.
 
         :param assessment_metadata_name: The Assessment Key - Unique key for
          the assessment type
         :type assessment_metadata_name: str
+        :param assessment_metadata: AssessmentMetadata object
+        :type assessment_metadata:
+         ~azure.mgmt.security.models.SecurityAssessmentMetadata
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -184,8 +187,6 @@ class AssessmentsMetadataSubscriptionOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        assessment_metadata = None
-
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -231,3 +232,56 @@ class AssessmentsMetadataSubscriptionOperations(object):
 
         return deserialized
     create.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/assessmentMetadata/{assessmentMetadataName}'}
+
+    def delete(
+            self, assessment_metadata_name, custom_headers=None, raw=False, **operation_config):
+        """Delete metadata information on an assessment type in a specific
+        subscription, will cause the deletion of all the assessments of that
+        type in that subscrtipion.
+
+        :param assessment_metadata_name: The Assessment Key - Unique key for
+         the assessment type
+        :type assessment_metadata_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.delete.metadata['url']
+        path_format_arguments = {
+            'assessmentMetadataName': self._serialize.url("assessment_metadata_name", assessment_metadata_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/assessmentMetadata/{assessmentMetadataName}'}

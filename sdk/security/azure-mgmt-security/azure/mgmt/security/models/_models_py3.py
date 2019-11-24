@@ -3399,49 +3399,47 @@ class SecurityAssessmentMetadata(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :ivar display_name: User friendly display name of the assessment
-    :vartype display_name: str
+    :param display_name: Required. User friendly display name of the
+     assessment
+    :type display_name: str
     :ivar policy_definition_id: Azure resource ID of the policy definition
      that turns this assessment calculation on
     :vartype policy_definition_id: str
-    :ivar description: Human readable description of the assessment
-    :vartype description: str
-    :ivar remediation_description: Human readable description of what you
+    :param description: Human readable description of the assessment
+    :type description: str
+    :param remediation_description: Human readable description of what you
      should do to mitigate this security issue
-    :vartype remediation_description: str
-    :ivar category:
-    :vartype category: list[str or ~azure.mgmt.security.models.Category]
-    :ivar severity: The severity level of the assessment. Possible values
-     include: 'Low', 'Medium', 'High'
-    :vartype severity: str or ~azure.mgmt.security.models.Severity
-    :ivar preview: True if this assessment is in preview release status
-    :vartype preview: bool
-    :ivar assessment_type: BuiltIn if the assessment based on built-in Azure
-     Policy definition, Custom if the assessment based on custom Azure Policy
-     definition. Possible values include: 'BuiltIn', 'CustomPolicy',
-     'CustomerManaged'
-    :vartype assessment_type: str or
-     ~azure.mgmt.security.models.AssessmentType
+    :type remediation_description: str
+    :param category:
+    :type category: list[str or ~azure.mgmt.security.models.Category]
+    :param severity: Required. The severity level of the assessment. Possible
+     values include: 'Low', 'Medium', 'High'
+    :type severity: str or ~azure.mgmt.security.models.Severity
+    :param preview: True if this assessment is in preview release status
+    :type preview: bool
+    :param assessment_type: Required. BuiltIn if the assessment based on
+     built-in Azure Policy definition, Custom if the assessment based on custom
+     Azure Policy definition. Possible values include: 'BuiltIn',
+     'CustomPolicy', 'CustomerManaged'
+    :type assessment_type: str or ~azure.mgmt.security.models.AssessmentType
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'display_name': {'readonly': True},
+        'display_name': {'required': True},
         'policy_definition_id': {'readonly': True},
-        'description': {'readonly': True},
-        'remediation_description': {'readonly': True},
-        'category': {'readonly': True},
-        'severity': {'readonly': True},
-        'preview': {'readonly': True},
-        'assessment_type': {'readonly': True},
+        'severity': {'required': True},
+        'assessment_type': {'required': True},
     }
 
     _attribute_map = {
@@ -3458,16 +3456,16 @@ class SecurityAssessmentMetadata(Resource):
         'assessment_type': {'key': 'properties.assessmentType', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, display_name: str, severity, assessment_type, description: str=None, remediation_description: str=None, category=None, preview: bool=None, **kwargs) -> None:
         super(SecurityAssessmentMetadata, self).__init__(**kwargs)
-        self.display_name = None
+        self.display_name = display_name
         self.policy_definition_id = None
-        self.description = None
-        self.remediation_description = None
-        self.category = None
-        self.severity = None
-        self.preview = None
-        self.assessment_type = None
+        self.description = description
+        self.remediation_description = remediation_description
+        self.category = category
+        self.severity = severity
+        self.preview = preview
+        self.assessment_type = assessment_type
 
 
 class SecurityContact(Resource):
