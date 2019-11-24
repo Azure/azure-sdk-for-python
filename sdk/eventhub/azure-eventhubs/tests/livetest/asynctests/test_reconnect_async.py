@@ -11,6 +11,7 @@ import time
 
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient, EventHubSharedKeyCredential
+from azure.eventhub.exceptions import OperationTimeoutError
 
 import uamqp
 from uamqp import authentication, errors, c_uamqp
@@ -66,10 +67,11 @@ async def test_send_connection_idle_timeout_and_reconnect_async(connstr_receiver
         ed = EventData('data')
         sender = client._create_producer(partition_id='0')
         async with sender:
-            sender._unsent_events = [ed.message]
             await sender._open_with_retry()
             time.sleep(11)
-            with pytest.raises(uamqp.errors.ConnectionClose):
+            sender._unsent_events = [ed.message]
+            ed.message.on_send_complete = sender._on_outcome
+            with pytest.raises((uamqp.errors.ConnectionClose, OperationTimeoutError)):  # Mac raises OperationTimeoutError
                 await sender._send_event_data()
             await sender._send_event_data_with_retry()
 

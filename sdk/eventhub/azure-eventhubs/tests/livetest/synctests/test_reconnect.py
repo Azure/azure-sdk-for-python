@@ -13,12 +13,11 @@ from uamqp import authentication, errors, c_uamqp
 
 from azure.eventhub import (
     EventData,
-    ConnectError,
     EventHubSharedKeyCredential,
     EventHubProducerClient,
     EventHubConsumerClient
 )
-
+from azure.eventhub.exceptions import OperationTimeoutError
 
 @pytest.mark.liveTest
 def test_send_with_long_interval_sync(live_eventhub, sleep):
@@ -68,10 +67,11 @@ def test_send_connection_idle_timeout_and_reconnect_sync(connstr_receivers):
         ed = EventData('data')
         sender = client._create_producer(partition_id='0')
     with sender:
-            sender._unsent_events = [ed.message]
             sender._open_with_retry()
             time.sleep(11)
-            with pytest.raises(uamqp.errors.ConnectionClose):
+            sender._unsent_events = [ed.message]
+            ed.message.on_send_complete = sender._on_outcome
+            with pytest.raises((uamqp.errors.ConnectionClose, OperationTimeoutError)):  # Mac raises OperationTimeoutError
                 sender._send_event_data()
             sender._send_event_data_with_retry()
 
