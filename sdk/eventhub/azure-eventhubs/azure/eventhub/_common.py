@@ -26,8 +26,7 @@ _BATCH_MESSAGE_OVERHEAD_COST = [5, 8]
 
 
 class EventData(object):
-    """
-    The EventData class is a holder of event content.
+    """The EventData class is a container for event content.
 
     :param body: The data to send in a single message. body can be type of str or bytes.
     :type body: str or bytes
@@ -96,8 +95,7 @@ class EventData(object):
 
     @property
     def sequence_number(self):
-        """
-        The sequence number of the event data object.
+        """The sequence number of the event.
 
         :rtype: int or long
         """
@@ -105,8 +103,7 @@ class EventData(object):
 
     @property
     def offset(self):
-        """
-        The offset of the event data object.
+        """The offset of the event.
 
         :rtype: str
         """
@@ -117,8 +114,7 @@ class EventData(object):
 
     @property
     def enqueued_time(self):
-        """
-        The enqueued timestamp of the event data object.
+        """The enqueued timestamp of the event.
 
         :rtype: datetime.datetime
         """
@@ -129,8 +125,7 @@ class EventData(object):
 
     @property
     def partition_key(self):
-        """
-        The partition key of the event data object.
+        """The partition key of the event.
 
         :rtype: bytes
         """
@@ -141,8 +136,7 @@ class EventData(object):
 
     @property
     def properties(self):
-        """
-        Application defined properties on the message.
+        """Application-defined properties on the event.
 
         :rtype: dict
         """
@@ -150,8 +144,7 @@ class EventData(object):
 
     @properties.setter
     def properties(self, value):
-        """
-        Application defined properties on the message.
+        """Application-defined properties on the event.
 
         :param dict value: The application properties for the EventData.
         """
@@ -160,8 +153,7 @@ class EventData(object):
 
     @property
     def system_properties(self):
-        """
-        Metadata set by the Event Hubs Service associated with the EventData
+        """Metadata set by the Event Hubs Service associated with the event
 
         :rtype: dict
         """
@@ -169,22 +161,19 @@ class EventData(object):
 
     @property
     def body(self):
-        """
-        The body of the event data object.
+        """The content of the event.
 
         :rtype: bytes or Generator[bytes]
         """
         try:
             return self.message.get_data()
         except TypeError:
-            raise ValueError("Message data empty.")
+            raise ValueError("Event content empty.")
 
     def body_as_str(self, encoding='UTF-8'):
-        """
-        The body of the event data as a string if the data is of a
-        compatible type.
+        """The content of the event as a string, if the data is of a compatible type.
 
-        :param encoding: The encoding to use for decoding message data.
+        :param encoding: The encoding to use for decoding event data.
          Default is 'UTF-8'
         :rtype: str
         """
@@ -201,10 +190,9 @@ class EventData(object):
             raise TypeError("Message data is not compatible with string type: {}".format(e))
 
     def body_as_json(self, encoding='UTF-8'):
-        """
-        The body of the event loaded as a JSON object is the data is compatible.
+        """The content of the event loaded as a JSON object, if the data is compatible.
 
-        :param encoding: The encoding to use for decoding message data.
+        :param encoding: The encoding to use for decoding event data.
          Default is 'UTF-8'
         :rtype: dict
         """
@@ -231,22 +219,23 @@ class EventData(object):
 
 
 class EventDataBatch(object):
-    """
-    Sending events in batch get better performance than sending individual events.
+    """A batch of events.
+    
+    Sending events in a batch is more performant than sending individual events.
     EventDataBatch helps you create the maximum allowed size batch of `EventData` to improve sending performance.
 
-    Use `add` method to add events until the maximum batch size limit in bytes has been reached -
-    a `ValueError` will be raised.
-    Use `send` method of :class:`EventHubProducerClient<azure.eventhub.EventHubProducerClient>`
+    Use the `add` method to add events until the maximum batch size limit in bytes has been reached -
+    at which point a `ValueError` will be raised.
+    Use the `send_batch` method of :class:`EventHubProducerClient<azure.eventhub.EventHubProducerClient>`
     or the async :class:`EventHubProducerClient<azure.eventhub.aio.EventHubProducerClient>`
-    for sending. The `send` method accepts partition_key as a parameter for sending a particular partition.
+    for sending. The `create_batch` method accepts partition_key as a parameter for sending a particular partition.
 
     **Please use the create_batch method of EventHubProducerClient
     to create an EventDataBatch object instead of instantiating an EventDataBatch object directly.**
 
     :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold.
     :param str partition_id: The specific partition ID to send to.
-    :param str partition_key: With the given partition_key, event data will land to a particular partition of the
+    :param str partition_key: With the given partition_key, event data will be sent to a particular partition of the
      Event Hub decided by the service.
     """
 
@@ -271,17 +260,20 @@ class EventDataBatch(object):
 
     @property
     def size_in_bytes(self):
-        """The size of EventDataBatch object in bytes
+        """The combined size of the events in the batch, in bytes.
 
         :rtype: int
         """
         return self._size
 
     def add(self, event_data):
-        """
-        Try to add an EventData object, the size of EventData is a sum up of body, application_properties, etc.
+        """Try to add an EventData to the batch.
+        
+        The added size of the EventData is the sum of the body, properties, etc.
+        If this added size results in the batch exceeding the maximum batch-size, a `ValueError` will
+        be raised.
 
-        :param event_data: The EventData object which is attempted to be added.
+        :param event_data: The EventData to add to the batch.
         :type event_data: ~azure.eventhub.EventData
         :rtype: None
         :raise: :class:`ValueError`, when exceeding the size limit.
