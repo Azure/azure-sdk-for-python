@@ -142,6 +142,7 @@ try:
     from ._models_py3 import SamplingSettings
     from ._models_py3 import SaveConfigurationParameter
     from ._models_py3 import SchemaContract
+    from ._models_py3 import SchemaCreateOrUpdateContract
     from ._models_py3 import SubscriptionContract
     from ._models_py3 import SubscriptionCreateParameters
     from ._models_py3 import SubscriptionKeyParameterNamesContract
@@ -299,6 +300,7 @@ except (SyntaxError, ImportError):
     from ._models import SamplingSettings
     from ._models import SaveConfigurationParameter
     from ._models import SchemaContract
+    from ._models import SchemaCreateOrUpdateContract
     from ._models import SubscriptionContract
     from ._models import SubscriptionCreateParameters
     from ._models import SubscriptionKeyParameterNamesContract
@@ -529,6 +531,7 @@ __all__ = [
     'SamplingSettings',
     'SaveConfigurationParameter',
     'SchemaContract',
+    'SchemaCreateOrUpdateContract',
     'SubscriptionContract',
     'SubscriptionCreateParameters',
     'SubscriptionKeyParameterNamesContract',

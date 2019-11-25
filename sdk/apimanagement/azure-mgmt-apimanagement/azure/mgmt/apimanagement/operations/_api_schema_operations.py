@@ -270,7 +270,7 @@ class ApiSchemaOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/schemas/{schemaId}'}
 
     def create_or_update(
-            self, resource_group_name, service_name, api_id, schema_id, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, api_id, schema_id, content_type, if_match=None, value=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates schema configuration for the API.
 
         :param resource_group_name: The name of the resource group.
@@ -284,11 +284,22 @@ class ApiSchemaOperations(object):
         :param schema_id: Schema identifier within an API. Must be unique in
          the current API Management service instance.
         :type schema_id: str
-        :param parameters: The schema contents to apply.
-        :type parameters: ~azure.mgmt.apimanagement.models.SchemaContract
+        :param content_type: Must be a valid a media type used in a
+         Content-Type header as defined in the RFC 2616. Media type of the
+         schema document (e.g. application/json, application/xml). </br> -
+         `Swagger` Schema use
+         `application/vnd.ms-azure-apim.swagger.definitions+json` </br> -
+         `WSDL` Schema use `application/vnd.ms-azure-apim.xsd+xml` </br> -
+         `OpenApi` Schema use `application/vnd.oai.openapi.components+json`
+         </br> - `WADL Schema` use
+         `application/vnd.ms-azure-apim.wadl.grammars+xml`.
+        :type content_type: str
         :param if_match: ETag of the Entity. Not required when creating an
          entity, but required when updating an entity.
         :type if_match: str
+        :param value: Json escaped string defining the document representing
+         the Schema.
+        :type value: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -300,6 +311,8 @@ class ApiSchemaOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
+        parameters = models.SchemaCreateOrUpdateContract(content_type=content_type, value=value)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -329,7 +342,7 @@ class ApiSchemaOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'SchemaContract')
+        body_content = self._serialize.body(parameters, 'SchemaCreateOrUpdateContract')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
