@@ -9,7 +9,8 @@ import calendar
 from datetime import datetime
 from collections import defaultdict
 
-from azure.eventhub import CheckpointStore, OwnershipLostError  # type: ignore # pylint:disable=no-name-in-module
+from azure.eventhub import CheckpointStore  # type: ignore
+from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError  # type: ignore
 from azure.storage.blob import BlobClient, ContainerClient  # type: ignore
 

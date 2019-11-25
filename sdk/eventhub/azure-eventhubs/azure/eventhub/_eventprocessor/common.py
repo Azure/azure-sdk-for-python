@@ -15,9 +15,3 @@ class CloseReason(Enum):
     """
     SHUTDOWN = 0
     OWNERSHIP_LOST = 1
-
-
-class OwnershipLostError(Exception):
-    """Raises when update_checkpoint detects the ownership to a partition has been lost.
-
-    """

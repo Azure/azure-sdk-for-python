@@ -247,7 +247,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             - `partition_ids` (list[str])
 
         :rtype: dict
-        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         mgmt_msg = Message(application_properties={'name': self.eventhub_name})
         response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
@@ -264,7 +264,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         """Get partition IDs of the Event Hub.
 
         :rtype: list[str]
-        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return self.get_eventhub_properties()['partition_ids']
 
@@ -285,7 +285,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         :param partition_id: The target partition ID.
         :type partition_id: str
         :rtype: dict
-        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         mgmt_msg = Message(application_properties={'name': self.eventhub_name,
                                                    'partition': partition_id})

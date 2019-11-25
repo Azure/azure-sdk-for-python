@@ -118,6 +118,10 @@ class OperationTimeoutError(EventHubError):
     """Operation times out."""
 
 
+class OwnershipLostError(Exception):
+    """Raises when update_checkpoint detects the ownership to a partition has been lost."""
+
+
 def _create_eventhub_exception(exception):
     if isinstance(exception, errors.AuthenticationException):
         error = AuthenticationError(str(exception), exception)

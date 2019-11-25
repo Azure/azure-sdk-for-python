@@ -162,12 +162,12 @@ class EventHubProducerClient(ClientBase):
         :keyword float timeout: The maximum wait time to send the event data.
          If not specified, the default wait time specified when the producer was created will be used.
         :rtype: None
-        :raises: :class:`AuthenticationError<azure.eventhub.AuthenticationError>`
-         :class:`ConnectError<azure.eventhub.ConnectError>`
-         :class:`ConnectionLostError<azure.eventhub.ConnectionLostError>`
-         :class:`EventDataError<azure.eventhub.EventDataError>`
-         :class:`EventDataSendError<azure.eventhub.EventDataSendError>`
-         :class:`EventHubError<azure.eventhub.EventHubError>`
+        :raises: :class:`AuthenticationError<azure.eventhub.exceptions.AuthenticationError>`
+         :class:`ConnectError<azure.eventhub.exceptions.ConnectError>`
+         :class:`ConnectionLostError<azure.eventhub.exceptions.ConnectionLostError>`
+         :class:`EventDataError<azure.eventhub.exceptions.EventDataError>`
+         :class:`EventDataSendError<azure.eventhub.exceptions.EventDataSendError>`
+         :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
 
         .. admonition:: Example:
 

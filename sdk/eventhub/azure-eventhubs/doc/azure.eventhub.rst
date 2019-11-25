@@ -46,34 +46,6 @@ azure.eventhub package
         :undoc-members:
         :inherited-members:
 
-    .. autoclass:: azure.eventhub.EventHubError
-        :members:
-        :undoc-members:
-
-    .. autoclass:: azure.eventhub.ConnectError
-        :members:
-        :undoc-members:
-
-    .. autoclass:: azure.eventhub.ConnectionLostError
-        :members:
-        :undoc-members:
-
-    .. autoclass:: azure.eventhub.EventDataError
-        :members:
-        :undoc-members:
-
-    .. autoclass:: azure.eventhub.EventDataSendError
-        :members:
-        :undoc-members:
-
-    .. autoclass:: azure.eventhub.AuthenticationError
-        :members:
-        :undoc-members:
-
-    .. autoclass:: azure.eventhub.OwnershipLostError
-        :members:
-        :undoc-members:
-
 
 Subpackages
 -----------
@@ -81,5 +53,6 @@ Subpackages
 .. toctree::
 
    azure.eventhub.aio
+   azure.eventhub.exceptions
 
 

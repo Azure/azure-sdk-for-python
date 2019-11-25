@@ -8,7 +8,8 @@ import pytest
 import threading
 import time
 
-from azure.eventhub import EventData, EventHubError
+from azure.eventhub import EventData
+from azure.eventhub.exceptions EventHubError
 from azure.eventhub._eventprocessor.event_processor import EventProcessor
 from azure.eventhub import CloseReason
 from azure.eventhub._eventprocessor.ownership_manager import OwnershipManager
