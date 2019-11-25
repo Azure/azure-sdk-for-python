@@ -3555,9 +3555,6 @@ class LiveEvent(TrackedResource):
     :type preview: ~azure.mgmt.media.models.LiveEventPreview
     :param encoding: The Live Event encoding.
     :type encoding: ~azure.mgmt.media.models.LiveEventEncoding
-    :param transcriptions: The Live Event transcription.
-    :type transcriptions:
-     list[~azure.mgmt.media.models.LiveEventTranscription]
     :ivar provisioning_state: The provisioning state of the Live Event.
     :vartype provisioning_state: str
     :ivar resource_state: The resource state of the Live Event. Possible
@@ -3601,7 +3598,6 @@ class LiveEvent(TrackedResource):
         'input': {'key': 'properties.input', 'type': 'LiveEventInput'},
         'preview': {'key': 'properties.preview', 'type': 'LiveEventPreview'},
         'encoding': {'key': 'properties.encoding', 'type': 'LiveEventEncoding'},
-        'transcriptions': {'key': 'properties.transcriptions', 'type': '[LiveEventTranscription]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'cross_site_access_policies': {'key': 'properties.crossSiteAccessPolicies', 'type': 'CrossSiteAccessPolicies'},
@@ -3611,13 +3607,12 @@ class LiveEvent(TrackedResource):
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, input, tags=None, location: str=None, description: str=None, preview=None, encoding=None, transcriptions=None, cross_site_access_policies=None, vanity_url: bool=None, stream_options=None, **kwargs) -> None:
+    def __init__(self, *, input, tags=None, location: str=None, description: str=None, preview=None, encoding=None, cross_site_access_policies=None, vanity_url: bool=None, stream_options=None, **kwargs) -> None:
         super(LiveEvent, self).__init__(tags=tags, location=location, **kwargs)
         self.description = description
         self.input = input
         self.preview = preview
         self.encoding = encoding
-        self.transcriptions = transcriptions
         self.provisioning_state = None
         self.resource_state = None
         self.cross_site_access_policies = cross_site_access_policies
@@ -3747,53 +3742,6 @@ class LiveEventInputAccessControl(Model):
         self.ip = ip
 
 
-class LiveEventInputTrackSelection(Model):
-    """A track selection condition.
-
-    :param property: Property name to select.
-    :type property: str
-    :param operation: Comparing operation.
-    :type operation: str
-    :param value: Property value to select.
-    :type value: str
-    """
-
-    _attribute_map = {
-        'property': {'key': 'property', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(self, *, property: str=None, operation: str=None, value: str=None, **kwargs) -> None:
-        super(LiveEventInputTrackSelection, self).__init__(**kwargs)
-        self.property = property
-        self.operation = operation
-        self.value = value
-
-
-class LiveEventOutputTranscriptionTrack(Model):
-    """Describes a transcription track in the output of a Live Event, generated
-    using speech-to-text transcription.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param track_name: Required. The output track name.
-    :type track_name: str
-    """
-
-    _validation = {
-        'track_name': {'required': True},
-    }
-
-    _attribute_map = {
-        'track_name': {'key': 'trackName', 'type': 'str'},
-    }
-
-    def __init__(self, *, track_name: str, **kwargs) -> None:
-        super(LiveEventOutputTranscriptionTrack, self).__init__(**kwargs)
-        self.track_name = track_name
-
-
 class LiveEventPreview(Model):
     """The Live Event preview.
 
@@ -3852,39 +3800,6 @@ class LiveEventPreviewAccessControl(Model):
     def __init__(self, *, ip=None, **kwargs) -> None:
         super(LiveEventPreviewAccessControl, self).__init__(**kwargs)
         self.ip = ip
-
-
-class LiveEventTranscription(Model):
-    """Describes the transcription tracks in the output of a Live Event, generated
-    using speech-to-text transcription.
-
-    :param language: Specifies the language (locale) used for speech-to-text
-     transcription � it should match the spoken language in the audio track.
-     The value should be in BCP-47 format of 'language tag-region' (e.g:
-     'en-US'). The list of supported languages are 'en-US' and 'en-GB'.
-    :type language: str
-    :param input_track_selection: Provides a mechanism to select the audio
-     track in the input live feed, to which speech-to-text transcription is
-     applied.
-    :type input_track_selection:
-     list[~azure.mgmt.media.models.LiveEventInputTrackSelection]
-    :param output_transcription_track: Describes a transcription track in the
-     output of a Live Event, generated using speech-to-text transcription.
-    :type output_transcription_track:
-     ~azure.mgmt.media.models.LiveEventOutputTranscriptionTrack
-    """
-
-    _attribute_map = {
-        'language': {'key': 'language', 'type': 'str'},
-        'input_track_selection': {'key': 'inputTrackSelection', 'type': '[LiveEventInputTrackSelection]'},
-        'output_transcription_track': {'key': 'outputTranscriptionTrack', 'type': 'LiveEventOutputTranscriptionTrack'},
-    }
-
-    def __init__(self, *, language: str=None, input_track_selection=None, output_transcription_track=None, **kwargs) -> None:
-        super(LiveEventTranscription, self).__init__(**kwargs)
-        self.language = language
-        self.input_track_selection = input_track_selection
-        self.output_transcription_track = output_transcription_track
 
 
 class LiveOutput(ProxyResource):
