@@ -558,7 +558,7 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
         cert_name = self.get_resource_name("cert")
         policy = CertificatePolicy.get_default()
-        policy._san_user_principal_names = "john.doe@domain.com"
+        policy._san_user_principal_names = ["john.doe@domain.com"]
 
         polling_interval = 0 if self.is_playback() else None
 
