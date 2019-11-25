@@ -18,34 +18,42 @@ interactions:
       accept-language:
       - en-US
     method: POST
-    uri: https://management.azure.com/providers/Microsoft.Cdn/checkNameAvailability?api-version=2019-12-31
+    uri: https://management.azure.com/providers/Microsoft.Cdn/checkNameAvailability?api-version=2019-04-15
   response:
     body:
-      string: '{"error":{"code":"InvalidResourceType","message":"The resource type
-        ''checkNameAvailability'' could not be found in the namespace ''Microsoft.Cdn''
-        for api version ''2019-12-31''. The supported api-versions are ''2015-06-01,2016-04-02,2016-10-02,2017-04-02,2017-10-12,2018-04-02,2019-04-15,2019-06-15-preview''."}}'
+      string: "{\r\n  \"nameAvailable\":true,\"reason\":null,\"message\":null\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '306'
+      - '57'
       content-type:
-      - application/json; charset=utf-8
+      - application/json; odata.metadata=minimal
       date:
-      - Mon, 25 Nov 2019 07:05:15 GMT
+      - Mon, 25 Nov 2019 08:43:44 GMT
       expires:
       - '-1'
+      odata-version:
+      - '4.0'
       pragma:
       - no-cache
+      server:
+      - Microsoft-IIS/8.5
       strict-transport-security:
       - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-aspnet-version:
+      - 4.0.30319
       x-content-type-options:
       - nosniff
-      x-ms-failure-cause:
-      - gateway
       x-ms-ratelimit-remaining-tenant-writes:
       - '1199'
+      x-powered-by:
+      - ASP.NET
     status:
-      code: 404
-      message: Not Found
+      code: 200
+      message: OK
 version: 1

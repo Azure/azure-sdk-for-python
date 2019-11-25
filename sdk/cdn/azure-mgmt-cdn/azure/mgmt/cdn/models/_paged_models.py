@@ -64,19 +64,6 @@ class OriginPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(OriginPaged, self).__init__(*args, **kwargs)
-class OriginGroupPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`OriginGroup <azure.mgmt.cdn.models.OriginGroup>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[OriginGroup]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(OriginGroupPaged, self).__init__(*args, **kwargs)
 class CustomDomainPaged(Paged):
     """
     A paging container for iterating over a list of :class:`CustomDomain <azure.mgmt.cdn.models.CustomDomain>` object

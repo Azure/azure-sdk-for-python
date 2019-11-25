@@ -26,7 +26,7 @@ class EndpointsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2019-12-31".
+    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2019-04-15".
     """
 
     models = models
@@ -36,7 +36,7 @@ class EndpointsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-31"
+        self.api_version = "2019-04-15"
 
         self.config = config
 
@@ -345,11 +345,10 @@ class EndpointsOperations(object):
     def update(
             self, resource_group_name, profile_name, endpoint_name, endpoint_update_properties, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates an existing CDN endpoint with the specified endpoint name under
-        the specified subscription, resource group and profile. Only tags can
-        be updated after creating an endpoint. To update origins, use the
-        Update Origin operation. To update origin groups, use the Update Origin
-        group operation. To update custom domains, use the Update Custom Domain
-        operation.
+        the specified subscription, resource group and profile. Only tags and
+        Origin HostHeader can be updated after creating an endpoint. To update
+        origins, use the Update Origin operation. To update custom domains, use
+        the Update Custom Domain operation.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.

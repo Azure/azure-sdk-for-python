@@ -22,7 +22,6 @@ try:
     from ._models_py3 import CustomDomainHttpsParameters
     from ._models_py3 import CustomDomainParameters
     from ._models_py3 import DeepCreatedOrigin
-    from ._models_py3 import DeepCreatedOriginGroup
     from ._models_py3 import DeliveryRule
     from ._models_py3 import DeliveryRuleAction
     from ._models_py3 import DeliveryRuleCacheExpirationAction
@@ -51,8 +50,6 @@ try:
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import GeoFilter
     from ._models_py3 import HeaderActionParameters
-    from ._models_py3 import HealthProbeParameters
-    from ._models_py3 import HttpErrorRangeParameters
     from ._models_py3 import HttpVersionMatchConditionParameters
     from ._models_py3 import IpAddressGroup
     from ._models_py3 import IsDeviceMatchConditionParameters
@@ -61,8 +58,6 @@ try:
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import Origin
-    from ._models_py3 import OriginGroup
-    from ._models_py3 import OriginGroupUpdateParameters
     from ._models_py3 import OriginUpdateParameters
     from ._models_py3 import PostArgsMatchConditionParameters
     from ._models_py3 import Profile
@@ -77,9 +72,7 @@ try:
     from ._models_py3 import RequestSchemeMatchConditionParameters
     from ._models_py3 import RequestUriMatchConditionParameters
     from ._models_py3 import Resource
-    from ._models_py3 import ResourceReference
     from ._models_py3 import ResourceUsage
-    from ._models_py3 import ResponseBasedOriginErrorDetectionParameters
     from ._models_py3 import Sku
     from ._models_py3 import SsoUri
     from ._models_py3 import SupportedOptimizationTypesListResult
@@ -109,7 +102,6 @@ except (SyntaxError, ImportError):
     from ._models import CustomDomainHttpsParameters
     from ._models import CustomDomainParameters
     from ._models import DeepCreatedOrigin
-    from ._models import DeepCreatedOriginGroup
     from ._models import DeliveryRule
     from ._models import DeliveryRuleAction
     from ._models import DeliveryRuleCacheExpirationAction
@@ -138,8 +130,6 @@ except (SyntaxError, ImportError):
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import GeoFilter
     from ._models import HeaderActionParameters
-    from ._models import HealthProbeParameters
-    from ._models import HttpErrorRangeParameters
     from ._models import HttpVersionMatchConditionParameters
     from ._models import IpAddressGroup
     from ._models import IsDeviceMatchConditionParameters
@@ -148,8 +138,6 @@ except (SyntaxError, ImportError):
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import Origin
-    from ._models import OriginGroup
-    from ._models import OriginGroupUpdateParameters
     from ._models import OriginUpdateParameters
     from ._models import PostArgsMatchConditionParameters
     from ._models import Profile
@@ -164,9 +152,7 @@ except (SyntaxError, ImportError):
     from ._models import RequestSchemeMatchConditionParameters
     from ._models import RequestUriMatchConditionParameters
     from ._models import Resource
-    from ._models import ResourceReference
     from ._models import ResourceUsage
-    from ._models import ResponseBasedOriginErrorDetectionParameters
     from ._models import Sku
     from ._models import SsoUri
     from ._models import SupportedOptimizationTypesListResult
@@ -187,7 +173,6 @@ from ._paged_models import CustomDomainPaged
 from ._paged_models import EdgeNodePaged
 from ._paged_models import EndpointPaged
 from ._paged_models import OperationPaged
-from ._paged_models import OriginGroupPaged
 from ._paged_models import OriginPaged
 from ._paged_models import ProfilePaged
 from ._paged_models import ResourceUsagePaged
@@ -195,9 +180,6 @@ from ._cdn_management_client_enums import (
     SkuName,
     ProfileResourceState,
     OptimizationType,
-    HealthProbeRequestType,
-    ProbeProtocol,
-    ResponseBasedDetectedErrorTypes,
     EndpointResourceState,
     QueryStringCachingBehavior,
     GeoFilterActions,
@@ -218,7 +200,6 @@ from ._cdn_management_client_enums import (
     CacheBehavior,
     QueryStringBehavior,
     OriginResourceState,
-    OriginGroupResourceState,
     CustomDomainResourceState,
     CustomHttpsProvisioningState,
     CustomHttpsProvisioningSubstate,
@@ -241,7 +222,6 @@ __all__ = [
     'CustomDomainHttpsParameters',
     'CustomDomainParameters',
     'DeepCreatedOrigin',
-    'DeepCreatedOriginGroup',
     'DeliveryRule',
     'DeliveryRuleAction',
     'DeliveryRuleCacheExpirationAction',
@@ -270,8 +250,6 @@ __all__ = [
     'ErrorResponse', 'ErrorResponseException',
     'GeoFilter',
     'HeaderActionParameters',
-    'HealthProbeParameters',
-    'HttpErrorRangeParameters',
     'HttpVersionMatchConditionParameters',
     'IpAddressGroup',
     'IsDeviceMatchConditionParameters',
@@ -280,8 +258,6 @@ __all__ = [
     'Operation',
     'OperationDisplay',
     'Origin',
-    'OriginGroup',
-    'OriginGroupUpdateParameters',
     'OriginUpdateParameters',
     'PostArgsMatchConditionParameters',
     'Profile',
@@ -296,9 +272,7 @@ __all__ = [
     'RequestSchemeMatchConditionParameters',
     'RequestUriMatchConditionParameters',
     'Resource',
-    'ResourceReference',
     'ResourceUsage',
-    'ResponseBasedOriginErrorDetectionParameters',
     'Sku',
     'SsoUri',
     'SupportedOptimizationTypesListResult',
@@ -319,16 +293,12 @@ __all__ = [
     'ResourceUsagePaged',
     'EndpointPaged',
     'OriginPaged',
-    'OriginGroupPaged',
     'CustomDomainPaged',
     'OperationPaged',
     'EdgeNodePaged',
     'SkuName',
     'ProfileResourceState',
     'OptimizationType',
-    'HealthProbeRequestType',
-    'ProbeProtocol',
-    'ResponseBasedDetectedErrorTypes',
     'EndpointResourceState',
     'QueryStringCachingBehavior',
     'GeoFilterActions',
@@ -349,7 +319,6 @@ __all__ = [
     'CacheBehavior',
     'QueryStringBehavior',
     'OriginResourceState',
-    'OriginGroupResourceState',
     'CustomDomainResourceState',
     'CustomHttpsProvisioningState',
     'CustomHttpsProvisioningSubstate',

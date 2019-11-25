@@ -463,6 +463,10 @@ class CustomDomain(ProxyResource):
      'CertificateDeleted'
     :vartype custom_https_provisioning_substate: str or
      ~azure.mgmt.cdn.models.CustomHttpsProvisioningSubstate
+    :param custom_https_parameters: Certificate parameters for securing custom
+     HTTPS
+    :type custom_https_parameters:
+     ~azure.mgmt.cdn.models.CustomDomainHttpsParameters
     :param validation_data: Special validation or data may be required when
      delivering CDN to some regions due to local compliance reasons. E.g. ICP
      license number of a custom domain is required to deliver content in China.
@@ -490,16 +494,18 @@ class CustomDomain(ProxyResource):
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'custom_https_provisioning_state': {'key': 'properties.customHttpsProvisioningState', 'type': 'str'},
         'custom_https_provisioning_substate': {'key': 'properties.customHttpsProvisioningSubstate', 'type': 'str'},
+        'custom_https_parameters': {'key': 'properties.customHttpsParameters', 'type': 'CustomDomainHttpsParameters'},
         'validation_data': {'key': 'properties.validationData', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, host_name: str, validation_data: str=None, **kwargs) -> None:
+    def __init__(self, *, host_name: str, custom_https_parameters=None, validation_data: str=None, **kwargs) -> None:
         super(CustomDomain, self).__init__(**kwargs)
         self.host_name = host_name
         self.resource_state = None
         self.custom_https_provisioning_state = None
         self.custom_https_provisioning_substate = None
+        self.custom_https_parameters = custom_https_parameters
         self.validation_data = validation_data
         self.provisioning_state = None
 
@@ -532,34 +538,16 @@ class DeepCreatedOrigin(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Origin name which must be unique within the
-     endpoint.
+    :param name: Required. Origin name
     :type name: str
     :param host_name: Required. The address of the origin. It can be a domain
-     name, IPv4 address, or IPv6 address. This should be unique across all
-     origins in an endpoint.
+     name, IPv4 address, or IPv6 address.
     :type host_name: str
-    :param http_port: The value of the HTTP port. Must be between 1 and 65535.
+    :param http_port: The value of the HTTP port. Must be between 1 and 65535
     :type http_port: int
     :param https_port: The value of the HTTPS port. Must be between 1 and
-     65535.
+     65535
     :type https_port: int
-    :param origin_host_header: The host header value sent to the origin with
-     each request. If you leave this blank, the request hostname determines
-     this value. Azure CDN origins, such as Web Apps, Blob Storage, and Cloud
-     Services require this host header value to match the origin hostname by
-     default.
-    :type origin_host_header: str
-    :param priority: Priority of origin in given origin group for load
-     balancing. Higher priorities will not be used for load balancing if any
-     lower priority origin is healthy.Must be between 1 and 5.
-    :type priority: int
-    :param weight: Weight of the origin in given origin group for load
-     balancing. Must be between 1 and 1000
-    :type weight: int
-    :param enabled: Origin is enabled for load balancing or not. By default,
-     origin is always enabled.
-    :type enabled: bool
     """
 
     _validation = {
@@ -567,8 +555,6 @@ class DeepCreatedOrigin(Model):
         'host_name': {'required': True},
         'http_port': {'maximum': 65535, 'minimum': 1},
         'https_port': {'maximum': 65535, 'minimum': 1},
-        'priority': {'maximum': 5, 'minimum': 1},
-        'weight': {'maximum': 1000, 'minimum': 1},
     }
 
     _attribute_map = {
@@ -576,73 +562,14 @@ class DeepCreatedOrigin(Model):
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'http_port': {'key': 'properties.httpPort', 'type': 'int'},
         'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
-        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'weight': {'key': 'properties.weight', 'type': 'int'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, name: str, host_name: str, http_port: int=None, https_port: int=None, origin_host_header: str=None, priority: int=None, weight: int=None, enabled: bool=None, **kwargs) -> None:
+    def __init__(self, *, name: str, host_name: str, http_port: int=None, https_port: int=None, **kwargs) -> None:
         super(DeepCreatedOrigin, self).__init__(**kwargs)
         self.name = name
         self.host_name = host_name
         self.http_port = http_port
         self.https_port = https_port
-        self.origin_host_header = origin_host_header
-        self.priority = priority
-        self.weight = weight
-        self.enabled = enabled
-
-
-class DeepCreatedOriginGroup(Model):
-    """The origin group for CDN content which is added when creating a CDN
-    endpoint. Traffic is sent to the origins within the origin group based on
-    origin health.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. Origin group name which must be unique within the
-     endpoint.
-    :type name: str
-    :param health_probe_settings: Health probe settings to the origin that is
-     used to determine the health of the origin.
-    :type health_probe_settings: ~azure.mgmt.cdn.models.HealthProbeParameters
-    :param origins: Required. The source of the content being delivered via
-     CDN within given origin group.
-    :type origins: list[~azure.mgmt.cdn.models.ResourceReference]
-    :param traffic_restoration_time_to_healed_or_new_endpoints_in_minutes:
-     Time in minutes to shift the traffic to the endpoint gradually when an
-     unhealthy endpoint comes healthy or a new endpoint is added. Default is 10
-     mins. This property is currently not supported.
-    :type traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int
-    :param response_based_origin_error_detection_settings: The JSON object
-     that contains the properties to determine origin health using real
-     requests/responses.This property is currently not supported.
-    :type response_based_origin_error_detection_settings:
-     ~azure.mgmt.cdn.models.ResponseBasedOriginErrorDetectionParameters
-    """
-
-    _validation = {
-        'name': {'required': True},
-        'origins': {'required': True},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'maximum': 50, 'minimum': 0},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'health_probe_settings': {'key': 'properties.healthProbeSettings', 'type': 'HealthProbeParameters'},
-        'origins': {'key': 'properties.origins', 'type': '[ResourceReference]'},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'key': 'properties.trafficRestorationTimeToHealedOrNewEndpointsInMinutes', 'type': 'int'},
-        'response_based_origin_error_detection_settings': {'key': 'properties.responseBasedOriginErrorDetectionSettings', 'type': 'ResponseBasedOriginErrorDetectionParameters'},
-    }
-
-    def __init__(self, *, name: str, origins, health_probe_settings=None, traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int=None, response_based_origin_error_detection_settings=None, **kwargs) -> None:
-        super(DeepCreatedOriginGroup, self).__init__(**kwargs)
-        self.name = name
-        self.health_probe_settings = health_probe_settings
-        self.origins = origins
-        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
-        self.response_based_origin_error_detection_settings = response_based_origin_error_detection_settings
 
 
 class DeliveryRule(Model):
@@ -1350,20 +1277,18 @@ class Endpoint(TrackedResource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param origin_host_header: The host header value sent to the origin with
+     each request. If you leave this blank, the request hostname determines
+     this value. Azure CDN origins, such as Web Apps, Blob Storage, and Cloud
+     Services require this host header value to match the origin hostname by
+     default.
+    :type origin_host_header: str
     :param origin_path: A directory path on the origin that CDN can use to
      retrieve content from, e.g. contoso.cloudapp.net/originpath.
     :type origin_path: str
     :param content_types_to_compress: List of content types on which
      compression applies. The value should be a valid MIME type.
     :type content_types_to_compress: list[str]
-    :param origin_host_header: The host header value sent to the origin with
-     each request. This property at Endpoint is only allowed when endpoint uses
-     single origin and can be overridden by the same property specified at
-     origin.If you leave this blank, the request hostname determines this
-     value. Azure CDN origins, such as Web Apps, Blob Storage, and Cloud
-     Services require this host header value to match the origin hostname by
-     default.
-    :type origin_host_header: str
     :param is_compression_enabled: Indicates whether content compression is
      enabled on CDN. Default value is false. If compression is enabled, content
      will be served as compressed if user requests for a compressed version.
@@ -1394,15 +1319,12 @@ class Endpoint(TrackedResource):
     :type optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
     :param probe_path: Path to a file hosted on the origin which helps
      accelerate delivery of the dynamic content and calculate the most optimal
-     routes for the CDN. This is relative to the origin path. This property is
-     only relevant when using a single origin.
+     routes for the CDN. This is relative to the origin path.
     :type probe_path: str
     :param geo_filters: List of rules defining the user's geo access within a
      CDN endpoint. Each geo filter defines an access rule to a specified path
      or content, e.g. block APAC for path /pictures/
     :type geo_filters: list[~azure.mgmt.cdn.models.GeoFilter]
-    :param default_origin_group: A reference to the origin group.
-    :type default_origin_group: ~azure.mgmt.cdn.models.ResourceReference
     :param delivery_policy: A policy that specifies the delivery rules to be
      used for an endpoint.
     :type delivery_policy:
@@ -1413,9 +1335,6 @@ class Endpoint(TrackedResource):
     :param origins: Required. The source of the content being delivered via
      CDN.
     :type origins: list[~azure.mgmt.cdn.models.DeepCreatedOrigin]
-    :param origin_groups: The origin groups comprising of origins that are
-     used for load balancing the traffic based on availability.
-    :type origin_groups: list[~azure.mgmt.cdn.models.DeepCreatedOriginGroup]
     :ivar resource_state: Resource status of the endpoint. Possible values
      include: 'Creating', 'Deleting', 'Running', 'Starting', 'Stopped',
      'Stopping'
@@ -1442,9 +1361,9 @@ class Endpoint(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
         'origin_path': {'key': 'properties.originPath', 'type': 'str'},
         'content_types_to_compress': {'key': 'properties.contentTypesToCompress', 'type': '[str]'},
-        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
         'is_compression_enabled': {'key': 'properties.isCompressionEnabled', 'type': 'bool'},
         'is_http_allowed': {'key': 'properties.isHttpAllowed', 'type': 'bool'},
         'is_https_allowed': {'key': 'properties.isHttpsAllowed', 'type': 'bool'},
@@ -1452,20 +1371,18 @@ class Endpoint(TrackedResource):
         'optimization_type': {'key': 'properties.optimizationType', 'type': 'str'},
         'probe_path': {'key': 'properties.probePath', 'type': 'str'},
         'geo_filters': {'key': 'properties.geoFilters', 'type': '[GeoFilter]'},
-        'default_origin_group': {'key': 'properties.defaultOriginGroup', 'type': 'ResourceReference'},
         'delivery_policy': {'key': 'properties.deliveryPolicy', 'type': 'EndpointPropertiesUpdateParametersDeliveryPolicy'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'origins': {'key': 'properties.origins', 'type': '[DeepCreatedOrigin]'},
-        'origin_groups': {'key': 'properties.originGroups', 'type': '[DeepCreatedOriginGroup]'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, origins, tags=None, origin_path: str=None, content_types_to_compress=None, origin_host_header: str=None, is_compression_enabled: bool=None, is_http_allowed: bool=None, is_https_allowed: bool=None, query_string_caching_behavior=None, optimization_type=None, probe_path: str=None, geo_filters=None, default_origin_group=None, delivery_policy=None, origin_groups=None, **kwargs) -> None:
+    def __init__(self, *, location: str, origins, tags=None, origin_host_header: str=None, origin_path: str=None, content_types_to_compress=None, is_compression_enabled: bool=None, is_http_allowed: bool=None, is_https_allowed: bool=None, query_string_caching_behavior=None, optimization_type=None, probe_path: str=None, geo_filters=None, delivery_policy=None, **kwargs) -> None:
         super(Endpoint, self).__init__(location=location, tags=tags, **kwargs)
+        self.origin_host_header = origin_host_header
         self.origin_path = origin_path
         self.content_types_to_compress = content_types_to_compress
-        self.origin_host_header = origin_host_header
         self.is_compression_enabled = is_compression_enabled
         self.is_http_allowed = is_http_allowed
         self.is_https_allowed = is_https_allowed
@@ -1473,11 +1390,9 @@ class Endpoint(TrackedResource):
         self.optimization_type = optimization_type
         self.probe_path = probe_path
         self.geo_filters = geo_filters
-        self.default_origin_group = default_origin_group
         self.delivery_policy = delivery_policy
         self.host_name = None
         self.origins = origins
-        self.origin_groups = origin_groups
         self.resource_state = None
         self.provisioning_state = None
 
@@ -1513,20 +1428,18 @@ class EndpointUpdateParameters(Model):
 
     :param tags: Endpoint tags.
     :type tags: dict[str, str]
+    :param origin_host_header: The host header value sent to the origin with
+     each request. If you leave this blank, the request hostname determines
+     this value. Azure CDN origins, such as Web Apps, Blob Storage, and Cloud
+     Services require this host header value to match the origin hostname by
+     default.
+    :type origin_host_header: str
     :param origin_path: A directory path on the origin that CDN can use to
      retrieve content from, e.g. contoso.cloudapp.net/originpath.
     :type origin_path: str
     :param content_types_to_compress: List of content types on which
      compression applies. The value should be a valid MIME type.
     :type content_types_to_compress: list[str]
-    :param origin_host_header: The host header value sent to the origin with
-     each request. This property at Endpoint is only allowed when endpoint uses
-     single origin and can be overridden by the same property specified at
-     origin.If you leave this blank, the request hostname determines this
-     value. Azure CDN origins, such as Web Apps, Blob Storage, and Cloud
-     Services require this host header value to match the origin hostname by
-     default.
-    :type origin_host_header: str
     :param is_compression_enabled: Indicates whether content compression is
      enabled on CDN. Default value is false. If compression is enabled, content
      will be served as compressed if user requests for a compressed version.
@@ -1557,15 +1470,12 @@ class EndpointUpdateParameters(Model):
     :type optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
     :param probe_path: Path to a file hosted on the origin which helps
      accelerate delivery of the dynamic content and calculate the most optimal
-     routes for the CDN. This is relative to the origin path. This property is
-     only relevant when using a single origin.
+     routes for the CDN. This is relative to the origin path.
     :type probe_path: str
     :param geo_filters: List of rules defining the user's geo access within a
      CDN endpoint. Each geo filter defines an access rule to a specified path
      or content, e.g. block APAC for path /pictures/
     :type geo_filters: list[~azure.mgmt.cdn.models.GeoFilter]
-    :param default_origin_group: A reference to the origin group.
-    :type default_origin_group: ~azure.mgmt.cdn.models.ResourceReference
     :param delivery_policy: A policy that specifies the delivery rules to be
      used for an endpoint.
     :type delivery_policy:
@@ -1574,9 +1484,9 @@ class EndpointUpdateParameters(Model):
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
         'origin_path': {'key': 'properties.originPath', 'type': 'str'},
         'content_types_to_compress': {'key': 'properties.contentTypesToCompress', 'type': '[str]'},
-        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
         'is_compression_enabled': {'key': 'properties.isCompressionEnabled', 'type': 'bool'},
         'is_http_allowed': {'key': 'properties.isHttpAllowed', 'type': 'bool'},
         'is_https_allowed': {'key': 'properties.isHttpsAllowed', 'type': 'bool'},
@@ -1584,16 +1494,15 @@ class EndpointUpdateParameters(Model):
         'optimization_type': {'key': 'properties.optimizationType', 'type': 'str'},
         'probe_path': {'key': 'properties.probePath', 'type': 'str'},
         'geo_filters': {'key': 'properties.geoFilters', 'type': '[GeoFilter]'},
-        'default_origin_group': {'key': 'properties.defaultOriginGroup', 'type': 'ResourceReference'},
         'delivery_policy': {'key': 'properties.deliveryPolicy', 'type': 'EndpointPropertiesUpdateParametersDeliveryPolicy'},
     }
 
-    def __init__(self, *, tags=None, origin_path: str=None, content_types_to_compress=None, origin_host_header: str=None, is_compression_enabled: bool=None, is_http_allowed: bool=None, is_https_allowed: bool=None, query_string_caching_behavior=None, optimization_type=None, probe_path: str=None, geo_filters=None, default_origin_group=None, delivery_policy=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, origin_host_header: str=None, origin_path: str=None, content_types_to_compress=None, is_compression_enabled: bool=None, is_http_allowed: bool=None, is_https_allowed: bool=None, query_string_caching_behavior=None, optimization_type=None, probe_path: str=None, geo_filters=None, delivery_policy=None, **kwargs) -> None:
         super(EndpointUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
+        self.origin_host_header = origin_host_header
         self.origin_path = origin_path
         self.content_types_to_compress = content_types_to_compress
-        self.origin_host_header = origin_host_header
         self.is_compression_enabled = is_compression_enabled
         self.is_http_allowed = is_http_allowed
         self.is_https_allowed = is_https_allowed
@@ -1601,7 +1510,6 @@ class EndpointUpdateParameters(Model):
         self.optimization_type = optimization_type
         self.probe_path = probe_path
         self.geo_filters = geo_filters
-        self.default_origin_group = default_origin_group
         self.delivery_policy = delivery_policy
 
 
@@ -1721,69 +1629,6 @@ class HeaderActionParameters(Model):
         self.header_action = header_action
         self.header_name = header_name
         self.value = value
-
-
-class HealthProbeParameters(Model):
-    """The JSON object that contains the properties to send health probes to
-    origin.
-
-    :param probe_path: The path relative to the origin that is used to
-     determine the health of the origin.
-    :type probe_path: str
-    :param probe_request_type: The type of health probe request that is made.
-     Possible values include: 'NotSet', 'GET', 'HEAD'
-    :type probe_request_type: str or
-     ~azure.mgmt.cdn.models.HealthProbeRequestType
-    :param probe_protocol: Protocol to use for health probe. Possible values
-     include: 'NotSet', 'Http', 'Https'
-    :type probe_protocol: str or ~azure.mgmt.cdn.models.ProbeProtocol
-    :param probe_interval_in_seconds: The number of seconds between health
-     probes.Default is 240sec.
-    :type probe_interval_in_seconds: int
-    """
-
-    _validation = {
-        'probe_interval_in_seconds': {'maximum': 255, 'minimum': 1},
-    }
-
-    _attribute_map = {
-        'probe_path': {'key': 'probePath', 'type': 'str'},
-        'probe_request_type': {'key': 'probeRequestType', 'type': 'HealthProbeRequestType'},
-        'probe_protocol': {'key': 'probeProtocol', 'type': 'ProbeProtocol'},
-        'probe_interval_in_seconds': {'key': 'probeIntervalInSeconds', 'type': 'int'},
-    }
-
-    def __init__(self, *, probe_path: str=None, probe_request_type=None, probe_protocol=None, probe_interval_in_seconds: int=None, **kwargs) -> None:
-        super(HealthProbeParameters, self).__init__(**kwargs)
-        self.probe_path = probe_path
-        self.probe_request_type = probe_request_type
-        self.probe_protocol = probe_protocol
-        self.probe_interval_in_seconds = probe_interval_in_seconds
-
-
-class HttpErrorRangeParameters(Model):
-    """The JSON object that represents the range for http status codes.
-
-    :param begin: The inclusive start of the http status code range.
-    :type begin: int
-    :param end: The inclusive end of the http status code range.
-    :type end: int
-    """
-
-    _validation = {
-        'begin': {'maximum': 999, 'minimum': 100},
-        'end': {'maximum': 999, 'minimum': 100},
-    }
-
-    _attribute_map = {
-        'begin': {'key': 'begin', 'type': 'int'},
-        'end': {'key': 'end', 'type': 'int'},
-    }
-
-    def __init__(self, *, begin: int=None, end: int=None, **kwargs) -> None:
-        super(HttpErrorRangeParameters, self).__init__(**kwargs)
-        self.begin = begin
-        self.end = end
 
 
 class HttpVersionMatchConditionParameters(Model):
@@ -2079,30 +1924,14 @@ class Origin(TrackedResource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param host_name: The address of the origin. Domain names, IPv4 addresses,
-     and IPv6 addresses are supported.This should be unique across all origins
-     in an endpoint.
+    :param host_name: Required. The address of the origin. Domain names, IPv4
+     addresses, and IPv6 addresses are supported.
     :type host_name: str
     :param http_port: The value of the HTTP port. Must be between 1 and 65535.
     :type http_port: int
-    :param https_port: The value of the HTTPS port. Must be between 1 and
+    :param https_port: The value of the https port. Must be between 1 and
      65535.
     :type https_port: int
-    :param origin_host_header: The host header value sent to the origin with
-     each request. If you leave this blank, the request hostname determines
-     this value. Azure CDN origins, such as Web Apps, Blob Storage, and Cloud
-     Services require this host header value to match the origin hostname by
-     default. This overrides the host header defined at Endpoint
-    :type origin_host_header: str
-    :param priority: Priority of origin in given origin group for load
-     balancing. Higher priorities will not be used for load balancing if any
-     lower priority origin is healthy.Must be between 1 and 5
-    :type priority: int
-    :param weight: Weight of the origin in given origin group for load
-     balancing. Must be between 1 and 1000
-    :type weight: int
-    :param enabled: Origin is enabled for load balancing or not
-    :type enabled: bool
     :ivar resource_state: Resource status of the origin. Possible values
      include: 'Creating', 'Active', 'Deleting'
     :vartype resource_state: str or ~azure.mgmt.cdn.models.OriginResourceState
@@ -2115,10 +1944,9 @@ class Origin(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'host_name': {'required': True},
         'http_port': {'maximum': 65535, 'minimum': 1},
         'https_port': {'maximum': 65535, 'minimum': 1},
-        'priority': {'maximum': 5, 'minimum': 1},
-        'weight': {'maximum': 1000, 'minimum': 1},
         'resource_state': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
@@ -2132,194 +1960,48 @@ class Origin(TrackedResource):
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'http_port': {'key': 'properties.httpPort', 'type': 'int'},
         'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
-        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'weight': {'key': 'properties.weight', 'type': 'int'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, host_name: str=None, http_port: int=None, https_port: int=None, origin_host_header: str=None, priority: int=None, weight: int=None, enabled: bool=None, **kwargs) -> None:
+    def __init__(self, *, location: str, host_name: str, tags=None, http_port: int=None, https_port: int=None, **kwargs) -> None:
         super(Origin, self).__init__(location=location, tags=tags, **kwargs)
         self.host_name = host_name
         self.http_port = http_port
         self.https_port = https_port
-        self.origin_host_header = origin_host_header
-        self.priority = priority
-        self.weight = weight
-        self.enabled = enabled
         self.resource_state = None
         self.provisioning_state = None
-
-
-class OriginGroup(ProxyResource):
-    """Origin group comprising of origins is used for load balancing to origins
-    when the content cannot be served from CDN.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param health_probe_settings: Health probe settings to the origin that is
-     used to determine the health of the origin.
-    :type health_probe_settings: ~azure.mgmt.cdn.models.HealthProbeParameters
-    :param origins: The source of the content being delivered via CDN within
-     given origin group.
-    :type origins: list[~azure.mgmt.cdn.models.ResourceReference]
-    :param traffic_restoration_time_to_healed_or_new_endpoints_in_minutes:
-     Time in minutes to shift the traffic to the endpoint gradually when an
-     unhealthy endpoint comes healthy or a new endpoint is added. Default is 10
-     mins. This property is currently not supported.
-    :type traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int
-    :param response_based_origin_error_detection_settings: The JSON object
-     that contains the properties to determine origin health using real
-     requests/responses. This property is currently not supported.
-    :type response_based_origin_error_detection_settings:
-     ~azure.mgmt.cdn.models.ResponseBasedOriginErrorDetectionParameters
-    :ivar resource_state: Resource status of the origin group. Possible values
-     include: 'Creating', 'Active', 'Deleting'
-    :vartype resource_state: str or
-     ~azure.mgmt.cdn.models.OriginGroupResourceState
-    :ivar provisioning_state: Provisioning status of the origin group.
-    :vartype provisioning_state: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'maximum': 50, 'minimum': 0},
-        'resource_state': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'health_probe_settings': {'key': 'properties.healthProbeSettings', 'type': 'HealthProbeParameters'},
-        'origins': {'key': 'properties.origins', 'type': '[ResourceReference]'},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'key': 'properties.trafficRestorationTimeToHealedOrNewEndpointsInMinutes', 'type': 'int'},
-        'response_based_origin_error_detection_settings': {'key': 'properties.responseBasedOriginErrorDetectionSettings', 'type': 'ResponseBasedOriginErrorDetectionParameters'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-    }
-
-    def __init__(self, *, health_probe_settings=None, origins=None, traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int=None, response_based_origin_error_detection_settings=None, **kwargs) -> None:
-        super(OriginGroup, self).__init__(**kwargs)
-        self.health_probe_settings = health_probe_settings
-        self.origins = origins
-        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
-        self.response_based_origin_error_detection_settings = response_based_origin_error_detection_settings
-        self.resource_state = None
-        self.provisioning_state = None
-
-
-class OriginGroupUpdateParameters(Model):
-    """Origin group properties needed for origin group creation or update.
-
-    :param health_probe_settings: Health probe settings to the origin that is
-     used to determine the health of the origin.
-    :type health_probe_settings: ~azure.mgmt.cdn.models.HealthProbeParameters
-    :param origins: The source of the content being delivered via CDN within
-     given origin group.
-    :type origins: list[~azure.mgmt.cdn.models.ResourceReference]
-    :param traffic_restoration_time_to_healed_or_new_endpoints_in_minutes:
-     Time in minutes to shift the traffic to the endpoint gradually when an
-     unhealthy endpoint comes healthy or a new endpoint is added. Default is 10
-     mins. This property is currently not supported.
-    :type traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int
-    :param response_based_origin_error_detection_settings: The JSON object
-     that contains the properties to determine origin health using real
-     requests/responses. This property is currently not supported.
-    :type response_based_origin_error_detection_settings:
-     ~azure.mgmt.cdn.models.ResponseBasedOriginErrorDetectionParameters
-    """
-
-    _validation = {
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'maximum': 50, 'minimum': 0},
-    }
-
-    _attribute_map = {
-        'health_probe_settings': {'key': 'properties.healthProbeSettings', 'type': 'HealthProbeParameters'},
-        'origins': {'key': 'properties.origins', 'type': '[ResourceReference]'},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'key': 'properties.trafficRestorationTimeToHealedOrNewEndpointsInMinutes', 'type': 'int'},
-        'response_based_origin_error_detection_settings': {'key': 'properties.responseBasedOriginErrorDetectionSettings', 'type': 'ResponseBasedOriginErrorDetectionParameters'},
-    }
-
-    def __init__(self, *, health_probe_settings=None, origins=None, traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int=None, response_based_origin_error_detection_settings=None, **kwargs) -> None:
-        super(OriginGroupUpdateParameters, self).__init__(**kwargs)
-        self.health_probe_settings = health_probe_settings
-        self.origins = origins
-        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
-        self.response_based_origin_error_detection_settings = response_based_origin_error_detection_settings
 
 
 class OriginUpdateParameters(Model):
-    """Origin properties needed for origin update.
+    """Origin properties needed for origin creation or update.
 
-    :param tags: Origin tags.
-    :type tags: dict[str, str]
     :param host_name: The address of the origin. Domain names, IPv4 addresses,
-     and IPv6 addresses are supported.This should be unique across all origins
-     in an endpoint.
+     and IPv6 addresses are supported.
     :type host_name: str
     :param http_port: The value of the HTTP port. Must be between 1 and 65535.
     :type http_port: int
     :param https_port: The value of the HTTPS port. Must be between 1 and
      65535.
     :type https_port: int
-    :param origin_host_header: The host header value sent to the origin with
-     each request. If you leave this blank, the request hostname determines
-     this value. Azure CDN origins, such as Web Apps, Blob Storage, and Cloud
-     Services require this host header value to match the origin hostname by
-     default. This overrides the host header defined at Endpoint
-    :type origin_host_header: str
-    :param priority: Priority of origin in given origin group for load
-     balancing. Higher priorities will not be used for load balancing if any
-     lower priority origin is healthy.Must be between 1 and 5
-    :type priority: int
-    :param weight: Weight of the origin in given origin group for load
-     balancing. Must be between 1 and 1000
-    :type weight: int
-    :param enabled: Origin is enabled for load balancing or not
-    :type enabled: bool
     """
 
     _validation = {
         'http_port': {'maximum': 65535, 'minimum': 1},
         'https_port': {'maximum': 65535, 'minimum': 1},
-        'priority': {'maximum': 5, 'minimum': 1},
-        'weight': {'maximum': 1000, 'minimum': 1},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'http_port': {'key': 'properties.httpPort', 'type': 'int'},
         'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
-        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'weight': {'key': 'properties.weight', 'type': 'int'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, tags=None, host_name: str=None, http_port: int=None, https_port: int=None, origin_host_header: str=None, priority: int=None, weight: int=None, enabled: bool=None, **kwargs) -> None:
+    def __init__(self, *, host_name: str=None, http_port: int=None, https_port: int=None, **kwargs) -> None:
         super(OriginUpdateParameters, self).__init__(**kwargs)
-        self.tags = tags
         self.host_name = host_name
         self.http_port = http_port
         self.https_port = https_port
-        self.origin_host_header = origin_host_header
-        self.priority = priority
-        self.weight = weight
-        self.enabled = enabled
 
 
 class PostArgsMatchConditionParameters(Model):
@@ -2810,22 +2492,6 @@ class RequestUriMatchConditionParameters(Model):
         self.transforms = transforms
 
 
-class ResourceReference(Model):
-    """Reference to another resource.
-
-    :param id: Resource ID.
-    :type id: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-    }
-
-    def __init__(self, *, id: str=None, **kwargs) -> None:
-        super(ResourceReference, self).__init__(**kwargs)
-        self.id = id
-
-
 class ResourceUsage(Model):
     """Output of check resource usage API.
 
@@ -2862,41 +2528,6 @@ class ResourceUsage(Model):
         self.unit = None
         self.current_value = None
         self.limit = None
-
-
-class ResponseBasedOriginErrorDetectionParameters(Model):
-    """The JSON object that contains the properties to determine origin health
-    using real requests/responses.
-
-    :param response_based_detected_error_types: Type of response errors for
-     real user requests for which origin will be deemed unhealthy. Possible
-     values include: 'None', 'TcpErrorsOnly', 'TcpAndHttpErrors'
-    :type response_based_detected_error_types: str or
-     ~azure.mgmt.cdn.models.ResponseBasedDetectedErrorTypes
-    :param response_based_failover_threshold_percentage: The percentage of
-     failed requests in the sample where failover should trigger.
-    :type response_based_failover_threshold_percentage: int
-    :param http_error_ranges: The list of Http status code ranges that are
-     considered as server errors for origin and it is marked as unhealthy.
-    :type http_error_ranges:
-     list[~azure.mgmt.cdn.models.HttpErrorRangeParameters]
-    """
-
-    _validation = {
-        'response_based_failover_threshold_percentage': {'maximum': 100, 'minimum': 0},
-    }
-
-    _attribute_map = {
-        'response_based_detected_error_types': {'key': 'responseBasedDetectedErrorTypes', 'type': 'ResponseBasedDetectedErrorTypes'},
-        'response_based_failover_threshold_percentage': {'key': 'responseBasedFailoverThresholdPercentage', 'type': 'int'},
-        'http_error_ranges': {'key': 'httpErrorRanges', 'type': '[HttpErrorRangeParameters]'},
-    }
-
-    def __init__(self, *, response_based_detected_error_types=None, response_based_failover_threshold_percentage: int=None, http_error_ranges=None, **kwargs) -> None:
-        super(ResponseBasedOriginErrorDetectionParameters, self).__init__(**kwargs)
-        self.response_based_detected_error_types = response_based_detected_error_types
-        self.response_based_failover_threshold_percentage = response_based_failover_threshold_percentage
-        self.http_error_ranges = http_error_ranges
 
 
 class Sku(Model):
@@ -3245,14 +2876,16 @@ class UrlRewriteActionParameters(Model):
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlRewriteActionParameters" .
     :vartype odatatype: str
     :param source_pattern: Required. define a request URI pattern that
-     identifies the type of requests that may be rewritten. If value is blank,
-     all strings are matched.
+     identifies the type of requests that may be rewritten. Currently, source
+     pattern uses a prefix-based match. To match all URL paths, use "/" as the
+     source pattern value. To match only the root directory and re-write this
+     path, use the origin path field
     :type source_pattern: str
-    :param destination: Required. Define the relative URL to which the above
-     requests will be rewritten by.
+    :param destination: Required. Define the destination path for be used in
+     the rewrite. This will overwrite the source pattern
     :type destination: str
-    :param preserve_unmatched_path: Whether to preserve unmatched path.
-     Default value is true.
+    :param preserve_unmatched_path: If True, the remaining path after the
+     source pattern will be appended to the new destination path.
     :type preserve_unmatched_path: bool
     """
 

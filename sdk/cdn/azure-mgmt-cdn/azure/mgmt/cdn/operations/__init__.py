@@ -12,7 +12,6 @@
 from ._profiles_operations import ProfilesOperations
 from ._endpoints_operations import EndpointsOperations
 from ._origins_operations import OriginsOperations
-from ._origin_groups_operations import OriginGroupsOperations
 from ._custom_domains_operations import CustomDomainsOperations
 from ._resource_usage_operations import ResourceUsageOperations
 from ._operations import Operations
@@ -23,7 +22,6 @@ __all__ = [
     'ProfilesOperations',
     'EndpointsOperations',
     'OriginsOperations',
-    'OriginGroupsOperations',
     'CustomDomainsOperations',
     'ResourceUsageOperations',
     'Operations',
