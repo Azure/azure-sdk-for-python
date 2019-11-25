@@ -10,7 +10,6 @@ if __name__ == '__main__':
     parser.add_argument('--new-version', required=True, help='new package version')
     parser.add_argument('--service', help='name of the service for which to set the dev build id (e.g. keyvault)')
     parser.add_argument(
-        "glob_string",
         dest="glob_string",
         nargs="?",
         help=(

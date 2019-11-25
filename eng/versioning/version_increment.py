@@ -27,7 +27,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Increments version for a given package name based on the released version')
     parser.add_argument('--package-name', required=True, help='name of package (accetps both formats: azure-service-package and azure_service_pacage)')
     parser.add_argument(
-        "glob_string",
         dest="glob_string",
         nargs="?",
         help=(

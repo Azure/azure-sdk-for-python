@@ -19,7 +19,6 @@ if __name__ == '__main__':
     parser.add_argument('--always-succeed', action='store_true', help='return exit code 0 even if incorrect versions are detected')
     parser.add_argument('--service', help='name of a service directory to target packages')
     parser.add_argument(
-        "glob_string",
         dest="glob_string",
         nargs="?",
         help=(
