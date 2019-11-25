@@ -11,9 +11,11 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class PartitionContext(object):
-    """Contains partition related context information for a PartitionProcessor instance to use.
-
-    Users can use update_checkpoint() of this class to save checkpoint data.
+    """Contains partition related context information.
+    
+    A `PartitionContext` instance will be passed to the event, error and initialization callbacks defined
+    when calling `EventHubConsumerClient.receive()`.
+    Users can call `update_checkpoint()` of this class to persist checkpoint data.
     """
     def __init__(self, fully_qualified_namespace, eventhub_name, consumer_group,
                  partition_id, checkpoint_store=None):
@@ -27,15 +29,16 @@ class PartitionContext(object):
 
     @property
     def last_enqueued_event_properties(self):
-        """
-        The latest enqueued event information. This property will be updated each time an event is received when
-        the receiver is created with `track_last_enqueued_event_properties` being `True`.
-        The dict includes following information of the partition:
+        """The latest enqueued event information.
+        
+        This property will be updated each time an event is received when the receiver is created
+        with `track_last_enqueued_event_properties` set to `True`.
+        The properties dict includes following information of the last enqueued event:
 
-            - `sequence_number`
-            - `offset`
-            - `enqueued_time`
-            - `retrieval_time`
+            - `sequence_number` (int)
+            - `offset` (str)
+            - `enqueued_time` (UTC datetime.datetime)
+            - `retrieval_time` (UTC datetime.datetime)
 
         :rtype: dict or None
         """
@@ -44,9 +47,10 @@ class PartitionContext(object):
         return None
 
     def update_checkpoint(self, event):
-        """
-        Updates the checkpoint using the given information for the associated partition and consumer group in the
-        chosen storage service.
+        """Updates the receive checkpoint to the given events offset.
+
+        This operation will only update a checkpoint if a `checkpoint_store` was provided during
+        creation of the `EventHubConsumerClient`. Otherwise a warning will be logged.
 
         :param ~azure.eventhub.EventData event: The EventData instance which contains the offset and
          sequence number information used for checkpoint.

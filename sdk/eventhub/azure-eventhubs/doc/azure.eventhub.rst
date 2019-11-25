@@ -54,5 +54,3 @@ Subpackages
 
    azure.eventhub.aio
    azure.eventhub.exceptions
-
-
