@@ -615,9 +615,11 @@ class CertificatePolicy(object):
         self._certificate_transparency = kwargs.pop("certificate_transparency", None)
         self._san_emails = kwargs.pop("san_emails", None) or None
         self._san_dns_names = kwargs.pop("san_dns_names", None) or None
-        self._san_upns = kwargs.pop("san_user_principal_names", None) or None
+        self._san_user_principal_names = kwargs.pop("san_user_principal_names", None) or None
 
-        if not (self._san_emails or self._san_upns or self._san_dns_names or self._subject):
+        if not (
+            self._san_emails or self._san_user_principal_names or self._san_dns_names or self._subject
+        ):
             raise ValueError("You need to set either subject or one of the subject alternative names " +
                             "parameters")
 
@@ -915,7 +917,7 @@ class CertificatePolicy(object):
 
         :rtype: list[str]
         """
-        return self._san_upns
+        return self._san_user_principal_names
 
     @property
     def validity_in_months(self):
