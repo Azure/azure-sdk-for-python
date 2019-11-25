@@ -51,7 +51,7 @@ class TransformsOperations(object):
         :type account_name: str
         :param filter: Restricts the set of items returned.
         :type filter: str
-        :param orderby: Specifies the key by which the result collection
+        :param orderby: Specifies the the key by which the result collection
          should be ordered.
         :type orderby: str
         :param dict custom_headers: headers that will be added to the request

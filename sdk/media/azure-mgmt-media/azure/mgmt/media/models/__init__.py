@@ -36,6 +36,7 @@ try:
     from ._models_py3 import ContentKeyPolicyClearKeyConfiguration
     from ._models_py3 import ContentKeyPolicyConfiguration
     from ._models_py3 import ContentKeyPolicyFairPlayConfiguration
+    from ._models_py3 import ContentKeyPolicyFairPlayOfflineRentalConfiguration
     from ._models_py3 import ContentKeyPolicyOpenRestriction
     from ._models_py3 import ContentKeyPolicyOption
     from ._models_py3 import ContentKeyPolicyPlayReadyConfiguration
@@ -101,11 +102,8 @@ try:
     from ._models_py3 import LiveEventEndpoint
     from ._models_py3 import LiveEventInput
     from ._models_py3 import LiveEventInputAccessControl
-    from ._models_py3 import LiveEventInputTrackSelection
-    from ._models_py3 import LiveEventOutputTranscriptionTrack
     from ._models_py3 import LiveEventPreview
     from ._models_py3 import LiveEventPreviewAccessControl
-    from ._models_py3 import LiveEventTranscription
     from ._models_py3 import LiveOutput
     from ._models_py3 import Location
     from ._models_py3 import MediaService
@@ -184,6 +182,7 @@ except (SyntaxError, ImportError):
     from ._models import ContentKeyPolicyClearKeyConfiguration
     from ._models import ContentKeyPolicyConfiguration
     from ._models import ContentKeyPolicyFairPlayConfiguration
+    from ._models import ContentKeyPolicyFairPlayOfflineRentalConfiguration
     from ._models import ContentKeyPolicyOpenRestriction
     from ._models import ContentKeyPolicyOption
     from ._models import ContentKeyPolicyPlayReadyConfiguration
@@ -249,11 +248,8 @@ except (SyntaxError, ImportError):
     from ._models import LiveEventEndpoint
     from ._models import LiveEventInput
     from ._models import LiveEventInputAccessControl
-    from ._models import LiveEventInputTrackSelection
-    from ._models import LiveEventOutputTranscriptionTrack
     from ._models import LiveEventPreview
     from ._models import LiveEventPreviewAccessControl
-    from ._models import LiveEventTranscription
     from ._models import LiveOutput
     from ._models import Location
     from ._models import MediaService
@@ -389,6 +385,7 @@ __all__ = [
     'ContentKeyPolicyClearKeyConfiguration',
     'ContentKeyPolicyConfiguration',
     'ContentKeyPolicyFairPlayConfiguration',
+    'ContentKeyPolicyFairPlayOfflineRentalConfiguration',
     'ContentKeyPolicyOpenRestriction',
     'ContentKeyPolicyOption',
     'ContentKeyPolicyPlayReadyConfiguration',
@@ -454,11 +451,8 @@ __all__ = [
     'LiveEventEndpoint',
     'LiveEventInput',
     'LiveEventInputAccessControl',
-    'LiveEventInputTrackSelection',
-    'LiveEventOutputTranscriptionTrack',
     'LiveEventPreview',
     'LiveEventPreviewAccessControl',
-    'LiveEventTranscription',
     'LiveOutput',
     'Location',
     'MediaService',
