@@ -98,9 +98,9 @@ for more information.
 During local development on Windows, [DefaultAzureCredential][default_cred_ref]
 can authenticate using a single sign-on shared with Microsoft applications, for
 example Visual Studio 2019. This may require additional configuration when
-multiple identities have signed in. In that case, set the environment variable
-`AZURE_USERNAME` with the desired identity's username (typically an email
-address).
+multiple identities have signed in. In that case, set the environment variables
+`AZURE_USERNAME` and `AZURE_TENANT_ID` to select the desired identity. Either,
+or both, may be set.
 
 ## Environment variables
 [DefaultAzureCredential][default_cred_ref] and
