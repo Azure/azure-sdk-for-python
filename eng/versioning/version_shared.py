@@ -45,7 +45,9 @@ def get_setup_py_paths(glob_string, base_path):
 
 
 def get_packages(args):
-
+    # This function returns list of path to setup.py and setup info like install requires, version for all packages discovered using glob
+    # Followiong are the list of arguements expected and parsed by this method
+    # service, glob_string
     if args.service:
         target_dir = path.join(root_dir, "sdk", args.service)
     else:

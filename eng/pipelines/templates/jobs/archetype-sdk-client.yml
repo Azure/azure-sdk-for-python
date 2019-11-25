@@ -93,15 +93,6 @@ jobs:
       vmImage: '$(OSVmImage)'
 
     steps:
-    - pwsh: |
-        $setDailyDevBuild = "false"
-        if (('$(Build.Reason)' -eq 'Schedule') -and ('$(System.TeamProject)' -eq 'internal')) {
-          $setDailyDevBuild = "true"
-        }
-        echo "##vso[task.setvariable variable=SetDevVersion]$setDailyDevBuild"
-      displayName: "Setup Versioning Properties"
-      condition: eq(variables['SetDevVersion'], '')
-
     - template: ../steps/build-test.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -118,12 +109,10 @@ jobs:
               artifactName: 'artifacts' 
               targetPath: $(Build.ArtifactStagingDirectory)
 
-          - task: PythonScript@0
-            condition: eq(variables['SetDevVersion'],'true')
-            displayName: "Update package versions for dev build"
-            inputs:
-              scriptPath: 'eng/versioning/version_set_dev.py'
-              arguments: '"${{ parameters.BuildTargetingString }}" --service="${{parameters.ServiceDirectory}}" --build-id="$(Build.BuildNumber)"'
+          - template: ../steps/set-dev-build.yml
+            parameters:
+              ServiceDirectory: ${{ parameters.ServiceDirectory }}
+              BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'RunMyPy'
     condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'], 'true'))
