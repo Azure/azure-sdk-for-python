@@ -5085,15 +5085,19 @@ class PolicyDescriptionCollection(Model):
     :param value: Descriptions of APIM policies.
     :type value:
      list[~azure.mgmt.apimanagement.models.PolicyDescriptionContract]
+    :param count: Total record count number.
+    :type count: long
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[PolicyDescriptionContract]'},
+        'count': {'key': 'count', 'type': 'long'},
     }
 
-    def __init__(self, *, value=None, **kwargs) -> None:
+    def __init__(self, *, value=None, count: int=None, **kwargs) -> None:
         super(PolicyDescriptionCollection, self).__init__(**kwargs)
         self.value = value
+        self.count = count
 
 
 class PolicyDescriptionContract(Resource):
