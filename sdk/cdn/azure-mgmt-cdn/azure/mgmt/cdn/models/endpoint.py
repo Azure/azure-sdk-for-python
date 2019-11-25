@@ -33,20 +33,18 @@ class Endpoint(TrackedResource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param origin_host_header: The host header value sent to the origin with
+     each request. If you leave this blank, the request hostname determines
+     this value. Azure CDN origins, such as Web Apps, Blob Storage, and Cloud
+     Services require this host header value to match the origin hostname by
+     default.
+    :type origin_host_header: str
     :param origin_path: A directory path on the origin that CDN can use to
      retrieve content from, e.g. contoso.cloudapp.net/originpath.
     :type origin_path: str
     :param content_types_to_compress: List of content types on which
      compression applies. The value should be a valid MIME type.
     :type content_types_to_compress: list[str]
-    :param origin_host_header: The host header value sent to the origin with
-     each request. This property at Endpoint is only allowed when endpoint uses
-     single origin and can be overridden by the same property specified at
-     origin.If you leave this blank, the request hostname determines this
-     value. Azure CDN origins, such as Web Apps, Blob Storage, and Cloud
-     Services require this host header value to match the origin hostname by
-     default.
-    :type origin_host_header: str
     :param is_compression_enabled: Indicates whether content compression is
      enabled on CDN. Default value is false. If compression is enabled, content
      will be served as compressed if user requests for a compressed version.
@@ -77,15 +75,12 @@ class Endpoint(TrackedResource):
     :type optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
     :param probe_path: Path to a file hosted on the origin which helps
      accelerate delivery of the dynamic content and calculate the most optimal
-     routes for the CDN. This is relative to the origin path. This property is
-     only relevant when using a single origin.
+     routes for the CDN. This is relative to the origin path.
     :type probe_path: str
     :param geo_filters: List of rules defining the user's geo access within a
      CDN endpoint. Each geo filter defines an access rule to a specified path
      or content, e.g. block APAC for path /pictures/
     :type geo_filters: list[~azure.mgmt.cdn.models.GeoFilter]
-    :param default_origin_group: A reference to the origin group.
-    :type default_origin_group: ~azure.mgmt.cdn.models.ResourceReference
     :param delivery_policy: A policy that specifies the delivery rules to be
      used for an endpoint.
     :type delivery_policy:
@@ -96,9 +91,6 @@ class Endpoint(TrackedResource):
     :param origins: Required. The source of the content being delivered via
      CDN.
     :type origins: list[~azure.mgmt.cdn.models.DeepCreatedOrigin]
-    :param origin_groups: The origin groups comprising of origins that are
-     used for load balancing the traffic based on availability.
-    :type origin_groups: list[~azure.mgmt.cdn.models.DeepCreatedOriginGroup]
     :ivar resource_state: Resource status of the endpoint. Possible values
      include: 'Creating', 'Deleting', 'Running', 'Starting', 'Stopped',
      'Stopping'
@@ -125,9 +117,9 @@ class Endpoint(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
         'origin_path': {'key': 'properties.originPath', 'type': 'str'},
         'content_types_to_compress': {'key': 'properties.contentTypesToCompress', 'type': '[str]'},
-        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
         'is_compression_enabled': {'key': 'properties.isCompressionEnabled', 'type': 'bool'},
         'is_http_allowed': {'key': 'properties.isHttpAllowed', 'type': 'bool'},
         'is_https_allowed': {'key': 'properties.isHttpsAllowed', 'type': 'bool'},
@@ -135,20 +127,18 @@ class Endpoint(TrackedResource):
         'optimization_type': {'key': 'properties.optimizationType', 'type': 'str'},
         'probe_path': {'key': 'properties.probePath', 'type': 'str'},
         'geo_filters': {'key': 'properties.geoFilters', 'type': '[GeoFilter]'},
-        'default_origin_group': {'key': 'properties.defaultOriginGroup', 'type': 'ResourceReference'},
         'delivery_policy': {'key': 'properties.deliveryPolicy', 'type': 'EndpointPropertiesUpdateParametersDeliveryPolicy'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'origins': {'key': 'properties.origins', 'type': '[DeepCreatedOrigin]'},
-        'origin_groups': {'key': 'properties.originGroups', 'type': '[DeepCreatedOriginGroup]'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(Endpoint, self).__init__(**kwargs)
+        self.origin_host_header = kwargs.get('origin_host_header', None)
         self.origin_path = kwargs.get('origin_path', None)
         self.content_types_to_compress = kwargs.get('content_types_to_compress', None)
-        self.origin_host_header = kwargs.get('origin_host_header', None)
         self.is_compression_enabled = kwargs.get('is_compression_enabled', None)
         self.is_http_allowed = kwargs.get('is_http_allowed', None)
         self.is_https_allowed = kwargs.get('is_https_allowed', None)
@@ -156,10 +146,8 @@ class Endpoint(TrackedResource):
         self.optimization_type = kwargs.get('optimization_type', None)
         self.probe_path = kwargs.get('probe_path', None)
         self.geo_filters = kwargs.get('geo_filters', None)
-        self.default_origin_group = kwargs.get('default_origin_group', None)
         self.delivery_policy = kwargs.get('delivery_policy', None)
         self.host_name = None
         self.origins = kwargs.get('origins', None)
-        self.origin_groups = kwargs.get('origin_groups', None)
         self.resource_state = None
         self.provisioning_state = None

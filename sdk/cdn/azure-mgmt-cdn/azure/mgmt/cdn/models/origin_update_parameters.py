@@ -13,61 +13,31 @@ from msrest.serialization import Model
 
 
 class OriginUpdateParameters(Model):
-    """Origin properties needed for origin update.
+    """Origin properties needed for origin creation or update.
 
-    :param tags: Origin tags.
-    :type tags: dict[str, str]
     :param host_name: The address of the origin. Domain names, IPv4 addresses,
-     and IPv6 addresses are supported.This should be unique across all origins
-     in an endpoint.
+     and IPv6 addresses are supported.
     :type host_name: str
     :param http_port: The value of the HTTP port. Must be between 1 and 65535.
     :type http_port: int
     :param https_port: The value of the HTTPS port. Must be between 1 and
      65535.
     :type https_port: int
-    :param origin_host_header: The host header value sent to the origin with
-     each request. If you leave this blank, the request hostname determines
-     this value. Azure CDN origins, such as Web Apps, Blob Storage, and Cloud
-     Services require this host header value to match the origin hostname by
-     default. This overrides the host header defined at Endpoint
-    :type origin_host_header: str
-    :param priority: Priority of origin in given origin group for load
-     balancing. Higher priorities will not be used for load balancing if any
-     lower priority origin is healthy.Must be between 1 and 5
-    :type priority: int
-    :param weight: Weight of the origin in given origin group for load
-     balancing. Must be between 1 and 1000
-    :type weight: int
-    :param enabled: Origin is enabled for load balancing or not
-    :type enabled: bool
     """
 
     _validation = {
         'http_port': {'maximum': 65535, 'minimum': 1},
         'https_port': {'maximum': 65535, 'minimum': 1},
-        'priority': {'maximum': 5, 'minimum': 1},
-        'weight': {'maximum': 1000, 'minimum': 1},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'http_port': {'key': 'properties.httpPort', 'type': 'int'},
         'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
-        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'weight': {'key': 'properties.weight', 'type': 'int'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(OriginUpdateParameters, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
         self.host_name = kwargs.get('host_name', None)
         self.http_port = kwargs.get('http_port', None)
         self.https_port = kwargs.get('https_port', None)
-        self.origin_host_header = kwargs.get('origin_host_header', None)
-        self.priority = kwargs.get('priority', None)
-        self.weight = kwargs.get('weight', None)
-        self.enabled = kwargs.get('enabled', None)
