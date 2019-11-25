@@ -415,7 +415,7 @@ def test_http_logger_operation_level():
 
     mock_handler.reset()
 
-def test_retry_seekable_body():
+def test_retry_seekable_stream():
     class MockTransport(HttpTransport):
         def __init__(self):
             self._first = True
@@ -438,6 +438,39 @@ def test_retry_seekable_body():
     data = BytesIO(b"Lots of dataaaa")
     http_request = HttpRequest('GET', 'http://127.0.0.1/')
     http_request.set_streamed_data_body(data)
+    http_retry = RetryPolicy(retry_total = 1)
+    pipeline = Pipeline(MockTransport(), [http_retry])
+    pipeline.run(http_request)
+
+def test_retry_seekable_file():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._first = True
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+        def close(self):
+            pass
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            if self._first:
+                self._first = False
+                name, body, content_type = request.files.get('file')
+                p = body.tell()
+                body.seek(0,2)
+                p = body.tell()
+                raise AzureError('fail on first')
+            name, body, content_type = request.files.get('file')
+            position = body.tell()
+            assert not position
+            return HttpResponse(request, None)
+
+    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    headers = {'Content-Type': "multipart/form-data"}
+    http_request.headers = headers
+    file = {'file': open('tmpfile.txt', 'rb')}
+    http_request.set_formdata_body(file)
     http_retry = RetryPolicy(retry_total = 1)
     pipeline = Pipeline(MockTransport(), [http_retry])
     pipeline.run(http_request)

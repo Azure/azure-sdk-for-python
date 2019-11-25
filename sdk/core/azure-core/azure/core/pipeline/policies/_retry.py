@@ -338,6 +338,14 @@ class RetryPolicy(HTTPPolicy):
             except (UnsupportedOperation, ValueError, AttributeError):
                 # if body is not seekable, then retry would not work
                 return False
+        if response.http_request.files and 'file_positions' in settings:
+            try:
+                for name, position in settings['file_positions'].items():
+                    name, body, content_type = response.http_request.files[name]
+                    body.seek(position, SEEK_SET)
+            except (UnsupportedOperation, ValueError, AttributeError):
+                # if body is not seekable, then retry would not work
+                return False
         return True
 
     def update_context(self, context, retry_settings):
@@ -365,13 +373,28 @@ class RetryPolicy(HTTPPolicy):
         response = None
         retry_settings = self.configure_retries(request.context.options)
         body_position = None
-        if hasattr(request.http_request.body, 'read'):
+        file_positions = None
+        if request.http_request.body and hasattr(request.http_request.body, 'read'):
             try:
                 body_position = request.http_request.body.tell()
             except (AttributeError, UnsupportedOperation):
                 # if body position cannot be obtained, then retries will not work
                 pass
+        else:
+            if request.http_request.files:
+                file_positions = {}
+                try:
+                    for key, value in request.http_request.files.items():
+                        name, body, content_type = value
+                        if key and body and hasattr(body, 'read'):
+                            position = body.tell()
+                            file_positions[key] = position
+                except (AttributeError, UnsupportedOperation):
+                    file_positions = None
+
         retry_settings['body_position'] = body_position
+        retry_settings['file_positions'] = file_positions
+
         while retry_active:
             try:
                 response = self.next.send(request)
