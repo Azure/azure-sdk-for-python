@@ -167,7 +167,7 @@ class BlobCheckpointStore(CheckpointStore):
 
     async def update_checkpoint(self, checkpoint: Dict[str, Any]) -> None:
         metadata = {
-            "offset": checkpoint['offset'],
+            "offset": str(checkpoint['offset']),
             "sequencenumber": str(checkpoint['sequence_number']),
         }
         blob_name = "{}/{}/{}/checkpoint/{}".format(
@@ -198,8 +198,8 @@ class BlobCheckpointStore(CheckpointStore):
                 "eventhub_name": eventhub_name,
                 "consumer_group": consumer_group,
                 "partition_id": blob.name.split("/")[-1],
-                "offset": metadata["offset"],
-                "sequence_number": metadata["sequencenumber"]
+                "offset": str(metadata["offset"]),
+                "sequence_number": int(metadata["sequencenumber"])
             }
             result.append(checkpoint)
         return result

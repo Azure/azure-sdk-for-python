@@ -8,8 +8,8 @@
 """
 An example to show receiving events from an Event Hub with partition manager asynchronously.
 In the `receive` method of `EventHubConsumerClient`:
-If no partition id is specified, the partition_manager are used for load-balance and checkpoint.
-If partition id is specified, the partition_manager can only be used for checkpoint.
+If no partition id is specified, the checkpoint_store are used for load-balance and checkpoint.
+If partition id is specified, the checkpoint_store can only be used for checkpoint.
 """
 
 import asyncio
