@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cdn_management_client import CdnManagementClient
-from .version import VERSION
+from ._configuration import CdnManagementClientConfiguration
+from ._cdn_management_client import CdnManagementClient
+__all__ = ['CdnManagementClient', 'CdnManagementClientConfiguration']
 
-__all__ = ['CdnManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

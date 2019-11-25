@@ -13,47 +13,39 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.0 (Windows-10-10.0.18362-SP0) msrest/0.6.10 msrest_azure/0.6.2
-        azure-mgmt-cdn/2.0.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-cdn/2.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
-    uri: https://management.azure.com/providers/Microsoft.Cdn/checkNameAvailability?api-version=2019-04-15
+    uri: https://management.azure.com/providers/Microsoft.Cdn/checkNameAvailability?api-version=2019-12-31
   response:
     body:
-      string: "{\r\n  \"nameAvailable\":true,\"reason\":null,\"message\":null\r\n}"
+      string: '{"error":{"code":"InvalidResourceType","message":"The resource type
+        ''checkNameAvailability'' could not be found in the namespace ''Microsoft.Cdn''
+        for api version ''2019-12-31''. The supported api-versions are ''2015-06-01,2016-04-02,2016-10-02,2017-04-02,2017-10-12,2018-04-02,2019-04-15,2019-06-15-preview''."}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '57'
+      - '306'
       content-type:
-      - application/json; odata.metadata=minimal
+      - application/json; charset=utf-8
       date:
-      - Tue, 19 Nov 2019 23:29:16 GMT
+      - Mon, 25 Nov 2019 07:05:15 GMT
       expires:
       - '-1'
-      odata-version:
-      - '4.0'
       pragma:
       - no-cache
-      server:
-      - Microsoft-IIS/8.5
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
       x-content-type-options:
       - nosniff
+      x-ms-failure-cause:
+      - gateway
       x-ms-ratelimit-remaining-tenant-writes:
       - '1199'
-      x-powered-by:
-      - ASP.NET
     status:
-      code: 200
-      message: OK
+      code: 404
+      message: Not Found
 version: 1
