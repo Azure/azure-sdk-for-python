@@ -40,27 +40,6 @@ class OptimizationType(str, Enum):
     dynamic_site_acceleration = "DynamicSiteAcceleration"
 
 
-class HealthProbeRequestType(str, Enum):
-
-    not_set = "NotSet"
-    get = "GET"
-    head = "HEAD"
-
-
-class ProbeProtocol(str, Enum):
-
-    not_set = "NotSet"
-    http = "Http"
-    https = "Https"
-
-
-class ResponseBasedDetectedErrorTypes(str, Enum):
-
-    none = "None"
-    tcp_errors_only = "TcpErrorsOnly"
-    tcp_and_http_errors = "TcpAndHttpErrors"
-
-
 class EndpointResourceState(str, Enum):
 
     creating = "Creating"
@@ -254,13 +233,6 @@ class QueryStringBehavior(str, Enum):
 
 
 class OriginResourceState(str, Enum):
-
-    creating = "Creating"
-    active = "Active"
-    deleting = "Deleting"
-
-
-class OriginGroupResourceState(str, Enum):
 
     creating = "Creating"
     active = "Active"

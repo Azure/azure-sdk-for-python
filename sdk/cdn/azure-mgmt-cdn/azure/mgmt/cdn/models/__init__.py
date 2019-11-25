@@ -16,11 +16,6 @@ try:
     from .sso_uri_py3 import SsoUri
     from .supported_optimization_types_list_result_py3 import SupportedOptimizationTypesListResult
     from .deep_created_origin_py3 import DeepCreatedOrigin
-    from .health_probe_parameters_py3 import HealthProbeParameters
-    from .resource_reference_py3 import ResourceReference
-    from .http_error_range_parameters_py3 import HttpErrorRangeParameters
-    from .response_based_origin_error_detection_parameters_py3 import ResponseBasedOriginErrorDetectionParameters
-    from .deep_created_origin_group_py3 import DeepCreatedOriginGroup
     from .endpoint_py3 import Endpoint
     from .geo_filter_py3 import GeoFilter
     from .delivery_rule_condition_py3 import DeliveryRuleCondition
@@ -71,11 +66,9 @@ try:
     from .load_parameters_py3 import LoadParameters
     from .origin_py3 import Origin
     from .origin_update_parameters_py3 import OriginUpdateParameters
-    from .origin_group_py3 import OriginGroup
-    from .origin_group_update_parameters_py3 import OriginGroupUpdateParameters
+    from .custom_domain_https_parameters_py3 import CustomDomainHttpsParameters
     from .custom_domain_py3 import CustomDomain
     from .custom_domain_parameters_py3 import CustomDomainParameters
-    from .custom_domain_https_parameters_py3 import CustomDomainHttpsParameters
     from .cdn_certificate_source_parameters_py3 import CdnCertificateSourceParameters
     from .cdn_managed_https_parameters_py3 import CdnManagedHttpsParameters
     from .key_vault_certificate_source_parameters_py3 import KeyVaultCertificateSourceParameters
@@ -103,11 +96,6 @@ except (SyntaxError, ImportError):
     from .sso_uri import SsoUri
     from .supported_optimization_types_list_result import SupportedOptimizationTypesListResult
     from .deep_created_origin import DeepCreatedOrigin
-    from .health_probe_parameters import HealthProbeParameters
-    from .resource_reference import ResourceReference
-    from .http_error_range_parameters import HttpErrorRangeParameters
-    from .response_based_origin_error_detection_parameters import ResponseBasedOriginErrorDetectionParameters
-    from .deep_created_origin_group import DeepCreatedOriginGroup
     from .endpoint import Endpoint
     from .geo_filter import GeoFilter
     from .delivery_rule_condition import DeliveryRuleCondition
@@ -158,11 +146,9 @@ except (SyntaxError, ImportError):
     from .load_parameters import LoadParameters
     from .origin import Origin
     from .origin_update_parameters import OriginUpdateParameters
-    from .origin_group import OriginGroup
-    from .origin_group_update_parameters import OriginGroupUpdateParameters
+    from .custom_domain_https_parameters import CustomDomainHttpsParameters
     from .custom_domain import CustomDomain
     from .custom_domain_parameters import CustomDomainParameters
-    from .custom_domain_https_parameters import CustomDomainHttpsParameters
     from .cdn_certificate_source_parameters import CdnCertificateSourceParameters
     from .cdn_managed_https_parameters import CdnManagedHttpsParameters
     from .key_vault_certificate_source_parameters import KeyVaultCertificateSourceParameters
@@ -187,7 +173,6 @@ from .profile_paged import ProfilePaged
 from .resource_usage_paged import ResourceUsagePaged
 from .endpoint_paged import EndpointPaged
 from .origin_paged import OriginPaged
-from .origin_group_paged import OriginGroupPaged
 from .custom_domain_paged import CustomDomainPaged
 from .operation_paged import OperationPaged
 from .edge_node_paged import EdgeNodePaged
@@ -195,9 +180,6 @@ from .cdn_management_client_enums import (
     SkuName,
     ProfileResourceState,
     OptimizationType,
-    HealthProbeRequestType,
-    ProbeProtocol,
-    ResponseBasedDetectedErrorTypes,
     EndpointResourceState,
     QueryStringCachingBehavior,
     GeoFilterActions,
@@ -218,7 +200,6 @@ from .cdn_management_client_enums import (
     CacheBehavior,
     QueryStringBehavior,
     OriginResourceState,
-    OriginGroupResourceState,
     CustomDomainResourceState,
     CustomHttpsProvisioningState,
     CustomHttpsProvisioningSubstate,
@@ -235,11 +216,6 @@ __all__ = [
     'SsoUri',
     'SupportedOptimizationTypesListResult',
     'DeepCreatedOrigin',
-    'HealthProbeParameters',
-    'ResourceReference',
-    'HttpErrorRangeParameters',
-    'ResponseBasedOriginErrorDetectionParameters',
-    'DeepCreatedOriginGroup',
     'Endpoint',
     'GeoFilter',
     'DeliveryRuleCondition',
@@ -290,11 +266,9 @@ __all__ = [
     'LoadParameters',
     'Origin',
     'OriginUpdateParameters',
-    'OriginGroup',
-    'OriginGroupUpdateParameters',
+    'CustomDomainHttpsParameters',
     'CustomDomain',
     'CustomDomainParameters',
-    'CustomDomainHttpsParameters',
     'CdnCertificateSourceParameters',
     'CdnManagedHttpsParameters',
     'KeyVaultCertificateSourceParameters',
@@ -319,16 +293,12 @@ __all__ = [
     'ResourceUsagePaged',
     'EndpointPaged',
     'OriginPaged',
-    'OriginGroupPaged',
     'CustomDomainPaged',
     'OperationPaged',
     'EdgeNodePaged',
     'SkuName',
     'ProfileResourceState',
     'OptimizationType',
-    'HealthProbeRequestType',
-    'ProbeProtocol',
-    'ResponseBasedDetectedErrorTypes',
     'EndpointResourceState',
     'QueryStringCachingBehavior',
     'GeoFilterActions',
@@ -349,7 +319,6 @@ __all__ = [
     'CacheBehavior',
     'QueryStringBehavior',
     'OriginResourceState',
-    'OriginGroupResourceState',
     'CustomDomainResourceState',
     'CustomHttpsProvisioningState',
     'CustomHttpsProvisioningSubstate',
