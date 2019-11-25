@@ -456,21 +456,28 @@ def test_retry_seekable_file():
         def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
             if self._first:
                 self._first = False
-                name, body, content_type = request.files.get('file')
-                p = body.tell()
-                body.seek(0,2)
-                p = body.tell()
-                raise AzureError('fail on first')
-            name, body, content_type = request.files.get('file')
-            position = body.tell()
-            assert not position
-            return HttpResponse(request, None)
+                for key, value in request.files.items():
+                    name = value[0]
+                    body = value[1]
+                    if name and body and hasattr(body, 'read'):
+                        body.seek(0,2)
+                        raise AzureError('fail on first')
+            for key, value in request.files.items():
+                name = value[0]
+                body = value[1]
+                if name and body and hasattr(body, 'read'):
+                    position = body.tell()
+                    assert not position
+                    return HttpResponse(request, None)
 
     http_request = HttpRequest('GET', 'http://127.0.0.1/')
     headers = {'Content-Type': "multipart/form-data"}
     http_request.headers = headers
-    file = {'file': open('tmpfile.txt', 'rb')}
-    http_request.set_formdata_body(file)
+    form_data_content = {
+        'fileContent': open('tmpfile.txt', 'rb'),
+        'fileName': 'tmpfile',
+    }
+    http_request.set_formdata_body(form_data_content)
     http_retry = RetryPolicy(retry_total = 1)
     pipeline = Pipeline(MockTransport(), [http_retry])
     pipeline.run(http_request)
