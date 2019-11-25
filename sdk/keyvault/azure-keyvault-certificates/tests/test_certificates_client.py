@@ -535,6 +535,7 @@ class CertificateClientTests(KeyVaultTestCase):
     @VaultClientPreparer()
     def test_backup_restore(self, vault_client, **kwargs):
         policy = CertificatePolicy.get_default()
+        policy._san_user_principal_names = "john.doe@domain.com"
         self.assertIsNotNone(vault_client)
         client = vault_client.certificates
         cert_name = self.get_resource_name("cert")
