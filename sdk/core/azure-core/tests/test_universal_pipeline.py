@@ -32,6 +32,11 @@ except ImportError:
 
 import requests
 import pytest
+from os import SEEK_SET
+try:
+    from io import BytesIO
+except ImportError:
+    from cStringIO import StringIO as BytesIO
 
 from azure.core.exceptions import DecodeError, AzureError
 from azure.core.pipeline import (
@@ -44,6 +49,7 @@ from azure.core.pipeline.transport import (
     HttpRequest,
     HttpResponse,
     RequestsTransportResponse,
+    HttpTransport,
 )
 
 from azure.core.pipeline.policies import (
@@ -408,3 +414,30 @@ def test_http_logger_operation_level():
     assert mock_handler.messages[4].message == 'Response headers:'
 
     mock_handler.reset()
+
+def test_retry_seekable_body():
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self._first = True
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+        def close(self):
+            pass
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            if self._first:
+                self._first = False
+                request.body.seek(0,2)
+                raise AzureError('fail on first')
+            position = request.body.tell()
+            assert not position
+            return HttpResponse(request, None)
+
+    data = BytesIO(b"Lots of dataaaa")
+    http_request = HttpRequest('GET', 'http://127.0.0.1/')
+    http_request.set_streamed_data_body(data)
+    http_retry = RetryPolicy(retry_total = 1)
+    pipeline = Pipeline(MockTransport(), [http_retry])
+    pipeline.run(http_request)
