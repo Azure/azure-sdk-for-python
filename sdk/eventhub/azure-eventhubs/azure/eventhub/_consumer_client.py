@@ -242,7 +242,7 @@ class EventHubConsumerClient(ClientBase):
             event_processor = EventProcessor(
                 self, self._consumer_group, on_event,
                 checkpoint_store=self._checkpoint_store,
-                polling_interval=self._load_balancing_interval,
+                load_balancing_interval=self._load_balancing_interval,
                 initial_event_position=initial_event_position,
                 initial_event_position_inclusive=initial_event_position_inclusive,
                 **kwargs
