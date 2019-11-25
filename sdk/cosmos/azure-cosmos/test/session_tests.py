@@ -7,10 +7,12 @@ from azure.cosmos.http_constants import HttpHeaders
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import test_config
-import azure.cosmos.errors as errors
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
-import azure.cosmos.synchronized_request as synchronized_request
-import azure.cosmos.retry_utility as retry_utility
+import azure.cosmos._synchronized_request as synchronized_request
+from azure.cosmos import _retry_utility
+
+pytestmark = pytest.mark.cosmosEmulator
 
 @pytest.mark.usefixtures("teardown")
 class SessionTests(unittest.TestCase):
@@ -19,43 +21,61 @@ class SessionTests(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, connectionPolicy)
-    created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(client)
+    
+    @classmethod
+    def setUpClass(cls):
+        # creates the database, collection, and insert all the documents
+        # we will gain some speed up in running the tests by creating the
+        # database, collection and inserting all the docs only once
 
-    def _MockRequest(self, global_endpoint_manager, request, connection_policy, requests_session, path, request_options, request_body):
-        if HttpHeaders.SessionToken in request_options['headers']:
-            self.last_session_token_sent = request_options['headers'][HttpHeaders.SessionToken]
+        if (cls.masterKey == '[YOUR_KEY_HERE]' or cls.host == '[YOUR_ENDPOINT_HERE]'):
+            raise Exception("You must specify your Azure Cosmos account values for "
+                "'masterKey' and 'host' at the top of this class to run the "
+                "tests.")
+
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
+        cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
+        cls.created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(cls.client)
+
+    def _MockRequest(self, global_endpoint_manager, request_params, connection_policy, pipeline_client, request):
+        if HttpHeaders.SessionToken in request.headers:
+            self.last_session_token_sent = request.headers[HttpHeaders.SessionToken]
         else:
             self.last_session_token_sent = None
-        return self._OriginalRequest(global_endpoint_manager, request, connection_policy, requests_session, path, request_options, request_body)
+        return self._OriginalRequest(global_endpoint_manager, request_params, connection_policy, pipeline_client, request)
 
     def test_session_token_not_sent_for_master_resource_ops (self):
         self._OriginalRequest = synchronized_request._Request
         synchronized_request._Request = self._MockRequest
-        created_document = self.client.CreateItem(self.created_collection['_self'], {'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
-        self.client.ReadItem(created_document['_self'], {'partitionKey': 'mypk'})
+        created_document = self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+        self.created_collection.read_item(item=created_document['id'], partition_key='mypk')
         self.assertNotEqual(self.last_session_token_sent, None)
-        self.client.ReadContainer(self.created_collection['_self'])
+        self.created_db.get_container_client(container=self.created_collection).read()
         self.assertEqual(self.last_session_token_sent, None)
-        self.client.ReadItem(created_document['_self'], {'partitionKey': 'mypk'})
+        self.created_collection.read_item(item=created_document['id'], partition_key='mypk')
         self.assertNotEqual(self.last_session_token_sent, None)
         synchronized_request._Request = self._OriginalRequest
 
     def _MockExecuteFunctionSessionReadFailureOnce(self, function, *args, **kwargs):
-        raise errors.HTTPFailure(StatusCodes.NOT_FOUND, "Read Session not available", {HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
+        response = test_config.FakeResponse({HttpHeaders.SubStatus: SubStatusCodes.READ_SESSION_NOTAVAILABLE})
+        raise exceptions.CosmosHttpResponseError(
+            status_code=StatusCodes.NOT_FOUND,
+            message="Read Session not available",
+            response=response)
 
     def test_clear_session_token(self):
-        created_document = self.client.CreateItem(self.created_collection['_self'], {'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+        created_document = self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
 
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunctionSessionReadFailureOnce
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunctionSessionReadFailureOnce
         try:
-            self.client.ReadItem(created_document['_self'])
-        except errors.HTTPFailure as e:
-            self.assertEqual(self.client.session.get_session_token(self.created_collection['_self']), "")
+            self.created_collection.read_item(item=created_document['id'], partition_key='mypk')
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(self.client.client_connection.session.get_session_token(
+                'dbs/' + self.created_db.id + '/colls/' + self.created_collection.id), "")
             self.assertEqual(e.status_code, StatusCodes.NOT_FOUND)
             self.assertEqual(e.sub_status, SubStatusCodes.READ_SESSION_NOTAVAILABLE)
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunctionInvalidSessionToken(self, function, *args, **kwargs):
         response = {'_self':'dbs/90U1AA==/colls/90U1AJ4o6iA=/docs/90U1AJ4o6iABCT0AAAAABA==/', 'id':'1'}
@@ -63,12 +83,12 @@ class SessionTests(unittest.TestCase):
         return (response, headers)
 
     def test_internal_server_error_raised_for_invalid_session_token_received_from_server(self):
-        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
-        retry_utility._ExecuteFunction = self._MockExecuteFunctionInvalidSessionToken
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        _retry_utility.ExecuteFunction = self._MockExecuteFunctionInvalidSessionToken
         try:
-            self.client.CreateItem(self.created_collection['_self'], {'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+            self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
             self.fail()
-        except errors.HTTPFailure as e:
-            self.assertEqual(e._http_error_message, "Could not parse the received session token: 2")
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.http_error_message, "Could not parse the received session token: 2")
             self.assertEqual(e.status_code, StatusCodes.INTERNAL_SERVER_ERROR)
-        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction

@@ -9,14 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .clusters_operations import ClustersOperations
-from .applications_operations import ApplicationsOperations
-from .locations_operations import LocationsOperations
-from .configurations_operations import ConfigurationsOperations
-from .extensions_operations import ExtensionsOperations
-from .script_actions_operations import ScriptActionsOperations
-from .script_execution_history_operations import ScriptExecutionHistoryOperations
-from .operations import Operations
+from ._clusters_operations import ClustersOperations
+from ._applications_operations import ApplicationsOperations
+from ._locations_operations import LocationsOperations
+from ._configurations_operations import ConfigurationsOperations
+from ._extensions_operations import ExtensionsOperations
+from ._script_actions_operations import ScriptActionsOperations
+from ._script_execution_history_operations import ScriptExecutionHistoryOperations
+from ._operations import Operations
 
 __all__ = [
     'ClustersOperations',

@@ -10,67 +10,67 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .arecord_py3 import ARecord
-    from .aaaa_record_py3 import AaaaRecord
-    from .mx_record_py3 import MxRecord
-    from .ns_record_py3 import NsRecord
-    from .ptr_record_py3 import PtrRecord
-    from .srv_record_py3 import SrvRecord
-    from .txt_record_py3 import TxtRecord
-    from .cname_record_py3 import CnameRecord
-    from .soa_record_py3 import SoaRecord
-    from .record_set_py3 import RecordSet
-    from .record_set_update_parameters_py3 import RecordSetUpdateParameters
-    from .zone_py3 import Zone
-    from .zone_delete_result_py3 import ZoneDeleteResult
-    from .proxy_resource_py3 import ProxyResource
-    from .azure_entity_resource_py3 import AzureEntityResource
-    from .resource_py3 import Resource
-    from .tracked_resource_py3 import TrackedResource
+    from ._models_py3 import AaaaRecord
+    from ._models_py3 import ARecord
+    from ._models_py3 import AzureEntityResource
+    from ._models_py3 import CnameRecord
+    from ._models_py3 import MxRecord
+    from ._models_py3 import NsRecord
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import PtrRecord
+    from ._models_py3 import RecordSet
+    from ._models_py3 import RecordSetUpdateParameters
+    from ._models_py3 import Resource
+    from ._models_py3 import SoaRecord
+    from ._models_py3 import SrvRecord
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import TxtRecord
+    from ._models_py3 import Zone
+    from ._models_py3 import ZoneDeleteResult
 except (SyntaxError, ImportError):
-    from .arecord import ARecord
-    from .aaaa_record import AaaaRecord
-    from .mx_record import MxRecord
-    from .ns_record import NsRecord
-    from .ptr_record import PtrRecord
-    from .srv_record import SrvRecord
-    from .txt_record import TxtRecord
-    from .cname_record import CnameRecord
-    from .soa_record import SoaRecord
-    from .record_set import RecordSet
-    from .record_set_update_parameters import RecordSetUpdateParameters
-    from .zone import Zone
-    from .zone_delete_result import ZoneDeleteResult
-    from .proxy_resource import ProxyResource
-    from .azure_entity_resource import AzureEntityResource
-    from .resource import Resource
-    from .tracked_resource import TrackedResource
-from .record_set_paged import RecordSetPaged
-from .zone_paged import ZonePaged
-from .dns_management_client_enums import (
+    from ._models import AaaaRecord
+    from ._models import ARecord
+    from ._models import AzureEntityResource
+    from ._models import CnameRecord
+    from ._models import MxRecord
+    from ._models import NsRecord
+    from ._models import ProxyResource
+    from ._models import PtrRecord
+    from ._models import RecordSet
+    from ._models import RecordSetUpdateParameters
+    from ._models import Resource
+    from ._models import SoaRecord
+    from ._models import SrvRecord
+    from ._models import TrackedResource
+    from ._models import TxtRecord
+    from ._models import Zone
+    from ._models import ZoneDeleteResult
+from ._paged_models import RecordSetPaged
+from ._paged_models import ZonePaged
+from ._dns_management_client_enums import (
     OperationStatus,
     HttpStatusCode,
     RecordType,
 )
 
 __all__ = [
-    'ARecord',
     'AaaaRecord',
+    'ARecord',
+    'AzureEntityResource',
+    'CnameRecord',
     'MxRecord',
     'NsRecord',
+    'ProxyResource',
     'PtrRecord',
-    'SrvRecord',
-    'TxtRecord',
-    'CnameRecord',
-    'SoaRecord',
     'RecordSet',
     'RecordSetUpdateParameters',
+    'Resource',
+    'SoaRecord',
+    'SrvRecord',
+    'TrackedResource',
+    'TxtRecord',
     'Zone',
     'ZoneDeleteResult',
-    'ProxyResource',
-    'AzureEntityResource',
-    'Resource',
-    'TrackedResource',
     'RecordSetPaged',
     'ZonePaged',
     'OperationStatus',

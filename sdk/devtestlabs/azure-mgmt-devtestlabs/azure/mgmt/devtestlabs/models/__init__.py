@@ -10,322 +10,321 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .week_details_py3 import WeekDetails
-    from .day_details_py3 import DayDetails
-    from .hour_details_py3 import HourDetails
-    from .notification_settings_py3 import NotificationSettings
-    from .schedule_py3 import Schedule
-    from .applicable_schedule_py3 import ApplicableSchedule
-    from .week_details_fragment_py3 import WeekDetailsFragment
-    from .day_details_fragment_py3 import DayDetailsFragment
-    from .hour_details_fragment_py3 import HourDetailsFragment
-    from .notification_settings_fragment_py3 import NotificationSettingsFragment
-    from .schedule_fragment_py3 import ScheduleFragment
-    from .applicable_schedule_fragment_py3 import ApplicableScheduleFragment
-    from .artifact_parameter_properties_py3 import ArtifactParameterProperties
-    from .artifact_install_properties_py3 import ArtifactInstallProperties
-    from .apply_artifacts_request_py3 import ApplyArtifactsRequest
-    from .parameters_value_file_info_py3 import ParametersValueFileInfo
-    from .arm_template_py3 import ArmTemplate
-    from .arm_template_info_py3 import ArmTemplateInfo
-    from .arm_template_parameter_properties_py3 import ArmTemplateParameterProperties
-    from .arm_template_parameter_properties_fragment_py3 import ArmTemplateParameterPropertiesFragment
-    from .artifact_py3 import Artifact
-    from .artifact_deployment_status_properties_py3 import ArtifactDeploymentStatusProperties
-    from .artifact_deployment_status_properties_fragment_py3 import ArtifactDeploymentStatusPropertiesFragment
-    from .artifact_parameter_properties_fragment_py3 import ArtifactParameterPropertiesFragment
-    from .artifact_install_properties_fragment_py3 import ArtifactInstallPropertiesFragment
-    from .artifact_source_py3 import ArtifactSource
-    from .artifact_source_fragment_py3 import ArtifactSourceFragment
-    from .attach_disk_properties_py3 import AttachDiskProperties
-    from .attach_new_data_disk_options_py3 import AttachNewDataDiskOptions
-    from .attach_new_data_disk_options_fragment_py3 import AttachNewDataDiskOptionsFragment
-    from .bulk_creation_parameters_py3 import BulkCreationParameters
-    from .bulk_creation_parameters_fragment_py3 import BulkCreationParametersFragment
-    from .compute_data_disk_py3 import ComputeDataDisk
-    from .compute_data_disk_fragment_py3 import ComputeDataDiskFragment
-    from .compute_vm_instance_view_status_py3 import ComputeVmInstanceViewStatus
-    from .compute_vm_instance_view_status_fragment_py3 import ComputeVmInstanceViewStatusFragment
-    from .compute_vm_properties_py3 import ComputeVmProperties
-    from .compute_vm_properties_fragment_py3 import ComputeVmPropertiesFragment
-    from .percentage_cost_threshold_properties_py3 import PercentageCostThresholdProperties
-    from .cost_threshold_properties_py3 import CostThresholdProperties
-    from .windows_os_info_py3 import WindowsOsInfo
-    from .linux_os_info_py3 import LinuxOsInfo
-    from .custom_image_properties_from_vm_py3 import CustomImagePropertiesFromVm
-    from .custom_image_properties_custom_py3 import CustomImagePropertiesCustom
-    from .data_disk_storage_type_info_py3 import DataDiskStorageTypeInfo
-    from .custom_image_properties_from_plan_py3 import CustomImagePropertiesFromPlan
-    from .custom_image_py3 import CustomImage
-    from .windows_os_info_fragment_py3 import WindowsOsInfoFragment
-    from .linux_os_info_fragment_py3 import LinuxOsInfoFragment
-    from .custom_image_properties_from_vm_fragment_py3 import CustomImagePropertiesFromVmFragment
-    from .custom_image_properties_custom_fragment_py3 import CustomImagePropertiesCustomFragment
-    from .data_disk_storage_type_info_fragment_py3 import DataDiskStorageTypeInfoFragment
-    from .custom_image_properties_from_plan_fragment_py3 import CustomImagePropertiesFromPlanFragment
-    from .custom_image_fragment_py3 import CustomImageFragment
-    from .data_disk_properties_py3 import DataDiskProperties
-    from .data_disk_properties_fragment_py3 import DataDiskPropertiesFragment
-    from .detach_data_disk_properties_py3 import DetachDataDiskProperties
-    from .detach_disk_properties_py3 import DetachDiskProperties
-    from .disk_py3 import Disk
-    from .disk_fragment_py3 import DiskFragment
-    from .environment_deployment_properties_py3 import EnvironmentDeploymentProperties
-    from .dtl_environment_py3 import DtlEnvironment
-    from .environment_deployment_properties_fragment_py3 import EnvironmentDeploymentPropertiesFragment
-    from .dtl_environment_fragment_py3 import DtlEnvironmentFragment
-    from .evaluate_policies_properties_py3 import EvaluatePoliciesProperties
-    from .evaluate_policies_request_py3 import EvaluatePoliciesRequest
-    from .policy_violation_py3 import PolicyViolation
-    from .policy_set_result_py3 import PolicySetResult
-    from .evaluate_policies_response_py3 import EvaluatePoliciesResponse
-    from .event_py3 import Event
-    from .event_fragment_py3 import EventFragment
-    from .export_resource_usage_parameters_py3 import ExportResourceUsageParameters
-    from .external_subnet_py3 import ExternalSubnet
-    from .external_subnet_fragment_py3 import ExternalSubnetFragment
-    from .gallery_image_reference_py3 import GalleryImageReference
-    from .inbound_nat_rule_py3 import InboundNatRule
-    from .shared_public_ip_address_configuration_py3 import SharedPublicIpAddressConfiguration
-    from .network_interface_properties_py3 import NetworkInterfaceProperties
-    from .schedule_creation_parameter_py3 import ScheduleCreationParameter
-    from .lab_virtual_machine_creation_parameter_py3 import LabVirtualMachineCreationParameter
-    from .formula_properties_from_vm_py3 import FormulaPropertiesFromVm
-    from .formula_py3 import Formula
-    from .gallery_image_reference_fragment_py3 import GalleryImageReferenceFragment
-    from .inbound_nat_rule_fragment_py3 import InboundNatRuleFragment
-    from .shared_public_ip_address_configuration_fragment_py3 import SharedPublicIpAddressConfigurationFragment
-    from .network_interface_properties_fragment_py3 import NetworkInterfacePropertiesFragment
-    from .schedule_creation_parameter_fragment_py3 import ScheduleCreationParameterFragment
-    from .lab_virtual_machine_creation_parameter_fragment_py3 import LabVirtualMachineCreationParameterFragment
-    from .formula_properties_from_vm_fragment_py3 import FormulaPropertiesFromVmFragment
-    from .formula_fragment_py3 import FormulaFragment
-    from .gallery_image_py3 import GalleryImage
-    from .parameter_info_py3 import ParameterInfo
-    from .generate_arm_template_request_py3 import GenerateArmTemplateRequest
-    from .generate_upload_uri_parameter_py3 import GenerateUploadUriParameter
-    from .generate_upload_uri_response_py3 import GenerateUploadUriResponse
-    from .identity_properties_py3 import IdentityProperties
-    from .import_lab_virtual_machine_request_py3 import ImportLabVirtualMachineRequest
-    from .lab_announcement_properties_py3 import LabAnnouncementProperties
-    from .lab_support_properties_py3 import LabSupportProperties
-    from .lab_py3 import Lab
-    from .lab_announcement_properties_fragment_py3 import LabAnnouncementPropertiesFragment
-    from .target_cost_properties_py3 import TargetCostProperties
-    from .lab_cost_summary_properties_py3 import LabCostSummaryProperties
-    from .lab_cost_details_properties_py3 import LabCostDetailsProperties
-    from .lab_resource_cost_properties_py3 import LabResourceCostProperties
-    from .lab_cost_py3 import LabCost
-    from .lab_support_properties_fragment_py3 import LabSupportPropertiesFragment
-    from .lab_fragment_py3 import LabFragment
-    from .lab_vhd_py3 import LabVhd
-    from .lab_virtual_machine_py3 import LabVirtualMachine
-    from .lab_virtual_machine_fragment_py3 import LabVirtualMachineFragment
-    from .notification_channel_py3 import NotificationChannel
-    from .notification_channel_fragment_py3 import NotificationChannelFragment
-    from .notify_parameters_py3 import NotifyParameters
-    from .operation_error_py3 import OperationError
-    from .operation_metadata_display_py3 import OperationMetadataDisplay
-    from .operation_metadata_py3 import OperationMetadata
-    from .operation_result_py3 import OperationResult
-    from .policy_py3 import Policy
-    from .policy_fragment_py3 import PolicyFragment
-    from .port_py3 import Port
-    from .port_fragment_py3 import PortFragment
-    from .rdp_connection_py3 import RdpConnection
-    from .resize_lab_virtual_machine_properties_py3 import ResizeLabVirtualMachineProperties
-    from .resource_py3 import Resource
-    from .retarget_schedule_properties_py3 import RetargetScheduleProperties
-    from .secret_py3 import Secret
-    from .secret_fragment_py3 import SecretFragment
-    from .service_fabric_py3 import ServiceFabric
-    from .service_fabric_fragment_py3 import ServiceFabricFragment
-    from .service_runner_py3 import ServiceRunner
-    from .shutdown_notification_content_py3 import ShutdownNotificationContent
-    from .subnet_py3 import Subnet
-    from .subnet_fragment_py3 import SubnetFragment
-    from .subnet_shared_public_ip_address_configuration_py3 import SubnetSharedPublicIpAddressConfiguration
-    from .subnet_override_py3 import SubnetOverride
-    from .subnet_shared_public_ip_address_configuration_fragment_py3 import SubnetSharedPublicIpAddressConfigurationFragment
-    from .subnet_override_fragment_py3 import SubnetOverrideFragment
-    from .update_resource_py3 import UpdateResource
-    from .user_identity_py3 import UserIdentity
-    from .user_secret_store_py3 import UserSecretStore
-    from .user_py3 import User
-    from .user_identity_fragment_py3 import UserIdentityFragment
-    from .user_secret_store_fragment_py3 import UserSecretStoreFragment
-    from .user_fragment_py3 import UserFragment
-    from .virtual_network_py3 import VirtualNetwork
-    from .virtual_network_fragment_py3 import VirtualNetworkFragment
+    from ._models_py3 import ApplicableSchedule
+    from ._models_py3 import ApplicableScheduleFragment
+    from ._models_py3 import ApplyArtifactsRequest
+    from ._models_py3 import ArmTemplate
+    from ._models_py3 import ArmTemplateInfo
+    from ._models_py3 import ArmTemplateParameterProperties
+    from ._models_py3 import ArmTemplateParameterPropertiesFragment
+    from ._models_py3 import Artifact
+    from ._models_py3 import ArtifactDeploymentStatusProperties
+    from ._models_py3 import ArtifactDeploymentStatusPropertiesFragment
+    from ._models_py3 import ArtifactInstallProperties
+    from ._models_py3 import ArtifactInstallPropertiesFragment
+    from ._models_py3 import ArtifactParameterProperties
+    from ._models_py3 import ArtifactParameterPropertiesFragment
+    from ._models_py3 import ArtifactSource
+    from ._models_py3 import ArtifactSourceFragment
+    from ._models_py3 import AttachDiskProperties
+    from ._models_py3 import AttachNewDataDiskOptions
+    from ._models_py3 import AttachNewDataDiskOptionsFragment
+    from ._models_py3 import BulkCreationParameters
+    from ._models_py3 import BulkCreationParametersFragment
+    from ._models_py3 import ComputeDataDisk
+    from ._models_py3 import ComputeDataDiskFragment
+    from ._models_py3 import ComputeVmInstanceViewStatus
+    from ._models_py3 import ComputeVmInstanceViewStatusFragment
+    from ._models_py3 import ComputeVmProperties
+    from ._models_py3 import ComputeVmPropertiesFragment
+    from ._models_py3 import CostThresholdProperties
+    from ._models_py3 import CustomImage
+    from ._models_py3 import CustomImageFragment
+    from ._models_py3 import CustomImagePropertiesCustom
+    from ._models_py3 import CustomImagePropertiesCustomFragment
+    from ._models_py3 import CustomImagePropertiesFromPlan
+    from ._models_py3 import CustomImagePropertiesFromPlanFragment
+    from ._models_py3 import CustomImagePropertiesFromVm
+    from ._models_py3 import CustomImagePropertiesFromVmFragment
+    from ._models_py3 import DataDiskProperties
+    from ._models_py3 import DataDiskPropertiesFragment
+    from ._models_py3 import DataDiskStorageTypeInfo
+    from ._models_py3 import DataDiskStorageTypeInfoFragment
+    from ._models_py3 import DayDetails
+    from ._models_py3 import DayDetailsFragment
+    from ._models_py3 import DetachDataDiskProperties
+    from ._models_py3 import DetachDiskProperties
+    from ._models_py3 import Disk
+    from ._models_py3 import DiskFragment
+    from ._models_py3 import DtlEnvironment
+    from ._models_py3 import DtlEnvironmentFragment
+    from ._models_py3 import EnvironmentDeploymentProperties
+    from ._models_py3 import EnvironmentDeploymentPropertiesFragment
+    from ._models_py3 import EvaluatePoliciesProperties
+    from ._models_py3 import EvaluatePoliciesRequest
+    from ._models_py3 import EvaluatePoliciesResponse
+    from ._models_py3 import Event
+    from ._models_py3 import EventFragment
+    from ._models_py3 import ExportResourceUsageParameters
+    from ._models_py3 import ExternalSubnet
+    from ._models_py3 import ExternalSubnetFragment
+    from ._models_py3 import Formula
+    from ._models_py3 import FormulaFragment
+    from ._models_py3 import FormulaPropertiesFromVm
+    from ._models_py3 import FormulaPropertiesFromVmFragment
+    from ._models_py3 import GalleryImage
+    from ._models_py3 import GalleryImageReference
+    from ._models_py3 import GalleryImageReferenceFragment
+    from ._models_py3 import GenerateArmTemplateRequest
+    from ._models_py3 import GenerateUploadUriParameter
+    from ._models_py3 import GenerateUploadUriResponse
+    from ._models_py3 import HourDetails
+    from ._models_py3 import HourDetailsFragment
+    from ._models_py3 import IdentityProperties
+    from ._models_py3 import ImportLabVirtualMachineRequest
+    from ._models_py3 import InboundNatRule
+    from ._models_py3 import InboundNatRuleFragment
+    from ._models_py3 import Lab
+    from ._models_py3 import LabAnnouncementProperties
+    from ._models_py3 import LabAnnouncementPropertiesFragment
+    from ._models_py3 import LabCost
+    from ._models_py3 import LabCostDetailsProperties
+    from ._models_py3 import LabCostSummaryProperties
+    from ._models_py3 import LabFragment
+    from ._models_py3 import LabResourceCostProperties
+    from ._models_py3 import LabSupportProperties
+    from ._models_py3 import LabSupportPropertiesFragment
+    from ._models_py3 import LabVhd
+    from ._models_py3 import LabVirtualMachine
+    from ._models_py3 import LabVirtualMachineCreationParameter
+    from ._models_py3 import LabVirtualMachineCreationParameterFragment
+    from ._models_py3 import LabVirtualMachineFragment
+    from ._models_py3 import LinuxOsInfo
+    from ._models_py3 import LinuxOsInfoFragment
+    from ._models_py3 import NetworkInterfaceProperties
+    from ._models_py3 import NetworkInterfacePropertiesFragment
+    from ._models_py3 import NotificationChannel
+    from ._models_py3 import NotificationChannelFragment
+    from ._models_py3 import NotificationSettings
+    from ._models_py3 import NotificationSettingsFragment
+    from ._models_py3 import NotifyParameters
+    from ._models_py3 import OperationError
+    from ._models_py3 import OperationMetadata
+    from ._models_py3 import OperationMetadataDisplay
+    from ._models_py3 import OperationResult
+    from ._models_py3 import ParameterInfo
+    from ._models_py3 import ParametersValueFileInfo
+    from ._models_py3 import PercentageCostThresholdProperties
+    from ._models_py3 import Policy
+    from ._models_py3 import PolicyFragment
+    from ._models_py3 import PolicySetResult
+    from ._models_py3 import PolicyViolation
+    from ._models_py3 import Port
+    from ._models_py3 import PortFragment
+    from ._models_py3 import RdpConnection
+    from ._models_py3 import ResizeLabVirtualMachineProperties
+    from ._models_py3 import Resource
+    from ._models_py3 import RetargetScheduleProperties
+    from ._models_py3 import Schedule
+    from ._models_py3 import ScheduleCreationParameter
+    from ._models_py3 import ScheduleCreationParameterFragment
+    from ._models_py3 import ScheduleFragment
+    from ._models_py3 import Secret
+    from ._models_py3 import SecretFragment
+    from ._models_py3 import ServiceFabric
+    from ._models_py3 import ServiceFabricFragment
+    from ._models_py3 import ServiceRunner
+    from ._models_py3 import SharedPublicIpAddressConfiguration
+    from ._models_py3 import SharedPublicIpAddressConfigurationFragment
+    from ._models_py3 import ShutdownNotificationContent
+    from ._models_py3 import Subnet
+    from ._models_py3 import SubnetFragment
+    from ._models_py3 import SubnetOverride
+    from ._models_py3 import SubnetOverrideFragment
+    from ._models_py3 import SubnetSharedPublicIpAddressConfiguration
+    from ._models_py3 import SubnetSharedPublicIpAddressConfigurationFragment
+    from ._models_py3 import TargetCostProperties
+    from ._models_py3 import UpdateResource
+    from ._models_py3 import User
+    from ._models_py3 import UserFragment
+    from ._models_py3 import UserIdentity
+    from ._models_py3 import UserIdentityFragment
+    from ._models_py3 import UserSecretStore
+    from ._models_py3 import UserSecretStoreFragment
+    from ._models_py3 import VirtualNetwork
+    from ._models_py3 import VirtualNetworkFragment
+    from ._models_py3 import WeekDetails
+    from ._models_py3 import WeekDetailsFragment
+    from ._models_py3 import WindowsOsInfo
+    from ._models_py3 import WindowsOsInfoFragment
 except (SyntaxError, ImportError):
-    from .week_details import WeekDetails
-    from .day_details import DayDetails
-    from .hour_details import HourDetails
-    from .notification_settings import NotificationSettings
-    from .schedule import Schedule
-    from .applicable_schedule import ApplicableSchedule
-    from .week_details_fragment import WeekDetailsFragment
-    from .day_details_fragment import DayDetailsFragment
-    from .hour_details_fragment import HourDetailsFragment
-    from .notification_settings_fragment import NotificationSettingsFragment
-    from .schedule_fragment import ScheduleFragment
-    from .applicable_schedule_fragment import ApplicableScheduleFragment
-    from .artifact_parameter_properties import ArtifactParameterProperties
-    from .artifact_install_properties import ArtifactInstallProperties
-    from .apply_artifacts_request import ApplyArtifactsRequest
-    from .parameters_value_file_info import ParametersValueFileInfo
-    from .arm_template import ArmTemplate
-    from .arm_template_info import ArmTemplateInfo
-    from .arm_template_parameter_properties import ArmTemplateParameterProperties
-    from .arm_template_parameter_properties_fragment import ArmTemplateParameterPropertiesFragment
-    from .artifact import Artifact
-    from .artifact_deployment_status_properties import ArtifactDeploymentStatusProperties
-    from .artifact_deployment_status_properties_fragment import ArtifactDeploymentStatusPropertiesFragment
-    from .artifact_parameter_properties_fragment import ArtifactParameterPropertiesFragment
-    from .artifact_install_properties_fragment import ArtifactInstallPropertiesFragment
-    from .artifact_source import ArtifactSource
-    from .artifact_source_fragment import ArtifactSourceFragment
-    from .attach_disk_properties import AttachDiskProperties
-    from .attach_new_data_disk_options import AttachNewDataDiskOptions
-    from .attach_new_data_disk_options_fragment import AttachNewDataDiskOptionsFragment
-    from .bulk_creation_parameters import BulkCreationParameters
-    from .bulk_creation_parameters_fragment import BulkCreationParametersFragment
-    from .compute_data_disk import ComputeDataDisk
-    from .compute_data_disk_fragment import ComputeDataDiskFragment
-    from .compute_vm_instance_view_status import ComputeVmInstanceViewStatus
-    from .compute_vm_instance_view_status_fragment import ComputeVmInstanceViewStatusFragment
-    from .compute_vm_properties import ComputeVmProperties
-    from .compute_vm_properties_fragment import ComputeVmPropertiesFragment
-    from .percentage_cost_threshold_properties import PercentageCostThresholdProperties
-    from .cost_threshold_properties import CostThresholdProperties
-    from .windows_os_info import WindowsOsInfo
-    from .linux_os_info import LinuxOsInfo
-    from .custom_image_properties_from_vm import CustomImagePropertiesFromVm
-    from .custom_image_properties_custom import CustomImagePropertiesCustom
-    from .data_disk_storage_type_info import DataDiskStorageTypeInfo
-    from .custom_image_properties_from_plan import CustomImagePropertiesFromPlan
-    from .custom_image import CustomImage
-    from .windows_os_info_fragment import WindowsOsInfoFragment
-    from .linux_os_info_fragment import LinuxOsInfoFragment
-    from .custom_image_properties_from_vm_fragment import CustomImagePropertiesFromVmFragment
-    from .custom_image_properties_custom_fragment import CustomImagePropertiesCustomFragment
-    from .data_disk_storage_type_info_fragment import DataDiskStorageTypeInfoFragment
-    from .custom_image_properties_from_plan_fragment import CustomImagePropertiesFromPlanFragment
-    from .custom_image_fragment import CustomImageFragment
-    from .data_disk_properties import DataDiskProperties
-    from .data_disk_properties_fragment import DataDiskPropertiesFragment
-    from .detach_data_disk_properties import DetachDataDiskProperties
-    from .detach_disk_properties import DetachDiskProperties
-    from .disk import Disk
-    from .disk_fragment import DiskFragment
-    from .environment_deployment_properties import EnvironmentDeploymentProperties
-    from .dtl_environment import DtlEnvironment
-    from .environment_deployment_properties_fragment import EnvironmentDeploymentPropertiesFragment
-    from .dtl_environment_fragment import DtlEnvironmentFragment
-    from .evaluate_policies_properties import EvaluatePoliciesProperties
-    from .evaluate_policies_request import EvaluatePoliciesRequest
-    from .policy_violation import PolicyViolation
-    from .policy_set_result import PolicySetResult
-    from .evaluate_policies_response import EvaluatePoliciesResponse
-    from .event import Event
-    from .event_fragment import EventFragment
-    from .export_resource_usage_parameters import ExportResourceUsageParameters
-    from .external_subnet import ExternalSubnet
-    from .external_subnet_fragment import ExternalSubnetFragment
-    from .gallery_image_reference import GalleryImageReference
-    from .inbound_nat_rule import InboundNatRule
-    from .shared_public_ip_address_configuration import SharedPublicIpAddressConfiguration
-    from .network_interface_properties import NetworkInterfaceProperties
-    from .schedule_creation_parameter import ScheduleCreationParameter
-    from .lab_virtual_machine_creation_parameter import LabVirtualMachineCreationParameter
-    from .formula_properties_from_vm import FormulaPropertiesFromVm
-    from .formula import Formula
-    from .gallery_image_reference_fragment import GalleryImageReferenceFragment
-    from .inbound_nat_rule_fragment import InboundNatRuleFragment
-    from .shared_public_ip_address_configuration_fragment import SharedPublicIpAddressConfigurationFragment
-    from .network_interface_properties_fragment import NetworkInterfacePropertiesFragment
-    from .schedule_creation_parameter_fragment import ScheduleCreationParameterFragment
-    from .lab_virtual_machine_creation_parameter_fragment import LabVirtualMachineCreationParameterFragment
-    from .formula_properties_from_vm_fragment import FormulaPropertiesFromVmFragment
-    from .formula_fragment import FormulaFragment
-    from .gallery_image import GalleryImage
-    from .parameter_info import ParameterInfo
-    from .generate_arm_template_request import GenerateArmTemplateRequest
-    from .generate_upload_uri_parameter import GenerateUploadUriParameter
-    from .generate_upload_uri_response import GenerateUploadUriResponse
-    from .identity_properties import IdentityProperties
-    from .import_lab_virtual_machine_request import ImportLabVirtualMachineRequest
-    from .lab_announcement_properties import LabAnnouncementProperties
-    from .lab_support_properties import LabSupportProperties
-    from .lab import Lab
-    from .lab_announcement_properties_fragment import LabAnnouncementPropertiesFragment
-    from .target_cost_properties import TargetCostProperties
-    from .lab_cost_summary_properties import LabCostSummaryProperties
-    from .lab_cost_details_properties import LabCostDetailsProperties
-    from .lab_resource_cost_properties import LabResourceCostProperties
-    from .lab_cost import LabCost
-    from .lab_support_properties_fragment import LabSupportPropertiesFragment
-    from .lab_fragment import LabFragment
-    from .lab_vhd import LabVhd
-    from .lab_virtual_machine import LabVirtualMachine
-    from .lab_virtual_machine_fragment import LabVirtualMachineFragment
-    from .notification_channel import NotificationChannel
-    from .notification_channel_fragment import NotificationChannelFragment
-    from .notify_parameters import NotifyParameters
-    from .operation_error import OperationError
-    from .operation_metadata_display import OperationMetadataDisplay
-    from .operation_metadata import OperationMetadata
-    from .operation_result import OperationResult
-    from .policy import Policy
-    from .policy_fragment import PolicyFragment
-    from .port import Port
-    from .port_fragment import PortFragment
-    from .rdp_connection import RdpConnection
-    from .resize_lab_virtual_machine_properties import ResizeLabVirtualMachineProperties
-    from .resource import Resource
-    from .retarget_schedule_properties import RetargetScheduleProperties
-    from .secret import Secret
-    from .secret_fragment import SecretFragment
-    from .service_fabric import ServiceFabric
-    from .service_fabric_fragment import ServiceFabricFragment
-    from .service_runner import ServiceRunner
-    from .shutdown_notification_content import ShutdownNotificationContent
-    from .subnet import Subnet
-    from .subnet_fragment import SubnetFragment
-    from .subnet_shared_public_ip_address_configuration import SubnetSharedPublicIpAddressConfiguration
-    from .subnet_override import SubnetOverride
-    from .subnet_shared_public_ip_address_configuration_fragment import SubnetSharedPublicIpAddressConfigurationFragment
-    from .subnet_override_fragment import SubnetOverrideFragment
-    from .update_resource import UpdateResource
-    from .user_identity import UserIdentity
-    from .user_secret_store import UserSecretStore
-    from .user import User
-    from .user_identity_fragment import UserIdentityFragment
-    from .user_secret_store_fragment import UserSecretStoreFragment
-    from .user_fragment import UserFragment
-    from .virtual_network import VirtualNetwork
-    from .virtual_network_fragment import VirtualNetworkFragment
-from .operation_metadata_paged import OperationMetadataPaged
-from .lab_paged import LabPaged
-from .lab_vhd_paged import LabVhdPaged
-from .schedule_paged import SchedulePaged
-from .artifact_source_paged import ArtifactSourcePaged
-from .arm_template_paged import ArmTemplatePaged
-from .artifact_paged import ArtifactPaged
-from .custom_image_paged import CustomImagePaged
-from .formula_paged import FormulaPaged
-from .gallery_image_paged import GalleryImagePaged
-from .notification_channel_paged import NotificationChannelPaged
-from .policy_paged import PolicyPaged
-from .service_runner_paged import ServiceRunnerPaged
-from .user_paged import UserPaged
-from .disk_paged import DiskPaged
-from .dtl_environment_paged import DtlEnvironmentPaged
-from .secret_paged import SecretPaged
-from .service_fabric_paged import ServiceFabricPaged
-from .lab_virtual_machine_paged import LabVirtualMachinePaged
-from .virtual_network_paged import VirtualNetworkPaged
-from .dev_test_labs_client_enums import (
+    from ._models import ApplicableSchedule
+    from ._models import ApplicableScheduleFragment
+    from ._models import ApplyArtifactsRequest
+    from ._models import ArmTemplate
+    from ._models import ArmTemplateInfo
+    from ._models import ArmTemplateParameterProperties
+    from ._models import ArmTemplateParameterPropertiesFragment
+    from ._models import Artifact
+    from ._models import ArtifactDeploymentStatusProperties
+    from ._models import ArtifactDeploymentStatusPropertiesFragment
+    from ._models import ArtifactInstallProperties
+    from ._models import ArtifactInstallPropertiesFragment
+    from ._models import ArtifactParameterProperties
+    from ._models import ArtifactParameterPropertiesFragment
+    from ._models import ArtifactSource
+    from ._models import ArtifactSourceFragment
+    from ._models import AttachDiskProperties
+    from ._models import AttachNewDataDiskOptions
+    from ._models import AttachNewDataDiskOptionsFragment
+    from ._models import BulkCreationParameters
+    from ._models import BulkCreationParametersFragment
+    from ._models import ComputeDataDisk
+    from ._models import ComputeDataDiskFragment
+    from ._models import ComputeVmInstanceViewStatus
+    from ._models import ComputeVmInstanceViewStatusFragment
+    from ._models import ComputeVmProperties
+    from ._models import ComputeVmPropertiesFragment
+    from ._models import CostThresholdProperties
+    from ._models import CustomImage
+    from ._models import CustomImageFragment
+    from ._models import CustomImagePropertiesCustom
+    from ._models import CustomImagePropertiesCustomFragment
+    from ._models import CustomImagePropertiesFromPlan
+    from ._models import CustomImagePropertiesFromPlanFragment
+    from ._models import CustomImagePropertiesFromVm
+    from ._models import CustomImagePropertiesFromVmFragment
+    from ._models import DataDiskProperties
+    from ._models import DataDiskPropertiesFragment
+    from ._models import DataDiskStorageTypeInfo
+    from ._models import DataDiskStorageTypeInfoFragment
+    from ._models import DayDetails
+    from ._models import DayDetailsFragment
+    from ._models import DetachDataDiskProperties
+    from ._models import DetachDiskProperties
+    from ._models import Disk
+    from ._models import DiskFragment
+    from ._models import DtlEnvironment
+    from ._models import DtlEnvironmentFragment
+    from ._models import EnvironmentDeploymentProperties
+    from ._models import EnvironmentDeploymentPropertiesFragment
+    from ._models import EvaluatePoliciesProperties
+    from ._models import EvaluatePoliciesRequest
+    from ._models import EvaluatePoliciesResponse
+    from ._models import Event
+    from ._models import EventFragment
+    from ._models import ExportResourceUsageParameters
+    from ._models import ExternalSubnet
+    from ._models import ExternalSubnetFragment
+    from ._models import Formula
+    from ._models import FormulaFragment
+    from ._models import FormulaPropertiesFromVm
+    from ._models import FormulaPropertiesFromVmFragment
+    from ._models import GalleryImage
+    from ._models import GalleryImageReference
+    from ._models import GalleryImageReferenceFragment
+    from ._models import GenerateArmTemplateRequest
+    from ._models import GenerateUploadUriParameter
+    from ._models import GenerateUploadUriResponse
+    from ._models import HourDetails
+    from ._models import HourDetailsFragment
+    from ._models import IdentityProperties
+    from ._models import ImportLabVirtualMachineRequest
+    from ._models import InboundNatRule
+    from ._models import InboundNatRuleFragment
+    from ._models import Lab
+    from ._models import LabAnnouncementProperties
+    from ._models import LabAnnouncementPropertiesFragment
+    from ._models import LabCost
+    from ._models import LabCostDetailsProperties
+    from ._models import LabCostSummaryProperties
+    from ._models import LabFragment
+    from ._models import LabResourceCostProperties
+    from ._models import LabSupportProperties
+    from ._models import LabSupportPropertiesFragment
+    from ._models import LabVhd
+    from ._models import LabVirtualMachine
+    from ._models import LabVirtualMachineCreationParameter
+    from ._models import LabVirtualMachineCreationParameterFragment
+    from ._models import LabVirtualMachineFragment
+    from ._models import LinuxOsInfo
+    from ._models import LinuxOsInfoFragment
+    from ._models import NetworkInterfaceProperties
+    from ._models import NetworkInterfacePropertiesFragment
+    from ._models import NotificationChannel
+    from ._models import NotificationChannelFragment
+    from ._models import NotificationSettings
+    from ._models import NotificationSettingsFragment
+    from ._models import NotifyParameters
+    from ._models import OperationError
+    from ._models import OperationMetadata
+    from ._models import OperationMetadataDisplay
+    from ._models import OperationResult
+    from ._models import ParameterInfo
+    from ._models import ParametersValueFileInfo
+    from ._models import PercentageCostThresholdProperties
+    from ._models import Policy
+    from ._models import PolicyFragment
+    from ._models import PolicySetResult
+    from ._models import PolicyViolation
+    from ._models import Port
+    from ._models import PortFragment
+    from ._models import RdpConnection
+    from ._models import ResizeLabVirtualMachineProperties
+    from ._models import Resource
+    from ._models import RetargetScheduleProperties
+    from ._models import Schedule
+    from ._models import ScheduleCreationParameter
+    from ._models import ScheduleCreationParameterFragment
+    from ._models import ScheduleFragment
+    from ._models import Secret
+    from ._models import SecretFragment
+    from ._models import ServiceFabric
+    from ._models import ServiceFabricFragment
+    from ._models import ServiceRunner
+    from ._models import SharedPublicIpAddressConfiguration
+    from ._models import SharedPublicIpAddressConfigurationFragment
+    from ._models import ShutdownNotificationContent
+    from ._models import Subnet
+    from ._models import SubnetFragment
+    from ._models import SubnetOverride
+    from ._models import SubnetOverrideFragment
+    from ._models import SubnetSharedPublicIpAddressConfiguration
+    from ._models import SubnetSharedPublicIpAddressConfigurationFragment
+    from ._models import TargetCostProperties
+    from ._models import UpdateResource
+    from ._models import User
+    from ._models import UserFragment
+    from ._models import UserIdentity
+    from ._models import UserIdentityFragment
+    from ._models import UserSecretStore
+    from ._models import UserSecretStoreFragment
+    from ._models import VirtualNetwork
+    from ._models import VirtualNetworkFragment
+    from ._models import WeekDetails
+    from ._models import WeekDetailsFragment
+    from ._models import WindowsOsInfo
+    from ._models import WindowsOsInfoFragment
+from ._paged_models import ArmTemplatePaged
+from ._paged_models import ArtifactPaged
+from ._paged_models import ArtifactSourcePaged
+from ._paged_models import CustomImagePaged
+from ._paged_models import DiskPaged
+from ._paged_models import DtlEnvironmentPaged
+from ._paged_models import FormulaPaged
+from ._paged_models import GalleryImagePaged
+from ._paged_models import LabPaged
+from ._paged_models import LabVhdPaged
+from ._paged_models import LabVirtualMachinePaged
+from ._paged_models import NotificationChannelPaged
+from ._paged_models import OperationMetadataPaged
+from ._paged_models import PolicyPaged
+from ._paged_models import SchedulePaged
+from ._paged_models import SecretPaged
+from ._paged_models import ServiceFabricPaged
+from ._paged_models import UserPaged
+from ._paged_models import VirtualNetworkPaged
+from ._dev_test_labs_client_enums import (
     EnableStatus,
     SourceControlType,
     StorageType,
@@ -351,22 +350,9 @@ from .dev_test_labs_client_enums import (
 )
 
 __all__ = [
-    'WeekDetails',
-    'DayDetails',
-    'HourDetails',
-    'NotificationSettings',
-    'Schedule',
     'ApplicableSchedule',
-    'WeekDetailsFragment',
-    'DayDetailsFragment',
-    'HourDetailsFragment',
-    'NotificationSettingsFragment',
-    'ScheduleFragment',
     'ApplicableScheduleFragment',
-    'ArtifactParameterProperties',
-    'ArtifactInstallProperties',
     'ApplyArtifactsRequest',
-    'ParametersValueFileInfo',
     'ArmTemplate',
     'ArmTemplateInfo',
     'ArmTemplateParameterProperties',
@@ -374,8 +360,10 @@ __all__ = [
     'Artifact',
     'ArtifactDeploymentStatusProperties',
     'ArtifactDeploymentStatusPropertiesFragment',
-    'ArtifactParameterPropertiesFragment',
+    'ArtifactInstallProperties',
     'ArtifactInstallPropertiesFragment',
+    'ArtifactParameterProperties',
+    'ArtifactParameterPropertiesFragment',
     'ArtifactSource',
     'ArtifactSourceFragment',
     'AttachDiskProperties',
@@ -389,115 +377,126 @@ __all__ = [
     'ComputeVmInstanceViewStatusFragment',
     'ComputeVmProperties',
     'ComputeVmPropertiesFragment',
-    'PercentageCostThresholdProperties',
     'CostThresholdProperties',
-    'WindowsOsInfo',
-    'LinuxOsInfo',
-    'CustomImagePropertiesFromVm',
-    'CustomImagePropertiesCustom',
-    'DataDiskStorageTypeInfo',
-    'CustomImagePropertiesFromPlan',
     'CustomImage',
-    'WindowsOsInfoFragment',
-    'LinuxOsInfoFragment',
-    'CustomImagePropertiesFromVmFragment',
-    'CustomImagePropertiesCustomFragment',
-    'DataDiskStorageTypeInfoFragment',
-    'CustomImagePropertiesFromPlanFragment',
     'CustomImageFragment',
+    'CustomImagePropertiesCustom',
+    'CustomImagePropertiesCustomFragment',
+    'CustomImagePropertiesFromPlan',
+    'CustomImagePropertiesFromPlanFragment',
+    'CustomImagePropertiesFromVm',
+    'CustomImagePropertiesFromVmFragment',
     'DataDiskProperties',
     'DataDiskPropertiesFragment',
+    'DataDiskStorageTypeInfo',
+    'DataDiskStorageTypeInfoFragment',
+    'DayDetails',
+    'DayDetailsFragment',
     'DetachDataDiskProperties',
     'DetachDiskProperties',
     'Disk',
     'DiskFragment',
-    'EnvironmentDeploymentProperties',
     'DtlEnvironment',
-    'EnvironmentDeploymentPropertiesFragment',
     'DtlEnvironmentFragment',
+    'EnvironmentDeploymentProperties',
+    'EnvironmentDeploymentPropertiesFragment',
     'EvaluatePoliciesProperties',
     'EvaluatePoliciesRequest',
-    'PolicyViolation',
-    'PolicySetResult',
     'EvaluatePoliciesResponse',
     'Event',
     'EventFragment',
     'ExportResourceUsageParameters',
     'ExternalSubnet',
     'ExternalSubnetFragment',
-    'GalleryImageReference',
-    'InboundNatRule',
-    'SharedPublicIpAddressConfiguration',
-    'NetworkInterfaceProperties',
-    'ScheduleCreationParameter',
-    'LabVirtualMachineCreationParameter',
-    'FormulaPropertiesFromVm',
     'Formula',
-    'GalleryImageReferenceFragment',
-    'InboundNatRuleFragment',
-    'SharedPublicIpAddressConfigurationFragment',
-    'NetworkInterfacePropertiesFragment',
-    'ScheduleCreationParameterFragment',
-    'LabVirtualMachineCreationParameterFragment',
-    'FormulaPropertiesFromVmFragment',
     'FormulaFragment',
+    'FormulaPropertiesFromVm',
+    'FormulaPropertiesFromVmFragment',
     'GalleryImage',
-    'ParameterInfo',
+    'GalleryImageReference',
+    'GalleryImageReferenceFragment',
     'GenerateArmTemplateRequest',
     'GenerateUploadUriParameter',
     'GenerateUploadUriResponse',
+    'HourDetails',
+    'HourDetailsFragment',
     'IdentityProperties',
     'ImportLabVirtualMachineRequest',
-    'LabAnnouncementProperties',
-    'LabSupportProperties',
+    'InboundNatRule',
+    'InboundNatRuleFragment',
     'Lab',
+    'LabAnnouncementProperties',
     'LabAnnouncementPropertiesFragment',
-    'TargetCostProperties',
-    'LabCostSummaryProperties',
-    'LabCostDetailsProperties',
-    'LabResourceCostProperties',
     'LabCost',
-    'LabSupportPropertiesFragment',
+    'LabCostDetailsProperties',
+    'LabCostSummaryProperties',
     'LabFragment',
+    'LabResourceCostProperties',
+    'LabSupportProperties',
+    'LabSupportPropertiesFragment',
     'LabVhd',
     'LabVirtualMachine',
+    'LabVirtualMachineCreationParameter',
+    'LabVirtualMachineCreationParameterFragment',
     'LabVirtualMachineFragment',
+    'LinuxOsInfo',
+    'LinuxOsInfoFragment',
+    'NetworkInterfaceProperties',
+    'NetworkInterfacePropertiesFragment',
     'NotificationChannel',
     'NotificationChannelFragment',
+    'NotificationSettings',
+    'NotificationSettingsFragment',
     'NotifyParameters',
     'OperationError',
-    'OperationMetadataDisplay',
     'OperationMetadata',
+    'OperationMetadataDisplay',
     'OperationResult',
+    'ParameterInfo',
+    'ParametersValueFileInfo',
+    'PercentageCostThresholdProperties',
     'Policy',
     'PolicyFragment',
+    'PolicySetResult',
+    'PolicyViolation',
     'Port',
     'PortFragment',
     'RdpConnection',
     'ResizeLabVirtualMachineProperties',
     'Resource',
     'RetargetScheduleProperties',
+    'Schedule',
+    'ScheduleCreationParameter',
+    'ScheduleCreationParameterFragment',
+    'ScheduleFragment',
     'Secret',
     'SecretFragment',
     'ServiceFabric',
     'ServiceFabricFragment',
     'ServiceRunner',
+    'SharedPublicIpAddressConfiguration',
+    'SharedPublicIpAddressConfigurationFragment',
     'ShutdownNotificationContent',
     'Subnet',
     'SubnetFragment',
-    'SubnetSharedPublicIpAddressConfiguration',
     'SubnetOverride',
-    'SubnetSharedPublicIpAddressConfigurationFragment',
     'SubnetOverrideFragment',
+    'SubnetSharedPublicIpAddressConfiguration',
+    'SubnetSharedPublicIpAddressConfigurationFragment',
+    'TargetCostProperties',
     'UpdateResource',
-    'UserIdentity',
-    'UserSecretStore',
     'User',
-    'UserIdentityFragment',
-    'UserSecretStoreFragment',
     'UserFragment',
+    'UserIdentity',
+    'UserIdentityFragment',
+    'UserSecretStore',
+    'UserSecretStoreFragment',
     'VirtualNetwork',
     'VirtualNetworkFragment',
+    'WeekDetails',
+    'WeekDetailsFragment',
+    'WindowsOsInfo',
+    'WindowsOsInfoFragment',
     'OperationMetadataPaged',
     'LabPaged',
     'LabVhdPaged',
@@ -510,7 +509,6 @@ __all__ = [
     'GalleryImagePaged',
     'NotificationChannelPaged',
     'PolicyPaged',
-    'ServiceRunnerPaged',
     'UserPaged',
     'DiskPaged',
     'DtlEnvironmentPaged',

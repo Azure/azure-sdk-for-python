@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .feature_client import FeatureClient
-from .version import VERSION
+from ._configuration import FeatureClientConfiguration
+from ._feature_client import FeatureClient
+__all__ = ['FeatureClient', 'FeatureClientConfiguration']
 
-__all__ = ['FeatureClient']
+from .version import VERSION
 
 __version__ = VERSION
 

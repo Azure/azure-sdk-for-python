@@ -1,0 +1,21 @@
+trigger: none
+
+resources:
+  repositories:
+    - repository: azure-sdk-tools
+      type: github
+      name: Azure/azure-sdk-tools
+      endpoint: azure
+
+jobs:
+  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+    parameters:
+      ServiceDirectory: servicebus
+      EnvVars:
+        SERVICE_BUS_HOSTNAME: $(python-sb-livetest-service-bus-hostname)
+        SERVICE_BUS_SAS_POLICY: $(python-sb-livetest-service-sas-policy)
+        SERVICE_BUS_SAS_KEY: $(python-sb-livetest-service-sas-key)
+        SERVICE_BUS_CONNECTION_STR: $(python-sb-livetest-service-connection-str)
+        SERVICE_BUS_CONNECTION_STR_RO: $(python-sb-livetest-service-connection-str-ro)
+        SERVICE_BUS_CONNECTION_STR_WO: $(python-sb-livetest-service-connection-str-wo)
+        SERVICE_BUS_CONNECTION_STR_ENTITY: $(python-sb-livetest-service-connection-entity)

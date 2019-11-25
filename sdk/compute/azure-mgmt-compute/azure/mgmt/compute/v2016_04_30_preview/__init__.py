@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient
-from .version import VERSION
+from ._configuration import ComputeManagementClientConfiguration
+from ._compute_management_client import ComputeManagementClient
+__all__ = ['ComputeManagementClient', 'ComputeManagementClientConfiguration']
 
-__all__ = ['ComputeManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

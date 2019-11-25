@@ -305,7 +305,7 @@ class MgmtACRTest20180201Preview(AzureMgmtTestCase):
 
 
     @ResourceGroupPreparer(location=DEFAULT_LOCATION)
-    def test_build_task(self, resource_group, location):
+    def _disabled_test_build_task(self, resource_group, location):
         registry_name = self.get_resource_name('pyacr')
         build_task_name = self.get_resource_name('pyacr')
 
@@ -384,7 +384,7 @@ class MgmtACRTest20180201Preview(AzureMgmtTestCase):
 
 
     @ResourceGroupPreparer(location=DEFAULT_LOCATION)
-    def test_build_step(self, resource_group, location):
+    def _disabled_test_build_step(self, resource_group, location):
         registry_name = self.get_resource_name('pyacr')
         build_task_name = self.get_resource_name('pyacr')
         build_step_name = self.get_resource_name('pyacr')

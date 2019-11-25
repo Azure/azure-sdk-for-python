@@ -3,6 +3,70 @@
 Release History
 ===============
 
+0.12.0 (2019-11-20)
++++++++++++++++++++
+
+**Features**
+
+- Model SapMonitor has a new parameter enable_customer_analytics
+- Model SapMonitor has a new parameter log_analytics_workspace_id
+- Model SapMonitor has a new parameter log_analytics_workspace_shared_key
+
+0.11.0 (2019-11-12)
++++++++++++++++++++
+
+**Features**
+
+- Model SapMonitor has a new parameter key_vault_id
+
+0.10.0 (2019-08-15)
++++++++++++++++++++
+
+**Features**
+
+- Model SapMonitor has a new parameter log_analytics_workspace_arm_id
+- Model SapMonitor has a new parameter managed_resource_group_name
+
+0.9.0 (2019-07-31)
+++++++++++++++++++
+
+**Features**
+
+- Model SapMonitor has a new parameter hana_db_credentials_msi_id
+- Model SapMonitor has a new parameter hana_db_password_key_vault_url
+
+**Breaking changes**
+
+- Removed operation HanaInstancesOperations.enable_monitoring
+
+0.8.0 (2019-06-26)
+++++++++++++++++++
+
+**Features**
+
+- Added operation HanaInstancesOperations.start
+- Added operation HanaInstancesOperations.shutdown
+- Added operation group SapMonitorsOperations
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes if from some import.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- HanaManagementClient cannot be imported from `azure.mgmt.hanaonazure.hana_management_client` anymore (import from `azure.mgmt.hanaonazure` works like before)
+- HanaManagementClientConfiguration import has been moved from `azure.mgmt.hanaonazure.hana_management_client` to `azure.mgmt.hanaonazure`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.hanaonazure.models.my_class` (import from `azure.mgmt.hanaonazure.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.hanaonazure.operations.my_class_operations` (import from `azure.mgmt.hanaonazure.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
+0.7.1 (2019-06-12)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Make mutable some attributes that were read-only by mistake (so they can be set on creation)
+
 0.7.0 (2019-05-30)
 ++++++++++++++++++
 

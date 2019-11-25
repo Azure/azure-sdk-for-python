@@ -9,15 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .accounts_operations import AccountsOperations
-from .pools_operations import PoolsOperations
-from .volumes_operations import VolumesOperations
-from .mount_targets_operations import MountTargetsOperations
-from .snapshots_operations import SnapshotsOperations
+from ._operations import Operations
+from ._net_app_resource_operations import NetAppResourceOperations
+from ._accounts_operations import AccountsOperations
+from ._pools_operations import PoolsOperations
+from ._volumes_operations import VolumesOperations
+from ._mount_targets_operations import MountTargetsOperations
+from ._snapshots_operations import SnapshotsOperations
 
 __all__ = [
     'Operations',
+    'NetAppResourceOperations',
     'AccountsOperations',
     'PoolsOperations',
     'VolumesOperations',

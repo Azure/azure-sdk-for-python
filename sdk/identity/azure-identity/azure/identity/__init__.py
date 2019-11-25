@@ -1,16 +1,39 @@
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See LICENSE.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
-from .exceptions import AuthenticationError
-from .credentials import ClientSecretCredential, TokenCredentialChain
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+"""Credentials for Azure SDK clients."""
 
-__all__ = ["AuthenticationError", "ClientSecretCredential", "TokenCredentialChain"]
+from ._constants import KnownAuthorities
+from ._credentials import (
+    AuthorizationCodeCredential,
+    CertificateCredential,
+    ChainedTokenCredential,
+    ClientSecretCredential,
+    DefaultAzureCredential,
+    DeviceCodeCredential,
+    EnvironmentCredential,
+    InteractiveBrowserCredential,
+    ManagedIdentityCredential,
+    SharedTokenCacheCredential,
+    UsernamePasswordCredential,
+)
 
-try:
-    from .aio import AsyncClientSecretCredential, AsyncTokenCredentialChain
 
-    __all__.extend(["AsyncClientSecretCredential", "AsyncTokenCredentialChain"])
-except SyntaxError:
-    pass
+__all__ = [
+    "AuthorizationCodeCredential",
+    "CertificateCredential",
+    "ChainedTokenCredential",
+    "ClientSecretCredential",
+    "DefaultAzureCredential",
+    "DeviceCodeCredential",
+    "EnvironmentCredential",
+    "InteractiveBrowserCredential",
+    "KnownAuthorities",
+    "ManagedIdentityCredential",
+    "SharedTokenCacheCredential",
+    "UsernamePasswordCredential",
+]
+
+from ._version import VERSION
+__version__ = VERSION

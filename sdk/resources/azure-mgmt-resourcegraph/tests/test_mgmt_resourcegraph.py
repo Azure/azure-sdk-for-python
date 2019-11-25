@@ -39,22 +39,50 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         self.assertEqual(len(query_response.facets), 0)
 
         # Data columns
-        self.assertIsNotNone(query_response.data.columns)
-        self.assertEqual(len(query_response.data.columns), 3)
-        self.assertIsNotNone(query_response.data.columns[0].name)
-        self.assertIsNotNone(query_response.data.columns[1].name)
-        self.assertIsNotNone(query_response.data.columns[2].name)
-        self.assertEqual(query_response.data.columns[0].type, ColumnDataType.string)
-        self.assertEqual(query_response.data.columns[1].type, ColumnDataType.object_enum)
-        self.assertEqual(query_response.data.columns[2].type, ColumnDataType.object_enum)
+        self.assertIsNotNone(query_response.data['columns'])
+        self.assertEqual(len(query_response.data['columns']), 3)
+        self.assertIsNotNone(query_response.data["columns"][0]["name"])
+        self.assertIsNotNone(query_response.data["columns"][1]["name"])
+        self.assertIsNotNone(query_response.data["columns"][2]["name"])
+        self.assertEqual(query_response.data["columns"][0]["type"], ColumnDataType.string)
+        self.assertEqual(query_response.data["columns"][1]["type"], ColumnDataType.object_enum)
+        self.assertEqual(query_response.data["columns"][2]["type"], ColumnDataType.object_enum)
 
         # Data rows
-        self.assertIsNotNone(query_response.data.rows)
-        self.assertEqual(len(query_response.data.rows), 2)
-        self.assertEqual(len(query_response.data.rows[0]), 3)
-        self.assertIsInstance(query_response.data.rows[0][0], six.string_types)
-        self.assertIsInstance(query_response.data.rows[0][1], dict)
-        self.assertIsInstance(query_response.data.rows[0][2], dict)
+        self.assertIsNotNone(query_response.data["rows"])
+        self.assertEqual(len(query_response.data["rows"]), 2)
+        self.assertEqual(len(query_response.data["rows"][0]), 3)
+        self.assertIsInstance(query_response.data["rows"][0][0], six.string_types)
+        self.assertIsInstance(query_response.data["rows"][0][1], dict)
+        self.assertIsInstance(query_response.data["rows"][0][2], dict)
+
+    def test_resources_basic_query_object_array(self):
+        query = QueryRequest(
+            query='project id, tags, properties | limit 2',
+            subscriptions=[self.settings.SUBSCRIPTION_ID],
+            options=QueryRequestOptions(
+                result_format=ResultFormat.object_array
+            )
+        )
+
+        query_response = self.resourcegraph_client.resources(query)
+
+        # Top-level response fields
+        self.assertEqual(query_response.count, 2)
+        self.assertEqual(query_response.total_records, 2)
+        self.assertIsNone(query_response.skip_token)
+        self.assertEqual(query_response.result_truncated, ResultTruncated.false)
+        self.assertIsNotNone(query_response.data)
+        self.assertIsNotNone(query_response.facets)
+        self.assertEqual(len(query_response.facets), 0)
+
+        # Data
+        self.assertIsNotNone(query_response.data)
+        self.assertEqual(len(query_response.data), 2)
+        self.assertEqual(len(query_response.data[0]), 3)
+        self.assertIsInstance(query_response.data[0]['id'], six.string_types)
+        self.assertIsInstance(query_response.data[0]['tags'], dict)
+        self.assertIsInstance(query_response.data[0]['properties'], dict)
 
     def test_resources_query_options(self):
         query = QueryRequest(
@@ -79,16 +107,16 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         self.assertEqual(len(query_response.facets), 0)
 
         # Data columns
-        self.assertIsNotNone(query_response.data.columns)
-        self.assertEqual(len(query_response.data.columns), 1)
-        self.assertIsNotNone(query_response.data.columns[0].name)
-        self.assertEqual(query_response.data.columns[0].type, ColumnDataType.string)
+        self.assertIsNotNone(query_response.data["columns"])
+        self.assertEqual(len(query_response.data["columns"]), 1)
+        self.assertIsNotNone(query_response.data["columns"][0]["name"])
+        self.assertEqual(query_response.data["columns"][0]["type"], ColumnDataType.string)
 
         # Data rows
-        self.assertIsNotNone(query_response.data.rows)
-        self.assertEqual(len(query_response.data.rows), 4)
-        self.assertEqual(len(query_response.data.rows[0]), 1)
-        self.assertIsInstance(query_response.data.rows[0][0], six.string_types)
+        self.assertIsNotNone(query_response.data["rows"])
+        self.assertEqual(len(query_response.data["rows"]), 4)
+        self.assertEqual(len(query_response.data["rows"][0]), 1)
+        self.assertIsInstance(query_response.data["rows"][0][0], six.string_types)
 
     def test_resources_facet_query(self):
         facet_expression0 = 'location'
@@ -133,19 +161,19 @@ class MgmtResourceGraphTest(AzureMgmtTestCase):
         self.assertEqual(query_response.facets[0].count, 4)
 
         # Successful facet columns
-        self.assertIsNotNone(query_response.facets[0].data.columns)
-        self.assertEqual(len(query_response.facets[0].data.columns), 2)
-        self.assertIsNotNone(query_response.facets[0].data.columns[0].name)
-        self.assertIsNotNone(query_response.facets[0].data.columns[1].name)
-        self.assertEqual(query_response.facets[0].data.columns[0].type, ColumnDataType.string)
-        self.assertEqual(query_response.facets[0].data.columns[1].type, ColumnDataType.integer)
+        self.assertIsNotNone(query_response.facets[0].data["columns"])
+        self.assertEqual(len(query_response.facets[0].data["columns"]), 2)
+        self.assertIsNotNone(query_response.facets[0].data["columns"][0]["name"])
+        self.assertIsNotNone(query_response.facets[0].data["columns"][1]["name"])
+        self.assertEqual(query_response.facets[0].data["columns"][0]["type"], ColumnDataType.string)
+        self.assertEqual(query_response.facets[0].data["columns"][1]["type"], ColumnDataType.integer)
 
         # Successful facet rows
-        self.assertIsNotNone(query_response.facets[0].data.rows)
-        self.assertEqual(len(query_response.facets[0].data.rows), 4)
-        self.assertEqual(len(query_response.facets[0].data.rows[0]), 2)
-        self.assertIsInstance(query_response.facets[0].data.rows[0][0], six.string_types)
-        self.assertIsInstance(query_response.facets[0].data.rows[0][1], six.integer_types)
+        self.assertIsNotNone(query_response.facets[0].data["rows"])
+        self.assertEqual(len(query_response.facets[0].data["rows"]), 4)
+        self.assertEqual(len(query_response.facets[0].data["rows"][0]), 2)
+        self.assertIsInstance(query_response.facets[0].data["rows"][0][0], six.string_types)
+        self.assertIsInstance(query_response.facets[0].data["rows"][0][1], six.integer_types)
 
         # Failed facet
         self.assertIsInstance(query_response.facets[1], FacetError)

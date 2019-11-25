@@ -3,6 +3,24 @@
 Release History
 ===============
 
+8.0.0 (2019-8-5)
+++++++++++++++++++
+
+- Using REST API version 2019-08-01.10.0.
+    * Added ability to specify a collection of public IPs on `NetworkConfiguration` via the new `public_ips` property. This guarantees nodes in the Pool will have an IP from the list user provided IPs.
+    * Added ability to mount remote file-systems on each node of a pool via the `mount_configuration` property on `CloudPool`.
+    * Shared Image Gallery images can now be specified on the `virtual_machine_image_id` property of `ImageReference` by referencing the image via its ARM ID.
+    * **Breaking** When not specified, the default value for `wait_for_success` on `StartTask` is now `True` (was `False`).
+    * **Breaking** When not specified, the default value for `scope` on `AutoUserSpecification` is now always `Pool` (was `Task` on Windows nodes, `Pool` on Linux nodes).
+
+7.0.0 (2019-6-11)
+++++++++++++++++++
+
+- Using REST API version 2019-06-01.9.0.
+    * **Breaking** Replaced `AccountOperations.list_node_agent_skus` with `AccountOperations.list_supported_images`. `list_supported_images` contains all of the same information originally available in `list_node_agent_skus` but in a clearer format. New non-verified images are also now returned. Additional information about `capabilities` and `batch_support_end_of_life` is accessible on the `ImageInformation` object returned by `list_supported_images`.
+    * Now support network security rules blocking network access to a `CloudPool` based on the source port of the traffic. This is done via the `source_port_ranges` property on `network_security_group_rules`.
+    * When running a container, Batch now supports executing the task in the container working directory or in the Batch task working directory. This is controlled by the `working_directory` property on `TaskContainerSettings`.
+
 6.0.1 (2019-2-26)
 ++++++++++++++++++
 

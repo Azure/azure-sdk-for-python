@@ -6,193 +6,331 @@ interactions:
       "environmentSettings": [{"name": "ENV_VAR", "value": "env_value"}], "userIdentity":
       {"autoUser": {"elevationLevel": "admin"}}}}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['374']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.4.34
-          azure-batch/6.0.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      ocp-date: ['Mon, 04 Mar 2019 19:25:52 GMT']
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '374'
+      Content-Type:
+      - application/json; odata=minimalmetadata; charset=utf-8
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Wed, 07 Aug 2019 01:03:51 GMT
     method: POST
-    uri: https://batchf0de0ddf.westcentralus.batch.azure.com/pools?api-version=2018-12-01.8.0
+    uri: https://batchf0de0ddf.westcentralus.batch.azure.com/pools?api-version=2019-08-01.10.0
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      dataserviceid: ['https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 04 Mar 2019 19:25:52 GMT']
-      etag: ['0x8D6A0D73770E2E8']
-      last-modified: ['Mon, 04 Mar 2019 19:25:52 GMT']
-      location: ['https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf']
-      request-id: [9c231233-2b6f-425b-aecb-8793d8f0a628]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      x-content-type-options: [nosniff]
-    status: {code: 201, message: Created}
+      dataserviceid:
+      - https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Wed, 07 Aug 2019 01:03:51 GMT
+      etag:
+      - '0x8D71AD31CBC3C65'
+      last-modified:
+      - Wed, 07 Aug 2019 01:03:51 GMT
+      location:
+      - https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf
+      request-id:
+      - 7500fc91-bfbc-4455-b824-3cdcd5204d26
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 201
+      message: Created
 - request:
     body: '{"certificateReferences": [], "applicationPackageReferences": [], "metadata":
       [{"name": "foo", "value": "bar"}]}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['112']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.4.34
-          azure-batch/6.0.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      ocp-date: ['Mon, 04 Mar 2019 19:25:52 GMT']
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '112'
+      Content-Type:
+      - application/json; odata=minimalmetadata; charset=utf-8
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Wed, 07 Aug 2019 01:03:51 GMT
     method: POST
-    uri: https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf/updateproperties?api-version=2018-12-01.8.0
+    uri: https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf/updateproperties?api-version=2019-08-01.10.0
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      content-length: ['0']
-      dataserviceid: ['https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf/updateproperties']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 04 Mar 2019 19:25:53 GMT']
-      etag: ['0x8D6A0D737B0B412']
-      last-modified: ['Mon, 04 Mar 2019 19:25:53 GMT']
-      request-id: [fe3ba2ab-4c26-4914-8a89-adb71bf2fe8f]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-content-type-options: [nosniff]
-    status: {code: 204, message: No Content}
+      content-length:
+      - '0'
+      dataserviceid:
+      - https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf/updateproperties
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Wed, 07 Aug 2019 01:03:51 GMT
+      etag:
+      - '0x8D71AD31D2598FA'
+      last-modified:
+      - Wed, 07 Aug 2019 01:03:52 GMT
+      request-id:
+      - 2cbc0643-11ec-469d-ae59-1d371bdd9ffa
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 204
+      message: No Content
 - request:
     body: '{"metadata": [{"name": "foo2", "value": "bar2"}]}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['49']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.4.34
-          azure-batch/6.0.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      ocp-date: ['Mon, 04 Mar 2019 19:25:53 GMT']
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '49'
+      Content-Type:
+      - application/json; odata=minimalmetadata; charset=utf-8
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Wed, 07 Aug 2019 01:03:52 GMT
     method: PATCH
-    uri: https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf?api-version=2018-12-01.8.0
+    uri: https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf?api-version=2019-08-01.10.0
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      dataserviceid: ['https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 04 Mar 2019 19:25:53 GMT']
-      etag: ['0x8D6A0D737DF2308']
-      last-modified: ['Mon, 04 Mar 2019 19:25:53 GMT']
-      request-id: [e51bfec8-99c9-4097-baa1-093354495bb8]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      x-content-type-options: [nosniff]
-    status: {code: 200, message: OK}
+      dataserviceid:
+      - https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Wed, 07 Aug 2019 01:03:51 GMT
+      etag:
+      - '0x8D71AD31D35EEF9'
+      last-modified:
+      - Wed, 07 Aug 2019 01:03:52 GMT
+      request-id:
+      - cb5e80aa-fc4a-445b-90a8-5682778f4ee5
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.4.34
-          azure-batch/6.0.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      ocp-date: ['Mon, 04 Mar 2019 19:25:53 GMT']
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Wed, 07 Aug 2019 01:03:52 GMT
     method: HEAD
-    uri: https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf?api-version=2018-12-01.8.0
+    uri: https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf?api-version=2019-08-01.10.0
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      dataserviceversion: ['3.0']
-      date: ['Mon, 04 Mar 2019 19:25:53 GMT']
-      etag: ['0x8D6A0D737DF2308']
-      last-modified: ['Mon, 04 Mar 2019 19:25:53 GMT']
-      request-id: [b9e09dd4-78fe-4a53-8240-475ddbb1ef24]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      x-content-type-options: [nosniff]
-    status: {code: 200, message: OK}
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Wed, 07 Aug 2019 01:03:51 GMT
+      etag:
+      - '0x8D71AD31D35EEF9'
+      last-modified:
+      - Wed, 07 Aug 2019 01:03:52 GMT
+      request-id:
+      - 593217e3-d6d7-4bf3-b61c-382e898007db
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.4.34
-          azure-batch/6.0.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      ocp-date: ['Mon, 04 Mar 2019 19:25:53 GMT']
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Wed, 07 Aug 2019 01:03:52 GMT
     method: GET
-    uri: https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf?api-version=2018-12-01.8.0
+    uri: https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf?api-version=2019-08-01.10.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0de0ddf.westcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_paas_f0de0ddf\",\"url\":\"https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf\",\"eTag\":\"0x8D6A0D737DF2308\",\"lastModified\":\"2019-03-04T19:25:53.5287048Z\",\"creationTime\":\"2019-03-04T19:25:52.8061672Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-03-04T19:25:52.8061672Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2019-03-04T19:25:53.2053782Z\",\"vmSize\":\"small\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"certificateReferences\":[\r\n
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batchf0de0ddf.westcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_paas_f0de0ddf\",\"url\":\"https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf\",\"eTag\":\"0x8D71AD31D35EEF9\",\"lastModified\":\"2019-08-07T01:03:52.6710009Z\",\"creationTime\":\"2019-08-07T01:03:51.8734437Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-08-07T01:03:51.8734437Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2019-08-07T01:03:52.4029376Z\",\"vmSize\":\"small\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"certificateReferences\":[\r\n
         \   \r\n  ],\"metadata\":[\r\n    {\r\n      \"name\":\"foo2\",\"value\":\"bar2\"\r\n
         \   }\r\n  ],\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
         \ },\"cloudServiceConfiguration\":{\r\n    \"osFamily\":\"5\",\"osVersion\":\"*\"\r\n
-        \ }\r\n}"}
+        \ }\r\n}"
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 04 Mar 2019 19:25:54 GMT']
-      etag: ['0x8D6A0D737DF2308']
-      last-modified: ['Mon, 04 Mar 2019 19:25:53 GMT']
-      request-id: [13d9aa5e-fd9b-4b2d-9f4a-072454293609]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      x-content-type-options: [nosniff]
-    status: {code: 200, message: OK}
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Wed, 07 Aug 2019 01:03:51 GMT
+      etag:
+      - '0x8D71AD31D35EEF9'
+      last-modified:
+      - Wed, 07 Aug 2019 01:03:52 GMT
+      request-id:
+      - bf68230e-52f9-4da9-874a-0bc427ae2cba
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.4.34
-          azure-batch/6.0.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      ocp-date: ['Mon, 04 Mar 2019 19:25:54 GMT']
-      return-client-request-id: ['false']
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Wed, 07 Aug 2019 01:03:52 GMT
+      return-client-request-id:
+      - 'false'
     method: GET
-    uri: https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf?api-version=2018-12-01.8.0&$select=id%2Cstate&$expand=stats&timeout=30
+    uri: https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf?api-version=2019-08-01.10.0&$select=id%2Cstate&$expand=stats&timeout=30
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0de0ddf.westcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_paas_f0de0ddf\",\"state\":\"active\"\r\n}"}
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batchf0de0ddf.westcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_paas_f0de0ddf\",\"state\":\"active\"\r\n}"
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 04 Mar 2019 19:25:53 GMT']
-      etag: ['0x8D6A0D737DF2308']
-      last-modified: ['Mon, 04 Mar 2019 19:25:53 GMT']
-      request-id: [3a753312-cbb3-429e-bbc4-9968b881543b]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      x-content-type-options: [nosniff]
-    status: {code: 200, message: OK}
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Wed, 07 Aug 2019 01:03:53 GMT
+      etag:
+      - '0x8D71AD31D35EEF9'
+      last-modified:
+      - Wed, 07 Aug 2019 01:03:52 GMT
+      request-id:
+      - 581e93a4-af3d-4297-aa73-35d2ba501d5a
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.4.34
-          azure-batch/6.0.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      ocp-date: ['Mon, 04 Mar 2019 19:25:54 GMT']
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Wed, 07 Aug 2019 01:03:53 GMT
     method: DELETE
-    uri: https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf?api-version=2018-12-01.8.0
+    uri: https://batchf0de0ddf.westcentralus.batch.azure.com/pools/batch_paas_f0de0ddf?api-version=2019-08-01.10.0
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      dataserviceversion: ['3.0']
-      date: ['Mon, 04 Mar 2019 19:25:54 GMT']
-      request-id: [4f2a76ac-5981-4a2e-8813-51bd4a246313]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      x-content-type-options: [nosniff]
-    status: {code: 202, message: Accepted}
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Wed, 07 Aug 2019 01:03:53 GMT
+      request-id:
+      - 069d2836-8936-4ee7-a07e-581465e099b6
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
 version: 1

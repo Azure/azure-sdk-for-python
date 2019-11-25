@@ -241,7 +241,7 @@ class PrivateEndpointsOperations(object):
         :param private_endpoint_name: The name of the private endpoint.
         :type private_endpoint_name: str
         :param parameters: Parameters supplied to the create or update private
-         endpoint operation
+         endpoint operation.
         :type parameters:
          ~azure.mgmt.network.v2019_04_01.models.PrivateEndpoint
         :param dict custom_headers: headers that will be added to the request

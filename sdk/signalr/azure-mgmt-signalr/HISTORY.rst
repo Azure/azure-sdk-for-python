@@ -3,6 +3,16 @@
 Release History
 ===============
 
+0.3.0 (2019-08-06)
+++++++++++++++++++
+
+**Features**
+
+- Model SignalRResource has a new parameter cors
+- Model SignalRResource has a new parameter features
+- Model SignalRCreateOrUpdateProperties has a new parameter cors
+- Model SignalRCreateOrUpdateProperties has a new parameter feature
+
 0.2.0 (2019-05-21)
 ++++++++++++++++++
 

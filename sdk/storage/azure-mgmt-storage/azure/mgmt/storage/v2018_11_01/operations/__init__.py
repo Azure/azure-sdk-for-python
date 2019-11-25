@@ -9,13 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .skus_operations import SkusOperations
-from .storage_accounts_operations import StorageAccountsOperations
-from .usages_operations import UsagesOperations
-from .management_policies_operations import ManagementPoliciesOperations
-from .blob_services_operations import BlobServicesOperations
-from .blob_containers_operations import BlobContainersOperations
+from ._operations import Operations
+from ._skus_operations import SkusOperations
+from ._storage_accounts_operations import StorageAccountsOperations
+from ._usages_operations import UsagesOperations
+from ._management_policies_operations import ManagementPoliciesOperations
+from ._blob_services_operations import BlobServicesOperations
+from ._blob_containers_operations import BlobContainersOperations
 
 __all__ = [
     'Operations',

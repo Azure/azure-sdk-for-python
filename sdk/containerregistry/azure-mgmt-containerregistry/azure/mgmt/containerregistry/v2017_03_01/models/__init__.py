@@ -10,58 +10,58 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .registry_name_check_request_py3 import RegistryNameCheckRequest
-    from .registry_name_status_py3 import RegistryNameStatus
-    from .operation_display_definition_py3 import OperationDisplayDefinition
-    from .operation_definition_py3 import OperationDefinition
-    from .sku_py3 import Sku
-    from .storage_account_properties_py3 import StorageAccountProperties
-    from .registry_py3 import Registry
-    from .storage_account_parameters_py3 import StorageAccountParameters
-    from .registry_create_parameters_py3 import RegistryCreateParameters
-    from .registry_update_parameters_py3 import RegistryUpdateParameters
-    from .registry_password_py3 import RegistryPassword
-    from .registry_list_credentials_result_py3 import RegistryListCredentialsResult
-    from .regenerate_credential_parameters_py3 import RegenerateCredentialParameters
-    from .resource_py3 import Resource
+    from ._models_py3 import OperationDefinition
+    from ._models_py3 import OperationDisplayDefinition
+    from ._models_py3 import RegenerateCredentialParameters
+    from ._models_py3 import Registry
+    from ._models_py3 import RegistryCreateParameters
+    from ._models_py3 import RegistryListCredentialsResult
+    from ._models_py3 import RegistryNameCheckRequest
+    from ._models_py3 import RegistryNameStatus
+    from ._models_py3 import RegistryPassword
+    from ._models_py3 import RegistryUpdateParameters
+    from ._models_py3 import Resource
+    from ._models_py3 import Sku
+    from ._models_py3 import StorageAccountParameters
+    from ._models_py3 import StorageAccountProperties
 except (SyntaxError, ImportError):
-    from .registry_name_check_request import RegistryNameCheckRequest
-    from .registry_name_status import RegistryNameStatus
-    from .operation_display_definition import OperationDisplayDefinition
-    from .operation_definition import OperationDefinition
-    from .sku import Sku
-    from .storage_account_properties import StorageAccountProperties
-    from .registry import Registry
-    from .storage_account_parameters import StorageAccountParameters
-    from .registry_create_parameters import RegistryCreateParameters
-    from .registry_update_parameters import RegistryUpdateParameters
-    from .registry_password import RegistryPassword
-    from .registry_list_credentials_result import RegistryListCredentialsResult
-    from .regenerate_credential_parameters import RegenerateCredentialParameters
-    from .resource import Resource
-from .registry_paged import RegistryPaged
-from .operation_definition_paged import OperationDefinitionPaged
-from .container_registry_management_client_enums import (
+    from ._models import OperationDefinition
+    from ._models import OperationDisplayDefinition
+    from ._models import RegenerateCredentialParameters
+    from ._models import Registry
+    from ._models import RegistryCreateParameters
+    from ._models import RegistryListCredentialsResult
+    from ._models import RegistryNameCheckRequest
+    from ._models import RegistryNameStatus
+    from ._models import RegistryPassword
+    from ._models import RegistryUpdateParameters
+    from ._models import Resource
+    from ._models import Sku
+    from ._models import StorageAccountParameters
+    from ._models import StorageAccountProperties
+from ._paged_models import OperationDefinitionPaged
+from ._paged_models import RegistryPaged
+from ._container_registry_management_client_enums import (
     SkuTier,
     ProvisioningState,
     PasswordName,
 )
 
 __all__ = [
+    'OperationDefinition',
+    'OperationDisplayDefinition',
+    'RegenerateCredentialParameters',
+    'Registry',
+    'RegistryCreateParameters',
+    'RegistryListCredentialsResult',
     'RegistryNameCheckRequest',
     'RegistryNameStatus',
-    'OperationDisplayDefinition',
-    'OperationDefinition',
-    'Sku',
-    'StorageAccountProperties',
-    'Registry',
-    'StorageAccountParameters',
-    'RegistryCreateParameters',
-    'RegistryUpdateParameters',
     'RegistryPassword',
-    'RegistryListCredentialsResult',
-    'RegenerateCredentialParameters',
+    'RegistryUpdateParameters',
     'Resource',
+    'Sku',
+    'StorageAccountParameters',
+    'StorageAccountProperties',
     'RegistryPaged',
     'OperationDefinitionPaged',
     'SkuTier',

@@ -10,375 +10,404 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .recoverable_database_py3 import RecoverableDatabase
-    from .restorable_dropped_database_py3 import RestorableDroppedDatabase
-    from .tracked_resource_py3 import TrackedResource
-    from .resource_py3 import Resource
-    from .proxy_resource_py3 import ProxyResource
-    from .check_name_availability_request_py3 import CheckNameAvailabilityRequest
-    from .check_name_availability_response_py3 import CheckNameAvailabilityResponse
-    from .server_connection_policy_py3 import ServerConnectionPolicy
-    from .database_security_alert_policy_py3 import DatabaseSecurityAlertPolicy
-    from .data_masking_policy_py3 import DataMaskingPolicy
-    from .data_masking_rule_py3 import DataMaskingRule
-    from .firewall_rule_py3 import FirewallRule
-    from .geo_backup_policy_py3 import GeoBackupPolicy
-    from .import_extension_request_py3 import ImportExtensionRequest
-    from .import_export_response_py3 import ImportExportResponse
-    from .import_request_py3 import ImportRequest
-    from .export_request_py3 import ExportRequest
-    from .metric_value_py3 import MetricValue
-    from .metric_name_py3 import MetricName
-    from .metric_py3 import Metric
-    from .metric_availability_py3 import MetricAvailability
-    from .metric_definition_py3 import MetricDefinition
-    from .recommended_elastic_pool_metric_py3 import RecommendedElasticPoolMetric
-    from .recommended_elastic_pool_py3 import RecommendedElasticPool
-    from .replication_link_py3 import ReplicationLink
-    from .server_azure_ad_administrator_py3 import ServerAzureADAdministrator
-    from .server_communication_link_py3 import ServerCommunicationLink
-    from .service_objective_py3 import ServiceObjective
-    from .elastic_pool_activity_py3 import ElasticPoolActivity
-    from .elastic_pool_database_activity_py3 import ElasticPoolDatabaseActivity
-    from .operation_impact_py3 import OperationImpact
-    from .recommended_index_py3 import RecommendedIndex
-    from .transparent_data_encryption_py3 import TransparentDataEncryption
-    from .slo_usage_metric_py3 import SloUsageMetric
-    from .service_tier_advisor_py3 import ServiceTierAdvisor
-    from .transparent_data_encryption_activity_py3 import TransparentDataEncryptionActivity
-    from .server_usage_py3 import ServerUsage
-    from .database_usage_py3 import DatabaseUsage
-    from .automatic_tuning_options_py3 import AutomaticTuningOptions
-    from .database_automatic_tuning_py3 import DatabaseAutomaticTuning
-    from .encryption_protector_py3 import EncryptionProtector
-    from .failover_group_read_write_endpoint_py3 import FailoverGroupReadWriteEndpoint
-    from .failover_group_read_only_endpoint_py3 import FailoverGroupReadOnlyEndpoint
-    from .partner_info_py3 import PartnerInfo
-    from .failover_group_py3 import FailoverGroup
-    from .failover_group_update_py3 import FailoverGroupUpdate
-    from .resource_identity_py3 import ResourceIdentity
-    from .sku_py3 import Sku
-    from .managed_instance_py3 import ManagedInstance
-    from .managed_instance_update_py3 import ManagedInstanceUpdate
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .server_key_py3 import ServerKey
-    from .server_py3 import Server
-    from .server_update_py3 import ServerUpdate
-    from .sync_agent_py3 import SyncAgent
-    from .sync_agent_key_properties_py3 import SyncAgentKeyProperties
-    from .sync_agent_linked_database_py3 import SyncAgentLinkedDatabase
-    from .sync_database_id_properties_py3 import SyncDatabaseIdProperties
-    from .sync_full_schema_table_column_py3 import SyncFullSchemaTableColumn
-    from .sync_full_schema_table_py3 import SyncFullSchemaTable
-    from .sync_full_schema_properties_py3 import SyncFullSchemaProperties
-    from .sync_group_log_properties_py3 import SyncGroupLogProperties
-    from .sync_group_schema_table_column_py3 import SyncGroupSchemaTableColumn
-    from .sync_group_schema_table_py3 import SyncGroupSchemaTable
-    from .sync_group_schema_py3 import SyncGroupSchema
-    from .sync_group_py3 import SyncGroup
-    from .sync_member_py3 import SyncMember
-    from .subscription_usage_py3 import SubscriptionUsage
-    from .virtual_cluster_py3 import VirtualCluster
-    from .virtual_cluster_update_py3 import VirtualClusterUpdate
-    from .virtual_network_rule_py3 import VirtualNetworkRule
-    from .extended_database_blob_auditing_policy_py3 import ExtendedDatabaseBlobAuditingPolicy
-    from .extended_server_blob_auditing_policy_py3 import ExtendedServerBlobAuditingPolicy
-    from .server_blob_auditing_policy_py3 import ServerBlobAuditingPolicy
-    from .database_blob_auditing_policy_py3 import DatabaseBlobAuditingPolicy
-    from .database_vulnerability_assessment_rule_baseline_item_py3 import DatabaseVulnerabilityAssessmentRuleBaselineItem
-    from .database_vulnerability_assessment_rule_baseline_py3 import DatabaseVulnerabilityAssessmentRuleBaseline
-    from .vulnerability_assessment_recurring_scans_properties_py3 import VulnerabilityAssessmentRecurringScansProperties
-    from .database_vulnerability_assessment_py3 import DatabaseVulnerabilityAssessment
-    from .job_agent_py3 import JobAgent
-    from .job_agent_update_py3 import JobAgentUpdate
-    from .job_credential_py3 import JobCredential
-    from .job_execution_target_py3 import JobExecutionTarget
-    from .job_execution_py3 import JobExecution
-    from .job_schedule_py3 import JobSchedule
-    from .job_py3 import Job
-    from .job_step_action_py3 import JobStepAction
-    from .job_step_output_py3 import JobStepOutput
-    from .job_step_execution_options_py3 import JobStepExecutionOptions
-    from .job_step_py3 import JobStep
-    from .job_target_py3 import JobTarget
-    from .job_target_group_py3 import JobTargetGroup
-    from .job_version_py3 import JobVersion
-    from .long_term_retention_backup_py3 import LongTermRetentionBackup
-    from .backup_long_term_retention_policy_py3 import BackupLongTermRetentionPolicy
-    from .managed_backup_short_term_retention_policy_py3 import ManagedBackupShortTermRetentionPolicy
-    from .complete_database_restore_definition_py3 import CompleteDatabaseRestoreDefinition
-    from .managed_database_py3 import ManagedDatabase
-    from .managed_database_update_py3 import ManagedDatabaseUpdate
-    from .automatic_tuning_server_options_py3 import AutomaticTuningServerOptions
-    from .server_automatic_tuning_py3 import ServerAutomaticTuning
-    from .server_dns_alias_py3 import ServerDnsAlias
-    from .server_dns_alias_acquisition_py3 import ServerDnsAliasAcquisition
-    from .server_security_alert_policy_py3 import ServerSecurityAlertPolicy
-    from .restorable_dropped_managed_database_py3 import RestorableDroppedManagedDatabase
-    from .restore_point_py3 import RestorePoint
-    from .create_database_restore_point_definition_py3 import CreateDatabaseRestorePointDefinition
-    from .managed_database_security_alert_policy_py3 import ManagedDatabaseSecurityAlertPolicy
-    from .managed_server_security_alert_policy_py3 import ManagedServerSecurityAlertPolicy
-    from .sensitivity_label_py3 import SensitivityLabel
-    from .database_operation_py3 import DatabaseOperation
-    from .elastic_pool_operation_py3 import ElasticPoolOperation
-    from .max_size_capability_py3 import MaxSizeCapability
-    from .log_size_capability_py3 import LogSizeCapability
-    from .max_size_range_capability_py3 import MaxSizeRangeCapability
-    from .performance_level_capability_py3 import PerformanceLevelCapability
-    from .license_type_capability_py3 import LicenseTypeCapability
-    from .service_objective_capability_py3 import ServiceObjectiveCapability
-    from .edition_capability_py3 import EditionCapability
-    from .elastic_pool_per_database_min_performance_level_capability_py3 import ElasticPoolPerDatabaseMinPerformanceLevelCapability
-    from .elastic_pool_per_database_max_performance_level_capability_py3 import ElasticPoolPerDatabaseMaxPerformanceLevelCapability
-    from .elastic_pool_performance_level_capability_py3 import ElasticPoolPerformanceLevelCapability
-    from .elastic_pool_edition_capability_py3 import ElasticPoolEditionCapability
-    from .server_version_capability_py3 import ServerVersionCapability
-    from .managed_instance_vcores_capability_py3 import ManagedInstanceVcoresCapability
-    from .managed_instance_family_capability_py3 import ManagedInstanceFamilyCapability
-    from .managed_instance_edition_capability_py3 import ManagedInstanceEditionCapability
-    from .managed_instance_version_capability_py3 import ManagedInstanceVersionCapability
-    from .location_capabilities_py3 import LocationCapabilities
-    from .database_py3 import Database
-    from .database_update_py3 import DatabaseUpdate
-    from .resource_move_definition_py3 import ResourceMoveDefinition
-    from .elastic_pool_per_database_settings_py3 import ElasticPoolPerDatabaseSettings
-    from .elastic_pool_py3 import ElasticPool
-    from .elastic_pool_update_py3 import ElasticPoolUpdate
-    from .vulnerability_assessment_scan_error_py3 import VulnerabilityAssessmentScanError
-    from .vulnerability_assessment_scan_record_py3 import VulnerabilityAssessmentScanRecord
-    from .database_vulnerability_assessment_scans_export_py3 import DatabaseVulnerabilityAssessmentScansExport
-    from .instance_failover_group_read_write_endpoint_py3 import InstanceFailoverGroupReadWriteEndpoint
-    from .instance_failover_group_read_only_endpoint_py3 import InstanceFailoverGroupReadOnlyEndpoint
-    from .partner_region_info_py3 import PartnerRegionInfo
-    from .managed_instance_pair_info_py3 import ManagedInstancePairInfo
-    from .instance_failover_group_py3 import InstanceFailoverGroup
-    from .backup_short_term_retention_policy_py3 import BackupShortTermRetentionPolicy
-    from .tde_certificate_py3 import TdeCertificate
-    from .managed_instance_key_py3 import ManagedInstanceKey
-    from .managed_instance_encryption_protector_py3 import ManagedInstanceEncryptionProtector
-    from .recoverable_managed_database_py3 import RecoverableManagedDatabase
-    from .managed_instance_vulnerability_assessment_py3 import ManagedInstanceVulnerabilityAssessment
-    from .server_vulnerability_assessment_py3 import ServerVulnerabilityAssessment
+    from ._models_py3 import AutomaticTuningOptions
+    from ._models_py3 import AutomaticTuningServerOptions
+    from ._models_py3 import BackupLongTermRetentionPolicy
+    from ._models_py3 import BackupShortTermRetentionPolicy
+    from ._models_py3 import CheckNameAvailabilityRequest
+    from ._models_py3 import CheckNameAvailabilityResponse
+    from ._models_py3 import CompleteDatabaseRestoreDefinition
+    from ._models_py3 import CreateDatabaseRestorePointDefinition
+    from ._models_py3 import Database
+    from ._models_py3 import DatabaseAutomaticTuning
+    from ._models_py3 import DatabaseBlobAuditingPolicy
+    from ._models_py3 import DatabaseOperation
+    from ._models_py3 import DatabaseSecurityAlertPolicy
+    from ._models_py3 import DatabaseUpdate
+    from ._models_py3 import DatabaseUsage
+    from ._models_py3 import DatabaseVulnerabilityAssessment
+    from ._models_py3 import DatabaseVulnerabilityAssessmentRuleBaseline
+    from ._models_py3 import DatabaseVulnerabilityAssessmentRuleBaselineItem
+    from ._models_py3 import DatabaseVulnerabilityAssessmentScansExport
+    from ._models_py3 import DataMaskingPolicy
+    from ._models_py3 import DataMaskingRule
+    from ._models_py3 import EditionCapability
+    from ._models_py3 import ElasticPool
+    from ._models_py3 import ElasticPoolActivity
+    from ._models_py3 import ElasticPoolDatabaseActivity
+    from ._models_py3 import ElasticPoolEditionCapability
+    from ._models_py3 import ElasticPoolOperation
+    from ._models_py3 import ElasticPoolPerDatabaseMaxPerformanceLevelCapability
+    from ._models_py3 import ElasticPoolPerDatabaseMinPerformanceLevelCapability
+    from ._models_py3 import ElasticPoolPerDatabaseSettings
+    from ._models_py3 import ElasticPoolPerformanceLevelCapability
+    from ._models_py3 import ElasticPoolUpdate
+    from ._models_py3 import EncryptionProtector
+    from ._models_py3 import ExportRequest
+    from ._models_py3 import ExtendedDatabaseBlobAuditingPolicy
+    from ._models_py3 import ExtendedServerBlobAuditingPolicy
+    from ._models_py3 import FailoverGroup
+    from ._models_py3 import FailoverGroupReadOnlyEndpoint
+    from ._models_py3 import FailoverGroupReadWriteEndpoint
+    from ._models_py3 import FailoverGroupUpdate
+    from ._models_py3 import FirewallRule
+    from ._models_py3 import GeoBackupPolicy
+    from ._models_py3 import ImportExportResponse
+    from ._models_py3 import ImportExtensionRequest
+    from ._models_py3 import ImportRequest
+    from ._models_py3 import InstanceFailoverGroup
+    from ._models_py3 import InstanceFailoverGroupReadOnlyEndpoint
+    from ._models_py3 import InstanceFailoverGroupReadWriteEndpoint
+    from ._models_py3 import InstancePool
+    from ._models_py3 import InstancePoolUpdate
+    from ._models_py3 import Job
+    from ._models_py3 import JobAgent
+    from ._models_py3 import JobAgentUpdate
+    from ._models_py3 import JobCredential
+    from ._models_py3 import JobExecution
+    from ._models_py3 import JobExecutionTarget
+    from ._models_py3 import JobSchedule
+    from ._models_py3 import JobStep
+    from ._models_py3 import JobStepAction
+    from ._models_py3 import JobStepExecutionOptions
+    from ._models_py3 import JobStepOutput
+    from ._models_py3 import JobTarget
+    from ._models_py3 import JobTargetGroup
+    from ._models_py3 import JobVersion
+    from ._models_py3 import LicenseTypeCapability
+    from ._models_py3 import LocationCapabilities
+    from ._models_py3 import LogSizeCapability
+    from ._models_py3 import LongTermRetentionBackup
+    from ._models_py3 import ManagedBackupShortTermRetentionPolicy
+    from ._models_py3 import ManagedDatabase
+    from ._models_py3 import ManagedDatabaseRestoreDetailsResult
+    from ._models_py3 import ManagedDatabaseSecurityAlertPolicy
+    from ._models_py3 import ManagedDatabaseUpdate
+    from ._models_py3 import ManagedInstance
+    from ._models_py3 import ManagedInstanceAdministrator
+    from ._models_py3 import ManagedInstanceEditionCapability
+    from ._models_py3 import ManagedInstanceEncryptionProtector
+    from ._models_py3 import ManagedInstanceFamilyCapability
+    from ._models_py3 import ManagedInstanceKey
+    from ._models_py3 import ManagedInstancePairInfo
+    from ._models_py3 import ManagedInstanceUpdate
+    from ._models_py3 import ManagedInstanceVcoresCapability
+    from ._models_py3 import ManagedInstanceVersionCapability
+    from ._models_py3 import ManagedInstanceVulnerabilityAssessment
+    from ._models_py3 import ManagedServerSecurityAlertPolicy
+    from ._models_py3 import MaxSizeCapability
+    from ._models_py3 import MaxSizeRangeCapability
+    from ._models_py3 import Metric
+    from ._models_py3 import MetricAvailability
+    from ._models_py3 import MetricDefinition
+    from ._models_py3 import MetricName
+    from ._models_py3 import MetricValue
+    from ._models_py3 import Name
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationImpact
+    from ._models_py3 import PartnerInfo
+    from ._models_py3 import PartnerRegionInfo
+    from ._models_py3 import PerformanceLevelCapability
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointProperty
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceProperties
+    from ._models_py3 import PrivateLinkServiceConnectionStateProperty
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import RecommendedElasticPool
+    from ._models_py3 import RecommendedElasticPoolMetric
+    from ._models_py3 import RecommendedIndex
+    from ._models_py3 import RecoverableDatabase
+    from ._models_py3 import RecoverableManagedDatabase
+    from ._models_py3 import ReplicationLink
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceIdentity
+    from ._models_py3 import ResourceMoveDefinition
+    from ._models_py3 import RestorableDroppedDatabase
+    from ._models_py3 import RestorableDroppedManagedDatabase
+    from ._models_py3 import RestorePoint
+    from ._models_py3 import SensitivityLabel
+    from ._models_py3 import Server
+    from ._models_py3 import ServerAutomaticTuning
+    from ._models_py3 import ServerAzureADAdministrator
+    from ._models_py3 import ServerBlobAuditingPolicy
+    from ._models_py3 import ServerCommunicationLink
+    from ._models_py3 import ServerConnectionPolicy
+    from ._models_py3 import ServerDnsAlias
+    from ._models_py3 import ServerDnsAliasAcquisition
+    from ._models_py3 import ServerKey
+    from ._models_py3 import ServerSecurityAlertPolicy
+    from ._models_py3 import ServerUpdate
+    from ._models_py3 import ServerUsage
+    from ._models_py3 import ServerVersionCapability
+    from ._models_py3 import ServerVulnerabilityAssessment
+    from ._models_py3 import ServiceObjective
+    from ._models_py3 import ServiceObjectiveCapability
+    from ._models_py3 import ServiceTierAdvisor
+    from ._models_py3 import Sku
+    from ._models_py3 import SloUsageMetric
+    from ._models_py3 import SubscriptionUsage
+    from ._models_py3 import SyncAgent
+    from ._models_py3 import SyncAgentKeyProperties
+    from ._models_py3 import SyncAgentLinkedDatabase
+    from ._models_py3 import SyncDatabaseIdProperties
+    from ._models_py3 import SyncFullSchemaProperties
+    from ._models_py3 import SyncFullSchemaTable
+    from ._models_py3 import SyncFullSchemaTableColumn
+    from ._models_py3 import SyncGroup
+    from ._models_py3 import SyncGroupLogProperties
+    from ._models_py3 import SyncGroupSchema
+    from ._models_py3 import SyncGroupSchemaTable
+    from ._models_py3 import SyncGroupSchemaTableColumn
+    from ._models_py3 import SyncMember
+    from ._models_py3 import TdeCertificate
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import TransparentDataEncryption
+    from ._models_py3 import TransparentDataEncryptionActivity
+    from ._models_py3 import Usage
+    from ._models_py3 import VirtualCluster
+    from ._models_py3 import VirtualClusterUpdate
+    from ._models_py3 import VirtualNetworkRule
+    from ._models_py3 import VulnerabilityAssessmentRecurringScansProperties
+    from ._models_py3 import VulnerabilityAssessmentScanError
+    from ._models_py3 import VulnerabilityAssessmentScanRecord
 except (SyntaxError, ImportError):
-    from .recoverable_database import RecoverableDatabase
-    from .restorable_dropped_database import RestorableDroppedDatabase
-    from .tracked_resource import TrackedResource
-    from .resource import Resource
-    from .proxy_resource import ProxyResource
-    from .check_name_availability_request import CheckNameAvailabilityRequest
-    from .check_name_availability_response import CheckNameAvailabilityResponse
-    from .server_connection_policy import ServerConnectionPolicy
-    from .database_security_alert_policy import DatabaseSecurityAlertPolicy
-    from .data_masking_policy import DataMaskingPolicy
-    from .data_masking_rule import DataMaskingRule
-    from .firewall_rule import FirewallRule
-    from .geo_backup_policy import GeoBackupPolicy
-    from .import_extension_request import ImportExtensionRequest
-    from .import_export_response import ImportExportResponse
-    from .import_request import ImportRequest
-    from .export_request import ExportRequest
-    from .metric_value import MetricValue
-    from .metric_name import MetricName
-    from .metric import Metric
-    from .metric_availability import MetricAvailability
-    from .metric_definition import MetricDefinition
-    from .recommended_elastic_pool_metric import RecommendedElasticPoolMetric
-    from .recommended_elastic_pool import RecommendedElasticPool
-    from .replication_link import ReplicationLink
-    from .server_azure_ad_administrator import ServerAzureADAdministrator
-    from .server_communication_link import ServerCommunicationLink
-    from .service_objective import ServiceObjective
-    from .elastic_pool_activity import ElasticPoolActivity
-    from .elastic_pool_database_activity import ElasticPoolDatabaseActivity
-    from .operation_impact import OperationImpact
-    from .recommended_index import RecommendedIndex
-    from .transparent_data_encryption import TransparentDataEncryption
-    from .slo_usage_metric import SloUsageMetric
-    from .service_tier_advisor import ServiceTierAdvisor
-    from .transparent_data_encryption_activity import TransparentDataEncryptionActivity
-    from .server_usage import ServerUsage
-    from .database_usage import DatabaseUsage
-    from .automatic_tuning_options import AutomaticTuningOptions
-    from .database_automatic_tuning import DatabaseAutomaticTuning
-    from .encryption_protector import EncryptionProtector
-    from .failover_group_read_write_endpoint import FailoverGroupReadWriteEndpoint
-    from .failover_group_read_only_endpoint import FailoverGroupReadOnlyEndpoint
-    from .partner_info import PartnerInfo
-    from .failover_group import FailoverGroup
-    from .failover_group_update import FailoverGroupUpdate
-    from .resource_identity import ResourceIdentity
-    from .sku import Sku
-    from .managed_instance import ManagedInstance
-    from .managed_instance_update import ManagedInstanceUpdate
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .server_key import ServerKey
-    from .server import Server
-    from .server_update import ServerUpdate
-    from .sync_agent import SyncAgent
-    from .sync_agent_key_properties import SyncAgentKeyProperties
-    from .sync_agent_linked_database import SyncAgentLinkedDatabase
-    from .sync_database_id_properties import SyncDatabaseIdProperties
-    from .sync_full_schema_table_column import SyncFullSchemaTableColumn
-    from .sync_full_schema_table import SyncFullSchemaTable
-    from .sync_full_schema_properties import SyncFullSchemaProperties
-    from .sync_group_log_properties import SyncGroupLogProperties
-    from .sync_group_schema_table_column import SyncGroupSchemaTableColumn
-    from .sync_group_schema_table import SyncGroupSchemaTable
-    from .sync_group_schema import SyncGroupSchema
-    from .sync_group import SyncGroup
-    from .sync_member import SyncMember
-    from .subscription_usage import SubscriptionUsage
-    from .virtual_cluster import VirtualCluster
-    from .virtual_cluster_update import VirtualClusterUpdate
-    from .virtual_network_rule import VirtualNetworkRule
-    from .extended_database_blob_auditing_policy import ExtendedDatabaseBlobAuditingPolicy
-    from .extended_server_blob_auditing_policy import ExtendedServerBlobAuditingPolicy
-    from .server_blob_auditing_policy import ServerBlobAuditingPolicy
-    from .database_blob_auditing_policy import DatabaseBlobAuditingPolicy
-    from .database_vulnerability_assessment_rule_baseline_item import DatabaseVulnerabilityAssessmentRuleBaselineItem
-    from .database_vulnerability_assessment_rule_baseline import DatabaseVulnerabilityAssessmentRuleBaseline
-    from .vulnerability_assessment_recurring_scans_properties import VulnerabilityAssessmentRecurringScansProperties
-    from .database_vulnerability_assessment import DatabaseVulnerabilityAssessment
-    from .job_agent import JobAgent
-    from .job_agent_update import JobAgentUpdate
-    from .job_credential import JobCredential
-    from .job_execution_target import JobExecutionTarget
-    from .job_execution import JobExecution
-    from .job_schedule import JobSchedule
-    from .job import Job
-    from .job_step_action import JobStepAction
-    from .job_step_output import JobStepOutput
-    from .job_step_execution_options import JobStepExecutionOptions
-    from .job_step import JobStep
-    from .job_target import JobTarget
-    from .job_target_group import JobTargetGroup
-    from .job_version import JobVersion
-    from .long_term_retention_backup import LongTermRetentionBackup
-    from .backup_long_term_retention_policy import BackupLongTermRetentionPolicy
-    from .managed_backup_short_term_retention_policy import ManagedBackupShortTermRetentionPolicy
-    from .complete_database_restore_definition import CompleteDatabaseRestoreDefinition
-    from .managed_database import ManagedDatabase
-    from .managed_database_update import ManagedDatabaseUpdate
-    from .automatic_tuning_server_options import AutomaticTuningServerOptions
-    from .server_automatic_tuning import ServerAutomaticTuning
-    from .server_dns_alias import ServerDnsAlias
-    from .server_dns_alias_acquisition import ServerDnsAliasAcquisition
-    from .server_security_alert_policy import ServerSecurityAlertPolicy
-    from .restorable_dropped_managed_database import RestorableDroppedManagedDatabase
-    from .restore_point import RestorePoint
-    from .create_database_restore_point_definition import CreateDatabaseRestorePointDefinition
-    from .managed_database_security_alert_policy import ManagedDatabaseSecurityAlertPolicy
-    from .managed_server_security_alert_policy import ManagedServerSecurityAlertPolicy
-    from .sensitivity_label import SensitivityLabel
-    from .database_operation import DatabaseOperation
-    from .elastic_pool_operation import ElasticPoolOperation
-    from .max_size_capability import MaxSizeCapability
-    from .log_size_capability import LogSizeCapability
-    from .max_size_range_capability import MaxSizeRangeCapability
-    from .performance_level_capability import PerformanceLevelCapability
-    from .license_type_capability import LicenseTypeCapability
-    from .service_objective_capability import ServiceObjectiveCapability
-    from .edition_capability import EditionCapability
-    from .elastic_pool_per_database_min_performance_level_capability import ElasticPoolPerDatabaseMinPerformanceLevelCapability
-    from .elastic_pool_per_database_max_performance_level_capability import ElasticPoolPerDatabaseMaxPerformanceLevelCapability
-    from .elastic_pool_performance_level_capability import ElasticPoolPerformanceLevelCapability
-    from .elastic_pool_edition_capability import ElasticPoolEditionCapability
-    from .server_version_capability import ServerVersionCapability
-    from .managed_instance_vcores_capability import ManagedInstanceVcoresCapability
-    from .managed_instance_family_capability import ManagedInstanceFamilyCapability
-    from .managed_instance_edition_capability import ManagedInstanceEditionCapability
-    from .managed_instance_version_capability import ManagedInstanceVersionCapability
-    from .location_capabilities import LocationCapabilities
-    from .database import Database
-    from .database_update import DatabaseUpdate
-    from .resource_move_definition import ResourceMoveDefinition
-    from .elastic_pool_per_database_settings import ElasticPoolPerDatabaseSettings
-    from .elastic_pool import ElasticPool
-    from .elastic_pool_update import ElasticPoolUpdate
-    from .vulnerability_assessment_scan_error import VulnerabilityAssessmentScanError
-    from .vulnerability_assessment_scan_record import VulnerabilityAssessmentScanRecord
-    from .database_vulnerability_assessment_scans_export import DatabaseVulnerabilityAssessmentScansExport
-    from .instance_failover_group_read_write_endpoint import InstanceFailoverGroupReadWriteEndpoint
-    from .instance_failover_group_read_only_endpoint import InstanceFailoverGroupReadOnlyEndpoint
-    from .partner_region_info import PartnerRegionInfo
-    from .managed_instance_pair_info import ManagedInstancePairInfo
-    from .instance_failover_group import InstanceFailoverGroup
-    from .backup_short_term_retention_policy import BackupShortTermRetentionPolicy
-    from .tde_certificate import TdeCertificate
-    from .managed_instance_key import ManagedInstanceKey
-    from .managed_instance_encryption_protector import ManagedInstanceEncryptionProtector
-    from .recoverable_managed_database import RecoverableManagedDatabase
-    from .managed_instance_vulnerability_assessment import ManagedInstanceVulnerabilityAssessment
-    from .server_vulnerability_assessment import ServerVulnerabilityAssessment
-from .recoverable_database_paged import RecoverableDatabasePaged
-from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
-from .server_paged import ServerPaged
-from .data_masking_rule_paged import DataMaskingRulePaged
-from .firewall_rule_paged import FirewallRulePaged
-from .geo_backup_policy_paged import GeoBackupPolicyPaged
-from .metric_paged import MetricPaged
-from .metric_definition_paged import MetricDefinitionPaged
-from .database_paged import DatabasePaged
-from .elastic_pool_paged import ElasticPoolPaged
-from .recommended_elastic_pool_paged import RecommendedElasticPoolPaged
-from .recommended_elastic_pool_metric_paged import RecommendedElasticPoolMetricPaged
-from .replication_link_paged import ReplicationLinkPaged
-from .server_azure_ad_administrator_paged import ServerAzureADAdministratorPaged
-from .server_communication_link_paged import ServerCommunicationLinkPaged
-from .service_objective_paged import ServiceObjectivePaged
-from .elastic_pool_activity_paged import ElasticPoolActivityPaged
-from .elastic_pool_database_activity_paged import ElasticPoolDatabaseActivityPaged
-from .service_tier_advisor_paged import ServiceTierAdvisorPaged
-from .transparent_data_encryption_activity_paged import TransparentDataEncryptionActivityPaged
-from .server_usage_paged import ServerUsagePaged
-from .database_usage_paged import DatabaseUsagePaged
-from .encryption_protector_paged import EncryptionProtectorPaged
-from .failover_group_paged import FailoverGroupPaged
-from .managed_instance_paged import ManagedInstancePaged
-from .operation_paged import OperationPaged
-from .server_key_paged import ServerKeyPaged
-from .sync_agent_paged import SyncAgentPaged
-from .sync_agent_linked_database_paged import SyncAgentLinkedDatabasePaged
-from .sync_database_id_properties_paged import SyncDatabaseIdPropertiesPaged
-from .sync_full_schema_properties_paged import SyncFullSchemaPropertiesPaged
-from .sync_group_log_properties_paged import SyncGroupLogPropertiesPaged
-from .sync_group_paged import SyncGroupPaged
-from .sync_member_paged import SyncMemberPaged
-from .subscription_usage_paged import SubscriptionUsagePaged
-from .virtual_cluster_paged import VirtualClusterPaged
-from .virtual_network_rule_paged import VirtualNetworkRulePaged
-from .database_vulnerability_assessment_paged import DatabaseVulnerabilityAssessmentPaged
-from .job_agent_paged import JobAgentPaged
-from .job_credential_paged import JobCredentialPaged
-from .job_execution_paged import JobExecutionPaged
-from .job_paged import JobPaged
-from .job_step_paged import JobStepPaged
-from .job_target_group_paged import JobTargetGroupPaged
-from .job_version_paged import JobVersionPaged
-from .long_term_retention_backup_paged import LongTermRetentionBackupPaged
-from .managed_backup_short_term_retention_policy_paged import ManagedBackupShortTermRetentionPolicyPaged
-from .managed_database_paged import ManagedDatabasePaged
-from .server_dns_alias_paged import ServerDnsAliasPaged
-from .server_security_alert_policy_paged import ServerSecurityAlertPolicyPaged
-from .restorable_dropped_managed_database_paged import RestorableDroppedManagedDatabasePaged
-from .restore_point_paged import RestorePointPaged
-from .managed_database_security_alert_policy_paged import ManagedDatabaseSecurityAlertPolicyPaged
-from .managed_server_security_alert_policy_paged import ManagedServerSecurityAlertPolicyPaged
-from .sensitivity_label_paged import SensitivityLabelPaged
-from .database_operation_paged import DatabaseOperationPaged
-from .elastic_pool_operation_paged import ElasticPoolOperationPaged
-from .vulnerability_assessment_scan_record_paged import VulnerabilityAssessmentScanRecordPaged
-from .instance_failover_group_paged import InstanceFailoverGroupPaged
-from .backup_short_term_retention_policy_paged import BackupShortTermRetentionPolicyPaged
-from .managed_instance_key_paged import ManagedInstanceKeyPaged
-from .managed_instance_encryption_protector_paged import ManagedInstanceEncryptionProtectorPaged
-from .recoverable_managed_database_paged import RecoverableManagedDatabasePaged
-from .managed_instance_vulnerability_assessment_paged import ManagedInstanceVulnerabilityAssessmentPaged
-from .server_vulnerability_assessment_paged import ServerVulnerabilityAssessmentPaged
-from .sql_management_client_enums import (
+    from ._models import AutomaticTuningOptions
+    from ._models import AutomaticTuningServerOptions
+    from ._models import BackupLongTermRetentionPolicy
+    from ._models import BackupShortTermRetentionPolicy
+    from ._models import CheckNameAvailabilityRequest
+    from ._models import CheckNameAvailabilityResponse
+    from ._models import CompleteDatabaseRestoreDefinition
+    from ._models import CreateDatabaseRestorePointDefinition
+    from ._models import Database
+    from ._models import DatabaseAutomaticTuning
+    from ._models import DatabaseBlobAuditingPolicy
+    from ._models import DatabaseOperation
+    from ._models import DatabaseSecurityAlertPolicy
+    from ._models import DatabaseUpdate
+    from ._models import DatabaseUsage
+    from ._models import DatabaseVulnerabilityAssessment
+    from ._models import DatabaseVulnerabilityAssessmentRuleBaseline
+    from ._models import DatabaseVulnerabilityAssessmentRuleBaselineItem
+    from ._models import DatabaseVulnerabilityAssessmentScansExport
+    from ._models import DataMaskingPolicy
+    from ._models import DataMaskingRule
+    from ._models import EditionCapability
+    from ._models import ElasticPool
+    from ._models import ElasticPoolActivity
+    from ._models import ElasticPoolDatabaseActivity
+    from ._models import ElasticPoolEditionCapability
+    from ._models import ElasticPoolOperation
+    from ._models import ElasticPoolPerDatabaseMaxPerformanceLevelCapability
+    from ._models import ElasticPoolPerDatabaseMinPerformanceLevelCapability
+    from ._models import ElasticPoolPerDatabaseSettings
+    from ._models import ElasticPoolPerformanceLevelCapability
+    from ._models import ElasticPoolUpdate
+    from ._models import EncryptionProtector
+    from ._models import ExportRequest
+    from ._models import ExtendedDatabaseBlobAuditingPolicy
+    from ._models import ExtendedServerBlobAuditingPolicy
+    from ._models import FailoverGroup
+    from ._models import FailoverGroupReadOnlyEndpoint
+    from ._models import FailoverGroupReadWriteEndpoint
+    from ._models import FailoverGroupUpdate
+    from ._models import FirewallRule
+    from ._models import GeoBackupPolicy
+    from ._models import ImportExportResponse
+    from ._models import ImportExtensionRequest
+    from ._models import ImportRequest
+    from ._models import InstanceFailoverGroup
+    from ._models import InstanceFailoverGroupReadOnlyEndpoint
+    from ._models import InstanceFailoverGroupReadWriteEndpoint
+    from ._models import InstancePool
+    from ._models import InstancePoolUpdate
+    from ._models import Job
+    from ._models import JobAgent
+    from ._models import JobAgentUpdate
+    from ._models import JobCredential
+    from ._models import JobExecution
+    from ._models import JobExecutionTarget
+    from ._models import JobSchedule
+    from ._models import JobStep
+    from ._models import JobStepAction
+    from ._models import JobStepExecutionOptions
+    from ._models import JobStepOutput
+    from ._models import JobTarget
+    from ._models import JobTargetGroup
+    from ._models import JobVersion
+    from ._models import LicenseTypeCapability
+    from ._models import LocationCapabilities
+    from ._models import LogSizeCapability
+    from ._models import LongTermRetentionBackup
+    from ._models import ManagedBackupShortTermRetentionPolicy
+    from ._models import ManagedDatabase
+    from ._models import ManagedDatabaseRestoreDetailsResult
+    from ._models import ManagedDatabaseSecurityAlertPolicy
+    from ._models import ManagedDatabaseUpdate
+    from ._models import ManagedInstance
+    from ._models import ManagedInstanceAdministrator
+    from ._models import ManagedInstanceEditionCapability
+    from ._models import ManagedInstanceEncryptionProtector
+    from ._models import ManagedInstanceFamilyCapability
+    from ._models import ManagedInstanceKey
+    from ._models import ManagedInstancePairInfo
+    from ._models import ManagedInstanceUpdate
+    from ._models import ManagedInstanceVcoresCapability
+    from ._models import ManagedInstanceVersionCapability
+    from ._models import ManagedInstanceVulnerabilityAssessment
+    from ._models import ManagedServerSecurityAlertPolicy
+    from ._models import MaxSizeCapability
+    from ._models import MaxSizeRangeCapability
+    from ._models import Metric
+    from ._models import MetricAvailability
+    from ._models import MetricDefinition
+    from ._models import MetricName
+    from ._models import MetricValue
+    from ._models import Name
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import OperationImpact
+    from ._models import PartnerInfo
+    from ._models import PartnerRegionInfo
+    from ._models import PerformanceLevelCapability
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateEndpointProperty
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkResourceProperties
+    from ._models import PrivateLinkServiceConnectionStateProperty
+    from ._models import ProxyResource
+    from ._models import RecommendedElasticPool
+    from ._models import RecommendedElasticPoolMetric
+    from ._models import RecommendedIndex
+    from ._models import RecoverableDatabase
+    from ._models import RecoverableManagedDatabase
+    from ._models import ReplicationLink
+    from ._models import Resource
+    from ._models import ResourceIdentity
+    from ._models import ResourceMoveDefinition
+    from ._models import RestorableDroppedDatabase
+    from ._models import RestorableDroppedManagedDatabase
+    from ._models import RestorePoint
+    from ._models import SensitivityLabel
+    from ._models import Server
+    from ._models import ServerAutomaticTuning
+    from ._models import ServerAzureADAdministrator
+    from ._models import ServerBlobAuditingPolicy
+    from ._models import ServerCommunicationLink
+    from ._models import ServerConnectionPolicy
+    from ._models import ServerDnsAlias
+    from ._models import ServerDnsAliasAcquisition
+    from ._models import ServerKey
+    from ._models import ServerSecurityAlertPolicy
+    from ._models import ServerUpdate
+    from ._models import ServerUsage
+    from ._models import ServerVersionCapability
+    from ._models import ServerVulnerabilityAssessment
+    from ._models import ServiceObjective
+    from ._models import ServiceObjectiveCapability
+    from ._models import ServiceTierAdvisor
+    from ._models import Sku
+    from ._models import SloUsageMetric
+    from ._models import SubscriptionUsage
+    from ._models import SyncAgent
+    from ._models import SyncAgentKeyProperties
+    from ._models import SyncAgentLinkedDatabase
+    from ._models import SyncDatabaseIdProperties
+    from ._models import SyncFullSchemaProperties
+    from ._models import SyncFullSchemaTable
+    from ._models import SyncFullSchemaTableColumn
+    from ._models import SyncGroup
+    from ._models import SyncGroupLogProperties
+    from ._models import SyncGroupSchema
+    from ._models import SyncGroupSchemaTable
+    from ._models import SyncGroupSchemaTableColumn
+    from ._models import SyncMember
+    from ._models import TdeCertificate
+    from ._models import TrackedResource
+    from ._models import TransparentDataEncryption
+    from ._models import TransparentDataEncryptionActivity
+    from ._models import Usage
+    from ._models import VirtualCluster
+    from ._models import VirtualClusterUpdate
+    from ._models import VirtualNetworkRule
+    from ._models import VulnerabilityAssessmentRecurringScansProperties
+    from ._models import VulnerabilityAssessmentScanError
+    from ._models import VulnerabilityAssessmentScanRecord
+from ._paged_models import BackupShortTermRetentionPolicyPaged
+from ._paged_models import DatabaseBlobAuditingPolicyPaged
+from ._paged_models import DatabaseOperationPaged
+from ._paged_models import DatabasePaged
+from ._paged_models import DatabaseUsagePaged
+from ._paged_models import DatabaseVulnerabilityAssessmentPaged
+from ._paged_models import DataMaskingRulePaged
+from ._paged_models import ElasticPoolActivityPaged
+from ._paged_models import ElasticPoolDatabaseActivityPaged
+from ._paged_models import ElasticPoolOperationPaged
+from ._paged_models import ElasticPoolPaged
+from ._paged_models import EncryptionProtectorPaged
+from ._paged_models import FailoverGroupPaged
+from ._paged_models import FirewallRulePaged
+from ._paged_models import GeoBackupPolicyPaged
+from ._paged_models import InstanceFailoverGroupPaged
+from ._paged_models import InstancePoolPaged
+from ._paged_models import JobAgentPaged
+from ._paged_models import JobCredentialPaged
+from ._paged_models import JobExecutionPaged
+from ._paged_models import JobPaged
+from ._paged_models import JobStepPaged
+from ._paged_models import JobTargetGroupPaged
+from ._paged_models import JobVersionPaged
+from ._paged_models import LongTermRetentionBackupPaged
+from ._paged_models import ManagedBackupShortTermRetentionPolicyPaged
+from ._paged_models import ManagedDatabasePaged
+from ._paged_models import ManagedDatabaseSecurityAlertPolicyPaged
+from ._paged_models import ManagedInstanceAdministratorPaged
+from ._paged_models import ManagedInstanceEncryptionProtectorPaged
+from ._paged_models import ManagedInstanceKeyPaged
+from ._paged_models import ManagedInstancePaged
+from ._paged_models import ManagedInstanceVulnerabilityAssessmentPaged
+from ._paged_models import ManagedServerSecurityAlertPolicyPaged
+from ._paged_models import MetricDefinitionPaged
+from ._paged_models import MetricPaged
+from ._paged_models import OperationPaged
+from ._paged_models import PrivateEndpointConnectionPaged
+from ._paged_models import PrivateLinkResourcePaged
+from ._paged_models import RecommendedElasticPoolMetricPaged
+from ._paged_models import RecommendedElasticPoolPaged
+from ._paged_models import RecoverableDatabasePaged
+from ._paged_models import RecoverableManagedDatabasePaged
+from ._paged_models import ReplicationLinkPaged
+from ._paged_models import RestorableDroppedDatabasePaged
+from ._paged_models import RestorableDroppedManagedDatabasePaged
+from ._paged_models import RestorePointPaged
+from ._paged_models import SensitivityLabelPaged
+from ._paged_models import ServerAzureADAdministratorPaged
+from ._paged_models import ServerBlobAuditingPolicyPaged
+from ._paged_models import ServerCommunicationLinkPaged
+from ._paged_models import ServerDnsAliasPaged
+from ._paged_models import ServerKeyPaged
+from ._paged_models import ServerPaged
+from ._paged_models import ServerSecurityAlertPolicyPaged
+from ._paged_models import ServerUsagePaged
+from ._paged_models import ServerVulnerabilityAssessmentPaged
+from ._paged_models import ServiceObjectivePaged
+from ._paged_models import ServiceTierAdvisorPaged
+from ._paged_models import SubscriptionUsagePaged
+from ._paged_models import SyncAgentLinkedDatabasePaged
+from ._paged_models import SyncAgentPaged
+from ._paged_models import SyncDatabaseIdPropertiesPaged
+from ._paged_models import SyncFullSchemaPropertiesPaged
+from ._paged_models import SyncGroupLogPropertiesPaged
+from ._paged_models import SyncGroupPaged
+from ._paged_models import SyncMemberPaged
+from ._paged_models import TransparentDataEncryptionActivityPaged
+from ._paged_models import UsagePaged
+from ._paged_models import VirtualClusterPaged
+from ._paged_models import VirtualNetworkRulePaged
+from ._paged_models import VulnerabilityAssessmentScanRecordPaged
+from ._sql_management_client_enums import (
     CheckNameAvailabilityReason,
     ServerConnectionType,
     SecurityAlertPolicyState,
@@ -411,9 +440,8 @@ from .sql_management_client_enums import (
     ReadWriteEndpointFailoverPolicy,
     ReadOnlyEndpointFailoverPolicy,
     FailoverGroupReplicationRole,
-    IdentityType,
-    ManagedInstanceProxyOverride,
     OperationOrigin,
+    IdentityType,
     SyncAgentState,
     SyncMemberDbType,
     SyncGroupLogType,
@@ -432,9 +460,6 @@ from .sql_management_client_enums import (
     JobStepActionSource,
     JobStepOutputType,
     JobTargetGroupMembershipType,
-    ManagedDatabaseStatus,
-    CatalogCollationType,
-    ManagedDatabaseCreateMode,
     AutomaticTuningServerMode,
     AutomaticTuningServerReason,
     RestorePointType,
@@ -446,6 +471,7 @@ from .sql_management_client_enums import (
     CreateMode,
     SampleName,
     DatabaseStatus,
+    CatalogCollationType,
     DatabaseLicenseType,
     DatabaseReadScale,
     ElasticPoolState,
@@ -453,164 +479,182 @@ from .sql_management_client_enums import (
     VulnerabilityAssessmentScanTriggerType,
     VulnerabilityAssessmentScanState,
     InstanceFailoverGroupReplicationRole,
+    InstancePoolLicenseType,
+    ManagedServerCreateMode,
+    ManagedInstanceLicenseType,
+    ManagedInstanceProxyOverride,
+    ManagedDatabaseStatus,
+    ManagedDatabaseCreateMode,
     LongTermRetentionDatabaseState,
     VulnerabilityAssessmentPolicyBaselineName,
     SensitivityLabelSource,
     CapabilityGroup,
+    ReplicaType,
 )
 
 __all__ = [
-    'RecoverableDatabase',
-    'RestorableDroppedDatabase',
-    'TrackedResource',
-    'Resource',
-    'ProxyResource',
+    'AutomaticTuningOptions',
+    'AutomaticTuningServerOptions',
+    'BackupLongTermRetentionPolicy',
+    'BackupShortTermRetentionPolicy',
     'CheckNameAvailabilityRequest',
     'CheckNameAvailabilityResponse',
-    'ServerConnectionPolicy',
+    'CompleteDatabaseRestoreDefinition',
+    'CreateDatabaseRestorePointDefinition',
+    'Database',
+    'DatabaseAutomaticTuning',
+    'DatabaseBlobAuditingPolicy',
+    'DatabaseOperation',
     'DatabaseSecurityAlertPolicy',
+    'DatabaseUpdate',
+    'DatabaseUsage',
+    'DatabaseVulnerabilityAssessment',
+    'DatabaseVulnerabilityAssessmentRuleBaseline',
+    'DatabaseVulnerabilityAssessmentRuleBaselineItem',
+    'DatabaseVulnerabilityAssessmentScansExport',
     'DataMaskingPolicy',
     'DataMaskingRule',
+    'EditionCapability',
+    'ElasticPool',
+    'ElasticPoolActivity',
+    'ElasticPoolDatabaseActivity',
+    'ElasticPoolEditionCapability',
+    'ElasticPoolOperation',
+    'ElasticPoolPerDatabaseMaxPerformanceLevelCapability',
+    'ElasticPoolPerDatabaseMinPerformanceLevelCapability',
+    'ElasticPoolPerDatabaseSettings',
+    'ElasticPoolPerformanceLevelCapability',
+    'ElasticPoolUpdate',
+    'EncryptionProtector',
+    'ExportRequest',
+    'ExtendedDatabaseBlobAuditingPolicy',
+    'ExtendedServerBlobAuditingPolicy',
+    'FailoverGroup',
+    'FailoverGroupReadOnlyEndpoint',
+    'FailoverGroupReadWriteEndpoint',
+    'FailoverGroupUpdate',
     'FirewallRule',
     'GeoBackupPolicy',
-    'ImportExtensionRequest',
     'ImportExportResponse',
+    'ImportExtensionRequest',
     'ImportRequest',
-    'ExportRequest',
-    'MetricValue',
-    'MetricName',
+    'InstanceFailoverGroup',
+    'InstanceFailoverGroupReadOnlyEndpoint',
+    'InstanceFailoverGroupReadWriteEndpoint',
+    'InstancePool',
+    'InstancePoolUpdate',
+    'Job',
+    'JobAgent',
+    'JobAgentUpdate',
+    'JobCredential',
+    'JobExecution',
+    'JobExecutionTarget',
+    'JobSchedule',
+    'JobStep',
+    'JobStepAction',
+    'JobStepExecutionOptions',
+    'JobStepOutput',
+    'JobTarget',
+    'JobTargetGroup',
+    'JobVersion',
+    'LicenseTypeCapability',
+    'LocationCapabilities',
+    'LogSizeCapability',
+    'LongTermRetentionBackup',
+    'ManagedBackupShortTermRetentionPolicy',
+    'ManagedDatabase',
+    'ManagedDatabaseRestoreDetailsResult',
+    'ManagedDatabaseSecurityAlertPolicy',
+    'ManagedDatabaseUpdate',
+    'ManagedInstance',
+    'ManagedInstanceAdministrator',
+    'ManagedInstanceEditionCapability',
+    'ManagedInstanceEncryptionProtector',
+    'ManagedInstanceFamilyCapability',
+    'ManagedInstanceKey',
+    'ManagedInstancePairInfo',
+    'ManagedInstanceUpdate',
+    'ManagedInstanceVcoresCapability',
+    'ManagedInstanceVersionCapability',
+    'ManagedInstanceVulnerabilityAssessment',
+    'ManagedServerSecurityAlertPolicy',
+    'MaxSizeCapability',
+    'MaxSizeRangeCapability',
     'Metric',
     'MetricAvailability',
     'MetricDefinition',
-    'RecommendedElasticPoolMetric',
-    'RecommendedElasticPool',
-    'ReplicationLink',
-    'ServerAzureADAdministrator',
-    'ServerCommunicationLink',
-    'ServiceObjective',
-    'ElasticPoolActivity',
-    'ElasticPoolDatabaseActivity',
-    'OperationImpact',
-    'RecommendedIndex',
-    'TransparentDataEncryption',
-    'SloUsageMetric',
-    'ServiceTierAdvisor',
-    'TransparentDataEncryptionActivity',
-    'ServerUsage',
-    'DatabaseUsage',
-    'AutomaticTuningOptions',
-    'DatabaseAutomaticTuning',
-    'EncryptionProtector',
-    'FailoverGroupReadWriteEndpoint',
-    'FailoverGroupReadOnlyEndpoint',
-    'PartnerInfo',
-    'FailoverGroup',
-    'FailoverGroupUpdate',
-    'ResourceIdentity',
-    'Sku',
-    'ManagedInstance',
-    'ManagedInstanceUpdate',
-    'OperationDisplay',
+    'MetricName',
+    'MetricValue',
+    'Name',
     'Operation',
-    'ServerKey',
+    'OperationDisplay',
+    'OperationImpact',
+    'PartnerInfo',
+    'PartnerRegionInfo',
+    'PerformanceLevelCapability',
+    'PrivateEndpointConnection',
+    'PrivateEndpointProperty',
+    'PrivateLinkResource',
+    'PrivateLinkResourceProperties',
+    'PrivateLinkServiceConnectionStateProperty',
+    'ProxyResource',
+    'RecommendedElasticPool',
+    'RecommendedElasticPoolMetric',
+    'RecommendedIndex',
+    'RecoverableDatabase',
+    'RecoverableManagedDatabase',
+    'ReplicationLink',
+    'Resource',
+    'ResourceIdentity',
+    'ResourceMoveDefinition',
+    'RestorableDroppedDatabase',
+    'RestorableDroppedManagedDatabase',
+    'RestorePoint',
+    'SensitivityLabel',
     'Server',
+    'ServerAutomaticTuning',
+    'ServerAzureADAdministrator',
+    'ServerBlobAuditingPolicy',
+    'ServerCommunicationLink',
+    'ServerConnectionPolicy',
+    'ServerDnsAlias',
+    'ServerDnsAliasAcquisition',
+    'ServerKey',
+    'ServerSecurityAlertPolicy',
     'ServerUpdate',
+    'ServerUsage',
+    'ServerVersionCapability',
+    'ServerVulnerabilityAssessment',
+    'ServiceObjective',
+    'ServiceObjectiveCapability',
+    'ServiceTierAdvisor',
+    'Sku',
+    'SloUsageMetric',
+    'SubscriptionUsage',
     'SyncAgent',
     'SyncAgentKeyProperties',
     'SyncAgentLinkedDatabase',
     'SyncDatabaseIdProperties',
-    'SyncFullSchemaTableColumn',
-    'SyncFullSchemaTable',
     'SyncFullSchemaProperties',
-    'SyncGroupLogProperties',
-    'SyncGroupSchemaTableColumn',
-    'SyncGroupSchemaTable',
-    'SyncGroupSchema',
+    'SyncFullSchemaTable',
+    'SyncFullSchemaTableColumn',
     'SyncGroup',
+    'SyncGroupLogProperties',
+    'SyncGroupSchema',
+    'SyncGroupSchemaTable',
+    'SyncGroupSchemaTableColumn',
     'SyncMember',
-    'SubscriptionUsage',
+    'TdeCertificate',
+    'TrackedResource',
+    'TransparentDataEncryption',
+    'TransparentDataEncryptionActivity',
+    'Usage',
     'VirtualCluster',
     'VirtualClusterUpdate',
     'VirtualNetworkRule',
-    'ExtendedDatabaseBlobAuditingPolicy',
-    'ExtendedServerBlobAuditingPolicy',
-    'ServerBlobAuditingPolicy',
-    'DatabaseBlobAuditingPolicy',
-    'DatabaseVulnerabilityAssessmentRuleBaselineItem',
-    'DatabaseVulnerabilityAssessmentRuleBaseline',
     'VulnerabilityAssessmentRecurringScansProperties',
-    'DatabaseVulnerabilityAssessment',
-    'JobAgent',
-    'JobAgentUpdate',
-    'JobCredential',
-    'JobExecutionTarget',
-    'JobExecution',
-    'JobSchedule',
-    'Job',
-    'JobStepAction',
-    'JobStepOutput',
-    'JobStepExecutionOptions',
-    'JobStep',
-    'JobTarget',
-    'JobTargetGroup',
-    'JobVersion',
-    'LongTermRetentionBackup',
-    'BackupLongTermRetentionPolicy',
-    'ManagedBackupShortTermRetentionPolicy',
-    'CompleteDatabaseRestoreDefinition',
-    'ManagedDatabase',
-    'ManagedDatabaseUpdate',
-    'AutomaticTuningServerOptions',
-    'ServerAutomaticTuning',
-    'ServerDnsAlias',
-    'ServerDnsAliasAcquisition',
-    'ServerSecurityAlertPolicy',
-    'RestorableDroppedManagedDatabase',
-    'RestorePoint',
-    'CreateDatabaseRestorePointDefinition',
-    'ManagedDatabaseSecurityAlertPolicy',
-    'ManagedServerSecurityAlertPolicy',
-    'SensitivityLabel',
-    'DatabaseOperation',
-    'ElasticPoolOperation',
-    'MaxSizeCapability',
-    'LogSizeCapability',
-    'MaxSizeRangeCapability',
-    'PerformanceLevelCapability',
-    'LicenseTypeCapability',
-    'ServiceObjectiveCapability',
-    'EditionCapability',
-    'ElasticPoolPerDatabaseMinPerformanceLevelCapability',
-    'ElasticPoolPerDatabaseMaxPerformanceLevelCapability',
-    'ElasticPoolPerformanceLevelCapability',
-    'ElasticPoolEditionCapability',
-    'ServerVersionCapability',
-    'ManagedInstanceVcoresCapability',
-    'ManagedInstanceFamilyCapability',
-    'ManagedInstanceEditionCapability',
-    'ManagedInstanceVersionCapability',
-    'LocationCapabilities',
-    'Database',
-    'DatabaseUpdate',
-    'ResourceMoveDefinition',
-    'ElasticPoolPerDatabaseSettings',
-    'ElasticPool',
-    'ElasticPoolUpdate',
     'VulnerabilityAssessmentScanError',
     'VulnerabilityAssessmentScanRecord',
-    'DatabaseVulnerabilityAssessmentScansExport',
-    'InstanceFailoverGroupReadWriteEndpoint',
-    'InstanceFailoverGroupReadOnlyEndpoint',
-    'PartnerRegionInfo',
-    'ManagedInstancePairInfo',
-    'InstanceFailoverGroup',
-    'BackupShortTermRetentionPolicy',
-    'TdeCertificate',
-    'ManagedInstanceKey',
-    'ManagedInstanceEncryptionProtector',
-    'RecoverableManagedDatabase',
-    'ManagedInstanceVulnerabilityAssessment',
-    'ServerVulnerabilityAssessment',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',
@@ -635,7 +679,6 @@ __all__ = [
     'DatabaseUsagePaged',
     'EncryptionProtectorPaged',
     'FailoverGroupPaged',
-    'ManagedInstancePaged',
     'OperationPaged',
     'ServerKeyPaged',
     'SyncAgentPaged',
@@ -648,6 +691,8 @@ __all__ = [
     'SubscriptionUsagePaged',
     'VirtualClusterPaged',
     'VirtualNetworkRulePaged',
+    'ServerBlobAuditingPolicyPaged',
+    'DatabaseBlobAuditingPolicyPaged',
     'DatabaseVulnerabilityAssessmentPaged',
     'JobAgentPaged',
     'JobCredentialPaged',
@@ -658,7 +703,6 @@ __all__ = [
     'JobVersionPaged',
     'LongTermRetentionBackupPaged',
     'ManagedBackupShortTermRetentionPolicyPaged',
-    'ManagedDatabasePaged',
     'ServerDnsAliasPaged',
     'ServerSecurityAlertPolicyPaged',
     'RestorableDroppedManagedDatabasePaged',
@@ -666,6 +710,7 @@ __all__ = [
     'ManagedDatabaseSecurityAlertPolicyPaged',
     'ManagedServerSecurityAlertPolicyPaged',
     'SensitivityLabelPaged',
+    'ManagedInstanceAdministratorPaged',
     'DatabaseOperationPaged',
     'ElasticPoolOperationPaged',
     'VulnerabilityAssessmentScanRecordPaged',
@@ -676,6 +721,12 @@ __all__ = [
     'RecoverableManagedDatabasePaged',
     'ManagedInstanceVulnerabilityAssessmentPaged',
     'ServerVulnerabilityAssessmentPaged',
+    'InstancePoolPaged',
+    'UsagePaged',
+    'ManagedInstancePaged',
+    'ManagedDatabasePaged',
+    'PrivateEndpointConnectionPaged',
+    'PrivateLinkResourcePaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
@@ -708,9 +759,8 @@ __all__ = [
     'ReadWriteEndpointFailoverPolicy',
     'ReadOnlyEndpointFailoverPolicy',
     'FailoverGroupReplicationRole',
-    'IdentityType',
-    'ManagedInstanceProxyOverride',
     'OperationOrigin',
+    'IdentityType',
     'SyncAgentState',
     'SyncMemberDbType',
     'SyncGroupLogType',
@@ -729,9 +779,6 @@ __all__ = [
     'JobStepActionSource',
     'JobStepOutputType',
     'JobTargetGroupMembershipType',
-    'ManagedDatabaseStatus',
-    'CatalogCollationType',
-    'ManagedDatabaseCreateMode',
     'AutomaticTuningServerMode',
     'AutomaticTuningServerReason',
     'RestorePointType',
@@ -743,6 +790,7 @@ __all__ = [
     'CreateMode',
     'SampleName',
     'DatabaseStatus',
+    'CatalogCollationType',
     'DatabaseLicenseType',
     'DatabaseReadScale',
     'ElasticPoolState',
@@ -750,8 +798,15 @@ __all__ = [
     'VulnerabilityAssessmentScanTriggerType',
     'VulnerabilityAssessmentScanState',
     'InstanceFailoverGroupReplicationRole',
+    'InstancePoolLicenseType',
+    'ManagedServerCreateMode',
+    'ManagedInstanceLicenseType',
+    'ManagedInstanceProxyOverride',
+    'ManagedDatabaseStatus',
+    'ManagedDatabaseCreateMode',
     'LongTermRetentionDatabaseState',
     'VulnerabilityAssessmentPolicyBaselineName',
     'SensitivityLabelSource',
     'CapabilityGroup',
+    'ReplicaType',
 ]

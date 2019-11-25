@@ -338,57 +338,6 @@ class ApplicationGatewayAutoscaleConfiguration(Model):
         self.max_capacity = max_capacity
 
 
-class ApplicationGatewayAvailableRequestHeadersResult(Model):
-    """Response for ApplicationGatewayAvailableRequestHeaders API service call.
-
-    :param value: The list of supported request headers in application
-     gateway.
-    :type value: list[str]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[str]'},
-    }
-
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(ApplicationGatewayAvailableRequestHeadersResult, self).__init__(**kwargs)
-        self.value = value
-
-
-class ApplicationGatewayAvailableResponseHeadersResult(Model):
-    """Response for ApplicationGatewayAvailableResponeHeaders API service call.
-
-    :param value: The list of supported response header in application
-     gateway.
-    :type value: list[str]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[str]'},
-    }
-
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(ApplicationGatewayAvailableResponseHeadersResult, self).__init__(**kwargs)
-        self.value = value
-
-
-class ApplicationGatewayAvailableServerVariablesResult(Model):
-    """Response for ApplicationGatewayAvailableServerVariables API service call.
-
-    :param value: The list of supported server variables in application
-     gateway.
-    :type value: list[str]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[str]'},
-    }
-
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(ApplicationGatewayAvailableServerVariablesResult, self).__init__(**kwargs)
-        self.value = value
-
-
 class ApplicationGatewayAvailableSslOptions(Resource):
     """Response for ApplicationGatewayAvailableSslOptions API service call.
 
@@ -2876,6 +2825,10 @@ class BackendAddressPool(SubResource):
     :ivar outbound_rule: Gets outbound rules that use this backend address
      pool.
     :vartype outbound_rule: ~azure.mgmt.network.v2018_11_01.models.SubResource
+    :ivar outbound_rules: Gets outbound rules that use this backend address
+     pool.
+    :vartype outbound_rules:
+     list[~azure.mgmt.network.v2018_11_01.models.SubResource]
     :param provisioning_state: Get provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -2891,6 +2844,7 @@ class BackendAddressPool(SubResource):
         'backend_ip_configurations': {'readonly': True},
         'load_balancing_rules': {'readonly': True},
         'outbound_rule': {'readonly': True},
+        'outbound_rules': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2898,6 +2852,7 @@ class BackendAddressPool(SubResource):
         'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
         'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
         'outbound_rule': {'key': 'properties.outboundRule', 'type': 'SubResource'},
+        'outbound_rules': {'key': 'properties.outboundRules', 'type': '[SubResource]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -2908,6 +2863,7 @@ class BackendAddressPool(SubResource):
         self.backend_ip_configurations = None
         self.load_balancing_rules = None
         self.outbound_rule = None
+        self.outbound_rules = None
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag
@@ -8335,7 +8291,7 @@ class OperationPropertiesFormatServiceSpecification(Model):
 
 
 class OutboundRule(SubResource):
-    """Outbound pool of the load balancer.
+    """Outbound rule of the load balancer.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -9508,6 +9464,10 @@ class PublicIPPrefix(Resource):
     :param public_ip_addresses: The list of all referenced PublicIPAddresses
     :type public_ip_addresses:
      list[~azure.mgmt.network.v2018_11_01.models.ReferencedPublicIpAddress]
+    :ivar load_balancer_frontend_ip_configuration: The reference to load
+     balancer frontend IP configuration associated with the public IP prefix.
+    :vartype load_balancer_frontend_ip_configuration:
+     ~azure.mgmt.network.v2018_11_01.models.SubResource
     :param resource_guid: The resource GUID property of the public IP prefix
      resource.
     :type resource_guid: str
@@ -9525,6 +9485,7 @@ class PublicIPPrefix(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'load_balancer_frontend_ip_configuration': {'readonly': True},
     }
 
     _attribute_map = {
@@ -9539,6 +9500,7 @@ class PublicIPPrefix(Resource):
         'prefix_length': {'key': 'properties.prefixLength', 'type': 'int'},
         'ip_prefix': {'key': 'properties.ipPrefix', 'type': 'str'},
         'public_ip_addresses': {'key': 'properties.publicIPAddresses', 'type': '[ReferencedPublicIpAddress]'},
+        'load_balancer_frontend_ip_configuration': {'key': 'properties.loadBalancerFrontendIpConfiguration', 'type': 'SubResource'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -9553,6 +9515,7 @@ class PublicIPPrefix(Resource):
         self.prefix_length = prefix_length
         self.ip_prefix = ip_prefix
         self.public_ip_addresses = public_ip_addresses
+        self.load_balancer_frontend_ip_configuration = None
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
         self.etag = etag

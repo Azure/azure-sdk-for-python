@@ -3,6 +3,64 @@
 Release History
 ===============
 
+8.0.0 (2019-10-24)
+++++++++++++++++++
+
+**Features**
+
+- Model OpenShiftManagedCluster has a new parameter monitor_profile
+- Model ManagedCluster has a new parameter private_fqdn
+- Added operation ManagedClustersOperations.rotate_cluster_certificates
+
+**Breaking changes**
+
+- Operation AgentPoolsOperations.get_available_agent_pool_versions has a new signature
+
+7.0.0 (2019-08-30)
+++++++++++++++++++
+  
+**Features**
+
+- Model ContainerServiceNetworkProfile has a new parameter load_balancer_profile
+- Model ManagedCluster has a new parameter api_server_access_profile
+
+**Breaking changes**
+
+- Model ManagedCluster no longer has parameter api_server_authorized_ip_ranges
+
+6.0.0 (2019-06-20)
+++++++++++++++++++
+
+**Features**
+
+- Model ManagedClusterAgentPoolProfile has a new parameter enable_node_public_ip
+- Model ManagedClusterAgentPoolProfile has a new parameter scale_set_eviction_policy
+- Model ManagedClusterAgentPoolProfile has a new parameter node_taints
+- Model ManagedClusterAgentPoolProfile has a new parameter scale_set_priority
+- Model AgentPool has a new parameter enable_node_public_ip
+- Model AgentPool has a new parameter scale_set_eviction_policy
+- Model AgentPool has a new parameter node_taints
+- Model AgentPool has a new parameter scale_set_priority
+- Model ManagedClusterAgentPoolProfileProperties has a new parameter enable_node_public_ip
+- Model ManagedClusterAgentPoolProfileProperties has a new parameter scale_set_eviction_policy
+- Model ManagedClusterAgentPoolProfileProperties has a new parameter node_taints
+- Model ManagedClusterAgentPoolProfileProperties has a new parameter scale_set_priority
+- Added operation AgentPoolsOperations.get_available_agent_pool_versions
+- Added operation AgentPoolsOperations.get_upgrade_profile
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes if you were importing from the v20xx_yy_zz API folders.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- ContainerServiceManagementClient cannot be imported from `azure.mgmt.containerservice.v20xx_yy_zz.container_service_management_client` anymore (import from `azure.mgmt.containerservice.v20xx_yy_zz` works like before)
+- ContainerServiceManagementClientConfiguration import has been moved from `azure.mgmt.containerservice.v20xx_yy_zz.container_service_management_client` to `azure.mgmt.containerservice.v20xx_yy_zz`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.containerservice.v20xx_yy_zz.models.my_class` (import from `azure.mgmt.containerservice.v20xx_yy_zz.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.containerservice.v20xx_yy_zz.operations.my_class_operations` (import from `azure.mgmt.containerservice.v20xx_yy_zz.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
+
 5.3.0 (2019-05-03)
 ++++++++++++++++++
 

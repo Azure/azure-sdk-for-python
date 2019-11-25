@@ -40,8 +40,12 @@ from azure.servicemanagement import (
     parse_response_for_async_op,
     get_certificate_from_publish_settings,
 )
-from azure.storage.blob import PageBlobService, BlockBlobService
-from azure.storage.blob.models import PublicAccess
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.storage.blob import (
+    BlobServiceClient,
+    BlobType,
+    PublicAccess
+)
 from testutils.common_recordingtestcase import (
     TestMode,
     record,
@@ -85,9 +89,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         super(LegacyMgmtMiscTest, self).setUp()
 
         self.sms = self.create_service_management(ServiceManagementService)
-
-        self.bc = self._create_storage_service(PageBlobService, self.settings)
-        self.bbc = self._create_storage_service(BlockBlobService, self.settings)
+        self.bsc = self._create_storage_service(BlobServiceClient, self.settings)
 
         self.hosted_service_name = self.get_resource_name('utsvc')
         self.container_name = self.get_resource_name('utctnr')
@@ -166,7 +168,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
                     pass
 
             try:
-                self.bc.delete_container(self.container_name)
+                self.bsc.delete_container(self.container_name)
             except:
                 pass
 
@@ -284,14 +286,19 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
     def _create_container_and_block_blob(self, container_name, blob_name,
                                          blob_data):
-        self.bc.create_container(container_name, None, 'container', False)
-        self.bbc.create_blob_from_bytes(
-            container_name, blob_name, blob_data)
+        try:
+            container = self.bsc.create_container(container_name, public_access='container')
+        except ResourceExistsError:
+            container = self.bsc.get_container_client(container_name)
+        container.upload_blob(blob_name, blob_data)
 
     def _create_container_and_page_blob(self, container_name, blob_name,
                                         content_length):
-        self.bc.create_container(container_name, None, 'container', False)
-        self.bc.create_blob_from_bytes(container_name, blob_name, b'')
+        try:
+            container = self.bsc.create_container(container_name, public_access='container')
+        except ResourceExistsError:
+            container = self.bsc.get_container_client(container_name)
+        container.upload_blob(blob_name, b'', blob_type=BlobType.PageBlob)
 
     def _upload_file_to_block_blob(self, file_path, blob_name):
         data = open(file_path, 'rb').read()
@@ -303,14 +310,13 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
     def _upload_chunks(self, file_path, blob_name, chunk_size):
         index = 0
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
         with open(file_path, 'rb') as f:
             while True:
                 data = f.read(chunk_size)
                 if data:
                     length = len(data)
-                    self.bc.update_page(
-                        self.container_name, blob_name, data,
-                        index, index + length - 1)
+                    blob.upload_page(data, index, index + length - 1)
                     index += length
                 else:
                     break
@@ -379,7 +385,8 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
     def _blob_exists(self, container_name, blob_name):
         try:
-            props = self.bc.get_blob_properties(container_name, blob_name)
+            blob = self.bsc.get_blob_client(container_name, blob_name)
+            props = blob.get_blob_properties()
             return props is not None
         except:
             return False
@@ -564,11 +571,13 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
     def _copy_linux_os_vhd_to_container(self):
         blob_name = 'imagecopy.vhd'
-        self.bc.create_container(self.container_name,
-                                 public_access=PublicAccess.Blob)
-        resp = self.bc.copy_blob(self.container_name, blob_name,
-                                 self.settings.LINUX_OS_VHD)
-        return self.bc.make_blob_url(self.container_name, blob_name)
+        try:
+            container = self.bsc.create_container(self.container_name, public_access=PublicAccess.Blob)
+        except ResourceExistsError:
+            container = self.bsc.get_container_client(self.container_name)
+        blob = container.get_blob_client(blob_name)
+        blob.copy_blob_from_url(self.settings.LINUX_OS_VHD)
+        return blob.url
 
     #--Test cases for http passthroughs --------------------------------------
     @record

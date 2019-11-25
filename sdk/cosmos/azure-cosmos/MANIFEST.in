@@ -1,7 +1,7 @@
 include README.md
+include HISTORY.md
 include LICENSE.txt
-recursive-include doc *.bat
-recursive-include doc *.py
-recursive-include doc *.rst
-recursive-include doc Makefile
+include azure/__init__.py
+recursive-include samples *.py
 recursive-include test *.py
+recursive-include doc *.rst

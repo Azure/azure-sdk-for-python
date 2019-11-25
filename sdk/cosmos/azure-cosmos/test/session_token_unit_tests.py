@@ -1,9 +1,9 @@
 import unittest
-import uuid
 import pytest
-import azure.cosmos.documents as documents
-from azure.cosmos.vector_session_token import VectorSessionToken
-from azure.cosmos.errors import CosmosError
+from azure.cosmos._vector_session_token import VectorSessionToken
+from azure.cosmos.exceptions import CosmosHttpResponseError
+
+pytestmark = pytest.mark.cosmosEmulator
 
 @pytest.mark.usefixtures("teardown")
 class SessionTokenUnitTest(unittest.TestCase):
@@ -11,7 +11,7 @@ class SessionTokenUnitTest(unittest.TestCase):
     def test_validate_successful_session_token_parsing(self):
         #valid session token
         session_token = "1#100#1=20#2=5#3=30"
-        self.assertEquals(VectorSessionToken.create(session_token).convert_to_string(), "1#100#1=20#2=5#3=30")
+        self.assertEqual(VectorSessionToken.create(session_token).convert_to_string(), "1#100#1=20#2=5#3=30")
 
     def test_validate_session_token_parsing_with_invalid_version(self):
         session_token = "foo#100#1=20#2=5#3=30"
@@ -76,5 +76,5 @@ class SessionTokenUnitTest(unittest.TestCase):
         try:
             session_token1.merge(session_token2)
             self.fail("Region progress can not be different when version is same")
-        except CosmosError as e:
-            self.assertEquals(str(e), "Status Code: 500. Compared session tokens '1#101#1=20#2=5#3=30' and '1#100#1=20#2=5#3=30#4=40' have unexpected regions.")
+        except CosmosHttpResponseError as e:
+            self.assertEqual(str(e), "Status code: 500\nCompared session tokens '1#101#1=20#2=5#3=30' and '1#100#1=20#2=5#3=30#4=40' have unexpected regions.")

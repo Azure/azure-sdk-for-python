@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .hana_management_client import HanaManagementClient
-from .version import VERSION
+from ._configuration import HanaManagementClientConfiguration
+from ._hana_management_client import HanaManagementClient
+__all__ = ['HanaManagementClient', 'HanaManagementClientConfiguration']
 
-__all__ = ['HanaManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

@@ -10,280 +10,359 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .consistency_policy_py3 import ConsistencyPolicy
-    from .capability_py3 import Capability
-    from .location_py3 import Location
-    from .failover_policy_py3 import FailoverPolicy
-    from .virtual_network_rule_py3 import VirtualNetworkRule
-    from .database_account_py3 import DatabaseAccount
-    from .sql_database_py3 import SqlDatabase
-    from .indexes_py3 import Indexes
-    from .included_path_py3 import IncludedPath
-    from .excluded_path_py3 import ExcludedPath
-    from .indexing_policy_py3 import IndexingPolicy
-    from .container_partition_key_py3 import ContainerPartitionKey
-    from .unique_key_py3 import UniqueKey
-    from .unique_key_policy_py3 import UniqueKeyPolicy
-    from .conflict_resolution_policy_py3 import ConflictResolutionPolicy
-    from .sql_container_py3 import SqlContainer
-    from .mongo_db_database_py3 import MongoDBDatabase
-    from .mongo_db_collection_py3 import MongoDBCollection
-    from .table_py3 import Table
-    from .cassandra_keyspace_py3 import CassandraKeyspace
-    from .cassandra_table_py3 import CassandraTable
-    from .gremlin_database_py3 import GremlinDatabase
-    from .gremlin_graph_py3 import GremlinGraph
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .failover_policies_py3 import FailoverPolicies
-    from .region_for_online_offline_py3 import RegionForOnlineOffline
-    from .resource_py3 import Resource
-    from .extended_resource_properties_py3 import ExtendedResourceProperties
-    from .database_account_create_update_parameters_py3 import DatabaseAccountCreateUpdateParameters
-    from .database_account_patch_parameters_py3 import DatabaseAccountPatchParameters
-    from .database_account_list_read_only_keys_result_py3 import DatabaseAccountListReadOnlyKeysResult
-    from .database_account_list_keys_result_py3 import DatabaseAccountListKeysResult
-    from .database_account_connection_string_py3 import DatabaseAccountConnectionString
-    from .database_account_list_connection_strings_result_py3 import DatabaseAccountListConnectionStringsResult
-    from .database_account_regenerate_key_parameters_py3 import DatabaseAccountRegenerateKeyParameters
-    from .sql_database_resource_py3 import SqlDatabaseResource
-    from .sql_database_create_update_parameters_py3 import SqlDatabaseCreateUpdateParameters
-    from .sql_container_resource_py3 import SqlContainerResource
-    from .sql_container_create_update_parameters_py3 import SqlContainerCreateUpdateParameters
-    from .mongo_db_database_resource_py3 import MongoDBDatabaseResource
-    from .mongo_db_database_create_update_parameters_py3 import MongoDBDatabaseCreateUpdateParameters
-    from .mongo_index_keys_py3 import MongoIndexKeys
-    from .mongo_index_options_py3 import MongoIndexOptions
-    from .mongo_index_py3 import MongoIndex
-    from .mongo_db_collection_resource_py3 import MongoDBCollectionResource
-    from .mongo_db_collection_create_update_parameters_py3 import MongoDBCollectionCreateUpdateParameters
-    from .table_resource_py3 import TableResource
-    from .table_create_update_parameters_py3 import TableCreateUpdateParameters
-    from .cassandra_keyspace_resource_py3 import CassandraKeyspaceResource
-    from .cassandra_keyspace_create_update_parameters_py3 import CassandraKeyspaceCreateUpdateParameters
-    from .column_py3 import Column
-    from .cassandra_partition_key_py3 import CassandraPartitionKey
-    from .cluster_key_py3 import ClusterKey
-    from .cassandra_schema_py3 import CassandraSchema
-    from .cassandra_table_resource_py3 import CassandraTableResource
-    from .cassandra_table_create_update_parameters_py3 import CassandraTableCreateUpdateParameters
-    from .gremlin_database_resource_py3 import GremlinDatabaseResource
-    from .gremlin_database_create_update_parameters_py3 import GremlinDatabaseCreateUpdateParameters
-    from .gremlin_graph_resource_py3 import GremlinGraphResource
-    from .gremlin_graph_create_update_parameters_py3 import GremlinGraphCreateUpdateParameters
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .metric_name_py3 import MetricName
-    from .usage_py3 import Usage
-    from .partition_usage_py3 import PartitionUsage
-    from .metric_availability_py3 import MetricAvailability
-    from .metric_definition_py3 import MetricDefinition
-    from .metric_value_py3 import MetricValue
-    from .metric_py3 import Metric
-    from .percentile_metric_value_py3 import PercentileMetricValue
-    from .percentile_metric_py3 import PercentileMetric
-    from .partition_metric_py3 import PartitionMetric
+    from ._models_py3 import ARMProxyResource
+    from ._models_py3 import ARMResourceProperties
+    from ._models_py3 import AzureEntityResource
+    from ._models_py3 import Capability
+    from ._models_py3 import CassandraKeyspaceCreateUpdateParameters
+    from ._models_py3 import CassandraKeyspaceGetResults
+    from ._models_py3 import CassandraKeyspaceResource
+    from ._models_py3 import CassandraPartitionKey
+    from ._models_py3 import CassandraSchema
+    from ._models_py3 import CassandraTableCreateUpdateParameters
+    from ._models_py3 import CassandraTableGetResults
+    from ._models_py3 import CassandraTableResource
+    from ._models_py3 import ClusterKey
+    from ._models_py3 import Column
+    from ._models_py3 import ConflictResolutionPolicy
+    from ._models_py3 import ConsistencyPolicy
+    from ._models_py3 import ContainerPartitionKey
+    from ._models_py3 import DatabaseAccountConnectionString
+    from ._models_py3 import DatabaseAccountCreateUpdateParameters
+    from ._models_py3 import DatabaseAccountGetResults
+    from ._models_py3 import DatabaseAccountListConnectionStringsResult
+    from ._models_py3 import DatabaseAccountListKeysResult
+    from ._models_py3 import DatabaseAccountListReadOnlyKeysResult
+    from ._models_py3 import DatabaseAccountRegenerateKeyParameters
+    from ._models_py3 import DatabaseAccountUpdateParameters
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ExcludedPath
+    from ._models_py3 import ExtendedResourceProperties
+    from ._models_py3 import FailoverPolicies
+    from ._models_py3 import FailoverPolicy
+    from ._models_py3 import GremlinDatabaseCreateUpdateParameters
+    from ._models_py3 import GremlinDatabaseGetResults
+    from ._models_py3 import GremlinDatabaseResource
+    from ._models_py3 import GremlinGraphCreateUpdateParameters
+    from ._models_py3 import GremlinGraphGetResults
+    from ._models_py3 import GremlinGraphResource
+    from ._models_py3 import IncludedPath
+    from ._models_py3 import Indexes
+    from ._models_py3 import IndexingPolicy
+    from ._models_py3 import Location
+    from ._models_py3 import Metric
+    from ._models_py3 import MetricAvailability
+    from ._models_py3 import MetricDefinition
+    from ._models_py3 import MetricName
+    from ._models_py3 import MetricValue
+    from ._models_py3 import MongoDBCollectionCreateUpdateParameters
+    from ._models_py3 import MongoDBCollectionGetResults
+    from ._models_py3 import MongoDBCollectionResource
+    from ._models_py3 import MongoDBDatabaseCreateUpdateParameters
+    from ._models_py3 import MongoDBDatabaseGetResults
+    from ._models_py3 import MongoDBDatabaseResource
+    from ._models_py3 import MongoIndex
+    from ._models_py3 import MongoIndexKeys
+    from ._models_py3 import MongoIndexOptions
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import PartitionMetric
+    from ._models_py3 import PartitionUsage
+    from ._models_py3 import PercentileMetric
+    from ._models_py3 import PercentileMetricValue
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointProperty
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkServiceConnectionStateProperty
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import RegionForOnlineOffline
+    from ._models_py3 import Resource
+    from ._models_py3 import SqlContainerCreateUpdateParameters
+    from ._models_py3 import SqlContainerGetResults
+    from ._models_py3 import SqlContainerResource
+    from ._models_py3 import SqlDatabaseCreateUpdateParameters
+    from ._models_py3 import SqlDatabaseGetResults
+    from ._models_py3 import SqlDatabaseResource
+    from ._models_py3 import SqlStoredProcedureCreateUpdateParameters
+    from ._models_py3 import SqlStoredProcedureGetResults
+    from ._models_py3 import SqlStoredProcedureResource
+    from ._models_py3 import SqlTriggerCreateUpdateParameters
+    from ._models_py3 import SqlTriggerGetResults
+    from ._models_py3 import SqlTriggerResource
+    from ._models_py3 import SqlUserDefinedFunctionCreateUpdateParameters
+    from ._models_py3 import SqlUserDefinedFunctionGetResults
+    from ._models_py3 import SqlUserDefinedFunctionResource
+    from ._models_py3 import TableCreateUpdateParameters
+    from ._models_py3 import TableGetResults
+    from ._models_py3 import TableResource
+    from ._models_py3 import ThroughputSettingsGetResults
+    from ._models_py3 import ThroughputSettingsResource
+    from ._models_py3 import ThroughputSettingsUpdateParameters
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import UniqueKey
+    from ._models_py3 import UniqueKeyPolicy
+    from ._models_py3 import Usage
+    from ._models_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
-    from .consistency_policy import ConsistencyPolicy
-    from .capability import Capability
-    from .location import Location
-    from .failover_policy import FailoverPolicy
-    from .virtual_network_rule import VirtualNetworkRule
-    from .database_account import DatabaseAccount
-    from .sql_database import SqlDatabase
-    from .indexes import Indexes
-    from .included_path import IncludedPath
-    from .excluded_path import ExcludedPath
-    from .indexing_policy import IndexingPolicy
-    from .container_partition_key import ContainerPartitionKey
-    from .unique_key import UniqueKey
-    from .unique_key_policy import UniqueKeyPolicy
-    from .conflict_resolution_policy import ConflictResolutionPolicy
-    from .sql_container import SqlContainer
-    from .mongo_db_database import MongoDBDatabase
-    from .mongo_db_collection import MongoDBCollection
-    from .table import Table
-    from .cassandra_keyspace import CassandraKeyspace
-    from .cassandra_table import CassandraTable
-    from .gremlin_database import GremlinDatabase
-    from .gremlin_graph import GremlinGraph
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .failover_policies import FailoverPolicies
-    from .region_for_online_offline import RegionForOnlineOffline
-    from .resource import Resource
-    from .extended_resource_properties import ExtendedResourceProperties
-    from .database_account_create_update_parameters import DatabaseAccountCreateUpdateParameters
-    from .database_account_patch_parameters import DatabaseAccountPatchParameters
-    from .database_account_list_read_only_keys_result import DatabaseAccountListReadOnlyKeysResult
-    from .database_account_list_keys_result import DatabaseAccountListKeysResult
-    from .database_account_connection_string import DatabaseAccountConnectionString
-    from .database_account_list_connection_strings_result import DatabaseAccountListConnectionStringsResult
-    from .database_account_regenerate_key_parameters import DatabaseAccountRegenerateKeyParameters
-    from .sql_database_resource import SqlDatabaseResource
-    from .sql_database_create_update_parameters import SqlDatabaseCreateUpdateParameters
-    from .sql_container_resource import SqlContainerResource
-    from .sql_container_create_update_parameters import SqlContainerCreateUpdateParameters
-    from .mongo_db_database_resource import MongoDBDatabaseResource
-    from .mongo_db_database_create_update_parameters import MongoDBDatabaseCreateUpdateParameters
-    from .mongo_index_keys import MongoIndexKeys
-    from .mongo_index_options import MongoIndexOptions
-    from .mongo_index import MongoIndex
-    from .mongo_db_collection_resource import MongoDBCollectionResource
-    from .mongo_db_collection_create_update_parameters import MongoDBCollectionCreateUpdateParameters
-    from .table_resource import TableResource
-    from .table_create_update_parameters import TableCreateUpdateParameters
-    from .cassandra_keyspace_resource import CassandraKeyspaceResource
-    from .cassandra_keyspace_create_update_parameters import CassandraKeyspaceCreateUpdateParameters
-    from .column import Column
-    from .cassandra_partition_key import CassandraPartitionKey
-    from .cluster_key import ClusterKey
-    from .cassandra_schema import CassandraSchema
-    from .cassandra_table_resource import CassandraTableResource
-    from .cassandra_table_create_update_parameters import CassandraTableCreateUpdateParameters
-    from .gremlin_database_resource import GremlinDatabaseResource
-    from .gremlin_database_create_update_parameters import GremlinDatabaseCreateUpdateParameters
-    from .gremlin_graph_resource import GremlinGraphResource
-    from .gremlin_graph_create_update_parameters import GremlinGraphCreateUpdateParameters
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .metric_name import MetricName
-    from .usage import Usage
-    from .partition_usage import PartitionUsage
-    from .metric_availability import MetricAvailability
-    from .metric_definition import MetricDefinition
-    from .metric_value import MetricValue
-    from .metric import Metric
-    from .percentile_metric_value import PercentileMetricValue
-    from .percentile_metric import PercentileMetric
-    from .partition_metric import PartitionMetric
-from .database_account_paged import DatabaseAccountPaged
-from .metric_paged import MetricPaged
-from .usage_paged import UsagePaged
-from .metric_definition_paged import MetricDefinitionPaged
-from .sql_database_paged import SqlDatabasePaged
-from .sql_container_paged import SqlContainerPaged
-from .mongo_db_database_paged import MongoDBDatabasePaged
-from .mongo_db_collection_paged import MongoDBCollectionPaged
-from .table_paged import TablePaged
-from .cassandra_keyspace_paged import CassandraKeyspacePaged
-from .cassandra_table_paged import CassandraTablePaged
-from .gremlin_database_paged import GremlinDatabasePaged
-from .gremlin_graph_paged import GremlinGraphPaged
-from .operation_paged import OperationPaged
-from .percentile_metric_paged import PercentileMetricPaged
-from .partition_metric_paged import PartitionMetricPaged
-from .partition_usage_paged import PartitionUsagePaged
-from .cosmos_db_enums import (
+    from ._models import ARMProxyResource
+    from ._models import ARMResourceProperties
+    from ._models import AzureEntityResource
+    from ._models import Capability
+    from ._models import CassandraKeyspaceCreateUpdateParameters
+    from ._models import CassandraKeyspaceGetResults
+    from ._models import CassandraKeyspaceResource
+    from ._models import CassandraPartitionKey
+    from ._models import CassandraSchema
+    from ._models import CassandraTableCreateUpdateParameters
+    from ._models import CassandraTableGetResults
+    from ._models import CassandraTableResource
+    from ._models import ClusterKey
+    from ._models import Column
+    from ._models import ConflictResolutionPolicy
+    from ._models import ConsistencyPolicy
+    from ._models import ContainerPartitionKey
+    from ._models import DatabaseAccountConnectionString
+    from ._models import DatabaseAccountCreateUpdateParameters
+    from ._models import DatabaseAccountGetResults
+    from ._models import DatabaseAccountListConnectionStringsResult
+    from ._models import DatabaseAccountListKeysResult
+    from ._models import DatabaseAccountListReadOnlyKeysResult
+    from ._models import DatabaseAccountRegenerateKeyParameters
+    from ._models import DatabaseAccountUpdateParameters
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import ExcludedPath
+    from ._models import ExtendedResourceProperties
+    from ._models import FailoverPolicies
+    from ._models import FailoverPolicy
+    from ._models import GremlinDatabaseCreateUpdateParameters
+    from ._models import GremlinDatabaseGetResults
+    from ._models import GremlinDatabaseResource
+    from ._models import GremlinGraphCreateUpdateParameters
+    from ._models import GremlinGraphGetResults
+    from ._models import GremlinGraphResource
+    from ._models import IncludedPath
+    from ._models import Indexes
+    from ._models import IndexingPolicy
+    from ._models import Location
+    from ._models import Metric
+    from ._models import MetricAvailability
+    from ._models import MetricDefinition
+    from ._models import MetricName
+    from ._models import MetricValue
+    from ._models import MongoDBCollectionCreateUpdateParameters
+    from ._models import MongoDBCollectionGetResults
+    from ._models import MongoDBCollectionResource
+    from ._models import MongoDBDatabaseCreateUpdateParameters
+    from ._models import MongoDBDatabaseGetResults
+    from ._models import MongoDBDatabaseResource
+    from ._models import MongoIndex
+    from ._models import MongoIndexKeys
+    from ._models import MongoIndexOptions
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import PartitionMetric
+    from ._models import PartitionUsage
+    from ._models import PercentileMetric
+    from ._models import PercentileMetricValue
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateEndpointProperty
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkServiceConnectionStateProperty
+    from ._models import ProxyResource
+    from ._models import RegionForOnlineOffline
+    from ._models import Resource
+    from ._models import SqlContainerCreateUpdateParameters
+    from ._models import SqlContainerGetResults
+    from ._models import SqlContainerResource
+    from ._models import SqlDatabaseCreateUpdateParameters
+    from ._models import SqlDatabaseGetResults
+    from ._models import SqlDatabaseResource
+    from ._models import SqlStoredProcedureCreateUpdateParameters
+    from ._models import SqlStoredProcedureGetResults
+    from ._models import SqlStoredProcedureResource
+    from ._models import SqlTriggerCreateUpdateParameters
+    from ._models import SqlTriggerGetResults
+    from ._models import SqlTriggerResource
+    from ._models import SqlUserDefinedFunctionCreateUpdateParameters
+    from ._models import SqlUserDefinedFunctionGetResults
+    from ._models import SqlUserDefinedFunctionResource
+    from ._models import TableCreateUpdateParameters
+    from ._models import TableGetResults
+    from ._models import TableResource
+    from ._models import ThroughputSettingsGetResults
+    from ._models import ThroughputSettingsResource
+    from ._models import ThroughputSettingsUpdateParameters
+    from ._models import TrackedResource
+    from ._models import UniqueKey
+    from ._models import UniqueKeyPolicy
+    from ._models import Usage
+    from ._models import VirtualNetworkRule
+from ._paged_models import CassandraKeyspaceGetResultsPaged
+from ._paged_models import CassandraTableGetResultsPaged
+from ._paged_models import DatabaseAccountGetResultsPaged
+from ._paged_models import GremlinDatabaseGetResultsPaged
+from ._paged_models import GremlinGraphGetResultsPaged
+from ._paged_models import MetricDefinitionPaged
+from ._paged_models import MetricPaged
+from ._paged_models import MongoDBCollectionGetResultsPaged
+from ._paged_models import MongoDBDatabaseGetResultsPaged
+from ._paged_models import OperationPaged
+from ._paged_models import PartitionMetricPaged
+from ._paged_models import PartitionUsagePaged
+from ._paged_models import PercentileMetricPaged
+from ._paged_models import PrivateEndpointConnectionPaged
+from ._paged_models import PrivateLinkResourcePaged
+from ._paged_models import SqlContainerGetResultsPaged
+from ._paged_models import SqlDatabaseGetResultsPaged
+from ._paged_models import SqlStoredProcedureGetResultsPaged
+from ._paged_models import SqlTriggerGetResultsPaged
+from ._paged_models import SqlUserDefinedFunctionGetResultsPaged
+from ._paged_models import TableGetResultsPaged
+from ._paged_models import UsagePaged
+from ._cosmos_db_management_client_enums import (
     DatabaseAccountKind,
     DatabaseAccountOfferType,
     DefaultConsistencyLevel,
+    ConnectorOffer,
     IndexingMode,
     DataType,
     IndexKind,
     PartitionKind,
     ConflictResolutionMode,
+    TriggerType,
+    TriggerOperation,
     KeyKind,
     UnitType,
     PrimaryAggregationType,
 )
 
 __all__ = [
-    'ConsistencyPolicy',
+    'ARMProxyResource',
+    'ARMResourceProperties',
+    'AzureEntityResource',
     'Capability',
-    'Location',
-    'FailoverPolicy',
-    'VirtualNetworkRule',
-    'DatabaseAccount',
-    'SqlDatabase',
-    'Indexes',
-    'IncludedPath',
-    'ExcludedPath',
-    'IndexingPolicy',
-    'ContainerPartitionKey',
-    'UniqueKey',
-    'UniqueKeyPolicy',
-    'ConflictResolutionPolicy',
-    'SqlContainer',
-    'MongoDBDatabase',
-    'MongoDBCollection',
-    'Table',
-    'CassandraKeyspace',
-    'CassandraTable',
-    'GremlinDatabase',
-    'GremlinGraph',
-    'ErrorResponse', 'ErrorResponseException',
-    'FailoverPolicies',
-    'RegionForOnlineOffline',
-    'Resource',
-    'ExtendedResourceProperties',
-    'DatabaseAccountCreateUpdateParameters',
-    'DatabaseAccountPatchParameters',
-    'DatabaseAccountListReadOnlyKeysResult',
-    'DatabaseAccountListKeysResult',
-    'DatabaseAccountConnectionString',
-    'DatabaseAccountListConnectionStringsResult',
-    'DatabaseAccountRegenerateKeyParameters',
-    'SqlDatabaseResource',
-    'SqlDatabaseCreateUpdateParameters',
-    'SqlContainerResource',
-    'SqlContainerCreateUpdateParameters',
-    'MongoDBDatabaseResource',
-    'MongoDBDatabaseCreateUpdateParameters',
-    'MongoIndexKeys',
-    'MongoIndexOptions',
-    'MongoIndex',
-    'MongoDBCollectionResource',
-    'MongoDBCollectionCreateUpdateParameters',
-    'TableResource',
-    'TableCreateUpdateParameters',
-    'CassandraKeyspaceResource',
     'CassandraKeyspaceCreateUpdateParameters',
-    'Column',
+    'CassandraKeyspaceGetResults',
+    'CassandraKeyspaceResource',
     'CassandraPartitionKey',
-    'ClusterKey',
     'CassandraSchema',
-    'CassandraTableResource',
     'CassandraTableCreateUpdateParameters',
-    'GremlinDatabaseResource',
+    'CassandraTableGetResults',
+    'CassandraTableResource',
+    'ClusterKey',
+    'Column',
+    'ConflictResolutionPolicy',
+    'ConsistencyPolicy',
+    'ContainerPartitionKey',
+    'DatabaseAccountConnectionString',
+    'DatabaseAccountCreateUpdateParameters',
+    'DatabaseAccountGetResults',
+    'DatabaseAccountListConnectionStringsResult',
+    'DatabaseAccountListKeysResult',
+    'DatabaseAccountListReadOnlyKeysResult',
+    'DatabaseAccountRegenerateKeyParameters',
+    'DatabaseAccountUpdateParameters',
+    'ErrorResponse', 'ErrorResponseException',
+    'ExcludedPath',
+    'ExtendedResourceProperties',
+    'FailoverPolicies',
+    'FailoverPolicy',
     'GremlinDatabaseCreateUpdateParameters',
-    'GremlinGraphResource',
+    'GremlinDatabaseGetResults',
+    'GremlinDatabaseResource',
     'GremlinGraphCreateUpdateParameters',
-    'OperationDisplay',
-    'Operation',
-    'MetricName',
-    'Usage',
-    'PartitionUsage',
+    'GremlinGraphGetResults',
+    'GremlinGraphResource',
+    'IncludedPath',
+    'Indexes',
+    'IndexingPolicy',
+    'Location',
+    'Metric',
     'MetricAvailability',
     'MetricDefinition',
+    'MetricName',
     'MetricValue',
-    'Metric',
-    'PercentileMetricValue',
-    'PercentileMetric',
+    'MongoDBCollectionCreateUpdateParameters',
+    'MongoDBCollectionGetResults',
+    'MongoDBCollectionResource',
+    'MongoDBDatabaseCreateUpdateParameters',
+    'MongoDBDatabaseGetResults',
+    'MongoDBDatabaseResource',
+    'MongoIndex',
+    'MongoIndexKeys',
+    'MongoIndexOptions',
+    'Operation',
+    'OperationDisplay',
     'PartitionMetric',
-    'DatabaseAccountPaged',
+    'PartitionUsage',
+    'PercentileMetric',
+    'PercentileMetricValue',
+    'PrivateEndpointConnection',
+    'PrivateEndpointProperty',
+    'PrivateLinkResource',
+    'PrivateLinkServiceConnectionStateProperty',
+    'ProxyResource',
+    'RegionForOnlineOffline',
+    'Resource',
+    'SqlContainerCreateUpdateParameters',
+    'SqlContainerGetResults',
+    'SqlContainerResource',
+    'SqlDatabaseCreateUpdateParameters',
+    'SqlDatabaseGetResults',
+    'SqlDatabaseResource',
+    'SqlStoredProcedureCreateUpdateParameters',
+    'SqlStoredProcedureGetResults',
+    'SqlStoredProcedureResource',
+    'SqlTriggerCreateUpdateParameters',
+    'SqlTriggerGetResults',
+    'SqlTriggerResource',
+    'SqlUserDefinedFunctionCreateUpdateParameters',
+    'SqlUserDefinedFunctionGetResults',
+    'SqlUserDefinedFunctionResource',
+    'TableCreateUpdateParameters',
+    'TableGetResults',
+    'TableResource',
+    'ThroughputSettingsGetResults',
+    'ThroughputSettingsResource',
+    'ThroughputSettingsUpdateParameters',
+    'TrackedResource',
+    'UniqueKey',
+    'UniqueKeyPolicy',
+    'Usage',
+    'VirtualNetworkRule',
+    'DatabaseAccountGetResultsPaged',
     'MetricPaged',
     'UsagePaged',
     'MetricDefinitionPaged',
-    'SqlDatabasePaged',
-    'SqlContainerPaged',
-    'MongoDBDatabasePaged',
-    'MongoDBCollectionPaged',
-    'TablePaged',
-    'CassandraKeyspacePaged',
-    'CassandraTablePaged',
-    'GremlinDatabasePaged',
-    'GremlinGraphPaged',
     'OperationPaged',
     'PercentileMetricPaged',
     'PartitionMetricPaged',
     'PartitionUsagePaged',
+    'SqlDatabaseGetResultsPaged',
+    'SqlContainerGetResultsPaged',
+    'SqlStoredProcedureGetResultsPaged',
+    'SqlUserDefinedFunctionGetResultsPaged',
+    'SqlTriggerGetResultsPaged',
+    'MongoDBDatabaseGetResultsPaged',
+    'MongoDBCollectionGetResultsPaged',
+    'TableGetResultsPaged',
+    'CassandraKeyspaceGetResultsPaged',
+    'CassandraTableGetResultsPaged',
+    'GremlinDatabaseGetResultsPaged',
+    'GremlinGraphGetResultsPaged',
+    'PrivateLinkResourcePaged',
+    'PrivateEndpointConnectionPaged',
     'DatabaseAccountKind',
     'DatabaseAccountOfferType',
     'DefaultConsistencyLevel',
+    'ConnectorOffer',
     'IndexingMode',
     'DataType',
     'IndexKind',
     'PartitionKind',
     'ConflictResolutionMode',
+    'TriggerType',
+    'TriggerOperation',
     'KeyKind',
     'UnitType',
     'PrimaryAggregationType',

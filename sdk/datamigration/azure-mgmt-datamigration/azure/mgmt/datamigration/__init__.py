@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_migration_service_client import DataMigrationServiceClient
-from .version import VERSION
+from ._configuration import DataMigrationServiceClientConfiguration
+from ._data_migration_service_client import DataMigrationServiceClient
+__all__ = ['DataMigrationServiceClient', 'DataMigrationServiceClientConfiguration']
 
-__all__ = ['DataMigrationServiceClient']
+from .version import VERSION
 
 __version__ = VERSION
 

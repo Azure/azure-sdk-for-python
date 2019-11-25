@@ -10,23 +10,23 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .feature_properties_py3 import FeatureProperties
-    from .feature_result_py3 import FeatureResult
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
+    from ._models_py3 import FeatureProperties
+    from ._models_py3 import FeatureResult
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
 except (SyntaxError, ImportError):
-    from .feature_properties import FeatureProperties
-    from .feature_result import FeatureResult
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-from .operation_paged import OperationPaged
-from .feature_result_paged import FeatureResultPaged
+    from ._models import FeatureProperties
+    from ._models import FeatureResult
+    from ._models import Operation
+    from ._models import OperationDisplay
+from ._paged_models import FeatureResultPaged
+from ._paged_models import OperationPaged
 
 __all__ = [
     'FeatureProperties',
     'FeatureResult',
-    'OperationDisplay',
     'Operation',
+    'OperationDisplay',
     'OperationPaged',
     'FeatureResultPaged',
 ]

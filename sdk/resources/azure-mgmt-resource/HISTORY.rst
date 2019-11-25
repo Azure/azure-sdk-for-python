@@ -3,6 +3,122 @@
 Release History
 ===============
 
+6.0.0 (2019-11-01)
+++++++++++++++++++
+
+**Features**
+
+- Model PolicySetDefinition has a new parameter policy_definition_groups
+
+**Breaking changes**
+
+- Operation DeploymentsOperations.validate_at_tenant_scope has a new signature
+- Operation DeploymentsOperations.create_or_update_at_management_group_scope has a new signature
+- Operation DeploymentsOperations.validate_at_management_group_scope has a new signature
+- Operation DeploymentsOperations.create_or_update_at_tenant_scope has a new signature
+- Model PolicyDefinitionReference has a new signature
+
+5.1.0 (2019-10-04)
+++++++++++++++++++
+
+**Features**
+
+- Added operation DeploymentsOperations.what_if
+- Added operation DeploymentsOperations.what_if_at_subscription_scope
+
+5.0.0 (2019-09-22)
+++++++++++++++++++
+
+**Features**
+
+- Model DeploymentValidateResult has a new parameter error
+- Model Subscription has a new parameter managed_by_tenants
+
+**Breaking changes**
+
+- Model Application no longer has parameter ui_definition_uri
+- Model ApplicationPatchable no longer has parameter ui_definition_uri
+- Model TenantIdDescription no longer has parameter display_name
+- Model TenantIdDescription no longer has parameter domains
+
+4.0.0 (2019-09-03)
+++++++++++++++++++
+
+**Features**
+
+- Model PolicyAssignment has a new parameter enforcement_mode
+- Added operation DeploymentOperations.get_at_scope
+- Added operation DeploymentOperations.list_at_tenant_scope
+- Added operation DeploymentOperations.get_at_tenant_scope
+- Added operation DeploymentOperations.list_at_scope
+- Added operation DeploymentsOperations.create_or_update_at_tenant_scope
+- Added operation DeploymentsOperations.list_at_tenant_scope
+- Added operation DeploymentsOperations.delete_at_scope
+- Added operation DeploymentsOperations.cancel_at_tenant_scope
+- Added operation DeploymentsOperations.list_at_scope
+- Added operation DeploymentsOperations.get_at_scope
+- Added operation DeploymentsOperations.export_template_at_tenant_scope
+- Added operation DeploymentsOperations.validate_at_scope
+- Added operation DeploymentsOperations.delete_at_tenant_scope
+- Added operation DeploymentsOperations.export_template_at_scope
+- Added operation DeploymentsOperations.validate_at_tenant_scope
+- Added operation DeploymentsOperations.create_or_update_at_scope
+- Added operation DeploymentsOperations.check_existence_at_tenant_scope
+- Added operation DeploymentsOperations.check_existence_at_scope
+- Added operation DeploymentsOperations.cancel_at_scope
+- Added operation DeploymentsOperations.get_at_tenant_scope
+- Added operation DeploymentsOperations.calculate_template_hash
+- Added operation ProvidersOperations.list_at_tenant_scope
+- Added operation ProvidersOperations.get_at_tenant_scope
+
+**Breaking changes**
+
+- Model DeploymentValidateResult no longer has parameter error
+- Model ErrorResponse has a new signature
+
+3.1.0 (2019-07-20)
+++++++++++++++++++
+
+**Features**
+
+- Model TenantIdDescription has a new parameter domains
+- Model TenantIdDescription has a new parameter display_name
+
+3.0.0 (2019-06-13)
+++++++++++++++++++
+
+**Features**
+
+- Model Provider has a new parameter registration_policy
+- Model ProviderResourceType has a new parameter capabilities
+- Model DeploymentOperationProperties has a new parameter duration
+- Model DeploymentPropertiesExtended has a new parameter duration
+- Added operation DeploymentOperations.get_at_management_group_scope
+- Added operation DeploymentOperations.list_at_management_group_scope
+- Added operation DeploymentsOperations.export_template_at_management_group_scope
+- Added operation DeploymentsOperations.create_or_update_at_management_group_scope
+- Added operation DeploymentsOperations.list_at_management_group_scope
+- Added operation DeploymentsOperations.get_at_management_group_scope
+- Added operation DeploymentsOperations.check_existence_at_management_group_scope
+- Added operation DeploymentsOperations.cancel_at_management_group_scope
+- Added operation DeploymentsOperations.delete_at_management_group_scope
+- Added operation DeploymentsOperations.validate_at_management_group_scope
+
+- Policy default API version is now 2018-05-01
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes if you were importing from the v20xx_yy_zz API folders.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+The following applies for all client and namespaces, we take ResourceManagementClient and "resources" as example:
+- ResourceManagementClient cannot be imported from `azure.mgmt.resource.resources.v20xx_yy_zz.resource_management_client` anymore (import from `azure.mgmt.resource.resources.v20xx_yy_zz` works like before)
+- ResourceManagementClientConfiguration import has been moved from `azure.mgmt.resource.resources.v20xx_yy_zz.resource_management_client` to `azure.mgmt.resource.resources.v20xx_yy_zz`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.resource.resources.v20xx_yy_zz.models.my_class` (import from `azure.mgmt.resource.resources.v20xx_yy_zz.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.resource.resources.v20xx_yy_zz.operations.my_class_operations` (import from `azure.mgmt.resource.resources.v20xx_yy_zz.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
 2.2.0 (2019-05-23)
 ++++++++++++++++++
 

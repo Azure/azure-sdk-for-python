@@ -2352,6 +2352,10 @@ class BackendAddressPool(SubResource):
     :ivar outbound_rule: Gets outbound rules that use this backend address
      pool.
     :vartype outbound_rule: ~azure.mgmt.network.v2018_07_01.models.SubResource
+    :ivar outbound_rules: Gets outbound rules that use this backend address
+     pool.
+    :vartype outbound_rules:
+     list[~azure.mgmt.network.v2018_07_01.models.SubResource]
     :param provisioning_state: Get provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
@@ -2367,6 +2371,7 @@ class BackendAddressPool(SubResource):
         'backend_ip_configurations': {'readonly': True},
         'load_balancing_rules': {'readonly': True},
         'outbound_rule': {'readonly': True},
+        'outbound_rules': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2374,6 +2379,7 @@ class BackendAddressPool(SubResource):
         'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
         'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
         'outbound_rule': {'key': 'properties.outboundRule', 'type': 'SubResource'},
+        'outbound_rules': {'key': 'properties.outboundRules', 'type': '[SubResource]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -2384,6 +2390,7 @@ class BackendAddressPool(SubResource):
         self.backend_ip_configurations = None
         self.load_balancing_rules = None
         self.outbound_rule = None
+        self.outbound_rules = None
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag
@@ -6501,7 +6508,7 @@ class OperationPropertiesFormatServiceSpecification(Model):
 
 
 class OutboundRule(SubResource):
-    """Outbound pool of the load balancer.
+    """Outbound rule of the load balancer.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -7285,6 +7292,10 @@ class PublicIPPrefix(Resource):
     :param public_ip_addresses: The list of all referenced PublicIPAddresses
     :type public_ip_addresses:
      list[~azure.mgmt.network.v2018_07_01.models.ReferencedPublicIpAddress]
+    :ivar load_balancer_frontend_ip_configuration: The reference to load
+     balancer frontend IP configuration associated with the public IP prefix.
+    :vartype load_balancer_frontend_ip_configuration:
+     ~azure.mgmt.network.v2018_07_01.models.SubResource
     :param resource_guid: The resource GUID property of the public IP prefix
      resource.
     :type resource_guid: str
@@ -7302,6 +7313,7 @@ class PublicIPPrefix(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'load_balancer_frontend_ip_configuration': {'readonly': True},
     }
 
     _attribute_map = {
@@ -7316,6 +7328,7 @@ class PublicIPPrefix(Resource):
         'prefix_length': {'key': 'properties.prefixLength', 'type': 'int'},
         'ip_prefix': {'key': 'properties.ipPrefix', 'type': 'str'},
         'public_ip_addresses': {'key': 'properties.publicIPAddresses', 'type': '[ReferencedPublicIpAddress]'},
+        'load_balancer_frontend_ip_configuration': {'key': 'properties.loadBalancerFrontendIpConfiguration', 'type': 'SubResource'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -7330,6 +7343,7 @@ class PublicIPPrefix(Resource):
         self.prefix_length = prefix_length
         self.ip_prefix = ip_prefix
         self.public_ip_addresses = public_ip_addresses
+        self.load_balancer_frontend_ip_configuration = None
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
         self.etag = etag
@@ -9825,7 +9839,7 @@ class VpnClientRootCertificate(SubResource):
         self.etag = etag
 
 
-class VpnConnection(Resource):
+class VpnConnection(SubResource):
     """VpnConnection Resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -9833,14 +9847,6 @@ class VpnConnection(Resource):
 
     :param id: Resource ID.
     :type id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     :param remote_vpn_site: Id of the connected vpn site.
     :type remote_vpn_site: ~azure.mgmt.network.v2018_07_01.models.SubResource
     :param routing_weight: routing weight for vpn connection.
@@ -9867,14 +9873,15 @@ class VpnConnection(Resource):
      Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :type provisioning_state: str or
      ~azure.mgmt.network.v2018_07_01.models.ProvisioningState
+    :param name: The name of the resource that is unique within a resource
+     group. This name can be used to access the resource.
+    :type name: str
     :ivar etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :vartype etag: str
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'ingress_bytes_transferred': {'readonly': True},
         'egress_bytes_transferred': {'readonly': True},
         'connection_bandwidth_in_mbps': {'readonly': True},
@@ -9883,10 +9890,6 @@ class VpnConnection(Resource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'remote_vpn_site': {'key': 'properties.remoteVpnSite', 'type': 'SubResource'},
         'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
         'connection_status': {'key': 'properties.connectionStatus', 'type': 'str'},
@@ -9897,11 +9900,12 @@ class VpnConnection(Resource):
         'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool'},
         'ipsec_policies': {'key': 'properties.ipsecPolicies', 'type': '[IpsecPolicy]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, remote_vpn_site=None, routing_weight: int=None, connection_status=None, shared_key: str=None, enable_bgp: bool=None, ipsec_policies=None, provisioning_state=None, **kwargs) -> None:
-        super(VpnConnection, self).__init__(id=id, location=location, tags=tags, **kwargs)
+    def __init__(self, *, id: str=None, remote_vpn_site=None, routing_weight: int=None, connection_status=None, shared_key: str=None, enable_bgp: bool=None, ipsec_policies=None, provisioning_state=None, name: str=None, **kwargs) -> None:
+        super(VpnConnection, self).__init__(id=id, **kwargs)
         self.remote_vpn_site = remote_vpn_site
         self.routing_weight = routing_weight
         self.connection_status = connection_status
@@ -9912,6 +9916,7 @@ class VpnConnection(Resource):
         self.enable_bgp = enable_bgp
         self.ipsec_policies = ipsec_policies
         self.provisioning_state = provisioning_state
+        self.name = name
         self.etag = None
 
 

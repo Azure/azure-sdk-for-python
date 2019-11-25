@@ -10,10 +10,10 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .classic_administrator_py3 import ClassicAdministrator
+    from ._models_py3 import ClassicAdministrator
 except (SyntaxError, ImportError):
-    from .classic_administrator import ClassicAdministrator
-from .classic_administrator_paged import ClassicAdministratorPaged
+    from ._models import ClassicAdministrator
+from ._paged_models import ClassicAdministratorPaged
 
 __all__ = [
     'ClassicAdministrator',

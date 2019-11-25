@@ -10,175 +10,175 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .instance_view_status_py3 import InstanceViewStatus
-    from .sub_resource_py3 import SubResource
-    from .availability_set_py3 import AvailabilitySet
-    from .virtual_machine_size_py3 import VirtualMachineSize
-    from .virtual_machine_extension_image_py3 import VirtualMachineExtensionImage
-    from .virtual_machine_image_resource_py3 import VirtualMachineImageResource
-    from .virtual_machine_extension_instance_view_py3 import VirtualMachineExtensionInstanceView
-    from .virtual_machine_extension_py3 import VirtualMachineExtension
-    from .virtual_machine_extension_update_py3 import VirtualMachineExtensionUpdate
-    from .virtual_machine_extensions_list_result_py3 import VirtualMachineExtensionsListResult
-    from .purchase_plan_py3 import PurchasePlan
-    from .os_disk_image_py3 import OSDiskImage
-    from .data_disk_image_py3 import DataDiskImage
-    from .virtual_machine_image_py3 import VirtualMachineImage
-    from .usage_name_py3 import UsageName
-    from .usage_py3 import Usage
-    from .virtual_machine_capture_parameters_py3 import VirtualMachineCaptureParameters
-    from .virtual_machine_capture_result_py3 import VirtualMachineCaptureResult
-    from .plan_py3 import Plan
-    from .hardware_profile_py3 import HardwareProfile
-    from .image_reference_py3 import ImageReference
-    from .key_vault_secret_reference_py3 import KeyVaultSecretReference
-    from .key_vault_key_reference_py3 import KeyVaultKeyReference
-    from .disk_encryption_settings_py3 import DiskEncryptionSettings
-    from .virtual_hard_disk_py3 import VirtualHardDisk
-    from .os_disk_py3 import OSDisk
-    from .data_disk_py3 import DataDisk
-    from .storage_profile_py3 import StorageProfile
-    from .additional_unattend_content_py3 import AdditionalUnattendContent
-    from .win_rm_listener_py3 import WinRMListener
-    from .win_rm_configuration_py3 import WinRMConfiguration
-    from .windows_configuration_py3 import WindowsConfiguration
-    from .ssh_public_key_py3 import SshPublicKey
-    from .ssh_configuration_py3 import SshConfiguration
-    from .linux_configuration_py3 import LinuxConfiguration
-    from .vault_certificate_py3 import VaultCertificate
-    from .vault_secret_group_py3 import VaultSecretGroup
-    from .os_profile_py3 import OSProfile
-    from .network_interface_reference_py3 import NetworkInterfaceReference
-    from .network_profile_py3 import NetworkProfile
-    from .boot_diagnostics_py3 import BootDiagnostics
-    from .diagnostics_profile_py3 import DiagnosticsProfile
-    from .virtual_machine_extension_handler_instance_view_py3 import VirtualMachineExtensionHandlerInstanceView
-    from .virtual_machine_agent_instance_view_py3 import VirtualMachineAgentInstanceView
-    from .disk_instance_view_py3 import DiskInstanceView
-    from .boot_diagnostics_instance_view_py3 import BootDiagnosticsInstanceView
-    from .virtual_machine_identity_py3 import VirtualMachineIdentity
-    from .virtual_machine_instance_view_py3 import VirtualMachineInstanceView
-    from .virtual_machine_py3 import VirtualMachine
-    from .sku_py3 import Sku
-    from .upgrade_policy_py3 import UpgradePolicy
-    from .virtual_machine_scale_set_identity_py3 import VirtualMachineScaleSetIdentity
-    from .virtual_machine_scale_set_os_profile_py3 import VirtualMachineScaleSetOSProfile
-    from .virtual_machine_scale_set_os_disk_py3 import VirtualMachineScaleSetOSDisk
-    from .virtual_machine_scale_set_storage_profile_py3 import VirtualMachineScaleSetStorageProfile
-    from .api_entity_reference_py3 import ApiEntityReference
-    from .virtual_machine_scale_set_ip_configuration_py3 import VirtualMachineScaleSetIPConfiguration
-    from .virtual_machine_scale_set_network_configuration_py3 import VirtualMachineScaleSetNetworkConfiguration
-    from .virtual_machine_scale_set_network_profile_py3 import VirtualMachineScaleSetNetworkProfile
-    from .virtual_machine_scale_set_extension_py3 import VirtualMachineScaleSetExtension
-    from .virtual_machine_scale_set_extension_profile_py3 import VirtualMachineScaleSetExtensionProfile
-    from .virtual_machine_scale_set_vm_profile_py3 import VirtualMachineScaleSetVMProfile
-    from .virtual_machine_scale_set_py3 import VirtualMachineScaleSet
-    from .virtual_machine_scale_set_vm_instance_ids_py3 import VirtualMachineScaleSetVMInstanceIDs
-    from .virtual_machine_scale_set_vm_instance_required_ids_py3 import VirtualMachineScaleSetVMInstanceRequiredIDs
-    from .virtual_machine_status_code_count_py3 import VirtualMachineStatusCodeCount
-    from .virtual_machine_scale_set_instance_view_statuses_summary_py3 import VirtualMachineScaleSetInstanceViewStatusesSummary
-    from .virtual_machine_scale_set_vm_extensions_summary_py3 import VirtualMachineScaleSetVMExtensionsSummary
-    from .virtual_machine_scale_set_instance_view_py3 import VirtualMachineScaleSetInstanceView
-    from .virtual_machine_scale_set_sku_capacity_py3 import VirtualMachineScaleSetSkuCapacity
-    from .virtual_machine_scale_set_sku_py3 import VirtualMachineScaleSetSku
-    from .virtual_machine_scale_set_vm_instance_view_py3 import VirtualMachineScaleSetVMInstanceView
-    from .virtual_machine_scale_set_vm_py3 import VirtualMachineScaleSetVM
-    from .api_error_base_py3 import ApiErrorBase
-    from .inner_error_py3 import InnerError
-    from .api_error_py3 import ApiError
-    from .compute_long_running_operation_properties_py3 import ComputeLongRunningOperationProperties
-    from .resource_py3 import Resource
-    from .update_resource_py3 import UpdateResource
-    from .operation_status_response_py3 import OperationStatusResponse
+    from ._models_py3 import AdditionalUnattendContent
+    from ._models_py3 import ApiEntityReference
+    from ._models_py3 import ApiError
+    from ._models_py3 import ApiErrorBase
+    from ._models_py3 import AvailabilitySet
+    from ._models_py3 import BootDiagnostics
+    from ._models_py3 import BootDiagnosticsInstanceView
+    from ._models_py3 import ComputeLongRunningOperationProperties
+    from ._models_py3 import DataDisk
+    from ._models_py3 import DataDiskImage
+    from ._models_py3 import DiagnosticsProfile
+    from ._models_py3 import DiskEncryptionSettings
+    from ._models_py3 import DiskInstanceView
+    from ._models_py3 import HardwareProfile
+    from ._models_py3 import ImageReference
+    from ._models_py3 import InnerError
+    from ._models_py3 import InstanceViewStatus
+    from ._models_py3 import KeyVaultKeyReference
+    from ._models_py3 import KeyVaultSecretReference
+    from ._models_py3 import LinuxConfiguration
+    from ._models_py3 import NetworkInterfaceReference
+    from ._models_py3 import NetworkProfile
+    from ._models_py3 import OperationStatusResponse
+    from ._models_py3 import OSDisk
+    from ._models_py3 import OSDiskImage
+    from ._models_py3 import OSProfile
+    from ._models_py3 import Plan
+    from ._models_py3 import PurchasePlan
+    from ._models_py3 import Resource
+    from ._models_py3 import Sku
+    from ._models_py3 import SshConfiguration
+    from ._models_py3 import SshPublicKey
+    from ._models_py3 import StorageProfile
+    from ._models_py3 import SubResource
+    from ._models_py3 import UpdateResource
+    from ._models_py3 import UpgradePolicy
+    from ._models_py3 import Usage
+    from ._models_py3 import UsageName
+    from ._models_py3 import VaultCertificate
+    from ._models_py3 import VaultSecretGroup
+    from ._models_py3 import VirtualHardDisk
+    from ._models_py3 import VirtualMachine
+    from ._models_py3 import VirtualMachineAgentInstanceView
+    from ._models_py3 import VirtualMachineCaptureParameters
+    from ._models_py3 import VirtualMachineCaptureResult
+    from ._models_py3 import VirtualMachineExtension
+    from ._models_py3 import VirtualMachineExtensionHandlerInstanceView
+    from ._models_py3 import VirtualMachineExtensionImage
+    from ._models_py3 import VirtualMachineExtensionInstanceView
+    from ._models_py3 import VirtualMachineExtensionsListResult
+    from ._models_py3 import VirtualMachineExtensionUpdate
+    from ._models_py3 import VirtualMachineIdentity
+    from ._models_py3 import VirtualMachineImage
+    from ._models_py3 import VirtualMachineImageResource
+    from ._models_py3 import VirtualMachineInstanceView
+    from ._models_py3 import VirtualMachineScaleSet
+    from ._models_py3 import VirtualMachineScaleSetExtension
+    from ._models_py3 import VirtualMachineScaleSetExtensionProfile
+    from ._models_py3 import VirtualMachineScaleSetIdentity
+    from ._models_py3 import VirtualMachineScaleSetInstanceView
+    from ._models_py3 import VirtualMachineScaleSetInstanceViewStatusesSummary
+    from ._models_py3 import VirtualMachineScaleSetIPConfiguration
+    from ._models_py3 import VirtualMachineScaleSetNetworkConfiguration
+    from ._models_py3 import VirtualMachineScaleSetNetworkProfile
+    from ._models_py3 import VirtualMachineScaleSetOSDisk
+    from ._models_py3 import VirtualMachineScaleSetOSProfile
+    from ._models_py3 import VirtualMachineScaleSetSku
+    from ._models_py3 import VirtualMachineScaleSetSkuCapacity
+    from ._models_py3 import VirtualMachineScaleSetStorageProfile
+    from ._models_py3 import VirtualMachineScaleSetVM
+    from ._models_py3 import VirtualMachineScaleSetVMExtensionsSummary
+    from ._models_py3 import VirtualMachineScaleSetVMInstanceIDs
+    from ._models_py3 import VirtualMachineScaleSetVMInstanceRequiredIDs
+    from ._models_py3 import VirtualMachineScaleSetVMInstanceView
+    from ._models_py3 import VirtualMachineScaleSetVMProfile
+    from ._models_py3 import VirtualMachineSize
+    from ._models_py3 import VirtualMachineStatusCodeCount
+    from ._models_py3 import WindowsConfiguration
+    from ._models_py3 import WinRMConfiguration
+    from ._models_py3 import WinRMListener
 except (SyntaxError, ImportError):
-    from .instance_view_status import InstanceViewStatus
-    from .sub_resource import SubResource
-    from .availability_set import AvailabilitySet
-    from .virtual_machine_size import VirtualMachineSize
-    from .virtual_machine_extension_image import VirtualMachineExtensionImage
-    from .virtual_machine_image_resource import VirtualMachineImageResource
-    from .virtual_machine_extension_instance_view import VirtualMachineExtensionInstanceView
-    from .virtual_machine_extension import VirtualMachineExtension
-    from .virtual_machine_extension_update import VirtualMachineExtensionUpdate
-    from .virtual_machine_extensions_list_result import VirtualMachineExtensionsListResult
-    from .purchase_plan import PurchasePlan
-    from .os_disk_image import OSDiskImage
-    from .data_disk_image import DataDiskImage
-    from .virtual_machine_image import VirtualMachineImage
-    from .usage_name import UsageName
-    from .usage import Usage
-    from .virtual_machine_capture_parameters import VirtualMachineCaptureParameters
-    from .virtual_machine_capture_result import VirtualMachineCaptureResult
-    from .plan import Plan
-    from .hardware_profile import HardwareProfile
-    from .image_reference import ImageReference
-    from .key_vault_secret_reference import KeyVaultSecretReference
-    from .key_vault_key_reference import KeyVaultKeyReference
-    from .disk_encryption_settings import DiskEncryptionSettings
-    from .virtual_hard_disk import VirtualHardDisk
-    from .os_disk import OSDisk
-    from .data_disk import DataDisk
-    from .storage_profile import StorageProfile
-    from .additional_unattend_content import AdditionalUnattendContent
-    from .win_rm_listener import WinRMListener
-    from .win_rm_configuration import WinRMConfiguration
-    from .windows_configuration import WindowsConfiguration
-    from .ssh_public_key import SshPublicKey
-    from .ssh_configuration import SshConfiguration
-    from .linux_configuration import LinuxConfiguration
-    from .vault_certificate import VaultCertificate
-    from .vault_secret_group import VaultSecretGroup
-    from .os_profile import OSProfile
-    from .network_interface_reference import NetworkInterfaceReference
-    from .network_profile import NetworkProfile
-    from .boot_diagnostics import BootDiagnostics
-    from .diagnostics_profile import DiagnosticsProfile
-    from .virtual_machine_extension_handler_instance_view import VirtualMachineExtensionHandlerInstanceView
-    from .virtual_machine_agent_instance_view import VirtualMachineAgentInstanceView
-    from .disk_instance_view import DiskInstanceView
-    from .boot_diagnostics_instance_view import BootDiagnosticsInstanceView
-    from .virtual_machine_identity import VirtualMachineIdentity
-    from .virtual_machine_instance_view import VirtualMachineInstanceView
-    from .virtual_machine import VirtualMachine
-    from .sku import Sku
-    from .upgrade_policy import UpgradePolicy
-    from .virtual_machine_scale_set_identity import VirtualMachineScaleSetIdentity
-    from .virtual_machine_scale_set_os_profile import VirtualMachineScaleSetOSProfile
-    from .virtual_machine_scale_set_os_disk import VirtualMachineScaleSetOSDisk
-    from .virtual_machine_scale_set_storage_profile import VirtualMachineScaleSetStorageProfile
-    from .api_entity_reference import ApiEntityReference
-    from .virtual_machine_scale_set_ip_configuration import VirtualMachineScaleSetIPConfiguration
-    from .virtual_machine_scale_set_network_configuration import VirtualMachineScaleSetNetworkConfiguration
-    from .virtual_machine_scale_set_network_profile import VirtualMachineScaleSetNetworkProfile
-    from .virtual_machine_scale_set_extension import VirtualMachineScaleSetExtension
-    from .virtual_machine_scale_set_extension_profile import VirtualMachineScaleSetExtensionProfile
-    from .virtual_machine_scale_set_vm_profile import VirtualMachineScaleSetVMProfile
-    from .virtual_machine_scale_set import VirtualMachineScaleSet
-    from .virtual_machine_scale_set_vm_instance_ids import VirtualMachineScaleSetVMInstanceIDs
-    from .virtual_machine_scale_set_vm_instance_required_ids import VirtualMachineScaleSetVMInstanceRequiredIDs
-    from .virtual_machine_status_code_count import VirtualMachineStatusCodeCount
-    from .virtual_machine_scale_set_instance_view_statuses_summary import VirtualMachineScaleSetInstanceViewStatusesSummary
-    from .virtual_machine_scale_set_vm_extensions_summary import VirtualMachineScaleSetVMExtensionsSummary
-    from .virtual_machine_scale_set_instance_view import VirtualMachineScaleSetInstanceView
-    from .virtual_machine_scale_set_sku_capacity import VirtualMachineScaleSetSkuCapacity
-    from .virtual_machine_scale_set_sku import VirtualMachineScaleSetSku
-    from .virtual_machine_scale_set_vm_instance_view import VirtualMachineScaleSetVMInstanceView
-    from .virtual_machine_scale_set_vm import VirtualMachineScaleSetVM
-    from .api_error_base import ApiErrorBase
-    from .inner_error import InnerError
-    from .api_error import ApiError
-    from .compute_long_running_operation_properties import ComputeLongRunningOperationProperties
-    from .resource import Resource
-    from .update_resource import UpdateResource
-    from .operation_status_response import OperationStatusResponse
-from .availability_set_paged import AvailabilitySetPaged
-from .virtual_machine_size_paged import VirtualMachineSizePaged
-from .virtual_machine_paged import VirtualMachinePaged
-from .usage_paged import UsagePaged
-from .virtual_machine_scale_set_paged import VirtualMachineScaleSetPaged
-from .virtual_machine_scale_set_sku_paged import VirtualMachineScaleSetSkuPaged
-from .virtual_machine_scale_set_vm_paged import VirtualMachineScaleSetVMPaged
-from .compute_management_client_enums import (
+    from ._models import AdditionalUnattendContent
+    from ._models import ApiEntityReference
+    from ._models import ApiError
+    from ._models import ApiErrorBase
+    from ._models import AvailabilitySet
+    from ._models import BootDiagnostics
+    from ._models import BootDiagnosticsInstanceView
+    from ._models import ComputeLongRunningOperationProperties
+    from ._models import DataDisk
+    from ._models import DataDiskImage
+    from ._models import DiagnosticsProfile
+    from ._models import DiskEncryptionSettings
+    from ._models import DiskInstanceView
+    from ._models import HardwareProfile
+    from ._models import ImageReference
+    from ._models import InnerError
+    from ._models import InstanceViewStatus
+    from ._models import KeyVaultKeyReference
+    from ._models import KeyVaultSecretReference
+    from ._models import LinuxConfiguration
+    from ._models import NetworkInterfaceReference
+    from ._models import NetworkProfile
+    from ._models import OperationStatusResponse
+    from ._models import OSDisk
+    from ._models import OSDiskImage
+    from ._models import OSProfile
+    from ._models import Plan
+    from ._models import PurchasePlan
+    from ._models import Resource
+    from ._models import Sku
+    from ._models import SshConfiguration
+    from ._models import SshPublicKey
+    from ._models import StorageProfile
+    from ._models import SubResource
+    from ._models import UpdateResource
+    from ._models import UpgradePolicy
+    from ._models import Usage
+    from ._models import UsageName
+    from ._models import VaultCertificate
+    from ._models import VaultSecretGroup
+    from ._models import VirtualHardDisk
+    from ._models import VirtualMachine
+    from ._models import VirtualMachineAgentInstanceView
+    from ._models import VirtualMachineCaptureParameters
+    from ._models import VirtualMachineCaptureResult
+    from ._models import VirtualMachineExtension
+    from ._models import VirtualMachineExtensionHandlerInstanceView
+    from ._models import VirtualMachineExtensionImage
+    from ._models import VirtualMachineExtensionInstanceView
+    from ._models import VirtualMachineExtensionsListResult
+    from ._models import VirtualMachineExtensionUpdate
+    from ._models import VirtualMachineIdentity
+    from ._models import VirtualMachineImage
+    from ._models import VirtualMachineImageResource
+    from ._models import VirtualMachineInstanceView
+    from ._models import VirtualMachineScaleSet
+    from ._models import VirtualMachineScaleSetExtension
+    from ._models import VirtualMachineScaleSetExtensionProfile
+    from ._models import VirtualMachineScaleSetIdentity
+    from ._models import VirtualMachineScaleSetInstanceView
+    from ._models import VirtualMachineScaleSetInstanceViewStatusesSummary
+    from ._models import VirtualMachineScaleSetIPConfiguration
+    from ._models import VirtualMachineScaleSetNetworkConfiguration
+    from ._models import VirtualMachineScaleSetNetworkProfile
+    from ._models import VirtualMachineScaleSetOSDisk
+    from ._models import VirtualMachineScaleSetOSProfile
+    from ._models import VirtualMachineScaleSetSku
+    from ._models import VirtualMachineScaleSetSkuCapacity
+    from ._models import VirtualMachineScaleSetStorageProfile
+    from ._models import VirtualMachineScaleSetVM
+    from ._models import VirtualMachineScaleSetVMExtensionsSummary
+    from ._models import VirtualMachineScaleSetVMInstanceIDs
+    from ._models import VirtualMachineScaleSetVMInstanceRequiredIDs
+    from ._models import VirtualMachineScaleSetVMInstanceView
+    from ._models import VirtualMachineScaleSetVMProfile
+    from ._models import VirtualMachineSize
+    from ._models import VirtualMachineStatusCodeCount
+    from ._models import WindowsConfiguration
+    from ._models import WinRMConfiguration
+    from ._models import WinRMListener
+from ._paged_models import AvailabilitySetPaged
+from ._paged_models import UsagePaged
+from ._paged_models import VirtualMachinePaged
+from ._paged_models import VirtualMachineScaleSetPaged
+from ._paged_models import VirtualMachineScaleSetSkuPaged
+from ._paged_models import VirtualMachineScaleSetVMPaged
+from ._paged_models import VirtualMachineSizePaged
+from ._compute_management_client_enums import (
     StatusLevelTypes,
     OperatingSystemTypes,
     VirtualMachineSizeTypes,
@@ -195,86 +195,86 @@ from .compute_management_client_enums import (
 )
 
 __all__ = [
-    'InstanceViewStatus',
-    'SubResource',
+    'AdditionalUnattendContent',
+    'ApiEntityReference',
+    'ApiError',
+    'ApiErrorBase',
     'AvailabilitySet',
-    'VirtualMachineSize',
-    'VirtualMachineExtensionImage',
-    'VirtualMachineImageResource',
-    'VirtualMachineExtensionInstanceView',
-    'VirtualMachineExtension',
-    'VirtualMachineExtensionUpdate',
-    'VirtualMachineExtensionsListResult',
-    'PurchasePlan',
-    'OSDiskImage',
+    'BootDiagnostics',
+    'BootDiagnosticsInstanceView',
+    'ComputeLongRunningOperationProperties',
+    'DataDisk',
     'DataDiskImage',
-    'VirtualMachineImage',
-    'UsageName',
-    'Usage',
-    'VirtualMachineCaptureParameters',
-    'VirtualMachineCaptureResult',
-    'Plan',
+    'DiagnosticsProfile',
+    'DiskEncryptionSettings',
+    'DiskInstanceView',
     'HardwareProfile',
     'ImageReference',
-    'KeyVaultSecretReference',
+    'InnerError',
+    'InstanceViewStatus',
     'KeyVaultKeyReference',
-    'DiskEncryptionSettings',
-    'VirtualHardDisk',
-    'OSDisk',
-    'DataDisk',
-    'StorageProfile',
-    'AdditionalUnattendContent',
-    'WinRMListener',
-    'WinRMConfiguration',
-    'WindowsConfiguration',
-    'SshPublicKey',
-    'SshConfiguration',
+    'KeyVaultSecretReference',
     'LinuxConfiguration',
-    'VaultCertificate',
-    'VaultSecretGroup',
-    'OSProfile',
     'NetworkInterfaceReference',
     'NetworkProfile',
-    'BootDiagnostics',
-    'DiagnosticsProfile',
-    'VirtualMachineExtensionHandlerInstanceView',
-    'VirtualMachineAgentInstanceView',
-    'DiskInstanceView',
-    'BootDiagnosticsInstanceView',
-    'VirtualMachineIdentity',
-    'VirtualMachineInstanceView',
-    'VirtualMachine',
+    'OperationStatusResponse',
+    'OSDisk',
+    'OSDiskImage',
+    'OSProfile',
+    'Plan',
+    'PurchasePlan',
+    'Resource',
     'Sku',
+    'SshConfiguration',
+    'SshPublicKey',
+    'StorageProfile',
+    'SubResource',
+    'UpdateResource',
     'UpgradePolicy',
+    'Usage',
+    'UsageName',
+    'VaultCertificate',
+    'VaultSecretGroup',
+    'VirtualHardDisk',
+    'VirtualMachine',
+    'VirtualMachineAgentInstanceView',
+    'VirtualMachineCaptureParameters',
+    'VirtualMachineCaptureResult',
+    'VirtualMachineExtension',
+    'VirtualMachineExtensionHandlerInstanceView',
+    'VirtualMachineExtensionImage',
+    'VirtualMachineExtensionInstanceView',
+    'VirtualMachineExtensionsListResult',
+    'VirtualMachineExtensionUpdate',
+    'VirtualMachineIdentity',
+    'VirtualMachineImage',
+    'VirtualMachineImageResource',
+    'VirtualMachineInstanceView',
+    'VirtualMachineScaleSet',
+    'VirtualMachineScaleSetExtension',
+    'VirtualMachineScaleSetExtensionProfile',
     'VirtualMachineScaleSetIdentity',
-    'VirtualMachineScaleSetOSProfile',
-    'VirtualMachineScaleSetOSDisk',
-    'VirtualMachineScaleSetStorageProfile',
-    'ApiEntityReference',
+    'VirtualMachineScaleSetInstanceView',
+    'VirtualMachineScaleSetInstanceViewStatusesSummary',
     'VirtualMachineScaleSetIPConfiguration',
     'VirtualMachineScaleSetNetworkConfiguration',
     'VirtualMachineScaleSetNetworkProfile',
-    'VirtualMachineScaleSetExtension',
-    'VirtualMachineScaleSetExtensionProfile',
-    'VirtualMachineScaleSetVMProfile',
-    'VirtualMachineScaleSet',
+    'VirtualMachineScaleSetOSDisk',
+    'VirtualMachineScaleSetOSProfile',
+    'VirtualMachineScaleSetSku',
+    'VirtualMachineScaleSetSkuCapacity',
+    'VirtualMachineScaleSetStorageProfile',
+    'VirtualMachineScaleSetVM',
+    'VirtualMachineScaleSetVMExtensionsSummary',
     'VirtualMachineScaleSetVMInstanceIDs',
     'VirtualMachineScaleSetVMInstanceRequiredIDs',
-    'VirtualMachineStatusCodeCount',
-    'VirtualMachineScaleSetInstanceViewStatusesSummary',
-    'VirtualMachineScaleSetVMExtensionsSummary',
-    'VirtualMachineScaleSetInstanceView',
-    'VirtualMachineScaleSetSkuCapacity',
-    'VirtualMachineScaleSetSku',
     'VirtualMachineScaleSetVMInstanceView',
-    'VirtualMachineScaleSetVM',
-    'ApiErrorBase',
-    'InnerError',
-    'ApiError',
-    'ComputeLongRunningOperationProperties',
-    'Resource',
-    'UpdateResource',
-    'OperationStatusResponse',
+    'VirtualMachineScaleSetVMProfile',
+    'VirtualMachineSize',
+    'VirtualMachineStatusCodeCount',
+    'WindowsConfiguration',
+    'WinRMConfiguration',
+    'WinRMListener',
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
     'VirtualMachinePaged',

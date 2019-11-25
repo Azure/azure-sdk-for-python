@@ -1,7 +1,10 @@
-﻿# coding=utf-8
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from .v2019_04_01.models import *
+from .v2018_07_01.models import *
+from .v2019_02_01.models import *
+from .v2019_07_01.models import *
+from .v2019_09_01.models import *

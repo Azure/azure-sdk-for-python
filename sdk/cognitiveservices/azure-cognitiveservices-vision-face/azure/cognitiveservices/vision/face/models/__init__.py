@@ -10,157 +10,158 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .error_py3 import Error
-    from .api_error_py3 import APIError, APIErrorException
-    from .face_rectangle_py3 import FaceRectangle
-    from .coordinate_py3 import Coordinate
-    from .face_landmarks_py3 import FaceLandmarks
-    from .facial_hair_py3 import FacialHair
-    from .head_pose_py3 import HeadPose
-    from .emotion_py3 import Emotion
-    from .hair_color_py3 import HairColor
-    from .hair_py3 import Hair
-    from .makeup_py3 import Makeup
-    from .occlusion_py3 import Occlusion
-    from .accessory_py3 import Accessory
-    from .blur_py3 import Blur
-    from .exposure_py3 import Exposure
-    from .noise_py3 import Noise
-    from .face_attributes_py3 import FaceAttributes
-    from .detected_face_py3 import DetectedFace
-    from .find_similar_request_py3 import FindSimilarRequest
-    from .similar_face_py3 import SimilarFace
-    from .group_request_py3 import GroupRequest
-    from .group_result_py3 import GroupResult
-    from .identify_request_py3 import IdentifyRequest
-    from .identify_candidate_py3 import IdentifyCandidate
-    from .identify_result_py3 import IdentifyResult
-    from .verify_face_to_person_request_py3 import VerifyFaceToPersonRequest
-    from .verify_face_to_face_request_py3 import VerifyFaceToFaceRequest
-    from .verify_result_py3 import VerifyResult
-    from .persisted_face_py3 import PersistedFace
-    from .face_list_py3 import FaceList
-    from .person_group_py3 import PersonGroup
-    from .person_py3 import Person
-    from .large_face_list_py3 import LargeFaceList
-    from .large_person_group_py3 import LargePersonGroup
-    from .update_face_request_py3 import UpdateFaceRequest
-    from .training_status_py3 import TrainingStatus
-    from .name_and_user_data_contract_py3 import NameAndUserDataContract
-    from .meta_data_contract_py3 import MetaDataContract
-    from .apply_snapshot_request_py3 import ApplySnapshotRequest
-    from .snapshot_py3 import Snapshot
-    from .take_snapshot_request_py3 import TakeSnapshotRequest
-    from .update_snapshot_request_py3 import UpdateSnapshotRequest
-    from .operation_status_py3 import OperationStatus
-    from .image_url_py3 import ImageUrl
+    from ._models_py3 import Accessory
+    from ._models_py3 import APIError, APIErrorException
+    from ._models_py3 import ApplySnapshotRequest
+    from ._models_py3 import Blur
+    from ._models_py3 import Coordinate
+    from ._models_py3 import DetectedFace
+    from ._models_py3 import Emotion
+    from ._models_py3 import Error
+    from ._models_py3 import Exposure
+    from ._models_py3 import FaceAttributes
+    from ._models_py3 import FaceLandmarks
+    from ._models_py3 import FaceList
+    from ._models_py3 import FaceRectangle
+    from ._models_py3 import FacialHair
+    from ._models_py3 import FindSimilarRequest
+    from ._models_py3 import GroupRequest
+    from ._models_py3 import GroupResult
+    from ._models_py3 import Hair
+    from ._models_py3 import HairColor
+    from ._models_py3 import HeadPose
+    from ._models_py3 import IdentifyCandidate
+    from ._models_py3 import IdentifyRequest
+    from ._models_py3 import IdentifyResult
+    from ._models_py3 import ImageUrl
+    from ._models_py3 import LargeFaceList
+    from ._models_py3 import LargePersonGroup
+    from ._models_py3 import Makeup
+    from ._models_py3 import MetaDataContract
+    from ._models_py3 import NameAndUserDataContract
+    from ._models_py3 import Noise
+    from ._models_py3 import Occlusion
+    from ._models_py3 import OperationStatus
+    from ._models_py3 import PersistedFace
+    from ._models_py3 import Person
+    from ._models_py3 import PersonGroup
+    from ._models_py3 import SimilarFace
+    from ._models_py3 import Snapshot
+    from ._models_py3 import TakeSnapshotRequest
+    from ._models_py3 import TrainingStatus
+    from ._models_py3 import UpdateFaceRequest
+    from ._models_py3 import UpdateSnapshotRequest
+    from ._models_py3 import VerifyFaceToFaceRequest
+    from ._models_py3 import VerifyFaceToPersonRequest
+    from ._models_py3 import VerifyResult
 except (SyntaxError, ImportError):
-    from .error import Error
-    from .api_error import APIError, APIErrorException
-    from .face_rectangle import FaceRectangle
-    from .coordinate import Coordinate
-    from .face_landmarks import FaceLandmarks
-    from .facial_hair import FacialHair
-    from .head_pose import HeadPose
-    from .emotion import Emotion
-    from .hair_color import HairColor
-    from .hair import Hair
-    from .makeup import Makeup
-    from .occlusion import Occlusion
-    from .accessory import Accessory
-    from .blur import Blur
-    from .exposure import Exposure
-    from .noise import Noise
-    from .face_attributes import FaceAttributes
-    from .detected_face import DetectedFace
-    from .find_similar_request import FindSimilarRequest
-    from .similar_face import SimilarFace
-    from .group_request import GroupRequest
-    from .group_result import GroupResult
-    from .identify_request import IdentifyRequest
-    from .identify_candidate import IdentifyCandidate
-    from .identify_result import IdentifyResult
-    from .verify_face_to_person_request import VerifyFaceToPersonRequest
-    from .verify_face_to_face_request import VerifyFaceToFaceRequest
-    from .verify_result import VerifyResult
-    from .persisted_face import PersistedFace
-    from .face_list import FaceList
-    from .person_group import PersonGroup
-    from .person import Person
-    from .large_face_list import LargeFaceList
-    from .large_person_group import LargePersonGroup
-    from .update_face_request import UpdateFaceRequest
-    from .training_status import TrainingStatus
-    from .name_and_user_data_contract import NameAndUserDataContract
-    from .meta_data_contract import MetaDataContract
-    from .apply_snapshot_request import ApplySnapshotRequest
-    from .snapshot import Snapshot
-    from .take_snapshot_request import TakeSnapshotRequest
-    from .update_snapshot_request import UpdateSnapshotRequest
-    from .operation_status import OperationStatus
-    from .image_url import ImageUrl
-from .face_client_enums import (
-    RecognitionModel,
+    from ._models import Accessory
+    from ._models import APIError, APIErrorException
+    from ._models import ApplySnapshotRequest
+    from ._models import Blur
+    from ._models import Coordinate
+    from ._models import DetectedFace
+    from ._models import Emotion
+    from ._models import Error
+    from ._models import Exposure
+    from ._models import FaceAttributes
+    from ._models import FaceLandmarks
+    from ._models import FaceList
+    from ._models import FaceRectangle
+    from ._models import FacialHair
+    from ._models import FindSimilarRequest
+    from ._models import GroupRequest
+    from ._models import GroupResult
+    from ._models import Hair
+    from ._models import HairColor
+    from ._models import HeadPose
+    from ._models import IdentifyCandidate
+    from ._models import IdentifyRequest
+    from ._models import IdentifyResult
+    from ._models import ImageUrl
+    from ._models import LargeFaceList
+    from ._models import LargePersonGroup
+    from ._models import Makeup
+    from ._models import MetaDataContract
+    from ._models import NameAndUserDataContract
+    from ._models import Noise
+    from ._models import Occlusion
+    from ._models import OperationStatus
+    from ._models import PersistedFace
+    from ._models import Person
+    from ._models import PersonGroup
+    from ._models import SimilarFace
+    from ._models import Snapshot
+    from ._models import TakeSnapshotRequest
+    from ._models import TrainingStatus
+    from ._models import UpdateFaceRequest
+    from ._models import UpdateSnapshotRequest
+    from ._models import VerifyFaceToFaceRequest
+    from ._models import VerifyFaceToPersonRequest
+    from ._models import VerifyResult
+from ._face_client_enums import (
+    AccessoryType,
+    BlurLevel,
+    DetectionModel,
+    ExposureLevel,
+    FaceAttributeType,
+    FindSimilarMatchMode,
     Gender,
     GlassesType,
     HairColorType,
-    AccessoryType,
-    BlurLevel,
-    ExposureLevel,
     NoiseLevel,
-    FindSimilarMatchMode,
-    TrainingStatusType,
+    OperationStatusType,
+    RecognitionModel,
     SnapshotApplyMode,
     SnapshotObjectType,
-    OperationStatusType,
-    FaceAttributeType,
+    TrainingStatusType,
 )
 
 __all__ = [
-    'Error',
-    'APIError', 'APIErrorException',
-    'FaceRectangle',
-    'Coordinate',
-    'FaceLandmarks',
-    'FacialHair',
-    'HeadPose',
-    'Emotion',
-    'HairColor',
-    'Hair',
-    'Makeup',
-    'Occlusion',
     'Accessory',
+    'APIError', 'APIErrorException',
+    'ApplySnapshotRequest',
     'Blur',
-    'Exposure',
-    'Noise',
-    'FaceAttributes',
+    'Coordinate',
     'DetectedFace',
+    'Emotion',
+    'Error',
+    'Exposure',
+    'FaceAttributes',
+    'FaceLandmarks',
+    'FaceList',
+    'FaceRectangle',
+    'FacialHair',
     'FindSimilarRequest',
-    'SimilarFace',
     'GroupRequest',
     'GroupResult',
-    'IdentifyRequest',
+    'Hair',
+    'HairColor',
+    'HeadPose',
     'IdentifyCandidate',
+    'IdentifyRequest',
     'IdentifyResult',
-    'VerifyFaceToPersonRequest',
-    'VerifyFaceToFaceRequest',
-    'VerifyResult',
-    'PersistedFace',
-    'FaceList',
-    'PersonGroup',
-    'Person',
+    'ImageUrl',
     'LargeFaceList',
     'LargePersonGroup',
-    'UpdateFaceRequest',
-    'TrainingStatus',
-    'NameAndUserDataContract',
+    'Makeup',
     'MetaDataContract',
-    'ApplySnapshotRequest',
+    'NameAndUserDataContract',
+    'Noise',
+    'Occlusion',
+    'OperationStatus',
+    'PersistedFace',
+    'Person',
+    'PersonGroup',
+    'SimilarFace',
     'Snapshot',
     'TakeSnapshotRequest',
+    'TrainingStatus',
+    'UpdateFaceRequest',
     'UpdateSnapshotRequest',
-    'OperationStatus',
-    'ImageUrl',
+    'VerifyFaceToFaceRequest',
+    'VerifyFaceToPersonRequest',
+    'VerifyResult',
     'RecognitionModel',
     'Gender',
     'GlassesType',
@@ -175,4 +176,5 @@ __all__ = [
     'SnapshotObjectType',
     'OperationStatusType',
     'FaceAttributeType',
+    'DetectionModel',
 ]

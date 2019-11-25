@@ -58,7 +58,7 @@ def test_qsession_by_session_client_conn_str_receive_handler_peeklock(live_servi
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=partitioned_session_queue,
-        debug=True)
+        debug=False)
     queue_client.get_properties()
 
     session_id = str(uuid.uuid4())
@@ -85,7 +85,7 @@ def test_qsession_by_queue_client_conn_str_receive_handler_receiveanddelete(live
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=partitioned_session_queue,
-        debug=True)
+        debug=False)
     queue_client.get_properties()
 
     session_id = str(uuid.uuid4())
@@ -118,7 +118,7 @@ def test_qsession_by_session_client_conn_str_receive_handler_with_stop(live_serv
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=partitioned_session_queue,
-        debug=True)
+        debug=False)
 
     session_id = str(uuid.uuid4())
     with queue_client.get_sender(session=session_id) as sender:
@@ -156,7 +156,7 @@ def test_qsession_by_session_client_conn_str_receive_handler_with_no_session(liv
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=partitioned_session_queue,
-        debug=True)
+        debug=False)
 
     session = queue_client.get_receiver(session=NEXT_AVAILABLE, idle_timeout=5)
     with pytest.raises(NoActiveSession):
@@ -167,7 +167,7 @@ def test_qsession_by_session_client_conn_str_receive_handler_with_inactive_sessi
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=partitioned_session_queue,
-        debug=True)
+        debug=False)
 
     session_id = str(uuid.uuid4())
     messages = []
@@ -184,7 +184,7 @@ def test_qsession_by_servicebus_client_iter_messages_with_retrieve_deferred_rece
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(partitioned_session_queue)
     deferred_messages = []
@@ -223,7 +223,7 @@ def test_qsession_by_servicebus_client_iter_messages_with_retrieve_deferred_rece
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(partitioned_session_queue)
     deferred_messages = []
@@ -267,7 +267,7 @@ def test_qsession_by_servicebus_client_iter_messages_with_retrieve_deferred_rece
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(partitioned_session_queue)
     deferred_messages = []
@@ -303,7 +303,7 @@ def test_qsession_by_servicebus_client_iter_messages_with_retrieve_deferred_clie
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(partitioned_session_queue)
     deferred_messages = []
@@ -336,7 +336,7 @@ def test_qsession_by_servicebus_client_fetch_next_with_retrieve_deadletter(live_
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(partitioned_session_queue)
     session_id = str(uuid.uuid4())
@@ -373,7 +373,7 @@ def test_qsession_by_servicebus_client_browse_messages_client(live_servicebus_co
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(partitioned_session_queue)
     session_id = str(uuid.uuid4())
@@ -401,7 +401,7 @@ def test_qsession_by_servicebus_client_browse_messages_with_receiver(live_servic
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(partitioned_session_queue)
     session_id = str(uuid.uuid4())
@@ -426,7 +426,7 @@ def test_qsession_by_servicebus_client_renew_client_locks(live_servicebus_config
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(partitioned_session_queue)
     session_id = str(uuid.uuid4())
@@ -467,7 +467,7 @@ def test_qsession_by_conn_str_receive_handler_with_autolockrenew(live_servicebus
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=partitioned_session_queue,
-        debug=True)
+        debug=False)
 
     with queue_client.get_sender(session=session_id) as sender:
         for i in range(10):
@@ -517,7 +517,7 @@ def test_qsession_message_connection_closed(live_servicebus_config, partitioned_
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     session_id = str(uuid.uuid4())
     queue_client = client.get_queue(partitioned_session_queue)
@@ -540,7 +540,7 @@ def test_qsession_message_expiry(live_servicebus_config, partitioned_session_que
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
     session_id = str(uuid.uuid4())
     queue_client = client.get_queue(partitioned_session_queue)
     
@@ -577,11 +577,11 @@ def test_qsession_schedule_message(live_servicebus_config, partitioned_session_q
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
     import uuid
     session_id = str(uuid.uuid4())
     queue_client = client.get_queue(partitioned_session_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
     with queue_client.get_receiver(session=session_id) as receiver:
         with queue_client.get_sender(session=session_id) as sender:
             content = str(uuid.uuid4())
@@ -611,11 +611,11 @@ def test_qsession_schedule_multiple_messages(live_servicebus_config, partitioned
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
     import uuid
     session_id = str(uuid.uuid4())
     queue_client = client.get_queue(partitioned_session_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
 
     with queue_client.get_receiver(session=session_id, prefetch=20) as receiver:
         with queue_client.get_sender(session=session_id) as sender:
@@ -647,11 +647,11 @@ def test_qsession_cancel_scheduled_messages(live_servicebus_config, partitioned_
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     session_id = str(uuid.uuid4())
     queue_client = client.get_queue(partitioned_session_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
 
     with queue_client.get_sender(session=session_id) as sender:
         message_id = uuid.uuid4()
@@ -677,7 +677,7 @@ def test_qsession_get_set_state_with_receiver(live_servicebus_config, partitione
     queue_client = QueueClient.from_connection_string(
         live_servicebus_config['conn_str'],
         name=partitioned_session_queue,
-        debug=True)
+        debug=False)
     queue_client.get_properties()
     session_id = str(uuid.uuid4())
     with queue_client.get_sender(session=session_id) as sender:
@@ -702,7 +702,7 @@ def test_qsession_by_servicebus_client_list_sessions_with_receiver(live_serviceb
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(partitioned_session_queue)
     sessions = []
@@ -731,7 +731,7 @@ def test_qsession_by_servicebus_client_list_sessions_with_client(live_servicebus
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(partitioned_session_queue)
     sessions = []
@@ -776,7 +776,7 @@ def test_qsession_by_servicebus_client_session_pool(live_servicebus_config, part
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(partitioned_session_queue)
     sessions = [str(uuid.uuid4()) for i in range(concurrent_receivers)]

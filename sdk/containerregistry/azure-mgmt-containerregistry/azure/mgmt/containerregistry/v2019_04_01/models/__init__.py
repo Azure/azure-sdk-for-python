@@ -10,193 +10,195 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .import_source_credentials_py3 import ImportSourceCredentials
-    from .import_source_py3 import ImportSource
-    from .import_image_parameters_py3 import ImportImageParameters
-    from .registry_name_check_request_py3 import RegistryNameCheckRequest
-    from .registry_name_status_py3 import RegistryNameStatus
-    from .operation_display_definition_py3 import OperationDisplayDefinition
-    from .operation_metric_specification_definition_py3 import OperationMetricSpecificationDefinition
-    from .operation_service_specification_definition_py3 import OperationServiceSpecificationDefinition
-    from .operation_definition_py3 import OperationDefinition
-    from .sku_py3 import Sku
-    from .status_py3 import Status
-    from .storage_account_properties_py3 import StorageAccountProperties
-    from .virtual_network_rule_py3 import VirtualNetworkRule
-    from .ip_rule_py3 import IPRule
-    from .network_rule_set_py3 import NetworkRuleSet
-    from .registry_py3 import Registry
-    from .registry_update_parameters_py3 import RegistryUpdateParameters
-    from .registry_password_py3 import RegistryPassword
-    from .registry_list_credentials_result_py3 import RegistryListCredentialsResult
-    from .regenerate_credential_parameters_py3 import RegenerateCredentialParameters
-    from .registry_usage_py3 import RegistryUsage
-    from .registry_usage_list_result_py3 import RegistryUsageListResult
-    from .quarantine_policy_py3 import QuarantinePolicy
-    from .trust_policy_py3 import TrustPolicy
-    from .registry_policies_py3 import RegistryPolicies
-    from .replication_py3 import Replication
-    from .replication_update_parameters_py3 import ReplicationUpdateParameters
-    from .webhook_py3 import Webhook
-    from .webhook_create_parameters_py3 import WebhookCreateParameters
-    from .webhook_update_parameters_py3 import WebhookUpdateParameters
-    from .event_info_py3 import EventInfo
-    from .callback_config_py3 import CallbackConfig
-    from .target_py3 import Target
-    from .request_py3 import Request
-    from .actor_py3 import Actor
-    from .source_py3 import Source
-    from .event_content_py3 import EventContent
-    from .event_request_message_py3 import EventRequestMessage
-    from .event_response_message_py3 import EventResponseMessage
-    from .event_py3 import Event
-    from .resource_py3 import Resource
-    from .run_request_py3 import RunRequest
-    from .image_descriptor_py3 import ImageDescriptor
-    from .image_update_trigger_py3 import ImageUpdateTrigger
-    from .source_trigger_descriptor_py3 import SourceTriggerDescriptor
-    from .platform_properties_py3 import PlatformProperties
-    from .agent_properties_py3 import AgentProperties
-    from .run_py3 import Run
-    from .source_upload_definition_py3 import SourceUploadDefinition
-    from .run_filter_py3 import RunFilter
-    from .run_update_parameters_py3 import RunUpdateParameters
-    from .run_get_log_result_py3 import RunGetLogResult
-    from .user_identity_properties_py3 import UserIdentityProperties
-    from .identity_properties_py3 import IdentityProperties
-    from .base_image_dependency_py3 import BaseImageDependency
-    from .task_step_properties_py3 import TaskStepProperties
-    from .timer_trigger_py3 import TimerTrigger
-    from .auth_info_py3 import AuthInfo
-    from .source_properties_py3 import SourceProperties
-    from .source_trigger_py3 import SourceTrigger
-    from .base_image_trigger_py3 import BaseImageTrigger
-    from .trigger_properties_py3 import TriggerProperties
-    from .source_registry_credentials_py3 import SourceRegistryCredentials
-    from .secret_object_py3 import SecretObject
-    from .custom_registry_credentials_py3 import CustomRegistryCredentials
-    from .credentials_py3 import Credentials
-    from .task_py3 import Task
-    from .platform_update_parameters_py3 import PlatformUpdateParameters
-    from .task_step_update_parameters_py3 import TaskStepUpdateParameters
-    from .timer_trigger_update_parameters_py3 import TimerTriggerUpdateParameters
-    from .auth_info_update_parameters_py3 import AuthInfoUpdateParameters
-    from .source_update_parameters_py3 import SourceUpdateParameters
-    from .source_trigger_update_parameters_py3 import SourceTriggerUpdateParameters
-    from .base_image_trigger_update_parameters_py3 import BaseImageTriggerUpdateParameters
-    from .trigger_update_parameters_py3 import TriggerUpdateParameters
-    from .task_update_parameters_py3 import TaskUpdateParameters
-    from .proxy_resource_py3 import ProxyResource
-    from .argument_py3 import Argument
-    from .docker_build_request_py3 import DockerBuildRequest
-    from .set_value_py3 import SetValue
-    from .file_task_run_request_py3 import FileTaskRunRequest
-    from .task_run_request_py3 import TaskRunRequest
-    from .encoded_task_run_request_py3 import EncodedTaskRunRequest
-    from .docker_build_step_py3 import DockerBuildStep
-    from .file_task_step_py3 import FileTaskStep
-    from .encoded_task_step_py3 import EncodedTaskStep
-    from .docker_build_step_update_parameters_py3 import DockerBuildStepUpdateParameters
-    from .file_task_step_update_parameters_py3 import FileTaskStepUpdateParameters
-    from .encoded_task_step_update_parameters_py3 import EncodedTaskStepUpdateParameters
+    from ._models_py3 import Actor
+    from ._models_py3 import AgentProperties
+    from ._models_py3 import Argument
+    from ._models_py3 import AuthInfo
+    from ._models_py3 import AuthInfoUpdateParameters
+    from ._models_py3 import BaseImageDependency
+    from ._models_py3 import BaseImageTrigger
+    from ._models_py3 import BaseImageTriggerUpdateParameters
+    from ._models_py3 import CallbackConfig
+    from ._models_py3 import Credentials
+    from ._models_py3 import CustomRegistryCredentials
+    from ._models_py3 import DockerBuildRequest
+    from ._models_py3 import DockerBuildStep
+    from ._models_py3 import DockerBuildStepUpdateParameters
+    from ._models_py3 import EncodedTaskRunRequest
+    from ._models_py3 import EncodedTaskStep
+    from ._models_py3 import EncodedTaskStepUpdateParameters
+    from ._models_py3 import Event
+    from ._models_py3 import EventContent
+    from ._models_py3 import EventInfo
+    from ._models_py3 import EventRequestMessage
+    from ._models_py3 import EventResponseMessage
+    from ._models_py3 import FileTaskRunRequest
+    from ._models_py3 import FileTaskStep
+    from ._models_py3 import FileTaskStepUpdateParameters
+    from ._models_py3 import IdentityProperties
+    from ._models_py3 import ImageDescriptor
+    from ._models_py3 import ImageUpdateTrigger
+    from ._models_py3 import ImportImageParameters
+    from ._models_py3 import ImportSource
+    from ._models_py3 import ImportSourceCredentials
+    from ._models_py3 import IPRule
+    from ._models_py3 import NetworkRuleSet
+    from ._models_py3 import OperationDefinition
+    from ._models_py3 import OperationDisplayDefinition
+    from ._models_py3 import OperationMetricSpecificationDefinition
+    from ._models_py3 import OperationServiceSpecificationDefinition
+    from ._models_py3 import PlatformProperties
+    from ._models_py3 import PlatformUpdateParameters
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import QuarantinePolicy
+    from ._models_py3 import RegenerateCredentialParameters
+    from ._models_py3 import Registry
+    from ._models_py3 import RegistryListCredentialsResult
+    from ._models_py3 import RegistryNameCheckRequest
+    from ._models_py3 import RegistryNameStatus
+    from ._models_py3 import RegistryPassword
+    from ._models_py3 import RegistryPolicies
+    from ._models_py3 import RegistryUpdateParameters
+    from ._models_py3 import RegistryUsage
+    from ._models_py3 import RegistryUsageListResult
+    from ._models_py3 import Replication
+    from ._models_py3 import ReplicationUpdateParameters
+    from ._models_py3 import Request
+    from ._models_py3 import Resource
+    from ._models_py3 import Run
+    from ._models_py3 import RunFilter
+    from ._models_py3 import RunGetLogResult
+    from ._models_py3 import RunRequest
+    from ._models_py3 import RunUpdateParameters
+    from ._models_py3 import SecretObject
+    from ._models_py3 import SetValue
+    from ._models_py3 import Sku
+    from ._models_py3 import Source
+    from ._models_py3 import SourceProperties
+    from ._models_py3 import SourceRegistryCredentials
+    from ._models_py3 import SourceTrigger
+    from ._models_py3 import SourceTriggerDescriptor
+    from ._models_py3 import SourceTriggerUpdateParameters
+    from ._models_py3 import SourceUpdateParameters
+    from ._models_py3 import SourceUploadDefinition
+    from ._models_py3 import Status
+    from ._models_py3 import StorageAccountProperties
+    from ._models_py3 import Target
+    from ._models_py3 import Task
+    from ._models_py3 import TaskRunRequest
+    from ._models_py3 import TaskStepProperties
+    from ._models_py3 import TaskStepUpdateParameters
+    from ._models_py3 import TaskUpdateParameters
+    from ._models_py3 import TimerTrigger
+    from ._models_py3 import TimerTriggerDescriptor
+    from ._models_py3 import TimerTriggerUpdateParameters
+    from ._models_py3 import TriggerProperties
+    from ._models_py3 import TriggerUpdateParameters
+    from ._models_py3 import TrustPolicy
+    from ._models_py3 import UserIdentityProperties
+    from ._models_py3 import VirtualNetworkRule
+    from ._models_py3 import Webhook
+    from ._models_py3 import WebhookCreateParameters
+    from ._models_py3 import WebhookUpdateParameters
 except (SyntaxError, ImportError):
-    from .import_source_credentials import ImportSourceCredentials
-    from .import_source import ImportSource
-    from .import_image_parameters import ImportImageParameters
-    from .registry_name_check_request import RegistryNameCheckRequest
-    from .registry_name_status import RegistryNameStatus
-    from .operation_display_definition import OperationDisplayDefinition
-    from .operation_metric_specification_definition import OperationMetricSpecificationDefinition
-    from .operation_service_specification_definition import OperationServiceSpecificationDefinition
-    from .operation_definition import OperationDefinition
-    from .sku import Sku
-    from .status import Status
-    from .storage_account_properties import StorageAccountProperties
-    from .virtual_network_rule import VirtualNetworkRule
-    from .ip_rule import IPRule
-    from .network_rule_set import NetworkRuleSet
-    from .registry import Registry
-    from .registry_update_parameters import RegistryUpdateParameters
-    from .registry_password import RegistryPassword
-    from .registry_list_credentials_result import RegistryListCredentialsResult
-    from .regenerate_credential_parameters import RegenerateCredentialParameters
-    from .registry_usage import RegistryUsage
-    from .registry_usage_list_result import RegistryUsageListResult
-    from .quarantine_policy import QuarantinePolicy
-    from .trust_policy import TrustPolicy
-    from .registry_policies import RegistryPolicies
-    from .replication import Replication
-    from .replication_update_parameters import ReplicationUpdateParameters
-    from .webhook import Webhook
-    from .webhook_create_parameters import WebhookCreateParameters
-    from .webhook_update_parameters import WebhookUpdateParameters
-    from .event_info import EventInfo
-    from .callback_config import CallbackConfig
-    from .target import Target
-    from .request import Request
-    from .actor import Actor
-    from .source import Source
-    from .event_content import EventContent
-    from .event_request_message import EventRequestMessage
-    from .event_response_message import EventResponseMessage
-    from .event import Event
-    from .resource import Resource
-    from .run_request import RunRequest
-    from .image_descriptor import ImageDescriptor
-    from .image_update_trigger import ImageUpdateTrigger
-    from .source_trigger_descriptor import SourceTriggerDescriptor
-    from .platform_properties import PlatformProperties
-    from .agent_properties import AgentProperties
-    from .run import Run
-    from .source_upload_definition import SourceUploadDefinition
-    from .run_filter import RunFilter
-    from .run_update_parameters import RunUpdateParameters
-    from .run_get_log_result import RunGetLogResult
-    from .user_identity_properties import UserIdentityProperties
-    from .identity_properties import IdentityProperties
-    from .base_image_dependency import BaseImageDependency
-    from .task_step_properties import TaskStepProperties
-    from .timer_trigger import TimerTrigger
-    from .auth_info import AuthInfo
-    from .source_properties import SourceProperties
-    from .source_trigger import SourceTrigger
-    from .base_image_trigger import BaseImageTrigger
-    from .trigger_properties import TriggerProperties
-    from .source_registry_credentials import SourceRegistryCredentials
-    from .secret_object import SecretObject
-    from .custom_registry_credentials import CustomRegistryCredentials
-    from .credentials import Credentials
-    from .task import Task
-    from .platform_update_parameters import PlatformUpdateParameters
-    from .task_step_update_parameters import TaskStepUpdateParameters
-    from .timer_trigger_update_parameters import TimerTriggerUpdateParameters
-    from .auth_info_update_parameters import AuthInfoUpdateParameters
-    from .source_update_parameters import SourceUpdateParameters
-    from .source_trigger_update_parameters import SourceTriggerUpdateParameters
-    from .base_image_trigger_update_parameters import BaseImageTriggerUpdateParameters
-    from .trigger_update_parameters import TriggerUpdateParameters
-    from .task_update_parameters import TaskUpdateParameters
-    from .proxy_resource import ProxyResource
-    from .argument import Argument
-    from .docker_build_request import DockerBuildRequest
-    from .set_value import SetValue
-    from .file_task_run_request import FileTaskRunRequest
-    from .task_run_request import TaskRunRequest
-    from .encoded_task_run_request import EncodedTaskRunRequest
-    from .docker_build_step import DockerBuildStep
-    from .file_task_step import FileTaskStep
-    from .encoded_task_step import EncodedTaskStep
-    from .docker_build_step_update_parameters import DockerBuildStepUpdateParameters
-    from .file_task_step_update_parameters import FileTaskStepUpdateParameters
-    from .encoded_task_step_update_parameters import EncodedTaskStepUpdateParameters
-from .registry_paged import RegistryPaged
-from .operation_definition_paged import OperationDefinitionPaged
-from .replication_paged import ReplicationPaged
-from .webhook_paged import WebhookPaged
-from .event_paged import EventPaged
-from .run_paged import RunPaged
-from .task_paged import TaskPaged
-from .container_registry_management_client_enums import (
+    from ._models import Actor
+    from ._models import AgentProperties
+    from ._models import Argument
+    from ._models import AuthInfo
+    from ._models import AuthInfoUpdateParameters
+    from ._models import BaseImageDependency
+    from ._models import BaseImageTrigger
+    from ._models import BaseImageTriggerUpdateParameters
+    from ._models import CallbackConfig
+    from ._models import Credentials
+    from ._models import CustomRegistryCredentials
+    from ._models import DockerBuildRequest
+    from ._models import DockerBuildStep
+    from ._models import DockerBuildStepUpdateParameters
+    from ._models import EncodedTaskRunRequest
+    from ._models import EncodedTaskStep
+    from ._models import EncodedTaskStepUpdateParameters
+    from ._models import Event
+    from ._models import EventContent
+    from ._models import EventInfo
+    from ._models import EventRequestMessage
+    from ._models import EventResponseMessage
+    from ._models import FileTaskRunRequest
+    from ._models import FileTaskStep
+    from ._models import FileTaskStepUpdateParameters
+    from ._models import IdentityProperties
+    from ._models import ImageDescriptor
+    from ._models import ImageUpdateTrigger
+    from ._models import ImportImageParameters
+    from ._models import ImportSource
+    from ._models import ImportSourceCredentials
+    from ._models import IPRule
+    from ._models import NetworkRuleSet
+    from ._models import OperationDefinition
+    from ._models import OperationDisplayDefinition
+    from ._models import OperationMetricSpecificationDefinition
+    from ._models import OperationServiceSpecificationDefinition
+    from ._models import PlatformProperties
+    from ._models import PlatformUpdateParameters
+    from ._models import ProxyResource
+    from ._models import QuarantinePolicy
+    from ._models import RegenerateCredentialParameters
+    from ._models import Registry
+    from ._models import RegistryListCredentialsResult
+    from ._models import RegistryNameCheckRequest
+    from ._models import RegistryNameStatus
+    from ._models import RegistryPassword
+    from ._models import RegistryPolicies
+    from ._models import RegistryUpdateParameters
+    from ._models import RegistryUsage
+    from ._models import RegistryUsageListResult
+    from ._models import Replication
+    from ._models import ReplicationUpdateParameters
+    from ._models import Request
+    from ._models import Resource
+    from ._models import Run
+    from ._models import RunFilter
+    from ._models import RunGetLogResult
+    from ._models import RunRequest
+    from ._models import RunUpdateParameters
+    from ._models import SecretObject
+    from ._models import SetValue
+    from ._models import Sku
+    from ._models import Source
+    from ._models import SourceProperties
+    from ._models import SourceRegistryCredentials
+    from ._models import SourceTrigger
+    from ._models import SourceTriggerDescriptor
+    from ._models import SourceTriggerUpdateParameters
+    from ._models import SourceUpdateParameters
+    from ._models import SourceUploadDefinition
+    from ._models import Status
+    from ._models import StorageAccountProperties
+    from ._models import Target
+    from ._models import Task
+    from ._models import TaskRunRequest
+    from ._models import TaskStepProperties
+    from ._models import TaskStepUpdateParameters
+    from ._models import TaskUpdateParameters
+    from ._models import TimerTrigger
+    from ._models import TimerTriggerDescriptor
+    from ._models import TimerTriggerUpdateParameters
+    from ._models import TriggerProperties
+    from ._models import TriggerUpdateParameters
+    from ._models import TrustPolicy
+    from ._models import UserIdentityProperties
+    from ._models import VirtualNetworkRule
+    from ._models import Webhook
+    from ._models import WebhookCreateParameters
+    from ._models import WebhookUpdateParameters
+from ._paged_models import EventPaged
+from ._paged_models import OperationDefinitionPaged
+from ._paged_models import RegistryPaged
+from ._paged_models import ReplicationPaged
+from ._paged_models import RunPaged
+from ._paged_models import TaskPaged
+from ._paged_models import WebhookPaged
+from ._container_registry_management_client_enums import (
     ImportMode,
     SkuName,
     SkuTier,
@@ -227,95 +229,96 @@ from .container_registry_management_client_enums import (
 )
 
 __all__ = [
-    'ImportSourceCredentials',
-    'ImportSource',
+    'Actor',
+    'AgentProperties',
+    'Argument',
+    'AuthInfo',
+    'AuthInfoUpdateParameters',
+    'BaseImageDependency',
+    'BaseImageTrigger',
+    'BaseImageTriggerUpdateParameters',
+    'CallbackConfig',
+    'Credentials',
+    'CustomRegistryCredentials',
+    'DockerBuildRequest',
+    'DockerBuildStep',
+    'DockerBuildStepUpdateParameters',
+    'EncodedTaskRunRequest',
+    'EncodedTaskStep',
+    'EncodedTaskStepUpdateParameters',
+    'Event',
+    'EventContent',
+    'EventInfo',
+    'EventRequestMessage',
+    'EventResponseMessage',
+    'FileTaskRunRequest',
+    'FileTaskStep',
+    'FileTaskStepUpdateParameters',
+    'IdentityProperties',
+    'ImageDescriptor',
+    'ImageUpdateTrigger',
     'ImportImageParameters',
-    'RegistryNameCheckRequest',
-    'RegistryNameStatus',
+    'ImportSource',
+    'ImportSourceCredentials',
+    'IPRule',
+    'NetworkRuleSet',
+    'OperationDefinition',
     'OperationDisplayDefinition',
     'OperationMetricSpecificationDefinition',
     'OperationServiceSpecificationDefinition',
-    'OperationDefinition',
-    'Sku',
-    'Status',
-    'StorageAccountProperties',
-    'VirtualNetworkRule',
-    'IPRule',
-    'NetworkRuleSet',
-    'Registry',
-    'RegistryUpdateParameters',
-    'RegistryPassword',
-    'RegistryListCredentialsResult',
+    'PlatformProperties',
+    'PlatformUpdateParameters',
+    'ProxyResource',
+    'QuarantinePolicy',
     'RegenerateCredentialParameters',
+    'Registry',
+    'RegistryListCredentialsResult',
+    'RegistryNameCheckRequest',
+    'RegistryNameStatus',
+    'RegistryPassword',
+    'RegistryPolicies',
+    'RegistryUpdateParameters',
     'RegistryUsage',
     'RegistryUsageListResult',
-    'QuarantinePolicy',
-    'TrustPolicy',
-    'RegistryPolicies',
     'Replication',
     'ReplicationUpdateParameters',
+    'Request',
+    'Resource',
+    'Run',
+    'RunFilter',
+    'RunGetLogResult',
+    'RunRequest',
+    'RunUpdateParameters',
+    'SecretObject',
+    'SetValue',
+    'Sku',
+    'Source',
+    'SourceProperties',
+    'SourceRegistryCredentials',
+    'SourceTrigger',
+    'SourceTriggerDescriptor',
+    'SourceTriggerUpdateParameters',
+    'SourceUpdateParameters',
+    'SourceUploadDefinition',
+    'Status',
+    'StorageAccountProperties',
+    'Target',
+    'Task',
+    'TaskRunRequest',
+    'TaskStepProperties',
+    'TaskStepUpdateParameters',
+    'TaskUpdateParameters',
+    'TimerTrigger',
+    'TimerTriggerDescriptor',
+    'TimerTriggerUpdateParameters',
+    'TriggerProperties',
+    'TriggerUpdateParameters',
+    'TrustPolicy',
+    'UserIdentityProperties',
+    'VirtualNetworkRule',
     'Webhook',
     'WebhookCreateParameters',
     'WebhookUpdateParameters',
-    'EventInfo',
-    'CallbackConfig',
-    'Target',
-    'Request',
-    'Actor',
-    'Source',
-    'EventContent',
-    'EventRequestMessage',
-    'EventResponseMessage',
-    'Event',
-    'Resource',
-    'RunRequest',
-    'ImageDescriptor',
-    'ImageUpdateTrigger',
-    'SourceTriggerDescriptor',
-    'PlatformProperties',
-    'AgentProperties',
-    'Run',
-    'SourceUploadDefinition',
-    'RunFilter',
-    'RunUpdateParameters',
-    'RunGetLogResult',
-    'UserIdentityProperties',
-    'IdentityProperties',
-    'BaseImageDependency',
-    'TaskStepProperties',
-    'TimerTrigger',
-    'AuthInfo',
-    'SourceProperties',
-    'SourceTrigger',
-    'BaseImageTrigger',
-    'TriggerProperties',
-    'SourceRegistryCredentials',
-    'SecretObject',
-    'CustomRegistryCredentials',
-    'Credentials',
-    'Task',
-    'PlatformUpdateParameters',
-    'TaskStepUpdateParameters',
-    'TimerTriggerUpdateParameters',
-    'AuthInfoUpdateParameters',
-    'SourceUpdateParameters',
-    'SourceTriggerUpdateParameters',
-    'BaseImageTriggerUpdateParameters',
-    'TriggerUpdateParameters',
-    'TaskUpdateParameters',
-    'ProxyResource',
-    'Argument',
-    'DockerBuildRequest',
-    'SetValue',
-    'FileTaskRunRequest',
-    'TaskRunRequest',
-    'EncodedTaskRunRequest',
-    'DockerBuildStep',
-    'FileTaskStep',
-    'EncodedTaskStep',
-    'DockerBuildStepUpdateParameters',
-    'FileTaskStepUpdateParameters',
-    'EncodedTaskStepUpdateParameters',
     'RegistryPaged',
     'OperationDefinitionPaged',
     'ReplicationPaged',

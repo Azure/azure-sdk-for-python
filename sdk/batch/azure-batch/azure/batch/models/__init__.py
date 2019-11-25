@@ -9,10 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-
 try:
-    from ._models_py3 import AccountListNodeAgentSkusOptions
     from ._models_py3 import AccountListPoolNodeCountsOptions
+    from ._models_py3 import AccountListSupportedImagesOptions
     from ._models_py3 import AffinityInformation
     from ._models_py3 import ApplicationGetOptions
     from ._models_py3 import ApplicationListOptions
@@ -23,7 +22,9 @@ try:
     from ._models_py3 import AutoScaleRun
     from ._models_py3 import AutoScaleRunError
     from ._models_py3 import AutoUserSpecification
-    from ._models_py3 import BatchError
+    from ._models_py3 import AzureBlobFileSystemConfiguration
+    from ._models_py3 import AzureFileShareConfiguration
+    from ._models_py3 import BatchError, BatchErrorException
     from ._models_py3 import BatchErrorDetail
     from ._models_py3 import Certificate
     from ._models_py3 import CertificateAddOptions
@@ -33,6 +34,7 @@ try:
     from ._models_py3 import CertificateGetOptions
     from ._models_py3 import CertificateListOptions
     from ._models_py3 import CertificateReference
+    from ._models_py3 import CIFSMountConfiguration
     from ._models_py3 import CloudJob
     from ._models_py3 import CloudJobSchedule
     from ._models_py3 import CloudPool
@@ -76,6 +78,7 @@ try:
     from ._models_py3 import FileListFromComputeNodeOptions
     from ._models_py3 import FileListFromTaskOptions
     from ._models_py3 import FileProperties
+    from ._models_py3 import ImageInformation
     from ._models_py3 import ImageReference
     from ._models_py3 import InboundEndpoint
     from ._models_py3 import InboundNATPool
@@ -126,12 +129,13 @@ try:
     from ._models_py3 import JobUpdateParameter
     from ._models_py3 import LinuxUserConfiguration
     from ._models_py3 import MetadataItem
+    from ._models_py3 import MountConfiguration
     from ._models_py3 import MultiInstanceSettings
     from ._models_py3 import NameValuePair
     from ._models_py3 import NetworkConfiguration
     from ._models_py3 import NetworkSecurityGroupRule
+    from ._models_py3 import NFSMountConfiguration
     from ._models_py3 import NodeAgentInformation
-    from ._models_py3 import NodeAgentSku
     from ._models_py3 import NodeCounts
     from ._models_py3 import NodeDisableSchedulingParameter
     from ._models_py3 import NodeFile
@@ -211,10 +215,9 @@ try:
     from ._models_py3 import VirtualMachineConfiguration
     from ._models_py3 import WindowsConfiguration
     from ._models_py3 import WindowsUserConfiguration
-    from ._models_py3 import BatchErrorException
 except (SyntaxError, ImportError):
-    from ._models import AccountListNodeAgentSkusOptions
     from ._models import AccountListPoolNodeCountsOptions
+    from ._models import AccountListSupportedImagesOptions
     from ._models import AffinityInformation
     from ._models import ApplicationGetOptions
     from ._models import ApplicationListOptions
@@ -225,7 +228,9 @@ except (SyntaxError, ImportError):
     from ._models import AutoScaleRun
     from ._models import AutoScaleRunError
     from ._models import AutoUserSpecification
-    from ._models import BatchError
+    from ._models import AzureBlobFileSystemConfiguration
+    from ._models import AzureFileShareConfiguration
+    from ._models import BatchError, BatchErrorException
     from ._models import BatchErrorDetail
     from ._models import Certificate
     from ._models import CertificateAddOptions
@@ -235,6 +240,7 @@ except (SyntaxError, ImportError):
     from ._models import CertificateGetOptions
     from ._models import CertificateListOptions
     from ._models import CertificateReference
+    from ._models import CIFSMountConfiguration
     from ._models import CloudJob
     from ._models import CloudJobSchedule
     from ._models import CloudPool
@@ -278,6 +284,7 @@ except (SyntaxError, ImportError):
     from ._models import FileListFromComputeNodeOptions
     from ._models import FileListFromTaskOptions
     from ._models import FileProperties
+    from ._models import ImageInformation
     from ._models import ImageReference
     from ._models import InboundEndpoint
     from ._models import InboundNATPool
@@ -328,12 +335,13 @@ except (SyntaxError, ImportError):
     from ._models import JobUpdateParameter
     from ._models import LinuxUserConfiguration
     from ._models import MetadataItem
+    from ._models import MountConfiguration
     from ._models import MultiInstanceSettings
     from ._models import NameValuePair
     from ._models import NetworkConfiguration
     from ._models import NetworkSecurityGroupRule
+    from ._models import NFSMountConfiguration
     from ._models import NodeAgentInformation
-    from ._models import NodeAgentSku
     from ._models import NodeCounts
     from ._models import NodeDisableSchedulingParameter
     from ._models import NodeFile
@@ -413,64 +421,66 @@ except (SyntaxError, ImportError):
     from ._models import VirtualMachineConfiguration
     from ._models import WindowsConfiguration
     from ._models import WindowsUserConfiguration
-    from ._models import BatchErrorException
 from ._paged_models import ApplicationSummaryPaged
-from ._paged_models import PoolUsageMetricsPaged
-from ._paged_models import CloudPoolPaged
-from ._paged_models import NodeAgentSkuPaged
-from ._paged_models import PoolNodeCountsPaged
-from ._paged_models import CloudJobPaged
-from ._paged_models import JobPreparationAndReleaseTaskExecutionInformationPaged
 from ._paged_models import CertificatePaged
-from ._paged_models import NodeFilePaged
+from ._paged_models import CloudJobPaged
 from ._paged_models import CloudJobSchedulePaged
+from ._paged_models import CloudPoolPaged
 from ._paged_models import CloudTaskPaged
 from ._paged_models import ComputeNodePaged
-from ._batch_service_client_enums import OSType
-from ._batch_service_client_enums import AccessScope
-from ._batch_service_client_enums import CertificateState
-from ._batch_service_client_enums import CertificateFormat
-from ._batch_service_client_enums import JobAction
-from ._batch_service_client_enums import DependencyAction
-from ._batch_service_client_enums import AutoUserScope
-from ._batch_service_client_enums import ElevationLevel
-from ._batch_service_client_enums import LoginMode
-from ._batch_service_client_enums import OutputFileUploadCondition
-from ._batch_service_client_enums import ComputeNodeFillType
-from ._batch_service_client_enums import CertificateStoreLocation
-from ._batch_service_client_enums import CertificateVisibility
-from ._batch_service_client_enums import CachingType
-from ._batch_service_client_enums import StorageAccountType
-from ._batch_service_client_enums import DynamicVNetAssignmentScope
-from ._batch_service_client_enums import InboundEndpointProtocol
-from ._batch_service_client_enums import NetworkSecurityGroupRuleAccess
-from ._batch_service_client_enums import PoolLifetimeOption
-from ._batch_service_client_enums import OnAllTasksComplete
-from ._batch_service_client_enums import OnTaskFailure
-from ._batch_service_client_enums import JobScheduleState
-from ._batch_service_client_enums import ErrorCategory
-from ._batch_service_client_enums import JobState
-from ._batch_service_client_enums import JobPreparationTaskState
-from ._batch_service_client_enums import TaskExecutionResult
-from ._batch_service_client_enums import JobReleaseTaskState
-from ._batch_service_client_enums import PoolState
-from ._batch_service_client_enums import AllocationState
-from ._batch_service_client_enums import TaskState
-from ._batch_service_client_enums import TaskAddStatus
-from ._batch_service_client_enums import SubtaskState
-from ._batch_service_client_enums import StartTaskState
-from ._batch_service_client_enums import ComputeNodeState
-from ._batch_service_client_enums import SchedulingState
-from ._batch_service_client_enums import DisableJobOption
-from ._batch_service_client_enums import ComputeNodeDeallocationOption
-from ._batch_service_client_enums import ComputeNodeRebootOption
-from ._batch_service_client_enums import ComputeNodeReimageOption
-from ._batch_service_client_enums import DisableComputeNodeSchedulingOption
+from ._paged_models import ImageInformationPaged
+from ._paged_models import JobPreparationAndReleaseTaskExecutionInformationPaged
+from ._paged_models import NodeFilePaged
+from ._paged_models import PoolNodeCountsPaged
+from ._paged_models import PoolUsageMetricsPaged
+from ._batch_service_client_enums import (
+    OSType,
+    VerificationType,
+    AccessScope,
+    CertificateState,
+    CertificateFormat,
+    ContainerWorkingDirectory,
+    JobAction,
+    DependencyAction,
+    AutoUserScope,
+    ElevationLevel,
+    LoginMode,
+    OutputFileUploadCondition,
+    ComputeNodeFillType,
+    CertificateStoreLocation,
+    CertificateVisibility,
+    CachingType,
+    StorageAccountType,
+    DynamicVNetAssignmentScope,
+    InboundEndpointProtocol,
+    NetworkSecurityGroupRuleAccess,
+    PoolLifetimeOption,
+    OnAllTasksComplete,
+    OnTaskFailure,
+    JobScheduleState,
+    ErrorCategory,
+    JobState,
+    JobPreparationTaskState,
+    TaskExecutionResult,
+    JobReleaseTaskState,
+    PoolState,
+    AllocationState,
+    TaskState,
+    TaskAddStatus,
+    SubtaskState,
+    StartTaskState,
+    ComputeNodeState,
+    SchedulingState,
+    DisableJobOption,
+    ComputeNodeDeallocationOption,
+    ComputeNodeRebootOption,
+    ComputeNodeReimageOption,
+    DisableComputeNodeSchedulingOption,
+)
 
-
-__all__=[
-    'AccountListNodeAgentSkusOptions',
+__all__ = [
     'AccountListPoolNodeCountsOptions',
+    'AccountListSupportedImagesOptions',
     'AffinityInformation',
     'ApplicationGetOptions',
     'ApplicationListOptions',
@@ -481,7 +491,9 @@ __all__=[
     'AutoScaleRun',
     'AutoScaleRunError',
     'AutoUserSpecification',
-    'BatchError',
+    'AzureBlobFileSystemConfiguration',
+    'AzureFileShareConfiguration',
+    'BatchError', 'BatchErrorException',
     'BatchErrorDetail',
     'Certificate',
     'CertificateAddOptions',
@@ -491,6 +503,7 @@ __all__=[
     'CertificateGetOptions',
     'CertificateListOptions',
     'CertificateReference',
+    'CIFSMountConfiguration',
     'CloudJob',
     'CloudJobSchedule',
     'CloudPool',
@@ -534,6 +547,7 @@ __all__=[
     'FileListFromComputeNodeOptions',
     'FileListFromTaskOptions',
     'FileProperties',
+    'ImageInformation',
     'ImageReference',
     'InboundEndpoint',
     'InboundNATPool',
@@ -584,12 +598,13 @@ __all__=[
     'JobUpdateParameter',
     'LinuxUserConfiguration',
     'MetadataItem',
+    'MountConfiguration',
     'MultiInstanceSettings',
     'NameValuePair',
     'NetworkConfiguration',
     'NetworkSecurityGroupRule',
+    'NFSMountConfiguration',
     'NodeAgentInformation',
-    'NodeAgentSku',
     'NodeCounts',
     'NodeDisableSchedulingParameter',
     'NodeFile',
@@ -669,11 +684,10 @@ __all__=[
     'VirtualMachineConfiguration',
     'WindowsConfiguration',
     'WindowsUserConfiguration',
-    'BatchErrorException',
     'ApplicationSummaryPaged',
     'PoolUsageMetricsPaged',
     'CloudPoolPaged',
-    'NodeAgentSkuPaged',
+    'ImageInformationPaged',
     'PoolNodeCountsPaged',
     'CloudJobPaged',
     'JobPreparationAndReleaseTaskExecutionInformationPaged',
@@ -683,9 +697,11 @@ __all__=[
     'CloudTaskPaged',
     'ComputeNodePaged',
     'OSType',
+    'VerificationType',
     'AccessScope',
     'CertificateState',
     'CertificateFormat',
+    'ContainerWorkingDirectory',
     'JobAction',
     'DependencyAction',
     'AutoUserScope',

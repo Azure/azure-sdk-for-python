@@ -1,19 +1,31 @@
-# See for instructions on this file https://help.github.com/articles/about-codeowners/
+# Instructions for CODEOWNERS file format and automatic build failure notifications:
+# https://github.com/Azure/azure-sdk/blob/master/docs/policies/opensource.md#codeowners
 
-/sdk/core/ @lmazuel
+###########
+# SDK
+###########
+
+# Catch all
+/sdk/ @mayurid
+
+# Core
+/sdk/core/ @lmazuel @xiangyan99 @johanste
 /sdk/core/azure-core/ @xiangyan99 @bryevdv
 
 # Service team
+/sdk/identity/ @chlowell @schaabs
+/sdk/eventhub/ @annatisch @yunhaoling @YijunXieMS
+/sdk/storage/ @zezha-msft @annatisch @rakshith91 @xiafu-msft
 /sdk/applicationinsights/ @alexeldeib
-/sdk/batch/ @matthchr
+/sdk/batch/ @bgklein @matthchr @xingwu1
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/ @areddish
-/sdk/keyvault/ @schaabs @chlowell
+/sdk/keyvault/ @schaabs @chlowell @iscai-msft
 /sdk/loganalytics/ @alexeldeib
 /sdk/consumption/ @sandeepnl
 /sdk/containerinstance/ @samkreter @xizhamsft
-/sdk/containerregistry/ @djyou 
+/sdk/containerregistry/ @djyou
 /sdk/containerservice/ @samkreter @zqingqing1 @GaneshaThirumurthi
-/sdk/cosmos/ @dmakwana
+/sdk/cosmos/ @shurd
 /sdk/datafactory/ @hvermis
 /sdk/datalake/ @ro-joowan
 /sdk/datadatamigration/ @vchske
@@ -23,4 +35,14 @@
 /sdk/recoveryservices/ @DheerendraRathor
 /sdk/servicefabric/ @QingChenmsft @samedder
 /sql/sql/ @jaredmoo
-/sdk/servicebus/azure-servicebus/ @annatisch
+/sdk/servicebus/ @annatisch @yunhaoling @YijunXieMS @KieranBrantnerMagee
+
+# Management Plane
+/**/*mgmt*/ @zikalino
+
+###########
+# Eng Sys
+###########
+/eng/   @weshaggard @scbedd @mitchdenny @danieljurek
+/**/tests.yml   @danieljurek
+/**/ci.yml      @mitchdenny

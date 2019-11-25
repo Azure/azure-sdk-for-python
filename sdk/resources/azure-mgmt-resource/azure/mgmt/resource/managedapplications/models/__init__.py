@@ -10,34 +10,34 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .plan_py3 import Plan
-    from .application_py3 import Application
-    from .plan_patchable_py3 import PlanPatchable
-    from .application_patchable_py3 import ApplicationPatchable
-    from .application_provider_authorization_py3 import ApplicationProviderAuthorization
-    from .application_artifact_py3 import ApplicationArtifact
-    from .application_definition_py3 import ApplicationDefinition
-    from .sku_py3 import Sku
-    from .identity_py3 import Identity
-    from .generic_resource_py3 import GenericResource
-    from .resource_py3 import Resource
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import Application
+    from ._models_py3 import ApplicationArtifact
+    from ._models_py3 import ApplicationDefinition
+    from ._models_py3 import ApplicationPatchable
+    from ._models_py3 import ApplicationProviderAuthorization
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import GenericResource
+    from ._models_py3 import Identity
+    from ._models_py3 import Plan
+    from ._models_py3 import PlanPatchable
+    from ._models_py3 import Resource
+    from ._models_py3 import Sku
 except (SyntaxError, ImportError):
-    from .plan import Plan
-    from .application import Application
-    from .plan_patchable import PlanPatchable
-    from .application_patchable import ApplicationPatchable
-    from .application_provider_authorization import ApplicationProviderAuthorization
-    from .application_artifact import ApplicationArtifact
-    from .application_definition import ApplicationDefinition
-    from .sku import Sku
-    from .identity import Identity
-    from .generic_resource import GenericResource
-    from .resource import Resource
-    from .error_response import ErrorResponse, ErrorResponseException
-from .application_paged import ApplicationPaged
-from .application_definition_paged import ApplicationDefinitionPaged
-from .application_client_enums import (
+    from ._models import Application
+    from ._models import ApplicationArtifact
+    from ._models import ApplicationDefinition
+    from ._models import ApplicationPatchable
+    from ._models import ApplicationProviderAuthorization
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import GenericResource
+    from ._models import Identity
+    from ._models import Plan
+    from ._models import PlanPatchable
+    from ._models import Resource
+    from ._models import Sku
+from ._paged_models import ApplicationDefinitionPaged
+from ._paged_models import ApplicationPaged
+from ._application_client_enums import (
     ProvisioningState,
     ApplicationLockLevel,
     ApplicationArtifactType,
@@ -45,18 +45,18 @@ from .application_client_enums import (
 )
 
 __all__ = [
-    'Plan',
     'Application',
-    'PlanPatchable',
-    'ApplicationPatchable',
-    'ApplicationProviderAuthorization',
     'ApplicationArtifact',
     'ApplicationDefinition',
-    'Sku',
-    'Identity',
-    'GenericResource',
-    'Resource',
+    'ApplicationPatchable',
+    'ApplicationProviderAuthorization',
     'ErrorResponse', 'ErrorResponseException',
+    'GenericResource',
+    'Identity',
+    'Plan',
+    'PlanPatchable',
+    'Resource',
+    'Sku',
     'ApplicationPaged',
     'ApplicationDefinitionPaged',
     'ProvisioningState',

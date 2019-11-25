@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .container_services_operations import ContainerServicesOperations
+from ._container_services_operations import ContainerServicesOperations
 
 __all__ = [
     'ContainerServicesOperations',

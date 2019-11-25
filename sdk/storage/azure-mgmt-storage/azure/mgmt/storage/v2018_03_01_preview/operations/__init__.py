@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .skus_operations import SkusOperations
-from .storage_accounts_operations import StorageAccountsOperations
-from .usages_operations import UsagesOperations
-from .blob_containers_operations import BlobContainersOperations
+from ._operations import Operations
+from ._skus_operations import SkusOperations
+from ._storage_accounts_operations import StorageAccountsOperations
+from ._usages_operations import UsagesOperations
+from ._blob_containers_operations import BlobContainersOperations
 
 __all__ = [
     'Operations',

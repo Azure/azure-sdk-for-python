@@ -10,153 +10,153 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .import_source_credentials_py3 import ImportSourceCredentials
-    from .import_source_py3 import ImportSource
-    from .import_image_parameters_py3 import ImportImageParameters
-    from .registry_name_check_request_py3 import RegistryNameCheckRequest
-    from .registry_name_status_py3 import RegistryNameStatus
-    from .operation_display_definition_py3 import OperationDisplayDefinition
-    from .operation_metric_specification_definition_py3 import OperationMetricSpecificationDefinition
-    from .operation_service_specification_definition_py3 import OperationServiceSpecificationDefinition
-    from .operation_definition_py3 import OperationDefinition
-    from .sku_py3 import Sku
-    from .status_py3 import Status
-    from .storage_account_properties_py3 import StorageAccountProperties
-    from .virtual_network_rule_py3 import VirtualNetworkRule
-    from .ip_rule_py3 import IPRule
-    from .network_rule_set_py3 import NetworkRuleSet
-    from .registry_py3 import Registry
-    from .registry_update_parameters_py3 import RegistryUpdateParameters
-    from .registry_password_py3 import RegistryPassword
-    from .registry_list_credentials_result_py3 import RegistryListCredentialsResult
-    from .regenerate_credential_parameters_py3 import RegenerateCredentialParameters
-    from .registry_usage_py3 import RegistryUsage
-    from .registry_usage_list_result_py3 import RegistryUsageListResult
-    from .quarantine_policy_py3 import QuarantinePolicy
-    from .trust_policy_py3 import TrustPolicy
-    from .registry_policies_py3 import RegistryPolicies
-    from .replication_py3 import Replication
-    from .replication_update_parameters_py3 import ReplicationUpdateParameters
-    from .webhook_py3 import Webhook
-    from .webhook_create_parameters_py3 import WebhookCreateParameters
-    from .webhook_update_parameters_py3 import WebhookUpdateParameters
-    from .event_info_py3 import EventInfo
-    from .callback_config_py3 import CallbackConfig
-    from .target_py3 import Target
-    from .request_py3 import Request
-    from .actor_py3 import Actor
-    from .source_py3 import Source
-    from .event_content_py3 import EventContent
-    from .event_request_message_py3 import EventRequestMessage
-    from .event_response_message_py3 import EventResponseMessage
-    from .event_py3 import Event
-    from .resource_py3 import Resource
-    from .image_descriptor_py3 import ImageDescriptor
-    from .image_update_trigger_py3 import ImageUpdateTrigger
-    from .git_commit_trigger_py3 import GitCommitTrigger
-    from .platform_properties_py3 import PlatformProperties
-    from .build_py3 import Build
-    from .build_filter_py3 import BuildFilter
-    from .build_update_parameters_py3 import BuildUpdateParameters
-    from .build_get_log_result_py3 import BuildGetLogResult
-    from .build_step_properties_py3 import BuildStepProperties
-    from .build_step_py3 import BuildStep
-    from .build_step_properties_update_parameters_py3 import BuildStepPropertiesUpdateParameters
-    from .build_step_update_parameters_py3 import BuildStepUpdateParameters
-    from .build_argument_py3 import BuildArgument
-    from .source_control_auth_info_py3 import SourceControlAuthInfo
-    from .source_repository_properties_py3 import SourceRepositoryProperties
-    from .build_task_py3 import BuildTask
-    from .build_task_filter_py3 import BuildTaskFilter
-    from .source_repository_update_parameters_py3 import SourceRepositoryUpdateParameters
-    from .build_task_update_parameters_py3 import BuildTaskUpdateParameters
-    from .queue_build_request_py3 import QueueBuildRequest
-    from .source_upload_definition_py3 import SourceUploadDefinition
-    from .proxy_resource_py3 import ProxyResource
-    from .base_image_dependency_py3 import BaseImageDependency
-    from .docker_build_step_py3 import DockerBuildStep
-    from .docker_build_step_update_parameters_py3 import DockerBuildStepUpdateParameters
-    from .build_task_build_request_py3 import BuildTaskBuildRequest
-    from .quick_build_request_py3 import QuickBuildRequest
+    from ._models_py3 import Actor
+    from ._models_py3 import BaseImageDependency
+    from ._models_py3 import Build
+    from ._models_py3 import BuildArgument
+    from ._models_py3 import BuildFilter
+    from ._models_py3 import BuildGetLogResult
+    from ._models_py3 import BuildStep
+    from ._models_py3 import BuildStepProperties
+    from ._models_py3 import BuildStepPropertiesUpdateParameters
+    from ._models_py3 import BuildStepUpdateParameters
+    from ._models_py3 import BuildTask
+    from ._models_py3 import BuildTaskBuildRequest
+    from ._models_py3 import BuildTaskFilter
+    from ._models_py3 import BuildTaskUpdateParameters
+    from ._models_py3 import BuildUpdateParameters
+    from ._models_py3 import CallbackConfig
+    from ._models_py3 import DockerBuildStep
+    from ._models_py3 import DockerBuildStepUpdateParameters
+    from ._models_py3 import Event
+    from ._models_py3 import EventContent
+    from ._models_py3 import EventInfo
+    from ._models_py3 import EventRequestMessage
+    from ._models_py3 import EventResponseMessage
+    from ._models_py3 import GitCommitTrigger
+    from ._models_py3 import ImageDescriptor
+    from ._models_py3 import ImageUpdateTrigger
+    from ._models_py3 import ImportImageParameters
+    from ._models_py3 import ImportSource
+    from ._models_py3 import ImportSourceCredentials
+    from ._models_py3 import IPRule
+    from ._models_py3 import NetworkRuleSet
+    from ._models_py3 import OperationDefinition
+    from ._models_py3 import OperationDisplayDefinition
+    from ._models_py3 import OperationMetricSpecificationDefinition
+    from ._models_py3 import OperationServiceSpecificationDefinition
+    from ._models_py3 import PlatformProperties
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import QuarantinePolicy
+    from ._models_py3 import QueueBuildRequest
+    from ._models_py3 import QuickBuildRequest
+    from ._models_py3 import RegenerateCredentialParameters
+    from ._models_py3 import Registry
+    from ._models_py3 import RegistryListCredentialsResult
+    from ._models_py3 import RegistryNameCheckRequest
+    from ._models_py3 import RegistryNameStatus
+    from ._models_py3 import RegistryPassword
+    from ._models_py3 import RegistryPolicies
+    from ._models_py3 import RegistryUpdateParameters
+    from ._models_py3 import RegistryUsage
+    from ._models_py3 import RegistryUsageListResult
+    from ._models_py3 import Replication
+    from ._models_py3 import ReplicationUpdateParameters
+    from ._models_py3 import Request
+    from ._models_py3 import Resource
+    from ._models_py3 import Sku
+    from ._models_py3 import Source
+    from ._models_py3 import SourceControlAuthInfo
+    from ._models_py3 import SourceRepositoryProperties
+    from ._models_py3 import SourceRepositoryUpdateParameters
+    from ._models_py3 import SourceUploadDefinition
+    from ._models_py3 import Status
+    from ._models_py3 import StorageAccountProperties
+    from ._models_py3 import Target
+    from ._models_py3 import TrustPolicy
+    from ._models_py3 import VirtualNetworkRule
+    from ._models_py3 import Webhook
+    from ._models_py3 import WebhookCreateParameters
+    from ._models_py3 import WebhookUpdateParameters
 except (SyntaxError, ImportError):
-    from .import_source_credentials import ImportSourceCredentials
-    from .import_source import ImportSource
-    from .import_image_parameters import ImportImageParameters
-    from .registry_name_check_request import RegistryNameCheckRequest
-    from .registry_name_status import RegistryNameStatus
-    from .operation_display_definition import OperationDisplayDefinition
-    from .operation_metric_specification_definition import OperationMetricSpecificationDefinition
-    from .operation_service_specification_definition import OperationServiceSpecificationDefinition
-    from .operation_definition import OperationDefinition
-    from .sku import Sku
-    from .status import Status
-    from .storage_account_properties import StorageAccountProperties
-    from .virtual_network_rule import VirtualNetworkRule
-    from .ip_rule import IPRule
-    from .network_rule_set import NetworkRuleSet
-    from .registry import Registry
-    from .registry_update_parameters import RegistryUpdateParameters
-    from .registry_password import RegistryPassword
-    from .registry_list_credentials_result import RegistryListCredentialsResult
-    from .regenerate_credential_parameters import RegenerateCredentialParameters
-    from .registry_usage import RegistryUsage
-    from .registry_usage_list_result import RegistryUsageListResult
-    from .quarantine_policy import QuarantinePolicy
-    from .trust_policy import TrustPolicy
-    from .registry_policies import RegistryPolicies
-    from .replication import Replication
-    from .replication_update_parameters import ReplicationUpdateParameters
-    from .webhook import Webhook
-    from .webhook_create_parameters import WebhookCreateParameters
-    from .webhook_update_parameters import WebhookUpdateParameters
-    from .event_info import EventInfo
-    from .callback_config import CallbackConfig
-    from .target import Target
-    from .request import Request
-    from .actor import Actor
-    from .source import Source
-    from .event_content import EventContent
-    from .event_request_message import EventRequestMessage
-    from .event_response_message import EventResponseMessage
-    from .event import Event
-    from .resource import Resource
-    from .image_descriptor import ImageDescriptor
-    from .image_update_trigger import ImageUpdateTrigger
-    from .git_commit_trigger import GitCommitTrigger
-    from .platform_properties import PlatformProperties
-    from .build import Build
-    from .build_filter import BuildFilter
-    from .build_update_parameters import BuildUpdateParameters
-    from .build_get_log_result import BuildGetLogResult
-    from .build_step_properties import BuildStepProperties
-    from .build_step import BuildStep
-    from .build_step_properties_update_parameters import BuildStepPropertiesUpdateParameters
-    from .build_step_update_parameters import BuildStepUpdateParameters
-    from .build_argument import BuildArgument
-    from .source_control_auth_info import SourceControlAuthInfo
-    from .source_repository_properties import SourceRepositoryProperties
-    from .build_task import BuildTask
-    from .build_task_filter import BuildTaskFilter
-    from .source_repository_update_parameters import SourceRepositoryUpdateParameters
-    from .build_task_update_parameters import BuildTaskUpdateParameters
-    from .queue_build_request import QueueBuildRequest
-    from .source_upload_definition import SourceUploadDefinition
-    from .proxy_resource import ProxyResource
-    from .base_image_dependency import BaseImageDependency
-    from .docker_build_step import DockerBuildStep
-    from .docker_build_step_update_parameters import DockerBuildStepUpdateParameters
-    from .build_task_build_request import BuildTaskBuildRequest
-    from .quick_build_request import QuickBuildRequest
-from .registry_paged import RegistryPaged
-from .operation_definition_paged import OperationDefinitionPaged
-from .replication_paged import ReplicationPaged
-from .webhook_paged import WebhookPaged
-from .event_paged import EventPaged
-from .build_paged import BuildPaged
-from .build_step_paged import BuildStepPaged
-from .build_argument_paged import BuildArgumentPaged
-from .build_task_paged import BuildTaskPaged
-from .container_registry_management_client_enums import (
+    from ._models import Actor
+    from ._models import BaseImageDependency
+    from ._models import Build
+    from ._models import BuildArgument
+    from ._models import BuildFilter
+    from ._models import BuildGetLogResult
+    from ._models import BuildStep
+    from ._models import BuildStepProperties
+    from ._models import BuildStepPropertiesUpdateParameters
+    from ._models import BuildStepUpdateParameters
+    from ._models import BuildTask
+    from ._models import BuildTaskBuildRequest
+    from ._models import BuildTaskFilter
+    from ._models import BuildTaskUpdateParameters
+    from ._models import BuildUpdateParameters
+    from ._models import CallbackConfig
+    from ._models import DockerBuildStep
+    from ._models import DockerBuildStepUpdateParameters
+    from ._models import Event
+    from ._models import EventContent
+    from ._models import EventInfo
+    from ._models import EventRequestMessage
+    from ._models import EventResponseMessage
+    from ._models import GitCommitTrigger
+    from ._models import ImageDescriptor
+    from ._models import ImageUpdateTrigger
+    from ._models import ImportImageParameters
+    from ._models import ImportSource
+    from ._models import ImportSourceCredentials
+    from ._models import IPRule
+    from ._models import NetworkRuleSet
+    from ._models import OperationDefinition
+    from ._models import OperationDisplayDefinition
+    from ._models import OperationMetricSpecificationDefinition
+    from ._models import OperationServiceSpecificationDefinition
+    from ._models import PlatformProperties
+    from ._models import ProxyResource
+    from ._models import QuarantinePolicy
+    from ._models import QueueBuildRequest
+    from ._models import QuickBuildRequest
+    from ._models import RegenerateCredentialParameters
+    from ._models import Registry
+    from ._models import RegistryListCredentialsResult
+    from ._models import RegistryNameCheckRequest
+    from ._models import RegistryNameStatus
+    from ._models import RegistryPassword
+    from ._models import RegistryPolicies
+    from ._models import RegistryUpdateParameters
+    from ._models import RegistryUsage
+    from ._models import RegistryUsageListResult
+    from ._models import Replication
+    from ._models import ReplicationUpdateParameters
+    from ._models import Request
+    from ._models import Resource
+    from ._models import Sku
+    from ._models import Source
+    from ._models import SourceControlAuthInfo
+    from ._models import SourceRepositoryProperties
+    from ._models import SourceRepositoryUpdateParameters
+    from ._models import SourceUploadDefinition
+    from ._models import Status
+    from ._models import StorageAccountProperties
+    from ._models import Target
+    from ._models import TrustPolicy
+    from ._models import VirtualNetworkRule
+    from ._models import Webhook
+    from ._models import WebhookCreateParameters
+    from ._models import WebhookUpdateParameters
+from ._paged_models import BuildArgumentPaged
+from ._paged_models import BuildPaged
+from ._paged_models import BuildStepPaged
+from ._paged_models import BuildTaskPaged
+from ._paged_models import EventPaged
+from ._paged_models import OperationDefinitionPaged
+from ._paged_models import RegistryPaged
+from ._paged_models import ReplicationPaged
+from ._paged_models import WebhookPaged
+from ._container_registry_management_client_enums import (
     ImportMode,
     SkuName,
     SkuTier,
@@ -180,74 +180,74 @@ from .container_registry_management_client_enums import (
 )
 
 __all__ = [
-    'ImportSourceCredentials',
-    'ImportSource',
+    'Actor',
+    'BaseImageDependency',
+    'Build',
+    'BuildArgument',
+    'BuildFilter',
+    'BuildGetLogResult',
+    'BuildStep',
+    'BuildStepProperties',
+    'BuildStepPropertiesUpdateParameters',
+    'BuildStepUpdateParameters',
+    'BuildTask',
+    'BuildTaskBuildRequest',
+    'BuildTaskFilter',
+    'BuildTaskUpdateParameters',
+    'BuildUpdateParameters',
+    'CallbackConfig',
+    'DockerBuildStep',
+    'DockerBuildStepUpdateParameters',
+    'Event',
+    'EventContent',
+    'EventInfo',
+    'EventRequestMessage',
+    'EventResponseMessage',
+    'GitCommitTrigger',
+    'ImageDescriptor',
+    'ImageUpdateTrigger',
     'ImportImageParameters',
-    'RegistryNameCheckRequest',
-    'RegistryNameStatus',
+    'ImportSource',
+    'ImportSourceCredentials',
+    'IPRule',
+    'NetworkRuleSet',
+    'OperationDefinition',
     'OperationDisplayDefinition',
     'OperationMetricSpecificationDefinition',
     'OperationServiceSpecificationDefinition',
-    'OperationDefinition',
-    'Sku',
-    'Status',
-    'StorageAccountProperties',
-    'VirtualNetworkRule',
-    'IPRule',
-    'NetworkRuleSet',
-    'Registry',
-    'RegistryUpdateParameters',
-    'RegistryPassword',
-    'RegistryListCredentialsResult',
+    'PlatformProperties',
+    'ProxyResource',
+    'QuarantinePolicy',
+    'QueueBuildRequest',
+    'QuickBuildRequest',
     'RegenerateCredentialParameters',
+    'Registry',
+    'RegistryListCredentialsResult',
+    'RegistryNameCheckRequest',
+    'RegistryNameStatus',
+    'RegistryPassword',
+    'RegistryPolicies',
+    'RegistryUpdateParameters',
     'RegistryUsage',
     'RegistryUsageListResult',
-    'QuarantinePolicy',
-    'TrustPolicy',
-    'RegistryPolicies',
     'Replication',
     'ReplicationUpdateParameters',
+    'Request',
+    'Resource',
+    'Sku',
+    'Source',
+    'SourceControlAuthInfo',
+    'SourceRepositoryProperties',
+    'SourceRepositoryUpdateParameters',
+    'SourceUploadDefinition',
+    'Status',
+    'StorageAccountProperties',
+    'Target',
+    'TrustPolicy',
+    'VirtualNetworkRule',
     'Webhook',
     'WebhookCreateParameters',
     'WebhookUpdateParameters',
-    'EventInfo',
-    'CallbackConfig',
-    'Target',
-    'Request',
-    'Actor',
-    'Source',
-    'EventContent',
-    'EventRequestMessage',
-    'EventResponseMessage',
-    'Event',
-    'Resource',
-    'ImageDescriptor',
-    'ImageUpdateTrigger',
-    'GitCommitTrigger',
-    'PlatformProperties',
-    'Build',
-    'BuildFilter',
-    'BuildUpdateParameters',
-    'BuildGetLogResult',
-    'BuildStepProperties',
-    'BuildStep',
-    'BuildStepPropertiesUpdateParameters',
-    'BuildStepUpdateParameters',
-    'BuildArgument',
-    'SourceControlAuthInfo',
-    'SourceRepositoryProperties',
-    'BuildTask',
-    'BuildTaskFilter',
-    'SourceRepositoryUpdateParameters',
-    'BuildTaskUpdateParameters',
-    'QueueBuildRequest',
-    'SourceUploadDefinition',
-    'ProxyResource',
-    'BaseImageDependency',
-    'DockerBuildStep',
-    'DockerBuildStepUpdateParameters',
-    'BuildTaskBuildRequest',
-    'QuickBuildRequest',
     'RegistryPaged',
     'OperationDefinitionPaged',
     'ReplicationPaged',

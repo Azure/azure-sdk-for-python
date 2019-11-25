@@ -11,6 +11,7 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -242,7 +243,7 @@ class PrivateLinkServicesOperations(object):
         :param service_name: The name of the private link service.
         :type service_name: str
         :param parameters: Parameters supplied to the create or update private
-         link service operation
+         link service operation.
         :type parameters:
          ~azure.mgmt.network.v2019_04_01.models.PrivateLinkService
         :param dict custom_headers: headers that will be added to the request
@@ -440,8 +441,10 @@ class PrivateLinkServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :return: PrivateEndpointConnection or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.network.v2019_04_01.models.PrivateEndpointConnection or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.network.v2019_04_01.models.ErrorException>`
         """
@@ -461,6 +464,7 @@ class PrivateLinkServicesOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -479,9 +483,15 @@ class PrivateLinkServicesOperations(object):
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
 
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PrivateEndpointConnection', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
+
+        return deserialized
     update_private_endpoint_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateLinkServices/{serviceName}/privateEndpointConnections/{peConnectionName}'}
 
 
@@ -567,3 +577,287 @@ class PrivateLinkServicesOperations(object):
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete_private_endpoint_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateLinkServices/{serviceName}/privateEndpointConnections/{peConnectionName}'}
+
+    def check_private_link_service_visibility(
+            self, location, private_link_service_alias=None, custom_headers=None, raw=False, **operation_config):
+        """Checks the subscription is visible to private link service.
+
+        :param location: The location of the domain name.
+        :type location: str
+        :param private_link_service_alias: The alias of the private link
+         service.
+        :type private_link_service_alias: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PrivateLinkServiceVisibility or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.network.v2019_04_01.models.PrivateLinkServiceVisibility or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        parameters = models.CheckPrivateLinkServiceVisibilityRequest(private_link_service_alias=private_link_service_alias)
+
+        # Construct URL
+        url = self.check_private_link_service_visibility.metadata['url']
+        path_format_arguments = {
+            'location': self._serialize.url("location", location, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'CheckPrivateLinkServiceVisibilityRequest')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PrivateLinkServiceVisibility', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    check_private_link_service_visibility.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/checkPrivateLinkServiceVisibility'}
+
+    def check_private_link_service_visibility_by_resource_group(
+            self, location, resource_group_name, private_link_service_alias=None, custom_headers=None, raw=False, **operation_config):
+        """Checks the subscription is visible to private link service.
+
+        :param location: The location of the domain name.
+        :type location: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param private_link_service_alias: The alias of the private link
+         service.
+        :type private_link_service_alias: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PrivateLinkServiceVisibility or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.network.v2019_04_01.models.PrivateLinkServiceVisibility or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        parameters = models.CheckPrivateLinkServiceVisibilityRequest(private_link_service_alias=private_link_service_alias)
+
+        # Construct URL
+        url = self.check_private_link_service_visibility_by_resource_group.metadata['url']
+        path_format_arguments = {
+            'location': self._serialize.url("location", location, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'CheckPrivateLinkServiceVisibilityRequest')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PrivateLinkServiceVisibility', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    check_private_link_service_visibility_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/locations/{location}/checkPrivateLinkServiceVisibility'}
+
+    def list_auto_approved_private_link_services(
+            self, location, custom_headers=None, raw=False, **operation_config):
+        """Returns all of the private link service ids that can be linked to a
+        Private Endpoint with auto approved in this subscription in this
+        region.
+
+        :param location: The location of the domain name.
+        :type location: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of AutoApprovedPrivateLinkService
+        :rtype:
+         ~azure.mgmt.network.v2019_04_01.models.AutoApprovedPrivateLinkServicePaged[~azure.mgmt.network.v2019_04_01.models.AutoApprovedPrivateLinkService]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_auto_approved_private_link_services.metadata['url']
+                path_format_arguments = {
+                    'location': self._serialize.url("location", location, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.AutoApprovedPrivateLinkServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list_auto_approved_private_link_services.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/autoApprovedPrivateLinkServices'}
+
+    def list_auto_approved_private_link_services_by_resource_group(
+            self, location, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        """Returns all of the private link service ids that can be linked to a
+        Private Endpoint with auto approved in this subscription in this
+        region.
+
+        :param location: The location of the domain name.
+        :type location: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of AutoApprovedPrivateLinkService
+        :rtype:
+         ~azure.mgmt.network.v2019_04_01.models.AutoApprovedPrivateLinkServicePaged[~azure.mgmt.network.v2019_04_01.models.AutoApprovedPrivateLinkService]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_auto_approved_private_link_services_by_resource_group.metadata['url']
+                path_format_arguments = {
+                    'location': self._serialize.url("location", location, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.AutoApprovedPrivateLinkServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list_auto_approved_private_link_services_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/locations/{location}/autoApprovedPrivateLinkServices'}

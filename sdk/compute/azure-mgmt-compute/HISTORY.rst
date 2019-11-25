@@ -3,6 +3,121 @@
 Release History
 ===============
 
+10.0.0 (2019-11-18)
++++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachineScaleSetUpdate has a new parameter proximity_placement_group
+- Enum VirtualMachinePriorityTypes has new value Spot
+
+**Breaking changes**
+
+- Operation ProximityPlacementGroupsOperations.get has a new signature
+
+9.0.0 (2019-10-22)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachineScaleSetUpdateNetworkProfile has a new parameter health_probe
+- Model VirtualMachineScaleSetUpdate has a new parameter do_not_run_extensions_on_overprovisioned_vms
+- Model VirtualMachineScaleSetUpdate has a new parameter automatic_repairs_policy
+- Model VirtualMachineScaleSetManagedDiskParameters has a new parameter disk_encryption_set
+- Model ImageDataDisk has a new parameter disk_encryption_set
+- Model VirtualMachineScaleSet has a new parameter automatic_repairs_policy
+- Model ImageOSDisk has a new parameter disk_encryption_set
+- Model ManagedDiskParameters has a new parameter disk_encryption_set
+- Model Snapshot has a new parameter encryption
+- Model VirtualMachineScaleSetDataDisk has a new parameter disk_mbps_read_write
+- Model VirtualMachineScaleSetDataDisk has a new parameter disk_iops_read_write
+- Model Disk has a new parameter encryption
+- Model VirtualMachineScaleSetPublicIPAddressConfiguration has a new parameter public_ip_address_version
+- Model DataDisk has a new parameter disk_mbps_read_write
+- Model DataDisk has a new parameter disk_iops_read_write
+- Model OSProfile has a new parameter require_guest_provision_signal
+- Added operation VirtualMachinesOperations.reapply
+- Added operation group DiskEncryptionSetsOperations
+- Added operation group VirtualMachineScaleSetVMExtensionsOperations
+
+**Breaking changes**
+
+- Operation VirtualMachinesOperations.list_all has a new signature
+- Operation ResourceSkusOperations.list has a new signature
+
+8.0.0 (2019-09-12)
+++++++++++++++++++
+
+**Note**
+
+- Compute API version default is now 2019-07-01
+- New disks version 2019-03-01
+- New galleries version 2019-07-01
+
+**Features**
+
+- Model GalleryImageVersionStorageProfile has a new parameter source
+- Model GalleryDiskImage has a new parameter source
+- Model Snapshot has new parameters: disk_size_bytes, unique_id, incremental
+- Model EncryptionSettingsCollection has a new parameter encryption_settings_version
+- Model CreationData has new parameters: source_unique_id, upload_size_bytes
+
+**Breaking Changes**
+
+- Model GalleryImageVersionPublishingProfile no longer has parameter source
+
+7.0.0 (2019-08-27)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachineScaleSetUpdateVMProfile has a new parameter scheduled_events_profile
+- Model VirtualMachineScaleSetUpdateVMProfile has a new parameter billing_profile
+- Model VirtualMachine has a new parameter virtual_machine_scale_set
+- Model VirtualMachine has a new parameter priority
+- Model VirtualMachine has a new parameter billing_profile
+- Model VirtualMachine has a new parameter eviction_policy
+- Model VirtualMachineScaleSetVMProfile has a new parameter scheduled_events_profile
+- Model VirtualMachineScaleSetVMProfile has a new parameter billing_profile
+- Model VirtualMachineImage has a new parameter hyper_vgeneration
+- Model VirtualMachineUpdate has a new parameter virtual_machine_scale_set
+- Model VirtualMachineUpdate has a new parameter priority
+- Model VirtualMachineUpdate has a new parameter billing_profile
+- Model VirtualMachineUpdate has a new parameter eviction_policy
+
+**Breaking changes**
+
+- Operation VirtualMachineScaleSetVMsOperations.get has a new signature
+
+6.0.0 (2019-07-20)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachine has a new parameter host
+- Model VirtualMachineUpdate has a new parameter host
+- Model VirtualMachineInstanceView has a new parameter hyper_vgeneration
+- Added operation group GalleryApplicationVersionsOperations
+- Added operation group GalleryApplicationsOperations
+- Added operation group DedicatedHostsOperations
+- Added operation group DedicatedHostGroupsOperations
+
+**Breaking changes**
+
+- Model GalleryArtifactPublishingProfileBase has a new signature
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes if you were importing from the v20xx_yy_zz API folders.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- ComputeManagementClient cannot be imported from `azure.mgmt.compute.v20xx_yy_zz.compute_management_client` anymore (import from `azure.mgmt.compute.v20xx_yy_zz` works like before)
+- ComputeManagementClientConfiguration import has been moved from `azure.mgmt.compute.v20xx_yy_zz.compute_management_client` to `azure.mgmt.compute.v20xx_yy_zz`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.compute.v20xx_yy_zz.models.my_class` (import from `azure.mgmt.compute.v20xx_yy_zz.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.compute.v20xx_yy_zz.operations.my_class_operations` (import from `azure.mgmt.compute.v20xx_yy_zz.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
 5.0.0 (2019-04-26)
 ++++++++++++++++++
 

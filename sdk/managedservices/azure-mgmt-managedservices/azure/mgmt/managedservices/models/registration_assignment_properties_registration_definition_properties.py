@@ -43,7 +43,7 @@ class RegistrationAssignmentPropertiesRegistrationDefinitionProperties(Model):
         'description': {'key': 'description', 'type': 'str'},
         'authorizations': {'key': 'authorizations', 'type': '[Authorization]'},
         'registration_definition_name': {'key': 'registrationDefinitionName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'ProvisioningState'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'managee_tenant_id': {'key': 'manageeTenantId', 'type': 'str'},
         'managee_tenant_name': {'key': 'manageeTenantName', 'type': 'str'},
         'managed_by_tenant_id': {'key': 'managedByTenantId', 'type': 'str'},

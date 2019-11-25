@@ -1,6 +1,6 @@
 #--------------------------------------------------------------------------
 #
-# Copyright (c) Microsoft Corporation. All rights reserved. 
+# Copyright (c) Microsoft Corporation. All rights reserved.
 #
 # The MIT License (MIT)
 #
@@ -24,29 +24,19 @@
 #
 #--------------------------------------------------------------------------
 
-import unittest
+from azure.core.paging import ItemPaged
 
-from azure.core.paging import Paged
+import pytest
 
-from msrest.serialization import Deserializer
 
-class FakePaged(Paged):
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[str]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-        super(FakePaged, self).__init__(*args, **kwargs)
-
-_test_deserializer = Deserializer({})
-
-class TestPaging(unittest.TestCase):
+class TestPaging(object):
 
     def test_basic_paging(self):
 
-        def internal_paging(next_link=None, raw=False):
-            if not next_link:
+        def get_next(continuation_token=None):
+            """Simplify my life and return JSON and not response, but should be response.
+            """
+            if not continuation_token:
                 return {
                     'nextLink': 'page2',
                     'value': ['value1.0', 'value1.1']
@@ -57,17 +47,49 @@ class TestPaging(unittest.TestCase):
                     'value': ['value2.0', 'value2.1']
                 }
 
-        deserialized = FakePaged(internal_paging, _test_deserializer)
-        result_iterated = list(deserialized)
-        self.assertListEqual(
-            ['value1.0', 'value1.1', 'value2.0', 'value2.1'],
-            result_iterated
-        )
+        def extract_data(response):
+            return response['nextLink'], iter(response['value'])
+
+        pager = ItemPaged(get_next, extract_data)
+        result_iterated = list(pager)
+
+        assert ['value1.0', 'value1.1', 'value2.0', 'value2.1'] == result_iterated
+
+    def test_by_page_paging(self):
+
+        def get_next(continuation_token=None):
+            """Simplify my life and return JSON and not response, but should be response.
+            """
+            if not continuation_token:
+                return {
+                    'nextLink': 'page2',
+                    'value': ['value1.0', 'value1.1']
+                }
+            else:
+                return {
+                    'nextLink': None,
+                    'value': ['value2.0', 'value2.1']
+                }
+
+        def extract_data(response):
+            return response['nextLink'], iter(response['value'])
+
+        pager = ItemPaged(get_next, extract_data).by_page()
+        page1 = next(pager)
+        assert list(page1) == ['value1.0', 'value1.1']
+
+        page2 = next(pager)
+        assert list(page2) == ['value2.0', 'value2.1']
+
+        with pytest.raises(StopIteration):
+            next(pager)
 
     def test_advance_paging(self):
 
-        def internal_paging(next_link=None, raw=False):
-            if not next_link:
+        def get_next(continuation_token=None):
+            """Simplify my life and return JSON and not response, but should be response.
+            """
+            if not continuation_token:
                 return {
                     'nextLink': 'page2',
                     'value': ['value1.0', 'value1.1']
@@ -78,27 +100,45 @@ class TestPaging(unittest.TestCase):
                     'value': ['value2.0', 'value2.1']
                 }
 
-        deserialized = FakePaged(internal_paging, _test_deserializer)
-        page1 = next(deserialized)
+        def extract_data(response):
+            return response['nextLink'], iter(response['value'])
+
+        pager = ItemPaged(get_next, extract_data)
+        page1 = next(pager)
         assert page1 == 'value1.0'
-        page1 = next(deserialized)
+        page1 = next(pager)
         assert page1 == 'value1.1'
-     
-        page2 = next(deserialized)
+
+        page2 = next(pager)
         assert page2 == 'value2.0'
-        page2 = next(deserialized)
+        page2 = next(pager)
         assert page2 == 'value2.1'
 
-        with self.assertRaises(StopIteration):
-            next(deserialized)
+        with pytest.raises(StopIteration):
+            next(pager)
 
     def test_none_value(self):
-        def internal_paging(next_link=None, raw=False):
+        def get_next(continuation_token=None):
             return {
                 'nextLink': None,
                 'value': None
             }
+        def extract_data(response):
+            return response['nextLink'], iter(response['value'] or [])
 
-        deserialized = FakePaged(internal_paging, _test_deserializer)
-        result_iterated = list(deserialized)
-        self.assertEqual(len(result_iterated), 0)
+        pager = ItemPaged(get_next, extract_data)
+        result_iterated = list(pager)
+        assert len(result_iterated) == 0
+
+    def test_print(self):
+        def get_next(continuation_token=None):
+            return {
+                'nextLink': None,
+                'value': None
+            }
+        def extract_data(response):
+            return response['nextLink'], iter(response['value'] or [])
+
+        pager = ItemPaged(get_next, extract_data)
+        output = repr(pager)
+        assert output.startswith('<iterator object azure.core.paging.ItemPaged at')

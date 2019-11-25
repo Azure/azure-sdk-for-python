@@ -1,42 +1,29 @@
+parameters:
+  ServiceDirectory: ''
+  BeforePublishSteps: []
+  TestMarkArgument: ''
+  BuildTargetingString: 'azure-*'
+  TestTimeoutInMinutes: 0
+
 jobs:
   - job: 'Build'
     variables:
     - template: ../variables/globals.yml
-    condition: or(eq(variables['long_running_tests'], False), eq(variables['long_running_tests'], ''))
 
     pool:
       vmImage: 'ubuntu-16.04'
 
     steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python $(PythonVersion)'
-        inputs:
-          versionSpec: $(PythonVersion)
-
-      - script: |
-          pip install wheel setuptools pathlib twine readme-renderer[md]
-        displayName: 'Prep Environment'
-
-      - task: PythonScript@0
-        displayName: 'Generate Packages'
-        inputs:
-          scriptPath: 'scripts/devops_tasks/build_packages.py'
-          arguments: '-d "$(Build.ArtifactStagingDirectory)" "azure-*" --service=${{parameters.ServiceDirectory}}'
-
-      - script: |
-          twine check $(Build.ArtifactStagingDirectory)/*
-        displayName: 'Verify Readme'
-
-      - task: PublishBuildArtifacts@1
-        condition: succeededOrFailed()
-        displayName: 'Publish Artifacts'
-        inputs:
-          artifactName: packages
+    - template: ../steps/build-artifacts.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
 
   - job: 'Analyze'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
     variables:
-    - template: ../variables/globals.yml  
-    condition: or(eq(variables['long_running_tests'], False), eq(variables['long_running_tests'], ''))
+    - template: ../variables/globals.yml
 
     dependsOn:
       - 'Build'
@@ -45,43 +32,19 @@ jobs:
       vmImage: 'ubuntu-16.04'
 
     steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python $(PythonVersion)'
-        inputs:
-          versionSpec: '$(PythonVersion)'
+    - template: ../steps/analyze.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-      - script: |
-          pip install setuptools wheel Jinja2
-          pip install doc-warden
-          ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml
-        displayName: 'Verify Readmes'
-
-      - task: PythonScript@0
-        displayName: 'Analyze dependencies'
-        inputs:
-          scriptPath: 'scripts/analyze_deps.py'
-          arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/dependencies.html"'
-
-      - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-        # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
-        # builds should be sufficient.
-        condition: and(succeededOrFailed(), ne(variables['Build.Reason'],'PullRequest'))
-        displayName: 'Component Detection'
-
-      - task: PublishBuildArtifacts@1
-        condition: succeededOrFailed()
-        displayName: 'Publish Report Artifacts'
-        inputs:
-          artifactName: reports
-
-  - job: 'Generic_Tests'
+  - job: 'Test'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
+    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     variables:
     - template: ../variables/globals.yml
-  
-    condition: or(eq(variables['long_running_tests'], False), eq(variables['long_running_tests'], ''))
 
     dependsOn:
-      - 'Build'
+       - 'Build'
 
     strategy:
       matrix:
@@ -89,94 +52,69 @@ jobs:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '2.7'
-        Linux_Python34:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
-          PythonVersion: '3.4'
+          CoverageArg: ''
         Linux_Python35:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.5'
+          CoverageArg: ''
         Linux_Python36:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.6'
+          CoverageArg: ''
         Linux_Python37:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.7'
+          CoverageArg: ''
+        Linux_Python38:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.8'
+          CoverageArg: ''
         Windows_Python35:
           OSName: 'Windows'
-          OSVmImage: 'vs2017-win2016'
+          OSVmImage: 'windows-2019'
           PythonVersion: '3.5'
+          CoverageArg: ''
         MacOS_Python27:
           OSName: 'MacOS'
           OSVmImage: 'macOS-10.13'
           PythonVersion: '2.7'
+          CoverageArg: ''
+        Linux_pypy3:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: 'pypy3'
+          CoverageArg: '--disablecov'
 
     pool:
       vmImage: '$(OSVmImage)'
 
     steps:
-      - powershell: |
-            Invoke-WebRequest -Uri "https://github.com/Azure/azure-sdk-tools/releases/download/sdk-tools_14793/sdk-tools.zip" `
-            -OutFile "sdk-tools.zip" | Wait-Process; Expand-Archive -Path "sdk-tools.zip" -DestinationPath "./sdk-tools/"
-        workingDirectory: '$(Build.BinariesDirectory)'
-        displayName: 'Download Tools Archive From Github Release and Extract it'
+    - template: ../steps/build-test.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        OSName: $(OSName)
+        CoverageArg: $(CoverageArg)
+        PythonVersion: $(PythonVersion)
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ToxTestEnv: 'whl,sdist'
+        BeforeTestSteps: 
+          - task: DownloadPipelineArtifact@0
+            inputs:
+              artifactName: 'artifacts' 
+              targetPath: $(Build.ArtifactStagingDirectory)
 
-      - task: UsePythonVersion@0
-        displayName: 'Use Python $(PythonVersion)'
-        inputs:
-          versionSpec: '$(PythonVersion)'
-
-      - task: PythonScript@0
-        displayName: 'Run VerifyAgentOS script'
-        inputs:
-          scriptPath: '$(Build.BinariesDirectory)/sdk-tools/scripts/python/verify_agent_os.py'
-          arguments: $(OSName)
-
-      - script: |
-          pip install pathlib twine codecov beautifulsoup4
-        displayName: 'Prep Environment'
-
-      - task: PythonScript@0
-        displayName: 'Setup and Run Tests'
-        inputs:
-          scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-          arguments: '"azure-*" --junitxml="junit/test-results.xml" --service="${{parameters.ServiceDirectory}}"'
-
-      - task: PublishTestResults@2
-        condition: succeededOrFailed()
-        inputs:
-          testResultsFiles: 'junit/test-results.xml'
-          testRunTitle: '$(OSName) Python $(PythonVersion)'
-
-      - script: |
-          coverage xml
-        displayName: 'Generate Coverage XML'
-        continueOnError: true
-
-      - script: |
-          codecov -t $(codecov-python-repository-token)
-        displayName: 'Publish Code Cov'
-        continueOnError: true
-        condition: ne(variables['codecov-python-repository-token'], '')
-
-      - task: PublishCodeCoverageResults@1
-        displayName: 'Publish Code Coverage to DevOps'
-        continueOnError: true
-        inputs:
-          codeCoverageTool: Cobertura
-          summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
-
-  - job: Test_PyPy
+  - job: 'RunMyPy'
+    condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'], 'true'))
+    displayName: 'Run MyPy'
     variables:
     - template: ../variables/globals.yml
 
-    timeoutInMinutes: 90
-
-    condition: or(eq(variables['long_running_tests'], True), eq(variables['long_running_tests'], ''))
-    
     dependsOn:
       - 'Build'
 
@@ -184,22 +122,27 @@ jobs:
       vmImage: 'ubuntu-16.04'
 
     steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python 3.7 For Build Tools'
-        inputs:
-          versionSpec: '3.7'
+    - template: ../steps/run_mypy.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
-      - script: |
-          pip install pathlib twine
-        displayName: 'Prep Environment'
+  - job: 'RunPyLint'
+    condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'], 'true'))
+    displayName: 'Run Pylint'
+    variables:
+    - template: ../variables/globals.yml
 
-      - script: |
-          cd ~/
-          wget https://bitbucket.org/pypy/pypy/downloads/pypy3-v6.0.0-linux64.tar.bz2
-          tar xf pypy3-v6.0.0-linux64.tar.bz2
-          cd $(Build.SourcesDirectory)
-          PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
-          pypy3 -m ensurepip
-          python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "azure-*" --disablecov --service=${{parameters.ServiceDirectory}}
-        displayName: 'Setup and Run Filtered Tests PyPy3'
-        continueOnError: true
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+    - template: ../steps/run_pylint.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}

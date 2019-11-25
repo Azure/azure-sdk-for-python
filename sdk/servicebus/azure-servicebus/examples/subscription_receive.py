@@ -32,7 +32,7 @@ connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
 if __name__ == '__main__':
 
     sub_client = SubscriptionClient.from_connection_string(
-        connection_str, name="pytopic/Subscriptions/pysub", debug=True)
+        connection_str, name="pytopic/Subscriptions/pysub", debug=False)
 
     with sub_client.get_receiver() as receiver:
         batch = receiver.fetch_next(timeout=10)

@@ -9,12 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .namespaces_operations import NamespacesOperations
-from .disaster_recovery_configs_operations import DisasterRecoveryConfigsOperations
-from .event_hubs_operations import EventHubsOperations
-from .consumer_groups_operations import ConsumerGroupsOperations
-from .regions_operations import RegionsOperations
+from ._operations import Operations
+from ._namespaces_operations import NamespacesOperations
+from ._disaster_recovery_configs_operations import DisasterRecoveryConfigsOperations
+from ._event_hubs_operations import EventHubsOperations
+from ._consumer_groups_operations import ConsumerGroupsOperations
+from ._regions_operations import RegionsOperations
 
 __all__ = [
     'Operations',

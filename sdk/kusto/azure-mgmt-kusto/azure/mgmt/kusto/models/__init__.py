@@ -10,118 +10,170 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .trusted_external_tenant_py3 import TrustedExternalTenant
-    from .azure_sku_py3 import AzureSku
-    from .azure_capacity_py3 import AzureCapacity
-    from .azure_resource_sku_py3 import AzureResourceSku
-    from .database_statistics_py3 import DatabaseStatistics
-    from .cluster_py3 import Cluster
-    from .cluster_update_py3 import ClusterUpdate
-    from .database_py3 import Database
-    from .database_update_py3 import DatabaseUpdate
-    from .database_principal_py3 import DatabasePrincipal
-    from .database_principal_list_result_py3 import DatabasePrincipalListResult
-    from .data_connection_py3 import DataConnection
-    from .data_connection_validation_result_py3 import DataConnectionValidationResult
-    from .database_principal_list_request_py3 import DatabasePrincipalListRequest
-    from .data_connection_validation_py3 import DataConnectionValidation
-    from .event_hub_data_connection_py3 import EventHubDataConnection
-    from .event_grid_data_connection_py3 import EventGridDataConnection
-    from .data_connection_validation_list_result_py3 import DataConnectionValidationListResult
-    from .cluster_check_name_request_py3 import ClusterCheckNameRequest
-    from .database_check_name_request_py3 import DatabaseCheckNameRequest
-    from .check_name_result_py3 import CheckNameResult
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .tracked_resource_py3 import TrackedResource
-    from .azure_entity_resource_py3 import AzureEntityResource
-    from .resource_py3 import Resource
-    from .proxy_resource_py3 import ProxyResource
+    from ._models_py3 import AttachedDatabaseConfiguration
+    from ._models_py3 import AzureCapacity
+    from ._models_py3 import AzureEntityResource
+    from ._models_py3 import AzureResourceSku
+    from ._models_py3 import AzureSku
+    from ._models_py3 import CheckNameRequest
+    from ._models_py3 import CheckNameResult
+    from ._models_py3 import Cluster
+    from ._models_py3 import ClusterCheckNameRequest
+    from ._models_py3 import ClusterUpdate
+    from ._models_py3 import Database
+    from ._models_py3 import DatabasePrincipal
+    from ._models_py3 import DatabasePrincipalListRequest
+    from ._models_py3 import DatabasePrincipalListResult
+    from ._models_py3 import DatabaseStatistics
+    from ._models_py3 import DataConnection
+    from ._models_py3 import DataConnectionCheckNameRequest
+    from ._models_py3 import DataConnectionValidation
+    from ._models_py3 import DataConnectionValidationListResult
+    from ._models_py3 import DataConnectionValidationResult
+    from ._models_py3 import EventGridDataConnection
+    from ._models_py3 import EventHubDataConnection
+    from ._models_py3 import FollowerDatabaseDefinition
+    from ._models_py3 import Identity
+    from ._models_py3 import IdentityUserAssignedIdentitiesValue
+    from ._models_py3 import IotHubDataConnection
+    from ._models_py3 import KeyVaultProperties
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OptimizedAutoscale
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import ReadOnlyFollowingDatabase
+    from ._models_py3 import ReadWriteDatabase
+    from ._models_py3 import Resource
+    from ._models_py3 import SkuDescription
+    from ._models_py3 import SkuLocationInfoItem
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import TrustedExternalTenant
+    from ._models_py3 import VirtualNetworkConfiguration
 except (SyntaxError, ImportError):
-    from .trusted_external_tenant import TrustedExternalTenant
-    from .azure_sku import AzureSku
-    from .azure_capacity import AzureCapacity
-    from .azure_resource_sku import AzureResourceSku
-    from .database_statistics import DatabaseStatistics
-    from .cluster import Cluster
-    from .cluster_update import ClusterUpdate
-    from .database import Database
-    from .database_update import DatabaseUpdate
-    from .database_principal import DatabasePrincipal
-    from .database_principal_list_result import DatabasePrincipalListResult
-    from .data_connection import DataConnection
-    from .data_connection_validation_result import DataConnectionValidationResult
-    from .database_principal_list_request import DatabasePrincipalListRequest
-    from .data_connection_validation import DataConnectionValidation
-    from .event_hub_data_connection import EventHubDataConnection
-    from .event_grid_data_connection import EventGridDataConnection
-    from .data_connection_validation_list_result import DataConnectionValidationListResult
-    from .cluster_check_name_request import ClusterCheckNameRequest
-    from .database_check_name_request import DatabaseCheckNameRequest
-    from .check_name_result import CheckNameResult
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .tracked_resource import TrackedResource
-    from .azure_entity_resource import AzureEntityResource
-    from .resource import Resource
-    from .proxy_resource import ProxyResource
-from .cluster_paged import ClusterPaged
-from .azure_sku_paged import AzureSkuPaged
-from .azure_resource_sku_paged import AzureResourceSkuPaged
-from .database_paged import DatabasePaged
-from .database_principal_paged import DatabasePrincipalPaged
-from .data_connection_paged import DataConnectionPaged
-from .operation_paged import OperationPaged
-from .kusto_management_client_enums import (
+    from ._models import AttachedDatabaseConfiguration
+    from ._models import AzureCapacity
+    from ._models import AzureEntityResource
+    from ._models import AzureResourceSku
+    from ._models import AzureSku
+    from ._models import CheckNameRequest
+    from ._models import CheckNameResult
+    from ._models import Cluster
+    from ._models import ClusterCheckNameRequest
+    from ._models import ClusterUpdate
+    from ._models import Database
+    from ._models import DatabasePrincipal
+    from ._models import DatabasePrincipalListRequest
+    from ._models import DatabasePrincipalListResult
+    from ._models import DatabaseStatistics
+    from ._models import DataConnection
+    from ._models import DataConnectionCheckNameRequest
+    from ._models import DataConnectionValidation
+    from ._models import DataConnectionValidationListResult
+    from ._models import DataConnectionValidationResult
+    from ._models import EventGridDataConnection
+    from ._models import EventHubDataConnection
+    from ._models import FollowerDatabaseDefinition
+    from ._models import Identity
+    from ._models import IdentityUserAssignedIdentitiesValue
+    from ._models import IotHubDataConnection
+    from ._models import KeyVaultProperties
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import OptimizedAutoscale
+    from ._models import ProxyResource
+    from ._models import ReadOnlyFollowingDatabase
+    from ._models import ReadWriteDatabase
+    from ._models import Resource
+    from ._models import SkuDescription
+    from ._models import SkuLocationInfoItem
+    from ._models import TrackedResource
+    from ._models import TrustedExternalTenant
+    from ._models import VirtualNetworkConfiguration
+from ._paged_models import AttachedDatabaseConfigurationPaged
+from ._paged_models import AzureResourceSkuPaged
+from ._paged_models import ClusterPaged
+from ._paged_models import DatabasePaged
+from ._paged_models import DatabasePrincipalPaged
+from ._paged_models import DataConnectionPaged
+from ._paged_models import FollowerDatabaseDefinitionPaged
+from ._paged_models import OperationPaged
+from ._paged_models import SkuDescriptionPaged
+from ._kusto_management_client_enums import (
     State,
     ProvisioningState,
     AzureSkuName,
+    AzureSkuTier,
     AzureScaleType,
+    DefaultPrincipalsModificationKind,
+    PrincipalsModificationKind,
     DataFormat,
+    IdentityType,
     DatabasePrincipalRole,
     DatabasePrincipalType,
+    Type,
+    Reason,
 )
 
 __all__ = [
-    'TrustedExternalTenant',
-    'AzureSku',
+    'AttachedDatabaseConfiguration',
     'AzureCapacity',
+    'AzureEntityResource',
     'AzureResourceSku',
-    'DatabaseStatistics',
+    'AzureSku',
+    'CheckNameRequest',
+    'CheckNameResult',
     'Cluster',
+    'ClusterCheckNameRequest',
     'ClusterUpdate',
     'Database',
-    'DatabaseUpdate',
     'DatabasePrincipal',
-    'DatabasePrincipalListResult',
-    'DataConnection',
-    'DataConnectionValidationResult',
     'DatabasePrincipalListRequest',
+    'DatabasePrincipalListResult',
+    'DatabaseStatistics',
+    'DataConnection',
+    'DataConnectionCheckNameRequest',
     'DataConnectionValidation',
-    'EventHubDataConnection',
-    'EventGridDataConnection',
     'DataConnectionValidationListResult',
-    'ClusterCheckNameRequest',
-    'DatabaseCheckNameRequest',
-    'CheckNameResult',
-    'OperationDisplay',
+    'DataConnectionValidationResult',
+    'EventGridDataConnection',
+    'EventHubDataConnection',
+    'FollowerDatabaseDefinition',
+    'Identity',
+    'IdentityUserAssignedIdentitiesValue',
+    'IotHubDataConnection',
+    'KeyVaultProperties',
     'Operation',
-    'TrackedResource',
-    'AzureEntityResource',
-    'Resource',
+    'OperationDisplay',
+    'OptimizedAutoscale',
     'ProxyResource',
+    'ReadOnlyFollowingDatabase',
+    'ReadWriteDatabase',
+    'Resource',
+    'SkuDescription',
+    'SkuLocationInfoItem',
+    'TrackedResource',
+    'TrustedExternalTenant',
+    'VirtualNetworkConfiguration',
+    'FollowerDatabaseDefinitionPaged',
     'ClusterPaged',
-    'AzureSkuPaged',
+    'SkuDescriptionPaged',
     'AzureResourceSkuPaged',
     'DatabasePaged',
     'DatabasePrincipalPaged',
+    'AttachedDatabaseConfigurationPaged',
     'DataConnectionPaged',
     'OperationPaged',
     'State',
     'ProvisioningState',
     'AzureSkuName',
+    'AzureSkuTier',
     'AzureScaleType',
+    'DefaultPrincipalsModificationKind',
+    'PrincipalsModificationKind',
     'DataFormat',
+    'IdentityType',
     'DatabasePrincipalRole',
     'DatabasePrincipalType',
+    'Type',
+    'Reason',
 ]

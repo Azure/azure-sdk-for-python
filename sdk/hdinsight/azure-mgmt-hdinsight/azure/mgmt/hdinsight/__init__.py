@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .hd_insight_management_client import HDInsightManagementClient
-from .version import VERSION
+from ._configuration import HDInsightManagementClientConfiguration
+from ._hd_insight_management_client import HDInsightManagementClient
+__all__ = ['HDInsightManagementClient', 'HDInsightManagementClientConfiguration']
 
-__all__ = ['HDInsightManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

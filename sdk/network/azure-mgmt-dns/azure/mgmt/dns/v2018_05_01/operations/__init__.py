@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .record_sets_operations import RecordSetsOperations
-from .zones_operations import ZonesOperations
-from .dns_resource_reference_operations import DnsResourceReferenceOperations
+from ._record_sets_operations import RecordSetsOperations
+from ._zones_operations import ZonesOperations
+from ._dns_resource_reference_operations import DnsResourceReferenceOperations
 
 __all__ = [
     'RecordSetsOperations',

@@ -85,7 +85,7 @@
     <Compile Include="azure\cosmos\auth.py" />
     <Compile Include="azure\cosmos\base.py" />
     <Compile Include="azure\cosmos\documents.py" />
-    <Compile Include="azure\cosmos\cosmos_client.py" />
+    <Compile Include="azure\cosmos\cosmos_client_connection.py" />
     <Compile Include="azure\cosmos\synchronized_request.py" />
     <Compile Include="azure\cosmos\__init__.py" />
     <Compile Include="test\test_partition_resolver.py" />

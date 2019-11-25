@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .batch_service_client import BatchServiceClient
-from .version import VERSION
+from ._configuration import BatchServiceClientConfiguration
+from ._batch_service_client import BatchServiceClient
+__all__ = ['BatchServiceClient', 'BatchServiceClientConfiguration']
 
-__all__ = ['BatchServiceClient']
+from ._version import VERSION
 
 __version__ = VERSION
 

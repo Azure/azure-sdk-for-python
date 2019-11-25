@@ -3,6 +3,143 @@
 Release History
 ===============
 
+0.10.0 (2019-11-13)
++++++++++++++++++++
+
+**Features**
+
+- Model DatabaseAccountCreateUpdateParameters has a new parameter disable_key_based_metadata_write_access
+- Model ContainerPartitionKey has a new parameter version
+- Added operation DatabaseAccountsOperations.update
+- Added operation group SqlResourcesOperations
+- Added operation group MongoDBResourcesOperations
+- Added operation group TableResourcesOperations
+- Added operation group GremlinResourcesOperations
+- Added operation group CassandraResourcesOperations
+
+**Breaking changes**
+
+- CosmosDB has been renamed to CosmosDBManagementClient
+- CosmosDBConfiguration was renamed to CosmodDBManagementClientConfiguration
+- Model MongoDBCollectionCreateUpdateParameters has a new signature
+- Model GremlinGraphCreateUpdateParameters has a new signature
+- Model CassandraKeyspaceCreateUpdateParameters has a new signature
+- Model GremlinDatabaseCreateUpdateParameters has a new signature
+- Model SqlContainerCreateUpdateParameters has a new signature
+- Model CassandraTableCreateUpdateParameters has a new signature
+- Model TableCreateUpdateParameters has a new signature
+- Model MongoDBDatabaseCreateUpdateParameters has a new signature
+- Model SqlDatabaseCreateUpdateParameters has a new signature
+- Removed operation DatabaseAccountsOperations.get_gremlin_graph_throughput
+- Removed operation DatabaseAccountsOperations.update_cassandra_keyspace_throughput
+- Removed operation DatabaseAccountsOperations.delete_sql_database
+- Removed operation DatabaseAccountsOperations.update_sql_database_throughput
+- Removed operation DatabaseAccountsOperations.update_mongo_db_database_throughput
+- Removed operation DatabaseAccountsOperations.delete_mongo_db_collection
+- Removed operation DatabaseAccountsOperations.list_mongo_db_databases
+- Removed operation DatabaseAccountsOperations.create_update_mongo_db_database
+- Removed operation DatabaseAccountsOperations.create_update_gremlin_graph
+- Removed operation DatabaseAccountsOperations.update_gremlin_database_throughput
+- Removed operation DatabaseAccountsOperations.get_mongo_db_collection
+- Removed operation DatabaseAccountsOperations.delete_gremlin_database
+- Removed operation DatabaseAccountsOperations.create_update_cassandra_keyspace
+- Removed operation DatabaseAccountsOperations.get_sql_database
+- Removed operation DatabaseAccountsOperations.get_table
+- Removed operation DatabaseAccountsOperations.update_table_throughput
+- Removed operation DatabaseAccountsOperations.create_update_mongo_db_collection
+- Removed operation DatabaseAccountsOperations.get_gremlin_database
+- Removed operation DatabaseAccountsOperations.create_update_sql_container
+- Removed operation DatabaseAccountsOperations.create_update_gremlin_database
+- Removed operation DatabaseAccountsOperations.get_table_throughput
+- Removed operation DatabaseAccountsOperations.delete_mongo_db_database
+- Removed operation DatabaseAccountsOperations.get_cassandra_table_throughput
+- Removed operation DatabaseAccountsOperations.update_sql_container_throughput
+- Removed operation DatabaseAccountsOperations.get_cassandra_table
+- Removed operation DatabaseAccountsOperations.list_gremlin_databases
+- Removed operation DatabaseAccountsOperations.list_gremlin_graphs
+- Removed operation DatabaseAccountsOperations.list_mongo_db_collections
+- Removed operation DatabaseAccountsOperations.create_update_cassandra_table
+- Removed operation DatabaseAccountsOperations.delete_cassandra_keyspace
+- Removed operation DatabaseAccountsOperations.update_cassandra_table_throughput
+- Removed operation DatabaseAccountsOperations.update_gremlin_graph_throughput
+- Removed operation DatabaseAccountsOperations.create_update_table
+- Removed operation DatabaseAccountsOperations.get_mongo_db_database_throughput
+- Removed operation DatabaseAccountsOperations.get_sql_container
+- Removed operation DatabaseAccountsOperations.get_gremlin_database_throughput
+- Removed operation DatabaseAccountsOperations.get_mongo_db_collection_throughput
+- Removed operation DatabaseAccountsOperations.list_cassandra_tables
+- Removed operation DatabaseAccountsOperations.get_sql_database_throughput
+- Removed operation DatabaseAccountsOperations.list_sql_databases
+- Removed operation DatabaseAccountsOperations.list_tables
+- Removed operation DatabaseAccountsOperations.get_cassandra_keyspace
+- Removed operation DatabaseAccountsOperations.get_gremlin_graph
+- Removed operation DatabaseAccountsOperations.get_mongo_db_database
+- Removed operation DatabaseAccountsOperations.delete_table
+- Removed operation DatabaseAccountsOperations.list_cassandra_keyspaces
+- Removed operation DatabaseAccountsOperations.list_sql_containers
+- Removed operation DatabaseAccountsOperations.delete_sql_container
+- Removed operation DatabaseAccountsOperations.delete_gremlin_graph
+- Removed operation DatabaseAccountsOperations.get_cassandra_keyspace_throughput
+- Removed operation DatabaseAccountsOperations.get_sql_container_throughput
+- Removed operation DatabaseAccountsOperations.delete_cassandra_table
+- Removed operation DatabaseAccountsOperations.patch
+- Removed operation DatabaseAccountsOperations.create_update_sql_database
+- Removed operation DatabaseAccountsOperations.update_mongo_db_collection_throughput
+
+0.9.0 (2019-11-09)
+++++++++++++++++++
+
+**Features**
+
+- Added operation group PrivateLinkResourcesOperations
+- Added operation group PrivateEndpointConnectionsOperations
+
+0.8.0 (2019-08-15)
+++++++++++++++++++
+
+**Features**
+
+- Model DatabaseAccount has a new parameter enable_cassandra_connector
+- Model DatabaseAccount has a new parameter connector_offer
+- Model DatabaseAccountCreateUpdateParameters has a new parameter enable_cassandra_connector
+- Model DatabaseAccountCreateUpdateParameters has a new parameter connector_offer
+
+**General breaking changes**  
+
+This version uses a next-generation code generator that *might* introduce breaking changes if from some import.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- CosmosDB cannot be imported from `azure.mgmt.cosmosdb.cosmos_db` anymore (import from `azure.mgmt.cosmosdb` works like before)
+- CosmosDBConfiguration import has been moved from `azure.mgmt.cosmosdb.cosmos_db` to `azure.mgmt.cosmosdb`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.cosmosdb.models.my_class` (import from `azure.mgmt.cosmosdb.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.cosmosdb.operations.my_class_operations` (import from `azure.mgmt.cosmosdb.operations` works like before)
+        
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
+0.7.0 (2019-06-07)
+++++++++++++++++++
+
+**Features**
+
+- Added operation DatabaseAccountsOperations.get_gremlin_graph_throughput
+- Added operation DatabaseAccountsOperations.get_sql_database_throughput
+- Added operation DatabaseAccountsOperations.update_gremlin_database_throughput
+- Added operation DatabaseAccountsOperations.get_sql_container_throughput
+- Added operation DatabaseAccountsOperations.update_sql_container_throughput
+- Added operation DatabaseAccountsOperations.get_gremlin_database_throughput
+- Added operation DatabaseAccountsOperations.get_cassandra_table_throughput
+- Added operation DatabaseAccountsOperations.update_cassandra_keyspace_throughput
+- Added operation DatabaseAccountsOperations.update_mongo_db_collection_throughput
+- Added operation DatabaseAccountsOperations.update_cassandra_table_throughput
+- Added operation DatabaseAccountsOperations.update_table_throughput
+- Added operation DatabaseAccountsOperations.update_mongo_db_database_throughput
+- Added operation DatabaseAccountsOperations.get_mongo_db_database_throughput
+- Added operation DatabaseAccountsOperations.update_sql_database_throughput
+- Added operation DatabaseAccountsOperations.get_table_throughput
+- Added operation DatabaseAccountsOperations.get_mongo_db_collection_throughput
+- Added operation DatabaseAccountsOperations.update_gremlin_graph_throughput
+- Added operation DatabaseAccountsOperations.get_cassandra_keyspace_throughput
+
 0.6.1 (2019-05-31)
 ++++++++++++++++++
 

@@ -10,21 +10,21 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .policy_definition_py3 import PolicyDefinition
-    from .policy_assignment_py3 import PolicyAssignment
+    from ._models_py3 import PolicyAssignment
+    from ._models_py3 import PolicyDefinition
 except (SyntaxError, ImportError):
-    from .policy_definition import PolicyDefinition
-    from .policy_assignment import PolicyAssignment
-from .policy_definition_paged import PolicyDefinitionPaged
-from .policy_assignment_paged import PolicyAssignmentPaged
-from .policy_client_enums import (
+    from ._models import PolicyAssignment
+    from ._models import PolicyDefinition
+from ._paged_models import PolicyAssignmentPaged
+from ._paged_models import PolicyDefinitionPaged
+from ._policy_client_enums import (
     PolicyType,
     PolicyMode,
 )
 
 __all__ = [
-    'PolicyDefinition',
     'PolicyAssignment',
+    'PolicyDefinition',
     'PolicyDefinitionPaged',
     'PolicyAssignmentPaged',
     'PolicyType',

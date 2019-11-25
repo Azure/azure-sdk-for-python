@@ -10,34 +10,34 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .policy_sku_py3 import PolicySku
-    from .policy_assignment_py3 import PolicyAssignment
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .policy_definition_reference_py3 import PolicyDefinitionReference
-    from .policy_set_definition_py3 import PolicySetDefinition
-    from .policy_definition_py3 import PolicyDefinition
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import PolicyAssignment
+    from ._models_py3 import PolicyDefinition
+    from ._models_py3 import PolicyDefinitionReference
+    from ._models_py3 import PolicySetDefinition
+    from ._models_py3 import PolicySku
 except (SyntaxError, ImportError):
-    from .policy_sku import PolicySku
-    from .policy_assignment import PolicyAssignment
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .policy_definition_reference import PolicyDefinitionReference
-    from .policy_set_definition import PolicySetDefinition
-    from .policy_definition import PolicyDefinition
-from .policy_assignment_paged import PolicyAssignmentPaged
-from .policy_set_definition_paged import PolicySetDefinitionPaged
-from .policy_definition_paged import PolicyDefinitionPaged
-from .policy_client_enums import (
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import PolicyAssignment
+    from ._models import PolicyDefinition
+    from ._models import PolicyDefinitionReference
+    from ._models import PolicySetDefinition
+    from ._models import PolicySku
+from ._paged_models import PolicyAssignmentPaged
+from ._paged_models import PolicyDefinitionPaged
+from ._paged_models import PolicySetDefinitionPaged
+from ._policy_client_enums import (
     PolicyType,
     PolicyMode,
 )
 
 __all__ = [
-    'PolicySku',
-    'PolicyAssignment',
     'ErrorResponse', 'ErrorResponseException',
+    'PolicyAssignment',
+    'PolicyDefinition',
     'PolicyDefinitionReference',
     'PolicySetDefinition',
-    'PolicyDefinition',
+    'PolicySku',
     'PolicyAssignmentPaged',
     'PolicySetDefinitionPaged',
     'PolicyDefinitionPaged',

@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .record_sets_operations import RecordSetsOperations
-from .zones_operations import ZonesOperations
+from ._record_sets_operations import RecordSetsOperations
+from ._zones_operations import ZonesOperations
 
 __all__ = [
     'RecordSetsOperations',

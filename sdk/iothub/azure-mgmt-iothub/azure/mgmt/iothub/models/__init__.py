@@ -10,138 +10,141 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .certificate_verification_description_py3 import CertificateVerificationDescription
-    from .certificate_properties_py3 import CertificateProperties
-    from .certificate_description_py3 import CertificateDescription
-    from .certificate_list_description_py3 import CertificateListDescription
-    from .certificate_body_description_py3 import CertificateBodyDescription
-    from .certificate_properties_with_nonce_py3 import CertificatePropertiesWithNonce
-    from .certificate_with_nonce_description_py3 import CertificateWithNonceDescription
-    from .shared_access_signature_authorization_rule_py3 import SharedAccessSignatureAuthorizationRule
-    from .ip_filter_rule_py3 import IpFilterRule
-    from .event_hub_properties_py3 import EventHubProperties
-    from .routing_service_bus_queue_endpoint_properties_py3 import RoutingServiceBusQueueEndpointProperties
-    from .routing_service_bus_topic_endpoint_properties_py3 import RoutingServiceBusTopicEndpointProperties
-    from .routing_event_hub_properties_py3 import RoutingEventHubProperties
-    from .routing_storage_container_properties_py3 import RoutingStorageContainerProperties
-    from .routing_endpoints_py3 import RoutingEndpoints
-    from .route_properties_py3 import RouteProperties
-    from .fallback_route_properties_py3 import FallbackRouteProperties
-    from .enrichment_properties_py3 import EnrichmentProperties
-    from .routing_properties_py3 import RoutingProperties
-    from .storage_endpoint_properties_py3 import StorageEndpointProperties
-    from .messaging_endpoint_properties_py3 import MessagingEndpointProperties
-    from .feedback_properties_py3 import FeedbackProperties
-    from .cloud_to_device_properties_py3 import CloudToDeviceProperties
-    from .iot_hub_properties_device_streams_py3 import IotHubPropertiesDeviceStreams
-    from .iot_hub_properties_py3 import IotHubProperties
-    from .iot_hub_sku_info_py3 import IotHubSkuInfo
-    from .iot_hub_description_py3 import IotHubDescription
-    from .resource_py3 import Resource
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .error_details_py3 import ErrorDetails, ErrorDetailsException
-    from .iot_hub_quota_metric_info_py3 import IotHubQuotaMetricInfo
-    from .endpoint_health_data_py3 import EndpointHealthData
-    from .registry_statistics_py3 import RegistryStatistics
-    from .job_response_py3 import JobResponse
-    from .iot_hub_capacity_py3 import IotHubCapacity
-    from .iot_hub_sku_description_py3 import IotHubSkuDescription
-    from .tags_resource_py3 import TagsResource
-    from .event_hub_consumer_group_info_py3 import EventHubConsumerGroupInfo
-    from .operation_inputs_py3 import OperationInputs
-    from .iot_hub_name_availability_info_py3 import IotHubNameAvailabilityInfo
-    from .name_py3 import Name
-    from .user_subscription_quota_py3 import UserSubscriptionQuota
-    from .user_subscription_quota_list_result_py3 import UserSubscriptionQuotaListResult
-    from .routing_message_py3 import RoutingMessage
-    from .routing_twin_properties_py3 import RoutingTwinProperties
-    from .routing_twin_py3 import RoutingTwin
-    from .test_all_routes_input_py3 import TestAllRoutesInput
-    from .matched_route_py3 import MatchedRoute
-    from .test_all_routes_result_py3 import TestAllRoutesResult
-    from .test_route_input_py3 import TestRouteInput
-    from .route_error_position_py3 import RouteErrorPosition
-    from .route_error_range_py3 import RouteErrorRange
-    from .route_compilation_error_py3 import RouteCompilationError
-    from .test_route_result_details_py3 import TestRouteResultDetails
-    from .test_route_result_py3 import TestRouteResult
-    from .export_devices_request_py3 import ExportDevicesRequest
-    from .import_devices_request_py3 import ImportDevicesRequest
-    from .failover_input_py3 import FailoverInput
+    from ._models_py3 import CertificateBodyDescription
+    from ._models_py3 import CertificateDescription
+    from ._models_py3 import CertificateListDescription
+    from ._models_py3 import CertificateProperties
+    from ._models_py3 import CertificatePropertiesWithNonce
+    from ._models_py3 import CertificateVerificationDescription
+    from ._models_py3 import CertificateWithNonceDescription
+    from ._models_py3 import CloudToDeviceProperties
+    from ._models_py3 import EndpointHealthData
+    from ._models_py3 import EnrichmentProperties
+    from ._models_py3 import ErrorDetails, ErrorDetailsException
+    from ._models_py3 import EventHubConsumerGroupInfo
+    from ._models_py3 import EventHubProperties
+    from ._models_py3 import ExportDevicesRequest
+    from ._models_py3 import FailoverInput
+    from ._models_py3 import FallbackRouteProperties
+    from ._models_py3 import FeedbackProperties
+    from ._models_py3 import ImportDevicesRequest
+    from ._models_py3 import IotHubCapacity
+    from ._models_py3 import IotHubDescription
+    from ._models_py3 import IotHubLocationDescription
+    from ._models_py3 import IotHubNameAvailabilityInfo
+    from ._models_py3 import IotHubProperties
+    from ._models_py3 import IotHubPropertiesDeviceStreams
+    from ._models_py3 import IotHubQuotaMetricInfo
+    from ._models_py3 import IotHubSkuDescription
+    from ._models_py3 import IotHubSkuInfo
+    from ._models_py3 import IpFilterRule
+    from ._models_py3 import JobResponse
+    from ._models_py3 import MatchedRoute
+    from ._models_py3 import MessagingEndpointProperties
+    from ._models_py3 import Name
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationInputs
+    from ._models_py3 import RegistryStatistics
+    from ._models_py3 import Resource
+    from ._models_py3 import RouteCompilationError
+    from ._models_py3 import RouteErrorPosition
+    from ._models_py3 import RouteErrorRange
+    from ._models_py3 import RouteProperties
+    from ._models_py3 import RoutingEndpoints
+    from ._models_py3 import RoutingEventHubProperties
+    from ._models_py3 import RoutingMessage
+    from ._models_py3 import RoutingProperties
+    from ._models_py3 import RoutingServiceBusQueueEndpointProperties
+    from ._models_py3 import RoutingServiceBusTopicEndpointProperties
+    from ._models_py3 import RoutingStorageContainerProperties
+    from ._models_py3 import RoutingTwin
+    from ._models_py3 import RoutingTwinProperties
+    from ._models_py3 import SharedAccessSignatureAuthorizationRule
+    from ._models_py3 import StorageEndpointProperties
+    from ._models_py3 import TagsResource
+    from ._models_py3 import TestAllRoutesInput
+    from ._models_py3 import TestAllRoutesResult
+    from ._models_py3 import TestRouteInput
+    from ._models_py3 import TestRouteResult
+    from ._models_py3 import TestRouteResultDetails
+    from ._models_py3 import UserSubscriptionQuota
+    from ._models_py3 import UserSubscriptionQuotaListResult
 except (SyntaxError, ImportError):
-    from .certificate_verification_description import CertificateVerificationDescription
-    from .certificate_properties import CertificateProperties
-    from .certificate_description import CertificateDescription
-    from .certificate_list_description import CertificateListDescription
-    from .certificate_body_description import CertificateBodyDescription
-    from .certificate_properties_with_nonce import CertificatePropertiesWithNonce
-    from .certificate_with_nonce_description import CertificateWithNonceDescription
-    from .shared_access_signature_authorization_rule import SharedAccessSignatureAuthorizationRule
-    from .ip_filter_rule import IpFilterRule
-    from .event_hub_properties import EventHubProperties
-    from .routing_service_bus_queue_endpoint_properties import RoutingServiceBusQueueEndpointProperties
-    from .routing_service_bus_topic_endpoint_properties import RoutingServiceBusTopicEndpointProperties
-    from .routing_event_hub_properties import RoutingEventHubProperties
-    from .routing_storage_container_properties import RoutingStorageContainerProperties
-    from .routing_endpoints import RoutingEndpoints
-    from .route_properties import RouteProperties
-    from .fallback_route_properties import FallbackRouteProperties
-    from .enrichment_properties import EnrichmentProperties
-    from .routing_properties import RoutingProperties
-    from .storage_endpoint_properties import StorageEndpointProperties
-    from .messaging_endpoint_properties import MessagingEndpointProperties
-    from .feedback_properties import FeedbackProperties
-    from .cloud_to_device_properties import CloudToDeviceProperties
-    from .iot_hub_properties_device_streams import IotHubPropertiesDeviceStreams
-    from .iot_hub_properties import IotHubProperties
-    from .iot_hub_sku_info import IotHubSkuInfo
-    from .iot_hub_description import IotHubDescription
-    from .resource import Resource
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .error_details import ErrorDetails, ErrorDetailsException
-    from .iot_hub_quota_metric_info import IotHubQuotaMetricInfo
-    from .endpoint_health_data import EndpointHealthData
-    from .registry_statistics import RegistryStatistics
-    from .job_response import JobResponse
-    from .iot_hub_capacity import IotHubCapacity
-    from .iot_hub_sku_description import IotHubSkuDescription
-    from .tags_resource import TagsResource
-    from .event_hub_consumer_group_info import EventHubConsumerGroupInfo
-    from .operation_inputs import OperationInputs
-    from .iot_hub_name_availability_info import IotHubNameAvailabilityInfo
-    from .name import Name
-    from .user_subscription_quota import UserSubscriptionQuota
-    from .user_subscription_quota_list_result import UserSubscriptionQuotaListResult
-    from .routing_message import RoutingMessage
-    from .routing_twin_properties import RoutingTwinProperties
-    from .routing_twin import RoutingTwin
-    from .test_all_routes_input import TestAllRoutesInput
-    from .matched_route import MatchedRoute
-    from .test_all_routes_result import TestAllRoutesResult
-    from .test_route_input import TestRouteInput
-    from .route_error_position import RouteErrorPosition
-    from .route_error_range import RouteErrorRange
-    from .route_compilation_error import RouteCompilationError
-    from .test_route_result_details import TestRouteResultDetails
-    from .test_route_result import TestRouteResult
-    from .export_devices_request import ExportDevicesRequest
-    from .import_devices_request import ImportDevicesRequest
-    from .failover_input import FailoverInput
-from .operation_paged import OperationPaged
-from .iot_hub_description_paged import IotHubDescriptionPaged
-from .iot_hub_sku_description_paged import IotHubSkuDescriptionPaged
-from .event_hub_consumer_group_info_paged import EventHubConsumerGroupInfoPaged
-from .job_response_paged import JobResponsePaged
-from .iot_hub_quota_metric_info_paged import IotHubQuotaMetricInfoPaged
-from .endpoint_health_data_paged import EndpointHealthDataPaged
-from .shared_access_signature_authorization_rule_paged import SharedAccessSignatureAuthorizationRulePaged
-from .iot_hub_client_enums import (
+    from ._models import CertificateBodyDescription
+    from ._models import CertificateDescription
+    from ._models import CertificateListDescription
+    from ._models import CertificateProperties
+    from ._models import CertificatePropertiesWithNonce
+    from ._models import CertificateVerificationDescription
+    from ._models import CertificateWithNonceDescription
+    from ._models import CloudToDeviceProperties
+    from ._models import EndpointHealthData
+    from ._models import EnrichmentProperties
+    from ._models import ErrorDetails, ErrorDetailsException
+    from ._models import EventHubConsumerGroupInfo
+    from ._models import EventHubProperties
+    from ._models import ExportDevicesRequest
+    from ._models import FailoverInput
+    from ._models import FallbackRouteProperties
+    from ._models import FeedbackProperties
+    from ._models import ImportDevicesRequest
+    from ._models import IotHubCapacity
+    from ._models import IotHubDescription
+    from ._models import IotHubLocationDescription
+    from ._models import IotHubNameAvailabilityInfo
+    from ._models import IotHubProperties
+    from ._models import IotHubPropertiesDeviceStreams
+    from ._models import IotHubQuotaMetricInfo
+    from ._models import IotHubSkuDescription
+    from ._models import IotHubSkuInfo
+    from ._models import IpFilterRule
+    from ._models import JobResponse
+    from ._models import MatchedRoute
+    from ._models import MessagingEndpointProperties
+    from ._models import Name
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import OperationInputs
+    from ._models import RegistryStatistics
+    from ._models import Resource
+    from ._models import RouteCompilationError
+    from ._models import RouteErrorPosition
+    from ._models import RouteErrorRange
+    from ._models import RouteProperties
+    from ._models import RoutingEndpoints
+    from ._models import RoutingEventHubProperties
+    from ._models import RoutingMessage
+    from ._models import RoutingProperties
+    from ._models import RoutingServiceBusQueueEndpointProperties
+    from ._models import RoutingServiceBusTopicEndpointProperties
+    from ._models import RoutingStorageContainerProperties
+    from ._models import RoutingTwin
+    from ._models import RoutingTwinProperties
+    from ._models import SharedAccessSignatureAuthorizationRule
+    from ._models import StorageEndpointProperties
+    from ._models import TagsResource
+    from ._models import TestAllRoutesInput
+    from ._models import TestAllRoutesResult
+    from ._models import TestRouteInput
+    from ._models import TestRouteResult
+    from ._models import TestRouteResultDetails
+    from ._models import UserSubscriptionQuota
+    from ._models import UserSubscriptionQuotaListResult
+from ._paged_models import EndpointHealthDataPaged
+from ._paged_models import EventHubConsumerGroupInfoPaged
+from ._paged_models import IotHubDescriptionPaged
+from ._paged_models import IotHubQuotaMetricInfoPaged
+from ._paged_models import IotHubSkuDescriptionPaged
+from ._paged_models import JobResponsePaged
+from ._paged_models import OperationPaged
+from ._paged_models import SharedAccessSignatureAuthorizationRulePaged
+from ._iot_hub_client_enums import (
     AccessRights,
     IpFilterActionType,
     RoutingSource,
     Capabilities,
+    IotHubReplicaRoleType,
     IotHubSku,
     IotHubSkuTier,
     EndpointHealthStatus,
@@ -154,65 +157,66 @@ from .iot_hub_client_enums import (
 )
 
 __all__ = [
-    'CertificateVerificationDescription',
-    'CertificateProperties',
+    'CertificateBodyDescription',
     'CertificateDescription',
     'CertificateListDescription',
-    'CertificateBodyDescription',
+    'CertificateProperties',
     'CertificatePropertiesWithNonce',
+    'CertificateVerificationDescription',
     'CertificateWithNonceDescription',
-    'SharedAccessSignatureAuthorizationRule',
-    'IpFilterRule',
-    'EventHubProperties',
-    'RoutingServiceBusQueueEndpointProperties',
-    'RoutingServiceBusTopicEndpointProperties',
-    'RoutingEventHubProperties',
-    'RoutingStorageContainerProperties',
-    'RoutingEndpoints',
-    'RouteProperties',
-    'FallbackRouteProperties',
-    'EnrichmentProperties',
-    'RoutingProperties',
-    'StorageEndpointProperties',
-    'MessagingEndpointProperties',
-    'FeedbackProperties',
     'CloudToDeviceProperties',
-    'IotHubPropertiesDeviceStreams',
-    'IotHubProperties',
-    'IotHubSkuInfo',
-    'IotHubDescription',
-    'Resource',
-    'OperationDisplay',
-    'Operation',
-    'ErrorDetails', 'ErrorDetailsException',
-    'IotHubQuotaMetricInfo',
     'EndpointHealthData',
-    'RegistryStatistics',
-    'JobResponse',
-    'IotHubCapacity',
-    'IotHubSkuDescription',
-    'TagsResource',
+    'EnrichmentProperties',
+    'ErrorDetails', 'ErrorDetailsException',
     'EventHubConsumerGroupInfo',
-    'OperationInputs',
+    'EventHubProperties',
+    'ExportDevicesRequest',
+    'FailoverInput',
+    'FallbackRouteProperties',
+    'FeedbackProperties',
+    'ImportDevicesRequest',
+    'IotHubCapacity',
+    'IotHubDescription',
+    'IotHubLocationDescription',
     'IotHubNameAvailabilityInfo',
-    'Name',
-    'UserSubscriptionQuota',
-    'UserSubscriptionQuotaListResult',
-    'RoutingMessage',
-    'RoutingTwinProperties',
-    'RoutingTwin',
-    'TestAllRoutesInput',
+    'IotHubProperties',
+    'IotHubPropertiesDeviceStreams',
+    'IotHubQuotaMetricInfo',
+    'IotHubSkuDescription',
+    'IotHubSkuInfo',
+    'IpFilterRule',
+    'JobResponse',
     'MatchedRoute',
-    'TestAllRoutesResult',
-    'TestRouteInput',
+    'MessagingEndpointProperties',
+    'Name',
+    'Operation',
+    'OperationDisplay',
+    'OperationInputs',
+    'RegistryStatistics',
+    'Resource',
+    'RouteCompilationError',
     'RouteErrorPosition',
     'RouteErrorRange',
-    'RouteCompilationError',
-    'TestRouteResultDetails',
+    'RouteProperties',
+    'RoutingEndpoints',
+    'RoutingEventHubProperties',
+    'RoutingMessage',
+    'RoutingProperties',
+    'RoutingServiceBusQueueEndpointProperties',
+    'RoutingServiceBusTopicEndpointProperties',
+    'RoutingStorageContainerProperties',
+    'RoutingTwin',
+    'RoutingTwinProperties',
+    'SharedAccessSignatureAuthorizationRule',
+    'StorageEndpointProperties',
+    'TagsResource',
+    'TestAllRoutesInput',
+    'TestAllRoutesResult',
+    'TestRouteInput',
     'TestRouteResult',
-    'ExportDevicesRequest',
-    'ImportDevicesRequest',
-    'FailoverInput',
+    'TestRouteResultDetails',
+    'UserSubscriptionQuota',
+    'UserSubscriptionQuotaListResult',
     'OperationPaged',
     'IotHubDescriptionPaged',
     'IotHubSkuDescriptionPaged',
@@ -225,6 +229,7 @@ __all__ = [
     'IpFilterActionType',
     'RoutingSource',
     'Capabilities',
+    'IotHubReplicaRoleType',
     'IotHubSku',
     'IotHubSkuTier',
     'EndpointHealthStatus',

@@ -3,6 +3,186 @@
 Release History
 ===============
 
+8.0.0 (2019-11-12)
+++++++++++++++++++
+
+**Features**
+
+- Model PrivateLinkServiceConnectionState has a new parameter actions_required
+- Model ConnectivityParameters has a new parameter preferred_ip_version
+
+**Breaking changes**
+
+- Model PrivateLinkServiceConnectionState no longer has parameter action_required
+
+7.0.0 (2019-10-22)
+++++++++++++++++++
+
+**Features**
+
+- Model ApplicationGatewayHttpListener has a new parameter hostnames
+- Model ApplicationGatewayHttpListener has a new parameter firewall_policy
+- Model ApplicationGatewayPathRule has a new parameter firewall_policy
+- Model P2SVpnGateway has a new parameter p2_sconnection_configurations
+- Model VpnServerConfiguration has a new parameter vpn_client_root_certificates
+- Model VpnServerConfiguration has a new parameter radius_server_root_certificates
+- Model VpnServerConfiguration has a new parameter radius_client_root_certificates
+- Model VpnServerConfiguration has a new parameter vpn_client_revoked_certificates
+- Model ExpressRouteConnection has a new parameter enable_internet_security
+- Model AzureFirewallApplicationRule has a new parameter source_ip_groups
+- Model WebApplicationFirewallPolicy has a new parameter path_based_rules
+- Model WebApplicationFirewallPolicy has a new parameter http_listeners
+- Model PrivateLinkService has a new parameter enable_proxy_protocol
+- Model AzureFirewallNetworkRule has a new parameter destination_ip_groups
+- Model AzureFirewallNetworkRule has a new parameter source_ip_groups
+- Model AzureFirewallNetworkRule has a new parameter destination_fqdns
+- Model VirtualWAN has a new parameter virtual_wan_type
+- Model VirtualHub has a new parameter sku
+- Model VirtualHub has a new parameter virtual_hub_route_table_v2s
+- Model AzureFirewallNatRule has a new parameter translated_fqdn
+- Model AzureFirewallNatRule has a new parameter source_ip_groups
+- Model PrivateEndpointConnection has a new parameter link_identifier
+- Model AzureFirewall has a new parameter additional_properties
+- Added operation RouteFiltersOperations.update_tags
+- Added operation ServiceEndpointPoliciesOperations.update_tags
+- Added operation PrivateLinkServicesOperations.get_private_endpoint_connection
+- Added operation PrivateLinkServicesOperations.list_private_endpoint_connections
+- Added operation group VirtualHubRouteTableV2sOperations
+- Added operation group IpGroupsOperations
+
+**Breaking changes**
+
+- Operation AzureFirewallsOperations.update_tags has a new signature
+- Operation ExpressRouteCircuitAuthorizationsOperations.create_or_update has a new signature
+- Model P2SVpnGateway no longer has parameter p2s_connection_configurations
+- Model VpnServerConfiguration no longer has parameter vpn_server_config_vpn_client_root_certificates
+- Model VpnServerConfiguration no longer has parameter vpn_server_config_radius_client_root_certificates
+- Model VpnServerConfiguration no longer has parameter vpn_server_config_vpn_client_revoked_certificates
+- Model VpnServerConfiguration no longer has parameter vpn_server_config_radius_server_root_certificates
+- Removed operation RouteFiltersOperations.update
+- Removed operation VirtualRoutersOperations.update
+- Removed operation RouteFilterRulesOperations.update
+- Removed operation VirtualRouterPeeringsOperations.update
+- Removed operation FirewallPoliciesOperations.update_tags
+- Removed operation ServiceEndpointPoliciesOperations.update
+
+6.0.0 (2019-10-09)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualNetwork has a new parameter bgp_communities
+- Model VirtualHub has a new parameter azure_firewall
+- Model VirtualHub has a new parameter security_provider_name
+- Model P2SVpnGateway has a new parameter p2s_connection_configurations
+- Model P2SVpnGateway has a new parameter vpn_server_configuration
+- Model AzureFirewall has a new parameter sku
+- Model VirtualNetworkGateway has a new parameter inbound_dns_forwarding_endpoint
+- Model VirtualNetworkGateway has a new parameter enable_dns_forwarding
+- Added operation P2sVpnGatewaysOperations.get_p2s_vpn_connection_health_detailed
+- Added operation NetworkManagementClientOperationsMixin.generatevirtualwanvpnserverconfigurationvpnprofile
+- Added operation group VpnServerConfigurationsOperations
+- Added operation group VpnServerConfigurationsAssociatedWithVirtualWanOperations
+- Added operation group AvailableServiceAliasesOperations
+
+**Breaking changes** 
+
+- Model WebApplicationFirewallPolicy has a new required parameter managed_rules
+- Model P2SVpnGateway no longer has parameter vpn_client_address_pool
+- Model P2SVpnGateway no longer has parameter custom_routes
+- Model P2SVpnGateway no longer has parameter p2_svpn_server_configuration
+- Model VirtualWAN no longer has parameter security_provider_name
+- Model VirtualWAN no longer has parameter p2_svpn_server_configurations
+- Model PolicySettings has a new signature
+
+5.1.0 (2019-10-03)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualNetworkGateway has a new parameter vpn_gateway_generation
+- Model ExpressRoutePort has a new parameter identity
+- Model VirtualNetworkGatewayConnection has a new parameter traffic_selector_policies
+- Model ExpressRouteLink has a new parameter mac_sec_config
+- Model VirtualNetworkGatewayConnectionListEntity has a new parameter traffic_selector_policies
+- Model NetworkInterfaceIPConfiguration has a new parameter private_link_connection_properties
+- Model ApplicationGatewayRequestRoutingRule has a new parameter priority
+- Added operation VirtualNetworkGatewayConnectionsOperations.stop_packet_capture
+- Added operation VirtualNetworkGatewayConnectionsOperations.start_packet_capture
+- Added operation ConnectionMonitorsOperations.update_tags
+- Added operation VirtualNetworkGatewaysOperations.stop_packet_capture
+- Added operation VirtualNetworkGatewaysOperations.start_packet_capture
+- Added operation group VirtualRoutersOperations
+- Added operation group VirtualRouterPeeringsOperations
+
+5.0.0 (2019-08-27)
+++++++++++++++++++
+
+**Features**
+
+- Model PrivateLinkServiceIpConfiguration has a new parameter primary
+- Model PrivateLinkServiceIpConfiguration has a new parameter etag
+- Model PrivateLinkServiceIpConfiguration has a new parameter type
+- Model PrivateLinkServiceIpConfiguration has a new parameter id
+- Model AzureFirewall has a new parameter virtual_hub
+- Model AzureFirewall has a new parameter hub_ip_addresses
+- Model AzureFirewall has a new parameter firewall_policy
+- Model PrivateLinkServiceConnection has a new parameter provisioning_state
+- Model PrivateLinkServiceConnection has a new parameter etag
+- Model PrivateLinkServiceConnection has a new parameter type
+- Model PublicIPPrefix has a new parameter load_balancer_frontend_ip_configuration
+- Model ApplicationGatewayOnDemandProbe has a new parameter backend_address_pool
+- Model ApplicationGatewayOnDemandProbe has a new parameter backend_http_settings
+- Model PrivateEndpointConnection has a new parameter provisioning_state
+- Model PrivateEndpointConnection has a new parameter etag
+- Model PrivateEndpointConnection has a new parameter type
+- Added operation SubnetsOperations.unprepare_network_policies
+- Added operation group FirewallPolicyRuleGroupsOperations
+- Added operation group FirewallPoliciesOperations
+
+**Breaking changes**
+
+- Model PrivateLinkServiceIpConfiguration no longer has parameter public_ip_address
+- Model ApplicationGatewayOnDemandProbe no longer has parameter backend_pool_name
+- Model ApplicationGatewayOnDemandProbe no longer has parameter backend_http_setting_name
+
+4.0.0 (2019-07-19)
+++++++++++++++++++
+
+**Features**
+
+- Model Subnet has a new parameter private_link_service_network_policies
+- Model Subnet has a new parameter private_endpoint_network_policies
+- Model VpnSite has a new parameter vpn_site_links
+- Model LoadBalancingRule has a new parameter type
+- Model BackendAddressPool has a new parameter outbound_rules
+- Model BackendAddressPool has a new parameter type
+- Model InboundNatPool has a new parameter type
+- Model OutboundRule has a new parameter type
+- Model InboundNatRule has a new parameter type
+- Model Probe has a new parameter type
+- Model FrontendIPConfiguration has a new parameter private_ip_address_version
+- Model FrontendIPConfiguration has a new parameter type
+- Model AvailablePrivateEndpointType has a new parameter name
+- Model AvailablePrivateEndpointType has a new parameter resource_name
+- Model VpnConnection has a new parameter vpn_link_connections
+- Added operation AvailablePrivateEndpointTypesOperations.list_by_resource_group
+- Added operation AzureFirewallsOperations.update_tags
+- Added operation PrivateLinkServicesOperations.check_private_link_service_visibility_by_resource_group
+- Added operation PrivateLinkServicesOperations.list_auto_approved_private_link_services
+- Added operation PrivateLinkServicesOperations.check_private_link_service_visibility
+- Added operation PrivateLinkServicesOperations.list_auto_approved_private_link_services_by_resource_group
+- Added operation group VpnLinkConnectionsOperations
+- Added operation group VpnSiteLinkConnectionsOperations
+- Added operation group VpnSiteLinksOperations
+
+**Breaking changes**
+
+- Operation SubnetsOperations.prepare_network_policies has a new signature
+- Model PrepareNetworkPoliciesRequest no longer has parameter resource_group_name
+- Model AvailablePrivateEndpointType no longer has parameter service_name
+- Removed operation group AvailableResourceGroupPrivateEndpointTypesOperations
+
 3.0.0 (2019-05-24)
 ++++++++++++++++++
 

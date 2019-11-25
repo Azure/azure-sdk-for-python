@@ -10,49 +10,49 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .tracked_resource_py3 import TrackedResource
-    from .resource_py3 import Resource
-    from .sku_py3 import Sku
-    from .namespace_create_or_update_parameters_py3 import NamespaceCreateOrUpdateParameters
-    from .namespace_resource_py3 import NamespaceResource
-    from .shared_access_authorization_rule_create_or_update_parameters_py3 import SharedAccessAuthorizationRuleCreateOrUpdateParameters
-    from .shared_access_authorization_rule_resource_py3 import SharedAccessAuthorizationRuleResource
-    from .resource_list_keys_py3 import ResourceListKeys
-    from .regenerate_keys_parameters_py3 import RegenerateKeysParameters
-    from .event_hub_create_or_update_parameters_py3 import EventHubCreateOrUpdateParameters
-    from .event_hub_resource_py3 import EventHubResource
-    from .consumer_group_create_or_update_parameters_py3 import ConsumerGroupCreateOrUpdateParameters
-    from .consumer_group_resource_py3 import ConsumerGroupResource
-    from .check_name_availability_parameter_py3 import CheckNameAvailabilityParameter
-    from .check_name_availability_result_py3 import CheckNameAvailabilityResult
-    from .namespace_update_parameter_py3 import NamespaceUpdateParameter
+    from ._models_py3 import CheckNameAvailabilityParameter
+    from ._models_py3 import CheckNameAvailabilityResult
+    from ._models_py3 import ConsumerGroupCreateOrUpdateParameters
+    from ._models_py3 import ConsumerGroupResource
+    from ._models_py3 import EventHubCreateOrUpdateParameters
+    from ._models_py3 import EventHubResource
+    from ._models_py3 import NamespaceCreateOrUpdateParameters
+    from ._models_py3 import NamespaceResource
+    from ._models_py3 import NamespaceUpdateParameter
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import RegenerateKeysParameters
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceListKeys
+    from ._models_py3 import SharedAccessAuthorizationRuleCreateOrUpdateParameters
+    from ._models_py3 import SharedAccessAuthorizationRuleResource
+    from ._models_py3 import Sku
+    from ._models_py3 import TrackedResource
 except (SyntaxError, ImportError):
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .tracked_resource import TrackedResource
-    from .resource import Resource
-    from .sku import Sku
-    from .namespace_create_or_update_parameters import NamespaceCreateOrUpdateParameters
-    from .namespace_resource import NamespaceResource
-    from .shared_access_authorization_rule_create_or_update_parameters import SharedAccessAuthorizationRuleCreateOrUpdateParameters
-    from .shared_access_authorization_rule_resource import SharedAccessAuthorizationRuleResource
-    from .resource_list_keys import ResourceListKeys
-    from .regenerate_keys_parameters import RegenerateKeysParameters
-    from .event_hub_create_or_update_parameters import EventHubCreateOrUpdateParameters
-    from .event_hub_resource import EventHubResource
-    from .consumer_group_create_or_update_parameters import ConsumerGroupCreateOrUpdateParameters
-    from .consumer_group_resource import ConsumerGroupResource
-    from .check_name_availability_parameter import CheckNameAvailabilityParameter
-    from .check_name_availability_result import CheckNameAvailabilityResult
-    from .namespace_update_parameter import NamespaceUpdateParameter
-from .operation_paged import OperationPaged
-from .namespace_resource_paged import NamespaceResourcePaged
-from .shared_access_authorization_rule_resource_paged import SharedAccessAuthorizationRuleResourcePaged
-from .event_hub_resource_paged import EventHubResourcePaged
-from .consumer_group_resource_paged import ConsumerGroupResourcePaged
-from .event_hub_management_client_enums import (
+    from ._models import CheckNameAvailabilityParameter
+    from ._models import CheckNameAvailabilityResult
+    from ._models import ConsumerGroupCreateOrUpdateParameters
+    from ._models import ConsumerGroupResource
+    from ._models import EventHubCreateOrUpdateParameters
+    from ._models import EventHubResource
+    from ._models import NamespaceCreateOrUpdateParameters
+    from ._models import NamespaceResource
+    from ._models import NamespaceUpdateParameter
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import RegenerateKeysParameters
+    from ._models import Resource
+    from ._models import ResourceListKeys
+    from ._models import SharedAccessAuthorizationRuleCreateOrUpdateParameters
+    from ._models import SharedAccessAuthorizationRuleResource
+    from ._models import Sku
+    from ._models import TrackedResource
+from ._paged_models import ConsumerGroupResourcePaged
+from ._paged_models import EventHubResourcePaged
+from ._paged_models import NamespaceResourcePaged
+from ._paged_models import OperationPaged
+from ._paged_models import SharedAccessAuthorizationRuleResourcePaged
+from ._event_hub_management_client_enums import (
     SkuName,
     SkuTier,
     NamespaceState,
@@ -63,24 +63,24 @@ from .event_hub_management_client_enums import (
 )
 
 __all__ = [
-    'OperationDisplay',
-    'Operation',
-    'TrackedResource',
-    'Resource',
-    'Sku',
-    'NamespaceCreateOrUpdateParameters',
-    'NamespaceResource',
-    'SharedAccessAuthorizationRuleCreateOrUpdateParameters',
-    'SharedAccessAuthorizationRuleResource',
-    'ResourceListKeys',
-    'RegenerateKeysParameters',
-    'EventHubCreateOrUpdateParameters',
-    'EventHubResource',
-    'ConsumerGroupCreateOrUpdateParameters',
-    'ConsumerGroupResource',
     'CheckNameAvailabilityParameter',
     'CheckNameAvailabilityResult',
+    'ConsumerGroupCreateOrUpdateParameters',
+    'ConsumerGroupResource',
+    'EventHubCreateOrUpdateParameters',
+    'EventHubResource',
+    'NamespaceCreateOrUpdateParameters',
+    'NamespaceResource',
     'NamespaceUpdateParameter',
+    'Operation',
+    'OperationDisplay',
+    'RegenerateKeysParameters',
+    'Resource',
+    'ResourceListKeys',
+    'SharedAccessAuthorizationRuleCreateOrUpdateParameters',
+    'SharedAccessAuthorizationRuleResource',
+    'Sku',
+    'TrackedResource',
     'OperationPaged',
     'NamespaceResourcePaged',
     'SharedAccessAuthorizationRuleResourcePaged',

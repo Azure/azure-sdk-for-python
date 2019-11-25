@@ -17,7 +17,7 @@ async def sample_queue_send_receive_batch_async(sb_config, queue):
         service_namespace=sb_config['hostname'],
         shared_access_key_name=sb_config['key_name'],
         shared_access_key_value=sb_config['access_key'],
-        debug=True)
+        debug=False)
 
     queue_client = client.get_queue(queue)
     async with queue_client.get_sender() as sender:

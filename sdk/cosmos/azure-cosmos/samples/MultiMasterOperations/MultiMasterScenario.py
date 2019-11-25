@@ -3,7 +3,7 @@ from ConflictWorker import ConflictWorker
 from Worker import Worker
 from multiprocessing.pool import ThreadPool
 import azure.cosmos.documents as documents
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 
 class MultiMasterScenario(object):
     def __init__(self):
@@ -27,7 +27,12 @@ class MultiMasterScenario(object):
             connection_policy.UseMultipleWriteLocations = True
             connection_policy.PreferredLocations = [region]
 
-            client = cosmos_client.CosmosClient(self.account_endpoint, {'masterKey': self.account_key}, connection_policy, documents.ConsistencyLevel.Session)
+            client = cosmos_client_connection.CosmosClientConnection(
+                self.account_endpoint,
+                {'masterKey': self.account_key},
+                connection_policy,
+                documents.ConsistencyLevel.Session
+            )
 
             self.workers.append(Worker(client, self.database_name, self.basic_collection_name))
 
@@ -43,7 +48,7 @@ class MultiMasterScenario(object):
         print("####################################################")
 
         print("1) Starting insert loops across multiple regions ...")
-        
+
         documents_to_insert_per_worker = 100
 
         run_loop_futures = []

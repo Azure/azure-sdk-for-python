@@ -10,43 +10,43 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .resource_py3 import Resource
-    from .container_service_custom_profile_py3 import ContainerServiceCustomProfile
-    from .key_vault_secret_ref_py3 import KeyVaultSecretRef
-    from .container_service_service_principal_profile_py3 import ContainerServiceServicePrincipalProfile
-    from .container_service_orchestrator_profile_py3 import ContainerServiceOrchestratorProfile
-    from .container_service_master_profile_py3 import ContainerServiceMasterProfile
-    from .container_service_agent_pool_profile_py3 import ContainerServiceAgentPoolProfile
-    from .container_service_windows_profile_py3 import ContainerServiceWindowsProfile
-    from .container_service_ssh_public_key_py3 import ContainerServiceSshPublicKey
-    from .container_service_ssh_configuration_py3 import ContainerServiceSshConfiguration
-    from .container_service_linux_profile_py3 import ContainerServiceLinuxProfile
-    from .container_service_vm_diagnostics_py3 import ContainerServiceVMDiagnostics
-    from .container_service_diagnostics_profile_py3 import ContainerServiceDiagnosticsProfile
-    from .container_service_py3 import ContainerService
-    from .orchestrator_profile_py3 import OrchestratorProfile
-    from .orchestrator_version_profile_py3 import OrchestratorVersionProfile
-    from .orchestrator_version_profile_list_result_py3 import OrchestratorVersionProfileListResult
+    from ._models_py3 import ContainerService
+    from ._models_py3 import ContainerServiceAgentPoolProfile
+    from ._models_py3 import ContainerServiceCustomProfile
+    from ._models_py3 import ContainerServiceDiagnosticsProfile
+    from ._models_py3 import ContainerServiceLinuxProfile
+    from ._models_py3 import ContainerServiceMasterProfile
+    from ._models_py3 import ContainerServiceOrchestratorProfile
+    from ._models_py3 import ContainerServiceServicePrincipalProfile
+    from ._models_py3 import ContainerServiceSshConfiguration
+    from ._models_py3 import ContainerServiceSshPublicKey
+    from ._models_py3 import ContainerServiceVMDiagnostics
+    from ._models_py3 import ContainerServiceWindowsProfile
+    from ._models_py3 import KeyVaultSecretRef
+    from ._models_py3 import OrchestratorProfile
+    from ._models_py3 import OrchestratorVersionProfile
+    from ._models_py3 import OrchestratorVersionProfileListResult
+    from ._models_py3 import Resource
 except (SyntaxError, ImportError):
-    from .resource import Resource
-    from .container_service_custom_profile import ContainerServiceCustomProfile
-    from .key_vault_secret_ref import KeyVaultSecretRef
-    from .container_service_service_principal_profile import ContainerServiceServicePrincipalProfile
-    from .container_service_orchestrator_profile import ContainerServiceOrchestratorProfile
-    from .container_service_master_profile import ContainerServiceMasterProfile
-    from .container_service_agent_pool_profile import ContainerServiceAgentPoolProfile
-    from .container_service_windows_profile import ContainerServiceWindowsProfile
-    from .container_service_ssh_public_key import ContainerServiceSshPublicKey
-    from .container_service_ssh_configuration import ContainerServiceSshConfiguration
-    from .container_service_linux_profile import ContainerServiceLinuxProfile
-    from .container_service_vm_diagnostics import ContainerServiceVMDiagnostics
-    from .container_service_diagnostics_profile import ContainerServiceDiagnosticsProfile
-    from .container_service import ContainerService
-    from .orchestrator_profile import OrchestratorProfile
-    from .orchestrator_version_profile import OrchestratorVersionProfile
-    from .orchestrator_version_profile_list_result import OrchestratorVersionProfileListResult
-from .container_service_paged import ContainerServicePaged
-from .container_service_client_enums import (
+    from ._models import ContainerService
+    from ._models import ContainerServiceAgentPoolProfile
+    from ._models import ContainerServiceCustomProfile
+    from ._models import ContainerServiceDiagnosticsProfile
+    from ._models import ContainerServiceLinuxProfile
+    from ._models import ContainerServiceMasterProfile
+    from ._models import ContainerServiceOrchestratorProfile
+    from ._models import ContainerServiceServicePrincipalProfile
+    from ._models import ContainerServiceSshConfiguration
+    from ._models import ContainerServiceSshPublicKey
+    from ._models import ContainerServiceVMDiagnostics
+    from ._models import ContainerServiceWindowsProfile
+    from ._models import KeyVaultSecretRef
+    from ._models import OrchestratorProfile
+    from ._models import OrchestratorVersionProfile
+    from ._models import OrchestratorVersionProfileListResult
+    from ._models import Resource
+from ._paged_models import ContainerServicePaged
+from ._container_service_client_enums import (
     ContainerServiceStorageProfileTypes,
     ContainerServiceVMSizeTypes,
     ContainerServiceOrchestratorTypes,
@@ -54,23 +54,23 @@ from .container_service_client_enums import (
 )
 
 __all__ = [
-    'Resource',
-    'ContainerServiceCustomProfile',
-    'KeyVaultSecretRef',
-    'ContainerServiceServicePrincipalProfile',
-    'ContainerServiceOrchestratorProfile',
-    'ContainerServiceMasterProfile',
-    'ContainerServiceAgentPoolProfile',
-    'ContainerServiceWindowsProfile',
-    'ContainerServiceSshPublicKey',
-    'ContainerServiceSshConfiguration',
-    'ContainerServiceLinuxProfile',
-    'ContainerServiceVMDiagnostics',
-    'ContainerServiceDiagnosticsProfile',
     'ContainerService',
+    'ContainerServiceAgentPoolProfile',
+    'ContainerServiceCustomProfile',
+    'ContainerServiceDiagnosticsProfile',
+    'ContainerServiceLinuxProfile',
+    'ContainerServiceMasterProfile',
+    'ContainerServiceOrchestratorProfile',
+    'ContainerServiceServicePrincipalProfile',
+    'ContainerServiceSshConfiguration',
+    'ContainerServiceSshPublicKey',
+    'ContainerServiceVMDiagnostics',
+    'ContainerServiceWindowsProfile',
+    'KeyVaultSecretRef',
     'OrchestratorProfile',
     'OrchestratorVersionProfile',
     'OrchestratorVersionProfileListResult',
+    'Resource',
     'ContainerServicePaged',
     'ContainerServiceStorageProfileTypes',
     'ContainerServiceVMSizeTypes',

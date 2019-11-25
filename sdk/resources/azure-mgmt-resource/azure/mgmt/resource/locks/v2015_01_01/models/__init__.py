@@ -10,11 +10,11 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .management_lock_object_py3 import ManagementLockObject
+    from ._models_py3 import ManagementLockObject
 except (SyntaxError, ImportError):
-    from .management_lock_object import ManagementLockObject
-from .management_lock_object_paged import ManagementLockObjectPaged
-from .management_lock_client_enums import (
+    from ._models import ManagementLockObject
+from ._paged_models import ManagementLockObjectPaged
+from ._management_lock_client_enums import (
     LockLevel,
 )
 

@@ -23,11 +23,13 @@ import unittest
 import uuid
 import pytest
 from six.moves import xrange
-import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos.execution_context import base_execution_context as base_execution_context
-import azure.cosmos.base as base
+from azure.cosmos._execution_context import base_execution_context as base_execution_context
+import azure.cosmos._base as base
 import test_config
+from azure.cosmos.partition_key import PartitionKey
+
+pytestmark = pytest.mark.cosmosEmulator
 
 #IMPORTANT NOTES:
   
@@ -56,11 +58,11 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
                 "tests.")
 
         cls.client = cosmos_client.CosmosClient(QueryExecutionContextEndToEndTests.host,
-                                                 {'masterKey': QueryExecutionContextEndToEndTests.masterKey},
-                                                 QueryExecutionContextEndToEndTests.connectionPolicy)
+                                                QueryExecutionContextEndToEndTests.masterKey,
+                                                "Session",
+                                                connection_policy=QueryExecutionContextEndToEndTests.connectionPolicy)
         cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
-        cls.created_collection = cls.create_collection(cls.client, cls.created_db)
-        cls.collection_link = cls.created_collection['_self']
+        cls.created_collection = cls.create_collection(cls.created_db)
         cls.document_definitions = []
 
         # create a document using the document definition
@@ -70,19 +72,20 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
                  'spam': 'eggs' + str(i),
                  'key': 'value'}
             cls.document_definitions.append(d)
-        cls.insert_doc(cls.client, cls.created_db, cls.collection_link, cls.document_definitions)
+        cls.insert_doc(cls.document_definitions)
 
     @classmethod
     def tearDownClass(cls):
-        cls.client.DeleteContainer(cls.collection_link)
+        cls.created_db.delete_container(container=cls.created_collection)
 
     def setUp(self):
         # sanity check:
-        partition_key_ranges = list(self.client._ReadPartitionKeyRanges(self.collection_link))
+        partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(
+            self.GetDocumentCollectionLink(self.created_db, self.created_collection)))
         self.assertGreaterEqual(len(partition_key_ranges), 1)
 
         # sanity check: read documents after creation
-        queried_docs = list(self.client.ReadItems(self.collection_link))
+        queried_docs = list(self.created_collection.read_all_items())
         self.assertEqual(
             len(queried_docs),
             len(self.document_definitions),
@@ -115,10 +118,13 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         options['enableCrossPartitionQuery'] = True
         options['maxItemCount'] = 2
     
-        res = self.client.QueryItems(self.collection_link, query, options)
+        res = self.created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True,
+            max_item_count=2
+        )
         self.assertEqual(len(list(res)), 19)
-    
-    
+
         self._test_default_execution_context(options, query, 19)
         
     def test_simple_query_default_execution_context_with_small_last_page(self):        
@@ -134,9 +140,9 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         options['enableCrossPartitionQuery'] = True
         options['maxItemCount'] = 3
     
-        self._test_default_execution_context(options, query, 19)    
+        self._test_default_execution_context(options, query, 19)
 
-    def _test_default_execution_context(self, options, query, expected_number_of_results):        
+    def _test_default_execution_context(self, options, query, expected_number_of_results):
         
         page_size = options['maxItemCount']
         collection_link = self.GetDocumentCollectionLink(self.created_db, self.created_collection)
@@ -144,7 +150,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
         def fetch_fn(options):
-                return self.client.QueryFeed(path,
+                return self.client.client_connection.QueryFeed(path,
                                         collection_id,
                                         query,
                                         options)
@@ -152,7 +158,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         ######################################
         # test next() behavior
         ######################################
-        ex = base_execution_context._DefaultQueryExecutionContext(self.client, options, fetch_fn)
+        ex = base_execution_context._DefaultQueryExecutionContext(self.client.client_connection, options, fetch_fn)
         
         it = ex.__iter__()
         def invokeNext():
@@ -172,7 +178,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         ######################################
         # test fetch_next_block() behavior
         ######################################
-        ex = base_execution_context._DefaultQueryExecutionContext(self.client, options, fetch_fn)
+        ex = base_execution_context._DefaultQueryExecutionContext(self.client.client_connection, options, fetch_fn)
         
         results = {}
         cnt = 0
@@ -202,47 +208,33 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         self.assertEqual(ex.fetch_next_block(), [])
 
     @classmethod
-    def create_collection(cls, client, created_db):
+    def create_collection(cls, created_db):
 
-        collection_definition = {   'id': 'query_execution_context_tests collection ' + str(uuid.uuid4()),
-                                    'partitionKey': 
-                                    {   
-                                        'paths': ['/id'],
-                                        'kind': documents.PartitionKind.Hash
-                                    }
-                                }
-        
-        collection_options = {  }
-
-        created_collection = client.CreateContainer(created_db['_self'],
-                                collection_definition, 
-                                collection_options)
+        created_collection = created_db.create_container(
+            id='query_execution_context_tests collection ' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path='/id', kind='Hash')
+        )
 
         return created_collection
 
     @classmethod
-    def insert_doc(cls, client, created_db, collection_link, document_definitions):
+    def insert_doc(cls, document_definitions):
         # create a document using the document definition
         created_docs = []
         for d in document_definitions:
 
-            created_doc = client.CreateItem(collection_link, d)
+            created_doc = cls.created_collection.create_item(body=d)
             created_docs.append(created_doc)
                         
         return created_docs
 
-    def GetDatabaseLink(self, database, is_name_based=True):
-        if is_name_based:
-            return 'dbs/' + database['id']
-        else:
-            return database['_self']
+    def GetDatabaseLink(self, database):
+            return 'dbs/' + database.id
 
-    def GetDocumentCollectionLink(self, database, document_collection, is_name_based=True):
-        if is_name_based:
-            return self.GetDatabaseLink(database) + '/colls/' + document_collection['id']
-        else:
-            return document_collection['_self']
-        
+    def GetDocumentCollectionLink(self, database, document_collection):
+            return self.GetDatabaseLink(database) + '/colls/' + document_collection.id
+
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

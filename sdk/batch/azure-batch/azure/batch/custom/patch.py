@@ -7,7 +7,7 @@ import sys
 
 from ..models import BatchErrorException, TaskAddCollectionResult, TaskAddStatus
 from ..custom.custom_errors import CreateTasksErrorException
-from ..operations.task_operations import TaskOperations
+from ..operations._task_operations import TaskOperations
 
 MAX_TASKS_PER_REQUEST = 100
 _LOGGER = logging.getLogger(__name__)
@@ -277,15 +277,24 @@ def build_new_add_collection(original_add_collection):
         # Only define error if all threads have finished and there were failures
         if task_workflow_manager.failure_tasks or task_workflow_manager.errors:
             raise CreateTasksErrorException(
-                    "One or more tasks failed to be added",
-                    task_workflow_manager.failure_tasks,
                     task_workflow_manager.tasks_to_add,
+                    task_workflow_manager.failure_tasks,
                     task_workflow_manager.errors)
         else:
             submitted_tasks = _handle_output(results_queue)
             return TaskAddCollectionResult(value=submitted_tasks)
     bulk_add_collection.metadata = {'url': '/jobs/{jobId}/addtaskcollection'}
     return bulk_add_collection
+
+
+def batch_error_exception_string(self):
+    ret = "Request encountered an exception.\nCode: {}\nMessage: {}\n".format(
+        self.error.code,
+        self.error.message)
+    if self.error.values:
+        for error_detail in self.error.values:
+            ret += "{}: {}\n".format(error_detail.key, error_detail.value)
+    return ret
 
 
 def patch_client():
@@ -298,3 +307,5 @@ def patch_client():
 
     operations_modules = importlib.import_module('azure.batch.operations')
     operations_modules.TaskOperations.add_collection = build_new_add_collection(operations_modules.TaskOperations.add_collection)
+    models = importlib.import_module('azure.batch.models')
+    models.BatchErrorException.__str__ = batch_error_exception_string

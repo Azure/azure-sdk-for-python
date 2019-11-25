@@ -30,7 +30,7 @@ class SqlVirtualMachineGroup(TrackedResource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :ivar provisioning_state: Provisioning state to track the aysnc operation
+    :ivar provisioning_state: Provisioning state to track the async operation
      status.
     :vartype provisioning_state: str
     :param sql_image_offer: SQL image offer. Examples may include

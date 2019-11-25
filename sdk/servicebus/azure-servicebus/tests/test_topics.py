@@ -36,7 +36,7 @@ _logger = get_logger(logging.DEBUG)
 @pytest.mark.liveTest
 def test_topic_by_topic_client_conn_str_send_basic(live_servicebus_config, standard_topic):
 
-    topic_client = TopicClient.from_connection_string(live_servicebus_config['conn_str'], name=standard_topic, debug=True)
+    topic_client = TopicClient.from_connection_string(live_servicebus_config['conn_str'], name=standard_topic, debug=False)
     with topic_client.get_sender() as sender:
         message = Message(b"Sample topic message")
         sender.send(message)
@@ -50,7 +50,7 @@ def test_topic_by_servicebus_client_conn_str_send_basic(live_servicebus_config, 
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     topic_client = client.get_topic(standard_topic)
     with topic_client.get_sender() as sender:
@@ -66,7 +66,7 @@ def test_topic_by_servicebus_client_list_topics(live_servicebus_config, standard
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     topics = client.list_topics()
     assert len(topics) >= 1
@@ -74,6 +74,6 @@ def test_topic_by_servicebus_client_list_topics(live_servicebus_config, standard
 
 @pytest.mark.liveTest
 def test_topic_by_topic_client_conn_str_receive_fail(live_servicebus_config, standard_topic):
-    topic_client = TopicClient.from_connection_string(live_servicebus_config['conn_str'], name=standard_topic, debug=True)
+    topic_client = TopicClient.from_connection_string(live_servicebus_config['conn_str'], name=standard_topic, debug=False)
     with pytest.raises(AttributeError):
         topic_client.get_receiver()

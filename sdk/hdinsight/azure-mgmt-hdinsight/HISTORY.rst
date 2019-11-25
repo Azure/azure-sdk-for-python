@@ -3,6 +3,23 @@
 Release History
 ===============
 
+1.2.0 (2019-08-06)
+++++++++++++++++++
+
+**Features**
+
+- Model Role has a new parameter autoscale_configuration
+- Added operation LocationsOperations.list_billing_specs
+- Added operation LocationsOperations.get_capabilities
+
+1.1.0 (2019-06-17)
+++++++++++++++++++
+
+**Features**
+
+- Model ApplicationGetHttpsEndpoint has a new parameter disable_gateway_auth
+- Model ApplicationGetHttpsEndpoint has a new parameter sub_domain_suffix
+
 1.0.0 (2019-04-08)
 ++++++++++++++++++
 

@@ -1,0 +1,45 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 52862a0c-d9a6-11e9-8b5c-001a7dda7113
+      x-ms-date:
+      - Tue, 17 Sep 2019 23:53:18 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.file.core.windows.net/utshare553610c6/dir1?restype=directory
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
+        specified resource does not exist.\nRequestId:2ace7c89-001a-00a1-1eb3-6d8889000000\nTime:2019-09-17T23:53:18.4491485Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '223'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 17 Sep 2019 23:53:17 GMT
+      Server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ResourceNotFound
+      x-ms-request-id:
+      - 2ace7c89-001a-00a1-1eb3-6d8889000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 404
+      message: The specified resource does not exist.
+version: 1

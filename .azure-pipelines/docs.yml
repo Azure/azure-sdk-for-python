@@ -6,6 +6,8 @@ variables:
 
 jobs:
   - job: 'DocGen'
+    variables:
+      skipComponentGovernanceDetection: true
     timeoutInMinutes: 120
     pool:
       vmImage: 'vs2017-win2016'
@@ -20,13 +22,14 @@ jobs:
         displayName: 'Install All Packages'
         inputs:
           scriptPath: 'scripts/dev_setup.py'
+          arguments: '--exceptionlist=azure-eventhubs,azure-eventhubs-checkpointstoreblob-aio'
 
-      - powershell: |
-          cd $(Build.SourcesDirectory)/doc/
+      - pwsh: |
+          cd $(Build.SourcesDirectory)/doc/sphinx
           pip install -r requirements.txt
           ./make.bat html
           mkdir $(Build.ArtifactStagingDirectory)/sphinx
-          Copy-Item -Path $(Build.SourcesDirectory)/doc/_build/html/* -Destination $(Build.ArtifactStagingDirectory)/sphinx -Recurse -Force
+          Copy-Item -Path $(Build.SourcesDirectory)/doc/sphinx/_build/html/* -Destination $(Build.ArtifactStagingDirectory)/sphinx -Recurse -Force
         displayName: 'Generate Sphinx Docs'
 
       - upload: $(Build.ArtifactStagingDirectory)

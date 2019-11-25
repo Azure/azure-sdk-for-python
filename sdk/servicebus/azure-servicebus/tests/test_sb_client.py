@@ -28,7 +28,7 @@ def test_sb_client_bad_credentials(live_servicebus_config, standard_queue):
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name="invalid",
         shared_access_key_value="invalid",
-        debug=True)
+        debug=False)
 
     with pytest.raises(AzureHttpError):
         client.get_queue(standard_queue)
@@ -41,7 +41,7 @@ def test_sb_client_bad_namespace(live_servicebus_config):
         service_namespace="invalid",
         shared_access_key_name="invalid",
         shared_access_key_value="invalid",
-        debug=True)
+        debug=False)
 
     with pytest.raises(ServiceBusConnectionError):
         client.get_queue("testq")
@@ -53,7 +53,7 @@ def test_sb_client_bad_entity(live_servicebus_config):
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     with pytest.raises(ServiceBusResourceNotFound):
         client.get_queue("invalid")
@@ -68,7 +68,7 @@ def test_sb_client_entity_conflict(live_servicebus_config, standard_queue):
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     with pytest.raises(AzureConflictHttpError):
         client.create_queue(standard_queue)
@@ -83,7 +83,7 @@ def test_sb_client_entity_delete(live_servicebus_config, standard_queue):
         service_namespace=live_servicebus_config['hostname'],
         shared_access_key_name=live_servicebus_config['key_name'],
         shared_access_key_value=live_servicebus_config['access_key'],
-        debug=True)
+        debug=False)
 
     with pytest.raises(ServiceBusResourceNotFound):
         client.delete_queue("invalid", fail_not_exist=True)
@@ -93,7 +93,7 @@ def test_sb_client_entity_delete(live_servicebus_config, standard_queue):
 
 @pytest.mark.liveTest
 def test_sb_client_readonly_credentials(servicebus_conn_str_readonly, standard_queue):
-    client = ServiceBusClient.from_connection_string(servicebus_conn_str_readonly, debug=True)
+    client = ServiceBusClient.from_connection_string(servicebus_conn_str_readonly, debug=False)
     with pytest.raises(AzureHttpError):
         client.get_queue(standard_queue)
 
@@ -110,7 +110,7 @@ def test_sb_client_writeonly_credentials(servicebus_conn_str_writeonly, standard
     with pytest.raises(AzureHttpError):
         client.get_queue(standard_queue)
 
-    client = QueueClient.from_connection_string(servicebus_conn_str_writeonly, name=standard_queue, debug=True)
+    client = QueueClient.from_connection_string(servicebus_conn_str_writeonly, name=standard_queue, debug=False)
     with pytest.raises(ServiceBusAuthorizationError):
         with client.get_receiver(idle_timeout=5) as receiver:
             messages = receiver.fetch_next()

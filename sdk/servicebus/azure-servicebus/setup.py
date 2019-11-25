@@ -36,8 +36,8 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, '__init__.py'), 'r') as fd:
-    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
 if not version:
@@ -77,7 +77,7 @@ setup(
         'azure',
     ]),
     install_requires=[
-        'uamqp~=1.1.0',
+        'uamqp~=1.2.0',
         'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
     ],

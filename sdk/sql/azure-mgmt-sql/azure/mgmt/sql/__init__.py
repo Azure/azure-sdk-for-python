@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sql_management_client import SqlManagementClient
-from .version import VERSION
+from ._configuration import SqlManagementClientConfiguration
+from ._sql_management_client import SqlManagementClient
+__all__ = ['SqlManagementClient', 'SqlManagementClientConfiguration']
 
-__all__ = ['SqlManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

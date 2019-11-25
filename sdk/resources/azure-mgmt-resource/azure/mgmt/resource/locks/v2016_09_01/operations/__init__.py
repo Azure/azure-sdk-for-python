@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .authorization_operations import AuthorizationOperations
-from .management_locks_operations import ManagementLocksOperations
+from ._authorization_operations import AuthorizationOperations
+from ._management_locks_operations import ManagementLocksOperations
 
 __all__ = [
     'AuthorizationOperations',

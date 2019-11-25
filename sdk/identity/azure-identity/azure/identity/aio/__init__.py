@@ -1,8 +1,28 @@
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See LICENSE.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
-from .credentials import AsyncClientSecretCredential, AsyncTokenCredentialChain
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+"""Credentials for asynchronous Azure SDK clients."""
 
-__all__ = ["AsyncClientSecretCredential", "AsyncTokenCredentialChain"]
+from ._credentials import (
+    AuthorizationCodeCredential,
+    CertificateCredential,
+    ChainedTokenCredential,
+    ClientSecretCredential,
+    DefaultAzureCredential,
+    EnvironmentCredential,
+    ManagedIdentityCredential,
+    SharedTokenCacheCredential,
+)
+
+
+__all__ = [
+    "AuthorizationCodeCredential",
+    "CertificateCredential",
+    "ClientSecretCredential",
+    "DefaultAzureCredential",
+    "EnvironmentCredential",
+    "ManagedIdentityCredential",
+    "ChainedTokenCredential",
+    "SharedTokenCacheCredential",
+]

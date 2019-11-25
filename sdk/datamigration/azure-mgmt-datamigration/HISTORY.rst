@@ -3,6 +3,41 @@
 Release History
 ===============
 
+4.0.0 (2019-10-24)
+++++++++++++++++++
+
+**Features**
+
+- Model MigrationEligibilityInfo has a new parameter is_eligible_for_migration
+- Model ConnectToTargetSqlMITaskInput has a new parameter validate_ssis_catalog_only
+- Model ConnectToTargetSqlMITaskInput has a new parameter collect_logins
+- Model ConnectToTargetSqlMITaskInput has a new parameter collect_agent_jobs
+- Model ConnectToSourceSqlServerTaskInput has a new parameter collect_databases
+- Model ConnectToSourceSqlServerTaskInput has a new parameter validate_ssis_catalog_only
+- Model MigrateSqlServerSqlMITaskInput has a new parameter aad_domain_name
+- Model MigrateOracleAzureDbPostgreSqlSyncDatabaseInput has a new parameter case_manipulation
+
+**Breaking changes**
+
+- Model MigrationEligibilityInfo no longer has parameter is_eligibile_for_migration
+
+3.0.0 (2019-07-12)
+++++++++++++++++++
+
+**Features**
+
+- Added operation group ServiceTasksOperations
+
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that might introduce breaking changes if from some import. In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+DataMigrationServiceManagementClient cannot be imported from azure.mgmt.datamigration.data_migration_service_client anymore (import from azure.mgmt.datamigration works like before)
+DataMigrationServiceManagementClientConfiguration import has been moved from azure.mgmt.datamigration.data_migration_service_management_client to azure.mgmt.datamigration
+A model MyClass from a "models" sub-module cannot be imported anymore using azure.mgmt.datamigration.models.my_class (import from azure.mgmt.datamigration.models works like before)
+An operation class MyClassOperations from an operations sub-module cannot be imported anymore using azure.mgmt.datamigration.operations.my_class_operations (import from azure.mgmt.datamigration.operations works like before)
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
 2.2.0 (2019-05-21)
 ++++++++++++++++++
 

@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .policy_client import PolicyClient
-from .version import VERSION
+from ._configuration import PolicyClientConfiguration
+from ._policy_client import PolicyClient
+__all__ = ['PolicyClient', 'PolicyClientConfiguration']
 
-__all__ = ['PolicyClient']
+from .version import VERSION
 
 __version__ = VERSION
 

@@ -1,118 +1,131 @@
 interactions:
 - request:
-    body: '{"location": "westus"}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['22']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.6
-          msrest_azure/0.4.7 resourcemanagementclient/0.31.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [b66cc34a-0374-11e7-b0ea-ecb1d756380e]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_locks_test_locks71c0e80?api-version=2016-09-01
-  response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_locks_test_locks71c0e80","name":"test_mgmt_resource_locks_test_locks71c0e80","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['237']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 07 Mar 2017 20:29:07 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [f0b378a0-11bf-49fa-a6c5-bff7ffb7f14e]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [f0b378a0-11bf-49fa-a6c5-bff7ffb7f14e]
-      x-ms-routing-request-id: ['WESTUS2:20170307T202907Z:f0b378a0-11bf-49fa-a6c5-bff7ffb7f14e']
-    status: {code: 201, message: Created}
-- request:
     body: '{"properties": {"level": "CanNotDelete"}}'
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['41']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.6
-          msrest_azure/0.4.7 resourcemanagementclient/0.31.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [b7043918-0374-11e7-96ff-ecb1d756380e]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '41'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-resource/6.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_locks_test_locks71c0e80/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
   response:
-    body: {string: '{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_locks_test_locks71c0e80/providers/Microsoft.Authorization/locks/pylockrg","type":"Microsoft.Authorization/locks","name":"pylockrg"}'}
+    body:
+      string: '{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_locks_test_locks71c0e80/providers/Microsoft.Authorization/locks/pylockrg","type":"Microsoft.Authorization/locks","name":"pylockrg"}'
     headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['262']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 07 Mar 2017 20:29:07 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [e61ab3af-e319-486e-8960-48c49f4dc443]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-      x-ms-request-id: ['westus2:cc761600-3c8d-4761-ae74-53f9bd301a0f']
-      x-ms-routing-request-id: ['WESTUS2:20170307T202908Z:e61ab3af-e319-486e-8960-48c49f4dc443']
-    status: {code: 201, message: Created}
+      cache-control:
+      - no-cache
+      content-length:
+      - '262'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 08:11:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.6
-          msrest_azure/0.4.7 resourcemanagementclient/0.31.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [b74f22a4-0374-11e7-b54f-ecb1d756380e]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-resource/6.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_locks_test_locks71c0e80/providers/Microsoft.Authorization/locks?api-version=2016-09-01
   response:
-    body: {string: '{"value":[{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_locks_test_locks71c0e80/providers/Microsoft.Authorization/locks/pylockrg","type":"Microsoft.Authorization/locks","name":"pylockrg"}]}'}
+    body:
+      string: '{"value":[{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_locks_test_locks71c0e80/providers/Microsoft.Authorization/locks/pylockrg","type":"Microsoft.Authorization/locks","name":"pylockrg"}]}'
     headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 07 Mar 2017 20:29:08 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: ['Accept-Encoding,Accept-Encoding']
-      content-length: ['274']
-      x-ms-correlation-request-id: [9dacdd4d-a805-4e2d-92b4-593f18a63c38]
-      x-ms-ratelimit-remaining-subscription-reads: ['14997']
-      x-ms-request-id: ['westus2:89bbe162-8f52-4679-a116-213c65f6cf67']
-      x-ms-routing-request-id: ['WESTUS2:20170307T202908Z:9dacdd4d-a805-4e2d-92b4-593f18a63c38']
-    status: {code: 200, message: OK}
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 05 Nov 2019 08:11:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.6
-          msrest_azure/0.4.7 resourcemanagementclient/0.31.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [b791c2e2-0374-11e7-ab01-ecb1d756380e]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-resource/6.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_locks_test_locks71c0e80/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 07 Mar 2017 20:29:08 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [fd2a7767-cdde-4e23-96ff-61b89aa5bc24]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-      x-ms-request-id: ['westus2:8cc00298-dc25-4655-ad82-eed2e75b9935']
-      x-ms-routing-request-id: ['WESTUS2:20170307T202909Z:fd2a7767-cdde-4e23-96ff-61b89aa5bc24']
-    status: {code: 200, message: OK}
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Tue, 05 Nov 2019 08:11:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14997'
+    status:
+      code: 200
+      message: OK
 version: 1

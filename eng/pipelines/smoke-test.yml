@@ -1,0 +1,37 @@
+variables:
+  InstallAsyncRequirements: true
+
+jobs:
+  - job:
+    strategy:
+      matrix:
+        Python_37:
+          PythonVersion: '3.7'
+        Python_27:
+          PythonVersion: '2.7'
+          InstallAsyncRequirements: false
+
+    steps:
+      - task: UsePythonVersion@0
+        displayName: "Use Python $(PythonVersion)"
+        inputs:
+          versionSpec: $(PythonVersion)
+
+      - script: pip install -r ./common/smoketest/requirements.txt
+        displayName: "Install requirements.txt"
+
+      - script: pip install -r ./common/smoketest/requirements_async.txt
+        displayName: "Install requirements_async.txt"
+        condition: eq(variables['InstallAsyncRequirements'], true)
+
+      - script: python ./common/smoketest/program.py
+        displayName: "Run Smoke Test"
+        env:
+          AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
+          AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+          AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+          AZURE_PROJECT_URL: $(smoke-tests-key-vault-project-url)
+          EVENT_HUBS_CONNECTION_STRING: $(smoke-tests-event-hubs-connection-string)
+          COSMOS_ENDPOINT: $(smoke-tests-cosmos-endpoint)
+          COSMOS_KEY: $(smoke-tests-cosmos-key)
+          STORAGE_CONNECTION_STRING: $(smoke-tests-storage-connection-string)

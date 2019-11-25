@@ -45,7 +45,7 @@ class SapEccResourceDataset(Dataset):
     :type type: str
     :param path: Required. The path of the SAP ECC OData entity. Type: string
      (or Expression with resultType string).
-    :type path: str
+    :type path: object
     """
 
     _validation = {
@@ -64,10 +64,10 @@ class SapEccResourceDataset(Dataset):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
-        'path': {'key': 'typeProperties.path', 'type': 'str'},
+        'path': {'key': 'typeProperties.path', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, path: str, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, path, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, **kwargs) -> None:
         super(SapEccResourceDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.path = path
         self.type = 'SapEccResource'

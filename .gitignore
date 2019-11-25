@@ -13,12 +13,14 @@ env*/
 
 # Coverage report
 **/.coverage
+_coverage
 
 # Build results
 bin/
 obj/
 dist/
 MANIFEST
+_docs
 
 # Result of running python setup.py install/pip install -e
 RECORD.txt
@@ -27,6 +29,16 @@ build/
 
 # Test results
 TestResults/
+
+# tox generated artifacts
+test-junit-*.xml
+pylint-*.out.txt
+coverage-*.xml
+stderr.txt
+stdout.txt
+
+# tox environment folders
+.tox/
 
 # Credentials
 credentials_real.json
@@ -43,7 +55,7 @@ app_creds_real.py
 *.user
 *.sln.docstates
 .vs/
-.vscode
+.vscode/
 
 # Windows image file caches
 Thumbs.db
@@ -62,6 +74,8 @@ $RECYCLE.BIN/
 src/build
 *.iml
 /doc/_build
+/doc/sphinx/examples
+/doc/sphinx/tests
 /.vs/config/applicationhost.config
 
 # Azure deployment credentials
@@ -71,3 +85,11 @@ src/build
 adlEnv/
 
 code_reports
+
+# Azure Storage test credentials
+sdk/storage/azure-storage-blob/tests/settings_real.py
+sdk/storage/azure-storage-queue/tests/settings_real.py
+sdk/storage/azure-storage-file-share/tests/settings_real.py
+sdk/storage/azure-storage-file-datalake/tests/settings_real.py
+*.code-workspace
+sdk/cosmos/azure-cosmos/test/test_config.py

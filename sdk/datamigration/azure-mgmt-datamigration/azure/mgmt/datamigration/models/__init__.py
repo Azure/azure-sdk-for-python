@@ -10,451 +10,538 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .tracked_resource_py3 import TrackedResource
-    from .resource_py3 import Resource
-    from .project_file_properties_py3 import ProjectFileProperties
-    from .project_file_py3 import ProjectFile
-    from .odata_error_py3 import ODataError
-    from .reportable_exception_py3 import ReportableException
-    from .migrate_mi_sync_complete_command_output_py3 import MigrateMISyncCompleteCommandOutput
-    from .migrate_mi_sync_complete_command_input_py3 import MigrateMISyncCompleteCommandInput
-    from .migrate_mi_sync_complete_command_properties_py3 import MigrateMISyncCompleteCommandProperties
-    from .migrate_sync_complete_command_output_py3 import MigrateSyncCompleteCommandOutput
-    from .migrate_sync_complete_command_input_py3 import MigrateSyncCompleteCommandInput
-    from .migrate_sync_complete_command_properties_py3 import MigrateSyncCompleteCommandProperties
-    from .command_properties_py3 import CommandProperties
-    from .get_tde_certificates_sql_task_output_py3 import GetTdeCertificatesSqlTaskOutput
-    from .selected_certificate_input_py3 import SelectedCertificateInput
-    from .file_share_py3 import FileShare
-    from .mi_sql_connection_info_py3 import MiSqlConnectionInfo
-    from .postgre_sql_connection_info_py3 import PostgreSqlConnectionInfo
-    from .my_sql_connection_info_py3 import MySqlConnectionInfo
-    from .mongo_db_connection_info_py3 import MongoDbConnectionInfo
-    from .connection_info_py3 import ConnectionInfo
-    from .sql_connection_info_py3 import SqlConnectionInfo
-    from .get_tde_certificates_sql_task_input_py3 import GetTdeCertificatesSqlTaskInput
-    from .get_tde_certificates_sql_task_properties_py3 import GetTdeCertificatesSqlTaskProperties
-    from .mongo_db_error_py3 import MongoDbError
-    from .mongo_db_collection_progress_py3 import MongoDbCollectionProgress
-    from .mongo_db_database_progress_py3 import MongoDbDatabaseProgress
-    from .mongo_db_progress_py3 import MongoDbProgress
-    from .mongo_db_migration_progress_py3 import MongoDbMigrationProgress
-    from .mongo_db_throttling_settings_py3 import MongoDbThrottlingSettings
-    from .mongo_db_shard_key_field_py3 import MongoDbShardKeyField
-    from .mongo_db_shard_key_setting_py3 import MongoDbShardKeySetting
-    from .mongo_db_collection_settings_py3 import MongoDbCollectionSettings
-    from .mongo_db_database_settings_py3 import MongoDbDatabaseSettings
-    from .mongo_db_migration_settings_py3 import MongoDbMigrationSettings
-    from .validate_mongo_db_task_properties_py3 import ValidateMongoDbTaskProperties
-    from .validate_migration_input_sql_server_sql_mi_sync_task_output_py3 import ValidateMigrationInputSqlServerSqlMISyncTaskOutput
-    from .azure_active_directory_app_py3 import AzureActiveDirectoryApp
-    from .migrate_sql_server_sql_mi_database_input_py3 import MigrateSqlServerSqlMIDatabaseInput
-    from .sql_server_sql_mi_sync_task_input_py3 import SqlServerSqlMISyncTaskInput
-    from .validate_migration_input_sql_server_sql_mi_sync_task_input_py3 import ValidateMigrationInputSqlServerSqlMISyncTaskInput
-    from .validate_migration_input_sql_server_sql_mi_sync_task_properties_py3 import ValidateMigrationInputSqlServerSqlMISyncTaskProperties
-    from .database_backup_info_py3 import DatabaseBackupInfo
-    from .validate_migration_input_sql_server_sql_mi_task_output_py3 import ValidateMigrationInputSqlServerSqlMITaskOutput
-    from .blob_share_py3 import BlobShare
-    from .validate_migration_input_sql_server_sql_mi_task_input_py3 import ValidateMigrationInputSqlServerSqlMITaskInput
-    from .validate_migration_input_sql_server_sql_mi_task_properties_py3 import ValidateMigrationInputSqlServerSqlMITaskProperties
-    from .validate_sync_migration_input_sql_server_task_output_py3 import ValidateSyncMigrationInputSqlServerTaskOutput
-    from .migrate_sql_server_sql_db_sync_database_input_py3 import MigrateSqlServerSqlDbSyncDatabaseInput
-    from .validate_sync_migration_input_sql_server_task_input_py3 import ValidateSyncMigrationInputSqlServerTaskInput
-    from .validate_migration_input_sql_server_sql_db_sync_task_properties_py3 import ValidateMigrationInputSqlServerSqlDbSyncTaskProperties
-    from .sync_migration_database_error_event_py3 import SyncMigrationDatabaseErrorEvent
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_database_error_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_error_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputError
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_table_level_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputTableLevel
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_database_level_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseLevel
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_migration_level_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutput
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_database_input_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_input_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_properties_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties
-    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_database_error_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseError
-    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_error_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputError
-    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_table_level_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputTableLevel
-    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_database_level_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseLevel
-    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_migration_level_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputMigrationLevel
-    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutput
-    from .migrate_my_sql_azure_db_for_my_sql_sync_database_input_py3 import MigrateMySqlAzureDbForMySqlSyncDatabaseInput
-    from .migrate_my_sql_azure_db_for_my_sql_sync_task_input_py3 import MigrateMySqlAzureDbForMySqlSyncTaskInput
-    from .migrate_my_sql_azure_db_for_my_sql_sync_task_properties_py3 import MigrateMySqlAzureDbForMySqlSyncTaskProperties
-    from .migrate_sql_server_sql_db_sync_task_output_database_error_py3 import MigrateSqlServerSqlDbSyncTaskOutputDatabaseError
-    from .migrate_sql_server_sql_db_sync_task_output_error_py3 import MigrateSqlServerSqlDbSyncTaskOutputError
-    from .migrate_sql_server_sql_db_sync_task_output_table_level_py3 import MigrateSqlServerSqlDbSyncTaskOutputTableLevel
-    from .migrate_sql_server_sql_db_sync_task_output_database_level_py3 import MigrateSqlServerSqlDbSyncTaskOutputDatabaseLevel
-    from .migrate_sql_server_sql_db_sync_task_output_migration_level_py3 import MigrateSqlServerSqlDbSyncTaskOutputMigrationLevel
-    from .migrate_sql_server_sql_db_sync_task_output_py3 import MigrateSqlServerSqlDbSyncTaskOutput
-    from .sql_migration_task_input_py3 import SqlMigrationTaskInput
-    from .migration_validation_options_py3 import MigrationValidationOptions
-    from .migrate_sql_server_sql_db_sync_task_input_py3 import MigrateSqlServerSqlDbSyncTaskInput
-    from .migrate_sql_server_sql_db_sync_task_properties_py3 import MigrateSqlServerSqlDbSyncTaskProperties
-    from .validation_error_py3 import ValidationError
-    from .wait_statistics_py3 import WaitStatistics
-    from .execution_statistics_py3 import ExecutionStatistics
-    from .query_execution_result_py3 import QueryExecutionResult
-    from .query_analysis_validation_result_py3 import QueryAnalysisValidationResult
-    from .schema_comparison_validation_result_type_py3 import SchemaComparisonValidationResultType
-    from .schema_comparison_validation_result_py3 import SchemaComparisonValidationResult
-    from .data_integrity_validation_result_py3 import DataIntegrityValidationResult
-    from .migration_validation_database_level_result_py3 import MigrationValidationDatabaseLevelResult
-    from .migration_validation_database_summary_result_py3 import MigrationValidationDatabaseSummaryResult
-    from .migration_validation_result_py3 import MigrationValidationResult
-    from .migrate_sql_server_sql_db_task_output_error_py3 import MigrateSqlServerSqlDbTaskOutputError
-    from .migrate_sql_server_sql_db_task_output_table_level_py3 import MigrateSqlServerSqlDbTaskOutputTableLevel
-    from .data_item_migration_summary_result_py3 import DataItemMigrationSummaryResult
-    from .migrate_sql_server_sql_db_task_output_database_level_py3 import MigrateSqlServerSqlDbTaskOutputDatabaseLevel
-    from .migration_report_result_py3 import MigrationReportResult
-    from .database_summary_result_py3 import DatabaseSummaryResult
-    from .migrate_sql_server_sql_db_task_output_migration_level_py3 import MigrateSqlServerSqlDbTaskOutputMigrationLevel
-    from .migrate_sql_server_sql_db_task_output_py3 import MigrateSqlServerSqlDbTaskOutput
-    from .migrate_sql_server_sql_db_database_input_py3 import MigrateSqlServerSqlDbDatabaseInput
-    from .migrate_sql_server_sql_db_task_input_py3 import MigrateSqlServerSqlDbTaskInput
-    from .migrate_sql_server_sql_db_task_properties_py3 import MigrateSqlServerSqlDbTaskProperties
-    from .migrate_sql_server_sql_mi_sync_task_output_error_py3 import MigrateSqlServerSqlMISyncTaskOutputError
-    from .backup_file_info_py3 import BackupFileInfo
-    from .backup_set_info_py3 import BackupSetInfo
-    from .migrate_sql_server_sql_mi_sync_task_output_database_level_py3 import MigrateSqlServerSqlMISyncTaskOutputDatabaseLevel
-    from .migrate_sql_server_sql_mi_sync_task_output_migration_level_py3 import MigrateSqlServerSqlMISyncTaskOutputMigrationLevel
-    from .migrate_sql_server_sql_mi_sync_task_output_py3 import MigrateSqlServerSqlMISyncTaskOutput
-    from .migrate_sql_server_sql_mi_sync_task_input_py3 import MigrateSqlServerSqlMISyncTaskInput
-    from .migrate_sql_server_sql_mi_sync_task_properties_py3 import MigrateSqlServerSqlMISyncTaskProperties
-    from .migrate_sql_server_sql_mi_task_output_error_py3 import MigrateSqlServerSqlMITaskOutputError
-    from .migrate_sql_server_sql_mi_task_output_login_level_py3 import MigrateSqlServerSqlMITaskOutputLoginLevel
-    from .migrate_sql_server_sql_mi_task_output_agent_job_level_py3 import MigrateSqlServerSqlMITaskOutputAgentJobLevel
-    from .migrate_sql_server_sql_mi_task_output_database_level_py3 import MigrateSqlServerSqlMITaskOutputDatabaseLevel
-    from .orphaned_user_info_py3 import OrphanedUserInfo
-    from .start_migration_scenario_server_role_result_py3 import StartMigrationScenarioServerRoleResult
-    from .migrate_sql_server_sql_mi_task_output_migration_level_py3 import MigrateSqlServerSqlMITaskOutputMigrationLevel
-    from .migrate_sql_server_sql_mi_task_output_py3 import MigrateSqlServerSqlMITaskOutput
-    from .migrate_sql_server_sql_mi_task_input_py3 import MigrateSqlServerSqlMITaskInput
-    from .migrate_sql_server_sql_mi_task_properties_py3 import MigrateSqlServerSqlMITaskProperties
-    from .migrate_mongo_db_task_properties_py3 import MigrateMongoDbTaskProperties
-    from .connect_to_target_azure_db_for_my_sql_task_output_py3 import ConnectToTargetAzureDbForMySqlTaskOutput
-    from .connect_to_target_azure_db_for_my_sql_task_input_py3 import ConnectToTargetAzureDbForMySqlTaskInput
-    from .connect_to_target_azure_db_for_my_sql_task_properties_py3 import ConnectToTargetAzureDbForMySqlTaskProperties
-    from .connect_to_target_sql_mi_sync_task_output_py3 import ConnectToTargetSqlMISyncTaskOutput
-    from .connect_to_target_sql_mi_sync_task_input_py3 import ConnectToTargetSqlMISyncTaskInput
-    from .connect_to_target_sql_mi_sync_task_properties_py3 import ConnectToTargetSqlMISyncTaskProperties
-    from .connect_to_target_sql_mi_task_output_py3 import ConnectToTargetSqlMITaskOutput
-    from .connect_to_target_sql_mi_task_input_py3 import ConnectToTargetSqlMITaskInput
-    from .connect_to_target_sql_mi_task_properties_py3 import ConnectToTargetSqlMITaskProperties
-    from .database_table_py3 import DatabaseTable
-    from .get_user_tables_sql_sync_task_output_py3 import GetUserTablesSqlSyncTaskOutput
-    from .get_user_tables_sql_sync_task_input_py3 import GetUserTablesSqlSyncTaskInput
-    from .get_user_tables_sql_sync_task_properties_py3 import GetUserTablesSqlSyncTaskProperties
-    from .get_user_tables_sql_task_output_py3 import GetUserTablesSqlTaskOutput
-    from .get_user_tables_sql_task_input_py3 import GetUserTablesSqlTaskInput
-    from .get_user_tables_sql_task_properties_py3 import GetUserTablesSqlTaskProperties
-    from .connect_to_target_azure_db_for_postgre_sql_sync_task_output_py3 import ConnectToTargetAzureDbForPostgreSqlSyncTaskOutput
-    from .connect_to_target_azure_db_for_postgre_sql_sync_task_input_py3 import ConnectToTargetAzureDbForPostgreSqlSyncTaskInput
-    from .connect_to_target_azure_db_for_postgre_sql_sync_task_properties_py3 import ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties
-    from .connect_to_target_sql_db_task_output_py3 import ConnectToTargetSqlDbTaskOutput
-    from .connect_to_target_sql_sql_db_sync_task_input_py3 import ConnectToTargetSqlSqlDbSyncTaskInput
-    from .connect_to_target_sql_sql_db_sync_task_properties_py3 import ConnectToTargetSqlSqlDbSyncTaskProperties
-    from .connect_to_target_sql_db_task_input_py3 import ConnectToTargetSqlDbTaskInput
-    from .connect_to_target_sql_db_task_properties_py3 import ConnectToTargetSqlDbTaskProperties
-    from .connect_to_source_postgre_sql_sync_task_output_py3 import ConnectToSourcePostgreSqlSyncTaskOutput
-    from .connect_to_source_postgre_sql_sync_task_input_py3 import ConnectToSourcePostgreSqlSyncTaskInput
-    from .connect_to_source_postgre_sql_sync_task_properties_py3 import ConnectToSourcePostgreSqlSyncTaskProperties
-    from .migration_eligibility_info_py3 import MigrationEligibilityInfo
-    from .connect_to_source_sql_server_task_output_agent_job_level_py3 import ConnectToSourceSqlServerTaskOutputAgentJobLevel
-    from .connect_to_source_sql_server_task_output_login_level_py3 import ConnectToSourceSqlServerTaskOutputLoginLevel
-    from .database_file_info_py3 import DatabaseFileInfo
-    from .connect_to_source_sql_server_task_output_database_level_py3 import ConnectToSourceSqlServerTaskOutputDatabaseLevel
-    from .connect_to_source_sql_server_task_output_task_level_py3 import ConnectToSourceSqlServerTaskOutputTaskLevel
-    from .connect_to_source_sql_server_task_output_py3 import ConnectToSourceSqlServerTaskOutput
-    from .connect_to_source_sql_server_task_input_py3 import ConnectToSourceSqlServerTaskInput
-    from .connect_to_source_sql_server_sync_task_properties_py3 import ConnectToSourceSqlServerSyncTaskProperties
-    from .connect_to_source_sql_server_task_properties_py3 import ConnectToSourceSqlServerTaskProperties
-    from .mongo_db_shard_key_info_py3 import MongoDbShardKeyInfo
-    from .mongo_db_collection_info_py3 import MongoDbCollectionInfo
-    from .mongo_db_object_info_py3 import MongoDbObjectInfo
-    from .mongo_db_database_info_py3 import MongoDbDatabaseInfo
-    from .mongo_db_cluster_info_py3 import MongoDbClusterInfo
-    from .connect_to_mongo_db_task_properties_py3 import ConnectToMongoDbTaskProperties
-    from .project_task_properties_py3 import ProjectTaskProperties
-    from .project_task_py3 import ProjectTask
-    from .service_sku_py3 import ServiceSku
-    from .data_migration_service_py3 import DataMigrationService
-    from .name_availability_request_py3 import NameAvailabilityRequest
-    from .database_info_py3 import DatabaseInfo
-    from .project_py3 import Project
-    from .api_error_py3 import ApiError, ApiErrorException
-    from .file_storage_info_py3 import FileStorageInfo
-    from .service_operation_display_py3 import ServiceOperationDisplay
-    from .service_operation_py3 import ServiceOperation
-    from .quota_name_py3 import QuotaName
-    from .quota_py3 import Quota
-    from .name_availability_response_py3 import NameAvailabilityResponse
-    from .available_service_sku_sku_py3 import AvailableServiceSkuSku
-    from .available_service_sku_capacity_py3 import AvailableServiceSkuCapacity
-    from .available_service_sku_py3 import AvailableServiceSku
-    from .data_migration_service_status_response_py3 import DataMigrationServiceStatusResponse
-    from .resource_sku_restrictions_py3 import ResourceSkuRestrictions
-    from .resource_sku_capabilities_py3 import ResourceSkuCapabilities
-    from .resource_sku_costs_py3 import ResourceSkuCosts
-    from .resource_sku_capacity_py3 import ResourceSkuCapacity
-    from .resource_sku_py3 import ResourceSku
-    from .connect_to_source_my_sql_task_input_py3 import ConnectToSourceMySqlTaskInput
-    from .server_properties_py3 import ServerProperties
-    from .connect_to_source_non_sql_task_output_py3 import ConnectToSourceNonSqlTaskOutput
-    from .connect_to_source_my_sql_task_properties_py3 import ConnectToSourceMySqlTaskProperties
-    from .schema_migration_setting_py3 import SchemaMigrationSetting
-    from .migrate_schema_sql_server_sql_db_database_input_py3 import MigrateSchemaSqlServerSqlDbDatabaseInput
-    from .migrate_schema_sql_server_sql_db_task_input_py3 import MigrateSchemaSqlServerSqlDbTaskInput
-    from .migrate_schema_sql_server_sql_db_task_output_py3 import MigrateSchemaSqlServerSqlDbTaskOutput
-    from .migrate_schema_sql_server_sql_db_task_properties_py3 import MigrateSchemaSqlServerSqlDbTaskProperties
-    from .migrate_schema_sql_server_sql_db_task_output_migration_level_py3 import MigrateSchemaSqlServerSqlDbTaskOutputMigrationLevel
-    from .migrate_schema_sql_server_sql_db_task_output_database_level_py3 import MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel
-    from .migrate_schema_sql_server_sql_db_task_output_error_py3 import MigrateSchemaSqlServerSqlDbTaskOutputError
-    from .migrate_schema_sql_task_output_error_py3 import MigrateSchemaSqlTaskOutputError
-    from .mongo_db_command_input_py3 import MongoDbCommandInput
-    from .mongo_db_cancel_command_py3 import MongoDbCancelCommand
-    from .mongo_db_finish_command_input_py3 import MongoDbFinishCommandInput
-    from .mongo_db_finish_command_py3 import MongoDbFinishCommand
-    from .mongo_db_restart_command_py3 import MongoDbRestartCommand
-    from .database_py3 import Database
-    from .database_object_name_py3 import DatabaseObjectName
-    from .migration_table_metadata_py3 import MigrationTableMetadata
-    from .data_migration_project_metadata_py3 import DataMigrationProjectMetadata
-    from .get_project_details_non_sql_task_input_py3 import GetProjectDetailsNonSqlTaskInput
-    from .non_sql_data_migration_table_py3 import NonSqlDataMigrationTable
-    from .non_sql_migration_task_input_py3 import NonSqlMigrationTaskInput
-    from .data_migration_error_py3 import DataMigrationError
-    from .non_sql_data_migration_table_result_py3 import NonSqlDataMigrationTableResult
-    from .non_sql_migration_task_output_py3 import NonSqlMigrationTaskOutput
-    from .database_file_input_py3 import DatabaseFileInput
-    from .migrate_sql_server_sql_server_database_input_py3 import MigrateSqlServerSqlServerDatabaseInput
+    from ._models_py3 import ApiError, ApiErrorException
+    from ._models_py3 import AvailableServiceSku
+    from ._models_py3 import AvailableServiceSkuCapacity
+    from ._models_py3 import AvailableServiceSkuSku
+    from ._models_py3 import AzureActiveDirectoryApp
+    from ._models_py3 import BackupFileInfo
+    from ._models_py3 import BackupSetInfo
+    from ._models_py3 import BlobShare
+    from ._models_py3 import CheckOCIDriverTaskInput
+    from ._models_py3 import CheckOCIDriverTaskOutput
+    from ._models_py3 import CheckOCIDriverTaskProperties
+    from ._models_py3 import CommandProperties
+    from ._models_py3 import ConnectionInfo
+    from ._models_py3 import ConnectToMongoDbTaskProperties
+    from ._models_py3 import ConnectToSourceMySqlTaskInput
+    from ._models_py3 import ConnectToSourceMySqlTaskProperties
+    from ._models_py3 import ConnectToSourceNonSqlTaskOutput
+    from ._models_py3 import ConnectToSourceOracleSyncTaskInput
+    from ._models_py3 import ConnectToSourceOracleSyncTaskOutput
+    from ._models_py3 import ConnectToSourceOracleSyncTaskProperties
+    from ._models_py3 import ConnectToSourcePostgreSqlSyncTaskInput
+    from ._models_py3 import ConnectToSourcePostgreSqlSyncTaskOutput
+    from ._models_py3 import ConnectToSourcePostgreSqlSyncTaskProperties
+    from ._models_py3 import ConnectToSourceSqlServerSyncTaskProperties
+    from ._models_py3 import ConnectToSourceSqlServerTaskInput
+    from ._models_py3 import ConnectToSourceSqlServerTaskOutput
+    from ._models_py3 import ConnectToSourceSqlServerTaskOutputAgentJobLevel
+    from ._models_py3 import ConnectToSourceSqlServerTaskOutputDatabaseLevel
+    from ._models_py3 import ConnectToSourceSqlServerTaskOutputLoginLevel
+    from ._models_py3 import ConnectToSourceSqlServerTaskOutputTaskLevel
+    from ._models_py3 import ConnectToSourceSqlServerTaskProperties
+    from ._models_py3 import ConnectToTargetAzureDbForMySqlTaskInput
+    from ._models_py3 import ConnectToTargetAzureDbForMySqlTaskOutput
+    from ._models_py3 import ConnectToTargetAzureDbForMySqlTaskProperties
+    from ._models_py3 import ConnectToTargetAzureDbForPostgreSqlSyncTaskInput
+    from ._models_py3 import ConnectToTargetAzureDbForPostgreSqlSyncTaskOutput
+    from ._models_py3 import ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties
+    from ._models_py3 import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskInput
+    from ._models_py3 import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput
+    from ._models_py3 import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem
+    from ._models_py3 import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties
+    from ._models_py3 import ConnectToTargetSqlDbTaskInput
+    from ._models_py3 import ConnectToTargetSqlDbTaskOutput
+    from ._models_py3 import ConnectToTargetSqlDbTaskProperties
+    from ._models_py3 import ConnectToTargetSqlMISyncTaskInput
+    from ._models_py3 import ConnectToTargetSqlMISyncTaskOutput
+    from ._models_py3 import ConnectToTargetSqlMISyncTaskProperties
+    from ._models_py3 import ConnectToTargetSqlMITaskInput
+    from ._models_py3 import ConnectToTargetSqlMITaskOutput
+    from ._models_py3 import ConnectToTargetSqlMITaskProperties
+    from ._models_py3 import ConnectToTargetSqlSqlDbSyncTaskInput
+    from ._models_py3 import ConnectToTargetSqlSqlDbSyncTaskProperties
+    from ._models_py3 import Database
+    from ._models_py3 import DatabaseBackupInfo
+    from ._models_py3 import DatabaseFileInfo
+    from ._models_py3 import DatabaseFileInput
+    from ._models_py3 import DatabaseInfo
+    from ._models_py3 import DatabaseObjectName
+    from ._models_py3 import DatabaseSummaryResult
+    from ._models_py3 import DatabaseTable
+    from ._models_py3 import DataIntegrityValidationResult
+    from ._models_py3 import DataItemMigrationSummaryResult
+    from ._models_py3 import DataMigrationError
+    from ._models_py3 import DataMigrationProjectMetadata
+    from ._models_py3 import DataMigrationService
+    from ._models_py3 import DataMigrationServiceStatusResponse
+    from ._models_py3 import ExecutionStatistics
+    from ._models_py3 import FileShare
+    from ._models_py3 import FileStorageInfo
+    from ._models_py3 import GetProjectDetailsNonSqlTaskInput
+    from ._models_py3 import GetTdeCertificatesSqlTaskInput
+    from ._models_py3 import GetTdeCertificatesSqlTaskOutput
+    from ._models_py3 import GetTdeCertificatesSqlTaskProperties
+    from ._models_py3 import GetUserTablesOracleTaskInput
+    from ._models_py3 import GetUserTablesOracleTaskOutput
+    from ._models_py3 import GetUserTablesOracleTaskProperties
+    from ._models_py3 import GetUserTablesPostgreSqlTaskInput
+    from ._models_py3 import GetUserTablesPostgreSqlTaskOutput
+    from ._models_py3 import GetUserTablesPostgreSqlTaskProperties
+    from ._models_py3 import GetUserTablesSqlSyncTaskInput
+    from ._models_py3 import GetUserTablesSqlSyncTaskOutput
+    from ._models_py3 import GetUserTablesSqlSyncTaskProperties
+    from ._models_py3 import GetUserTablesSqlTaskInput
+    from ._models_py3 import GetUserTablesSqlTaskOutput
+    from ._models_py3 import GetUserTablesSqlTaskProperties
+    from ._models_py3 import InstallOCIDriverTaskInput
+    from ._models_py3 import InstallOCIDriverTaskOutput
+    from ._models_py3 import InstallOCIDriverTaskProperties
+    from ._models_py3 import MigrateMISyncCompleteCommandInput
+    from ._models_py3 import MigrateMISyncCompleteCommandOutput
+    from ._models_py3 import MigrateMISyncCompleteCommandProperties
+    from ._models_py3 import MigrateMongoDbTaskProperties
+    from ._models_py3 import MigrateMySqlAzureDbForMySqlSyncDatabaseInput
+    from ._models_py3 import MigrateMySqlAzureDbForMySqlSyncTaskInput
+    from ._models_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutput
+    from ._models_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseError
+    from ._models_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseLevel
+    from ._models_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputError
+    from ._models_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputMigrationLevel
+    from ._models_py3 import MigrateMySqlAzureDbForMySqlSyncTaskOutputTableLevel
+    from ._models_py3 import MigrateMySqlAzureDbForMySqlSyncTaskProperties
+    from ._models_py3 import MigrateOracleAzureDbForPostgreSqlSyncTaskProperties
+    from ._models_py3 import MigrateOracleAzureDbPostgreSqlSyncDatabaseInput
+    from ._models_py3 import MigrateOracleAzureDbPostgreSqlSyncTaskInput
+    from ._models_py3 import MigrateOracleAzureDbPostgreSqlSyncTaskOutput
+    from ._models_py3 import MigrateOracleAzureDbPostgreSqlSyncTaskOutputDatabaseError
+    from ._models_py3 import MigrateOracleAzureDbPostgreSqlSyncTaskOutputDatabaseLevel
+    from ._models_py3 import MigrateOracleAzureDbPostgreSqlSyncTaskOutputError
+    from ._models_py3 import MigrateOracleAzureDbPostgreSqlSyncTaskOutputMigrationLevel
+    from ._models_py3 import MigrateOracleAzureDbPostgreSqlSyncTaskOutputTableLevel
+    from ._models_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput
+    from ._models_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput
+    from ._models_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutput
+    from ._models_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError
+    from ._models_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseLevel
+    from ._models_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputError
+    from ._models_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel
+    from ._models_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputTableLevel
+    from ._models_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties
+    from ._models_py3 import MigrateSchemaSqlServerSqlDbDatabaseInput
+    from ._models_py3 import MigrateSchemaSqlServerSqlDbTaskInput
+    from ._models_py3 import MigrateSchemaSqlServerSqlDbTaskOutput
+    from ._models_py3 import MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel
+    from ._models_py3 import MigrateSchemaSqlServerSqlDbTaskOutputError
+    from ._models_py3 import MigrateSchemaSqlServerSqlDbTaskOutputMigrationLevel
+    from ._models_py3 import MigrateSchemaSqlServerSqlDbTaskProperties
+    from ._models_py3 import MigrateSchemaSqlTaskOutputError
+    from ._models_py3 import MigrateSqlServerSqlDbDatabaseInput
+    from ._models_py3 import MigrateSqlServerSqlDbSyncDatabaseInput
+    from ._models_py3 import MigrateSqlServerSqlDbSyncTaskInput
+    from ._models_py3 import MigrateSqlServerSqlDbSyncTaskOutput
+    from ._models_py3 import MigrateSqlServerSqlDbSyncTaskOutputDatabaseError
+    from ._models_py3 import MigrateSqlServerSqlDbSyncTaskOutputDatabaseLevel
+    from ._models_py3 import MigrateSqlServerSqlDbSyncTaskOutputError
+    from ._models_py3 import MigrateSqlServerSqlDbSyncTaskOutputMigrationLevel
+    from ._models_py3 import MigrateSqlServerSqlDbSyncTaskOutputTableLevel
+    from ._models_py3 import MigrateSqlServerSqlDbSyncTaskProperties
+    from ._models_py3 import MigrateSqlServerSqlDbTaskInput
+    from ._models_py3 import MigrateSqlServerSqlDbTaskOutput
+    from ._models_py3 import MigrateSqlServerSqlDbTaskOutputDatabaseLevel
+    from ._models_py3 import MigrateSqlServerSqlDbTaskOutputError
+    from ._models_py3 import MigrateSqlServerSqlDbTaskOutputMigrationLevel
+    from ._models_py3 import MigrateSqlServerSqlDbTaskOutputTableLevel
+    from ._models_py3 import MigrateSqlServerSqlDbTaskProperties
+    from ._models_py3 import MigrateSqlServerSqlMIDatabaseInput
+    from ._models_py3 import MigrateSqlServerSqlMISyncTaskInput
+    from ._models_py3 import MigrateSqlServerSqlMISyncTaskOutput
+    from ._models_py3 import MigrateSqlServerSqlMISyncTaskOutputDatabaseLevel
+    from ._models_py3 import MigrateSqlServerSqlMISyncTaskOutputError
+    from ._models_py3 import MigrateSqlServerSqlMISyncTaskOutputMigrationLevel
+    from ._models_py3 import MigrateSqlServerSqlMISyncTaskProperties
+    from ._models_py3 import MigrateSqlServerSqlMITaskInput
+    from ._models_py3 import MigrateSqlServerSqlMITaskOutput
+    from ._models_py3 import MigrateSqlServerSqlMITaskOutputAgentJobLevel
+    from ._models_py3 import MigrateSqlServerSqlMITaskOutputDatabaseLevel
+    from ._models_py3 import MigrateSqlServerSqlMITaskOutputError
+    from ._models_py3 import MigrateSqlServerSqlMITaskOutputLoginLevel
+    from ._models_py3 import MigrateSqlServerSqlMITaskOutputMigrationLevel
+    from ._models_py3 import MigrateSqlServerSqlMITaskProperties
+    from ._models_py3 import MigrateSqlServerSqlServerDatabaseInput
+    from ._models_py3 import MigrateSsisTaskInput
+    from ._models_py3 import MigrateSsisTaskOutput
+    from ._models_py3 import MigrateSsisTaskOutputMigrationLevel
+    from ._models_py3 import MigrateSsisTaskOutputProjectLevel
+    from ._models_py3 import MigrateSsisTaskProperties
+    from ._models_py3 import MigrateSyncCompleteCommandInput
+    from ._models_py3 import MigrateSyncCompleteCommandOutput
+    from ._models_py3 import MigrateSyncCompleteCommandProperties
+    from ._models_py3 import MigrationEligibilityInfo
+    from ._models_py3 import MigrationReportResult
+    from ._models_py3 import MigrationTableMetadata
+    from ._models_py3 import MigrationValidationDatabaseLevelResult
+    from ._models_py3 import MigrationValidationDatabaseSummaryResult
+    from ._models_py3 import MigrationValidationOptions
+    from ._models_py3 import MigrationValidationResult
+    from ._models_py3 import MiSqlConnectionInfo
+    from ._models_py3 import MongoDbCancelCommand
+    from ._models_py3 import MongoDbClusterInfo
+    from ._models_py3 import MongoDbCollectionInfo
+    from ._models_py3 import MongoDbCollectionProgress
+    from ._models_py3 import MongoDbCollectionSettings
+    from ._models_py3 import MongoDbCommandInput
+    from ._models_py3 import MongoDbConnectionInfo
+    from ._models_py3 import MongoDbDatabaseInfo
+    from ._models_py3 import MongoDbDatabaseProgress
+    from ._models_py3 import MongoDbDatabaseSettings
+    from ._models_py3 import MongoDbError
+    from ._models_py3 import MongoDbFinishCommand
+    from ._models_py3 import MongoDbFinishCommandInput
+    from ._models_py3 import MongoDbMigrationProgress
+    from ._models_py3 import MongoDbMigrationSettings
+    from ._models_py3 import MongoDbObjectInfo
+    from ._models_py3 import MongoDbProgress
+    from ._models_py3 import MongoDbRestartCommand
+    from ._models_py3 import MongoDbShardKeyField
+    from ._models_py3 import MongoDbShardKeyInfo
+    from ._models_py3 import MongoDbShardKeySetting
+    from ._models_py3 import MongoDbThrottlingSettings
+    from ._models_py3 import MySqlConnectionInfo
+    from ._models_py3 import NameAvailabilityRequest
+    from ._models_py3 import NameAvailabilityResponse
+    from ._models_py3 import NonSqlDataMigrationTable
+    from ._models_py3 import NonSqlDataMigrationTableResult
+    from ._models_py3 import NonSqlMigrationTaskInput
+    from ._models_py3 import NonSqlMigrationTaskOutput
+    from ._models_py3 import ODataError
+    from ._models_py3 import OracleConnectionInfo
+    from ._models_py3 import OracleOCIDriverInfo
+    from ._models_py3 import OrphanedUserInfo
+    from ._models_py3 import PostgreSqlConnectionInfo
+    from ._models_py3 import Project
+    from ._models_py3 import ProjectFile
+    from ._models_py3 import ProjectFileProperties
+    from ._models_py3 import ProjectTask
+    from ._models_py3 import ProjectTaskProperties
+    from ._models_py3 import QueryAnalysisValidationResult
+    from ._models_py3 import QueryExecutionResult
+    from ._models_py3 import Quota
+    from ._models_py3 import QuotaName
+    from ._models_py3 import ReportableException
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceSku
+    from ._models_py3 import ResourceSkuCapabilities
+    from ._models_py3 import ResourceSkuCapacity
+    from ._models_py3 import ResourceSkuCosts
+    from ._models_py3 import ResourceSkuRestrictions
+    from ._models_py3 import SchemaComparisonValidationResult
+    from ._models_py3 import SchemaComparisonValidationResultType
+    from ._models_py3 import SchemaMigrationSetting
+    from ._models_py3 import SelectedCertificateInput
+    from ._models_py3 import ServerProperties
+    from ._models_py3 import ServiceOperation
+    from ._models_py3 import ServiceOperationDisplay
+    from ._models_py3 import ServiceSku
+    from ._models_py3 import SqlConnectionInfo
+    from ._models_py3 import SqlMigrationTaskInput
+    from ._models_py3 import SqlServerSqlMISyncTaskInput
+    from ._models_py3 import SsisMigrationInfo
+    from ._models_py3 import StartMigrationScenarioServerRoleResult
+    from ._models_py3 import SyncMigrationDatabaseErrorEvent
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import UploadOCIDriverTaskInput
+    from ._models_py3 import UploadOCIDriverTaskOutput
+    from ._models_py3 import UploadOCIDriverTaskProperties
+    from ._models_py3 import ValidateMigrationInputSqlServerSqlDbSyncTaskProperties
+    from ._models_py3 import ValidateMigrationInputSqlServerSqlMISyncTaskInput
+    from ._models_py3 import ValidateMigrationInputSqlServerSqlMISyncTaskOutput
+    from ._models_py3 import ValidateMigrationInputSqlServerSqlMISyncTaskProperties
+    from ._models_py3 import ValidateMigrationInputSqlServerSqlMITaskInput
+    from ._models_py3 import ValidateMigrationInputSqlServerSqlMITaskOutput
+    from ._models_py3 import ValidateMigrationInputSqlServerSqlMITaskProperties
+    from ._models_py3 import ValidateMongoDbTaskProperties
+    from ._models_py3 import ValidateOracleAzureDbForPostgreSqlSyncTaskProperties
+    from ._models_py3 import ValidateOracleAzureDbPostgreSqlSyncTaskOutput
+    from ._models_py3 import ValidateSyncMigrationInputSqlServerTaskInput
+    from ._models_py3 import ValidateSyncMigrationInputSqlServerTaskOutput
+    from ._models_py3 import ValidationError
+    from ._models_py3 import WaitStatistics
 except (SyntaxError, ImportError):
-    from .tracked_resource import TrackedResource
-    from .resource import Resource
-    from .project_file_properties import ProjectFileProperties
-    from .project_file import ProjectFile
-    from .odata_error import ODataError
-    from .reportable_exception import ReportableException
-    from .migrate_mi_sync_complete_command_output import MigrateMISyncCompleteCommandOutput
-    from .migrate_mi_sync_complete_command_input import MigrateMISyncCompleteCommandInput
-    from .migrate_mi_sync_complete_command_properties import MigrateMISyncCompleteCommandProperties
-    from .migrate_sync_complete_command_output import MigrateSyncCompleteCommandOutput
-    from .migrate_sync_complete_command_input import MigrateSyncCompleteCommandInput
-    from .migrate_sync_complete_command_properties import MigrateSyncCompleteCommandProperties
-    from .command_properties import CommandProperties
-    from .get_tde_certificates_sql_task_output import GetTdeCertificatesSqlTaskOutput
-    from .selected_certificate_input import SelectedCertificateInput
-    from .file_share import FileShare
-    from .mi_sql_connection_info import MiSqlConnectionInfo
-    from .postgre_sql_connection_info import PostgreSqlConnectionInfo
-    from .my_sql_connection_info import MySqlConnectionInfo
-    from .mongo_db_connection_info import MongoDbConnectionInfo
-    from .connection_info import ConnectionInfo
-    from .sql_connection_info import SqlConnectionInfo
-    from .get_tde_certificates_sql_task_input import GetTdeCertificatesSqlTaskInput
-    from .get_tde_certificates_sql_task_properties import GetTdeCertificatesSqlTaskProperties
-    from .mongo_db_error import MongoDbError
-    from .mongo_db_collection_progress import MongoDbCollectionProgress
-    from .mongo_db_database_progress import MongoDbDatabaseProgress
-    from .mongo_db_progress import MongoDbProgress
-    from .mongo_db_migration_progress import MongoDbMigrationProgress
-    from .mongo_db_throttling_settings import MongoDbThrottlingSettings
-    from .mongo_db_shard_key_field import MongoDbShardKeyField
-    from .mongo_db_shard_key_setting import MongoDbShardKeySetting
-    from .mongo_db_collection_settings import MongoDbCollectionSettings
-    from .mongo_db_database_settings import MongoDbDatabaseSettings
-    from .mongo_db_migration_settings import MongoDbMigrationSettings
-    from .validate_mongo_db_task_properties import ValidateMongoDbTaskProperties
-    from .validate_migration_input_sql_server_sql_mi_sync_task_output import ValidateMigrationInputSqlServerSqlMISyncTaskOutput
-    from .azure_active_directory_app import AzureActiveDirectoryApp
-    from .migrate_sql_server_sql_mi_database_input import MigrateSqlServerSqlMIDatabaseInput
-    from .sql_server_sql_mi_sync_task_input import SqlServerSqlMISyncTaskInput
-    from .validate_migration_input_sql_server_sql_mi_sync_task_input import ValidateMigrationInputSqlServerSqlMISyncTaskInput
-    from .validate_migration_input_sql_server_sql_mi_sync_task_properties import ValidateMigrationInputSqlServerSqlMISyncTaskProperties
-    from .database_backup_info import DatabaseBackupInfo
-    from .validate_migration_input_sql_server_sql_mi_task_output import ValidateMigrationInputSqlServerSqlMITaskOutput
-    from .blob_share import BlobShare
-    from .validate_migration_input_sql_server_sql_mi_task_input import ValidateMigrationInputSqlServerSqlMITaskInput
-    from .validate_migration_input_sql_server_sql_mi_task_properties import ValidateMigrationInputSqlServerSqlMITaskProperties
-    from .validate_sync_migration_input_sql_server_task_output import ValidateSyncMigrationInputSqlServerTaskOutput
-    from .migrate_sql_server_sql_db_sync_database_input import MigrateSqlServerSqlDbSyncDatabaseInput
-    from .validate_sync_migration_input_sql_server_task_input import ValidateSyncMigrationInputSqlServerTaskInput
-    from .validate_migration_input_sql_server_sql_db_sync_task_properties import ValidateMigrationInputSqlServerSqlDbSyncTaskProperties
-    from .sync_migration_database_error_event import SyncMigrationDatabaseErrorEvent
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_database_error import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_error import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputError
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_table_level import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputTableLevel
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_database_level import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseLevel
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_migration_level import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutput
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_database_input import MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_input import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput
-    from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_properties import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties
-    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_database_error import MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseError
-    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_error import MigrateMySqlAzureDbForMySqlSyncTaskOutputError
-    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_table_level import MigrateMySqlAzureDbForMySqlSyncTaskOutputTableLevel
-    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_database_level import MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseLevel
-    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output_migration_level import MigrateMySqlAzureDbForMySqlSyncTaskOutputMigrationLevel
-    from .migrate_my_sql_azure_db_for_my_sql_sync_task_output import MigrateMySqlAzureDbForMySqlSyncTaskOutput
-    from .migrate_my_sql_azure_db_for_my_sql_sync_database_input import MigrateMySqlAzureDbForMySqlSyncDatabaseInput
-    from .migrate_my_sql_azure_db_for_my_sql_sync_task_input import MigrateMySqlAzureDbForMySqlSyncTaskInput
-    from .migrate_my_sql_azure_db_for_my_sql_sync_task_properties import MigrateMySqlAzureDbForMySqlSyncTaskProperties
-    from .migrate_sql_server_sql_db_sync_task_output_database_error import MigrateSqlServerSqlDbSyncTaskOutputDatabaseError
-    from .migrate_sql_server_sql_db_sync_task_output_error import MigrateSqlServerSqlDbSyncTaskOutputError
-    from .migrate_sql_server_sql_db_sync_task_output_table_level import MigrateSqlServerSqlDbSyncTaskOutputTableLevel
-    from .migrate_sql_server_sql_db_sync_task_output_database_level import MigrateSqlServerSqlDbSyncTaskOutputDatabaseLevel
-    from .migrate_sql_server_sql_db_sync_task_output_migration_level import MigrateSqlServerSqlDbSyncTaskOutputMigrationLevel
-    from .migrate_sql_server_sql_db_sync_task_output import MigrateSqlServerSqlDbSyncTaskOutput
-    from .sql_migration_task_input import SqlMigrationTaskInput
-    from .migration_validation_options import MigrationValidationOptions
-    from .migrate_sql_server_sql_db_sync_task_input import MigrateSqlServerSqlDbSyncTaskInput
-    from .migrate_sql_server_sql_db_sync_task_properties import MigrateSqlServerSqlDbSyncTaskProperties
-    from .validation_error import ValidationError
-    from .wait_statistics import WaitStatistics
-    from .execution_statistics import ExecutionStatistics
-    from .query_execution_result import QueryExecutionResult
-    from .query_analysis_validation_result import QueryAnalysisValidationResult
-    from .schema_comparison_validation_result_type import SchemaComparisonValidationResultType
-    from .schema_comparison_validation_result import SchemaComparisonValidationResult
-    from .data_integrity_validation_result import DataIntegrityValidationResult
-    from .migration_validation_database_level_result import MigrationValidationDatabaseLevelResult
-    from .migration_validation_database_summary_result import MigrationValidationDatabaseSummaryResult
-    from .migration_validation_result import MigrationValidationResult
-    from .migrate_sql_server_sql_db_task_output_error import MigrateSqlServerSqlDbTaskOutputError
-    from .migrate_sql_server_sql_db_task_output_table_level import MigrateSqlServerSqlDbTaskOutputTableLevel
-    from .data_item_migration_summary_result import DataItemMigrationSummaryResult
-    from .migrate_sql_server_sql_db_task_output_database_level import MigrateSqlServerSqlDbTaskOutputDatabaseLevel
-    from .migration_report_result import MigrationReportResult
-    from .database_summary_result import DatabaseSummaryResult
-    from .migrate_sql_server_sql_db_task_output_migration_level import MigrateSqlServerSqlDbTaskOutputMigrationLevel
-    from .migrate_sql_server_sql_db_task_output import MigrateSqlServerSqlDbTaskOutput
-    from .migrate_sql_server_sql_db_database_input import MigrateSqlServerSqlDbDatabaseInput
-    from .migrate_sql_server_sql_db_task_input import MigrateSqlServerSqlDbTaskInput
-    from .migrate_sql_server_sql_db_task_properties import MigrateSqlServerSqlDbTaskProperties
-    from .migrate_sql_server_sql_mi_sync_task_output_error import MigrateSqlServerSqlMISyncTaskOutputError
-    from .backup_file_info import BackupFileInfo
-    from .backup_set_info import BackupSetInfo
-    from .migrate_sql_server_sql_mi_sync_task_output_database_level import MigrateSqlServerSqlMISyncTaskOutputDatabaseLevel
-    from .migrate_sql_server_sql_mi_sync_task_output_migration_level import MigrateSqlServerSqlMISyncTaskOutputMigrationLevel
-    from .migrate_sql_server_sql_mi_sync_task_output import MigrateSqlServerSqlMISyncTaskOutput
-    from .migrate_sql_server_sql_mi_sync_task_input import MigrateSqlServerSqlMISyncTaskInput
-    from .migrate_sql_server_sql_mi_sync_task_properties import MigrateSqlServerSqlMISyncTaskProperties
-    from .migrate_sql_server_sql_mi_task_output_error import MigrateSqlServerSqlMITaskOutputError
-    from .migrate_sql_server_sql_mi_task_output_login_level import MigrateSqlServerSqlMITaskOutputLoginLevel
-    from .migrate_sql_server_sql_mi_task_output_agent_job_level import MigrateSqlServerSqlMITaskOutputAgentJobLevel
-    from .migrate_sql_server_sql_mi_task_output_database_level import MigrateSqlServerSqlMITaskOutputDatabaseLevel
-    from .orphaned_user_info import OrphanedUserInfo
-    from .start_migration_scenario_server_role_result import StartMigrationScenarioServerRoleResult
-    from .migrate_sql_server_sql_mi_task_output_migration_level import MigrateSqlServerSqlMITaskOutputMigrationLevel
-    from .migrate_sql_server_sql_mi_task_output import MigrateSqlServerSqlMITaskOutput
-    from .migrate_sql_server_sql_mi_task_input import MigrateSqlServerSqlMITaskInput
-    from .migrate_sql_server_sql_mi_task_properties import MigrateSqlServerSqlMITaskProperties
-    from .migrate_mongo_db_task_properties import MigrateMongoDbTaskProperties
-    from .connect_to_target_azure_db_for_my_sql_task_output import ConnectToTargetAzureDbForMySqlTaskOutput
-    from .connect_to_target_azure_db_for_my_sql_task_input import ConnectToTargetAzureDbForMySqlTaskInput
-    from .connect_to_target_azure_db_for_my_sql_task_properties import ConnectToTargetAzureDbForMySqlTaskProperties
-    from .connect_to_target_sql_mi_sync_task_output import ConnectToTargetSqlMISyncTaskOutput
-    from .connect_to_target_sql_mi_sync_task_input import ConnectToTargetSqlMISyncTaskInput
-    from .connect_to_target_sql_mi_sync_task_properties import ConnectToTargetSqlMISyncTaskProperties
-    from .connect_to_target_sql_mi_task_output import ConnectToTargetSqlMITaskOutput
-    from .connect_to_target_sql_mi_task_input import ConnectToTargetSqlMITaskInput
-    from .connect_to_target_sql_mi_task_properties import ConnectToTargetSqlMITaskProperties
-    from .database_table import DatabaseTable
-    from .get_user_tables_sql_sync_task_output import GetUserTablesSqlSyncTaskOutput
-    from .get_user_tables_sql_sync_task_input import GetUserTablesSqlSyncTaskInput
-    from .get_user_tables_sql_sync_task_properties import GetUserTablesSqlSyncTaskProperties
-    from .get_user_tables_sql_task_output import GetUserTablesSqlTaskOutput
-    from .get_user_tables_sql_task_input import GetUserTablesSqlTaskInput
-    from .get_user_tables_sql_task_properties import GetUserTablesSqlTaskProperties
-    from .connect_to_target_azure_db_for_postgre_sql_sync_task_output import ConnectToTargetAzureDbForPostgreSqlSyncTaskOutput
-    from .connect_to_target_azure_db_for_postgre_sql_sync_task_input import ConnectToTargetAzureDbForPostgreSqlSyncTaskInput
-    from .connect_to_target_azure_db_for_postgre_sql_sync_task_properties import ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties
-    from .connect_to_target_sql_db_task_output import ConnectToTargetSqlDbTaskOutput
-    from .connect_to_target_sql_sql_db_sync_task_input import ConnectToTargetSqlSqlDbSyncTaskInput
-    from .connect_to_target_sql_sql_db_sync_task_properties import ConnectToTargetSqlSqlDbSyncTaskProperties
-    from .connect_to_target_sql_db_task_input import ConnectToTargetSqlDbTaskInput
-    from .connect_to_target_sql_db_task_properties import ConnectToTargetSqlDbTaskProperties
-    from .connect_to_source_postgre_sql_sync_task_output import ConnectToSourcePostgreSqlSyncTaskOutput
-    from .connect_to_source_postgre_sql_sync_task_input import ConnectToSourcePostgreSqlSyncTaskInput
-    from .connect_to_source_postgre_sql_sync_task_properties import ConnectToSourcePostgreSqlSyncTaskProperties
-    from .migration_eligibility_info import MigrationEligibilityInfo
-    from .connect_to_source_sql_server_task_output_agent_job_level import ConnectToSourceSqlServerTaskOutputAgentJobLevel
-    from .connect_to_source_sql_server_task_output_login_level import ConnectToSourceSqlServerTaskOutputLoginLevel
-    from .database_file_info import DatabaseFileInfo
-    from .connect_to_source_sql_server_task_output_database_level import ConnectToSourceSqlServerTaskOutputDatabaseLevel
-    from .connect_to_source_sql_server_task_output_task_level import ConnectToSourceSqlServerTaskOutputTaskLevel
-    from .connect_to_source_sql_server_task_output import ConnectToSourceSqlServerTaskOutput
-    from .connect_to_source_sql_server_task_input import ConnectToSourceSqlServerTaskInput
-    from .connect_to_source_sql_server_sync_task_properties import ConnectToSourceSqlServerSyncTaskProperties
-    from .connect_to_source_sql_server_task_properties import ConnectToSourceSqlServerTaskProperties
-    from .mongo_db_shard_key_info import MongoDbShardKeyInfo
-    from .mongo_db_collection_info import MongoDbCollectionInfo
-    from .mongo_db_object_info import MongoDbObjectInfo
-    from .mongo_db_database_info import MongoDbDatabaseInfo
-    from .mongo_db_cluster_info import MongoDbClusterInfo
-    from .connect_to_mongo_db_task_properties import ConnectToMongoDbTaskProperties
-    from .project_task_properties import ProjectTaskProperties
-    from .project_task import ProjectTask
-    from .service_sku import ServiceSku
-    from .data_migration_service import DataMigrationService
-    from .name_availability_request import NameAvailabilityRequest
-    from .database_info import DatabaseInfo
-    from .project import Project
-    from .api_error import ApiError, ApiErrorException
-    from .file_storage_info import FileStorageInfo
-    from .service_operation_display import ServiceOperationDisplay
-    from .service_operation import ServiceOperation
-    from .quota_name import QuotaName
-    from .quota import Quota
-    from .name_availability_response import NameAvailabilityResponse
-    from .available_service_sku_sku import AvailableServiceSkuSku
-    from .available_service_sku_capacity import AvailableServiceSkuCapacity
-    from .available_service_sku import AvailableServiceSku
-    from .data_migration_service_status_response import DataMigrationServiceStatusResponse
-    from .resource_sku_restrictions import ResourceSkuRestrictions
-    from .resource_sku_capabilities import ResourceSkuCapabilities
-    from .resource_sku_costs import ResourceSkuCosts
-    from .resource_sku_capacity import ResourceSkuCapacity
-    from .resource_sku import ResourceSku
-    from .connect_to_source_my_sql_task_input import ConnectToSourceMySqlTaskInput
-    from .server_properties import ServerProperties
-    from .connect_to_source_non_sql_task_output import ConnectToSourceNonSqlTaskOutput
-    from .connect_to_source_my_sql_task_properties import ConnectToSourceMySqlTaskProperties
-    from .schema_migration_setting import SchemaMigrationSetting
-    from .migrate_schema_sql_server_sql_db_database_input import MigrateSchemaSqlServerSqlDbDatabaseInput
-    from .migrate_schema_sql_server_sql_db_task_input import MigrateSchemaSqlServerSqlDbTaskInput
-    from .migrate_schema_sql_server_sql_db_task_output import MigrateSchemaSqlServerSqlDbTaskOutput
-    from .migrate_schema_sql_server_sql_db_task_properties import MigrateSchemaSqlServerSqlDbTaskProperties
-    from .migrate_schema_sql_server_sql_db_task_output_migration_level import MigrateSchemaSqlServerSqlDbTaskOutputMigrationLevel
-    from .migrate_schema_sql_server_sql_db_task_output_database_level import MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel
-    from .migrate_schema_sql_server_sql_db_task_output_error import MigrateSchemaSqlServerSqlDbTaskOutputError
-    from .migrate_schema_sql_task_output_error import MigrateSchemaSqlTaskOutputError
-    from .mongo_db_command_input import MongoDbCommandInput
-    from .mongo_db_cancel_command import MongoDbCancelCommand
-    from .mongo_db_finish_command_input import MongoDbFinishCommandInput
-    from .mongo_db_finish_command import MongoDbFinishCommand
-    from .mongo_db_restart_command import MongoDbRestartCommand
-    from .database import Database
-    from .database_object_name import DatabaseObjectName
-    from .migration_table_metadata import MigrationTableMetadata
-    from .data_migration_project_metadata import DataMigrationProjectMetadata
-    from .get_project_details_non_sql_task_input import GetProjectDetailsNonSqlTaskInput
-    from .non_sql_data_migration_table import NonSqlDataMigrationTable
-    from .non_sql_migration_task_input import NonSqlMigrationTaskInput
-    from .data_migration_error import DataMigrationError
-    from .non_sql_data_migration_table_result import NonSqlDataMigrationTableResult
-    from .non_sql_migration_task_output import NonSqlMigrationTaskOutput
-    from .database_file_input import DatabaseFileInput
-    from .migrate_sql_server_sql_server_database_input import MigrateSqlServerSqlServerDatabaseInput
-from .resource_sku_paged import ResourceSkuPaged
-from .available_service_sku_paged import AvailableServiceSkuPaged
-from .data_migration_service_paged import DataMigrationServicePaged
-from .project_task_paged import ProjectTaskPaged
-from .project_paged import ProjectPaged
-from .quota_paged import QuotaPaged
-from .service_operation_paged import ServiceOperationPaged
-from .project_file_paged import ProjectFilePaged
-from .data_migration_service_client_enums import (
+    from ._models import ApiError, ApiErrorException
+    from ._models import AvailableServiceSku
+    from ._models import AvailableServiceSkuCapacity
+    from ._models import AvailableServiceSkuSku
+    from ._models import AzureActiveDirectoryApp
+    from ._models import BackupFileInfo
+    from ._models import BackupSetInfo
+    from ._models import BlobShare
+    from ._models import CheckOCIDriverTaskInput
+    from ._models import CheckOCIDriverTaskOutput
+    from ._models import CheckOCIDriverTaskProperties
+    from ._models import CommandProperties
+    from ._models import ConnectionInfo
+    from ._models import ConnectToMongoDbTaskProperties
+    from ._models import ConnectToSourceMySqlTaskInput
+    from ._models import ConnectToSourceMySqlTaskProperties
+    from ._models import ConnectToSourceNonSqlTaskOutput
+    from ._models import ConnectToSourceOracleSyncTaskInput
+    from ._models import ConnectToSourceOracleSyncTaskOutput
+    from ._models import ConnectToSourceOracleSyncTaskProperties
+    from ._models import ConnectToSourcePostgreSqlSyncTaskInput
+    from ._models import ConnectToSourcePostgreSqlSyncTaskOutput
+    from ._models import ConnectToSourcePostgreSqlSyncTaskProperties
+    from ._models import ConnectToSourceSqlServerSyncTaskProperties
+    from ._models import ConnectToSourceSqlServerTaskInput
+    from ._models import ConnectToSourceSqlServerTaskOutput
+    from ._models import ConnectToSourceSqlServerTaskOutputAgentJobLevel
+    from ._models import ConnectToSourceSqlServerTaskOutputDatabaseLevel
+    from ._models import ConnectToSourceSqlServerTaskOutputLoginLevel
+    from ._models import ConnectToSourceSqlServerTaskOutputTaskLevel
+    from ._models import ConnectToSourceSqlServerTaskProperties
+    from ._models import ConnectToTargetAzureDbForMySqlTaskInput
+    from ._models import ConnectToTargetAzureDbForMySqlTaskOutput
+    from ._models import ConnectToTargetAzureDbForMySqlTaskProperties
+    from ._models import ConnectToTargetAzureDbForPostgreSqlSyncTaskInput
+    from ._models import ConnectToTargetAzureDbForPostgreSqlSyncTaskOutput
+    from ._models import ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties
+    from ._models import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskInput
+    from ._models import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput
+    from ._models import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem
+    from ._models import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties
+    from ._models import ConnectToTargetSqlDbTaskInput
+    from ._models import ConnectToTargetSqlDbTaskOutput
+    from ._models import ConnectToTargetSqlDbTaskProperties
+    from ._models import ConnectToTargetSqlMISyncTaskInput
+    from ._models import ConnectToTargetSqlMISyncTaskOutput
+    from ._models import ConnectToTargetSqlMISyncTaskProperties
+    from ._models import ConnectToTargetSqlMITaskInput
+    from ._models import ConnectToTargetSqlMITaskOutput
+    from ._models import ConnectToTargetSqlMITaskProperties
+    from ._models import ConnectToTargetSqlSqlDbSyncTaskInput
+    from ._models import ConnectToTargetSqlSqlDbSyncTaskProperties
+    from ._models import Database
+    from ._models import DatabaseBackupInfo
+    from ._models import DatabaseFileInfo
+    from ._models import DatabaseFileInput
+    from ._models import DatabaseInfo
+    from ._models import DatabaseObjectName
+    from ._models import DatabaseSummaryResult
+    from ._models import DatabaseTable
+    from ._models import DataIntegrityValidationResult
+    from ._models import DataItemMigrationSummaryResult
+    from ._models import DataMigrationError
+    from ._models import DataMigrationProjectMetadata
+    from ._models import DataMigrationService
+    from ._models import DataMigrationServiceStatusResponse
+    from ._models import ExecutionStatistics
+    from ._models import FileShare
+    from ._models import FileStorageInfo
+    from ._models import GetProjectDetailsNonSqlTaskInput
+    from ._models import GetTdeCertificatesSqlTaskInput
+    from ._models import GetTdeCertificatesSqlTaskOutput
+    from ._models import GetTdeCertificatesSqlTaskProperties
+    from ._models import GetUserTablesOracleTaskInput
+    from ._models import GetUserTablesOracleTaskOutput
+    from ._models import GetUserTablesOracleTaskProperties
+    from ._models import GetUserTablesPostgreSqlTaskInput
+    from ._models import GetUserTablesPostgreSqlTaskOutput
+    from ._models import GetUserTablesPostgreSqlTaskProperties
+    from ._models import GetUserTablesSqlSyncTaskInput
+    from ._models import GetUserTablesSqlSyncTaskOutput
+    from ._models import GetUserTablesSqlSyncTaskProperties
+    from ._models import GetUserTablesSqlTaskInput
+    from ._models import GetUserTablesSqlTaskOutput
+    from ._models import GetUserTablesSqlTaskProperties
+    from ._models import InstallOCIDriverTaskInput
+    from ._models import InstallOCIDriverTaskOutput
+    from ._models import InstallOCIDriverTaskProperties
+    from ._models import MigrateMISyncCompleteCommandInput
+    from ._models import MigrateMISyncCompleteCommandOutput
+    from ._models import MigrateMISyncCompleteCommandProperties
+    from ._models import MigrateMongoDbTaskProperties
+    from ._models import MigrateMySqlAzureDbForMySqlSyncDatabaseInput
+    from ._models import MigrateMySqlAzureDbForMySqlSyncTaskInput
+    from ._models import MigrateMySqlAzureDbForMySqlSyncTaskOutput
+    from ._models import MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseError
+    from ._models import MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseLevel
+    from ._models import MigrateMySqlAzureDbForMySqlSyncTaskOutputError
+    from ._models import MigrateMySqlAzureDbForMySqlSyncTaskOutputMigrationLevel
+    from ._models import MigrateMySqlAzureDbForMySqlSyncTaskOutputTableLevel
+    from ._models import MigrateMySqlAzureDbForMySqlSyncTaskProperties
+    from ._models import MigrateOracleAzureDbForPostgreSqlSyncTaskProperties
+    from ._models import MigrateOracleAzureDbPostgreSqlSyncDatabaseInput
+    from ._models import MigrateOracleAzureDbPostgreSqlSyncTaskInput
+    from ._models import MigrateOracleAzureDbPostgreSqlSyncTaskOutput
+    from ._models import MigrateOracleAzureDbPostgreSqlSyncTaskOutputDatabaseError
+    from ._models import MigrateOracleAzureDbPostgreSqlSyncTaskOutputDatabaseLevel
+    from ._models import MigrateOracleAzureDbPostgreSqlSyncTaskOutputError
+    from ._models import MigrateOracleAzureDbPostgreSqlSyncTaskOutputMigrationLevel
+    from ._models import MigrateOracleAzureDbPostgreSqlSyncTaskOutputTableLevel
+    from ._models import MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput
+    from ._models import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput
+    from ._models import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutput
+    from ._models import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError
+    from ._models import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseLevel
+    from ._models import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputError
+    from ._models import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel
+    from ._models import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputTableLevel
+    from ._models import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties
+    from ._models import MigrateSchemaSqlServerSqlDbDatabaseInput
+    from ._models import MigrateSchemaSqlServerSqlDbTaskInput
+    from ._models import MigrateSchemaSqlServerSqlDbTaskOutput
+    from ._models import MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel
+    from ._models import MigrateSchemaSqlServerSqlDbTaskOutputError
+    from ._models import MigrateSchemaSqlServerSqlDbTaskOutputMigrationLevel
+    from ._models import MigrateSchemaSqlServerSqlDbTaskProperties
+    from ._models import MigrateSchemaSqlTaskOutputError
+    from ._models import MigrateSqlServerSqlDbDatabaseInput
+    from ._models import MigrateSqlServerSqlDbSyncDatabaseInput
+    from ._models import MigrateSqlServerSqlDbSyncTaskInput
+    from ._models import MigrateSqlServerSqlDbSyncTaskOutput
+    from ._models import MigrateSqlServerSqlDbSyncTaskOutputDatabaseError
+    from ._models import MigrateSqlServerSqlDbSyncTaskOutputDatabaseLevel
+    from ._models import MigrateSqlServerSqlDbSyncTaskOutputError
+    from ._models import MigrateSqlServerSqlDbSyncTaskOutputMigrationLevel
+    from ._models import MigrateSqlServerSqlDbSyncTaskOutputTableLevel
+    from ._models import MigrateSqlServerSqlDbSyncTaskProperties
+    from ._models import MigrateSqlServerSqlDbTaskInput
+    from ._models import MigrateSqlServerSqlDbTaskOutput
+    from ._models import MigrateSqlServerSqlDbTaskOutputDatabaseLevel
+    from ._models import MigrateSqlServerSqlDbTaskOutputError
+    from ._models import MigrateSqlServerSqlDbTaskOutputMigrationLevel
+    from ._models import MigrateSqlServerSqlDbTaskOutputTableLevel
+    from ._models import MigrateSqlServerSqlDbTaskProperties
+    from ._models import MigrateSqlServerSqlMIDatabaseInput
+    from ._models import MigrateSqlServerSqlMISyncTaskInput
+    from ._models import MigrateSqlServerSqlMISyncTaskOutput
+    from ._models import MigrateSqlServerSqlMISyncTaskOutputDatabaseLevel
+    from ._models import MigrateSqlServerSqlMISyncTaskOutputError
+    from ._models import MigrateSqlServerSqlMISyncTaskOutputMigrationLevel
+    from ._models import MigrateSqlServerSqlMISyncTaskProperties
+    from ._models import MigrateSqlServerSqlMITaskInput
+    from ._models import MigrateSqlServerSqlMITaskOutput
+    from ._models import MigrateSqlServerSqlMITaskOutputAgentJobLevel
+    from ._models import MigrateSqlServerSqlMITaskOutputDatabaseLevel
+    from ._models import MigrateSqlServerSqlMITaskOutputError
+    from ._models import MigrateSqlServerSqlMITaskOutputLoginLevel
+    from ._models import MigrateSqlServerSqlMITaskOutputMigrationLevel
+    from ._models import MigrateSqlServerSqlMITaskProperties
+    from ._models import MigrateSqlServerSqlServerDatabaseInput
+    from ._models import MigrateSsisTaskInput
+    from ._models import MigrateSsisTaskOutput
+    from ._models import MigrateSsisTaskOutputMigrationLevel
+    from ._models import MigrateSsisTaskOutputProjectLevel
+    from ._models import MigrateSsisTaskProperties
+    from ._models import MigrateSyncCompleteCommandInput
+    from ._models import MigrateSyncCompleteCommandOutput
+    from ._models import MigrateSyncCompleteCommandProperties
+    from ._models import MigrationEligibilityInfo
+    from ._models import MigrationReportResult
+    from ._models import MigrationTableMetadata
+    from ._models import MigrationValidationDatabaseLevelResult
+    from ._models import MigrationValidationDatabaseSummaryResult
+    from ._models import MigrationValidationOptions
+    from ._models import MigrationValidationResult
+    from ._models import MiSqlConnectionInfo
+    from ._models import MongoDbCancelCommand
+    from ._models import MongoDbClusterInfo
+    from ._models import MongoDbCollectionInfo
+    from ._models import MongoDbCollectionProgress
+    from ._models import MongoDbCollectionSettings
+    from ._models import MongoDbCommandInput
+    from ._models import MongoDbConnectionInfo
+    from ._models import MongoDbDatabaseInfo
+    from ._models import MongoDbDatabaseProgress
+    from ._models import MongoDbDatabaseSettings
+    from ._models import MongoDbError
+    from ._models import MongoDbFinishCommand
+    from ._models import MongoDbFinishCommandInput
+    from ._models import MongoDbMigrationProgress
+    from ._models import MongoDbMigrationSettings
+    from ._models import MongoDbObjectInfo
+    from ._models import MongoDbProgress
+    from ._models import MongoDbRestartCommand
+    from ._models import MongoDbShardKeyField
+    from ._models import MongoDbShardKeyInfo
+    from ._models import MongoDbShardKeySetting
+    from ._models import MongoDbThrottlingSettings
+    from ._models import MySqlConnectionInfo
+    from ._models import NameAvailabilityRequest
+    from ._models import NameAvailabilityResponse
+    from ._models import NonSqlDataMigrationTable
+    from ._models import NonSqlDataMigrationTableResult
+    from ._models import NonSqlMigrationTaskInput
+    from ._models import NonSqlMigrationTaskOutput
+    from ._models import ODataError
+    from ._models import OracleConnectionInfo
+    from ._models import OracleOCIDriverInfo
+    from ._models import OrphanedUserInfo
+    from ._models import PostgreSqlConnectionInfo
+    from ._models import Project
+    from ._models import ProjectFile
+    from ._models import ProjectFileProperties
+    from ._models import ProjectTask
+    from ._models import ProjectTaskProperties
+    from ._models import QueryAnalysisValidationResult
+    from ._models import QueryExecutionResult
+    from ._models import Quota
+    from ._models import QuotaName
+    from ._models import ReportableException
+    from ._models import Resource
+    from ._models import ResourceSku
+    from ._models import ResourceSkuCapabilities
+    from ._models import ResourceSkuCapacity
+    from ._models import ResourceSkuCosts
+    from ._models import ResourceSkuRestrictions
+    from ._models import SchemaComparisonValidationResult
+    from ._models import SchemaComparisonValidationResultType
+    from ._models import SchemaMigrationSetting
+    from ._models import SelectedCertificateInput
+    from ._models import ServerProperties
+    from ._models import ServiceOperation
+    from ._models import ServiceOperationDisplay
+    from ._models import ServiceSku
+    from ._models import SqlConnectionInfo
+    from ._models import SqlMigrationTaskInput
+    from ._models import SqlServerSqlMISyncTaskInput
+    from ._models import SsisMigrationInfo
+    from ._models import StartMigrationScenarioServerRoleResult
+    from ._models import SyncMigrationDatabaseErrorEvent
+    from ._models import TrackedResource
+    from ._models import UploadOCIDriverTaskInput
+    from ._models import UploadOCIDriverTaskOutput
+    from ._models import UploadOCIDriverTaskProperties
+    from ._models import ValidateMigrationInputSqlServerSqlDbSyncTaskProperties
+    from ._models import ValidateMigrationInputSqlServerSqlMISyncTaskInput
+    from ._models import ValidateMigrationInputSqlServerSqlMISyncTaskOutput
+    from ._models import ValidateMigrationInputSqlServerSqlMISyncTaskProperties
+    from ._models import ValidateMigrationInputSqlServerSqlMITaskInput
+    from ._models import ValidateMigrationInputSqlServerSqlMITaskOutput
+    from ._models import ValidateMigrationInputSqlServerSqlMITaskProperties
+    from ._models import ValidateMongoDbTaskProperties
+    from ._models import ValidateOracleAzureDbForPostgreSqlSyncTaskProperties
+    from ._models import ValidateOracleAzureDbPostgreSqlSyncTaskOutput
+    from ._models import ValidateSyncMigrationInputSqlServerTaskInput
+    from ._models import ValidateSyncMigrationInputSqlServerTaskOutput
+    from ._models import ValidationError
+    from ._models import WaitStatistics
+from ._paged_models import AvailableServiceSkuPaged
+from ._paged_models import DataMigrationServicePaged
+from ._paged_models import ProjectFilePaged
+from ._paged_models import ProjectPaged
+from ._paged_models import ProjectTaskPaged
+from ._paged_models import QuotaPaged
+from ._paged_models import ResourceSkuPaged
+from ._paged_models import ServiceOperationPaged
+from ._data_migration_service_client_enums import (
     CommandState,
+    SsisMigrationStage,
+    MigrationState,
+    MigrationStatus,
+    SsisMigrationOverwriteOption,
+    SsisStoreType,
     SqlSourcePlatform,
     AuthenticationType,
     MongoDbErrorType,
@@ -469,9 +556,7 @@ from .data_migration_service_client_enums import (
     Severity,
     UpdateActionType,
     ObjectType,
-    MigrationState,
     DatabaseMigrationStage,
-    MigrationStatus,
     BackupFileStatus,
     DatabaseMigrationState,
     LoginMigrationStage,
@@ -499,223 +584,264 @@ from .data_migration_service_client_enums import (
 )
 
 __all__ = [
-    'TrackedResource',
-    'Resource',
-    'ProjectFileProperties',
-    'ProjectFile',
-    'ODataError',
-    'ReportableException',
-    'MigrateMISyncCompleteCommandOutput',
-    'MigrateMISyncCompleteCommandInput',
-    'MigrateMISyncCompleteCommandProperties',
-    'MigrateSyncCompleteCommandOutput',
-    'MigrateSyncCompleteCommandInput',
-    'MigrateSyncCompleteCommandProperties',
-    'CommandProperties',
-    'GetTdeCertificatesSqlTaskOutput',
-    'SelectedCertificateInput',
-    'FileShare',
-    'MiSqlConnectionInfo',
-    'PostgreSqlConnectionInfo',
-    'MySqlConnectionInfo',
-    'MongoDbConnectionInfo',
-    'ConnectionInfo',
-    'SqlConnectionInfo',
-    'GetTdeCertificatesSqlTaskInput',
-    'GetTdeCertificatesSqlTaskProperties',
-    'MongoDbError',
-    'MongoDbCollectionProgress',
-    'MongoDbDatabaseProgress',
-    'MongoDbProgress',
-    'MongoDbMigrationProgress',
-    'MongoDbThrottlingSettings',
-    'MongoDbShardKeyField',
-    'MongoDbShardKeySetting',
-    'MongoDbCollectionSettings',
-    'MongoDbDatabaseSettings',
-    'MongoDbMigrationSettings',
-    'ValidateMongoDbTaskProperties',
-    'ValidateMigrationInputSqlServerSqlMISyncTaskOutput',
+    'ApiError', 'ApiErrorException',
+    'AvailableServiceSku',
+    'AvailableServiceSkuCapacity',
+    'AvailableServiceSkuSku',
     'AzureActiveDirectoryApp',
-    'MigrateSqlServerSqlMIDatabaseInput',
-    'SqlServerSqlMISyncTaskInput',
-    'ValidateMigrationInputSqlServerSqlMISyncTaskInput',
-    'ValidateMigrationInputSqlServerSqlMISyncTaskProperties',
-    'DatabaseBackupInfo',
-    'ValidateMigrationInputSqlServerSqlMITaskOutput',
-    'BlobShare',
-    'ValidateMigrationInputSqlServerSqlMITaskInput',
-    'ValidateMigrationInputSqlServerSqlMITaskProperties',
-    'ValidateSyncMigrationInputSqlServerTaskOutput',
-    'MigrateSqlServerSqlDbSyncDatabaseInput',
-    'ValidateSyncMigrationInputSqlServerTaskInput',
-    'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties',
-    'SyncMigrationDatabaseErrorEvent',
-    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError',
-    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputError',
-    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputTableLevel',
-    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseLevel',
-    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel',
-    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutput',
-    'MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput',
-    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput',
-    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties',
-    'MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseError',
-    'MigrateMySqlAzureDbForMySqlSyncTaskOutputError',
-    'MigrateMySqlAzureDbForMySqlSyncTaskOutputTableLevel',
-    'MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseLevel',
-    'MigrateMySqlAzureDbForMySqlSyncTaskOutputMigrationLevel',
-    'MigrateMySqlAzureDbForMySqlSyncTaskOutput',
-    'MigrateMySqlAzureDbForMySqlSyncDatabaseInput',
-    'MigrateMySqlAzureDbForMySqlSyncTaskInput',
-    'MigrateMySqlAzureDbForMySqlSyncTaskProperties',
-    'MigrateSqlServerSqlDbSyncTaskOutputDatabaseError',
-    'MigrateSqlServerSqlDbSyncTaskOutputError',
-    'MigrateSqlServerSqlDbSyncTaskOutputTableLevel',
-    'MigrateSqlServerSqlDbSyncTaskOutputDatabaseLevel',
-    'MigrateSqlServerSqlDbSyncTaskOutputMigrationLevel',
-    'MigrateSqlServerSqlDbSyncTaskOutput',
-    'SqlMigrationTaskInput',
-    'MigrationValidationOptions',
-    'MigrateSqlServerSqlDbSyncTaskInput',
-    'MigrateSqlServerSqlDbSyncTaskProperties',
-    'ValidationError',
-    'WaitStatistics',
-    'ExecutionStatistics',
-    'QueryExecutionResult',
-    'QueryAnalysisValidationResult',
-    'SchemaComparisonValidationResultType',
-    'SchemaComparisonValidationResult',
-    'DataIntegrityValidationResult',
-    'MigrationValidationDatabaseLevelResult',
-    'MigrationValidationDatabaseSummaryResult',
-    'MigrationValidationResult',
-    'MigrateSqlServerSqlDbTaskOutputError',
-    'MigrateSqlServerSqlDbTaskOutputTableLevel',
-    'DataItemMigrationSummaryResult',
-    'MigrateSqlServerSqlDbTaskOutputDatabaseLevel',
-    'MigrationReportResult',
-    'DatabaseSummaryResult',
-    'MigrateSqlServerSqlDbTaskOutputMigrationLevel',
-    'MigrateSqlServerSqlDbTaskOutput',
-    'MigrateSqlServerSqlDbDatabaseInput',
-    'MigrateSqlServerSqlDbTaskInput',
-    'MigrateSqlServerSqlDbTaskProperties',
-    'MigrateSqlServerSqlMISyncTaskOutputError',
     'BackupFileInfo',
     'BackupSetInfo',
-    'MigrateSqlServerSqlMISyncTaskOutputDatabaseLevel',
-    'MigrateSqlServerSqlMISyncTaskOutputMigrationLevel',
-    'MigrateSqlServerSqlMISyncTaskOutput',
-    'MigrateSqlServerSqlMISyncTaskInput',
-    'MigrateSqlServerSqlMISyncTaskProperties',
-    'MigrateSqlServerSqlMITaskOutputError',
-    'MigrateSqlServerSqlMITaskOutputLoginLevel',
-    'MigrateSqlServerSqlMITaskOutputAgentJobLevel',
-    'MigrateSqlServerSqlMITaskOutputDatabaseLevel',
-    'OrphanedUserInfo',
-    'StartMigrationScenarioServerRoleResult',
-    'MigrateSqlServerSqlMITaskOutputMigrationLevel',
-    'MigrateSqlServerSqlMITaskOutput',
-    'MigrateSqlServerSqlMITaskInput',
-    'MigrateSqlServerSqlMITaskProperties',
-    'MigrateMongoDbTaskProperties',
-    'ConnectToTargetAzureDbForMySqlTaskOutput',
+    'BlobShare',
+    'CheckOCIDriverTaskInput',
+    'CheckOCIDriverTaskOutput',
+    'CheckOCIDriverTaskProperties',
+    'CommandProperties',
+    'ConnectionInfo',
+    'ConnectToMongoDbTaskProperties',
+    'ConnectToSourceMySqlTaskInput',
+    'ConnectToSourceMySqlTaskProperties',
+    'ConnectToSourceNonSqlTaskOutput',
+    'ConnectToSourceOracleSyncTaskInput',
+    'ConnectToSourceOracleSyncTaskOutput',
+    'ConnectToSourceOracleSyncTaskProperties',
+    'ConnectToSourcePostgreSqlSyncTaskInput',
+    'ConnectToSourcePostgreSqlSyncTaskOutput',
+    'ConnectToSourcePostgreSqlSyncTaskProperties',
+    'ConnectToSourceSqlServerSyncTaskProperties',
+    'ConnectToSourceSqlServerTaskInput',
+    'ConnectToSourceSqlServerTaskOutput',
+    'ConnectToSourceSqlServerTaskOutputAgentJobLevel',
+    'ConnectToSourceSqlServerTaskOutputDatabaseLevel',
+    'ConnectToSourceSqlServerTaskOutputLoginLevel',
+    'ConnectToSourceSqlServerTaskOutputTaskLevel',
+    'ConnectToSourceSqlServerTaskProperties',
     'ConnectToTargetAzureDbForMySqlTaskInput',
+    'ConnectToTargetAzureDbForMySqlTaskOutput',
     'ConnectToTargetAzureDbForMySqlTaskProperties',
-    'ConnectToTargetSqlMISyncTaskOutput',
-    'ConnectToTargetSqlMISyncTaskInput',
-    'ConnectToTargetSqlMISyncTaskProperties',
-    'ConnectToTargetSqlMITaskOutput',
-    'ConnectToTargetSqlMITaskInput',
-    'ConnectToTargetSqlMITaskProperties',
-    'DatabaseTable',
-    'GetUserTablesSqlSyncTaskOutput',
-    'GetUserTablesSqlSyncTaskInput',
-    'GetUserTablesSqlSyncTaskProperties',
-    'GetUserTablesSqlTaskOutput',
-    'GetUserTablesSqlTaskInput',
-    'GetUserTablesSqlTaskProperties',
-    'ConnectToTargetAzureDbForPostgreSqlSyncTaskOutput',
     'ConnectToTargetAzureDbForPostgreSqlSyncTaskInput',
+    'ConnectToTargetAzureDbForPostgreSqlSyncTaskOutput',
     'ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties',
+    'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskInput',
+    'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput',
+    'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutputDatabaseSchemaMapItem',
+    'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties',
+    'ConnectToTargetSqlDbTaskInput',
     'ConnectToTargetSqlDbTaskOutput',
+    'ConnectToTargetSqlDbTaskProperties',
+    'ConnectToTargetSqlMISyncTaskInput',
+    'ConnectToTargetSqlMISyncTaskOutput',
+    'ConnectToTargetSqlMISyncTaskProperties',
+    'ConnectToTargetSqlMITaskInput',
+    'ConnectToTargetSqlMITaskOutput',
+    'ConnectToTargetSqlMITaskProperties',
     'ConnectToTargetSqlSqlDbSyncTaskInput',
     'ConnectToTargetSqlSqlDbSyncTaskProperties',
-    'ConnectToTargetSqlDbTaskInput',
-    'ConnectToTargetSqlDbTaskProperties',
-    'ConnectToSourcePostgreSqlSyncTaskOutput',
-    'ConnectToSourcePostgreSqlSyncTaskInput',
-    'ConnectToSourcePostgreSqlSyncTaskProperties',
-    'MigrationEligibilityInfo',
-    'ConnectToSourceSqlServerTaskOutputAgentJobLevel',
-    'ConnectToSourceSqlServerTaskOutputLoginLevel',
+    'Database',
+    'DatabaseBackupInfo',
     'DatabaseFileInfo',
-    'ConnectToSourceSqlServerTaskOutputDatabaseLevel',
-    'ConnectToSourceSqlServerTaskOutputTaskLevel',
-    'ConnectToSourceSqlServerTaskOutput',
-    'ConnectToSourceSqlServerTaskInput',
-    'ConnectToSourceSqlServerSyncTaskProperties',
-    'ConnectToSourceSqlServerTaskProperties',
-    'MongoDbShardKeyInfo',
-    'MongoDbCollectionInfo',
-    'MongoDbObjectInfo',
-    'MongoDbDatabaseInfo',
-    'MongoDbClusterInfo',
-    'ConnectToMongoDbTaskProperties',
-    'ProjectTaskProperties',
-    'ProjectTask',
-    'ServiceSku',
-    'DataMigrationService',
-    'NameAvailabilityRequest',
+    'DatabaseFileInput',
     'DatabaseInfo',
-    'Project',
-    'ApiError', 'ApiErrorException',
-    'FileStorageInfo',
-    'ServiceOperationDisplay',
-    'ServiceOperation',
-    'QuotaName',
-    'Quota',
-    'NameAvailabilityResponse',
-    'AvailableServiceSkuSku',
-    'AvailableServiceSkuCapacity',
-    'AvailableServiceSku',
+    'DatabaseObjectName',
+    'DatabaseSummaryResult',
+    'DatabaseTable',
+    'DataIntegrityValidationResult',
+    'DataItemMigrationSummaryResult',
+    'DataMigrationError',
+    'DataMigrationProjectMetadata',
+    'DataMigrationService',
     'DataMigrationServiceStatusResponse',
-    'ResourceSkuRestrictions',
-    'ResourceSkuCapabilities',
-    'ResourceSkuCosts',
-    'ResourceSkuCapacity',
-    'ResourceSku',
-    'ConnectToSourceMySqlTaskInput',
-    'ServerProperties',
-    'ConnectToSourceNonSqlTaskOutput',
-    'ConnectToSourceMySqlTaskProperties',
-    'SchemaMigrationSetting',
+    'ExecutionStatistics',
+    'FileShare',
+    'FileStorageInfo',
+    'GetProjectDetailsNonSqlTaskInput',
+    'GetTdeCertificatesSqlTaskInput',
+    'GetTdeCertificatesSqlTaskOutput',
+    'GetTdeCertificatesSqlTaskProperties',
+    'GetUserTablesOracleTaskInput',
+    'GetUserTablesOracleTaskOutput',
+    'GetUserTablesOracleTaskProperties',
+    'GetUserTablesPostgreSqlTaskInput',
+    'GetUserTablesPostgreSqlTaskOutput',
+    'GetUserTablesPostgreSqlTaskProperties',
+    'GetUserTablesSqlSyncTaskInput',
+    'GetUserTablesSqlSyncTaskOutput',
+    'GetUserTablesSqlSyncTaskProperties',
+    'GetUserTablesSqlTaskInput',
+    'GetUserTablesSqlTaskOutput',
+    'GetUserTablesSqlTaskProperties',
+    'InstallOCIDriverTaskInput',
+    'InstallOCIDriverTaskOutput',
+    'InstallOCIDriverTaskProperties',
+    'MigrateMISyncCompleteCommandInput',
+    'MigrateMISyncCompleteCommandOutput',
+    'MigrateMISyncCompleteCommandProperties',
+    'MigrateMongoDbTaskProperties',
+    'MigrateMySqlAzureDbForMySqlSyncDatabaseInput',
+    'MigrateMySqlAzureDbForMySqlSyncTaskInput',
+    'MigrateMySqlAzureDbForMySqlSyncTaskOutput',
+    'MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseError',
+    'MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseLevel',
+    'MigrateMySqlAzureDbForMySqlSyncTaskOutputError',
+    'MigrateMySqlAzureDbForMySqlSyncTaskOutputMigrationLevel',
+    'MigrateMySqlAzureDbForMySqlSyncTaskOutputTableLevel',
+    'MigrateMySqlAzureDbForMySqlSyncTaskProperties',
+    'MigrateOracleAzureDbForPostgreSqlSyncTaskProperties',
+    'MigrateOracleAzureDbPostgreSqlSyncDatabaseInput',
+    'MigrateOracleAzureDbPostgreSqlSyncTaskInput',
+    'MigrateOracleAzureDbPostgreSqlSyncTaskOutput',
+    'MigrateOracleAzureDbPostgreSqlSyncTaskOutputDatabaseError',
+    'MigrateOracleAzureDbPostgreSqlSyncTaskOutputDatabaseLevel',
+    'MigrateOracleAzureDbPostgreSqlSyncTaskOutputError',
+    'MigrateOracleAzureDbPostgreSqlSyncTaskOutputMigrationLevel',
+    'MigrateOracleAzureDbPostgreSqlSyncTaskOutputTableLevel',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutput',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseLevel',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputError',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputTableLevel',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties',
     'MigrateSchemaSqlServerSqlDbDatabaseInput',
     'MigrateSchemaSqlServerSqlDbTaskInput',
     'MigrateSchemaSqlServerSqlDbTaskOutput',
-    'MigrateSchemaSqlServerSqlDbTaskProperties',
-    'MigrateSchemaSqlServerSqlDbTaskOutputMigrationLevel',
     'MigrateSchemaSqlServerSqlDbTaskOutputDatabaseLevel',
     'MigrateSchemaSqlServerSqlDbTaskOutputError',
+    'MigrateSchemaSqlServerSqlDbTaskOutputMigrationLevel',
+    'MigrateSchemaSqlServerSqlDbTaskProperties',
     'MigrateSchemaSqlTaskOutputError',
-    'MongoDbCommandInput',
-    'MongoDbCancelCommand',
-    'MongoDbFinishCommandInput',
-    'MongoDbFinishCommand',
-    'MongoDbRestartCommand',
-    'Database',
-    'DatabaseObjectName',
-    'MigrationTableMetadata',
-    'DataMigrationProjectMetadata',
-    'GetProjectDetailsNonSqlTaskInput',
-    'NonSqlDataMigrationTable',
-    'NonSqlMigrationTaskInput',
-    'DataMigrationError',
-    'NonSqlDataMigrationTableResult',
-    'NonSqlMigrationTaskOutput',
-    'DatabaseFileInput',
+    'MigrateSqlServerSqlDbDatabaseInput',
+    'MigrateSqlServerSqlDbSyncDatabaseInput',
+    'MigrateSqlServerSqlDbSyncTaskInput',
+    'MigrateSqlServerSqlDbSyncTaskOutput',
+    'MigrateSqlServerSqlDbSyncTaskOutputDatabaseError',
+    'MigrateSqlServerSqlDbSyncTaskOutputDatabaseLevel',
+    'MigrateSqlServerSqlDbSyncTaskOutputError',
+    'MigrateSqlServerSqlDbSyncTaskOutputMigrationLevel',
+    'MigrateSqlServerSqlDbSyncTaskOutputTableLevel',
+    'MigrateSqlServerSqlDbSyncTaskProperties',
+    'MigrateSqlServerSqlDbTaskInput',
+    'MigrateSqlServerSqlDbTaskOutput',
+    'MigrateSqlServerSqlDbTaskOutputDatabaseLevel',
+    'MigrateSqlServerSqlDbTaskOutputError',
+    'MigrateSqlServerSqlDbTaskOutputMigrationLevel',
+    'MigrateSqlServerSqlDbTaskOutputTableLevel',
+    'MigrateSqlServerSqlDbTaskProperties',
+    'MigrateSqlServerSqlMIDatabaseInput',
+    'MigrateSqlServerSqlMISyncTaskInput',
+    'MigrateSqlServerSqlMISyncTaskOutput',
+    'MigrateSqlServerSqlMISyncTaskOutputDatabaseLevel',
+    'MigrateSqlServerSqlMISyncTaskOutputError',
+    'MigrateSqlServerSqlMISyncTaskOutputMigrationLevel',
+    'MigrateSqlServerSqlMISyncTaskProperties',
+    'MigrateSqlServerSqlMITaskInput',
+    'MigrateSqlServerSqlMITaskOutput',
+    'MigrateSqlServerSqlMITaskOutputAgentJobLevel',
+    'MigrateSqlServerSqlMITaskOutputDatabaseLevel',
+    'MigrateSqlServerSqlMITaskOutputError',
+    'MigrateSqlServerSqlMITaskOutputLoginLevel',
+    'MigrateSqlServerSqlMITaskOutputMigrationLevel',
+    'MigrateSqlServerSqlMITaskProperties',
     'MigrateSqlServerSqlServerDatabaseInput',
+    'MigrateSsisTaskInput',
+    'MigrateSsisTaskOutput',
+    'MigrateSsisTaskOutputMigrationLevel',
+    'MigrateSsisTaskOutputProjectLevel',
+    'MigrateSsisTaskProperties',
+    'MigrateSyncCompleteCommandInput',
+    'MigrateSyncCompleteCommandOutput',
+    'MigrateSyncCompleteCommandProperties',
+    'MigrationEligibilityInfo',
+    'MigrationReportResult',
+    'MigrationTableMetadata',
+    'MigrationValidationDatabaseLevelResult',
+    'MigrationValidationDatabaseSummaryResult',
+    'MigrationValidationOptions',
+    'MigrationValidationResult',
+    'MiSqlConnectionInfo',
+    'MongoDbCancelCommand',
+    'MongoDbClusterInfo',
+    'MongoDbCollectionInfo',
+    'MongoDbCollectionProgress',
+    'MongoDbCollectionSettings',
+    'MongoDbCommandInput',
+    'MongoDbConnectionInfo',
+    'MongoDbDatabaseInfo',
+    'MongoDbDatabaseProgress',
+    'MongoDbDatabaseSettings',
+    'MongoDbError',
+    'MongoDbFinishCommand',
+    'MongoDbFinishCommandInput',
+    'MongoDbMigrationProgress',
+    'MongoDbMigrationSettings',
+    'MongoDbObjectInfo',
+    'MongoDbProgress',
+    'MongoDbRestartCommand',
+    'MongoDbShardKeyField',
+    'MongoDbShardKeyInfo',
+    'MongoDbShardKeySetting',
+    'MongoDbThrottlingSettings',
+    'MySqlConnectionInfo',
+    'NameAvailabilityRequest',
+    'NameAvailabilityResponse',
+    'NonSqlDataMigrationTable',
+    'NonSqlDataMigrationTableResult',
+    'NonSqlMigrationTaskInput',
+    'NonSqlMigrationTaskOutput',
+    'ODataError',
+    'OracleConnectionInfo',
+    'OracleOCIDriverInfo',
+    'OrphanedUserInfo',
+    'PostgreSqlConnectionInfo',
+    'Project',
+    'ProjectFile',
+    'ProjectFileProperties',
+    'ProjectTask',
+    'ProjectTaskProperties',
+    'QueryAnalysisValidationResult',
+    'QueryExecutionResult',
+    'Quota',
+    'QuotaName',
+    'ReportableException',
+    'Resource',
+    'ResourceSku',
+    'ResourceSkuCapabilities',
+    'ResourceSkuCapacity',
+    'ResourceSkuCosts',
+    'ResourceSkuRestrictions',
+    'SchemaComparisonValidationResult',
+    'SchemaComparisonValidationResultType',
+    'SchemaMigrationSetting',
+    'SelectedCertificateInput',
+    'ServerProperties',
+    'ServiceOperation',
+    'ServiceOperationDisplay',
+    'ServiceSku',
+    'SqlConnectionInfo',
+    'SqlMigrationTaskInput',
+    'SqlServerSqlMISyncTaskInput',
+    'SsisMigrationInfo',
+    'StartMigrationScenarioServerRoleResult',
+    'SyncMigrationDatabaseErrorEvent',
+    'TrackedResource',
+    'UploadOCIDriverTaskInput',
+    'UploadOCIDriverTaskOutput',
+    'UploadOCIDriverTaskProperties',
+    'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties',
+    'ValidateMigrationInputSqlServerSqlMISyncTaskInput',
+    'ValidateMigrationInputSqlServerSqlMISyncTaskOutput',
+    'ValidateMigrationInputSqlServerSqlMISyncTaskProperties',
+    'ValidateMigrationInputSqlServerSqlMITaskInput',
+    'ValidateMigrationInputSqlServerSqlMITaskOutput',
+    'ValidateMigrationInputSqlServerSqlMITaskProperties',
+    'ValidateMongoDbTaskProperties',
+    'ValidateOracleAzureDbForPostgreSqlSyncTaskProperties',
+    'ValidateOracleAzureDbPostgreSqlSyncTaskOutput',
+    'ValidateSyncMigrationInputSqlServerTaskInput',
+    'ValidateSyncMigrationInputSqlServerTaskOutput',
+    'ValidationError',
+    'WaitStatistics',
     'ResourceSkuPaged',
     'AvailableServiceSkuPaged',
     'DataMigrationServicePaged',
@@ -725,6 +851,11 @@ __all__ = [
     'ServiceOperationPaged',
     'ProjectFilePaged',
     'CommandState',
+    'SsisMigrationStage',
+    'MigrationState',
+    'MigrationStatus',
+    'SsisMigrationOverwriteOption',
+    'SsisStoreType',
     'SqlSourcePlatform',
     'AuthenticationType',
     'MongoDbErrorType',
@@ -739,9 +870,7 @@ __all__ = [
     'Severity',
     'UpdateActionType',
     'ObjectType',
-    'MigrationState',
     'DatabaseMigrationStage',
-    'MigrationStatus',
     'BackupFileStatus',
     'DatabaseMigrationState',
     'LoginMigrationStage',

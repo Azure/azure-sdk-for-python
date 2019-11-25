@@ -54,6 +54,7 @@ try:
     from ._models_py3 import ApplicationGatewayUrlPathMap
     from ._models_py3 import ApplicationGatewayWebApplicationFirewallConfiguration
     from ._models_py3 import ApplicationSecurityGroup
+    from ._models_py3 import AutoApprovedPrivateLinkService
     from ._models_py3 import Availability
     from ._models_py3 import AvailableDelegation
     from ._models_py3 import AvailablePrivateEndpointType
@@ -88,6 +89,7 @@ try:
     from ._models_py3 import BgpPeerStatusListResult
     from ._models_py3 import BgpServiceCommunity
     from ._models_py3 import BgpSettings
+    from ._models_py3 import CheckPrivateLinkServiceVisibilityRequest
     from ._models_py3 import ConnectionMonitor
     from ._models_py3 import ConnectionMonitorDestination
     from ._models_py3 import ConnectionMonitorParameters
@@ -238,6 +240,7 @@ try:
     from ._models_py3 import PrivateLinkServiceIpConfiguration
     from ._models_py3 import PrivateLinkServicePropertiesAutoApproval
     from ._models_py3 import PrivateLinkServicePropertiesVisibility
+    from ._models_py3 import PrivateLinkServiceVisibility
     from ._models_py3 import Probe
     from ._models_py3 import ProtocolConfiguration
     from ._models_py3 import ProtocolCustomSettingsFormat
@@ -368,6 +371,7 @@ except (SyntaxError, ImportError):
     from ._models import ApplicationGatewayUrlPathMap
     from ._models import ApplicationGatewayWebApplicationFirewallConfiguration
     from ._models import ApplicationSecurityGroup
+    from ._models import AutoApprovedPrivateLinkService
     from ._models import Availability
     from ._models import AvailableDelegation
     from ._models import AvailablePrivateEndpointType
@@ -402,6 +406,7 @@ except (SyntaxError, ImportError):
     from ._models import BgpPeerStatusListResult
     from ._models import BgpServiceCommunity
     from ._models import BgpSettings
+    from ._models import CheckPrivateLinkServiceVisibilityRequest
     from ._models import ConnectionMonitor
     from ._models import ConnectionMonitorDestination
     from ._models import ConnectionMonitorParameters
@@ -552,6 +557,7 @@ except (SyntaxError, ImportError):
     from ._models import PrivateLinkServiceIpConfiguration
     from ._models import PrivateLinkServicePropertiesAutoApproval
     from ._models import PrivateLinkServicePropertiesVisibility
+    from ._models import PrivateLinkServiceVisibility
     from ._models import Probe
     from ._models import ProtocolConfiguration
     from ._models import ProtocolCustomSettingsFormat
@@ -640,6 +646,7 @@ except (SyntaxError, ImportError):
 from ._paged_models import ApplicationGatewayPaged
 from ._paged_models import ApplicationGatewaySslPredefinedPolicyPaged
 from ._paged_models import ApplicationSecurityGroupPaged
+from ._paged_models import AutoApprovedPrivateLinkServicePaged
 from ._paged_models import AvailableDelegationPaged
 from ._paged_models import AvailablePrivateEndpointTypePaged
 from ._paged_models import AzureFirewallFqdnTagPaged
@@ -709,12 +716,13 @@ from ._paged_models import WebApplicationFirewallPolicyPaged
 from ._network_management_client_enums import (
     ApplicationGatewayProtocol,
     IPAllocationMethod,
+    IPVersion,
     SecurityRuleProtocol,
     SecurityRuleAccess,
     SecurityRuleDirection,
+    ProvisioningState,
     RouteNextHopType,
     PublicIPAddressSkuName,
-    IPVersion,
     DdosSettingsProtectionCoverage,
     TransportProtocol,
     ApplicationGatewayCookieBasedAffinity,
@@ -731,7 +739,6 @@ from ._network_management_client_enums import (
     ApplicationGatewayOperationalState,
     ApplicationGatewayFirewallMode,
     ResourceIdentityType,
-    ProvisioningState,
     AzureFirewallRCActionType,
     AzureFirewallApplicationRuleProtocolType,
     AzureFirewallNatRCActionType,
@@ -859,6 +866,7 @@ __all__ = [
     'ApplicationGatewayUrlPathMap',
     'ApplicationGatewayWebApplicationFirewallConfiguration',
     'ApplicationSecurityGroup',
+    'AutoApprovedPrivateLinkService',
     'Availability',
     'AvailableDelegation',
     'AvailablePrivateEndpointType',
@@ -893,6 +901,7 @@ __all__ = [
     'BgpPeerStatusListResult',
     'BgpServiceCommunity',
     'BgpSettings',
+    'CheckPrivateLinkServiceVisibilityRequest',
     'ConnectionMonitor',
     'ConnectionMonitorDestination',
     'ConnectionMonitorParameters',
@@ -1043,6 +1052,7 @@ __all__ = [
     'PrivateLinkServiceIpConfiguration',
     'PrivateLinkServicePropertiesAutoApproval',
     'PrivateLinkServicePropertiesVisibility',
+    'PrivateLinkServiceVisibility',
     'Probe',
     'ProtocolConfiguration',
     'ProtocolCustomSettingsFormat',
@@ -1132,7 +1142,6 @@ __all__ = [
     'ApplicationGatewaySslPredefinedPolicyPaged',
     'ApplicationSecurityGroupPaged',
     'AvailableDelegationPaged',
-    'AvailablePrivateEndpointTypePaged',
     'AzureFirewallPaged',
     'AzureFirewallFqdnTagPaged',
     'BastionHostPaged',
@@ -1150,7 +1159,9 @@ __all__ = [
     'ExpressRoutePortPaged',
     'ExpressRouteLinkPaged',
     'PrivateEndpointPaged',
+    'AvailablePrivateEndpointTypePaged',
     'PrivateLinkServicePaged',
+    'AutoApprovedPrivateLinkServicePaged',
     'LoadBalancerPaged',
     'BackendAddressPoolPaged',
     'FrontendIPConfigurationPaged',
@@ -1199,12 +1210,13 @@ __all__ = [
     'WebApplicationFirewallPolicyPaged',
     'ApplicationGatewayProtocol',
     'IPAllocationMethod',
+    'IPVersion',
     'SecurityRuleProtocol',
     'SecurityRuleAccess',
     'SecurityRuleDirection',
+    'ProvisioningState',
     'RouteNextHopType',
     'PublicIPAddressSkuName',
-    'IPVersion',
     'DdosSettingsProtectionCoverage',
     'TransportProtocol',
     'ApplicationGatewayCookieBasedAffinity',
@@ -1221,7 +1233,6 @@ __all__ = [
     'ApplicationGatewayOperationalState',
     'ApplicationGatewayFirewallMode',
     'ResourceIdentityType',
-    'ProvisioningState',
     'AzureFirewallRCActionType',
     'AzureFirewallApplicationRuleProtocolType',
     'AzureFirewallNatRCActionType',

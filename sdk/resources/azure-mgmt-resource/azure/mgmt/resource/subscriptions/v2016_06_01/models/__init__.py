@@ -10,35 +10,35 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .location_py3 import Location
-    from .subscription_policies_py3 import SubscriptionPolicies
-    from .subscription_py3 import Subscription
-    from .tenant_id_description_py3 import TenantIdDescription
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
+    from ._models_py3 import Location
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import Subscription
+    from ._models_py3 import SubscriptionPolicies
+    from ._models_py3 import TenantIdDescription
 except (SyntaxError, ImportError):
-    from .location import Location
-    from .subscription_policies import SubscriptionPolicies
-    from .subscription import Subscription
-    from .tenant_id_description import TenantIdDescription
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-from .operation_paged import OperationPaged
-from .location_paged import LocationPaged
-from .subscription_paged import SubscriptionPaged
-from .tenant_id_description_paged import TenantIdDescriptionPaged
-from .subscription_client_enums import (
+    from ._models import Location
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import Subscription
+    from ._models import SubscriptionPolicies
+    from ._models import TenantIdDescription
+from ._paged_models import LocationPaged
+from ._paged_models import OperationPaged
+from ._paged_models import SubscriptionPaged
+from ._paged_models import TenantIdDescriptionPaged
+from ._subscription_client_enums import (
     SubscriptionState,
     SpendingLimit,
 )
 
 __all__ = [
     'Location',
-    'SubscriptionPolicies',
-    'Subscription',
-    'TenantIdDescription',
-    'OperationDisplay',
     'Operation',
+    'OperationDisplay',
+    'Subscription',
+    'SubscriptionPolicies',
+    'TenantIdDescription',
     'OperationPaged',
     'LocationPaged',
     'SubscriptionPaged',

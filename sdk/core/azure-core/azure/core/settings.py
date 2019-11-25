@@ -24,21 +24,36 @@
 #
 # --------------------------------------------------------------------------
 """Provide access to settings for globally used Azure configuration values.
-
-
 """
 
 from collections import namedtuple
+from enum import Enum
 import logging
 import os
-from typing import Any, Union
+import sys
+import six
+from azure.core.tracing import AbstractSpan
+
+try:
+    from typing import Type, Optional, Dict, Callable, cast, TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    from typing import Any, Union
+    try:
+        # pylint:disable=unused-import
+        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan  # pylint:disable=redefined-outer-name
+    except ImportError:
+        pass
+
+__all__ = ("settings", "Settings")
 
 
-__all__ = ("settings",)
-
-
-class _Unset(object):
-    pass
+# https://www.python.org/dev/peps/pep-0484/#support-for-singleton-types-in-unions
+class _Unset(Enum):
+    token = 0
+_unset = _Unset.token
 
 
 def convert_bool(value):
@@ -58,12 +73,12 @@ def convert_bool(value):
 
     """
     if value in (True, False):
-        return value # type: ignore
+        return value  # type: ignore
 
-    val = value.lower() # type: ignore
-    if val in ["yes", "1", "on"]:
+    val = value.lower()  # type: ignore
+    if val in ["yes", "1", "on", "true", "True"]:
         return True
-    if val in ["no", "0", "off"]:
+    if val in ["no", "0", "off", "false", "False"]:
         return False
     raise ValueError("Cannot convert {} to boolean value".format(value))
 
@@ -97,17 +112,71 @@ def convert_logging(value):
 
     """
     if value in set(_levels.values()):
-        return value # type: ignore
+        return value  # type: ignore
 
-    val = value.upper() # type: ignore
+    val = value.upper()  # type: ignore
     level = _levels.get(val)
     if not level:
+        raise ValueError("Cannot convert {} to log level, valid values are: {}".format(value, ", ".join(_levels)))
+    return level
+
+
+def get_opencensus_span():
+    # type: () -> Optional[Type[AbstractSpan]]
+    """Returns the OpenCensusSpan if opencensus is installed else returns None"""
+    try:
+        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan  # pylint:disable=redefined-outer-name
+
+        return OpenCensusSpan  # type: ignore
+    except ImportError:
+        return None
+
+
+def get_opencensus_span_if_opencensus_is_imported():
+    # type: () -> Optional[Type[AbstractSpan]]
+    if "opencensus" not in sys.modules:
+        return None
+    return get_opencensus_span()
+
+
+_tracing_implementation_dict = {
+    "opencensus": get_opencensus_span
+}  # type: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]]
+
+
+def convert_tracing_impl(value):
+    # type: (Union[str, Type[AbstractSpan]]) -> Optional[Type[AbstractSpan]]
+    """Convert a string to AbstractSpan
+
+    If a AbstractSpan is passed in, it is returned as-is. Otherwise the function
+    understands the following strings, ignoring case:
+
+    * "opencensus"
+
+    :param value: the value to convert
+    :type value: string
+    :returns: AbstractSpan
+    :raises ValueError: If conversion to AbstractSpan fails
+
+    """
+    if value is None:
+        return get_opencensus_span_if_opencensus_is_imported()
+
+    if not isinstance(value, six.string_types):
+        return value
+
+    value = cast(str, value)  # mypy clarity
+    value = value.lower()
+    get_wrapper_class = _tracing_implementation_dict.get(value, lambda: _unset)
+    wrapper_class = get_wrapper_class()  # type: Union[None, _Unset, Type[AbstractSpan]]
+    if wrapper_class is _unset:
         raise ValueError(
-            "Cannot convert {} to log level, valid values are: {}".format(
-                value, ", ".join(_levels)
+            "Cannot convert {} to AbstractSpan, valid values are: {}".format(
+                value, ", ".join(_tracing_implementation_dict)
             )
         )
-    return level
+    # type ignored until https://github.com/python/mypy/issues/7279
+    return wrapper_class  # type: ignore
 
 
 class PrioritizedSetting(object):
@@ -138,9 +207,7 @@ class PrioritizedSetting(object):
 
     """
 
-    def __init__(
-            self, name, env_var=None, system_hook=None, default=_Unset, convert=None
-        ):
+    def __init__(self, name, env_var=None, system_hook=None, default=_Unset, convert=None):
 
         self._name = name
         self._env_var = env_var
@@ -194,7 +261,7 @@ class PrioritizedSetting(object):
         self.set_value(value)
 
     def set_value(self, value):
-        # (Any) -> None
+        # type: (Any) -> None
         """Specify a value for this setting programmatically.
 
         A value set this way takes precedence over all other methods except
@@ -207,6 +274,11 @@ class PrioritizedSetting(object):
         """
         self._user_value = value
 
+    def unset_value(self):
+        # () -> None
+        """Unset the previous user value such that the priority is reset."""
+        self._user_value = _Unset
+
     @property
     def env_var(self):
         return self._env_var
@@ -218,6 +290,13 @@ class PrioritizedSetting(object):
 
 class Settings(object):
     """Settings for globally used Azure configuration values.
+
+    You probably don't want to create an instance of this class, but call the singleton instance:
+
+    .. code-block:: python
+
+        from azure.common.settings import settings
+        settings.log_level = log_level = logging.DEBUG
 
     The following methods are searched in order for a setting:
 
@@ -244,7 +323,7 @@ class Settings(object):
 
     .. code-block:: python
 
-        settings.log_level(logging.DEBUG()
+        settings.log_level(logging.DEBUG())
 
     Immediate values are most often useful to provide from optional arguments
     to client functions. If the argument value is not None, it will be returned
@@ -268,14 +347,12 @@ class Settings(object):
         # return current settings with log level overridden
         settings.config(log_level=logging.DEBUG)
 
-    :Attributes:
-
-    :ivar defaults_only: whether to ignore environment and system settings and return only base default values
-    :type defaults_only: bool
     :cvar log_level: a log level to use across all Azure client SDKs (AZURE_LOG_LEVEL)
     :type log_level: PrioritizedSetting
-    :cvar tracing_enabled: Whether tracing shoudl be enabled across Azure SDKs (AZURE_TRACING_ENABLED)
+    :cvar tracing_enabled: Whether tracing should be enabled across Azure SDKs (AZURE_TRACING_ENABLED)
     :type tracing_enabled: PrioritizedSetting
+    :cvar tracing_implementation: The tracing implementation to use (AZURE_SDK_TRACING_IMPLEMENTATION)
+    :type tracing_implementation: PrioritizedSetting
 
     :Example:
 
@@ -295,6 +372,10 @@ class Settings(object):
 
     @property
     def defaults_only(self):
+        """Whether to ignore environment and system settings and return only base default values.
+
+        :rtype: bool
+        """
         return self._defaults_only
 
     @defaults_only.setter
@@ -303,18 +384,19 @@ class Settings(object):
 
     @property
     def defaults(self):
-        """ Return implicit default values for all settings, ignoring environment and system.
+        """Return implicit default values for all settings, ignoring environment and system.
 
+        :rtype: namedtuple
         """
-        props = {
-            k: v.default
-            for (k, v) in self.__class__.__dict__.items()
-            if isinstance(v, PrioritizedSetting)
-        }
+        props = {k: v.default for (k, v) in self.__class__.__dict__.items() if isinstance(v, PrioritizedSetting)}
         return self._config(props)
 
     @property
     def current(self):
+        """Return the current values for all settings.
+
+        :rtype: namedtuple
+        """
         if self.defaults_only:
             return self.defaults
         return self.config()
@@ -326,35 +408,33 @@ class Settings(object):
 
         .. code-block:: python
 
-        # return current settings with log level overridden
-        settings.config(log_level=logging.DEBUG)
+           # return current settings with log level overridden
+           settings.config(log_level=logging.DEBUG)
 
         """
-        props = {
-            k: v()
-            for (k, v) in self.__class__.__dict__.items()
-            if isinstance(v, PrioritizedSetting)
-        }
+        props = {k: v() for (k, v) in self.__class__.__dict__.items() if isinstance(v, PrioritizedSetting)}
         props.update(kwargs)
         return self._config(props)
 
-    def _config(self, props): #pylint: disable=no-self-use
+    def _config(self, props):  # pylint: disable=no-self-use
         Config = namedtuple("Config", list(props.keys()))
         return Config(**props)
 
     log_level = PrioritizedSetting(
-        "log_level",
-        env_var="AZURE_LOG_LEVEL",
-        convert=convert_logging,
-        default=logging.INFO,
+        "log_level", env_var="AZURE_LOG_LEVEL", convert=convert_logging, default=logging.INFO
     )
 
     tracing_enabled = PrioritizedSetting(
-        "tracing_enbled",
-        env_var="AZURE_TRACING_ENABLED",
-        convert=convert_bool,
-        default=False,
+        "tracing_enbled", env_var="AZURE_TRACING_ENABLED", convert=convert_bool, default=False
+    )
+
+    tracing_implementation = PrioritizedSetting(
+        "tracing_implementation", env_var="AZURE_SDK_TRACING_IMPLEMENTATION", convert=convert_tracing_impl, default=None
     )
 
 
 settings = Settings()
+"""The settings unique instance.
+
+:type settings: Settings
+"""

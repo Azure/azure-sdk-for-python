@@ -3,6 +3,83 @@
 Release History
 ===============
 
+3.0.0rc7 (2019-10-23)
++++++++++++++++++++++
+
+**Bugfixes**
+
+- Minor fixes in ScopeMaps
+
+3.0.0rc6 (2019-10-03)
++++++++++++++++++++++
+
+**Features**
+
+- Added operation RegistriesOperations.generate_credentials
+
+3.0.0rc5 (2019-08-02)
++++++++++++++++++++++
+
+**Bugfixes**
+
+- Reverting API version back to 2019-05-01
+
+3.0.0rc4 (2019-07-10)
++++++++++++++++++++++
+
+**Bugfixes**
+
+- Fix incorrect default API version from 2019-05-01 to 2017-10-01
+
+3.0.0rc3 (2019-07-01)
++++++++++++++++++++++
+
+New preview API version 2019-06-01-preview contains:
+
+**Features**
+
+- Model BaseImageTriggerUpdateParameters has a new parameter update_trigger_payload_type
+- Model BaseImageTriggerUpdateParameters has a new parameter update_trigger_endpoint
+- Model RegistryUpdateParameters has a new parameter policies
+- Model Registry has a new parameter policies
+- Model TaskRunRequest has a new parameter override_task_step_properties
+- Model BaseImageTrigger has a new parameter update_trigger_payload_type
+- Model BaseImageTrigger has a new parameter update_trigger_endpoint
+- Model Run has a new parameter update_trigger_token
+- Added operation RegistriesOperations.get_build_source_upload_url
+- Added operation RegistriesOperations.schedule_run
+
+**Breaking changes**
+
+- Model RegistryUpdateParameters no longer has parameter storage_account
+- Model TaskRunRequest no longer has parameter task_name
+- Model TaskRunRequest no longer has parameter values
+- Model TaskRunRequest has a new required parameter task_id
+- Removed operation RegistriesOperations.list_policies
+- Removed operation RegistriesOperations.generate_credentials
+- Removed operation RegistriesOperations.update_policies
+
+3.0.0rc2 (2019-06-12)
++++++++++++++++++++++
+
+**Features**
+
+- Model Run has a new parameter timer_trigger
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes while using imports.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- ContainerRegistryManagementClient cannot be imported from `azure.mgmt.containerregistry.containerregistry_management_client` anymore (import from `azure.mgmt.containerregistry` works like before)
+- ContainerRegistryManagementClientConfiguration import has been moved from `azure.mgmt.containerregistry.containerregistry_management_client` to `azure.mgmt.containerregistry`
+- ContainerRegistryManagementClient cannot be imported from `azure.mgmt.containerregistry.v20xx_yy_zz.containerregistry_management_client` anymore (import from `azure.mgmt.containerregistry.v20xx_yy_zz` works like before)
+- ContainerRegistryManagementClientConfiguration import has been moved from `azure.mgmt.containerregistry.v20xx_yy_zz.containerregistry_management_client` to `azure.mgmt.containerregistry.v20xx_yy_zz`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.containerregistry.v20xx_yy_zz.models.my_class` (import from `azure.mgmt.containerregistry.v20xx_yy_zz.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.containerregistry.v20xx_yy_zz.operations.my_class_operations` (import from `azure.mgmt.containerregistry.v20xx_yy_zz.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one containerregistry mgmt client per process.
+
 3.0.0rc1 (2019-05-24)
 +++++++++++++++++++++
 

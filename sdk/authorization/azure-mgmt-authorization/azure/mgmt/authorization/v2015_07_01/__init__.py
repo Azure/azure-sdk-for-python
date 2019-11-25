@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .authorization_management_client import AuthorizationManagementClient
-from .version import VERSION
+from ._configuration import AuthorizationManagementClientConfiguration
+from ._authorization_management_client import AuthorizationManagementClient
+__all__ = ['AuthorizationManagementClient', 'AuthorizationManagementClientConfiguration']
 
-__all__ = ['AuthorizationManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

@@ -3,17 +3,45 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-__version__ = "1.3.1"
+__path__ = __import__('pkgutil').extend_path(__path__, __name__)  # type: ignore
 
-from azure.eventhub.common import EventData, EventHubError, Offset
-from azure.eventhub.client import EventHubClient
-from azure.eventhub.sender import Sender
-from azure.eventhub.receiver import Receiver
+from uamqp import constants  # type: ignore
+from ._common import EventData, EventDataBatch
+from ._version import VERSION
+__version__ = VERSION
 
-try:
-    from azure.eventhub.async_ops import (
-        EventHubClientAsync,
-        AsyncSender,
-        AsyncReceiver)
-except (ImportError, SyntaxError):
-    pass  # Python 3 async features not supported
+from ._producer_client import EventHubProducerClient
+from ._consumer_client import EventHubConsumerClient
+from ._client_base import EventHubSharedKeyCredential
+from ._eventprocessor.checkpoint_store import CheckpointStore
+from ._eventprocessor.common import CloseReason, OwnershipLostError
+from ._eventprocessor.partition_context import PartitionContext
+from .exceptions import (
+    EventHubError,
+    EventDataError,
+    ConnectError,
+    AuthenticationError,
+    EventDataSendError,
+    ConnectionLostError
+)
+
+TransportType = constants.TransportType
+
+__all__ = [
+    "EventData",
+    "EventDataBatch",
+    "EventHubError",
+    "ConnectError",
+    "ConnectionLostError",
+    "EventDataError",
+    "EventDataSendError",
+    "AuthenticationError",
+    "EventHubProducerClient",
+    "EventHubConsumerClient",
+    "TransportType",
+    "EventHubSharedKeyCredential",
+    "CheckpointStore",
+    "CloseReason",
+    "OwnershipLostError",
+    "PartitionContext",
+]

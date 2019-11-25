@@ -21,9 +21,11 @@
 
 import unittest
 import pytest
-from azure.cosmos.routing.collection_routing_map import _CollectionRoutingMap
-import azure.cosmos.routing.routing_range as routing_range
-from azure.cosmos.routing.routing_map_provider import _PartitionKeyRangeCache
+from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
+import azure.cosmos._routing.routing_range as routing_range
+from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
+
+pytestmark = pytest.mark.cosmosEmulator
 
 @pytest.mark.usefixtures("teardown")
 class CollectionRoutingMapTests(unittest.TestCase):
@@ -32,8 +34,8 @@ class CollectionRoutingMapTests(unittest.TestCase):
         partition_key_ranges = [{u'id': u'0', u'minInclusive': u'', u'maxExclusive': u'05C1C9CD673398'}, {u'id': u'1', u'minInclusive': u'05C1C9CD673398', u'maxExclusive': u'05C1D9CD673398'}, {u'id': u'2', u'minInclusive': u'05C1D9CD673398', u'maxExclusive': u'05C1E399CD6732'}, {u'id': u'3', u'minInclusive': u'05C1E399CD6732', u'maxExclusive': u'05C1E9CD673398'}, {u'id': u'4', u'minInclusive': u'05C1E9CD673398', u'maxExclusive': u'FF'}]
         partitionRangeWithInfo = [(r, True) for r in partition_key_ranges]
         
-        pkRange = routing_range._Range("", "FF", True, False)
-        collection_routing_map = _CollectionRoutingMap.CompleteRoutingMap(partitionRangeWithInfo, 'sample collection id')
+        pkRange = routing_range.Range("", "FF", True, False)
+        collection_routing_map = CollectionRoutingMap.CompleteRoutingMap(partitionRangeWithInfo, 'sample collection id')
         overlapping_partition_key_ranges = collection_routing_map.get_overlapping_ranges(pkRange)
         
         self.assertEqual(len(overlapping_partition_key_ranges), len(partition_key_ranges))
@@ -72,7 +74,7 @@ class CollectionRoutingMapTests(unittest.TestCase):
             return r[Id]
 
         # verify no thing is filtered out since there is no children ranges
-        filteredRanges = _PartitionKeyRangeCache._discard_parent_ranges(partitionKeyRanges)
+        filteredRanges = PartitionKeyRangeCache._discard_parent_ranges(partitionKeyRanges)
         self.assertEqual(['2', '0', '1', '3'], list(map(get_range_id, filteredRanges)))
 
         # add some children partition key ranges with parents Ids
@@ -91,7 +93,7 @@ class CollectionRoutingMapTests(unittest.TestCase):
                         Parents : ["0"]})
 
         # verify the filtered range list has children ranges and the parent Ids are discarded
-        filteredRanges = _PartitionKeyRangeCache._discard_parent_ranges(partitionKeyRanges)
+        filteredRanges = PartitionKeyRangeCache._discard_parent_ranges(partitionKeyRanges)
         expectedRanges = ['2', '1', '3', '6', '7', '5']
         self.assertEqual(expectedRanges, list(map(get_range_id, filteredRanges)))
 
@@ -121,7 +123,7 @@ class CollectionRoutingMapTests(unittest.TestCase):
                         3)
                     ]
 
-        crm = _CollectionRoutingMap.CompleteRoutingMap(partitionKeyRanges, "")
+        crm = CollectionRoutingMap.CompleteRoutingMap(partitionKeyRanges, "")
 
         self.assertEqual("0", crm._orderedPartitionKeyRanges[0][Id])
         self.assertEqual("1", crm._orderedPartitionKeyRanges[1][Id])
@@ -142,7 +144,7 @@ class CollectionRoutingMapTests(unittest.TestCase):
         self.assertEqual("0", crm.get_range_by_partition_key_range_id("0")[Id])
         self.assertEqual("1", crm.get_range_by_partition_key_range_id("1")[Id])
 
-        fullRangeMinToMaxRange = routing_range._Range(_CollectionRoutingMap.MinimumInclusiveEffectivePartitionKey, _CollectionRoutingMap.MaximumExclusiveEffectivePartitionKey, True, False)
+        fullRangeMinToMaxRange = routing_range.Range(CollectionRoutingMap.MinimumInclusiveEffectivePartitionKey, CollectionRoutingMap.MaximumExclusiveEffectivePartitionKey, True, False)
         overlappingRanges = crm.get_overlapping_ranges([fullRangeMinToMaxRange])
         self.assertEqual(4, len(overlappingRanges))
         
@@ -152,18 +154,18 @@ class CollectionRoutingMapTests(unittest.TestCase):
         onlyParitionRanges.sort(key = getKey)
         self.assertEqual(overlappingRanges, onlyParitionRanges)
                        
-        noPoint = routing_range._Range(_CollectionRoutingMap.MinimumInclusiveEffectivePartitionKey, _CollectionRoutingMap.MinimumInclusiveEffectivePartitionKey, False, False)
+        noPoint = routing_range.Range(CollectionRoutingMap.MinimumInclusiveEffectivePartitionKey, CollectionRoutingMap.MinimumInclusiveEffectivePartitionKey, False, False)
         self.assertEqual(0, len(crm.get_overlapping_ranges([noPoint])))               
         
-        onePoint = routing_range._Range("0000000040", "0000000040", True, True)
+        onePoint = routing_range.Range("0000000040", "0000000040", True, True)
         overlappingPartitionKeyRanges = crm.get_overlapping_ranges([onePoint])
         self.assertEqual(1, len(overlappingPartitionKeyRanges))
         self.assertEqual("1", overlappingPartitionKeyRanges[0][Id])
 
         ranges = [
-                   routing_range._Range("0000000040", "0000000045", True, True),
-                   routing_range._Range("0000000045", "0000000046", True, True),
-                   routing_range._Range("0000000046", "0000000050", True, True)
+                   routing_range.Range("0000000040", "0000000045", True, True),
+                   routing_range.Range("0000000045", "0000000046", True, True),
+                   routing_range.Range("0000000046", "0000000050", True, True)
                 ]
         overlappingPartitionKeyRanges = crm.get_overlapping_ranges(ranges)
                                                    
@@ -180,12 +182,12 @@ class CollectionRoutingMapTests(unittest.TestCase):
                        
         collectionUniqueId = ""
         def createRoutingMap():
-            _CollectionRoutingMap.CompleteRoutingMap(partitionKeyRanges, collectionUniqueId)
+            CollectionRoutingMap.CompleteRoutingMap(partitionKeyRanges, collectionUniqueId)
         
         self.assertRaises(ValueError, createRoutingMap)
         
     def test_incomplete_routing_map(self):
-        crm = _CollectionRoutingMap.CompleteRoutingMap(
+        crm = CollectionRoutingMap.CompleteRoutingMap(
                     [
                         ({ 'id' : "2", 'minInclusive' : "", 'maxExclusive' : "0000000030"}, 2),
                         ({ 'id' : "3", 'minInclusive' : "0000000031", 'maxExclusive' : "FF"}, 2),
@@ -193,7 +195,7 @@ class CollectionRoutingMapTests(unittest.TestCase):
             , "")
         self.assertIsNone(crm)
         
-        crm = _CollectionRoutingMap.CompleteRoutingMap(
+        crm = CollectionRoutingMap.CompleteRoutingMap(
                     [
                         ({ 'id' : "2", 'minInclusive' : "", 'maxExclusive' : "0000000030"}, 2),
                         ({ 'id' : "2", 'minInclusive' : "0000000030", 'maxExclusive' : "FF"}, 2),

@@ -24,8 +24,8 @@
 #
 # --------------------------------------------------------------------------
 
-from .base import HttpTransport, HttpRequest, HttpResponse
-from .requests_basic import RequestsTransport, RequestsTransportResponse
+from ._base import HttpTransport, HttpRequest, HttpResponse
+from ._requests_basic import RequestsTransport, RequestsTransportResponse
 
 __all__ = [
     'HttpTransport',
@@ -38,8 +38,8 @@ __all__ = [
 #pylint: disable=unused-import
 
 try:
-    from .base_async import AsyncHttpTransport, AsyncHttpResponse
-    from .requests_asyncio import AsyncioRequestsTransport, AsyncioRequestsTransportResponse
+    from ._base_async import AsyncHttpTransport, AsyncHttpResponse
+    from ._requests_asyncio import AsyncioRequestsTransport, AsyncioRequestsTransportResponse
     __all__.extend([
         'AsyncHttpTransport',
         'AsyncHttpResponse',
@@ -48,7 +48,7 @@ try:
     ])
 
     try:
-        from .requests_trio import TrioRequestsTransport, TrioRequestsTransportResponse
+        from ._requests_trio import TrioRequestsTransport, TrioRequestsTransportResponse
         __all__.extend([
             'TrioRequestsTransport',
             'TrioRequestsTransportResponse'
@@ -57,7 +57,7 @@ try:
         pass  # Trio not installed
 
     try:
-        from .aiohttp import AioHttpTransport, AioHttpTransportResponse
+        from ._aiohttp import AioHttpTransport, AioHttpTransportResponse
         __all__.extend([
             'AioHttpTransport',
             'AioHttpTransportResponse',

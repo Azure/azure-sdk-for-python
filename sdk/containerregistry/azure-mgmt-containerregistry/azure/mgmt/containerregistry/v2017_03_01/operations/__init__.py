@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .registries_operations import RegistriesOperations
-from .operations import Operations
+from ._registries_operations import RegistriesOperations
+from ._operations import Operations
 
 __all__ = [
     'RegistriesOperations',

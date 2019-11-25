@@ -33,7 +33,7 @@ connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
 
 if __name__ == '__main__':
 
-    topic_client = TopicClient.from_connection_string(connection_str, name="pytopic", debug=True)
+    topic_client = TopicClient.from_connection_string(connection_str, name="pytopic", debug=False)
     with topic_client.get_sender() as sender:
         message = Message(b"sample topic message")
         sender.send(message)

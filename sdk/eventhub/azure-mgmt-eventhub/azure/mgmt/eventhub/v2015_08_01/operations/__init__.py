@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .namespaces_operations import NamespacesOperations
-from .event_hubs_operations import EventHubsOperations
-from .consumer_groups_operations import ConsumerGroupsOperations
+from ._operations import Operations
+from ._namespaces_operations import NamespacesOperations
+from ._event_hubs_operations import EventHubsOperations
+from ._consumer_groups_operations import ConsumerGroupsOperations
 
 __all__ = [
     'Operations',

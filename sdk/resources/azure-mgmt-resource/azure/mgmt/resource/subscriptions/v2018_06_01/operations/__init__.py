@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .subscriptions_operations import SubscriptionsOperations
-from .tenants_operations import TenantsOperations
+from ._operations import Operations
+from ._subscriptions_operations import SubscriptionsOperations
+from ._tenants_operations import TenantsOperations
 
 __all__ = [
     'Operations',
