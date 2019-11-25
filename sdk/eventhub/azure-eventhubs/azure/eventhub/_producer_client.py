@@ -21,8 +21,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class EventHubProducerClient(ClientBase):
-    """
-    The EventHubProducerClient class defines a high level interface for
+    """The EventHubProducerClient class defines a high level interface for
     sending events to the Azure Event Hubs service.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Event Hubs namespace.
@@ -35,18 +34,18 @@ class EventHubProducerClient(ClientBase):
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
-    :keyword str user_agent: The user agent that needs to be appended to the built in user agent string.
-    :keyword int retry_total: The total number of attempts to redo the failed operation when an error happened. Default
+    :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
+    :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs. Default
      value is 3.
-    :keyword float idle_timeout: Timeout in seconds after which the underlying connection will close
-     if there is no further activity. By default the value is None and is determined by the service side when
-     to close an idle connection.
+    :keyword float idle_timeout: Timeout, in seconds, after which the underlying connection will close
+     if there is no further activity. By default the value is None, meaning that when to close an idle connection is
+     determined by the service.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Event Hubs service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.eventhub.TransportType
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
-     keys: 'proxy_hostname' (str value) and 'proxy_port' (int value).
-     Additionally the following keys may also be present: 'username', 'password'.
+     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+     Additionally the following keys may also be present: `'username', 'password'`.
 
     .. admonition:: Example:
 
@@ -120,22 +119,22 @@ class EventHubProducerClient(ClientBase):
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
         # type: (str, Any) -> EventHubProducerClient
-        """
-        Create an EventHubProducerClient from a connection string.
-        :param str conn_str: The connection string of an eventhub.
+        """Create an EventHubProducerClient from a connection string.
+
+        :param str conn_str: The connection string of an Event Hub.
         :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
         :keyword bool network_tracing: Whether to output network trace logs to the logger. Default is `False`.
-        :keyword dict[str,Any] http_proxy: HTTP proxy settings. This must be a dictionary with the following
-         keys - 'proxy_hostname' (str value) and 'proxy_port' (int value).
-         Additionally the following keys may also be present - 'username', 'password'.
+        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+         Additionally the following keys may also be present: `'username', 'password'`.
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
          The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
-        :keyword str user_agent: The user agent that needs to be appended to the built in user agent string.
-        :keyword int retry_total: The total number of attempts to redo the failed operation when an error happened.
+        :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
+        :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
-        :keyword float idle_timeout: Timeout in seconds after which the underlying connection will close
-         if there is no further activity. By default the value is None and is determined by the service side when
-         to close an idle connection.
+        :keyword float idle_timeout: Timeout, in seconds, after which the underlying connection will close
+         if there is no further activity. By default the value is None, meaning that when to close an idle
+         connection is determined by the service.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
@@ -154,8 +153,7 @@ class EventHubProducerClient(ClientBase):
 
     def send_batch(self, event_data_batch, **kwargs):
         # type: (EventDataBatch, Any) -> None
-        """
-        Sends event data and blocks until acknowledgement is received or operation times out.
+        """Sends event data and blocks until acknowledgement is received or operation times out.
 
         :param event_data_batch: The EventDataBatch object to be sent.
         :type event_data_batch: ~azure.eventhub.EventDataBatch
@@ -189,13 +187,13 @@ class EventHubProducerClient(ClientBase):
 
     def create_batch(self, **kwargs):
         # type:(Any) -> EventDataBatch
-        """
-        Create an EventDataBatch object with max size being max_size.
-        The max_size should be no greater than the max allowed message size defined by the service side.
+        """Create an EventDataBatch object with max size being max_size.
+
+        The max_size should be no greater than the max allowed message size defined by the service.
 
         :keyword str partition_id: The specific partition ID to send to. Default is None, in which case the service
          will assign to all partitions using round-robin.
-        :keyword str partition_key: With the given partition_key, event data will land to
+        :keyword str partition_key: With the given partition_key, event data will be sent to
          a particular partition of the Event Hub decided by the service.
         :keyword int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold.
         :rtype: ~azure.eventhub.EventDataBatch
@@ -231,8 +229,7 @@ class EventHubProducerClient(ClientBase):
 
     def close(self):
         # type: () -> None
-        """
-        Close down the client. If the client has already closed, this will be a no op.
+        """Close the Producer client underlying AMQP connection and links.
 
         :rtype: None
 

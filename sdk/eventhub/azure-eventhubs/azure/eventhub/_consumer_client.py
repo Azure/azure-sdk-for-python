@@ -50,15 +50,15 @@ class EventHubConsumerClient(ClientBase):
     :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
     :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs. Default
      value is 3.
-    :keyword float idle_timeout: Timeout in seconds after which the underlying connection will close
+    :keyword float idle_timeout: Timeout, in seconds, after which the underlying connection will close
      if there is no further activity. By default the value is None, meaning that when to close an idle connection is
      determined by the service.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Event Hubs service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.eventhub.TransportType
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
-     keys: 'proxy_hostname' (str value) and 'proxy_port' (int value).
-     Additionally the following keys may also be present: 'username', 'password'.
+     keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+     Additionally the following keys may also be present: `'username', 'password'`.
     :keyword checkpoint_store: Manager for storing the partition load-balancing and checkpoint data when receiving
      events. If None, this `EventHubConsumerClient` instance will receive events without load-balancing and checkpoint.
     :paramtype checkpoint_store: ~azure.eventhub.CheckpointStore
@@ -125,9 +125,9 @@ class EventHubConsumerClient(ClientBase):
         :param str consumer_group: Receive events from the Event Hub for this consumer group.
         :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
         :keyword bool network_tracing: Whether to output network trace logs to the logger. Default is `False`.
-        :keyword dict[str,Any] http_proxy: HTTP proxy settings. This must be a dictionary with the following
-         keys - 'proxy_hostname' (str value) and 'proxy_port' (int value).
-         Additionally the following keys may also be present - 'username', 'password'.
+        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+         Additionally the following keys may also be present: `'username', 'password'`.
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
          The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
         :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
