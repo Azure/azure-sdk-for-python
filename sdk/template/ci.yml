@@ -10,6 +10,7 @@ resources:
     - repository: azure-sdk-build-tools
       type: git
       name: internal/azure-sdk-build-tools
+      ref: refs/pull/91/merge
 
 trigger:
   branches:
