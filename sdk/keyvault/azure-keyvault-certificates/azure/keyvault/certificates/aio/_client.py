@@ -845,7 +845,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             admin_details = None
         if organization_id or admin_details:
             organization_details = self._client.models.OrganizationDetails(
-                id=organization_id, admin_contacts=admin_details
+                id=organization_id, admin_details=admin_details
             )
         else:
             organization_details = None
@@ -910,7 +910,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             admin_details = None
         if organization_id or admin_details:
             organization_details = self._client.models.OrganizationDetails(
-                id=organization_id, admin_contacts=admin_details
+                id=organization_id, admin_details=admin_details
             )
         else:
             organization_details = None
