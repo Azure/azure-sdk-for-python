@@ -21,22 +21,12 @@ azure.eventhub package
         :undoc-members:
         :inherited-members:
 
-    .. autoclass:: azure.eventhub.EventPosition
-        :members:
-        :undoc-members:
-        :inherited-members:
-
     .. autoclass:: azure.eventhub.EventHubSharedKeyCredential
         :members:
         :undoc-members:
         :inherited-members:
 
-    .. autoclass:: azure.eventhub.EventHubSASTokenCredential
-        :members:
-        :undoc-members:
-        :inherited-members:
-
-    .. autoclass:: azure.eventhub.PartitionManager
+    .. autoclass:: azure.eventhub.CheckpointStore
         :members:
         :undoc-members:
         :inherited-members:
