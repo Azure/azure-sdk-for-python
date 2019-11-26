@@ -468,12 +468,16 @@ def test_retry_seekable_file():
                     assert not position
                     return HttpResponse(request, None)
 
+    file_name = 'test_retry_seekable_file'
+    f = open(file_name, "w+")
+    f.write('Lots of dataaaa')
+    f.close()
     http_request = HttpRequest('GET', 'http://127.0.0.1/')
     headers = {'Content-Type': "multipart/form-data"}
     http_request.headers = headers
     form_data_content = {
-        'fileContent': open('tmpfile.txt', 'rb'),
-        'fileName': 'tmpfile',
+        'fileContent': open(file_name, 'rb'),
+        'fileName': file_name,
     }
     http_request.set_formdata_body(form_data_content)
     http_retry = RetryPolicy(retry_total = 1)
