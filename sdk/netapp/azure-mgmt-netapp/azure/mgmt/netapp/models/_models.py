@@ -793,7 +793,6 @@ class Volume(Model):
     :param usage_threshold: Required. usageThreshold. Maximum storage quota
      allowed for a file system in bytes. This is a soft quota used for alerting
      only. Minimum size is 100 GiB. Upper limit is 100TiB. Specified in bytes.
-     Default value: 107374182400 .
     :type usage_threshold: long
     :param export_policy: exportPolicy. Set of export policy rules
     :type export_policy:
@@ -828,7 +827,7 @@ class Volume(Model):
         'type': {'readonly': True},
         'file_system_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'creation_token': {'required': True},
-        'usage_threshold': {'required': True, 'maximum': 109951162777600, 'minimum': 107374182400},
+        'usage_threshold': {'required': True},
         'provisioning_state': {'readonly': True},
         'snapshot_id': {'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}|(\\?([^\/]*[\/])*)([^\/]+)$'},
         'baremetal_tenant_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
@@ -866,7 +865,7 @@ class Volume(Model):
         self.file_system_id = None
         self.creation_token = kwargs.get('creation_token', None)
         self.service_level = kwargs.get('service_level', "Premium")
-        self.usage_threshold = kwargs.get('usage_threshold', 107374182400)
+        self.usage_threshold = kwargs.get('usage_threshold', None)
         self.export_policy = kwargs.get('export_policy', None)
         self.protocol_types = kwargs.get('protocol_types', None)
         self.provisioning_state = None

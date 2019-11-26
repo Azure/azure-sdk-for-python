@@ -793,7 +793,6 @@ class Volume(Model):
     :param usage_threshold: Required. usageThreshold. Maximum storage quota
      allowed for a file system in bytes. This is a soft quota used for alerting
      only. Minimum size is 100 GiB. Upper limit is 100TiB. Specified in bytes.
-     Default value: 107374182400 .
     :type usage_threshold: long
     :param export_policy: exportPolicy. Set of export policy rules
     :type export_policy:
@@ -828,7 +827,7 @@ class Volume(Model):
         'type': {'readonly': True},
         'file_system_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'creation_token': {'required': True},
-        'usage_threshold': {'required': True, 'maximum': 109951162777600, 'minimum': 107374182400},
+        'usage_threshold': {'required': True},
         'provisioning_state': {'readonly': True},
         'snapshot_id': {'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}|(\\?([^\/]*[\/])*)([^\/]+)$'},
         'baremetal_tenant_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
@@ -856,7 +855,7 @@ class Volume(Model):
         'data_protection': {'key': 'properties.dataProtection', 'type': 'VolumePropertiesDataProtection'},
     }
 
-    def __init__(self, *, location: str, creation_token: str, subnet_id: str, tags=None, service_level="Premium", usage_threshold: int=107374182400, export_policy=None, protocol_types=None, snapshot_id: str=None, mount_targets=None, volume_type: str=None, data_protection=None, **kwargs) -> None:
+    def __init__(self, *, location: str, creation_token: str, usage_threshold: int, subnet_id: str, tags=None, service_level="Premium", export_policy=None, protocol_types=None, snapshot_id: str=None, mount_targets=None, volume_type: str=None, data_protection=None, **kwargs) -> None:
         super(Volume, self).__init__(**kwargs)
         self.location = location
         self.id = None
