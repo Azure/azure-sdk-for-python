@@ -100,7 +100,6 @@ class MgmtStorageTest(AzureMgmtTestCase):
         self.storage_client.storage_accounts.delete(
             resource_group.name,
             account_name,
-            polling=False
         )
 
 #------------------------------------------------------------------------------
