@@ -111,7 +111,7 @@ class PolicyOperations(object):
             return client_raw_response
 
         return deserialized
-    prepare_to_set.metadata = {'url': '/operations/policy/updatepolicy'}
+    prepare_to_set.metadata = {'url': '/policy/updatepolicy'}
 
     def get(
             self, tenant_base_url, tee, custom_headers=None, raw=False, **operation_config):
@@ -177,7 +177,7 @@ class PolicyOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/operations/policy/current'}
+    get.metadata = {'url': '/policy/current'}
 
     def set(
             self, tenant_base_url, tee, new_attestation_policy, custom_headers=None, raw=False, **operation_config):
@@ -247,7 +247,7 @@ class PolicyOperations(object):
             return client_raw_response
 
         return deserialized
-    set.metadata = {'url': '/operations/policy/current'}
+    set.metadata = {'url': '/policy/current'}
 
     def delete(
             self, tenant_base_url, tee, policy_jws, custom_headers=None, raw=False, **operation_config):
@@ -320,4 +320,4 @@ class PolicyOperations(object):
             return client_raw_response
 
         return deserialized
-    delete.metadata = {'url': '/operations/policy/current'}
+    delete.metadata = {'url': '/policy/current'}
