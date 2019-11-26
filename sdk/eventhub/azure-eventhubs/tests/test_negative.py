@@ -133,7 +133,7 @@ def test_send_too_large_message(connection_str):
     sender = client.add_sender()
     try:
         client.run()
-        data = EventData(b"A" * 300000)
+        data = EventData(b"A" * 5 * 1024 * 1024)
         with pytest.raises(EventHubError):
             sender.send(data)
     finally:

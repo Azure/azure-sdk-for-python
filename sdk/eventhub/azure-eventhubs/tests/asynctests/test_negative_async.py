@@ -146,7 +146,7 @@ async def test_send_too_large_message_async(connection_str):
     sender = client.add_async_sender()
     try:
         await client.run_async()
-        data = EventData(b"A" * 300000)
+        data = EventData(b"A" * 5 * 1024 * 1024)
         with pytest.raises(EventHubError):
             await sender.send(data)
     finally:
