@@ -342,9 +342,8 @@ class RetryPolicy(HTTPPolicy):
             try:
                 for name, position in settings['file_positions'].items():
                     for value in response.http_request.files.values():
-                        file_name = value[0]
+                        file_name, body = value[0], value[1]
                         if file_name == name:
-                            body = value[1]
                             body.seek(position, SEEK_SET)
             except (UnsupportedOperation, ValueError, AttributeError):
                 # if body is not seekable, then retry would not work
@@ -388,8 +387,7 @@ class RetryPolicy(HTTPPolicy):
                 file_positions = {}
                 try:
                     for value in request.http_request.files.values():
-                        name = value[0]
-                        body = value[1]
+                        name, body = value[0], value[1]
                         if name and body and hasattr(body, 'read'):
                             position = body.tell()
                             file_positions[name] = position
