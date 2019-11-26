@@ -338,13 +338,14 @@ class RetryPolicy(HTTPPolicy):
             except (UnsupportedOperation, ValueError, AttributeError):
                 # if body is not seekable, then retry would not work
                 return False
-        if response.http_request.files and 'file_positions' in settings:
+        file_positions = settings.get('file_positions')
+        if response.http_request.files and file_positions:
             try:
-                for name, position in settings['file_positions'].items():
-                    for value in response.http_request.files.values():
-                        file_name, body = value[0], value[1]
-                        if file_name == name:
-                            body.seek(position, SEEK_SET)
+                for value in response.http_request.files.values():
+                    file_name, body = value[0], value[1]
+                    if file_name in file_positions:
+                        position = file_positions[file_name]
+                        body.seek(position, SEEK_SET)
             except (UnsupportedOperation, ValueError, AttributeError):
                 # if body is not seekable, then retry would not work
                 return False
