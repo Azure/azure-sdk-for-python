@@ -12,7 +12,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class PartitionContext(object):
     """Contains partition related context information.
-    
+
     A `PartitionContext` instance will be passed to the event, error and initialization callbacks defined
     when calling `EventHubConsumerClient.receive()`.
     Users can call `update_checkpoint()` of this class to persist checkpoint data.
@@ -30,7 +30,7 @@ class PartitionContext(object):
     @property
     def last_enqueued_event_properties(self):
         """The latest enqueued event information.
-        
+
         This property will be updated each time an event is received when the receiver is created
         with `track_last_enqueued_event_properties` set to `True`.
         The properties dict includes following information of the last enqueued event:

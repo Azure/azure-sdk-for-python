@@ -27,8 +27,8 @@ class CheckpointStore(ABC):
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
                   The format is like "<namespace>.servicebus.windows.net"
-                - `eventhub_name` (str): The name of the specific Event Hub the checkpoint is associated with, relative to
-                  the Event Hubs namespace that contains it.
+                - `eventhub_name` (str): The name of the specific Event Hub the checkpoint is associated with,
+                  relative to the Event Hubs namespace that contains it.
                 - `consumer_group` (str): The name of the consumer group the ownership are associated with.
                 - `partition_id` (str): The partition ID which the checkpoint is created for.
                 - `owner_id` (str): A UUID representing the current owner of this partition.
@@ -46,8 +46,8 @@ class CheckpointStore(ABC):
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
                   The format is like "<namespace>.servicebus.windows.net"
-                - `eventhub_name` (str): The name of the specific Event Hub the checkpoint is associated with, relative to
-                  the Event Hubs namespace that contains it.
+                - `eventhub_name` (str): The name of the specific Event Hub the checkpoint is associated with,
+                  relative to the Event Hubs namespace that contains it.
                 - `consumer_group` (str): The name of the consumer group the ownership are associated with.
                 - `partition_id` (str): The partition ID which the checkpoint is created for.
                 - `owner_id` (str): A UUID representing the owner attempting to claim this partition.
@@ -68,8 +68,8 @@ class CheckpointStore(ABC):
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
                   The format is like "<namespace>.servicebus.windows.net"
-                - `eventhub_name` (str): The name of the specific Event Hub the checkpoint is associated with, relative to
-                  the Event Hubs namespace that contains it.
+                - `eventhub_name` (str): The name of the specific Event Hub the checkpoint is associated with,
+                  relative to the Event Hubs namespace that contains it.
                 - `consumer_group` (str): The name of the consumer group the checkpoint is associated with.
                 - `partition_id` (str): The partition ID which the checkpoint is created for.
                 - `sequence_number` (int): The sequence number of the :class:`EventData<azure.eventhub.EventData>`
@@ -93,8 +93,8 @@ class CheckpointStore(ABC):
 
                 - `fully_qualified_namespace` (str): The fully qualified namespace that the Event Hub belongs to.
                   The format is like "<namespace>.servicebus.windows.net"
-                - `eventhub_name` (str): The name of the specific Event Hub the checkpoints are associated with, relative to
-                  the Event Hubs namespace that contains it.
+                - `eventhub_name` (str): The name of the specific Event Hub the checkpoints are associated with,
+                  relative to the Event Hubs namespace that contains it.
                 - `consumer_group` (str): The name of the consumer group the checkpoints are associated with.
                 - `partition_id` (str): The partition ID which the checkpoint is created for.
                 - `sequence_number` (int): The sequence number of the :class:`EventData<azure.eventhub.EventData>`.

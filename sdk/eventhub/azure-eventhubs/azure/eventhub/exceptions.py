@@ -95,7 +95,7 @@ class ClientClosedError(EventHubError):
 
 class ConnectionLostError(EventHubError):
     """Connection to the Event Hub is lost.
-    
+
     In most cases the client will automatically retry on this error."""
 
 
