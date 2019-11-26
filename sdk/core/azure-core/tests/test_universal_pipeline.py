@@ -456,13 +456,13 @@ def test_retry_seekable_file():
         def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
             if self._first:
                 self._first = False
-                for key, value in request.files.items():
+                for value in request.files.values():
                     name = value[0]
                     body = value[1]
                     if name and body and hasattr(body, 'read'):
                         body.seek(0,2)
                         raise AzureError('fail on first')
-            for key, value in request.files.items():
+            for value in request.files.values():
                 name = value[0]
                 body = value[1]
                 if name and body and hasattr(body, 'read'):

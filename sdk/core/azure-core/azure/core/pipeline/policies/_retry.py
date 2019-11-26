@@ -341,7 +341,7 @@ class RetryPolicy(HTTPPolicy):
         if response.http_request.files and 'file_positions' in settings:
             try:
                 for name, position in settings['file_positions'].items():
-                    for key, value in response.http_request.files.items():
+                    for value in response.http_request.files.values():
                         file_name = value[0]
                         if file_name == name:
                             body = value[1]
@@ -387,7 +387,7 @@ class RetryPolicy(HTTPPolicy):
             if request.http_request.files:
                 file_positions = {}
                 try:
-                    for key, value in request.http_request.files.items():
+                    for value in request.http_request.files.values():
                         name = value[0]
                         body = value[1]
                         if name and body and hasattr(body, 'read'):
