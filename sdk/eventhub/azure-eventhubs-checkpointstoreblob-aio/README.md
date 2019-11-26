@@ -68,13 +68,14 @@ from azure.eventhub.aio import EventHubConsumerClient
 from azure.storage.blob.aio import ContainerClient
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
-eventhub_connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+eventhub_name = '<< NAME OF THE EVENT HUB >>'
 storage_container_connection_str = '<< CONNECTION STRING OF THE STORAGE >>'
 storage_container_name = '<< STORAGE CONTAINER NAME>>'
 
 async def process_event(partition_context, event):
-    # do some operations to the events.
-    await partition_context.update_checkpoint(event)
+    # do something
+    await partition_context.update_checkpoint(event)  # Or update_checkpoint every N events for better performance.
 
 async def main():
     checkpoint_store = BlobCheckpointStore.from_connection_string(
@@ -82,9 +83,9 @@ async def main():
         storage_container_name
     )
     client = EventHubConsumerClient.from_connection_string(
-        eventhub_connection_str,
+        connection_str,
+        eventhub_name=eventhub_name,
         checkpoint_store=checkpoint_store,
-        retry_total=3
     )
 
     try:
@@ -106,7 +107,7 @@ Refer to [Logging](#logging) to enable loggers for related libraries.
 ## Next steps
 
 ### Examples
-- [./samples/event_processor_blob_storage_example.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio/samples/event_processor_blob_storage_example.py) - EventHubConsumerClient with blob partition manager example
+- [./samples/event_processor_blob_storage_example.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio/samples/event_processor_blob_storage_example.py) - EventHubConsumerClient with blob checkpoint store example
 
 ### Documentation
 
