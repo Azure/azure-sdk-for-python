@@ -175,7 +175,7 @@ class EncoderNamedPreset(str, Enum):
     content_aware_encoding_experimental = "ContentAwareEncodingExperimental"  #: Exposes an experimental preset for content-aware encoding. Given any input content, the service attempts to automatically determine the optimal number of layers, appropriate bitrate and resolution settings for delivery by adaptive streaming. The underlying algorithms will continue to evolve over time. The output will contain MP4 files with video and audio interleaved.
     h264_multiple_bitrate1080p = "H264MultipleBitrate1080p"  #: Produces a set of 8 GOP-aligned MP4 files, ranging from 6000 kbps to 400 kbps, and stereo AAC audio. Resolution starts at 1080p and goes down to 360p.
     h264_multiple_bitrate720p = "H264MultipleBitrate720p"  #: Produces a set of 6 GOP-aligned MP4 files, ranging from 3400 kbps to 400 kbps, and stereo AAC audio. Resolution starts at 720p and goes down to 360p.
-    h264_multiple_bitrate_sd = "H264MultipleBitrateSD"  #: Produces a set of 5 GOP-aligned MP4 files, ranging from 1600 kbps to 400 kbps, and stereo AAC audio. Resolution starts at 480p and goes down to 360p.
+    h264_multiple_bitrate_sd = "H264MultipleBitrateSD"  #: Produces a set of 5 GOP-aligned MP4 files, ranging from 1600kbps to 400 kbps, and stereo AAC audio. Resolution starts at 480p and goes down to 360p.
 
 
 class InsightsType(str, Enum):
