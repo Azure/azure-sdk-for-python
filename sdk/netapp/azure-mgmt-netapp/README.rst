@@ -18,7 +18,7 @@ Usage
 =====
 
 For code examples, see `NetApp Files Management
-<https://docs.microsoft.com/python/api/overview/azure/>`__
+<https://docs.microsoft.com/en-us/samples/browse/?term=netapp&languages=python>`__
 on docs.microsoft.com.
 
 
