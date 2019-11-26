@@ -89,16 +89,21 @@ class DigestConfig(Model):
     :param frequency: Frequency that digest will be triggered. Value must
      conform to ISO 8601 standard and must be greater than equal to 1 day and
      less than or equal to 30 days.
-    :type frequency: str
+    :type frequency: datetime
     :param categories: Categories to send digest for. If categories are not
      provided, then digest will be sent for all categories.
-    :type categories: list[str]
+    :type categories: list[str or ~azure.mgmt.advisor.models.Category]
+    :param language: Language for digest content body. Value must be ISO 639-1
+     code for one of Azure portal supported languages. Otherwise, it will be
+     converted into one. Default value is English (en).
+    :type language: str
     """
 
     _attribute_map = {
         'action_group_resource_id': {'key': 'actionGroupResourceId', 'type': 'str'},
-        'frequency': {'key': 'frequency', 'type': 'str'},
+        'frequency': {'key': 'frequency', 'type': 'iso-8601'},
         'categories': {'key': 'categories', 'type': '[str]'},
+        'language': {'key': 'language', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -106,6 +111,7 @@ class DigestConfig(Model):
         self.action_group_resource_id = kwargs.get('action_group_resource_id', None)
         self.frequency = kwargs.get('frequency', None)
         self.categories = kwargs.get('categories', None)
+        self.language = kwargs.get('language', None)
 
 
 class MetadataEntity(Model):
