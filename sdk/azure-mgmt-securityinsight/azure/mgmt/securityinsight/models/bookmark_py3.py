@@ -46,6 +46,8 @@ class Bookmark(ResourceWithEtag):
     :type updated: datetime
     :param updated_by: Describes a user that updated the bookmark
     :type updated_by: ~azure.mgmt.securityinsight.models.UserInfo
+    :param incident_info: Describes an incident that relates to bookmark
+    :type incident_info: ~azure.mgmt.securityinsight.models.IncidentInfo
     """
 
     _validation = {
@@ -70,9 +72,10 @@ class Bookmark(ResourceWithEtag):
         'query_result': {'key': 'properties.queryResult', 'type': 'str'},
         'updated': {'key': 'properties.updated', 'type': 'iso-8601'},
         'updated_by': {'key': 'properties.updatedBy', 'type': 'UserInfo'},
+        'incident_info': {'key': 'properties.incidentInfo', 'type': 'IncidentInfo'},
     }
 
-    def __init__(self, *, display_name: str, query: str, etag: str=None, created=None, created_by=None, labels=None, notes: str=None, query_result: str=None, updated=None, updated_by=None, **kwargs) -> None:
+    def __init__(self, *, display_name: str, query: str, etag: str=None, created=None, created_by=None, labels=None, notes: str=None, query_result: str=None, updated=None, updated_by=None, incident_info=None, **kwargs) -> None:
         super(Bookmark, self).__init__(etag=etag, **kwargs)
         self.created = created
         self.created_by = created_by
@@ -83,3 +86,4 @@ class Bookmark(ResourceWithEtag):
         self.query_result = query_result
         self.updated = updated
         self.updated_by = updated_by
+        self.incident_info = incident_info

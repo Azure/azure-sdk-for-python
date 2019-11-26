@@ -80,6 +80,15 @@ class RelationNodeKind(str, Enum):
     bookmark = "Bookmark"  #: Bookmark node part of the relation
 
 
+class IncidentSeverity(str, Enum):
+
+    critical = "Critical"  #: Critical severity
+    high = "High"  #: High severity
+    medium = "Medium"  #: Medium severity
+    low = "Low"  #: Low severity
+    informational = "Informational"  #: Informational severity
+
+
 class CloseReason(str, Enum):
 
     resolved = "Resolved"  #: Case was resolved
@@ -187,6 +196,7 @@ class MicrosoftSecurityProductName(str, Enum):
     azure_security_center = "Azure Security Center"
     azure_advanced_threat_protection = "Azure Advanced Threat Protection"
     azure_active_directory_identity_protection = "Azure Active Directory Identity Protection"
+    azure_security_centerfor_io_t = "Azure Security Center for IoT"
 
 
 class ElevationToken(str, Enum):
