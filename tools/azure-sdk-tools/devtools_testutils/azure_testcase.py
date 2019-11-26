@@ -177,13 +177,24 @@ class AzureTestCase(ReplayableTest):
             credentials = self.settings.get_credentials()
 
         # Real client creation
+        kwargs.setdefault("logging_enable", True)
+        # FIXME decide what is the final argument for that
+        # if self.is_playback():
+        #     kwargs.setdefault("polling_interval", 0)
         client = client_class(
             credentials=credentials,
             **kwargs
         )
         if self.is_playback():
-            client.config.long_running_operation_timeout = 0
-        client.config.enable_http_logger = True
+            try:
+                client._config.polling_interval = 0  # FIXME in azure-mgmt-core, make this a kwargs
+            except AttributeError:
+                pass
+
+        if hasattr(client, "config"):
+            if self.is_playback():
+                client.config.long_running_operation_timeout = 0
+            client.config.enable_http_logger = True
         return client
 
     def create_random_name(self, name):
