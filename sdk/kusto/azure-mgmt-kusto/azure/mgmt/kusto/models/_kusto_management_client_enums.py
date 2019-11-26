@@ -117,6 +117,12 @@ class DatabasePrincipalType(str, Enum):
     user = "User"
 
 
+class ClusterPrincipalRole(str, Enum):
+
+    all_databases_admin = "AllDatabasesAdmin"
+    all_databases_viewer = "AllDatabasesViewer"
+
+
 class Type(str, Enum):
 
     microsoft_kustoclustersdatabases = "Microsoft.Kusto/clusters/databases"
