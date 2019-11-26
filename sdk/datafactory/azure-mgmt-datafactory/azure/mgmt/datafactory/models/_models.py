@@ -19754,7 +19754,7 @@ class MySqlLinkedService(LinkedService):
     :param type: Required. Constant filled by server.
     :type type: str
     :param connection_string: Required. The connection string.
-    :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
+    :type connection_string: object
     :param password: The Azure key vault secret reference of password in
      connection string.
     :type password:
@@ -19777,7 +19777,7 @@ class MySqlLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
-        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'AzureKeyVaultSecretReference'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
@@ -22651,7 +22651,7 @@ class PostgreSqlLinkedService(LinkedService):
     :param type: Required. Constant filled by server.
     :type type: str
     :param connection_string: Required. The connection string.
-    :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
+    :type connection_string: object
     :param password: The Azure key vault secret reference of password in
      connection string.
     :type password:
@@ -22674,7 +22674,7 @@ class PostgreSqlLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
-        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'AzureKeyVaultSecretReference'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
