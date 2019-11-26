@@ -80,7 +80,8 @@ consumer_client = EventHubConsumerClient(host, eventhub_name, credential)
 ```
 
 - This constructor takes the host name and entity name of your Event Hub instance and credential that implements the
-TokenCredential interface. There are implementations of the TokenCredential interface available in the
+[TokenCredential](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/azure/core/credentials.py) 
+protocol. There are implementations of the `TokenCredential` protocol available in the
 [azure-identity package](https://pypi.org/project/azure-identity/). The host name is of the format `<yournamespace.servicebus.windows.net>`.
 
 ## Key concepts
@@ -116,7 +117,7 @@ The following sections provide several code snippets covering some of the most c
 - [Consume events from an Event Hub](#consume-events-from-an-event-hub)
 - [Async publish events to an Event Hub](#async-publish-events-to-an-event-hub)
 - [Async consume events from an Event Hub](#async-consume-events-from-an-event-hub)
-- [Consume events using a partition manager](#consume-events-using-a-partition-manager)
+- [Consume events using a checkpoint store](#consume-events-using-a-partition-manager)
 - [Use EventHubConsumerClient to work with IoT Hub](#use-eventhubconsumerclient-to-work-with-iot-hub)
 
 ### Inspect an Event Hub
@@ -242,7 +243,7 @@ if __name__ == '__main__':
     loop.run_until_complete(receive())
 ```
 
-### Consume events using a checkpoint store
+### Consume events and save checkpoint using a checkpoint store
 
 `EventHubConsumerClient` is a high level construct which allows you to receive events from multiple partitions at once 
 and load balance with other consumers using the same Event Hub and consumer group.
@@ -250,19 +251,19 @@ and load balance with other consumers using the same Event Hub and consumer grou
 This also allows the user to track progress when events are processed using checkpoints.
 
 A checkpoint is meant to represent the last successfully processed event by the user from a particular partition of
-a consumer group in an Event Hub instance.The `EventHubConsumerClient` uses an instance of PartitionManager to update checkpoints
+a consumer group in an Event Hub instance.The `EventHubConsumerClient` uses an instance of `CheckpointStore` to update checkpoints
 and to store the relevant information required by the load balancing algorithm.
 
 Search pypi with the prefix `azure-eventhub-checkpointstore` to
-find packages that support this and use the PartitionManager implementation from one such package. Please note that both sync and async libraries are provided.
+find packages that support this and use the `CheckpointStore` implementation from one such package. Please note that both sync and async libraries are provided.
 
 In the below example, we create an instance of `EventHubConsumerClient` and use a `BlobCheckpointStore`. You need
 to [create an Azure Storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal)
 and a [Blob Container](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container) to run the code.
 
-[Azure Blob Storage Partition Manager Async](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio)
+[Azure Blob Storage Checkpoint Store Async](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio)
 and [Azure Blob Storage Checkpoint Store Sync](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob)
-are one of the `PartitionManager` implementations we provide that applies Azure Blob Storage as the persistent store.
+are one of the `CheckpointStore` implementations we provide that applies Azure Blob Storage as the persistent store.
 
 
 ```python
@@ -271,20 +272,15 @@ import asyncio
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
-RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
-RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
+RETRY_TOTAL = 3  # max number of retries if receiving events raises an error
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 storage_connection_str = '<< CONNECTION STRING FOR THE STORAGE >>'
 container_name = '<<STRING FOR THE BLOB NAME>>'
 
-async def do_operation(event):
-    # do some sync or async operations. If the operation is i/o intensive, async will have better performance
-    print(event)
-
-
 async def process_event(partition_context, event):
-    await partition_context.update_checkpoint(event)
+    pass # do something
+    await partition_context.update_checkpoint(event)  # Or update_checkpoint every N events for better performance.
 
 async def receive(client):
     try:
