@@ -178,7 +178,7 @@ class UserAssignedIdentitiesOperations(object):
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities'}
 
     def create_or_update(
-            self, resource_group_name, resource_name, location=None, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, location, tags=None, custom_headers=None, raw=False, **operation_config):
         """Create or update an identity in the specified subscription and resource
         group.
 
@@ -253,7 +253,7 @@ class UserAssignedIdentitiesOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{resourceName}'}
 
     def update(
-            self, resource_group_name, resource_name, location=None, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, location, tags=None, custom_headers=None, raw=False, **operation_config):
         """Update an identity in the specified subscription and resource group.
 
         :param resource_group_name: The name of the Resource Group to which

@@ -77,11 +77,13 @@ class Identity(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The id of the created identity.
     :vartype id: str
     :ivar name: The name of the created identity.
     :vartype name: str
-    :param location: The Azure region where the identity lives.
+    :param location: Required. The Azure region where the identity lives.
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -102,6 +104,7 @@ class Identity(Model):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'location': {'required': True},
         'tenant_id': {'readonly': True},
         'principal_id': {'readonly': True},
         'client_id': {'readonly': True},
@@ -194,11 +197,13 @@ class SystemAssignedIdentity(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The id of the created identity.
     :vartype id: str
     :ivar name: The name of the created identity.
     :vartype name: str
-    :param location: The Azure region where the identity lives.
+    :param location: Required. The Azure region where the identity lives.
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -221,6 +226,7 @@ class SystemAssignedIdentity(Model):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'location': {'required': True},
         'tenant_id': {'readonly': True},
         'principal_id': {'readonly': True},
         'client_id': {'readonly': True},
