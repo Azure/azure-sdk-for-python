@@ -7,7 +7,7 @@
 #--------------------------------------------------------------------------
 import unittest
 
-import azure.mgmt.cdn
+import azure.mgmt.cdn.models
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtCdnTest(AzureMgmtTestCase):

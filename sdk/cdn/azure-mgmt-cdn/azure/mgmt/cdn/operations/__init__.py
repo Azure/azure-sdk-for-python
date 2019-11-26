@@ -9,13 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .profiles_operations import ProfilesOperations
-from .endpoints_operations import EndpointsOperations
-from .origins_operations import OriginsOperations
-from .custom_domains_operations import CustomDomainsOperations
-from .resource_usage_operations import ResourceUsageOperations
-from .operations import Operations
-from .edge_nodes_operations import EdgeNodesOperations
+from ._profiles_operations import ProfilesOperations
+from ._endpoints_operations import EndpointsOperations
+from ._origins_operations import OriginsOperations
+from ._custom_domains_operations import CustomDomainsOperations
+from ._resource_usage_operations import ResourceUsageOperations
+from ._operations import Operations
+from ._edge_nodes_operations import EdgeNodesOperations
+from ._cdn_management_client_operations import CdnManagementClientOperationsMixin
 
 __all__ = [
     'ProfilesOperations',
@@ -25,4 +26,5 @@ __all__ = [
     'ResourceUsageOperations',
     'Operations',
     'EdgeNodesOperations',
+    'CdnManagementClientOperationsMixin',
 ]
