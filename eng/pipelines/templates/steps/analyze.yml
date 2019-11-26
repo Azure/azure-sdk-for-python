@@ -33,7 +33,7 @@ steps:
   - script: |
       cd eng/versioning
       pip install -r requirements.txt
-      python find_invalid_versions.py --always-succeed --service-directory ${{parameters.ServiceDirectory}}
+      python find_invalid_versions.py --always-succeed --service ${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
