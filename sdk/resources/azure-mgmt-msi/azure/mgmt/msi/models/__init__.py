@@ -11,11 +11,13 @@
 
 try:
     from ._models_py3 import Identity
+    from ._models_py3 import IdentityPatch
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import SystemAssignedIdentity
 except (SyntaxError, ImportError):
     from ._models import Identity
+    from ._models import IdentityPatch
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import SystemAssignedIdentity
@@ -27,6 +29,7 @@ from ._managed_service_identity_client_enums import (
 
 __all__ = [
     'Identity',
+    'IdentityPatch',
     'Operation',
     'OperationDisplay',
     'SystemAssignedIdentity',

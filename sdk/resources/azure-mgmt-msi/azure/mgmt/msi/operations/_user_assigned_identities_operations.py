@@ -253,7 +253,7 @@ class UserAssignedIdentitiesOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{resourceName}'}
 
     def update(
-            self, resource_group_name, resource_name, location, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, location=None, tags=None, custom_headers=None, raw=False, **operation_config):
         """Update an identity in the specified subscription and resource group.
 
         :param resource_group_name: The name of the Resource Group to which
@@ -275,7 +275,7 @@ class UserAssignedIdentitiesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.Identity(location=location, tags=tags)
+        parameters = models.IdentityPatch(location=location, tags=tags)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -302,7 +302,7 @@ class UserAssignedIdentitiesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'Identity')
+        body_content = self._serialize.body(parameters, 'IdentityPatch')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
