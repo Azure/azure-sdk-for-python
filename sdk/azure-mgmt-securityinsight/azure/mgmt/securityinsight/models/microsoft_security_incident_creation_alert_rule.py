@@ -36,7 +36,8 @@ class MicrosoftSecurityIncidentCreationAlertRule(AlertRule):
     :param product_filter: Required. The alerts' productName on which the
      cases will be generated. Possible values include: 'Microsoft Cloud App
      Security', 'Azure Security Center', 'Azure Advanced Threat Protection',
-     'Azure Active Directory Identity Protection'
+     'Azure Active Directory Identity Protection', 'Azure Security Center for
+     IoT'
     :type product_filter: str or
      ~azure.mgmt.securityinsight.models.MicrosoftSecurityProductName
     :param severities_filter: the alerts' severities on which the cases will

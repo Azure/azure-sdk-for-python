@@ -35,6 +35,7 @@ try:
     from .relation_node_py3 import RelationNode
     from .relations_model_input_py3 import RelationsModelInput
     from .user_info_py3 import UserInfo
+    from .incident_info_py3 import IncidentInfo
     from .bookmark_py3 import Bookmark
     from .case_py3 import Case
     from .case_comment_py3 import CaseComment
@@ -125,6 +126,7 @@ except (SyntaxError, ImportError):
     from .relation_node import RelationNode
     from .relations_model_input import RelationsModelInput
     from .user_info import UserInfo
+    from .incident_info import IncidentInfo
     from .bookmark import Bookmark
     from .case import Case
     from .case_comment import CaseComment
@@ -212,6 +214,7 @@ from .security_insights_enums import (
     AlertSeverity,
     RelationTypes,
     RelationNodeKind,
+    IncidentSeverity,
     CloseReason,
     CaseSeverity,
     CaseStatus,
@@ -260,6 +263,7 @@ __all__ = [
     'RelationNode',
     'RelationsModelInput',
     'UserInfo',
+    'IncidentInfo',
     'Bookmark',
     'Case',
     'CaseComment',
@@ -346,6 +350,7 @@ __all__ = [
     'AlertSeverity',
     'RelationTypes',
     'RelationNodeKind',
+    'IncidentSeverity',
     'CloseReason',
     'CaseSeverity',
     'CaseStatus',
