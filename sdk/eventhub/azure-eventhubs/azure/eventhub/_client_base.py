@@ -102,8 +102,7 @@ def _build_uri(address, entity):
 
 
 class EventHubSharedKeyCredential(object):
-    """
-    The shared access key credential used for authentication.
+    """The shared access key credential used for authentication.
 
     :param str policy: The name of the shared access policy.
     :param str key: The shared access key.
@@ -239,16 +238,16 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def get_eventhub_properties(self):
         # type:() -> Dict[str, Any]
-        """Get properties of the EventHub.
+        """Get properties of the Event Hub.
 
         Keys in the returned dictionary include:
 
-            - eventhub_name
-            - created_at
-            - partition_ids
+            - `eventhub_name` (str)
+            - `created_at` (UTC datetime.datetime)
+            - `partition_ids` (list[str])
 
         :rtype: dict
-        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         mgmt_msg = Message(application_properties={'name': self.eventhub_name})
         response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
@@ -262,11 +261,10 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
     def get_partition_ids(self):
         # type:() -> List[str]
-        """
-        Get partition ids of the specified EventHub.
+        """Get partition IDs of the Event Hub.
 
         :rtype: list[str]
-        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return self.get_eventhub_properties()['partition_ids']
 
@@ -274,20 +272,20 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         # type:(str) -> Dict[str, Any]
         """Get properties of the specified partition.
 
-        Keys in the details dictionary include:
+        Keys in the properties dictionary include:
 
-            - eventhub_name
-            - id
-            - beginning_sequence_number
-            - last_enqueued_sequence_number
-            - last_enqueued_offset
-            - last_enqueued_time_utc
-            - is_empty
+            - `eventhub_name` (str)
+            - `id` (str)
+            - `beginning_sequence_number` (int)
+            - `last_enqueued_sequence_number` (int)
+            - `last_enqueued_offset` (str)
+            - `last_enqueued_time_utc` (UTC datetime.datetime)
+            - `is_empty` (bool)
 
-        :param partition_id: The target partition id.
+        :param partition_id: The target partition ID.
         :type partition_id: str
         :rtype: dict
-        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         mgmt_msg = Message(application_properties={'name': self.eventhub_name,
                                                    'partition': partition_id})

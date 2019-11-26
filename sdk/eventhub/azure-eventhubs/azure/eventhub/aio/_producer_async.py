@@ -185,8 +185,12 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
          If not specified, the default wait time specified when the producer was created will be used.
         :type timeout: float
 
-        :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
-                ~azure.eventhub.EventDataError, ~azure.eventhub.EventDataSendError, ~azure.eventhub.EventHubError
+        :raises: ~azure.eventhub.exceptions.AuthenticationError,
+                 ~azure.eventhub.exceptions.ConnectError,
+                 ~azure.eventhub.exceptions.ConnectionLostError,
+                 ~azure.eventhub.exceptions.EventDataError,
+                 ~azure.eventhub.exceptions.EventDataSendError,
+                 ~azure.eventhub.exceptions.EventHubError
         :return: None
         :rtype: None
         """

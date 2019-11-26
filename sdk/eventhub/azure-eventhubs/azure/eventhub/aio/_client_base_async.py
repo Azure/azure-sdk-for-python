@@ -30,8 +30,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class EventHubSharedKeyCredential(object):
-    """
-    The shared access key credential used for authentication.
+    """The shared access key credential used for authentication.
 
     :param str policy: The name of the shared access policy.
     :param str key: The shared access key.
@@ -156,16 +155,16 @@ class ClientBaseAsync(ClientBase):
 
     async def get_eventhub_properties(self):
         # type:() -> Dict[str, Any]
-        """
-        Get properties of the specified EventHub async.
-        Keys in the details dictionary include:
+        """Get properties of the Event Hub.
 
-            - eventhub_name
-            - created_at
-            - partition_ids
+        Keys in the returned dictionary include:
+
+            - `eventhub_name` (str)
+            - `created_at` (UTC datetime.datetime)
+            - `partition_ids` (list[str])
 
         :rtype: dict
-        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         mgmt_msg = Message(application_properties={'name': self.eventhub_name})
         response = await self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
@@ -179,32 +178,31 @@ class ClientBaseAsync(ClientBase):
 
     async def get_partition_ids(self):
         # type:() -> List[str]
-        """
-        Get partition ids of the specified EventHub async.
+        """Get partition IDs of the Event Hub.
 
         :rtype: list[str]
-        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return (await self.get_eventhub_properties())['partition_ids']
 
     async def get_partition_properties(self, partition_id):
         # type:(str) -> Dict[str, str]
-        """
-        Get properties of the specified partition async.
-        Keys in the details dictionary include:
+        """Get properties of the specified partition.
 
-            - eventhub_name
-            - id
-            - beginning_sequence_number
-            - last_enqueued_sequence_number
-            - last_enqueued_offset
-            - last_enqueued_time_utc
-            - is_empty
+        Keys in the properties dictionary include:
 
-        :param partition_id: The target partition id.
+            - `eventhub_name` (str)
+            - `id` (str)
+            - `beginning_sequence_number` (int)
+            - `last_enqueued_sequence_number` (int)
+            - `last_enqueued_offset` (str)
+            - `last_enqueued_time_utc` (UTC datetime.datetime)
+            - `is_empty` (bool)
+
+        :param partition_id: The target partition ID.
         :type partition_id: str
         :rtype: dict
-        :raises: :class:`EventHubError<azure.eventhub.EventHubError>`
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         mgmt_msg = Message(application_properties={'name': self.eventhub_name,
                                                    'partition': partition_id})

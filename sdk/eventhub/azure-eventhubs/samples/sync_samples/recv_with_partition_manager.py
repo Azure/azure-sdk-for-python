@@ -36,7 +36,7 @@ if __name__ == '__main__':
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         consumer_group='$Default',
-        checkpoint_store=checkpoint_store,  # For load balancing and checkpoint. Leave None for no load balancing
+        checkpoint_store=checkpoint_store,  # For load-balancing and checkpoint. Leave None for no load-balancing
     )
 
     try:
