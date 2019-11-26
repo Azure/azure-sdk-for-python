@@ -9,16 +9,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Serializer, Deserializer
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 from ._configuration import StorageManagementClientConfiguration
 
+class _SDKClient(object):
+    def __init__(self, *args, **kwargs):
+        """This is a fake class to support current implemetation of MultiApiClientMixin."
 
+        Will be removed in final version of multiapi azure-core based client
+        """
+        pass
 
-class StorageManagementClient(MultiApiClientMixin, SDKClient):
+class StorageManagementClient(MultiApiClientMixin, _SDKClient):
     """The Azure Storage Management API.
 
     This ready contains multiple API versions, to help you deal with all Azure clouds
@@ -56,11 +62,14 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
         _PROFILE_TAG + " latest"
     )
 
-    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
-        self.config = StorageManagementClientConfiguration(credentials, subscription_id, base_url)
+    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default, **kwargs):
+        if not base_url:
+            base_url = 'https://management.azure.com'
+        self._config = StorageManagementClientConfiguration(credentials, subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(StorageManagementClient, self).__init__(
             credentials,
-            self.config,
+            self._config,
             api_version=api_version,
             profile=profile
         )
@@ -146,7 +155,7 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
             from .v2019_06_01.operations import BlobContainersOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def blob_services(self):
@@ -168,7 +177,7 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
             from .v2019_06_01.operations import BlobServicesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def file_services(self):
@@ -184,7 +193,7 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
             from .v2019_06_01.operations import FileServicesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def file_shares(self):
@@ -200,7 +209,7 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
             from .v2019_06_01.operations import FileSharesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def management_policies(self):
@@ -222,7 +231,7 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
             from .v2019_06_01.operations import ManagementPoliciesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def operations(self):
@@ -256,7 +265,7 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
             from .v2019_06_01.operations import Operations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def private_endpoint_connections(self):
@@ -269,7 +278,7 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
             from .v2019_06_01.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def private_link_resources(self):
@@ -282,7 +291,7 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
             from .v2019_06_01.operations import PrivateLinkResourcesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def skus(self):
@@ -316,7 +325,7 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
             from .v2019_06_01.operations import SkusOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def storage_accounts(self):
@@ -359,7 +368,7 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
             from .v2019_06_01.operations import StorageAccountsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def usage(self):
@@ -387,7 +396,7 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_02_01.operations import UsageOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def usages(self):
@@ -412,4 +421,12 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
             from .v2019_06_01.operations import UsagesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    def close(self):
+        self._client.close()
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+    def __exit__(self, *exc_details):
+        self._client.__exit__(*exc_details)

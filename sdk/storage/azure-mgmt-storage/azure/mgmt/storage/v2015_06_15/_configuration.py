@@ -8,12 +8,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-from msrestazure import AzureConfiguration
+from azure.core.configuration import Configuration
+from azure.core.pipeline import policies
 
 from .version import VERSION
 
 
-class StorageManagementClientConfiguration(AzureConfiguration):
+class StorageManagementClientConfiguration(Configuration):
     """Configuration for StorageManagementClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -25,26 +26,29 @@ class StorageManagementClientConfiguration(AzureConfiguration):
      the Microsoft Azure subscription. The subscription ID forms part of the
      URI for every service call.
     :type subscription_id: str
-    :param str base_url: Service URL
     """
 
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
+    def __init__(self, credentials, subscription_id, **kwargs):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
 
-        super(StorageManagementClientConfiguration, self).__init__(base_url)
+        super(StorageManagementClientConfiguration, self).__init__(**kwargs)
+        self._configure(**kwargs)
 
-        # Starting Autorest.Python 4.0.64, make connection pool activated by default
-        self.keep_alive = True
-
-        self.add_user_agent('azure-mgmt-storage/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
+        self.user_agent_policy.add_user_agent('azsdk-python-azure-mgmt-storage/{}'.format(VERSION))
+        self.generate_client_request_id = True
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+
+    def _configure(self, **kwargs):
+        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)

@@ -10,8 +10,9 @@
 # --------------------------------------------------------------------------
 
 import uuid
-from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
+from azure.core.exceptions import map_error
+from azure.mgmt.core.exceptions import ARMError
+from azure.core.paging import ItemPaged
 
 from .. import models
 
@@ -37,10 +38,10 @@ class FileSharesOperations(object):
         self._deserialize = deserializer
         self.api_version = "2019-04-01"
 
-        self.config = config
+        self._config = config
 
     def list(
-            self, resource_group_name, account_name, skip_token=None, maxpagesize=None, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, skip_token=None, maxpagesize=None, filter=None, cls=None, **kwargs):
         """Lists all shares.
 
         :param resource_group_name: The name of the resource group within the
@@ -59,29 +60,23 @@ class FileSharesOperations(object):
         :param filter: Optional. When specified, only share names starting
          with the filter will be listed.
         :type filter: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of FileShareItem
         :rtype:
-         ~azure.mgmt.storage.v2019_04_01.models.FileShareItemPaged[~azure.mgmt.storage.v2019_04_01.models.FileShareItem]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.core.paging.ItemPaged[~azure.mgmt.storage.v2019_04_01.models.FileShareItem]
+        :raises: :class:`ARMError<azure.mgmt.core.ARMError>`
         """
+        error_map = kwargs.pop('error_map', None)
         def prepare_request(next_link=None):
+            query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
                 if skip_token is not None:
                     query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
@@ -92,45 +87,42 @@ class FileSharesOperations(object):
 
             else:
                 url = next_link
-                query_parameters = {}
 
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
+            if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def internal_paging(next_link=None):
+        def extract_data(response):
+            deserialized = self._deserialize('FileShareItems', response)
+            list_of_elem = deserialized.value
+            if cls:
+               list_of_elem = cls(list_of_elem)
+            return deserialized.next_link, iter(list_of_elem)
+
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            response = self._client.send(request, stream=False, **operation_config)
+            pipeline_response = self._client._pipeline.run(request, **kwargs)
+            response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise ARMError(response=response)
             return response
 
         # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.FileShareItemPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
+        return ItemPaged(
+            get_next, extract_data
+        )
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/default/shares'}
 
-    def create(
-            self, resource_group_name, account_name, share_name, metadata=None, share_quota=None, custom_headers=None, raw=False, **operation_config):
+    def create(self, resource_group_name, account_name, share_name, metadata=None, share_quota=None, cls=None, **kwargs):
         """Creates a new share under the specified account as described by request
         body. The share resource includes metadata and properties for that
         share. It does not include a list of the files contained by the share.
@@ -155,16 +147,13 @@ class FileSharesOperations(object):
         :param share_quota: The maximum size of the share, in gigabytes. Must
          be greater than 0, and less than or equal to 5TB (5120).
         :type share_quota: int
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: FileShare or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileShare or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: FileShare or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileShare
+        :raises: :class:`ARMError<azure.mgmt.core.ARMError>`
         """
+        error_map = kwargs.pop('error_map', None)
         file_share = models.FileShare(metadata=metadata, share_quota=share_quota)
 
         # Construct URL
@@ -173,7 +162,7 @@ class FileSharesOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
             'shareName': self._serialize.url("share_name", share_name, 'str', max_length=63, min_length=3),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -185,24 +174,20 @@ class FileSharesOperations(object):
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
+        if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(file_share, 'FileShare')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise ARMError(response=response)
 
         deserialized = None
         if response.status_code == 200:
@@ -210,15 +195,13 @@ class FileSharesOperations(object):
         if response.status_code == 201:
             deserialized = self._deserialize('FileShare', response)
 
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+        if cls:
+            return cls(response, deserialized, None)
 
         return deserialized
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/default/shares/{shareName}'}
 
-    def update(
-            self, resource_group_name, account_name, share_name, metadata=None, share_quota=None, custom_headers=None, raw=False, **operation_config):
+    def update(self, resource_group_name, account_name, share_name, metadata=None, share_quota=None, cls=None, **kwargs):
         """Updates share properties as specified in request body. Properties not
         mentioned in the request will not be changed. Update fails if the
         specified share does not already exist. .
@@ -242,16 +225,13 @@ class FileSharesOperations(object):
         :param share_quota: The maximum size of the share, in gigabytes. Must
          be greater than 0, and less than or equal to 5TB (5120).
         :type share_quota: int
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: FileShare or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileShare or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: FileShare or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileShare
+        :raises: :class:`ARMError<azure.mgmt.core.ARMError>`
         """
+        error_map = kwargs.pop('error_map', None)
         file_share = models.FileShare(metadata=metadata, share_quota=share_quota)
 
         # Construct URL
@@ -260,7 +240,7 @@ class FileSharesOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
             'shareName': self._serialize.url("share_name", share_name, 'str', max_length=63, min_length=3),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -272,38 +252,32 @@ class FileSharesOperations(object):
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
+        if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(file_share, 'FileShare')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise ARMError(response=response)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('FileShare', response)
 
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+        if cls:
+            return cls(response, deserialized, None)
 
         return deserialized
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/default/shares/{shareName}'}
 
-    def get(
-            self, resource_group_name, account_name, share_name, custom_headers=None, raw=False, **operation_config):
+    def get(self, resource_group_name, account_name, share_name, cls=None, **kwargs):
         """Gets properties of a specified share.
 
         :param resource_group_name: The name of the resource group within the
@@ -319,23 +293,20 @@ class FileSharesOperations(object):
          dash (-) character must be immediately preceded and followed by a
          letter or number.
         :type share_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: FileShare or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileShare or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: FileShare or the result of cls(response)
+        :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileShare
+        :raises: :class:`ARMError<azure.mgmt.core.ARMError>`
         """
+        error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
             'shareName': self._serialize.url("share_name", share_name, 'str', max_length=63, min_length=3),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -346,35 +317,29 @@ class FileSharesOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
+        if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise ARMError(response=response)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('FileShare', response)
 
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+        if cls:
+            return cls(response, deserialized, None)
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/default/shares/{shareName}'}
 
-    def delete(
-            self, resource_group_name, account_name, share_name, custom_headers=None, raw=False, **operation_config):
+    def delete(self, resource_group_name, account_name, share_name, cls=None, **kwargs):
         """Deletes specified share under its account.
 
         :param resource_group_name: The name of the resource group within the
@@ -390,22 +355,20 @@ class FileSharesOperations(object):
          dash (-) character must be immediately preceded and followed by a
          letter or number.
         :type share_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises: :class:`ARMError<azure.mgmt.core.ARMError>`
         """
+        error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
             'shareName': self._serialize.url("share_name", share_name, 'str', max_length=63, min_length=3),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -415,23 +378,19 @@ class FileSharesOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self.config.generate_client_request_id:
+        if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise ARMError(response=response)
 
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
+        if cls:
+            response_headers = {}
+            return cls(response, None, response_headers)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/default/shares/{shareName}'}

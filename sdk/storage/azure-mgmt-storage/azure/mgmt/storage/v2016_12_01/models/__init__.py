@@ -27,9 +27,11 @@ try:
     from ._models_py3 import StorageAccountCreateParameters
     from ._models_py3 import StorageAccountKey
     from ._models_py3 import StorageAccountListKeysResult
+    from ._models_py3 import StorageAccountListResult
     from ._models_py3 import StorageAccountRegenerateKeyParameters
     from ._models_py3 import StorageAccountUpdateParameters
     from ._models_py3 import Usage
+    from ._models_py3 import UsageListResult
     from ._models_py3 import UsageName
 except (SyntaxError, ImportError):
     from ._models import AccountSasParameters
@@ -49,12 +51,12 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccountCreateParameters
     from ._models import StorageAccountKey
     from ._models import StorageAccountListKeysResult
+    from ._models import StorageAccountListResult
     from ._models import StorageAccountRegenerateKeyParameters
     from ._models import StorageAccountUpdateParameters
     from ._models import Usage
+    from ._models import UsageListResult
     from ._models import UsageName
-from ._paged_models import StorageAccountPaged
-from ._paged_models import UsagePaged
 from ._storage_management_client_enums import (
     Reason,
     SkuName,
@@ -86,12 +88,12 @@ __all__ = [
     'StorageAccountCreateParameters',
     'StorageAccountKey',
     'StorageAccountListKeysResult',
+    'StorageAccountListResult',
     'StorageAccountRegenerateKeyParameters',
     'StorageAccountUpdateParameters',
     'Usage',
+    'UsageListResult',
     'UsageName',
-    'StorageAccountPaged',
-    'UsagePaged',
     'Reason',
     'SkuName',
     'SkuTier',

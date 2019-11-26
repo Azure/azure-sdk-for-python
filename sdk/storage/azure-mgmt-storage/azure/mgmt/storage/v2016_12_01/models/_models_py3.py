@@ -116,14 +116,6 @@ class CheckNameAvailabilityResult(Model):
         self.message = None
 
 
-class CloudError(Model):
-    """CloudError.
-    """
-
-    _attribute_map = {
-    }
-
-
 class CustomDomain(Model):
     """The custom domain assigned to this storage account. This can be set via
     Update.
@@ -826,6 +818,30 @@ class StorageAccountListKeysResult(Model):
         self.keys = None
 
 
+class StorageAccountListResult(Model):
+    """The response from the List Storage Accounts operation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: Gets the list of storage accounts and their properties.
+    :vartype value:
+     list[~azure.mgmt.storage.v2016_12_01.models.StorageAccount]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[StorageAccount]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(StorageAccountListResult, self).__init__(**kwargs)
+        self.value = None
+
+
 class StorageAccountRegenerateKeyParameters(Model):
     """The parameters used to regenerate the storage account key.
 
@@ -939,6 +955,22 @@ class Usage(Model):
         self.current_value = None
         self.limit = None
         self.name = None
+
+
+class UsageListResult(Model):
+    """The response from the List Usages operation.
+
+    :param value: Gets or sets the list of Storage Resource Usages.
+    :type value: list[~azure.mgmt.storage.v2016_12_01.models.Usage]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Usage]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(UsageListResult, self).__init__(**kwargs)
+        self.value = value
 
 
 class UsageName(Model):

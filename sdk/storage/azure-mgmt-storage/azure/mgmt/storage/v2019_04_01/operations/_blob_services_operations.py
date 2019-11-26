@@ -10,8 +10,9 @@
 # --------------------------------------------------------------------------
 
 import uuid
-from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
+from azure.core.exceptions import map_error
+from azure.mgmt.core.exceptions import ARMError
+from azure.core.paging import ItemPaged
 
 from .. import models
 
@@ -39,10 +40,10 @@ class BlobServicesOperations(object):
         self.api_version = "2019-04-01"
         self.blob_services_name = "default"
 
-        self.config = config
+        self._config = config
 
     def list(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, cls=None, **kwargs):
         """List blob services of storage account. It returns a collection of one
         object named default.
 
@@ -53,72 +54,63 @@ class BlobServicesOperations(object):
          specified resource group. Storage account names must be between 3 and
          24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of BlobServiceProperties
         :rtype:
-         ~azure.mgmt.storage.v2019_04_01.models.BlobServicePropertiesPaged[~azure.mgmt.storage.v2019_04_01.models.BlobServiceProperties]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.core.paging.ItemPaged[~azure.mgmt.storage.v2019_04_01.models.BlobServiceProperties]
+        :raises: :class:`ARMError<azure.mgmt.core.ARMError>`
         """
+        error_map = kwargs.pop('error_map', None)
         def prepare_request(next_link=None):
+            query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
             else:
                 url = next_link
-                query_parameters = {}
 
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
+            if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def internal_paging(next_link=None):
+        def extract_data(response):
+            deserialized = self._deserialize('BlobServiceItems', response)
+            list_of_elem = deserialized.value
+            if cls:
+               list_of_elem = cls(list_of_elem)
+            return None, iter(list_of_elem)
+
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            response = self._client.send(request, stream=False, **operation_config)
+            pipeline_response = self._client._pipeline.run(request, **kwargs)
+            response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise ARMError(response=response)
             return response
 
         # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.BlobServicePropertiesPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
+        return ItemPaged(
+            get_next, extract_data
+        )
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices'}
 
-    def set_service_properties(
-            self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
+    def set_service_properties(self, resource_group_name, account_name, parameters, cls=None, **kwargs):
         """Sets the properties of a storage account’s Blob service, including
         properties for Storage Analytics and CORS (Cross-Origin Resource
         Sharing) rules. .
@@ -135,22 +127,19 @@ class BlobServicesOperations(object):
          Resource Sharing) rules.
         :type parameters:
          ~azure.mgmt.storage.v2019_04_01.models.BlobServiceProperties
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: BlobServiceProperties or ClientRawResponse if raw=true
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: BlobServiceProperties or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.BlobServiceProperties
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`ARMError<azure.mgmt.core.ARMError>`
         """
+        error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.set_service_properties.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'BlobServicesName': self._serialize.url("self.blob_services_name", self.blob_services_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -163,38 +152,32 @@ class BlobServicesOperations(object):
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
+        if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(parameters, 'BlobServiceProperties')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise ARMError(response=response)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('BlobServiceProperties', response)
 
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+        if cls:
+            return cls(response, deserialized, None)
 
         return deserialized
     set_service_properties.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/{BlobServicesName}'}
 
-    def get_service_properties(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+    def get_service_properties(self, resource_group_name, account_name, cls=None, **kwargs):
         """Gets the properties of a storage account’s Blob service, including
         properties for Storage Analytics and CORS (Cross-Origin Resource
         Sharing) rules.
@@ -206,22 +189,19 @@ class BlobServicesOperations(object):
          specified resource group. Storage account names must be between 3 and
          24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: BlobServiceProperties or ClientRawResponse if raw=true
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: BlobServiceProperties or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.BlobServiceProperties
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`ARMError<azure.mgmt.core.ARMError>`
         """
+        error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.get_service_properties.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'BlobServicesName': self._serialize.url("self.blob_services_name", self.blob_services_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -233,29 +213,24 @@ class BlobServicesOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
+        if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise ARMError(response=response)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('BlobServiceProperties', response)
 
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+        if cls:
+            return cls(response, deserialized, None)
 
         return deserialized
     get_service_properties.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/{BlobServicesName}'}

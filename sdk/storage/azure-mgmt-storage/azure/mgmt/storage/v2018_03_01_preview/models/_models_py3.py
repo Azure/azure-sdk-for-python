@@ -300,14 +300,6 @@ class CheckNameAvailabilityResult(Model):
         self.message = None
 
 
-class CloudError(Model):
-    """CloudError.
-    """
-
-    _attribute_map = {
-    }
-
-
 class CustomDomain(Model):
     """The custom domain assigned to this storage account. This can be set via
     Update.
@@ -1180,6 +1172,25 @@ class OperationDisplay(Model):
         self.description = description
 
 
+class OperationListResult(Model):
+    """Result of the request to list Storage operations. It contains a list of
+    operations and a URL link to get the next set of results.
+
+    :param value: List of Storage operations supported by the Storage resource
+     provider.
+    :type value:
+     list[~azure.mgmt.storage.v2018_03_01_preview.models.Operation]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Operation]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(OperationListResult, self).__init__(**kwargs)
+        self.value = value
+
+
 class ProxyResource(Resource):
     """The resource model definition for a ARM proxy resource. It will have
     everything other than required location and tags.
@@ -1861,6 +1872,30 @@ class StorageAccountListKeysResult(Model):
         self.keys = None
 
 
+class StorageAccountListResult(Model):
+    """The response from the List Storage Accounts operation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: Gets the list of storage accounts and their properties.
+    :vartype value:
+     list[~azure.mgmt.storage.v2018_03_01_preview.models.StorageAccount]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[StorageAccount]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(StorageAccountListResult, self).__init__(**kwargs)
+        self.value = None
+
+
 class StorageAccountManagementPolicies(Resource):
     """The Get Storage Account ManagementPolicies operation response.
 
@@ -1994,6 +2029,29 @@ class StorageAccountUpdateParameters(Model):
         self.enable_https_traffic_only = enable_https_traffic_only
         self.network_rule_set = network_rule_set
         self.kind = kind
+
+
+class StorageSkuListResult(Model):
+    """The response from the List Storage SKUs operation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: Get the list result of storage SKUs and their properties.
+    :vartype value: list[~azure.mgmt.storage.v2018_03_01_preview.models.Sku]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Sku]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(StorageSkuListResult, self).__init__(**kwargs)
+        self.value = None
 
 
 class TagProperty(Model):
@@ -2138,6 +2196,22 @@ class Usage(Model):
         self.current_value = None
         self.limit = None
         self.name = None
+
+
+class UsageListResult(Model):
+    """The response from the List Usages operation.
+
+    :param value: Gets or sets the list of Storage Resource Usages.
+    :type value: list[~azure.mgmt.storage.v2018_03_01_preview.models.Usage]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Usage]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(UsageListResult, self).__init__(**kwargs)
+        self.value = value
 
 
 class UsageName(Model):

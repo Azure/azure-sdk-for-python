@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
+from azure.core import PipelineClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import StorageManagementClientConfiguration
@@ -21,11 +21,9 @@ from .operations import BlobContainersOperations
 from . import models
 
 
-class StorageManagementClient(SDKClient):
+class StorageManagementClient(object):
     """The Azure Storage Management API.
 
-    :ivar config: Configuration for client.
-    :vartype config: StorageManagementClientConfiguration
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.storage.v2018_03_01_preview.operations.Operations
@@ -47,10 +45,12 @@ class StorageManagementClient(SDKClient):
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, base_url=None, **kwargs):
 
-        self.config = StorageManagementClientConfiguration(credentials, subscription_id, base_url)
-        super(StorageManagementClient, self).__init__(self.config.credentials, self.config)
+        if not base_url:
+            base_url = 'https://management.azure.com'
+        self._config = StorageManagementClientConfiguration(credentials, subscription_id, **kwargs)
+        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2018-03-01-preview'
@@ -58,12 +58,20 @@ class StorageManagementClient(SDKClient):
         self._deserialize = Deserializer(client_models)
 
         self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize)
         self.skus = SkusOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize)
         self.storage_accounts = StorageAccountsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize)
         self.usages = UsagesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize)
         self.blob_containers = BlobContainersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize)
+
+    def close(self):
+        self._client.close()
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+    def __exit__(self, *exc_details):
+        self._client.__exit__(*exc_details)

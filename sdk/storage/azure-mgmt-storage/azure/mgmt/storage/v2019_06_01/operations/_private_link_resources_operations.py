@@ -10,8 +10,8 @@
 # --------------------------------------------------------------------------
 
 import uuid
-from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
+from azure.core.exceptions import map_error
+from azure.mgmt.core.exceptions import ARMError
 
 from .. import models
 
@@ -37,10 +37,9 @@ class PrivateLinkResourcesOperations(object):
         self._deserialize = deserializer
         self.api_version = "2019-06-01"
 
-        self.config = config
+        self._config = config
 
-    def list_by_storage_account(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+    def list_by_storage_account(self, resource_group_name, account_name, cls=None, **kwargs):
         """Gets the private link resources that need to be created for a storage
         account.
 
@@ -51,24 +50,20 @@ class PrivateLinkResourcesOperations(object):
          specified resource group. Storage account names must be between 3 and
          24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: PrivateLinkResourceListResult or ClientRawResponse if
-         raw=true
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: PrivateLinkResourceListResult or the result of cls(response)
         :rtype:
          ~azure.mgmt.storage.v2019_06_01.models.PrivateLinkResourceListResult
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`ARMError<azure.mgmt.core.ARMError>`
         """
+        error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.list_by_storage_account.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -79,29 +74,24 @@ class PrivateLinkResourcesOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
+        if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise ARMError(response=response)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('PrivateLinkResourceListResult', response)
 
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+        if cls:
+            return cls(response, deserialized, None)
 
         return deserialized
     list_by_storage_account.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/privateLinkResources'}

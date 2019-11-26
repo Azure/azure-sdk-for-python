@@ -10,8 +10,9 @@
 # --------------------------------------------------------------------------
 
 import uuid
-from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
+from azure.core.exceptions import map_error
+from azure.mgmt.core.exceptions import ARMError
+from azure.core.paging import ItemPaged
 
 from .. import models
 
@@ -37,71 +38,63 @@ class SkusOperations(object):
         self._deserialize = deserializer
         self.api_version = "2018-02-01"
 
-        self.config = config
+        self._config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, cls=None, **kwargs):
         """Lists the available SKUs supported by Microsoft.Storage for given
         subscription.
 
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Sku
         :rtype:
-         ~azure.mgmt.storage.v2018_02_01.models.SkuPaged[~azure.mgmt.storage.v2018_02_01.models.Sku]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.core.paging.ItemPaged[~azure.mgmt.storage.v2018_02_01.models.Sku]
+        :raises: :class:`ARMError<azure.mgmt.core.ARMError>`
         """
+        error_map = kwargs.pop('error_map', None)
         def prepare_request(next_link=None):
+            query_parameters = {}
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
             else:
                 url = next_link
-                query_parameters = {}
 
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
+            if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def internal_paging(next_link=None):
+        def extract_data(response):
+            deserialized = self._deserialize('StorageSkuListResult', response)
+            list_of_elem = deserialized.value
+            if cls:
+               list_of_elem = cls(list_of_elem)
+            return None, iter(list_of_elem)
+
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            response = self._client.send(request, stream=False, **operation_config)
+            pipeline_response = self._client._pipeline.run(request, **kwargs)
+            response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise ARMError(response=response)
             return response
 
         # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.SkuPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
+        return ItemPaged(
+            get_next, extract_data
+        )
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Storage/skus'}

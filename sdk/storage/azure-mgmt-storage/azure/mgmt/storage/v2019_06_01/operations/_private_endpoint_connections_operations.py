@@ -10,7 +10,7 @@
 # --------------------------------------------------------------------------
 
 import uuid
-from msrest.pipeline import ClientRawResponse
+from azure.core.exceptions import map_error
 
 from .. import models
 
@@ -36,10 +36,9 @@ class PrivateEndpointConnectionsOperations(object):
         self._deserialize = deserializer
         self.api_version = "2019-06-01"
 
-        self.config = config
+        self._config = config
 
-    def get(
-            self, resource_group_name, account_name, private_endpoint_connection_name, custom_headers=None, raw=False, **operation_config):
+    def get(self, resource_group_name, account_name, private_endpoint_connection_name, cls=None, **kwargs):
         """Gets the specified private endpoint connection associated with the
         storage account.
 
@@ -53,24 +52,21 @@ class PrivateEndpointConnectionsOperations(object):
         :param private_endpoint_connection_name: The name of the private
          endpoint connection associated with the Storage Account
         :type private_endpoint_connection_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: PrivateEndpointConnection or ClientRawResponse if raw=true
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: PrivateEndpointConnection or the result of cls(response)
         :rtype:
-         ~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnection or
-         ~msrest.pipeline.ClientRawResponse
+         ~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnection
         :raises:
          :class:`ErrorResponseException<azure.mgmt.storage.v2019_06_01.models.ErrorResponseException>`
         """
+        error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -82,33 +78,29 @@ class PrivateEndpointConnectionsOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
+        if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.ErrorResponseException(response, self._deserialize)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('PrivateEndpointConnection', response)
 
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+        if cls:
+            return cls(response, deserialized, None)
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}'}
 
-    def put(
-            self, resource_group_name, account_name, private_endpoint_connection_name, properties, custom_headers=None, raw=False, **operation_config):
+    def put(self, resource_group_name, account_name, private_endpoint_connection_name, properties, cls=None, **kwargs):
         """Update the state of specified private endpoint connection associated
         with the storage account.
 
@@ -125,24 +117,21 @@ class PrivateEndpointConnectionsOperations(object):
         :param properties: The private endpoint connection properties.
         :type properties:
          ~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnection
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: PrivateEndpointConnection or ClientRawResponse if raw=true
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: PrivateEndpointConnection or the result of cls(response)
         :rtype:
-         ~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnection or
-         ~msrest.pipeline.ClientRawResponse
+         ~azure.mgmt.storage.v2019_06_01.models.PrivateEndpointConnection
         :raises:
          :class:`ErrorResponseException<azure.mgmt.storage.v2019_06_01.models.ErrorResponseException>`
         """
+        error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.put.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -155,36 +144,32 @@ class PrivateEndpointConnectionsOperations(object):
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
+        if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(properties, 'PrivateEndpointConnection')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.ErrorResponseException(response, self._deserialize)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('PrivateEndpointConnection', response)
 
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+        if cls:
+            return cls(response, deserialized, None)
 
         return deserialized
     put.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}'}
 
-    def delete(
-            self, resource_group_name, account_name, private_endpoint_connection_name, custom_headers=None, raw=False, **operation_config):
+    def delete(self, resource_group_name, account_name, private_endpoint_connection_name, cls=None, **kwargs):
         """Deletes the specified private endpoint connection associated with the
         storage account.
 
@@ -198,22 +183,20 @@ class PrivateEndpointConnectionsOperations(object):
         :param private_endpoint_connection_name: The name of the private
          endpoint connection associated with the Storage Account
         :type private_endpoint_connection_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: None or the result of cls(response)
+        :rtype: None
         :raises:
          :class:`ErrorResponseException<azure.mgmt.storage.v2019_06_01.models.ErrorResponseException>`
         """
+        error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
             'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -224,21 +207,19 @@ class PrivateEndpointConnectionsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        if self.config.generate_client_request_id:
+        if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.ErrorResponseException(response, self._deserialize)
 
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
+        if cls:
+            response_headers = {}
+            return cls(response, None, response_headers)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}'}

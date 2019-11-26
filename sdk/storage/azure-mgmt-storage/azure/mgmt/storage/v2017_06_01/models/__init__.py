@@ -27,6 +27,7 @@ try:
     from ._models_py3 import NetworkRuleSet
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationListResult
     from ._models_py3 import Resource
     from ._models_py3 import Restriction
     from ._models_py3 import ServiceSasParameters
@@ -38,9 +39,12 @@ try:
     from ._models_py3 import StorageAccountCreateParameters
     from ._models_py3 import StorageAccountKey
     from ._models_py3 import StorageAccountListKeysResult
+    from ._models_py3 import StorageAccountListResult
     from ._models_py3 import StorageAccountRegenerateKeyParameters
     from ._models_py3 import StorageAccountUpdateParameters
+    from ._models_py3 import StorageSkuListResult
     from ._models_py3 import Usage
+    from ._models_py3 import UsageListResult
     from ._models_py3 import UsageName
     from ._models_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
@@ -61,6 +65,7 @@ except (SyntaxError, ImportError):
     from ._models import NetworkRuleSet
     from ._models import Operation
     from ._models import OperationDisplay
+    from ._models import OperationListResult
     from ._models import Resource
     from ._models import Restriction
     from ._models import ServiceSasParameters
@@ -72,15 +77,14 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccountCreateParameters
     from ._models import StorageAccountKey
     from ._models import StorageAccountListKeysResult
+    from ._models import StorageAccountListResult
     from ._models import StorageAccountRegenerateKeyParameters
     from ._models import StorageAccountUpdateParameters
+    from ._models import StorageSkuListResult
     from ._models import Usage
+    from ._models import UsageListResult
     from ._models import UsageName
     from ._models import VirtualNetworkRule
-from ._paged_models import OperationPaged
-from ._paged_models import SkuPaged
-from ._paged_models import StorageAccountPaged
-from ._paged_models import UsagePaged
 from ._storage_management_client_enums import (
     ReasonCode,
     SkuName,
@@ -122,6 +126,7 @@ __all__ = [
     'NetworkRuleSet',
     'Operation',
     'OperationDisplay',
+    'OperationListResult',
     'Resource',
     'Restriction',
     'ServiceSasParameters',
@@ -133,15 +138,14 @@ __all__ = [
     'StorageAccountCreateParameters',
     'StorageAccountKey',
     'StorageAccountListKeysResult',
+    'StorageAccountListResult',
     'StorageAccountRegenerateKeyParameters',
     'StorageAccountUpdateParameters',
+    'StorageSkuListResult',
     'Usage',
+    'UsageListResult',
     'UsageName',
     'VirtualNetworkRule',
-    'OperationPaged',
-    'SkuPaged',
-    'StorageAccountPaged',
-    'UsagePaged',
     'ReasonCode',
     'SkuName',
     'SkuTier',

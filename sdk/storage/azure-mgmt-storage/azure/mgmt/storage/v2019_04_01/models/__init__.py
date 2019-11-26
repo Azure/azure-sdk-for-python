@@ -15,6 +15,7 @@ try:
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import AzureFilesIdentityBasedAuthentication
     from ._models_py3 import BlobContainer
+    from ._models_py3 import BlobServiceItems
     from ._models_py3 import BlobServiceProperties
     from ._models_py3 import ChangeFeed
     from ._models_py3 import CheckNameAvailabilityResult
@@ -33,6 +34,7 @@ try:
     from ._models_py3 import FileServiceProperties
     from ._models_py3 import FileShare
     from ._models_py3 import FileShareItem
+    from ._models_py3 import FileShareItems
     from ._models_py3 import GeoReplicationStats
     from ._models_py3 import Identity
     from ._models_py3 import ImmutabilityPolicy
@@ -45,6 +47,7 @@ try:
     from ._models_py3 import LegalHoldProperties
     from ._models_py3 import ListAccountSasResponse
     from ._models_py3 import ListContainerItem
+    from ._models_py3 import ListContainerItems
     from ._models_py3 import ListServiceSasResponse
     from ._models_py3 import ManagementPolicy
     from ._models_py3 import ManagementPolicyAction
@@ -58,6 +61,7 @@ try:
     from ._models_py3 import NetworkRuleSet
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationListResult
     from ._models_py3 import ProxyResource
     from ._models_py3 import Resource
     from ._models_py3 import Restriction
@@ -70,12 +74,15 @@ try:
     from ._models_py3 import StorageAccountCreateParameters
     from ._models_py3 import StorageAccountKey
     from ._models_py3 import StorageAccountListKeysResult
+    from ._models_py3 import StorageAccountListResult
     from ._models_py3 import StorageAccountRegenerateKeyParameters
     from ._models_py3 import StorageAccountUpdateParameters
+    from ._models_py3 import StorageSkuListResult
     from ._models_py3 import TagProperty
     from ._models_py3 import TrackedResource
     from ._models_py3 import UpdateHistoryProperty
     from ._models_py3 import Usage
+    from ._models_py3 import UsageListResult
     from ._models_py3 import UsageName
     from ._models_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
@@ -84,6 +91,7 @@ except (SyntaxError, ImportError):
     from ._models import AzureEntityResource
     from ._models import AzureFilesIdentityBasedAuthentication
     from ._models import BlobContainer
+    from ._models import BlobServiceItems
     from ._models import BlobServiceProperties
     from ._models import ChangeFeed
     from ._models import CheckNameAvailabilityResult
@@ -102,6 +110,7 @@ except (SyntaxError, ImportError):
     from ._models import FileServiceProperties
     from ._models import FileShare
     from ._models import FileShareItem
+    from ._models import FileShareItems
     from ._models import GeoReplicationStats
     from ._models import Identity
     from ._models import ImmutabilityPolicy
@@ -114,6 +123,7 @@ except (SyntaxError, ImportError):
     from ._models import LegalHoldProperties
     from ._models import ListAccountSasResponse
     from ._models import ListContainerItem
+    from ._models import ListContainerItems
     from ._models import ListServiceSasResponse
     from ._models import ManagementPolicy
     from ._models import ManagementPolicyAction
@@ -127,6 +137,7 @@ except (SyntaxError, ImportError):
     from ._models import NetworkRuleSet
     from ._models import Operation
     from ._models import OperationDisplay
+    from ._models import OperationListResult
     from ._models import ProxyResource
     from ._models import Resource
     from ._models import Restriction
@@ -139,21 +150,17 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccountCreateParameters
     from ._models import StorageAccountKey
     from ._models import StorageAccountListKeysResult
+    from ._models import StorageAccountListResult
     from ._models import StorageAccountRegenerateKeyParameters
     from ._models import StorageAccountUpdateParameters
+    from ._models import StorageSkuListResult
     from ._models import TagProperty
     from ._models import TrackedResource
     from ._models import UpdateHistoryProperty
     from ._models import Usage
+    from ._models import UsageListResult
     from ._models import UsageName
     from ._models import VirtualNetworkRule
-from ._paged_models import BlobServicePropertiesPaged
-from ._paged_models import FileShareItemPaged
-from ._paged_models import ListContainerItemPaged
-from ._paged_models import OperationPaged
-from ._paged_models import SkuPaged
-from ._paged_models import StorageAccountPaged
-from ._paged_models import UsagePaged
 from ._storage_management_client_enums import (
     ReasonCode,
     SkuName,
@@ -194,6 +201,7 @@ __all__ = [
     'AzureEntityResource',
     'AzureFilesIdentityBasedAuthentication',
     'BlobContainer',
+    'BlobServiceItems',
     'BlobServiceProperties',
     'ChangeFeed',
     'CheckNameAvailabilityResult',
@@ -212,6 +220,7 @@ __all__ = [
     'FileServiceProperties',
     'FileShare',
     'FileShareItem',
+    'FileShareItems',
     'GeoReplicationStats',
     'Identity',
     'ImmutabilityPolicy',
@@ -224,6 +233,7 @@ __all__ = [
     'LegalHoldProperties',
     'ListAccountSasResponse',
     'ListContainerItem',
+    'ListContainerItems',
     'ListServiceSasResponse',
     'ManagementPolicy',
     'ManagementPolicyAction',
@@ -237,6 +247,7 @@ __all__ = [
     'NetworkRuleSet',
     'Operation',
     'OperationDisplay',
+    'OperationListResult',
     'ProxyResource',
     'Resource',
     'Restriction',
@@ -249,21 +260,17 @@ __all__ = [
     'StorageAccountCreateParameters',
     'StorageAccountKey',
     'StorageAccountListKeysResult',
+    'StorageAccountListResult',
     'StorageAccountRegenerateKeyParameters',
     'StorageAccountUpdateParameters',
+    'StorageSkuListResult',
     'TagProperty',
     'TrackedResource',
     'UpdateHistoryProperty',
     'Usage',
+    'UsageListResult',
     'UsageName',
     'VirtualNetworkRule',
-    'OperationPaged',
-    'SkuPaged',
-    'StorageAccountPaged',
-    'UsagePaged',
-    'BlobServicePropertiesPaged',
-    'ListContainerItemPaged',
-    'FileShareItemPaged',
     'ReasonCode',
     'SkuName',
     'SkuTier',

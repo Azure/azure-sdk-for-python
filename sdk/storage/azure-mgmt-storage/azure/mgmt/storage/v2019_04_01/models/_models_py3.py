@@ -10,7 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
-from msrest.exceptions import HttpOperationError
+from azure.core.exceptions import HttpResponseError
 
 
 class AccountSasParameters(Model):
@@ -340,6 +340,30 @@ class BlobContainer(AzureEntityResource):
         self.has_immutability_policy = None
 
 
+class BlobServiceItems(Model):
+    """BlobServiceItems.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: List of blob services returned.
+    :vartype value:
+     list[~azure.mgmt.storage.v2019_04_01.models.BlobServiceProperties]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[BlobServiceProperties]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(BlobServiceItems, self).__init__(**kwargs)
+        self.value = None
+
+
 class BlobServiceProperties(Resource):
     """The properties of a storage account’s Blob service.
 
@@ -472,16 +496,20 @@ class CloudError(Model):
         self.error = error
 
 
-class CloudErrorException(HttpOperationError):
+class CloudErrorException(HttpResponseError):
     """Server responsed with exception of type: 'CloudError'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.
     """
 
-    def __init__(self, deserialize, response, *args):
+    def __init__(self, response, deserialize, *args):
 
-        super(CloudErrorException, self).__init__(deserialize, response, 'CloudError', *args)
+      model_name = 'CloudError'
+      self.error = deserialize(model_name, response)
+      if self.error is None:
+          self.error = deserialize.dependencies[model_name]()
+      super(CloudErrorException, self).__init__(response=response)
 
 
 class CloudErrorBody(Model):
@@ -1024,6 +1052,37 @@ class FileShareItem(AzureEntityResource):
         self.share_quota = share_quota
 
 
+class FileShareItems(Model):
+    """Response schema. Contains list of shares returned, and if paging is
+    requested or required, a URL to next page of shares.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: List of file shares returned.
+    :vartype value: list[~azure.mgmt.storage.v2019_04_01.models.FileShareItem]
+    :ivar next_link: Request URL that can be used to query next page of
+     shares. Returned when total number of requested shares exceed maximum page
+     size.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[FileShareItem]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(FileShareItems, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class GeoReplicationStats(Model):
     """Statistics related to replication for storage account's Blob, Table, Queue
     and File services. It is only available when geo-redundant replication is
@@ -1522,6 +1581,38 @@ class ListContainerItem(AzureEntityResource):
         self.has_immutability_policy = None
 
 
+class ListContainerItems(Model):
+    """Response schema. Contains list of blobs returned, and if paging is
+    requested or required, a URL to next page of containers.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: List of blobs containers returned.
+    :vartype value:
+     list[~azure.mgmt.storage.v2019_04_01.models.ListContainerItem]
+    :ivar next_link: Request URL that can be used to query next page of
+     containers. Returned when total number of requested containers exceed
+     maximum page size.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ListContainerItem]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ListContainerItems, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class ListServiceSasResponse(Model):
     """The List service SAS credentials operation response.
 
@@ -1939,6 +2030,24 @@ class OperationDisplay(Model):
         self.resource = resource
         self.operation = operation
         self.description = description
+
+
+class OperationListResult(Model):
+    """Result of the request to list Storage operations. It contains a list of
+    operations and a URL link to get the next set of results.
+
+    :param value: List of Storage operations supported by the Storage resource
+     provider.
+    :type value: list[~azure.mgmt.storage.v2019_04_01.models.Operation]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Operation]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(OperationListResult, self).__init__(**kwargs)
+        self.value = value
 
 
 class ProxyResource(Resource):
@@ -2659,6 +2768,37 @@ class StorageAccountListKeysResult(Model):
         self.keys = None
 
 
+class StorageAccountListResult(Model):
+    """The response from the List Storage Accounts operation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: Gets the list of storage accounts and their properties.
+    :vartype value:
+     list[~azure.mgmt.storage.v2019_04_01.models.StorageAccount]
+    :ivar next_link: Request URL that can be used to query next page of
+     storage accounts. Returned when total number of requested storage accounts
+     exceed maximum page size.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[StorageAccount]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(StorageAccountListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class StorageAccountRegenerateKeyParameters(Model):
     """The parameters used to regenerate the storage account key.
 
@@ -2759,6 +2899,29 @@ class StorageAccountUpdateParameters(Model):
         self.network_rule_set = network_rule_set
         self.large_file_shares_state = large_file_shares_state
         self.kind = kind
+
+
+class StorageSkuListResult(Model):
+    """The response from the List Storage SKUs operation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: Get the list result of storage SKUs and their properties.
+    :vartype value: list[~azure.mgmt.storage.v2019_04_01.models.Sku]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Sku]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(StorageSkuListResult, self).__init__(**kwargs)
+        self.value = None
 
 
 class TagProperty(Model):
@@ -2902,6 +3065,22 @@ class Usage(Model):
         self.current_value = None
         self.limit = None
         self.name = None
+
+
+class UsageListResult(Model):
+    """The response from the List Usages operation.
+
+    :param value: Gets or sets the list of Storage Resource Usages.
+    :type value: list[~azure.mgmt.storage.v2019_04_01.models.Usage]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Usage]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(UsageListResult, self).__init__(**kwargs)
+        self.value = value
 
 
 class UsageName(Model):

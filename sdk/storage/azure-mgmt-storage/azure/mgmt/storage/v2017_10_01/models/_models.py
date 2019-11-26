@@ -118,14 +118,6 @@ class CheckNameAvailabilityResult(Model):
         self.message = None
 
 
-class CloudError(Model):
-    """CloudError.
-    """
-
-    _attribute_map = {
-    }
-
-
 class CustomDomain(Model):
     """The custom domain assigned to this storage account. This can be set via
     Update.
@@ -595,6 +587,24 @@ class OperationDisplay(Model):
         self.provider = kwargs.get('provider', None)
         self.resource = kwargs.get('resource', None)
         self.operation = kwargs.get('operation', None)
+
+
+class OperationListResult(Model):
+    """Result of the request to list Storage operations. It contains a list of
+    operations and a URL link to get the next set of results.
+
+    :param value: List of Storage operations supported by the Storage resource
+     provider.
+    :type value: list[~azure.mgmt.storage.v2017_10_01.models.Operation]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Operation]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(OperationListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
 
 
 class Resource(Model):
@@ -1227,6 +1237,30 @@ class StorageAccountListKeysResult(Model):
         self.keys = None
 
 
+class StorageAccountListResult(Model):
+    """The response from the List Storage Accounts operation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: Gets the list of storage accounts and their properties.
+    :vartype value:
+     list[~azure.mgmt.storage.v2017_10_01.models.StorageAccount]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[StorageAccount]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StorageAccountListResult, self).__init__(**kwargs)
+        self.value = None
+
+
 class StorageAccountRegenerateKeyParameters(Model):
     """The parameters used to regenerate the storage account key.
 
@@ -1316,6 +1350,29 @@ class StorageAccountUpdateParameters(Model):
         self.kind = kwargs.get('kind', None)
 
 
+class StorageSkuListResult(Model):
+    """The response from the List Storage SKUs operation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: Get the list result of storage SKUs and their properties.
+    :vartype value: list[~azure.mgmt.storage.v2017_10_01.models.Sku]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Sku]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(StorageSkuListResult, self).__init__(**kwargs)
+        self.value = None
+
+
 class Usage(Model):
     """Describes Storage Resource Usage.
 
@@ -1356,6 +1413,22 @@ class Usage(Model):
         self.current_value = None
         self.limit = None
         self.name = None
+
+
+class UsageListResult(Model):
+    """The response from the List Usages operation.
+
+    :param value: Gets or sets the list of Storage Resource Usages.
+    :type value: list[~azure.mgmt.storage.v2017_10_01.models.Usage]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Usage]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UsageListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
 
 
 class UsageName(Model):

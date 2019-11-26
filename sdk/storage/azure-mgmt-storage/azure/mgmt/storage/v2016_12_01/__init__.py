@@ -9,9 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import StorageManagementClientConfiguration
 from ._storage_management_client import StorageManagementClient
-__all__ = ['StorageManagementClient', 'StorageManagementClientConfiguration']
+__all__ = ['StorageManagementClient']
 
 from .version import VERSION
 
