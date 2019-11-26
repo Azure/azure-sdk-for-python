@@ -1,13 +1,27 @@
-from glob import glob
-from os import path
-from packaging.version import parse
-import re
+#!/usr/bin/env python
 
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
+# Below are common methods for the devops build steps. This is the common location that will be updated with
+# package targeting during release.
+
+import sys
+import os
+from os import path
+import re
+from packaging.version import parse
 
 from setup_parser import parse_setup
 
-SETUP_PY_GLOB = "**/setup.py"
-VERSION_PY_GLOB = "**/_version.py"
+root_dir = path.abspath(path.join(path.abspath(__file__), "..", "..", ".."))
+common_task_path = path.abspath(path.join(root_dir, "scripts", "devops_tasks"))
+sys.path.append(common_task_path)
+from common_tasks import process_glob_string
+
+VERSION_PY = "_version.py"
 VERSION_REGEX = r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]'
 VERSION_STRING = "VERSION = '%s'"
 
@@ -24,16 +38,22 @@ def is_metapackage(package_path):
     azure_path = path.join(dir_path, 'azure')
     return not path.exists(azure_path)
 
-def get_setup_py_paths(base_path):
-    glob_expression = path.join(base_path, SETUP_PY_GLOB)
-    setup_paths = glob(glob_expression, recursive=True)
-
-    filtered_paths = [path for path in setup_paths if not path_excluded(path)]
+def get_setup_py_paths(glob_string, base_path):
+    setup_paths = process_glob_string(glob_string, base_path)
+    filtered_paths = [path.join(p, 'setup.py') for p in setup_paths if not path_excluded(p)]
     return filtered_paths
 
 
-def get_packages(sdk_location):
-    paths = get_setup_py_paths(sdk_location)
+def get_packages(args):
+    # This function returns list of path to setup.py and setup info like install requires, version for all packages discovered using glob
+    # Followiong are the list of arguements expected and parsed by this method
+    # service, glob_string
+    if args.service:
+        target_dir = path.join(root_dir, "sdk", args.service)
+    else:
+        target_dir = root_dir
+
+    paths = get_setup_py_paths(args.glob_string, target_dir)
     packages = []
     for setup_path in paths:
         try:
@@ -41,17 +61,18 @@ def get_packages(sdk_location):
             setup_entry = (setup_path, setup_info)
             packages.append(setup_entry)
         except:
-            print(f'Error parsing {setup_path}')
+            print('Error parsing {}'.format(setup_path))
             raise
 
     return packages
 
 def get_version_py(setup_py_location):
     file_path, _ = path.split(setup_py_location)
-    glob_expression = path.join(file_path, VERSION_PY_GLOB)
-
-    version_py_path = glob(glob_expression,  recursive=True)
-    return version_py_path[0]
+    # Find path to _version.py recursively in azure folder of package
+    azure_root_path = path.join(file_path, 'azure')
+    for root, _, files in os.walk(azure_root_path):
+        if(VERSION_PY in files):
+            return path.join(root, VERSION_PY)
 
 def set_version_py(setup_py_location, new_version):
     version_py_location = get_version_py(setup_py_location)
@@ -90,7 +111,7 @@ def set_dev_classifier(setup_py_location, version):
 
         replaced_setup_contents = re.sub(
             DEV_STATUS_REGEX,
-            f"\g<1>'{classification}'",
+            "\g<1>'{}'".format(classification),
             setup_contents
         )
 
