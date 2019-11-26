@@ -6,6 +6,7 @@
 import time
 
 from . import SansIOHTTPPolicy
+from ...exceptions import ServiceRequestError
 
 try:
     from typing import TYPE_CHECKING  # pylint:disable=unused-import
@@ -34,6 +35,14 @@ class _BearerTokenCredentialPolicyBase(object):
         self._scopes = scopes
         self._credential = credential
         self._token = None  # type: Optional[AccessToken]
+
+    @staticmethod
+    def _enforce_tls(request):
+        # type: (PipelineRequest) -> None
+        if not request.http_request.url.startswith("https"):
+            raise ServiceRequestError(
+                "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
+            )
 
     @staticmethod
     def _update_headers(headers, token):
@@ -66,6 +75,8 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPo
         :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
+        self._enforce_tls(request)
+
         if self._need_new_token:
             self._token = self._credential.get_token(*self._scopes)
         self._update_headers(request.http_request.headers, self._token.token)  # type: ignore

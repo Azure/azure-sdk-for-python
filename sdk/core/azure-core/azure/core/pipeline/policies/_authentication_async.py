@@ -29,6 +29,8 @@ class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOH
         :param request: The pipeline request object to be modified.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
+        self._enforce_tls(request)
+
         with self._lock:
             if self._need_new_token:
                 self._token = await self._credential.get_token(*self._scopes)  # type: ignore
