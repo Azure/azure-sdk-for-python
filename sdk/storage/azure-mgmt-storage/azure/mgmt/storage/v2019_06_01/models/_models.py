@@ -1011,7 +1011,7 @@ class FileShare(AzureEntityResource):
      superuser. Possible values include: 'NoRootSquash', 'RootSquash',
      'AllSquash'
     :type root_squash: str or
-     ~azure.mgmt.storage.v2019_06_01.models.RootSquash
+     ~azure.mgmt.storage.v2019_06_01.models.RootSquashType
     """
 
     _validation = {
@@ -1078,7 +1078,7 @@ class FileShareItem(AzureEntityResource):
      superuser. Possible values include: 'NoRootSquash', 'RootSquash',
      'AllSquash'
     :type root_squash: str or
-     ~azure.mgmt.storage.v2019_06_01.models.RootSquash
+     ~azure.mgmt.storage.v2019_06_01.models.RootSquashType
     """
 
     _validation = {

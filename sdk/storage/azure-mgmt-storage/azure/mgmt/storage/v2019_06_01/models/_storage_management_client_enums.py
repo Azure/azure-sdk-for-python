@@ -249,7 +249,7 @@ class EnabledProtocols(str, Enum):
     nfs = "NFS"
 
 
-class RootSquash(str, Enum):
+class RootSquashType(str, Enum):
 
     no_root_squash = "NoRootSquash"
     root_squash = "RootSquash"

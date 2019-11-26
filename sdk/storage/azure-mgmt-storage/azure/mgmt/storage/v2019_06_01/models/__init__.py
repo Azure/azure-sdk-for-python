@@ -208,7 +208,7 @@ from ._storage_management_client_enums import (
     ImmutabilityPolicyState,
     ImmutabilityPolicyUpdateType,
     EnabledProtocols,
-    RootSquash,
+    RootSquashType,
     StorageAccountExpand,
     ListKeyExpand,
 )
@@ -332,7 +332,7 @@ __all__ = [
     'ImmutabilityPolicyState',
     'ImmutabilityPolicyUpdateType',
     'EnabledProtocols',
-    'RootSquash',
+    'RootSquashType',
     'StorageAccountExpand',
     'ListKeyExpand',
 ]
