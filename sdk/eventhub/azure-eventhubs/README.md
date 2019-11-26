@@ -56,8 +56,8 @@ There are several ways to instantiate the EventHubClient object and the followin
 from azure.eventhub import EventHubConsumerClient
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
-event_hub_path = '<< NAME OF THE EVENT HUB >>'
-consumer_client = EventHubConsumerClient.from_connection_string(connection_str, event_hub_path=event_hub_path)
+eventhub_name = '<< NAME OF THE EVENT HUB >>'
+consumer_client = EventHubConsumerClient.from_connection_string(connection_str, eventhub_name=eventhub_name)
 
 ```
 
@@ -74,13 +74,14 @@ from azure.identity import DefaultAzureCredential
 credential = DefaultAzureCredential()
 
 host = '<< HOSTNAME OF THE EVENT HUB >>'
-event_hub_path = '<< NAME OF THE EVENT HUB >>'
-consumer_client = EventHubConsumerClient(host, event_hub_path, credential)
+eventhub_name = '<< NAME OF THE EVENT HUB >>'
+consumer_client = EventHubConsumerClient(host, eventhub_name, credential)
 
 ```
 
 - This constructor takes the host name and entity name of your Event Hub instance and credential that implements the
-TokenCredential interface. There are implementations of the TokenCredential interface available in the
+[TokenCredential](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/azure/core/credentials.py) 
+protocol. There are implementations of the `TokenCredential` protocol available in the
 [azure-identity package](https://pypi.org/project/azure-identity/). The host name is of the format `<yournamespace.servicebus.windows.net>`.
 
 ## Key concepts
@@ -114,9 +115,9 @@ The following sections provide several code snippets covering some of the most c
 - [Inspect an Event Hub](#inspect-an-event-hub)
 - [Publish events to an Event Hub](#publish-events-to-an-event-hub)
 - [Consume events from an Event Hub](#consume-events-from-an-event-hub)
-- [Async publish events to an Event Hub](#async-publish-events-to-an-event-hub)
-- [Async consume events from an Event Hub](#async-consume-events-from-an-event-hub)
-- [Consume events using a partition manager](#consume-events-using-a-partition-manager)
+- [Publish events to an Event Hub asynchronously](#publish-events-to-an-event-hub-asynchronously)
+- [Consume events from an Event Hub asynchronously](#consume-events-from-an-event-hub-asynchronously)
+- [Consume events and save checkpoints using a checkpoint store](#consume-events-and-save-checkpoints-using-a-checkpoint-store)
 - [Use EventHubConsumerClient to work with IoT Hub](#use-eventhubconsumerclient-to-work-with-iot-hub)
 
 ### Inspect an Event Hub
@@ -127,52 +128,33 @@ Get the partition ids of an Event Hub.
 from azure.eventhub import EventHubConsumerClient
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
-event_hub_path = '<< NAME OF THE EVENT HUB >>'
-client = EventHubConsumerClient.from_connection_string(connection_str, event_hub_path=event_hub_path)
+eventhub_name = '<< NAME OF THE EVENT HUB >>'
+client = EventHubConsumerClient.from_connection_string(connection_str, eventhub_name=eventhub_name)
 partition_ids = client.get_partition_ids()
 ```
 
 ### Publish events to an Event Hub
 
 Publish events to an Event Hub.
-
-#### Send a single event or an array of events
-
+Use the `create_batch` method on `EventHubProducerClient` to create an `EventDataBatch` object which can then be sent using the `send_batch` method.
+Events may be added to the `EventDataBatch` using the `add` method until the maximum batch size limit in bytes has been reached.
 ```python
 from azure.eventhub import EventHubProducerClient, EventData
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
-event_hub_path = '<< NAME OF THE EVENT HUB >>'
-client = EventHubProducerClient.from_connection_string(connection_str, event_hub_path=event_hub_path)
-
-event_list = []
-for i in range(10):
-    event_list.append(EventData(b"A single event"))
-with client:
-    client.send(event_list)
-```
-
-#### Send a batch of events
-
-Use the `create_batch` method on `EventHubProducerClient` to create an `EventDataBatch` object which can then be sent using the `send` method.
-Events may be added to the `EventDataBatch` using the `try_add` method until the maximum batch size limit in bytes has been reached.
-```python
-from azure.eventhub import EventHubProducerClient, EventData
-
-connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
-event_hub_path = '<< NAME OF THE EVENT HUB >>'
-client = EventHubProducerClient.from_connection_string(connection_str, event_hub_path=event_hub_path)
+eventhub_name = '<< NAME OF THE EVENT HUB >>'
+client = EventHubProducerClient.from_connection_string(connection_str, eventhub_name=eventhub_name)
 
 event_data_batch = client.create_batch(max_size=10000)
 can_add = True
 while can_add:
     try:
-        event_data_batch.try_add(EventData('Message inside EventBatchData'))
+        event_data_batch.add(EventData('Message inside EventBatchData'))
     except ValueError:
         can_add = False  # EventDataBatch object reaches max_size.
 
 with client:
-    client.send(event_data_batch)
+    client.send_batch(event_data_batch)
 ```
 
 ### Consume events from an Event Hub
@@ -184,8 +166,8 @@ import logging
 from azure.eventhub import EventHubConsumerClient
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
-event_hub_path = '<< NAME OF THE EVENT HUB >>'
-client = EventHubConsumerClient.from_connection_string(connection_str, event_hub_path=event_hub_path)
+eventhub_name = '<< NAME OF THE EVENT HUB >>'
+client = EventHubConsumerClient.from_connection_string(connection_str, eventhub_name=eventhub_name)
 
 logger = logging.getLogger("azure.eventhub")
 
@@ -198,68 +180,41 @@ with client:
     # client.receive(on_event=on_event, consumer_group="$Default", partition_id='0')
 ```
 
-### Async publish events to an Event Hub
+### Publish events to an Event Hub asynchronously
 
-Publish events to an Event Hub asynchronously.
-
-#### Send a single event or an array of events
+Publish events to an Event Hub asynchronously 
+Use the `create_batch` method on `EventHubProcuer` to create an `EventDataBatch` object which can then be sent using the `send_batch` method.
+Events may be added to the `EventDataBatch` using the `add` method until the maximum batch size limit in bytes has been reached.
 ```python
 import asyncio
-from azure.eventhub.aio import EventHubProducerClient
+from azure.eventhub.aio import EventHubProducerClient  # The package name suffixed with ".aio" for async
 from azure.eventhub import EventData
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
-event_hub_path = '<< NAME OF THE EVENT HUB >>'
-
-event_list = []
-for i in range(10):
-    event_list.append(EventData(b"A single event"))
-
-async def send():
-    client = EventHubProducerClient.from_connection_string(connection_str, event_hub_path=event_hub_path)
-    async with client:
-        await client.send(event_list)  # Send a list of events
-        await client.send(EventData(b"A single event"))  # Send a single event
-
-if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(send())
-```
-
-#### Send a batch of events
-
-Use the `create_batch` method on `EventHubProcuer` to create an `EventDataBatch` object which can then be sent using the `send` method.
-Events may be added to the `EventDataBatch` using the `try_add` method until the maximum batch size limit in bytes has been reached.
-```python
-import asyncio
-from azure.eventhub.aio import EventHubProducerClient
-from azure.eventhub import EventData
-
-connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
-event_hub_path = '<< NAME OF THE EVENT HUB >>'
+eventhub_name = '<< NAME OF THE EVENT HUB >>'
 
 async def create_batch(client):
     event_data_batch = await client.create_batch(max_size=10000)
     can_add = True
     while can_add:
         try:
-            event_data_batch.try_add(EventData('Message inside EventBatchData'))
+            event_data_batch.add(EventData('Message inside EventBatchData'))
         except ValueError:
             can_add = False  # EventDataBatch object reaches max_size.
     return event_data_batch
 
 async def send():
-    client = EventHubProducerClient.from_connection_string(connection_str, event_hub_path=event_hub_path)
+    client = EventHubProducerClient.from_connection_string(connection_str, eventhub_name=eventhub_name)
     batch_data = await create_batch(client)
     async with client:
-        await client.send(batch_data)
+        await client.send_batch(batch_data)
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(send())
 ```
 
-### Async consume events from an Event Hub
+### Consume events from an Event Hub asynchronously
 
 Consume events asynchronously from an EventHub.
 
@@ -269,7 +224,7 @@ import asyncio
 from azure.eventhub.aio import EventHubConsumerClient
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
-event_hub_path = '<< NAME OF THE EVENT HUB >>'
+eventhub_name = '<< NAME OF THE EVENT HUB >>'
 
 logger = logging.getLogger("azure.eventhub")
 
@@ -277,18 +232,18 @@ async def on_event(partition_context, event):
     logger.info("Received event from partition {}".format(partition_context.partition_id))
 
 async def receive():
-    client = EventHubConsumerClient.from_connection_string(connection_str, event_hub_path=event_hub_path)
+    client = EventHubConsumerClient.from_connection_string(connection_str, eventhub_name=eventhub_name)
     async with client:
-        received = await client.receive(on_event=on_event, consumer_group='$Default')
+        await client.receive(on_event=on_event, consumer_group='$Default')
         # receive events from specified partition:
-        # received = await client.receive(on_event=on_event, consumer_group='$Default', partition_id='0')
+        # await client.receive(on_event=on_event, consumer_group='$Default', partition_id='0')
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(receive())
 ```
 
-### Consume events using a partition manager
+### Consume events and save checkpoints using a checkpoint store
 
 `EventHubConsumerClient` is a high level construct which allows you to receive events from multiple partitions at once 
 and load balance with other consumers using the same Event Hub and consumer group.
@@ -296,42 +251,35 @@ and load balance with other consumers using the same Event Hub and consumer grou
 This also allows the user to track progress when events are processed using checkpoints.
 
 A checkpoint is meant to represent the last successfully processed event by the user from a particular partition of
-a consumer group in an Event Hub instance.The `EventHubConsumerClient` uses an instance of PartitionManager to update checkpoints
+a consumer group in an Event Hub instance. The `EventHubConsumerClient` uses an instance of `CheckpointStore` to update checkpoints
 and to store the relevant information required by the load balancing algorithm.
 
 Search pypi with the prefix `azure-eventhub-checkpointstore` to
-find packages that support this and use the PartitionManager implementation from one such package. Please note that both sync and async libraries are provided.
+find packages that support this and use the `CheckpointStore` implementation from one such package. Please note that both sync and async libraries are provided.
 
 In the below example, we create an instance of `EventHubConsumerClient` and use a `BlobCheckpointStore`. You need
 to [create an Azure Storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal)
 and a [Blob Container](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container) to run the code.
 
-[Azure Blob Storage Partition Manager Async](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio)
+[Azure Blob Storage Checkpoint Store Async](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio)
 and [Azure Blob Storage Checkpoint Store Sync](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob)
-are one of the `PartitionManager` implementations we provide that applies Azure Blob Storage as the persistent store.
+are one of the `CheckpointStore` implementations we provide that applies Azure Blob Storage as the persistent store.
 
 
 ```python
 import asyncio
 
 from azure.eventhub.aio import EventHubConsumerClient
-from azure.storage.blob.aio import ContainerClient
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
-RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
-RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
-event_hub_path = '<< NAME OF THE EVENT HUB >>'
+eventhub_name = '<< NAME OF THE EVENT HUB >>'
 storage_connection_str = '<< CONNECTION STRING FOR THE STORAGE >>'
 container_name = '<<STRING FOR THE BLOB NAME>>'
 
-async def do_operation(event):
-    # do some sync or async operations. If the operation is i/o intensive, async will have better performance
-    print(event)
-
-
 async def process_event(partition_context, event):
-    await partition_context.update_checkpoint(event)
+    # do something
+    await partition_context.update_checkpoint(event)  # Or update_checkpoint every N events for better performance.
 
 async def receive(client):
     try:
@@ -343,7 +291,7 @@ async def main():
     checkpoint_store = BlobCheckpointStore.from_connection_string(storage_connection_str, container_name)
     client = EventHubConsumerClient.from_connection_string(
         connection_str,
-        event_hub_path=event_hub_path,
+        eventhub_name=eventhub_name,
         checkpoint_store=checkpoint_store,  # For load balancing and checkpoint. Leave None for no load balancing
     )
     async with client:
@@ -376,13 +324,12 @@ partition_ids = client.get_partition_ids()
 
 ### General
 
-The Event Hubs APIs generate the following exceptions.
+The Event Hubs APIs generate the following exceptions in azure.eventhub.exceptions
 
 - **AuthenticationError:** Failed to authenticate because of wrong address, SAS policy/key pair, SAS token or azure identity.
 - **ConnectError:** Failed to connect to the EventHubs. The AuthenticationError is a type of ConnectError.
 - **ConnectionLostError:** Lose connection after a connection has been built.
-- **EventDataError:** The EventData to be sent fails data validation. 
-For instance, this error is raised if you try to send an EventData that is already sent.
+- **EventDataError:** The EventData to be sent fails data validation. For instance, this error is raised if you try to send an EventData that is already sent.
 - **EventDataSendError:** The Eventhubs service responds with an error when an EventData is sent.
 - **OperationTimeoutError:** EventHubConsumer.send() times out.
 - **EventHubError:** All other Eventhubs related errors. It is also the root error class of all the errors described above.
