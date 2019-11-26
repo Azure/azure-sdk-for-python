@@ -117,7 +117,7 @@ The following sections provide several code snippets covering some of the most c
 - [Consume events from an Event Hub](#consume-events-from-an-event-hub)
 - [Async publish events to an Event Hub](#async-publish-events-to-an-event-hub)
 - [Async consume events from an Event Hub](#async-consume-events-from-an-event-hub)
-- [Consume events using a checkpoint store](#consume-events-using-a-partition-manager)
+- [Consume events and save checkpoint using a checkpoint store](#consume-events-and-save-checkpoint-using-a-checkpoint-store)
 - [Use EventHubConsumerClient to work with IoT Hub](#use-eventhubconsumerclient-to-work-with-iot-hub)
 
 ### Inspect an Event Hub
@@ -272,7 +272,6 @@ import asyncio
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
-RETRY_TOTAL = 3  # max number of retries if receiving events raises an error
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
 storage_connection_str = '<< CONNECTION STRING FOR THE STORAGE >>'
