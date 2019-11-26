@@ -1552,6 +1552,8 @@ class ApiRevisionContract(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar api_id: Identifier of the API Revision.
     :vartype api_id: str
     :ivar api_revision: Revision number of API.
@@ -1575,6 +1577,7 @@ class ApiRevisionContract(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
         'api_id': {'readonly': True},
         'api_revision': {'readonly': True, 'max_length': 100, 'min_length': 1},
         'created_date_time': {'readonly': True},
@@ -1586,6 +1589,7 @@ class ApiRevisionContract(Model):
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'api_id': {'key': 'apiId', 'type': 'str'},
         'api_revision': {'key': 'apiRevision', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
@@ -1598,6 +1602,7 @@ class ApiRevisionContract(Model):
 
     def __init__(self, **kwargs):
         super(ApiRevisionContract, self).__init__(**kwargs)
+        self.id = None
         self.api_id = None
         self.api_revision = None
         self.created_date_time = None
@@ -5085,15 +5090,19 @@ class PolicyDescriptionCollection(Model):
     :param value: Descriptions of APIM policies.
     :type value:
      list[~azure.mgmt.apimanagement.models.PolicyDescriptionContract]
+    :param count: Total record count number.
+    :type count: long
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[PolicyDescriptionContract]'},
+        'count': {'key': 'count', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
         super(PolicyDescriptionCollection, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
+        self.count = kwargs.get('count', None)
 
 
 class PolicyDescriptionContract(Resource):
@@ -6332,56 +6341,12 @@ class SchemaContract(Resource):
      `OpenApi` Schema use `application/vnd.oai.openapi.components+json` </br> -
      `WADL Schema` use `application/vnd.ms-azure-apim.wadl.grammars+xml`.
     :type content_type: str
-    :param document: Properties of the Schema Document.
-    :type document: object
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'content_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'content_type': {'key': 'properties.contentType', 'type': 'str'},
-        'document': {'key': 'properties.document', 'type': 'object'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SchemaContract, self).__init__(**kwargs)
-        self.content_type = kwargs.get('content_type', None)
-        self.document = kwargs.get('document', None)
-
-
-class SchemaCreateOrUpdateContract(Resource):
-    """Schema Contract details.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type for API Management resource.
-    :vartype type: str
-    :param content_type: Required. Must be a valid a media type used in a
-     Content-Type header as defined in the RFC 2616. Media type of the schema
-     document (e.g. application/json, application/xml). </br> - `Swagger`
-     Schema use `application/vnd.ms-azure-apim.swagger.definitions+json` </br>
-     - `WSDL` Schema use `application/vnd.ms-azure-apim.xsd+xml` </br> -
-     `OpenApi` Schema use `application/vnd.oai.openapi.components+json` </br> -
-     `WADL Schema` use `application/vnd.ms-azure-apim.wadl.grammars+xml`.
-    :type content_type: str
     :param value: Json escaped string defining the document representing the
-     Schema.
+     Schema. Used for schemas other than Swagger/OpenAPI.
     :type value: str
+    :param definitions: Types definitions. Used for Swagger/OpenAPI schemas
+     only, null otherwise.
+    :type definitions: object
     """
 
     _validation = {
@@ -6397,12 +6362,14 @@ class SchemaCreateOrUpdateContract(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'content_type': {'key': 'properties.contentType', 'type': 'str'},
         'value': {'key': 'properties.document.value', 'type': 'str'},
+        'definitions': {'key': 'properties.document.definitions', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(SchemaCreateOrUpdateContract, self).__init__(**kwargs)
+        super(SchemaContract, self).__init__(**kwargs)
         self.content_type = kwargs.get('content_type', None)
         self.value = kwargs.get('value', None)
+        self.definitions = kwargs.get('definitions', None)
 
 
 class SubscriptionContract(Resource):
