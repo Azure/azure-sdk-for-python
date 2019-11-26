@@ -11,7 +11,7 @@ import datetime
 
 from azure import eventhub
 from azure.eventhub import EventData, EventHubClient, Offset
-
+from uamqp.errors import MessageHandlerError
 
 # def test_receive_without_events(connstr_senders):
 #     connection_str, senders = connstr_senders
@@ -32,6 +32,66 @@ from azure.eventhub import EventData, EventHubClient, Offset
 #         raise
 #     finally:
 #         client.stop()
+
+
+@pytest.mark.liveTest
+def test_receive_fail_max_retries(connstr_senders):
+    connection_str, senders = connstr_senders
+    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    receiver = client.add_receiver("$default", "0", offset=Offset('@latest'))
+    try:
+        client.run()
+
+        senders[0].send(EventData(b"Receiving only a single event"))
+        received = receiver.receive(timeout=2)
+        assert len(received) == 1
+        
+        # Intentially break the receiver.
+        receiver.retries = 0
+        def _fail_receive(**kwargs):
+            print("FAILING TO RECEIVE")
+            receiver.retries += 1
+            raise MessageHandlerError()
+        receiver._handler.receive_message_batch = _fail_receive
+
+        senders[0].send(EventData(b"Receiving only a single event"))
+        received = receiver.receive(timeout=2, max_reconnect_retries=0)
+        assert len(received) == 0
+        assert receiver.retries == 1
+    except:
+        raise
+    finally:
+        client.stop()
+
+
+@pytest.mark.liveTest
+def test_receive_fail_then_succeed(connstr_senders):
+    connection_str, senders = connstr_senders
+    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    receiver = client.add_receiver("$default", "0", offset=Offset('@latest'))
+    try:
+        client.run()
+
+        senders[0].send(EventData(b"Receiving only a single event"))
+        received = receiver.receive(timeout=2)
+        assert len(received) == 1
+        
+        # Intentially break the receiver.
+        receiver.retries = 0
+        def _fail_receive(**kwargs):
+            receiver.retries += 1
+            if receiver.retries == 1:
+                raise MessageHandlerError()
+        receiver._handler.receive_message_batch = _fail_receive
+
+        senders[0].send(EventData(b"Receiving only a single event"))
+        received = receiver.receive(timeout=2, max_reconnect_retries=3)
+        assert len(received) == 1
+        assert receiver.retries == 1
+    except:
+        raise
+    finally:
+        client.stop()  
 
 
 @pytest.mark.liveTest
