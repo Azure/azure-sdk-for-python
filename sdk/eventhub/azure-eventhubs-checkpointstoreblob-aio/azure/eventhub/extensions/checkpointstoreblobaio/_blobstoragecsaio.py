@@ -6,8 +6,8 @@ from typing import Iterable, Dict, Any, Optional
 import logging
 from collections import defaultdict
 import asyncio
-from azure.eventhub.exceptions import OwnershipLostError  # type: ignore  #pylint:disable=no-name-in-module
-from azure.eventhub.aio import CheckpointStore  # type: ignore
+from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
+from azure.eventhub.aio import CheckpointStore  # pylint: disable=no-name-in-module
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError  # type: ignore
 from azure.storage.blob.aio import ContainerClient, BlobClient  # type: ignore
 
