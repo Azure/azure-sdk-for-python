@@ -13,7 +13,10 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import SubscriptionClientConfiguration
-from .operations import SubscriptionsOperations
+from .operations import GetOperationStatusOperations
+from .operations import SupportPlanOperations
+from .operations import SupportPlanDefaultOperations
+from .operations import PurchaseSupportPlanOperations
 from . import models
 
 
@@ -23,8 +26,14 @@ class SubscriptionClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: SubscriptionClientConfiguration
 
-    :ivar subscriptions: Subscriptions operations
-    :vartype subscriptions: azure.mgmt.subscription.operations.SubscriptionsOperations
+    :ivar get_operation_status: GetOperationStatus operations
+    :vartype get_operation_status: azure.mgmt.subscription.operations.GetOperationStatusOperations
+    :ivar support_plan: SupportPlan operations
+    :vartype support_plan: azure.mgmt.subscription.operations.SupportPlanOperations
+    :ivar support_plan_default: SupportPlanDefault operations
+    :vartype support_plan_default: azure.mgmt.subscription.operations.SupportPlanDefaultOperations
+    :ivar purchase_support_plan: PurchaseSupportPlan operations
+    :vartype purchase_support_plan: azure.mgmt.subscription.operations.PurchaseSupportPlanOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -43,5 +52,11 @@ class SubscriptionClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.subscriptions = SubscriptionsOperations(
+        self.get_operation_status = GetOperationStatusOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.support_plan = SupportPlanOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.support_plan_default = SupportPlanDefaultOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.purchase_support_plan = PurchaseSupportPlanOperations(
             self._client, self.config, self._serialize, self._deserialize)

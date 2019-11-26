@@ -10,31 +10,43 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import CanceledSubscriptionId
-    from ._models_py3 import EnabledSubscriptionId
+    from ._models_py3 import DefaultSupportPlanResponseResult
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
-    from ._models_py3 import RenamedSubscriptionId
+    from ._models_py3 import OperationName
+    from ._models_py3 import OperationStatusResponseResult
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import PurchaseSupportResponseResult
     from ._models_py3 import SubscriptionName
+    from ._models_py3 import SupportPlanName
+    from ._models_py3 import SupportPlanResponseResult
 except (SyntaxError, ImportError):
-    from ._models import CanceledSubscriptionId
-    from ._models import EnabledSubscriptionId
+    from ._models import DefaultSupportPlanResponseResult
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import OperationListResult
-    from ._models import RenamedSubscriptionId
+    from ._models import OperationName
+    from ._models import OperationStatusResponseResult
+    from ._models import ProxyResource
+    from ._models import PurchaseSupportResponseResult
     from ._models import SubscriptionName
+    from ._models import SupportPlanName
+    from ._models import SupportPlanResponseResult
 
 __all__ = [
-    'CanceledSubscriptionId',
-    'EnabledSubscriptionId',
+    'DefaultSupportPlanResponseResult',
     'ErrorResponse', 'ErrorResponseException',
     'Operation',
     'OperationDisplay',
     'OperationListResult',
-    'RenamedSubscriptionId',
+    'OperationName',
+    'OperationStatusResponseResult',
+    'ProxyResource',
+    'PurchaseSupportResponseResult',
     'SubscriptionName',
+    'SupportPlanName',
+    'SupportPlanResponseResult',
 ]

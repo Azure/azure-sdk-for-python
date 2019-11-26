@@ -13,29 +13,6 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
-class CanceledSubscriptionId(Model):
-    """The ID of the canceled subscription.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar value: The ID of the canceled subscription
-    :vartype value: str
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(CanceledSubscriptionId, self).__init__(**kwargs)
-        self.value = None
-
-
 class CloudError(Model):
     """CloudError.
     """
@@ -44,27 +21,76 @@ class CloudError(Model):
     }
 
 
-class EnabledSubscriptionId(Model):
-    """The ID of the subscriptions that is being enabled.
+class ProxyResource(Model):
+    """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The ID of the subscriptions that is being enabled
-    :vartype value: str
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
     """
 
     _validation = {
-        'value': {'readonly': True},
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(EnabledSubscriptionId, self).__init__(**kwargs)
-        self.value = None
+        super(ProxyResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class DefaultSupportPlanResponseResult(ProxyResource):
+    """A SupportPlan resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param plan_type: Possible values include: 'basic_support',
+     'developer_support', 'standard_support', 'prodirect_support'
+    :type plan_type: str or ~azure.mgmt.subscription.models.enum
+    :param end_date: the end date
+    :type end_date: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'plan_type': {'key': 'properties.planType', 'type': 'str'},
+        'end_date': {'key': 'properties.endDate', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DefaultSupportPlanResponseResult, self).__init__(**kwargs)
+        self.plan_type = kwargs.get('plan_type', None)
+        self.end_date = kwargs.get('end_date', None)
 
 
 class ErrorResponse(Model):
@@ -166,13 +192,13 @@ class OperationListResult(Model):
         self.next_link = kwargs.get('next_link', None)
 
 
-class RenamedSubscriptionId(Model):
-    """The ID of the subscriptions that is being renamed.
+class OperationName(Model):
+    """The operation Name parameter.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The ID of the subscriptions that is being renamed
+    :ivar value: The operation Name
     :vartype value: str
     """
 
@@ -185,8 +211,50 @@ class RenamedSubscriptionId(Model):
     }
 
     def __init__(self, **kwargs):
-        super(RenamedSubscriptionId, self).__init__(**kwargs)
+        super(OperationName, self).__init__(**kwargs)
         self.value = None
+
+
+class OperationStatusResponseResult(Model):
+    """Purchase Record result.
+
+    :param plan_type: Possible values include: 'basic_support',
+     'developer_support', 'standard_support', 'prodirect_support'
+    :type plan_type: str or ~azure.mgmt.subscription.models.enum
+    :param end_date: the end date
+    :type end_date: str
+    """
+
+    _attribute_map = {
+        'plan_type': {'key': 'planType', 'type': 'str'},
+        'end_date': {'key': 'endDate', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(OperationStatusResponseResult, self).__init__(**kwargs)
+        self.plan_type = kwargs.get('plan_type', None)
+        self.end_date = kwargs.get('end_date', None)
+
+
+class PurchaseSupportResponseResult(Model):
+    """A list of containing support plan result.
+
+    :param plan_type: Possible values include: 'basic_support',
+     'developer_support', 'standard_support', 'prodirect_support'
+    :type plan_type: str or ~azure.mgmt.subscription.models.enum
+    :param end_date: the end date
+    :type end_date: str
+    """
+
+    _attribute_map = {
+        'plan_type': {'key': 'planType', 'type': 'str'},
+        'end_date': {'key': 'endDate', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PurchaseSupportResponseResult, self).__init__(**kwargs)
+        self.plan_type = kwargs.get('plan_type', None)
+        self.end_date = kwargs.get('end_date', None)
 
 
 class SubscriptionName(Model):
@@ -203,3 +271,49 @@ class SubscriptionName(Model):
     def __init__(self, **kwargs):
         super(SubscriptionName, self).__init__(**kwargs)
         self.subscription_name = kwargs.get('subscription_name', None)
+
+
+class SupportPlanName(Model):
+    """The supportPlan Name.
+
+    :param plan_type: Possible values include: 'basic_support',
+     'developer_support', 'standard_support', 'prodirect_support'
+    :type plan_type: str or ~azure.mgmt.subscription.models.enum
+    """
+
+    _attribute_map = {
+        'plan_type': {'key': 'planType', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SupportPlanName, self).__init__(**kwargs)
+        self.plan_type = kwargs.get('plan_type', None)
+
+
+class SupportPlanResponseResult(Model):
+    """Support plan result.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: The list of Support plan.
+    :vartype value:
+     list[~azure.mgmt.subscription.models.DefaultSupportPlanResponseResult]
+    :ivar next_link: The link (url) to the next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DefaultSupportPlanResponseResult]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SupportPlanResponseResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
