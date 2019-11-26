@@ -98,7 +98,7 @@ class CapacityPool(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'pool_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
-        'size': {'required': True, 'maximum': 549755813888000, 'minimum': 4398046511104},
+        'size': {'required': True},
         'service_level': {'required': True},
         'provisioning_state': {'readonly': True},
     }
