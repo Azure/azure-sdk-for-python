@@ -87,7 +87,7 @@ class DigestConfig(Model):
     :param action_group_resource_id: Action group resource id used by digest.
     :type action_group_resource_id: str
     :param frequency: Frequency that digest will be triggered. Value must
-     conform to ISO 8601 standard and must be greater than equal to 1 day and
+     conform to ISO 8601 standard and must be greater than equal to 7 day and
      less than or equal to 30 days.
     :type frequency: datetime
     :param categories: Categories to send digest for. If categories are not
