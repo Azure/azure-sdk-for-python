@@ -13,33 +13,24 @@ These code samples show common scenario operations with the Azure Text Analytics
 The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations 
 with Text Analytics and require Python 3.5 or later. 
 
+Authenticate the client with a Cognitive Services/Text Analytics subscription key or a token credential from [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity):
+* [sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_authentication.py)
 
-* Authenticate the client with a Cognitive Services/Text Analytics subscription key or a token credential from azure.identity
-    * [sample_authentication.py](TODO)
+In a batch of documents:
+* Detect language: [sample_detect_language.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_detect_language.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_detect_language_async.py))
+* Recognize entities: [sample_recognize_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_recognize_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_recognize_entities_async.py))
+* Recognize linked entities: [sample_recognize_linked_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_recognize_linked_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_recognize_linked_entities_async.py))
+* Recognize personally identifiable information: [sample_recognize_pii_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_recognize_pii_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py))
+* Extract key phrases: [sample_extract_key_phrases.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_extract_key_phrases.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_extract_key_phrases_async.py))
+* Analyze sentiment: [sample_analyze_sentiment.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_analyze_sentiment.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_analyze_sentiment_async.py))
 
-* Detect language
-    * In a batch of documents: [sample_detect_language.py](TODO) ([async version](TODO))
-    * In a single string of text: [sample_single_detect_language.py](TODO) ([async version](TODO))
-
-* Recognize entities
-    * In a batch of documents: [sample_recognize_entities.py](TODO) ([async version](TODO))
-    * In a single string of text:[sample_single_recognize_entities.py](TODO) ([async version](TODO))
-
-* Recognize linked entities
-    * In a batch of documents: [sample_recognize_linked_entities.py](TODO) ([async version](TODO))
-    * In a single string of text:[sample_single_recognize_linked_entities.py](TODO) ([async version](TODO))
-
-* Recognize personally identifiable information
-    * In a batch of documents: [sample_recognize_pii_entities.py](TODO) ([async version](TODO))
-    * In a single string of text:[sample_single_recognize_pii_entities.py](TODO) ([async version](TODO))
-
-* Extract key phrases
-   * In a batch of documents: [sample_extract_key_phrases.py](TODO) ([async version](TODO))
-   * In a single string of text: [sample_single_extract_key_phrases.py](TODO) ([async version](TODO))
-
-* Analyze sentiment in a sentence
-    * In a batch of documents: [sample_analyze_sentiment.py](TODO) ([async version](TODO))
-    * In a single string of text: [sample_single_analyze_sentiment.py](TODO) ([async version](TODO))
+In a single string of text:
+* Detect language: [sample_single_detect_language.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_single_detect_language.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_single_detect_language_async.py))
+* Recognize entities: [sample_single_recognize_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_single_recognize_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_single_recognize_entities_async.py))
+* Recognize linked entities: [sample_single_recognize_linked_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_single_recognize_linked_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_single_recognize_linked_entities_async.py))
+* Recognize personally identifiable information: [sample_single_recognize_pii_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_single_recognize_pii_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_single_recognize_pii_entities_async.py))
+* Extract key phrases: [sample_single_extract_key_phrases.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_single_extract_key_phrases.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_single_extract_key_phrases_async.py))
+* Analyze sentiment: [sample_single_analyze_sentiment.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/sample_single_analyze_sentiment.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-language-textanalytics/samples/async_samples/sample_single_analyze_sentiment_async.py))
 
 ## Prerequisites
 * Python 2.7, or 3.5 or later is required to use this package (3.5 or later if using asyncio)
@@ -65,5 +56,5 @@ pip install azure-cognitiveservices-language-textanalytics --pre
 
 ## Next steps
 
-Check out the [API reference documentation](TODO) to learn more about
+Check out the [API reference documentation](https://westus.dev.cognitive.microsoft.com/docs/services/TextAnalytics-v3-0-Preview-1/operations/Languages) to learn more about
 what you can do with the Azure Text Analytics client library.

@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import ResourceGroupPreparer
 from devtools_testutils.cognitiveservices_testcase import CognitiveServiceTest, CognitiveServicesAccountPreparer
@@ -15,6 +16,19 @@ from azure.cognitiveservices.language.textanalytics import (
 
 
 class BatchTextAnalyticsTest(CognitiveServiceTest):
+
+    @pytest.mark.live_test_only
+    def test_active_directory_auth(self):
+        token = self.generate_oauth_token()
+        endpoint = self.get_oauth_endpoint()
+        text_analytics = TextAnalyticsClient(endpoint, token)
+
+        docs = [{"id": "1", "text": "I should take my cat to the veterinarian."},
+                {"id": "2", "text": "Este es un document escrito en Español."},
+                {"id": "3", "text": "猫は幸せ"},
+                {"id": "4", "text": "Fahrt nach Stuttgart und dann zum Hotel zu Fu."}]
+
+        response = text_analytics.detect_language(docs)
 
     @ResourceGroupPreparer()
     @CognitiveServicesAccountPreparer(name_prefix="pycog")
