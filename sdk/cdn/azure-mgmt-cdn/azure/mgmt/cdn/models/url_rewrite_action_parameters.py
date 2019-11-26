@@ -24,14 +24,16 @@ class UrlRewriteActionParameters(Model):
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlRewriteActionParameters" .
     :vartype odatatype: str
     :param source_pattern: Required. define a request URI pattern that
-     identifies the type of requests that may be rewritten. If value is blank,
-     all strings are matched.
+     identifies the type of requests that may be rewritten. Currently, source
+     pattern uses a prefix-based match. To match all URL paths, use "/" as the
+     source pattern value. To match only the root directory and re-write this
+     path, use the origin path field
     :type source_pattern: str
-    :param destination: Required. Define the relative URL to which the above
-     requests will be rewritten by.
+    :param destination: Required. Define the destination path for be used in
+     the rewrite. This will overwrite the source pattern
     :type destination: str
-    :param preserve_unmatched_path: Whether to preserve unmatched path.
-     Default value is true.
+    :param preserve_unmatched_path: If True, the remaining path after the
+     source pattern will be appended to the new destination path.
     :type preserve_unmatched_path: bool
     """
 
