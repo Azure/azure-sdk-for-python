@@ -4,6 +4,9 @@
 
 **Breaking changes**
 
+- All exceptions should now be imported from `azure.eventhub.exceptions`.
+- Introduced separate `EventHubSharedKeyCredential` objects for synchronous and asynchronous operations.
+  For async, import the credentials object from the `azure.eventhub.aio` namespace.
 - `EventData`
     - Renamed property `application_properties` to `properties`.
     - `EventData` no longer has attribute `last_enqueued_event_properties` - use this on `PartitionContext` instead.
