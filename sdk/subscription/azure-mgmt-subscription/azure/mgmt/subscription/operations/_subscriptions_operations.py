@@ -11,9 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
-from msrest.polling import LROPoller, NoPolling
-from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -27,6 +24,7 @@ class SubscriptionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar api_version: Version of the API to be used with the client request. Current version is 2019-10-01-preview. Constant value: "2019-10-01-preview".
     """
 
     models = models
@@ -36,6 +34,7 @@ class SubscriptionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2019-10-01-preview"
 
         self.config = config
 
@@ -56,8 +55,6 @@ class SubscriptionsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
         """
-        api_version = "2019-03-01-preview"
-
         # Construct URL
         url = self.cancel.metadata['url']
         path_format_arguments = {
@@ -67,7 +64,7 @@ class SubscriptionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -118,8 +115,6 @@ class SubscriptionsOperations(object):
         """
         body = models.SubscriptionName(subscription_name=subscription_name)
 
-        api_version = "2019-03-01-preview"
-
         # Construct URL
         url = self.rename.metadata['url']
         path_format_arguments = {
@@ -129,7 +124,7 @@ class SubscriptionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -180,8 +175,6 @@ class SubscriptionsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
         """
-        api_version = "2019-03-01-preview"
-
         # Construct URL
         url = self.enable.metadata['url']
         path_format_arguments = {
@@ -191,7 +184,7 @@ class SubscriptionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -220,553 +213,3 @@ class SubscriptionsOperations(object):
 
         return deserialized
     enable.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Subscription/enable'}
-
-
-    def _create_subscription_initial(
-            self, billing_account_name, invoice_section_name, body, custom_headers=None, raw=False, **operation_config):
-        api_version = "2018-11-01-preview"
-
-        # Construct URL
-        url = self.create_subscription.metadata['url']
-        path_format_arguments = {
-            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
-            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(body, 'ModernSubscriptionCreationParameters')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 202]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        header_dict = {}
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('SubscriptionCreationResult', response)
-            header_dict = {
-                'Location': 'str',
-                'Retry-After': 'int',
-            }
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            client_raw_response.add_headers(header_dict)
-            return client_raw_response
-
-        return deserialized
-
-    def create_subscription(
-            self, billing_account_name, invoice_section_name, body, custom_headers=None, raw=False, polling=True, **operation_config):
-        """The operation to create a new WebDirect or EA Azure subscription.
-
-        :param billing_account_name: The name of the Microsoft Customer
-         Agreement billing account for which you want to create the
-         subscription.
-        :type billing_account_name: str
-        :param invoice_section_name: The name of the invoice section in the
-         billing account for which you want to create the subscription.
-        :type invoice_section_name: str
-        :param body: The subscription creation parameters.
-        :type body:
-         ~azure.mgmt.subscription.models.ModernSubscriptionCreationParameters
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns
-         SubscriptionCreationResult or
-         ClientRawResponse<SubscriptionCreationResult> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.subscription.models.SubscriptionCreationResult]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.subscription.models.SubscriptionCreationResult]]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
-        """
-        raw_result = self._create_subscription_initial(
-            billing_account_name=billing_account_name,
-            invoice_section_name=invoice_section_name,
-            body=body,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            header_dict = {
-                'Location': 'str',
-                'Retry-After': 'int',
-            }
-            deserialized = self._deserialize('SubscriptionCreationResult', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                client_raw_response.add_headers(header_dict)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_subscription.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/providers/Microsoft.Subscription/createSubscription'}
-
-
-    def _create_subscription_under_billing_profile_initial(
-            self, billing_account_name, billing_profile_name, invoice_section_name, body, custom_headers=None, raw=False, **operation_config):
-        api_version = "2018-11-01-preview"
-
-        # Construct URL
-        url = self.create_subscription_under_billing_profile.metadata['url']
-        path_format_arguments = {
-            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
-            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
-            'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(body, 'ModernSubscriptionCreationParameters')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 202]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        header_dict = {}
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('SubscriptionCreationResult', response)
-            header_dict = {
-                'Location': 'str',
-                'Retry-After': 'int',
-            }
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            client_raw_response.add_headers(header_dict)
-            return client_raw_response
-
-        return deserialized
-
-    def create_subscription_under_billing_profile(
-            self, billing_account_name, billing_profile_name, invoice_section_name, body, custom_headers=None, raw=False, polling=True, **operation_config):
-        """The operation to create a new WebDirect or EA Azure subscription (under
-        billingProfiles).
-
-        :param billing_account_name: The name of the Microsoft Customer
-         Agreement billing account for which you want to create the
-         subscription.
-        :type billing_account_name: str
-        :param billing_profile_name: The name of the billing profile in the
-         billing account for which you want to create the subscription.
-        :type billing_profile_name: str
-        :param invoice_section_name: The name of the invoice section in the
-         billing account for which you want to create the subscription.
-        :type invoice_section_name: str
-        :param body: The subscription creation parameters.
-        :type body:
-         ~azure.mgmt.subscription.models.ModernSubscriptionCreationParameters
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns
-         SubscriptionCreationResult or
-         ClientRawResponse<SubscriptionCreationResult> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.subscription.models.SubscriptionCreationResult]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.subscription.models.SubscriptionCreationResult]]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
-        """
-        raw_result = self._create_subscription_under_billing_profile_initial(
-            billing_account_name=billing_account_name,
-            billing_profile_name=billing_profile_name,
-            invoice_section_name=invoice_section_name,
-            body=body,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            header_dict = {
-                'Location': 'str',
-                'Retry-After': 'int',
-            }
-            deserialized = self._deserialize('SubscriptionCreationResult', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                client_raw_response.add_headers(header_dict)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_subscription_under_billing_profile.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/providers/Microsoft.Subscription/createSubscription'}
-
-
-    def _create_csp_subscription_initial(
-            self, billing_account_name, customer_name, body, custom_headers=None, raw=False, **operation_config):
-        api_version = "2018-11-01-preview"
-
-        # Construct URL
-        url = self.create_csp_subscription.metadata['url']
-        path_format_arguments = {
-            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
-            'customerName': self._serialize.url("customer_name", customer_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(body, 'ModernCspSubscriptionCreationParameters')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 202]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        header_dict = {}
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('SubscriptionCreationResult', response)
-            header_dict = {
-                'Location': 'str',
-                'Retry-After': 'int',
-            }
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            client_raw_response.add_headers(header_dict)
-            return client_raw_response
-
-        return deserialized
-
-    def create_csp_subscription(
-            self, billing_account_name, customer_name, body, custom_headers=None, raw=False, polling=True, **operation_config):
-        """The operation to create a new CSP subscription.
-
-        :param billing_account_name: The name of the Microsoft Customer
-         Agreement billing account for which you want to create the
-         subscription.
-        :type billing_account_name: str
-        :param customer_name: The name of the customer.
-        :type customer_name: str
-        :param body: The subscription creation parameters.
-        :type body:
-         ~azure.mgmt.subscription.models.ModernCspSubscriptionCreationParameters
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns
-         SubscriptionCreationResult or
-         ClientRawResponse<SubscriptionCreationResult> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.subscription.models.SubscriptionCreationResult]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.subscription.models.SubscriptionCreationResult]]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
-        """
-        raw_result = self._create_csp_subscription_initial(
-            billing_account_name=billing_account_name,
-            customer_name=customer_name,
-            body=body,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            header_dict = {
-                'Location': 'str',
-                'Retry-After': 'int',
-            }
-            deserialized = self._deserialize('SubscriptionCreationResult', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                client_raw_response.add_headers(header_dict)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_csp_subscription.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/customers/{customerName}/providers/Microsoft.Subscription/createSubscription'}
-
-    def list_locations(
-            self, subscription_id, custom_headers=None, raw=False, **operation_config):
-        """Gets all available geo-locations.
-
-        This operation provides all the locations that are available for
-        resource providers; however, each resource provider may support a
-        subset of this list.
-
-        :param subscription_id: The ID of the target subscription.
-        :type subscription_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Location
-        :rtype:
-         ~azure.mgmt.subscription.models.LocationPaged[~azure.mgmt.subscription.models.Location]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        api_version = "2016-06-01"
-
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_locations.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.LocationPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_locations.metadata = {'url': '/subscriptions/{subscriptionId}/locations'}
-
-    def get(
-            self, subscription_id, custom_headers=None, raw=False, **operation_config):
-        """Gets details about a specified subscription.
-
-        :param subscription_id: The ID of the target subscription.
-        :type subscription_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Subscription or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.subscription.models.Subscription or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        api_version = "2016-06-01"
-
-        # Construct URL
-        url = self.get.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('Subscription', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}'}
-
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Gets all subscriptions for a tenant.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Subscription
-        :rtype:
-         ~azure.mgmt.subscription.models.SubscriptionPaged[~azure.mgmt.subscription.models.Subscription]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        api_version = "2016-06-01"
-
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.SubscriptionPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list.metadata = {'url': '/subscriptions'}
