@@ -26,7 +26,7 @@
 
 from azure.core import PipelineClient
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import ContentDecodePolicy
+from azure.core.pipeline.policies import ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from .policies import ARMAutoResourceProviderRegistrationPolicy
 
@@ -50,6 +50,8 @@ class ARMPipelineClient(PipelineClient):
                 config.retry_policy,
                 config.custom_hook_policy,
                 config.logging_policy,
+                DistributedTracingPolicy(**kwargs),
+                HttpLoggingPolicy(**kwargs)
             ]
 
         if not transport:
