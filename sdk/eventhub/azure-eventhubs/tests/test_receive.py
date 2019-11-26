@@ -263,7 +263,6 @@ def test_receive_batch(connstr_senders):
 
 @pytest.mark.liveTest
 def test_receive_batch_with_app_prop_sync(connstr_senders):
-    pytest.skip("Waiting on uAMQP release")
     connection_str, senders = connstr_senders
 
     def batched():
@@ -297,6 +296,33 @@ def test_receive_batch_with_app_prop_sync(connstr_senders):
             assert list(message.body)[0] == "Event Data {}".format(index).encode('utf-8')
             assert (app_prop_key.encode('utf-8') in message.application_properties) \
                 and (dict(message.application_properties)[app_prop_key.encode('utf-8')] == app_prop_value.encode('utf-8'))
+    except:
+        raise
+    finally:
+        client.stop()
+
+@pytest.mark.liveTest
+def test_receive_app_properties_variations(connstr_senders):
+    connection_str, senders = connstr_senders
+    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    receiver = client.add_receiver("$default", "0", offset=Offset('@latest'))
+    try:
+        client.run()
+
+        received = receiver.receive(timeout=5)
+        assert len(received) == 0
+        event = EventData(b"Receiving only a single event")
+        key = "test"
+        val = "42"
+        event.application_properties[key] = val
+        senders[0].send(event)
+        received = receiver.receive(timeout=5)
+        assert len(received) == 1
+
+        assert received[0].body_as_str() == "Receiving only a single event"
+        assert list(received[-1].body)[0] == b"Receiving only a single event"
+        assert (key.encode('utf-8') in received[0].application_properties) \
+            and (dict(received[0].application_properties)[key.encode('utf-8')] == val.encode('utf-8'))
     except:
         raise
     finally:
