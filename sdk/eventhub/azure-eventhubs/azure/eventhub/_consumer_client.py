@@ -27,7 +27,7 @@ class EventHubConsumerClient(ClientBase):
     load-balancing and checkpointing.
 
     When multiple `EventHubConsumerClient` operate within one or more processes or machines targeting the same
-    checkpointing location, the will balance automatically.
+    checkpointing location, they will balance automatically.
     To enable the load-balancing and / or checkpointing, checkpoint_store must be set when creating the
     `EventHubConsumerClient`.
 
@@ -41,9 +41,9 @@ class EventHubConsumerClient(ClientBase):
     :param str eventhub_name: The path of the specific Event Hub to connect the client to.
     :param str consumer_group: Receive events from the event hub for this consumer group.
     :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
-     implements particular interface of getting tokens. It accepts
+     implements a particular interface for getting tokens. It accepts
      :class:`EventHubSharedKeyCredential<azure.eventhub.EventHubSharedKeyCredential>`, or credential objects generated
-     by the azure-identity library and objects that implement `get_token(self, *scopes)` method.
+     by the azure-identity library and objects that implement the `get_token(self, *scopes)` method.
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
@@ -51,8 +51,8 @@ class EventHubConsumerClient(ClientBase):
     :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs. Default
      value is 3.
     :keyword float idle_timeout: Timeout, in seconds, after which the underlying connection will close
-     if there is no further activity. By default the value is None, meaning that when to close an idle connection is
-     determined by the service.
+     if there is no further activity. By default the value is None, meaning that the service determines when to
+     close an idle connection.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Event Hubs service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.eventhub.TransportType
@@ -60,8 +60,9 @@ class EventHubConsumerClient(ClientBase):
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword checkpoint_store: Manager for storing the partition load-balancing and checkpoint data when receiving
-     events. If None, this `EventHubConsumerClient` instance will receive events without load-balancing and checkpoint.
-    :paramtype checkpoint_store: ~azure.eventhub.CheckpointStore
+     events. If None, this `EventHubConsumerClient` instance will receive events without load-balancing and
+     checkpointing. The checkpoint store will be used in both cases of receiving from all partitions or a single
+     partition, however in the latter case load-balancing does not apply.
     :keyword float load_balancing_interval: When load-balancing kicks in. This is the interval, in seconds,
      between two load-balancing evaluations. Default is 10 seconds.
 
@@ -134,14 +135,15 @@ class EventHubConsumerClient(ClientBase):
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :keyword float idle_timeout: Timeout in seconds after which the underlying connection will close
-         if there is no further activity. By default the value is None, meaning that when to close an idle
-         connection is determined by the service.
+         if there is no further activity. By default the value is None, meaning that the service determines when to
+         close an idle connection.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.eventhub.TransportType
         :keyword checkpoint_store: Manager for storing the partition load-balancing and checkpoint data when receiving
-         events. If None, this `EventHubConsumerClient` instance will receive events without
-         load-balancing and checkpointing.
+         events. If None, this `EventHubConsumerClient` instance will receive events without load-balancing and
+         checkpointing. The checkpoint store will be used in both cases of receiving from all partitions or a single
+         partition, however in the latter case load-balancing does not apply.
         :paramtype checkpoint_store: ~azure.eventhub.CheckpointStore
         :keyword float load_balancing_interval: When load-balancing kicks in. This is the interval, in seconds,
          between two load-balancing evaluations. Default is 10 seconds.
@@ -172,7 +174,7 @@ class EventHubConsumerClient(ClientBase):
          :class:`PartitionContext<azure.eventhub.PartitionContext>`.
         :type on_event: Callable[~azure.eventhub.PartitionContext, ~azure.eventhub.EventData]
         :keyword str partition_id: If specified, the client will receive from this partition only.
-         Otherwise the client will receive from all partition.
+         Otherwise the client will receive from all partitions.
         :keyword int owner_level: The priority for an exclusive consumer. An exclusive
          consumer will be created if owner_level is set. A consumer with a higher owner_level has higher exclusive
          priority. The owner level is also know as the 'epoch value' of the consumer.

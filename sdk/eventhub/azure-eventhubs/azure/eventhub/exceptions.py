@@ -108,7 +108,7 @@ class AuthenticationError(ConnectError):
 
 
 class EventDataError(EventHubError):
-    """Problematic event data that was prevented from sending by the client."""
+    """Client prevented problematic event data from being sent."""
 
 
 class EventDataSendError(EventHubError):

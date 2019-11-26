@@ -269,8 +269,8 @@ class EventDataBatch(object):
     def add(self, event_data):
         """Try to add an EventData to the batch.
 
-        The added size of the EventData is the sum of the body, properties, etc.
-        If this added size results in the batch exceeding the maximum batch-size, a `ValueError` will
+        The total size of an added event is the sum of its body, properties, etc.
+        If this added size results in the batch exceeding the maximum batch size, a `ValueError` will
         be raised.
 
         :param event_data: The EventData to add to the batch.

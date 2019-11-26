@@ -30,7 +30,7 @@ class PartitionContext(object):
     def last_enqueued_event_properties(self):
         """The latest enqueued event information.
 
-        This property will be updated each time an event is received when the receiver is created
+        This property will be updated each time an event is received if the receiver is created
         with `track_last_enqueued_event_properties` set to `True`.
         The properties dict includes following information of the last enqueued event:
 
