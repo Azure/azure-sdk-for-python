@@ -115,9 +115,9 @@ The following sections provide several code snippets covering some of the most c
 - [Inspect an Event Hub](#inspect-an-event-hub)
 - [Publish events to an Event Hub](#publish-events-to-an-event-hub)
 - [Consume events from an Event Hub](#consume-events-from-an-event-hub)
-- [Async publish events to an Event Hub](#async-publish-events-to-an-event-hub)
-- [Async consume events from an Event Hub](#async-consume-events-from-an-event-hub)
-- [Consume events and save checkpoint using a checkpoint store](#consume-events-and-save-checkpoint-using-a-checkpoint-store)
+- [Publish events to an Event Hub asynchronously](#publish-events-to-an-event-hub-asynchronously)
+- [Consume events from an Event Hub asynchronously](#consume-events-from-an-event-hub-asynchronously)
+- [Consume events and save checkpoints using a checkpoint store](#consume-events-and-save-checkpoints-using-a-checkpoint-store)
 - [Use EventHubConsumerClient to work with IoT Hub](#use-eventhubconsumerclient-to-work-with-iot-hub)
 
 ### Inspect an Event Hub
@@ -180,7 +180,7 @@ with client:
     # client.receive(on_event=on_event, consumer_group="$Default", partition_id='0')
 ```
 
-### Async publish events to an Event Hub
+### Publish events to an Event Hub asynchronously
 
 Publish events to an Event Hub asynchronously 
 Use the `create_batch` method on `EventHubProcuer` to create an `EventDataBatch` object which can then be sent using the `send_batch` method.
@@ -214,7 +214,7 @@ if __name__ == '__main__':
     loop.run_until_complete(send())
 ```
 
-### Async consume events from an Event Hub
+### Consume events from an Event Hub asynchronously
 
 Consume events asynchronously from an EventHub.
 
@@ -243,7 +243,7 @@ if __name__ == '__main__':
     loop.run_until_complete(receive())
 ```
 
-### Consume events and save checkpoint using a checkpoint store
+### Consume events and save checkpoints using a checkpoint store
 
 `EventHubConsumerClient` is a high level construct which allows you to receive events from multiple partitions at once 
 and load balance with other consumers using the same Event Hub and consumer group.
@@ -251,7 +251,7 @@ and load balance with other consumers using the same Event Hub and consumer grou
 This also allows the user to track progress when events are processed using checkpoints.
 
 A checkpoint is meant to represent the last successfully processed event by the user from a particular partition of
-a consumer group in an Event Hub instance.The `EventHubConsumerClient` uses an instance of `CheckpointStore` to update checkpoints
+a consumer group in an Event Hub instance. The `EventHubConsumerClient` uses an instance of `CheckpointStore` to update checkpoints
 and to store the relevant information required by the load balancing algorithm.
 
 Search pypi with the prefix `azure-eventhub-checkpointstore` to
@@ -278,7 +278,7 @@ storage_connection_str = '<< CONNECTION STRING FOR THE STORAGE >>'
 container_name = '<<STRING FOR THE BLOB NAME>>'
 
 async def process_event(partition_context, event):
-    pass # do something
+    # do something
     await partition_context.update_checkpoint(event)  # Or update_checkpoint every N events for better performance.
 
 async def receive(client):
