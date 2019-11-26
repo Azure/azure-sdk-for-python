@@ -114,7 +114,7 @@ def trace_message(message, parent_span=None):
         message_span.start()
         app_prop = dict(message.properties) if message.properties else dict()
         app_prop.setdefault(b"Diagnostic-Id", message_span.get_trace_parent().encode('ascii'))
-        message.application_properties = app_prop
+        message.properties = app_prop
         message_span.finish()
 
 
