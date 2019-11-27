@@ -5,6 +5,7 @@ languages:
 products:
   - azure
   - azure-key-vault
+urlFragment: keyvault-secrets-samples
 ---
 
 # Azure Key Vault Secrets Client Library Python Samples
