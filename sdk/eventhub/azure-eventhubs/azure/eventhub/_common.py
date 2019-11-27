@@ -61,44 +61,28 @@ class EventData(object):
         self.message.annotations = {}
         self.message.application_properties = {}
 
-    def __repr__(self):
-        # type: () -> str
-        try:
-            body_str = self.body_as_str()
-        except:  # pylint: disable=bare-except
-            body_str = "<read-error>"
-        event_repr = "body='{}'".format(body_str)
-        try:
-            event_repr += ", properties={}".format(self.properties)
-            event_repr += ", offset={}".format(self.offset)
-            event_repr += ", sequence_number={}".format(self.sequence_number)
-            event_repr += ", partition_key={!r}".format(self.partition_key)
-            event_repr += ", enqueued_time={!r}".format(self.enqueued_time)
-        except:  # pylint: disable=bare-except
-            pass
-        return "EventData({})".format(event_repr)
-
     def __str__(self):
         # type: () -> str
         try:
-            body_str = self.body_as_str()
+            body = self.body_as_str()
         except:  # pylint: disable=bare-except
-            body_str = "<read-error>"
-        event_str = "{{ body: '{}'".format(body_str)
+            body = "<read-error>"
+        message_as_dict = {
+            'body': body,
+            'application_properties': str(self.properties)
+        }
         try:
-            event_str += ", properties: {}".format(self.properties)
-            if self.offset:
-                event_str += ", offset: {}".format(self.offset)
             if self.sequence_number:
-                event_str += ", sequence_number: {}".format(self.sequence_number)
-            if self.partition_key:
-                event_str += ", partition_key={!r}".format(self.partition_key)
+                message_as_dict['sequence_number'] = str(self.sequence_number)
+            if self.offset:
+                message_as_dict['offset'] = str(self.offset)
             if self.enqueued_time:
-                event_str += ", enqueued_time={!r}".format(self.enqueued_time)
+                message_as_dict['enqueued_time'] = str(self.enqueued_time)
+            if self.partition_key:
+                message_as_dict['partition_key'] = str(self.partition_key)
         except:  # pylint: disable=bare-except
             pass
-        event_str += ' }'
-        return event_str
+        return str(message_as_dict)
 
     @classmethod
     def _from_message(cls, message):
@@ -286,16 +270,6 @@ class EventDataBatch(object):
         set_message_partition_key(self.message, self._partition_key)
         self._size = self.message.gather()[0].get_message_encoded_size()
         self._count = 0
-
-    def __repr__(self):
-        # type: () -> str
-        batch_repr = "max_size_in_bytes={}, partition_id={}, partition_key={}, event_count={}".format(
-            self.max_size_in_bytes,
-            self._partition_id,
-            self._partition_key,
-            self._count
-        )
-        return "EventDataBatch({})".format(batch_repr)
 
     def __len__(self):
         return self._count
