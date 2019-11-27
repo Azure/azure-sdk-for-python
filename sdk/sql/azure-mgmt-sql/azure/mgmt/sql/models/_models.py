@@ -750,7 +750,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint is required.
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
      auditing storage account. If state is Enabled and storageEndpoint is
@@ -843,6 +843,11 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
      or [Diagnostic Settings
      PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
     :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
     """
 
     _validation = {
@@ -866,6 +871,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -879,6 +885,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
         self.is_storage_secondary_key_in_use = kwargs.get('is_storage_secondary_key_in_use', None)
         self.is_azure_monitor_target_enabled = kwargs.get('is_azure_monitor_target_enabled', None)
+        self.queue_delay_ms = kwargs.get('queue_delay_ms', None)
 
 
 class DatabaseOperation(ProxyResource):
@@ -2594,7 +2601,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint is required.
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
      auditing storage account. If state is Enabled and storageEndpoint is
@@ -2687,6 +2694,11 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
      or [Diagnostic Settings
      PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
     :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
     """
 
     _validation = {
@@ -2709,6 +2721,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
         'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -2722,6 +2735,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
         self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
         self.is_storage_secondary_key_in_use = kwargs.get('is_storage_secondary_key_in_use', None)
         self.is_azure_monitor_target_enabled = kwargs.get('is_azure_monitor_target_enabled', None)
+        self.queue_delay_ms = kwargs.get('queue_delay_ms', None)
 
 
 class ExtendedServerBlobAuditingPolicy(ProxyResource):
@@ -2747,7 +2761,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint is required.
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
      auditing storage account. If state is Enabled and storageEndpoint is
@@ -2840,6 +2854,11 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      or [Diagnostic Settings
      PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
     :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
     """
 
     _validation = {
@@ -2862,6 +2881,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
         'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -2875,6 +2895,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
         self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
         self.is_storage_secondary_key_in_use = kwargs.get('is_storage_secondary_key_in_use', None)
         self.is_azure_monitor_target_enabled = kwargs.get('is_azure_monitor_target_enabled', None)
+        self.queue_delay_ms = kwargs.get('queue_delay_ms', None)
 
 
 class FailoverGroup(ProxyResource):
@@ -7176,7 +7197,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
-     storageEndpoint is required.
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
      auditing storage account. If state is Enabled and storageEndpoint is
@@ -7269,6 +7290,11 @@ class ServerBlobAuditingPolicy(ProxyResource):
      or [Diagnostic Settings
      PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
     :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
     """
 
     _validation = {
@@ -7290,6 +7316,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
         'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
         'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -7302,6 +7329,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
         self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
         self.is_storage_secondary_key_in_use = kwargs.get('is_storage_secondary_key_in_use', None)
         self.is_azure_monitor_target_enabled = kwargs.get('is_azure_monitor_target_enabled', None)
+        self.queue_delay_ms = kwargs.get('queue_delay_ms', None)
 
 
 class ServerCommunicationLink(ProxyResource):
