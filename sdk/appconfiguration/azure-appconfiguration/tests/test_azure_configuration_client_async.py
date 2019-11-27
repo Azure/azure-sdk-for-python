@@ -348,7 +348,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
         # Remove configuration settings
         try:
-            for i in range(PAGE_SIZE + 1)
+            for i in range(PAGE_SIZE + 1):
                 await self.app_config_client.delete_configuration_setting(
                     key="multi_" + str(i) + KEY_UUID, label="multi_label_" + str(i)
                 )
