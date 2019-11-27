@@ -12,6 +12,7 @@ X_MS_VERSION = VERSION
 
 # Socket timeout in seconds
 CONNECTION_TIMEOUT = 20
+READ_TIMEOUT = 20
 
 # for python 3.5+, there was a change to the definition of the socket timeout (as far as socket.sendall is concerned)
 # The socket timeout is now the maximum total duration to send all data.
