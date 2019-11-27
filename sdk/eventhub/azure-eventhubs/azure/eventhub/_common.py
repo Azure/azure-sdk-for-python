@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import json
 import logging
 import six
+from typing import Union, Dict, Any, Iterable, Optional
 
 from uamqp import BatchMessage, Message, constants  # type: ignore
 
@@ -43,6 +44,7 @@ class EventData(object):
     """
 
     def __init__(self, body=None):
+        # type: (Union[str, bytes, List[Union[str, bytes]]]) -> None
         self._last_enqueued_event_properties = {}
         if body and isinstance(body, list):
             self.message = Message(body[0])
@@ -54,6 +56,9 @@ class EventData(object):
             self.message = Message(body)
         self.message.annotations = {}
         self.message.application_properties = {}
+
+    def __repr__(self):
+        return str(self)
 
     def __str__(self):
         try:
@@ -91,10 +96,12 @@ class EventData(object):
         return event_data
 
     def _encode_message(self):
+        # type: () -> bytes
         return self.message.encode_message()
 
     @property
     def sequence_number(self):
+        # type: () -> int
         """The sequence number of the event.
 
         :rtype: int or long
@@ -103,6 +110,7 @@ class EventData(object):
 
     @property
     def offset(self):
+        # type: () -> str
         """The offset of the event.
 
         :rtype: str
@@ -114,6 +122,7 @@ class EventData(object):
 
     @property
     def enqueued_time(self):
+        # type: () -> datetime.datetime
         """The enqueued timestamp of the event.
 
         :rtype: datetime.datetime
@@ -125,6 +134,7 @@ class EventData(object):
 
     @property
     def partition_key(self):
+        # type: () -> bytes
         """The partition key of the event.
 
         :rtype: bytes
@@ -136,6 +146,7 @@ class EventData(object):
 
     @property
     def properties(self):
+        # type: () -> Dict[str, Any]
         """Application-defined properties on the event.
 
         :rtype: dict
@@ -144,6 +155,7 @@ class EventData(object):
 
     @properties.setter
     def properties(self, value):
+        # type: (Dict[str, Any]) -> None
         """Application-defined properties on the event.
 
         :param dict value: The application properties for the EventData.
@@ -153,6 +165,7 @@ class EventData(object):
 
     @property
     def system_properties(self):
+        # type: () -> Dict[str, Any]
         """Metadata set by the Event Hubs Service associated with the event
 
         :rtype: dict
@@ -161,6 +174,7 @@ class EventData(object):
 
     @property
     def body(self):
+        # type: () -> Iterable[Union[str, bytes]]
         """The content of the event.
 
         :rtype: bytes or Generator[bytes]
@@ -171,6 +185,7 @@ class EventData(object):
             raise ValueError("Event content empty.")
 
     def body_as_str(self, encoding='UTF-8'):
+        # type: (str) -> str
         """The content of the event as a string, if the data is of a compatible type.
 
         :param encoding: The encoding to use for decoding event data.
@@ -190,6 +205,7 @@ class EventData(object):
             raise TypeError("Message data is not compatible with string type: {}".format(e))
 
     def body_as_json(self, encoding='UTF-8'):
+        # type: (str) -> Dict[str, Any]
         """The content of the event loaded as a JSON object, if the data is compatible.
 
         :param encoding: The encoding to use for decoding event data.
@@ -240,6 +256,7 @@ class EventDataBatch(object):
     """
 
     def __init__(self, max_size_in_bytes=None, partition_id=None, partition_key=None):
+        # type: (Optional[int], Optional[str], Optional[Union[str, bytes]]) -> None
         self.max_size_in_bytes = max_size_in_bytes or constants.MAX_MESSAGE_LENGTH_BYTES
         self.message = BatchMessage(data=[], multi_messages=False, properties=None)
         self._partition_id = partition_id
@@ -260,6 +277,7 @@ class EventDataBatch(object):
 
     @property
     def size_in_bytes(self):
+        # type: () -> int
         """The combined size of the events in the batch, in bytes.
 
         :rtype: int
@@ -267,6 +285,7 @@ class EventDataBatch(object):
         return self._size
 
     def add(self, event_data):
+        # type: (EventData) -> None
         """Try to add an EventData to the batch.
 
         The total size of an added event is the sum of its body, properties, etc.
