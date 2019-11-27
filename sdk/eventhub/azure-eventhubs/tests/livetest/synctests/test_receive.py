@@ -10,8 +10,8 @@ import pytest
 import time
 import datetime
 
-from azure.eventhub import EventData, TransportType, EventHubError
-from azure.eventhub import EventHubConsumerClient
+from azure.eventhub import EventData, TransportType, EventHubConsumerClient
+from azure.eventhub.exceptions import EventHubError
 
 
 @pytest.mark.liveTest

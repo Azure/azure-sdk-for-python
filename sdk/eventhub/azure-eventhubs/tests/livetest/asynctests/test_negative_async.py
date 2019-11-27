@@ -10,11 +10,13 @@ import sys
 
 from azure.eventhub import (
     EventData,
-    EventHubError,
     EventDataBatch,
+)
+from azure.eventhub.exceptions import (
+    EventHubError,
     ConnectError,
     AuthenticationError,
-    EventDataSendError,
+    EventDataSendError
 )
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient
 

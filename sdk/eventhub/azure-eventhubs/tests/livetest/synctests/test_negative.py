@@ -11,11 +11,12 @@ import threading
 
 from azure.eventhub import (
     EventData,
-    EventDataBatch,
-    AuthenticationError,
+    EventDataBatch)
+from azure.eventhub.exceptions import (
     ConnectError,
-    EventDataSendError)
-
+    AuthenticationError,
+    EventDataSendError
+)
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub import EventHubProducerClient
 
