@@ -72,7 +72,7 @@ class ClientBaseAsync(ClientBase):
         await self.close()
 
     @classmethod
-    def _from_connection_string(cls, conn_str: str, **kwargs) -> ClientBaseAsync:
+    def _from_connection_string(cls, conn_str: str, **kwargs) -> 'ClientBaseAsync':
         consumer_group = kwargs.pop("consumer_group", None)
         host, policy, key, entity = _parse_conn_str(conn_str, kwargs)
 

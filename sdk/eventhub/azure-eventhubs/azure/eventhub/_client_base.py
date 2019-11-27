@@ -120,7 +120,7 @@ class EventHubSharedKeyCredential(object):
         self.token_type = b"servicebus.windows.net:sastoken"
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: Optional[List[str], Any] -> _AccessToken
+        # type: (Optional[List[str]], Any) -> _AccessToken
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
