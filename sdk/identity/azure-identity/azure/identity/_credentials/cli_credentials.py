@@ -9,7 +9,7 @@ import time
 
 class CliCredentials(object):
 
-    _DEFAULT_PREFIX = "/.default()"
+    _DEFAULT_PREFIX = "/.default"
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         if len(scopes) != 1:
