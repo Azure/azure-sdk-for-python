@@ -41,7 +41,9 @@ class AutomationsOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Get all security automations in a subscription.
+        """Lists all the security automations in the specified subscription. Use
+        the 'nextLink' property in the response to get the next page of
+        security automations for the specified subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -107,7 +109,9 @@ class AutomationsOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Get all security automations in a resource group.
+        """Lists all the security automations in the specified resource group. Use
+        the 'nextLink' property in the response to get the next page of
+        security automations for the specified resource group.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -177,7 +181,7 @@ class AutomationsOperations(object):
 
     def get(
             self, resource_group_name, automation_name, custom_headers=None, raw=False, **operation_config):
-        """Get the details of a security automation.
+        """Retrieves information about the model of a security automation.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -239,10 +243,9 @@ class AutomationsOperations(object):
 
     def create_or_update(
             self, resource_group_name, automation_name, automation, custom_headers=None, raw=False, **operation_config):
-        """Create or update a security automation. If a security automation is
-        already created and a subsequent create request is issued with
-        different properties, the security automation properties will be
-        updated.
+        """Creates or updates a security automation. If a security automation is
+        already created and a subsequent request is issued for the same
+        automation id, then it will be updated.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -312,7 +315,7 @@ class AutomationsOperations(object):
 
     def delete(
             self, resource_group_name, automation_name, custom_headers=None, raw=False, **operation_config):
-        """Delete a security automation.
+        """Deletes a security automation.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -366,7 +369,7 @@ class AutomationsOperations(object):
 
     def validate(
             self, resource_group_name, automation_name, automation, custom_headers=None, raw=False, **operation_config):
-        """Validate the security automation model before create or update. Any
+        """Validates the security automation model before create or update. Any
         validation errors are returned to the client.
 
         :param resource_group_name: The name of the resource group within the
