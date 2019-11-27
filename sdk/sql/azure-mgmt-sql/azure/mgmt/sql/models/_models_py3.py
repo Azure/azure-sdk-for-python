@@ -9245,3 +9245,124 @@ class VulnerabilityAssessmentScanRecord(ProxyResource):
         self.errors = None
         self.storage_container_path = None
         self.number_of_failed_security_checks = None
+
+
+class WorkloadClassifier(ProxyResource):
+    """Workload classifier operations for a data warehouse.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param member_name: Required. The workload classifier member name.
+    :type member_name: str
+    :param label: The workload classifier label.
+    :type label: str
+    :param context: The workload classifier context.
+    :type context: str
+    :param start_time: The workload classifier start time for classification.
+    :type start_time: str
+    :param end_time: The workload classifier end time for classification.
+    :type end_time: str
+    :param importance: The workload classifier importance.
+    :type importance: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'member_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'member_name': {'key': 'properties.memberName', 'type': 'str'},
+        'label': {'key': 'properties.label', 'type': 'str'},
+        'context': {'key': 'properties.context', 'type': 'str'},
+        'start_time': {'key': 'properties.startTime', 'type': 'str'},
+        'end_time': {'key': 'properties.endTime', 'type': 'str'},
+        'importance': {'key': 'properties.importance', 'type': 'str'},
+    }
+
+    def __init__(self, *, member_name: str, label: str=None, context: str=None, start_time: str=None, end_time: str=None, importance: str=None, **kwargs) -> None:
+        super(WorkloadClassifier, self).__init__(**kwargs)
+        self.member_name = member_name
+        self.label = label
+        self.context = context
+        self.start_time = start_time
+        self.end_time = end_time
+        self.importance = importance
+
+
+class WorkloadGroup(ProxyResource):
+    """Workload group operations for a data warehouse.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param min_resource_percent: Required. The workload group minimum
+     percentage resource.
+    :type min_resource_percent: int
+    :param max_resource_percent: Required. The workload group cap percentage
+     resource.
+    :type max_resource_percent: int
+    :param min_resource_percent_per_request: Required. The workload group
+     request minimum grant percentage.
+    :type min_resource_percent_per_request: float
+    :param max_resource_percent_per_request: The workload group request
+     maximum grant percentage.
+    :type max_resource_percent_per_request: float
+    :param importance: The workload group importance level.
+    :type importance: str
+    :param query_execution_timeout: The workload group query execution
+     timeout.
+    :type query_execution_timeout: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'min_resource_percent': {'required': True},
+        'max_resource_percent': {'required': True},
+        'min_resource_percent_per_request': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'min_resource_percent': {'key': 'properties.minResourcePercent', 'type': 'int'},
+        'max_resource_percent': {'key': 'properties.maxResourcePercent', 'type': 'int'},
+        'min_resource_percent_per_request': {'key': 'properties.minResourcePercentPerRequest', 'type': 'float'},
+        'max_resource_percent_per_request': {'key': 'properties.maxResourcePercentPerRequest', 'type': 'float'},
+        'importance': {'key': 'properties.importance', 'type': 'str'},
+        'query_execution_timeout': {'key': 'properties.queryExecutionTimeout', 'type': 'int'},
+    }
+
+    def __init__(self, *, min_resource_percent: int, max_resource_percent: int, min_resource_percent_per_request: float, max_resource_percent_per_request: float=None, importance: str=None, query_execution_timeout: int=None, **kwargs) -> None:
+        super(WorkloadGroup, self).__init__(**kwargs)
+        self.min_resource_percent = min_resource_percent
+        self.max_resource_percent = max_resource_percent
+        self.min_resource_percent_per_request = min_resource_percent_per_request
+        self.max_resource_percent_per_request = max_resource_percent_per_request
+        self.importance = importance
+        self.query_execution_timeout = query_execution_timeout

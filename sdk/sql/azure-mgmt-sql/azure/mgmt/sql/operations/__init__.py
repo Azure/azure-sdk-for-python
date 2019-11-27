@@ -95,6 +95,8 @@ from ._managed_databases_operations import ManagedDatabasesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
+from ._workload_groups_operations import WorkloadGroupsOperations
+from ._workload_classifiers_operations import WorkloadClassifiersOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -183,4 +185,6 @@ __all__ = [
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
     'ServerAzureADAdministratorsOperations',
+    'WorkloadGroupsOperations',
+    'WorkloadClassifiersOperations',
 ]
