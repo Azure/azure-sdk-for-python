@@ -9,7 +9,7 @@ import uuid
 import time
 import functools
 import collections
-from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast
 from datetime import timedelta
 try:
     from urlparse import urlparse  # type: ignore
@@ -48,9 +48,9 @@ _AccessToken = collections.namedtuple('AccessToken', 'token expires_on')
 
 def _parse_conn_str(conn_str, kwargs):
     # type: (str, Dict[str, Any]) -> Tuple[str, str, str, str]
-    endpoint = None  # type: str
-    shared_access_key_name = None  # type: str
-    shared_access_key = None  # type: str
+    endpoint = None
+    shared_access_key_name = None
+    shared_access_key = None
     entity_path = None  # type: Optional[str]
     eventhub_name = kwargs.pop("eventhub_name", None)  # type: Optional[str]
     for element in conn_str.split(';'):
@@ -69,13 +69,13 @@ def _parse_conn_str(conn_str, kwargs):
         raise ValueError(
             "Invalid connection string. Should be in the format: "
             "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>")
-    entity = eventhub_name or entity_path  # type: str
+    entity = eventhub_name or entity_path
     left_slash_pos = endpoint.find("//")
     if left_slash_pos != -1:
         host = endpoint[left_slash_pos + 2:]
     else:
         host = endpoint
-    return host, shared_access_key_name, shared_access_key, entity
+    return cast(str, host), cast(str, shared_access_key_name), cast(str, shared_access_key), cast(str, entity)
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):

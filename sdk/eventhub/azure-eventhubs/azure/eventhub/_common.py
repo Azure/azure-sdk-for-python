@@ -213,13 +213,13 @@ class EventData(object):
         """
         data = self.body
         try:
-            return "".join(b.decode(encoding) for b in data)
+            return "".join(b.decode(encoding) for b in cast(Iterable[bytes], data))
         except TypeError:
             return six.text_type(data)
         except:  # pylint: disable=bare-except
             pass
         try:
-            return data.decode(encoding)
+            return cast(bytes, data).decode(encoding)
         except Exception as e:
             raise TypeError("Message data is not compatible with string type: {}".format(e))
 

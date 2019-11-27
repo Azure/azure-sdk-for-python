@@ -8,7 +8,7 @@ import logging
 import asyncio
 import time
 import functools
-from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast
 
 from uamqp import (
     authentication,
@@ -210,14 +210,14 @@ class ClientBaseAsync(ClientBase):
         partition_info = response.get_data()  # type: Dict[bytes, Union[bytes, int]]
         output = {}
         if partition_info:
-            output['eventhub_name'] = partition_info[b'name'].decode('utf-8')
-            output['id'] = partition_info[b'partition'].decode('utf-8')
+            output['eventhub_name'] = cast(bytes, partition_info[b'name']).decode('utf-8')
+            output['id'] = cast(bytes, partition_info[b'partition']).decode('utf-8')
             output['beginning_sequence_number'] = partition_info[b'begin_sequence_number']
             output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']
-            output['last_enqueued_offset'] = partition_info[b'last_enqueued_offset'].decode('utf-8')
+            output['last_enqueued_offset'] = cast(bytes, partition_info[b'last_enqueued_offset']).decode('utf-8')
             output['is_empty'] = partition_info[b'is_partition_empty']
             output['last_enqueued_time_utc'] = utc_from_timestamp(
-                float(partition_info[b'last_enqueued_time_utc'] / 1000)
+                float(cast(int, partition_info[b'last_enqueued_time_utc']) / 1000)
             )
         return output
 
@@ -245,11 +245,11 @@ class ConsumerProducerMixin(object):
 
         """
         # pylint: disable=protected-access
-        if not self.running:  # type: ignore
-            if self._handler:  # type: ignore
+        if not cast(bool, self.running):
+            if self._handler:
                 await self._handler.close_async()
             auth = await self._client._create_auth()
-            self._create_handler(auth)
+            self._create_handler(auth)  # type: ignore
             await self._handler.open_async(
                 connection=await self._client._conn_manager.get_connection(self._client._address.hostname, auth)  # pylint: disable=protected-access
             )
