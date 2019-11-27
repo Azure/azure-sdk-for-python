@@ -18,8 +18,10 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class SqlVirtualMachineGroupsOperations(object):
-    """SqlVirtualMachineGroupsOperations operations.
+class SqlVirtualMachinesOperations(object):
+    """SqlVirtualMachinesOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -39,9 +41,9 @@ class SqlVirtualMachineGroupsOperations(object):
 
         self.config = config
 
-    def get(
+    def list_by_sql_vm_group(
             self, resource_group_name, sql_virtual_machine_group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a SQL virtual machine group.
+        """Gets the list of sql virtual machines in a SQL virtual machine group.
 
         :param resource_group_name: Name of the resource group that contains
          the resource. You can obtain this value from the Azure Resource
@@ -55,8 +57,150 @@ class SqlVirtualMachineGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SqlVirtualMachineGroup or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachineGroup or
+        :return: An iterator like instance of SqlVirtualMachine
+        :rtype:
+         ~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachinePaged[~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachine]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_by_sql_vm_group.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'sqlVirtualMachineGroupName': self._serialize.url("sql_virtual_machine_group_name", sql_virtual_machine_group_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.SqlVirtualMachinePaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list_by_sql_vm_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachineGroups/{sqlVirtualMachineGroupName}/sqlVirtualMachines'}
+
+    def list(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Gets all SQL virtual machines in a subscription.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of SqlVirtualMachine
+        :rtype:
+         ~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachinePaged[~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachine]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.SqlVirtualMachinePaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines'}
+
+    def get(
+            self, resource_group_name, sql_virtual_machine_name, expand=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a SQL virtual machine.
+
+        :param resource_group_name: Name of the resource group that contains
+         the resource. You can obtain this value from the Azure Resource
+         Manager API or the portal.
+        :type resource_group_name: str
+        :param sql_virtual_machine_name: Name of the SQL virtual machine.
+        :type sql_virtual_machine_name: str
+        :param expand: The child resources to include in the response.
+        :type expand: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: SqlVirtualMachine or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachine or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -64,13 +208,15 @@ class SqlVirtualMachineGroupsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'sqlVirtualMachineGroupName': self._serialize.url("sql_virtual_machine_group_name", sql_virtual_machine_group_name, 'str'),
+            'sqlVirtualMachineName': self._serialize.url("sql_virtual_machine_name", sql_virtual_machine_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -93,25 +239,24 @@ class SqlVirtualMachineGroupsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('SqlVirtualMachineGroup', response)
+            deserialized = self._deserialize('SqlVirtualMachine', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachineGroups/{sqlVirtualMachineGroupName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/{sqlVirtualMachineName}'}
 
 
     def _create_or_update_initial(
-            self, resource_group_name, sql_virtual_machine_group_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, sql_virtual_machine_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'sqlVirtualMachineGroupName': self._serialize.url("sql_virtual_machine_group_name", sql_virtual_machine_group_name, 'str'),
+            'sqlVirtualMachineName': self._serialize.url("sql_virtual_machine_name", sql_virtual_machine_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -132,7 +277,7 @@ class SqlVirtualMachineGroupsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'SqlVirtualMachineGroup')
+        body_content = self._serialize.body(parameters, 'SqlVirtualMachine')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -146,9 +291,9 @@ class SqlVirtualMachineGroupsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SqlVirtualMachineGroup', response)
+            deserialized = self._deserialize('SqlVirtualMachine', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('SqlVirtualMachineGroup', response)
+            deserialized = self._deserialize('SqlVirtualMachine', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -157,35 +302,34 @@ class SqlVirtualMachineGroupsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, sql_virtual_machine_group_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updates a SQL virtual machine group.
+            self, resource_group_name, sql_virtual_machine_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates or updates a SQL virtual machine.
 
         :param resource_group_name: Name of the resource group that contains
          the resource. You can obtain this value from the Azure Resource
          Manager API or the portal.
         :type resource_group_name: str
-        :param sql_virtual_machine_group_name: Name of the SQL virtual machine
-         group.
-        :type sql_virtual_machine_group_name: str
-        :param parameters: The SQL virtual machine group.
+        :param sql_virtual_machine_name: Name of the SQL virtual machine.
+        :type sql_virtual_machine_name: str
+        :param parameters: The SQL virtual machine.
         :type parameters:
-         ~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachineGroup
+         ~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachine
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns SqlVirtualMachineGroup
-         or ClientRawResponse<SqlVirtualMachineGroup> if raw==True
+        :return: An instance of LROPoller that returns SqlVirtualMachine or
+         ClientRawResponse<SqlVirtualMachine> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachineGroup]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachine]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachineGroup]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachine]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
-            sql_virtual_machine_group_name=sql_virtual_machine_group_name,
+            sql_virtual_machine_name=sql_virtual_machine_name,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -193,7 +337,7 @@ class SqlVirtualMachineGroupsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('SqlVirtualMachineGroup', response)
+            deserialized = self._deserialize('SqlVirtualMachine', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -208,16 +352,16 @@ class SqlVirtualMachineGroupsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachineGroups/{sqlVirtualMachineGroupName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/{sqlVirtualMachineName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, sql_virtual_machine_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, sql_virtual_machine_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'sqlVirtualMachineGroupName': self._serialize.url("sql_virtual_machine_group_name", sql_virtual_machine_group_name, 'str'),
+            'sqlVirtualMachineName': self._serialize.url("sql_virtual_machine_name", sql_virtual_machine_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -249,16 +393,15 @@ class SqlVirtualMachineGroupsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, sql_virtual_machine_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes a SQL virtual machine group.
+            self, resource_group_name, sql_virtual_machine_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes a SQL virtual machine.
 
         :param resource_group_name: Name of the resource group that contains
          the resource. You can obtain this value from the Azure Resource
          Manager API or the portal.
         :type resource_group_name: str
-        :param sql_virtual_machine_group_name: Name of the SQL virtual machine
-         group.
-        :type sql_virtual_machine_group_name: str
+        :param sql_virtual_machine_name: Name of the SQL virtual machine.
+        :type sql_virtual_machine_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -272,7 +415,7 @@ class SqlVirtualMachineGroupsOperations(object):
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
-            sql_virtual_machine_group_name=sql_virtual_machine_group_name,
+            sql_virtual_machine_name=sql_virtual_machine_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -290,18 +433,18 @@ class SqlVirtualMachineGroupsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachineGroups/{sqlVirtualMachineGroupName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/{sqlVirtualMachineName}'}
 
 
     def _update_initial(
-            self, resource_group_name, sql_virtual_machine_group_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.SqlVirtualMachineGroupUpdate(tags=tags)
+            self, resource_group_name, sql_virtual_machine_name, tags=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.SqlVirtualMachineUpdate(tags=tags)
 
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'sqlVirtualMachineGroupName': self._serialize.url("sql_virtual_machine_group_name", sql_virtual_machine_group_name, 'str'),
+            'sqlVirtualMachineName': self._serialize.url("sql_virtual_machine_name", sql_virtual_machine_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -322,7 +465,7 @@ class SqlVirtualMachineGroupsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'SqlVirtualMachineGroupUpdate')
+        body_content = self._serialize.body(parameters, 'SqlVirtualMachineUpdate')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -336,7 +479,7 @@ class SqlVirtualMachineGroupsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SqlVirtualMachineGroup', response)
+            deserialized = self._deserialize('SqlVirtualMachine', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -345,16 +488,15 @@ class SqlVirtualMachineGroupsOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, sql_virtual_machine_group_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Updates SQL virtual machine group tags.
+            self, resource_group_name, sql_virtual_machine_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Updates a SQL virtual machine.
 
         :param resource_group_name: Name of the resource group that contains
          the resource. You can obtain this value from the Azure Resource
          Manager API or the portal.
         :type resource_group_name: str
-        :param sql_virtual_machine_group_name: Name of the SQL virtual machine
-         group.
-        :type sql_virtual_machine_group_name: str
+        :param sql_virtual_machine_name: Name of the SQL virtual machine.
+        :type sql_virtual_machine_name: str
         :param tags: Resource tags.
         :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
@@ -362,17 +504,17 @@ class SqlVirtualMachineGroupsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns SqlVirtualMachineGroup
-         or ClientRawResponse<SqlVirtualMachineGroup> if raw==True
+        :return: An instance of LROPoller that returns SqlVirtualMachine or
+         ClientRawResponse<SqlVirtualMachine> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachineGroup]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachine]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachineGroup]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachine]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
-            sql_virtual_machine_group_name=sql_virtual_machine_group_name,
+            sql_virtual_machine_name=sql_virtual_machine_name,
             tags=tags,
             custom_headers=custom_headers,
             raw=True,
@@ -380,7 +522,7 @@ class SqlVirtualMachineGroupsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('SqlVirtualMachineGroup', response)
+            deserialized = self._deserialize('SqlVirtualMachine', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -395,11 +537,11 @@ class SqlVirtualMachineGroupsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachineGroups/{sqlVirtualMachineGroupName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/{sqlVirtualMachineName}'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets all SQL virtual machine groups in a resource group.
+        """Gets all SQL virtual machines in a resource group.
 
         :param resource_group_name: Name of the resource group that contains
          the resource. You can obtain this value from the Azure Resource
@@ -410,13 +552,12 @@ class SqlVirtualMachineGroupsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of SqlVirtualMachineGroup
+        :return: An iterator like instance of SqlVirtualMachine
         :rtype:
-         ~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachineGroupPaged[~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachineGroup]
+         ~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachinePaged[~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachine]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']
@@ -446,6 +587,11 @@ class SqlVirtualMachineGroupsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -456,76 +602,10 @@ class SqlVirtualMachineGroupsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.SqlVirtualMachineGroupPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.SqlVirtualMachineGroupPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.SqlVirtualMachinePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachineGroups'}
-
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Gets all SQL virtual machine groups in a subscription.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of SqlVirtualMachineGroup
-        :rtype:
-         ~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachineGroupPaged[~azure.mgmt.sqlvirtualmachine.models.SqlVirtualMachineGroup]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.SqlVirtualMachineGroupPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.SqlVirtualMachineGroupPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachineGroups'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines'}
