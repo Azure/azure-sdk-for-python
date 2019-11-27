@@ -57,7 +57,7 @@ class AzureAppConfigurationClient:
         # type: (str, any, dict) -> None
         try:
             if not base_url.lower().startswith('http'):
-                container_url = "https://" + base_url
+                base_url = "https://" + base_url
         except AttributeError:
             raise ValueError("Base URL must be a string.")
 

@@ -331,16 +331,16 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
     async def test_list_configuration_settings_multi_pages(self):
         # create PAGE_SIZE+1 configuration settings to have at least two pages
         try:
-            delete_me = [
-                await self.app_config_client.add_configuration_setting(
+            delete_me = []
+            for i in range(PAGE_SIZE + 1):
+                kv = await self.app_config_client.add_configuration_setting(
                     ConfigurationSetting(
                         key="multi_" + str(i) + KEY_UUID,
                         label="multi_label_" + str(i),
                         value="multi value",
                     )
                 )
-                for i in range(PAGE_SIZE + 1)
-            ]
+                delete_me.append(kv)
         except ResourceExistsError:
             pass
         items = await self.app_config_client.list_configuration_settings(keys=["multi_*"])
