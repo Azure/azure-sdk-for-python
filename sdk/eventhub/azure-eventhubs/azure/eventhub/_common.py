@@ -58,16 +58,31 @@ class EventData(object):
         self.message.application_properties = {}
 
     def __repr__(self):
-        return str(self)
+        # type: () -> str
+        try:
+            body_str = self.body_as_str()
+        except:  # pylint: disable=bare-except
+            body_str = "<read-error>"
+        event_repr = "body='{}'".format(body_str)
+        try:
+            event_repr += ", properties={}".format(self.properties)
+            event_repr += ", offset={}".format(self.offset)
+            event_repr += ", sequence_number={}".format(self.sequence_number)
+            event_repr += ", partition_key={}".format(self.partition_key)
+            event_repr += ", enqueued_time={}".format(self.enqueued_time)
+        except:
+            pass
+        return "EventData({})".format(event_repr)
 
     def __str__(self):
+        # type: () -> str
         try:
             body = self.body_as_str()
         except:  # pylint: disable=bare-except
             body = "<read-error>"
         message_as_dict = {
             'body': body,
-            'application_properties': str(self.properties)
+            'properties': str(self.properties)
         }
         try:
             if self.sequence_number:
@@ -265,6 +280,16 @@ class EventDataBatch(object):
         set_message_partition_key(self.message, self._partition_key)
         self._size = self.message.gather()[0].get_message_encoded_size()
         self._count = 0
+
+    def __repr__(self):
+        # type: () -> str
+        batch_repr = "max_size_in_bytes={}, partition_id={}, partition_key={}, event_count={}".format(
+            self.max_size_in_bytes,
+            self._partition_id,
+            self._partition_key,
+            self._count
+        )
+        return "EventDataBatch({})".format(batch_repr)
 
     def __len__(self):
         return self._count
