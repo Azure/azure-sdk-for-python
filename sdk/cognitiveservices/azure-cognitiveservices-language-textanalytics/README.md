@@ -31,7 +31,7 @@ You can create either resource using the
 or [Azure CLI](https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows).
 Below is an example of how you can create a Text Analytics resource using the CLI:
 
-```bash
+```
 # Create a new resource group to hold the text analytics resource -
 # if using an existing resource group, skip this step
 az group create --name my-resource-group --location westus2
