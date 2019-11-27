@@ -42,6 +42,8 @@ class StorageManagementClientConfiguration(Configuration):
         self.credentials = credentials
         self.subscription_id = subscription_id
 
+        self.authentication_policy = kwargs.get('authentication_policy') or policies.BearerTokenCredentialPolicy(credentials, "https://management.azure.com/.default")
+
     def _configure(self, **kwargs):
         self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
