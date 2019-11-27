@@ -12,58 +12,6 @@
 from msrest.paging import Paged
 
 
-class RecoveryPointResourcePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`RecoveryPointResource <azure.mgmt.recoveryservicesbackup.models.RecoveryPointResource>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[RecoveryPointResource]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(RecoveryPointResourcePaged, self).__init__(*args, **kwargs)
-class ProtectionPolicyResourcePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ProtectionPolicyResource <azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResource>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ProtectionPolicyResource]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ProtectionPolicyResourcePaged, self).__init__(*args, **kwargs)
-class JobResourcePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`JobResource <azure.mgmt.recoveryservicesbackup.models.JobResource>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[JobResource]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(JobResourcePaged, self).__init__(*args, **kwargs)
-class ProtectedItemResourcePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ProtectedItemResource <azure.mgmt.recoveryservicesbackup.models.ProtectedItemResource>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ProtectedItemResource]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ProtectedItemResourcePaged, self).__init__(*args, **kwargs)
 class ProtectionIntentResourcePaged(Paged):
     """
     A paging container for iterating over a list of :class:`ProtectionIntentResource <azure.mgmt.recoveryservicesbackup.models.ProtectionIntentResource>` object
