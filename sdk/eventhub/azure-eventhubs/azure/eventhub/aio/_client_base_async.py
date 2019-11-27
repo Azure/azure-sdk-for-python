@@ -245,19 +245,19 @@ class ConsumerProducerMixin(object):
         Open the EventHubConsumer using the supplied connection.
 
         """
-        # pylint: disable=protected-access
+        # pylint: disable=protected-access,line-too-long
         if not self.running:  # type: ignore
             if cast(_UAMQP_HANDLER, self._handler):
                 await cast(_UAMQP_HANDLER, self._handler).close_async()
             auth = await self._client._create_auth()
             self._create_handler(auth)  # type: ignore
             await cast(_UAMQP_HANDLER, self._handler).open_async(
-                connection=await self._client._conn_manager.get_connection(self._client._address.hostname, auth)  # pylint: disable=protected-access
+                connection=await self._client._conn_manager.get_connection(self._client._address.hostname, auth)
             )
             while not await cast(_UAMQP_HANDLER, self._handler).client_ready_async():
                 await asyncio.sleep(0.05)
-            self._max_message_size_on_link = cast(_UAMQP_HANDLER, self._handler).message_handler._link.peer_max_message_size \  # pylint: disable=line-too-long
-                                             or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
+            self._max_message_size_on_link = cast(_UAMQP_HANDLER, self._handler).message_handler._link.peer_max_message_size \
+                                             or constants.MAX_MESSAGE_LENGTH_BYTES
             self.running = True
 
     async def _close_handler(self) -> None:
