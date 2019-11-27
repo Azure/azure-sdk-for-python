@@ -71,7 +71,7 @@ class EventData(object):
             event_repr += ", sequence_number={}".format(self.sequence_number)
             event_repr += ", partition_key={}".format(self.partition_key)
             event_repr += ", enqueued_time={}".format(self.enqueued_time)
-        except:
+        except:  # pylint: disable=bare-except
             pass
         return "EventData({})".format(event_repr)
 
