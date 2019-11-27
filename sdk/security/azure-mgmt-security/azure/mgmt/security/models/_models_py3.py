@@ -1335,8 +1335,6 @@ class AutomationActionWorkspace(AutomationAction):
     :param workspace_resource_id: The fully qualified Log Analytics Workspace
      Azure Resource ID.
     :type workspace_resource_id: str
-    :param workspace_id: The Log Analytics Workspace ID in a GUID format.
-    :type workspace_id: str
     """
 
     _validation = {
@@ -1346,13 +1344,11 @@ class AutomationActionWorkspace(AutomationAction):
     _attribute_map = {
         'action_type': {'key': 'actionType', 'type': 'str'},
         'workspace_resource_id': {'key': 'workspaceResourceId', 'type': 'str'},
-        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
     }
 
-    def __init__(self, *, workspace_resource_id: str=None, workspace_id: str=None, **kwargs) -> None:
+    def __init__(self, *, workspace_resource_id: str=None, **kwargs) -> None:
         super(AutomationActionWorkspace, self).__init__(**kwargs)
         self.workspace_resource_id = workspace_resource_id
-        self.workspace_id = workspace_id
         self.action_type = 'Workspace'
 
 
