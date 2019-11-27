@@ -18,7 +18,7 @@ def test_get_span_from_thread():
         output.append(current_span)
 
     tracer = Tracer(sampler=AlwaysOnSampler())
-    with tracer.span(name="YijunEventHubTestSend") as span:
+    with tracer.span(name="TestSpan") as span:
 
         thread = threading.Thread(
             target=get_span_from_thread,
