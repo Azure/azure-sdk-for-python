@@ -6,8 +6,9 @@ from __future__ import unicode_literals
 
 import json
 import logging
-import six
 from typing import Union, Dict, Any, Iterable, Optional
+
+import six
 
 from uamqp import BatchMessage, Message, constants  # type: ignore
 
