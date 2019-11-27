@@ -18,8 +18,8 @@ CONNECTION_TIMEOUT = 20
 if sys.version_info >= (3, 5):
     # the timeout to connect is 20 seconds, and the read timeout is 2000 seconds
     # the 2000 seconds was calculated with: 100MB (max block size)/ 50KB/s (an arbitrarily chosen minimum upload speed)
-    CONNECTION_TIMEOUT=20
-    READ_TIMEOUT=2000
+    CONNECTION_TIMEOUT = 20
+    READ_TIMEOUT = 2000
 
 STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"
 
