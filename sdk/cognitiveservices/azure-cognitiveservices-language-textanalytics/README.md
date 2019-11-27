@@ -31,11 +31,13 @@ You can create either resource using the
 or [Azure CLI](https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows).
 Below is an example of how you can create a Text Analytics resource using the CLI:
 
-```
+```bash
 # Create a new resource group to hold the text analytics resource -
 # if using an existing resource group, skip this step
 az group create --name my-resource-group --location westus2
+```
 
+```bash
 # Create text analytics
 az cognitiveservices account create \
     --name text-analytics-resource \
@@ -283,7 +285,7 @@ text_analytics_client = TextAnalyticsClient(endpoint, key)
 documents = [
     "This is written in English.",
     "Este es un document escrito en Español.",
-    "这是一个用中文写的文件"
+    "Dies ist in englischer Sprache verfasst."
 ]
 
 result = text_analytics_client.detect_language(documents)
