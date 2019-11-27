@@ -74,11 +74,11 @@ class EventHubProducerClient(ClientBaseAsync):
         self._producers = {ALL_PARTITIONS: self._create_producer()}  # type: Dict[str, EventHubProducer]
         self._lock = asyncio.Lock()  # sync the creation of self._producers
         self._max_message_size_on_link = 0
-        self._partition_ids = None
+        self._partition_ids = None  # Optional[Iterable[str]]
 
     async def _get_partitions(self) -> None:
         if not self._partition_ids:
-            self._partition_ids = await self.get_partition_ids()
+            self._partition_ids = await self.get_partition_ids()  # type: Iterable[str]
             for p_id in self._partition_ids:
                 self._producers[p_id] = None
 
@@ -91,7 +91,7 @@ class EventHubProducerClient(ClientBaseAsync):
                     self._producers[ALL_PARTITIONS]._handler.message_handler._link.peer_max_message_size \
                     or constants.MAX_MESSAGE_LENGTH_BYTES
 
-    async def _start_producer(self, partition_id: str, send_timeout: Optional[int]) -> None:
+    async def _start_producer(self, partition_id: str, send_timeout: Optional[Union[int, float]]) -> None:
         async with self._lock:
             await self._get_partitions()
             if partition_id not in self._partition_ids and partition_id != ALL_PARTITIONS:
@@ -105,8 +105,8 @@ class EventHubProducerClient(ClientBaseAsync):
 
     def _create_producer(
             self, *,
-            partition_id: str = None,
-            send_timeout: Optional[float] = None,
+            partition_id: Optional[str] = None,
+            send_timeout: Optional[Union[int, float]] = None,
             loop: Optional[asyncio.AbstractEventLoop] = None
     ) -> EventHubProducer:
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
@@ -135,7 +135,6 @@ class EventHubProducerClient(ClientBaseAsync):
             transport_type: Optional['TransportType'] = None,
             **kwargs: Any
             ) -> 'EventHubProducerClient':
-        # pylint: disable=arguments-differ
         """Create an EventHubProducerClient from a connection string.
 
         :param str conn_str: The connection string of an Event Hub.
@@ -166,7 +165,7 @@ class EventHubProducerClient(ClientBaseAsync):
                 :dedent: 4
                 :caption: Create a new instance of the EventHubProducerClient from connection string.
         """
-        return super(EventHubProducerClient, cls).from_connection_string(
+        return cls._from_connection_string(
             conn_str,
             eventhub_name=eventhub_name,
             logging_enable=logging_enable,
@@ -182,7 +181,7 @@ class EventHubProducerClient(ClientBaseAsync):
             self,
             event_data_batch: EventDataBatch,
             *,
-            timeout: Optional[float] = None) -> None:
+            timeout: Optional[Union[int, float]] = None) -> None:
         """Sends event data and blocks until acknowledgement is received or operation times out.
 
         :param event_data_batch: The EventDataBatch object to be sent.

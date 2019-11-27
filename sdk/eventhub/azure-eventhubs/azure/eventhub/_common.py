@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 
 import json
 import logging
-from typing import Union, Dict, Any, Iterable, Optional
+from typing import Union, Dict, Any, Iterable, Optional, List, TYPE_CHECKING
 
 import six
 
@@ -20,6 +20,9 @@ from ._constants import (
     PROP_PARTITION_KEY_AMQP_SYMBOL,
     PROP_TIMESTAMP
 )
+
+if TYPE_CHECKING:
+    import datetime
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -46,7 +49,7 @@ class EventData(object):
 
     def __init__(self, body=None):
         # type: (Union[str, bytes, List[Union[str, bytes]]]) -> None
-        self._last_enqueued_event_properties = {}
+        self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         if body and isinstance(body, list):
             self.message = Message(body[0])
             for more in body[1:]:
@@ -69,8 +72,8 @@ class EventData(object):
             event_repr += ", properties={}".format(self.properties)
             event_repr += ", offset={}".format(self.offset)
             event_repr += ", sequence_number={}".format(self.sequence_number)
-            event_repr += ", partition_key={}".format(self.partition_key)
-            event_repr += ", enqueued_time={}".format(self.enqueued_time)
+            event_repr += ", partition_key={!r}".format(self.partition_key)
+            event_repr += ", enqueued_time={!r}".format(self.enqueued_time)
         except:  # pylint: disable=bare-except
             pass
         return "EventData({})".format(event_repr)
@@ -89,7 +92,7 @@ class EventData(object):
             if self.sequence_number:
                 event_str += ", sequence_number: {}".format(self.sequence_number)
             if self.partition_key:
-                event_str += ", partition_key={}".format(self.partition_key)
+                event_str += ", partition_key={!r}".format(self.partition_key)
             if self.enqueued_time:
                 event_str += ", enqueued_time={!r}".format(self.enqueued_time)
         except:  # pylint: disable=bare-except
@@ -99,6 +102,7 @@ class EventData(object):
 
     @classmethod
     def _from_message(cls, message):
+        # type: (Message) -> EventData
         """Internal use only.
 
         Creates an EventData object from a raw uamqp message.
@@ -116,7 +120,7 @@ class EventData(object):
 
     @property
     def sequence_number(self):
-        # type: () -> int
+        # type: () -> Optional[int]
         """The sequence number of the event.
 
         :rtype: int or long
@@ -125,7 +129,7 @@ class EventData(object):
 
     @property
     def offset(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The offset of the event.
 
         :rtype: str
@@ -137,7 +141,7 @@ class EventData(object):
 
     @property
     def enqueued_time(self):
-        # type: () -> datetime.datetime
+        # type: () -> Optional[datetime.datetime]
         """The enqueued timestamp of the event.
 
         :rtype: datetime.datetime
@@ -149,7 +153,7 @@ class EventData(object):
 
     @property
     def partition_key(self):
-        # type: () -> bytes
+        # type: () -> Optional[bytes]
         """The partition key of the event.
 
         :rtype: bytes
@@ -189,7 +193,7 @@ class EventData(object):
 
     @property
     def body(self):
-        # type: () -> Iterable[Union[str, bytes]]
+        # type: () -> Iterable[bytes]
         """The content of the event.
 
         :rtype: bytes or Generator[bytes]
@@ -235,6 +239,7 @@ class EventData(object):
 
     @property
     def application_properties(self):
+        # type: () -> Dict[str, Any]
         # TODO: This method is for the purpose of livetest, because uamqp v.1.2.4 hasn't been released
         # The gather() in uamqp.message of v1.2.3 depends on application_properties attribute,
         # the livetest would all break if removing this property.
@@ -242,6 +247,7 @@ class EventData(object):
         return self.properties
 
     def encode_message(self):
+        # type: () -> bytes
         # TODO: This method is for the purpose of livetest, because uamqp v.1.2.4 hasn't been released
         # The gather() in uamqp.message of v1.2.3 depends on encode_message method,
         # the livetest would all break if removing this method.
@@ -271,7 +277,7 @@ class EventDataBatch(object):
     """
 
     def __init__(self, max_size_in_bytes=None, partition_id=None, partition_key=None):
-        # type: (Optional[int], Optional[str], Optional[Union[str, bytes]]) -> None
+        # type: (Optional[int], Optional[str], Optional[str]) -> None
         self.max_size_in_bytes = max_size_in_bytes or constants.MAX_MESSAGE_LENGTH_BYTES
         self.message = BatchMessage(data=[], multi_messages=False, properties=None)
         self._partition_id = partition_id

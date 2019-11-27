@@ -8,7 +8,7 @@ import logging
 import asyncio
 import time
 import functools
-from typing import Any
+from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional
 
 from uamqp import (
     authentication,
@@ -26,6 +26,9 @@ from .._constants import JWT_TOKEN_SCOPE, MGMT_OPERATION, MGMT_PARTITION_OPERATI
 from ._connection_manager_async import get_connection_manager
 from ._error_async import _handle_exception
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential  # type: ignore
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -35,7 +38,7 @@ class EventHubSharedKeyCredential(object):
     :param str policy: The name of the shared access policy.
     :param str key: The shared access key.
     """
-    def __init__(self, policy, key):
+    def __init__(self, policy: str, key: str):
         self.policy = policy
         self.key = key
         self.token_type = b"servicebus.windows.net:sastoken"
@@ -47,7 +50,13 @@ class EventHubSharedKeyCredential(object):
 
 
 class ClientBaseAsync(ClientBase):
-    def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
+    def __init__(
+            self,
+            fully_qualified_namespace: str,
+            eventhub_name: str,
+            credential: 'TokenCredential',
+            **kwargs: Any
+            ) -> None:
         super(ClientBaseAsync, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
@@ -63,7 +72,7 @@ class ClientBaseAsync(ClientBase):
         await self.close()
 
     @classmethod
-    def from_connection_string(cls, conn_str, **kwargs):
+    def _from_connection_string(cls, conn_str: str, **kwargs) -> ClientBaseAsync:
         consumer_group = kwargs.pop("consumer_group", None)
         host, policy, key, entity = _parse_conn_str(conn_str, kwargs)
 
@@ -82,7 +91,7 @@ class ClientBaseAsync(ClientBase):
             **kwargs
         )
 
-    async def _create_auth(self):
+    async def _create_auth(self) -> authentication.JWTTokenAsync:
         """
         Create an ~uamqp.authentication.SASTokenAuthAsync instance to authenticate
         the session.
@@ -112,10 +121,16 @@ class ClientBaseAsync(ClientBase):
             http_proxy=self._config.http_proxy,
             transport_type=self._config.transport_type)
 
-    async def _close_connection(self):
+    async def _close_connection(self) -> None:
         await self._conn_manager.reset_connection_if_broken()
 
-    async def _backoff(self, retried_times, last_exception, timeout_time=None, entity_name=None):
+    async def _backoff(
+            self,
+            retried_times: int,
+            last_exception: Exception,
+            timeout_time: Optional[int] = None,
+            entity_name: Optional[str] = None
+            ) -> None:
         entity_name = entity_name or self._container_id
         backoff = self._config.backoff_factor * 2 ** retried_times
         if backoff <= self._config.backoff_max and (
@@ -127,7 +142,7 @@ class ClientBaseAsync(ClientBase):
                      entity_name, last_exception)
             raise last_exception
 
-    async def _management_request(self, mgmt_msg, op_type):
+    async def _management_request(self, mgmt_msg: Message, op_type: str) -> Any:
         retried_times = 0
         last_exception = None
         while retried_times <= self._config.max_retries:
@@ -153,8 +168,7 @@ class ClientBaseAsync(ClientBase):
             finally:
                 await mgmt_client.close_async()
 
-    async def get_eventhub_properties(self):
-        # type:() -> Dict[str, Any]
+    async def get_eventhub_properties(self) -> Dict[str, Any]:
         """Get properties of the Event Hub.
 
         Keys in the returned dictionary include:
@@ -169,15 +183,14 @@ class ClientBaseAsync(ClientBase):
         mgmt_msg = Message(application_properties={'name': self.eventhub_name})
         response = await self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
         output = {}
-        eh_info = response.get_data()
+        eh_info = response.get_data()  # type: Dict[bytes, Any]
         if eh_info:
             output['eventhub_name'] = eh_info[b'name'].decode('utf-8')
             output['created_at'] = utc_from_timestamp(float(eh_info[b'created_at']) / 1000)
             output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
         return output
 
-    async def get_partition_ids(self):
-        # type:() -> List[str]
+    async def get_partition_ids(self) -> List[str]:
         """Get partition IDs of the Event Hub.
 
         :rtype: list[str]
@@ -185,8 +198,7 @@ class ClientBaseAsync(ClientBase):
         """
         return (await self.get_eventhub_properties())['partition_ids']
 
-    async def get_partition_properties(self, partition_id):
-        # type:(str) -> Dict[str, str]
+    async def get_partition_properties(self, partition_id: str) -> Dict[str, Any]:
         """Get properties of the specified partition.
 
         Keys in the properties dictionary include:
@@ -207,7 +219,7 @@ class ClientBaseAsync(ClientBase):
         mgmt_msg = Message(application_properties={'name': self.eventhub_name,
                                                    'partition': partition_id})
         response = await self._management_request(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
-        partition_info = response.get_data()
+        partition_info = response.get_data()  # type: Dict[bytes, Union[bytes, int]]
         output = {}
         if partition_info:
             output['eventhub_name'] = partition_info[b'name'].decode('utf-8')
@@ -221,8 +233,7 @@ class ClientBaseAsync(ClientBase):
             )
         return output
 
-    async def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         await self._conn_manager.close_connection()
 
 
@@ -234,13 +245,13 @@ class ConsumerProducerMixin(object):
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close()
 
-    def _check_closed(self):
+    def _check_closed(self) -> None:
         if self.closed:
             raise ClientClosedError(
                 "{} has been closed. Please create a new one to handle event data.".format(self._name)
             )
 
-    async def _open(self):
+    async def _open(self) -> None:
         """
         Open the EventHubConsumer using the supplied connection.
 
@@ -260,23 +271,28 @@ class ConsumerProducerMixin(object):
                                              or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
             self.running = True
 
-    async def _close_handler(self):
+    async def _close_handler(self) -> None:
         if self._handler:
             await self._handler.close_async()  # close the link (sharing connection) or connection (not sharing)
         self.running = False
 
-    async def _close_connection(self):
+    async def _close_connection(self) -> None:
         await self._close_handler()
         await self._client._conn_manager.reset_connection_if_broken()  # pylint:disable=protected-access
 
-    async def _handle_exception(self, exception):
+    async def _handle_exception(self, exception: Exception) -> Exception:
         if not self.running and isinstance(exception, compat.TimeoutException):
             exception = errors.AuthenticationException("Authorization timeout.")
             return await _handle_exception(exception, self)
 
         return await _handle_exception(exception, self)
 
-    async def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+    async def _do_retryable_operation(
+            self,
+            operation: Callable[..., Any],
+            timeout: Optional[int] = None,
+            **kwargs: Any
+            ) -> Optional[Any]:
         # pylint:disable=protected-access
         timeout_time = (time.time() + timeout) if timeout else None
         retried_times = 0
@@ -302,8 +318,7 @@ class ConsumerProducerMixin(object):
                     _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
                     raise last_exception
 
-    async def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         """
         Close down the handler. If the handler has already closed,
         this will be a no op.

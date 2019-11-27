@@ -146,8 +146,7 @@ class EventHubConsumerClient(ClientBaseAsync):
                                checkpoint_store: Optional['CheckpointStore'] = None,
                                load_balancing_interval: float = 10,
                                **kwargs: Any
-                               ) -> 'EventHubConsumerClient':  # pylint: disable=arguments-differ
-        # pylint: disable=arguments-differ
+                               ) -> 'EventHubConsumerClient':
         """Create an EventHubConsumerClient from a connection string.
 
         :param str conn_str: The connection string of an Event Hub.
@@ -187,7 +186,7 @@ class EventHubConsumerClient(ClientBaseAsync):
                 :caption: Create a new instance of the EventHubConsumerClient from connection string.
 
         """
-        return super(EventHubConsumerClient, cls).from_connection_string(
+        return cls._from_connection_string(
             conn_str,
             consumer_group=consumer_group,
             eventhub_name=eventhub_name,

@@ -96,6 +96,7 @@ class EventHubConsumerClient(ClientBase):
         self._event_processors = {}  # type: Dict[Tuple[str, str], EventProcessor]
 
     def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
+        # type: (str, str, Union[str, int, datetime.datetime], Any) -> EventHubConsumer
         owner_level = kwargs.get("owner_level")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
         track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
@@ -118,7 +119,7 @@ class EventHubConsumerClient(ClientBase):
         return handler
 
     @classmethod
-    def from_connection_string(cls, conn_str, consumer_group, **kwargs):  # pylint: disable=arguments-differ
+    def from_connection_string(cls, conn_str, consumer_group, **kwargs):
         # type: (str, str, Any) -> EventHubConsumerClient
         """Create an EventHubConsumerClient from a connection string.
 
@@ -159,12 +160,10 @@ class EventHubConsumerClient(ClientBase):
                 :caption: Create a new instance of the EventHubConsumerClient from connection string.
 
         """
-        return super(EventHubConsumerClient, cls).from_connection_string(conn_str,
-                                                                         consumer_group=consumer_group,
-                                                                         **kwargs)
+        return cls._from_connection_string(conn_str, consumer_group=consumer_group, **kwargs)
 
     def receive(self, on_event, **kwargs):
-        #  type: (Callable[[PartitionContext, List[EventData]], None], str, Any) -> None
+        #  type: (Callable[[PartitionContext, EventData], None], Any) -> None
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
         :param on_event: The callback function for handling a received event. The callback takes two
@@ -228,7 +227,7 @@ class EventHubConsumerClient(ClientBase):
         """
         partition_id = kwargs.get("partition_id")
         with self._lock:
-            error = None
+            error = None  # type: Optional[str]
             if (self._consumer_group, ALL_PARTITIONS) in self._event_processors:
                 error = ("This consumer client is already receiving events "
                          "from all partitions for consumer group {}.".format(self._consumer_group))

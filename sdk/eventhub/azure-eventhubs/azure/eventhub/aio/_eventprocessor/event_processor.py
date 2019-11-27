@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
-from typing import Dict, Callable, List, Any
+from typing import Dict, Callable, List, Any, TYPE_CHECKING
 import uuid
 import asyncio
 import logging
@@ -16,6 +16,9 @@ from .partition_context import PartitionContext
 from .checkpoint_store import CheckpointStore
 from ._ownership_manager import OwnershipManager
 from .utils import get_running_loop
+
+if TYPE_CHECKING:
+    from .._consumer_async import EventHubConsumer
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -64,7 +67,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         self._id = str(uuid.uuid4())
         self._running = False
 
-        self._consumers = {}
+        self._consumers = {}  # type: Dict[str, EventHubConsumer]
         self._ownership_manager = OwnershipManager(
             self._eventhub_client,
             self._consumer_group,
