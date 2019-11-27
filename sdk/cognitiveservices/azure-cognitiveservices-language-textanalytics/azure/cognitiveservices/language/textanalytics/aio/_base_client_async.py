@@ -26,19 +26,21 @@ from .._version import VERSION
 
 class AsyncTextAnalyticsClientBase(object):
 
-    def __init__(self, credentials, **kwargs):
-        self._pipeline = self._create_pipeline(credentials, **kwargs)
+    def __init__(self, credential, **kwargs):
+        self._pipeline = self._create_pipeline(credential, **kwargs)
 
-    def _create_pipeline(self, credentials, **kwargs):
+    def _create_pipeline(self, credential, **kwargs):
         credential_policy = None
-        if hasattr(credentials, "get_token"):
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
+        if hasattr(credential, "get_token"):
             credential_policy = AsyncBearerTokenCredentialPolicy(
-                credentials, "https://cognitiveservices.azure.com/.default"
+                credential, "https://cognitiveservices.azure.com/.default"
             )
-        elif isinstance(credentials, six.string_types):
-            credential_policy = CognitiveServicesCredentialPolicy(credentials)
-        elif credentials is not None:
-            raise TypeError("Unsupported credential: {}".format(credentials))
+        elif isinstance(credential, six.string_types):
+            credential_policy = CognitiveServicesCredentialPolicy(credential)
+        elif credential is not None:
+            raise TypeError("Unsupported credential: {}".format(credential))
 
         config = self.create_configuration(**kwargs)
         config.transport = kwargs.get("transport")  # type: ignore

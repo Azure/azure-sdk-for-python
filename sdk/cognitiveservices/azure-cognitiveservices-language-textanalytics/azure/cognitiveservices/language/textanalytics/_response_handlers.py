@@ -30,19 +30,18 @@ from ._models import (
 
 
 def process_single_error(error):
-    """We actually raise the DocumentError for single text operations.
+    """Configure and raise a DocumentError for single text operation errors.
     """
-    raise_error = HttpResponseError
     error_message = error.error["innerError"]["message"]
     error_code = error.error["code"]
     error_message += "\nErrorCode:{}".format(error_code)
-    error = raise_error(message=error_message)
+    error = HttpResponseError(message=error_message)
     error.error_code = error_code
     raise error
 
 
 def process_batch_error(error):
-    """Raise and return detailed error message for HttpResponseErrors
+    """Raise detailed error message for HttpResponseErrors
     """
     raise_error = HttpResponseError
     if error.status_code == 401:
@@ -58,13 +57,11 @@ def process_batch_error(error):
 
     if error_body is not None:
         error_resp = error_body["error"]
-        try:
-            error_message = error_resp["innerError"]["message"]
-            error_code = error_resp["innerError"]["code"]
-        except KeyError:
-            error_message = error_resp["message"]
-            error_code = error_resp["code"]
+        if "innerError" in error_resp:
+            error_resp = error_resp["innerError"]
 
+        error_message = error_resp["message"]
+        error_code = error_resp["code"]
         error_message += "\nErrorCode:{}".format(error_code)
 
     error = raise_error(message=error_message, response=error.response)
@@ -82,9 +79,10 @@ def _validate_single_input(text, hint, hint_value):
     :return: A LanguageInput or MultiLanguageInput
     """
     if isinstance(text, six.string_types):
+        document = {"id": "0", "text": text}
         if hint_value:
-            return [{"id": "0", "text": text, hint: hint_value}]
-        return [{"id": "0", "text": text}]
+            document[hint] = hint_value
+        return [document]
     raise TypeError("Text parameter must be string.")
 
 
@@ -102,10 +100,10 @@ def _validate_batch_input(documents, hint, hint_value):
     string_batch = []
     for idx, doc in enumerate(documents):
         if isinstance(doc, six.string_types):
+            document = {"id": str(idx), "text": doc}
             if hint_value:
-                string_batch.append({"id": str(idx), hint: hint_value, "text": doc})
-            else:
-                string_batch.append({"id": str(idx), "text": doc})
+                document[hint] = hint_value
+            string_batch.append(document)
             string_input = True
         if isinstance(doc, (dict, MultiLanguageInput, LanguageInput)):
             nonstring_input = True
@@ -123,108 +121,71 @@ def order_results(response, combined):
     :return: In order list of results | errors (if any)
     """
     request = json.loads(response.request.body)["documents"]
-    mapping = {}
-    for item in combined:
-        mapping[item.id] = item
-
-    ordered_response = []
-    for item in request:
-        ordered_response.append(mapping[item["id"]])
+    mapping = {item.id: item for item in combined}
+    ordered_response = [mapping[item["id"]] for item in request]
     return ordered_response
 
 
-def language_result(response, obj, response_headers):  # pylint: disable=unused-argument
-    if obj.errors:
-        combined = obj.documents + obj.errors
-        results = order_results(response, combined)
-    else:
-        results = obj.documents
-
-    for idx, language in enumerate(results):
-        if hasattr(language, "error"):
-            results[idx] = DocumentError(id=language.id, error=language.error)
+def prepare_result(func):
+    def wrapper(response, obj, response_headers):  # pylint: disable=unused-argument
+        if obj.errors:
+            combined = obj.documents + obj.errors
+            results = order_results(response, combined)
         else:
-            results[idx] = DocumentLanguage(
-                id=language.id,
-                detected_language=DetectedLanguage._from_generated(language.detected_languages[0]),  # pylint: disable=protected-access
-                statistics=DocumentStatistics._from_generated(language.statistics),  # pylint: disable=protected-access
-            )
-    return results
+            results = obj.documents
+
+        for idx, item in enumerate(results):
+            if hasattr(item, "error"):
+                results[idx] = DocumentError(id=item.id, error=item.error)
+            else:
+                results[idx] = func(item)
+        return results
+
+    return wrapper
 
 
-def entities_result(response, obj, response_headers):  # pylint: disable=unused-argument
-    if obj.errors:
-        combined = obj.documents + obj.errors
-        results = order_results(response, combined)
-    else:
-        results = obj.documents
-
-    for idx, entity in enumerate(results):
-        if hasattr(entity, "error"):
-            results[idx] = DocumentError(id=entity.id, error=entity.error)
-        else:
-            results[idx] = DocumentEntities(
-                id=entity.id,
-                entities=[Entity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
-                statistics=DocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
-            )
-    return results
+@prepare_result
+def language_result(language):
+    return DocumentLanguage(
+        id=language.id,
+        detected_language=DetectedLanguage._from_generated(language.detected_languages[0]),  # pylint: disable=protected-access
+        statistics=DocumentStatistics._from_generated(language.statistics),  # pylint: disable=protected-access
+    )
 
 
-def linked_entities_result(response, obj, response_headers):  # pylint: disable=unused-argument
-    if obj.errors:
-        combined = obj.documents + obj.errors
-        results = order_results(response, combined)
-    else:
-        results = obj.documents
-
-    for idx, entity in enumerate(results):
-        if hasattr(entity, "error"):
-            results[idx] = DocumentError(id=entity.id, error=entity.error)
-        else:
-            results[idx] = DocumentLinkedEntities(
-                id=entity.id,
-                entities=[LinkedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
-                statistics=DocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
-            )
-    return results
+@prepare_result
+def entities_result(entity):
+    return DocumentEntities(
+        id=entity.id,
+        entities=[Entity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        statistics=DocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
+    )
 
 
-def key_phrases_result(response, obj, response_headers):  # pylint: disable=unused-argument
-    if obj.errors:
-        combined = obj.documents + obj.errors
-        results = order_results(response, combined)
-    else:
-        results = obj.documents
-
-    for idx, phrases in enumerate(results):
-        if hasattr(phrases, "error"):
-            results[idx] = DocumentError(id=phrases.id, error=phrases.error)
-        else:
-            results[idx] = DocumentKeyPhrases(
-                id=phrases.id,
-                key_phrases=phrases.key_phrases,
-                statistics=DocumentStatistics._from_generated(phrases.statistics),  # pylint: disable=protected-access
-            )
-    return results
+@prepare_result
+def linked_entities_result(entity):
+    return DocumentLinkedEntities(
+        id=entity.id,
+        entities=[LinkedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        statistics=DocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
+    )
 
 
-def sentiment_result(response, obj, response_headers):  # pylint: disable=unused-argument
-    if obj.errors:
-        combined = obj.documents + obj.errors
-        results = order_results(response, combined)
-    else:
-        results = obj.documents
+@prepare_result
+def key_phrases_result(phrases):
+    return DocumentKeyPhrases(
+        id=phrases.id,
+        key_phrases=phrases.key_phrases,
+        statistics=DocumentStatistics._from_generated(phrases.statistics),  # pylint: disable=protected-access
+    )
 
-    for idx, sentiment in enumerate(results):
-        if hasattr(sentiment, "error"):
-            results[idx] = DocumentError(id=sentiment.id, error=sentiment.error)
-        else:
-            results[idx] = DocumentSentiment(
-                id=sentiment.id,
-                sentiment=sentiment.sentiment,
-                statistics=DocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
-                document_scores=sentiment.document_scores,
-                sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences],  # pylint: disable=protected-access
-            )
-    return results
+
+@prepare_result
+def sentiment_result(sentiment):
+    return DocumentSentiment(
+        id=sentiment.id,
+        sentiment=sentiment.sentiment,
+        statistics=DocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
+        document_scores=sentiment.document_scores,
+        sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences],  # pylint: disable=protected-access
+    )

@@ -40,10 +40,9 @@ async def single_detect_language(
     # type: (...) -> DocumentLanguage
     """Detect Language for a single document.
 
-    The API returns the detected language and a numeric score between 0 and
-    1. Scores close to 1 indicate 100% certainty that the identified
-    language is true. See https://aka.ms/talangs for the
-    list of enabled languages.
+    Returns the detected language and a numeric score between zero and
+    one. Scores close to one indicate 100% certainty that the identified
+    language is true. See https://aka.ms/talangs for the list of enabled languages.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
@@ -88,11 +87,9 @@ async def single_recognize_entities(
     # type: (...) -> DocumentEntities
     """Named Entity Recognition for a single document.
 
-    The API returns a list of general named entities in a given document.
-    For the list of supported entity types, check:
-    https://aka.ms/taner
-    API</a>. For the list of enabled languages, check:
-    https://aka.ms/talangs
+    Returns a list of general named entities in a given document.
+    For a list of supported entity types, check: https://aka.ms/taner
+    For a list of enabled languages, check: https://aka.ms/talangs
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
@@ -136,9 +133,10 @@ async def single_recognize_pii_entities(
     # type: (...) -> DocumentEntities
     """Recognize entities containing personal information for a single document.
 
-    The API returns a list of personal information entities ("SSN",
-    "Bank Account", etc) in the document. See https://aka.ms/talangs for the
-    list of enabled languages.
+    Returns a list of personal information entities ("SSN",
+    "Bank Account", etc) in the document.  For the list of supported entity types,
+    check https://aka.ms/tanerpii. See https://aka.ms/talangs
+    for the list of enabled languages.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
@@ -183,8 +181,9 @@ async def single_recognize_linked_entities(
     """Recognize linked entities from a well-known knowledge base
     for a single document.
 
-    The API returns a list of recognized entities with links to a
-    well-known knowledge base. See https://aka.ms/talangs for the list of enabled languages.
+    Returns a list of recognized entities with links to a
+    well-known knowledge base. See https://aka.ms/talangs for
+    supported languages in Text Analytics API.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
@@ -228,8 +227,9 @@ async def single_extract_key_phrases(
     # type: (...) -> DocumentKeyPhrases
     """Extract Key Phrases for a single document.
 
-    The API returns a list of strings denoting the key phrases in the input
-    text. See https://aka.ms/talangs for the list of enabled languages.
+    Returns a list of strings denoting the key phrases in the input
+    text. See https://aka.ms/talangs for the list of enabled
+    languages.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and
         hostname, for example: https://westus2.api.cognitive.microsoft.com).
@@ -273,7 +273,7 @@ async def single_analyze_sentiment(
     # type: (...) -> DocumentSentiment
     """Analyze sentiment in a single document.
 
-    The API returns a sentiment prediction, as well as sentiment scores for
+    Returns a sentiment prediction, as well as sentiment scores for
     each sentiment class (Positive, Negative, and Neutral) for the document
     and each sentence within it. See https://aka.ms/talangs for the list
     of enabled languages.

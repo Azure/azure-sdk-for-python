@@ -18,7 +18,7 @@ USAGE:
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your cognitive services resource.
-    2) AZURE_COGNITIVE_SERVICES_KEY - your cognitive services account key
+    2) AZURE_TEXT_ANALYTICS_KEY - your text analytics subscription key
 
 OUTPUT:
     Document text: This is a document written in English.
@@ -54,7 +54,7 @@ import asyncio
 class DetectLanguageSampleAsync(object):
 
     endpoint = os.getenv("AZURE_TEXT_ANALYTICS_ENDPOINT")
-    key = os.getenv("AZURE_COGNITIVE_SERVICES_KEY")
+    key = os.getenv("AZURE_TEXT_ANALYTICS_KEY")
 
     async def detect_language_async(self):
         from azure.cognitiveservices.language.textanalytics.aio import TextAnalyticsClient

@@ -43,7 +43,7 @@ with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
 if not version:
     raise RuntimeError('Cannot find version information')
 
-with open('README.rst', encoding='utf-8') as f:
+with open('README.md', encoding='utf-8') as f:
     readme = f.read()
 with open('HISTORY.rst', encoding='utf-8') as f:
     history = f.read()

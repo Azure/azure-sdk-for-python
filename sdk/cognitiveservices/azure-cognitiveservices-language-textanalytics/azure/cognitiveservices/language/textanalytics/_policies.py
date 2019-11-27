@@ -11,8 +11,6 @@ from ._models import RequestStatistics
 
 class CognitiveServicesCredentialPolicy(SansIOHTTPPolicy):
     def __init__(self, cognitiveservices_key):
-        if cognitiveservices_key is None:
-            raise ValueError("Parameter 'credential' must not be None.")
         self.cognitiveservices_key = cognitiveservices_key
         super(CognitiveServicesCredentialPolicy, self).__init__()
 
@@ -29,9 +27,8 @@ class TextAnalyticsResponseHook(HTTPPolicy):
         super(TextAnalyticsResponseHook, self).__init__()
 
     def send(self, request):
-        if request.context.options.get("response_hook", self._response_callback):
-            response_callback = request.context.options.pop("response_hook", self._response_callback)
-
+        response_callback = request.context.options.pop("response_hook", self._response_callback)
+        if response_callback:
             response = self.next.send(request)
             data = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
             statistics = data.get("statistics", None)
@@ -41,7 +38,6 @@ class TextAnalyticsResponseHook(HTTPPolicy):
             response.statistics = batch_statistics
             response.model_version = model_version
             response.raw_response = data
-            if response_callback:
-                response_callback(response)
+            response_callback(response)
             return response
         return self.next.send(request)
