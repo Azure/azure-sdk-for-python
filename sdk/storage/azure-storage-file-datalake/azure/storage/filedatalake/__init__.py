@@ -55,6 +55,7 @@ __all__ = [
     'PathPropertiesPaged',
     'LeaseProperties',
     'ContentSettings',
+    'MatchConditions'
     'AccountSasPermissions',
     'FileSystemSasPermissions',
     'DirectorySasPermissions',

@@ -49,6 +49,7 @@ from ._models import (
     ContainerSasPermissions,
     BlobSasPermissions,
     CustomerProvidedEncryptionKey,
+    MatchConditions,
 )
 
 __version__ = VERSION
@@ -204,5 +205,6 @@ __all__ = [
     'generate_account_sas',
     'generate_container_sas',
     'generate_blob_sas',
-    'PartialBatchErrorException'
+    'PartialBatchErrorException',
+    'MatchConditions'
 ]

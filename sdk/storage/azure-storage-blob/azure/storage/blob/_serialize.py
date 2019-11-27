@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
 
-from azure.core import MatchConditions
+from ._models import MatchConditions
 
 from ._generated.models import ModifiedAccessConditions, SourceModifiedAccessConditions
 
@@ -25,7 +25,7 @@ def _get_match_headers(kwargs, match_param, etag_param):
         if_none_match = kwargs.pop(etag_param, None)
         if not if_none_match:
             raise ValueError("'{}' specified without '{}'.".format(match_param, etag_param))
-    elif match_condition == MatchConditions.IfMissing:
+    elif match_condition == MatchConditions.IfNotPresent:
         if_none_match = '*'
     elif match_condition is None:
         if etag_param in kwargs:

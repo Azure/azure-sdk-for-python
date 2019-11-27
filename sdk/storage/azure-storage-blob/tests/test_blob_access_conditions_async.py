@@ -13,7 +13,7 @@ import os
 import unittest
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
-from azure.core import MatchConditions
+from azure.storage.blob import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy

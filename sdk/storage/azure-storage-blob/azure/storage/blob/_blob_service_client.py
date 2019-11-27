@@ -29,10 +29,9 @@ from ._generated.models import StorageErrorException, StorageServiceProperties, 
 from ._container_client import ContainerClient
 from ._blob_client import BlobClient
 from ._models import (
-    ContainerPropertiesPaged,
-    service_stats_deserialize,
-    service_properties_deserialize
+    ContainerPropertiesPaged
 )
+from ._deserialize import service_stats_deserialize, service_properties_deserialize
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -489,7 +488,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition:
+        :keyword ~azure.storage.blob.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.

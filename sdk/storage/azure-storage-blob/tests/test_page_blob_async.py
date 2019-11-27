@@ -12,7 +12,7 @@ import os
 import unittest
 from datetime import datetime, timedelta
 
-from azure.core import MatchConditions
+from azure.storage.blob import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy

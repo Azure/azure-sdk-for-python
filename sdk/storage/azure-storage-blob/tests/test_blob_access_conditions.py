@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 import os
 import unittest
 
-from azure.core import MatchConditions
+from azure.storage.blob import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
 
 from azure.storage.blob import (

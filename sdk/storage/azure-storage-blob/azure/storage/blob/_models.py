@@ -7,7 +7,6 @@
 # pylint: disable=super-init-not-called, too-many-lines
 
 from enum import Enum
-from typing import List, Any, TYPE_CHECKING # pylint: disable=unused-import
 
 from azure.core.paging import PageIterator, ItemPaged
 
@@ -1042,25 +1041,9 @@ class CustomerProvidedEncryptionKey(object):
         self.algorithm = 'AES256'
 
 
-def service_stats_deserialize(generated):
-    """Deserialize a ServiceStats objects into a dict.
-    """
-    return {
-        'geo_replication': {
-            'status': generated.geo_replication.status,
-            'last_sync_time': generated.geo_replication.last_sync_time,
-        }
-    }
-
-def service_properties_deserialize(generated):
-    """Deserialize a ServiceProperties objects into a dict.
-    """
-    return {
-        'analytics_logging': BlobAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
-        'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
-        'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
-        'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
-        'target_version': generated.default_service_version,  # pylint: disable=protected-access
-        'delete_retention_policy': RetentionPolicy._from_generated(generated.delete_retention_policy),  # pylint: disable=protected-access
-        'static_website': StaticWebsite._from_generated(generated.static_website),  # pylint: disable=protected-access
-    }
+class MatchConditions(Enum):
+    """An enum to describe match conditions. """
+    IfNotModified = 2
+    IfModified = 3
+    IfPresent = 4
+    IfNotPresent = 5
