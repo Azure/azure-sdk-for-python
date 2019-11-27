@@ -113,7 +113,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """Gets a certificate with its management policy attached. Requires certificates/get permission.
 
         Does not accept the version of the certificate as a parameter. To get a specific version of the
-        certificate, use the :func:`get_certificate_version` function and specify the desired version.
+        certificate, call :func:`get_certificate_version`.
 
         :param str certificate_name: The name of the certificate in the given vault.
         :returns: An instance of KeyVaultCertificate
@@ -146,7 +146,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """Gets a specific version of a certificate without returning its management policy.
 
         Requires certificates/get permission. To get the latest version of the certificate,
-        or to get the certificate's policy as well, use the :func:`get_certificate` function.
+        or to get the certificate's policy as well, call :func:`get_certificate`.
 
         :param str certificate_name: The name of the certificate in the given vault.
         :param str version: The version of the certificate.
