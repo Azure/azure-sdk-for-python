@@ -14,34 +14,19 @@ from ._producer_client import EventHubProducerClient
 from ._consumer_client import EventHubConsumerClient
 from ._client_base import EventHubSharedKeyCredential
 from ._eventprocessor.checkpoint_store import CheckpointStore
-from ._eventprocessor.common import CloseReason, OwnershipLostError
+from ._eventprocessor.common import CloseReason
 from ._eventprocessor.partition_context import PartitionContext
-from .exceptions import (
-    EventHubError,
-    EventDataError,
-    ConnectError,
-    AuthenticationError,
-    EventDataSendError,
-    ConnectionLostError
-)
 
 TransportType = constants.TransportType
 
 __all__ = [
     "EventData",
     "EventDataBatch",
-    "EventHubError",
-    "ConnectError",
-    "ConnectionLostError",
-    "EventDataError",
-    "EventDataSendError",
-    "AuthenticationError",
     "EventHubProducerClient",
     "EventHubConsumerClient",
     "TransportType",
     "EventHubSharedKeyCredential",
     "CheckpointStore",
     "CloseReason",
-    "OwnershipLostError",
     "PartitionContext",
 ]

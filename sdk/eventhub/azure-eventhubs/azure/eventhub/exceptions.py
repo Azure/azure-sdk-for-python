@@ -37,8 +37,7 @@ def _error_handler(error):
 
 
 class EventHubError(Exception):
-    """
-    Represents an error happened in the client.
+    """Represents an error occurred in the client.
 
     :ivar message: The error message.
     :vartype message: str
@@ -95,27 +94,33 @@ class ClientClosedError(EventHubError):
 
 
 class ConnectionLostError(EventHubError):
-    """Connection to event hub is lost. SDK will retry. So this shouldn't happen."""
+    """Connection to the Event Hub is lost.
+
+    In most cases the client will automatically retry on this error."""
 
 
 class ConnectError(EventHubError):
-    """Fail to connect to event hubs."""
+    """Failed to connect to the Event Hubs service."""
 
 
 class AuthenticationError(ConnectError):
-    """Fail to connect to event hubs because of authentication problem."""
+    """Failed to connect to the Event Hubs service because of an authentication issue."""
 
 
 class EventDataError(EventHubError):
-    """Problematic event data so the send will fail at client side."""
+    """Client prevented problematic event data from being sent."""
 
 
 class EventDataSendError(EventHubError):
-    """Service returns error while an event data is being sent."""
+    """Service returned an error while an event data is being sent."""
 
 
 class OperationTimeoutError(EventHubError):
-    """Operation times out."""
+    """Operation timed out."""
+
+
+class OwnershipLostError(Exception):
+    """Raised when `update_checkpoint` detects the ownership to a partition has been lost."""
 
 
 def _create_eventhub_exception(exception):
