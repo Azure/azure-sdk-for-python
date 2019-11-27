@@ -78,7 +78,7 @@ class EventHubProducerClient(ClientBaseAsync):
 
     async def _get_partitions(self) -> None:
         if not self._partition_ids:
-            self._partition_ids = cast(List[str], await self.get_partition_ids())
+            self._partition_ids = await self.get_partition_ids()  # type: ignore
             for p_id in cast(List[str], self._partition_ids):
                 self._producers[p_id] = None
 

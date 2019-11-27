@@ -256,8 +256,7 @@ class ConsumerProducerMixin(object):
             )
             while not await self._handler.client_ready_async():  # type: ignore
                 await asyncio.sleep(0.05)
-            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
-                                             or constants.MAX_MESSAGE_LENGTH_BYTES  # type: ignore
+            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size or constants.MAX_MESSAGE_LENGTH_BYTES  # type: ignore
             self.running = True
 
     async def _close_handler(self) -> None:
@@ -269,7 +268,7 @@ class ConsumerProducerMixin(object):
 
     async def _close_connection(self) -> None:
         await self._close_handler()
-        await self._client._conn_manager.reset_connection_if_broken()  # pylint:disable=protected-access
+        await self._client._conn_manager.reset_connection_if_broken()  # type: ignore # pylint:disable=protected-access
 
     async def _handle_exception(self, exception: Exception) -> Exception:
         if not self.running and isinstance(exception, compat.TimeoutException):
@@ -284,7 +283,7 @@ class ConsumerProducerMixin(object):
             timeout: Optional[int] = None,
             **kwargs: Any
             ) -> Optional[Any]:
-        # pylint:disable=protected-access
+        # pylint:disable=protected-access,line-too-long
         timeout_time = (time.time() + timeout) if timeout else None
         retried_times = 0
         last_exception = kwargs.pop('last_exception', None)
