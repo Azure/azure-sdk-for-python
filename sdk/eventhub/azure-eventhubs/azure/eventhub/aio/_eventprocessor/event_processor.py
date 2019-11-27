@@ -8,7 +8,8 @@ import asyncio
 import logging
 from functools import partial
 
-from azure.eventhub import EventData, EventHubError
+from azure.eventhub import EventData
+from azure.eventhub.exceptions import EventHubError
 from ..._eventprocessor.common import CloseReason
 from ..._eventprocessor._eventprocessor_mixin import EventProcessorMixin
 from .partition_context import PartitionContext

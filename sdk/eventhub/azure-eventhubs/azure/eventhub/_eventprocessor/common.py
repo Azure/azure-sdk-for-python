@@ -7,17 +7,11 @@ from enum import Enum
 
 
 class CloseReason(Enum):
-    """
-    A partition consumer is closed due to two reasons:
-    SHUTDOWN: It is explicitly required to stop, this would happen when the EventHubConsumerClient is closed.
-    OWNERSHIP_LOST: It loses the ownership of a partition, this would happend when other EventHubConsumerClient
-    instance claims ownership of the partition.
-    """
+    """The reason a partition consumer is closed."""
+
+    # The Consumer was explicitly required to stop. This would happen when the EventHubConsumerClient is closed.
     SHUTDOWN = 0
+
+    # The Consumer lost the ownership of a partition. This would happend when another EventHubConsumerClient
+    # instance claims ownership of the partition.
     OWNERSHIP_LOST = 1
-
-
-class OwnershipLostError(Exception):
-    """Raises when update_checkpoint detects the ownership to a partition has been lost.
-
-    """

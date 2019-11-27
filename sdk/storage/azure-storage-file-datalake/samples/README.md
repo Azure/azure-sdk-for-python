@@ -5,9 +5,10 @@ languages:
 products:
   - azure
   - azure-storage
+urlFragment: storage-datalake-samples
 ---
 
-# Azure Storage Blob client library for Python Samples
+# Azure Storage Datalake client library for Python Samples
 
 These are code samples that show common scenario operations with the Azure DataLake Storage client library.
 
@@ -36,10 +37,10 @@ Several DataLake Storage Python SDK samples are available to you in the SDK's Gi
 
 ## Setup
 
-1. Install the Azure Storage Blob client library for Python with [pip](https://pypi.org/project/pip/):
+1. Install the Azure Storage Datalake client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-storage-file-datalake --pre 
+pip install azure-storage-file-datalake --pre
 ```
 
 2. Clone or download this sample repository

@@ -8,9 +8,9 @@ import pytest
 import threading
 import time
 
-from azure.eventhub import EventData, EventHubError
+from azure.eventhub import EventData, CloseReason
+from azure.eventhub.exceptions import EventHubError
 from azure.eventhub._eventprocessor.event_processor import EventProcessor
-from azure.eventhub import CloseReason
 from azure.eventhub._eventprocessor.ownership_manager import OwnershipManager
 from azure.eventhub._eventprocessor.local_checkpoint_store import InMemoryCheckpointStore
 from azure.eventhub._client_base import _Address
@@ -87,6 +87,7 @@ def test_loadbalancer_balance():
     time.sleep(10)
     ep2_after_ep1_stopped = len(event_processor2._consumers)
     event_processor2.stop()
+    thread2.join()
 
     assert ep1_after_start == 2
     assert ep2_after_start == 1
@@ -203,6 +204,7 @@ def test_partition_processor():
     ep_partitions = len(event_processor._consumers)
     event_processor.stop()
     time.sleep(2)
+    thread.join()
     assert ep_partitions == 2
     assert assert_map["initialize"] == "called"
     assert event_map['0'] > 1 and event_map['1'] > 1
@@ -454,6 +456,7 @@ def test_partition_processor_process_update_checkpoint_error():
     thread.start()
     time.sleep(2)
     event_processor.stop()
+    thread.join()
     assert isinstance(assert_map["error"], ValueError)
 
 
