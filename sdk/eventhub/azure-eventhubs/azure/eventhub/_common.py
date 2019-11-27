@@ -57,19 +57,32 @@ class EventData(object):
 
     def __repr__(self):
         # type: () -> str
+        # pylint: disable=bare-except
         try:
             body_str = self.body_as_str()
-        except:  # pylint: disable=bare-except
+        except:
             body_str = "<read-error>"
         event_repr = "body='{}'".format(body_str)
         try:
             event_repr += ", properties={}".format(self.properties)
+        except:
+            event_repr += ", properties=<read-error>"
+        try:
             event_repr += ", offset={}".format(self.offset)
+        except:
+            event_repr += ", offset=<read-error>"
+        try:
             event_repr += ", sequence_number={}".format(self.sequence_number)
+        except:
+            event_repr += ", sequence_number=<read-error>"
+        try:
             event_repr += ", partition_key={!r}".format(self.partition_key)
+        except:
+            event_repr += ", partition_key=<read-error>"
+        try:
             event_repr += ", enqueued_time={!r}".format(self.enqueued_time)
-        except:  # pylint: disable=bare-except
-            pass
+        except:
+            event_repr += ", enqueued_time=<read-error>"
         return "EventData({})".format(event_repr)
 
     def __str__(self):
