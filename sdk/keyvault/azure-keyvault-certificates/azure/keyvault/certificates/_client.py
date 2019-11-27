@@ -127,11 +127,11 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_certificate(self, certificate_name, **kwargs):
-        # type: (str, Any) -> KeyVaultCertificate
+        # type: (str, **Any) -> KeyVaultCertificate
         """Gets a certificate with its management policy attached. Requires certificates/get permission.
 
-        Does not accept the version of the certificate as a parameter. If you wish to specify version,
-        use the :func:`get_certificate_version` function and specify the desired version.
+        Does not accept the version of the certificate as a parameter. To get a specific version of the
+        certificate, use the :func:`get_certificate_version` function and specify the desired version.
 
         :param str certificate_name: The name of the certificate in the given vault.
         :returns: An instance of KeyVaultCertificate
@@ -159,11 +159,11 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_certificate_version(self, certificate_name, version, **kwargs):
-        # type: (str, str, Any) -> KeyVaultCertificate
+        # type: (str, str, **Any) -> KeyVaultCertificate
         """Gets a specific version of a certificate without returning its management policy.
 
-        Requires certificates/get permission. If you wish to get the latest version of your
-        certificate, or to get the certificate's policy as well, use the :func:`get_certificate` function.
+        Requires certificates/get permission. To get the latest version of the certificate,
+        or to get the certificate's policy as well, use the :func:`get_certificate` function.
 
         :param str certificate_name: The name of the certificate in the given vault.
         :param str version: The version of the certificate.
@@ -192,7 +192,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_delete_certificate(self, certificate_name, **kwargs):
-        # type: (str, Any) -> LROPoller
+        # type: (str, **Any) -> LROPoller
         """Delete all versions of a certificate. Requires certificates/delete permission.
 
         When this method returns Key Vault has begun deleting the certificate. Deletion may take several seconds in a
@@ -239,7 +239,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_deleted_certificate(self, certificate_name, **kwargs):
-        # type: (str, Any) -> DeletedCertificate
+        # type: (str, **Any) -> DeletedCertificate
         """Get a deleted certificate. Possible only in a vault with soft-delete enabled.
 
         Requires certificates/get permission. Retrieves the deleted certificate information
@@ -268,7 +268,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def purge_deleted_certificate(self, certificate_name, **kwargs):
-        # type: (str, Any) -> None
+        # type: (str, **Any) -> None
         """Permanently deletes a deleted certificate. Possible only in vaults with soft-delete enabled.
 
         Requires certificates/purge permission.
@@ -290,7 +290,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def begin_recover_deleted_certificate(self, certificate_name, **kwargs):
-        # type: (str, Any) -> LROPoller
+        # type: (str, **Any) -> LROPoller
         """Recover a deleted certificate to its latest version. Possible only in a vault with soft-delete enabled.
 
         Requires certificates/recover permission.
@@ -334,7 +334,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def import_certificate(self, certificate_name, certificate_bytes, **kwargs):
-        # type: (str, bytes, Any) -> KeyVaultCertificate
+        # type: (str, bytes, **Any) -> KeyVaultCertificate
         """Import a certificate created externally. Requires certificates/import permission.
 
         Imports an existing valid certificate, containing a private key, into
@@ -379,7 +379,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_certificate_policy(self, certificate_name, **kwargs):
-        # type: (str, Any) -> CertificatePolicy
+        # type: (str, **Any) -> CertificatePolicy
         """Gets the policy for a certificate. Requires certificates/get permission.
 
         Returns the specified certificate policy resources in the key vault.
@@ -396,7 +396,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def update_certificate_policy(self, certificate_name, policy, **kwargs):
-        # type: (str, CertificatePolicy, Any) -> CertificatePolicy
+        # type: (str, CertificatePolicy, **Any) -> CertificatePolicy
         """Updates the policy for a certificate. Requires certificiates/update permission.
 
         Set specified members in the certificate policy. Leaves others as null.
@@ -463,7 +463,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def backup_certificate(self, certificate_name, **kwargs):
-        # type: (str, Any) -> bytes
+        # type: (str, **Any) -> bytes
         """Back up a certificate in a protected form useable only by Azure Key Vault.
 
         Requires certificates/backup permission. This is intended to allow copying a certificate
@@ -493,10 +493,10 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def restore_certificate_backup(self, backup, **kwargs):
-        # type: (bytes, Any) -> KeyVaultCertificate
+        # type: (bytes, **Any) -> KeyVaultCertificate
         """Restore a certificate backup to the vault. Requires certificates/restore permission.
 
-        This imports all versions of the certificate, with its name, attributes, and access control policies.
+        This restores all versions of the certificate, with its name, attributes, and access control policies.
         If the certificate's name is already in use, restoring it will fail. Also, the target vault must
         be owned by the same Microsoft Azure subscription as the source vault.
 
@@ -520,7 +520,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_deleted_certificates(self, **kwargs):
-        # type: (Any) -> Iterable[DeletedCertificate]
+        # type: (**Any) -> Iterable[DeletedCertificate]
         """Lists the currently-recoverable deleted certificates. Possible only if vault is soft-delete enabled.
 
         Requires certificates/get/list permission. Retrieves the certificates in the current vault which
@@ -555,7 +555,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_properties_of_certificates(self, **kwargs):
-        # type: (Any) -> Iterable[CertificateProperties]
+        # type: (**Any) -> Iterable[CertificateProperties]
         """List identifiers and properties of all certificates in the vault.
 
         Requires certificates/list permission.
@@ -586,7 +586,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_properties_of_certificate_versions(self, certificate_name, **kwargs):
-        # type: (str, Any) -> Iterable[CertificateProperties]
+        # type: (str, **Any) -> Iterable[CertificateProperties]
         """List the identifiers and properties of a certificate's versions.
 
         Requires certificates/list permission.
@@ -616,7 +616,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def set_contacts(self, contacts, **kwargs):
-        # type: (Iterable[CertificateContact], Any) -> List[CertificateContact]
+        # type: (Iterable[CertificateContact], **Any) -> List[CertificateContact]
         """Sets the certificate contacts for the key vault. Requires certificates/managecontacts permission.
 
         :param contacts: The contact list for the vault certificates.
@@ -642,7 +642,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_contacts(self, **kwargs):
-        # type: (Any) -> List[CertificateContact]
+        # type: (**Any) -> List[CertificateContact]
         """Gets the certificate contacts for the key vault. Requires the certificates/managecontacts permission.
 
         :return: The certificate contacts for the key vault.
@@ -662,7 +662,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def delete_contacts(self, **kwargs):
-        # type: (Any) -> List[CertificateContact]
+        # type: (**Any) -> List[CertificateContact]
         """Deletes the certificate contacts for the key vault. Requires the certificates/managecontacts permission.
 
         :return: The deleted contacts for the key vault.
@@ -682,7 +682,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_certificate_operation(self, certificate_name, **kwargs):
-        # type: (str, Any) -> CertificateOperation
+        # type: (str, **Any) -> CertificateOperation
         """Gets the creation operation of a certificate. Requires the certificates/get permission.
 
         :param str certificate_name: The name of the certificate.
@@ -700,7 +700,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def delete_certificate_operation(self, certificate_name, **kwargs):
-        # type: (str, Any) -> CertificateOperation
+        # type: (str, **Any) -> CertificateOperation
         """Deletes and stops the creation operation for a specific certificate.
 
         Requires the certificates/update permission.
@@ -717,7 +717,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def cancel_certificate_operation(self, certificate_name, **kwargs):
-        # type: (str, Any) -> CertificateOperation
+        # type: (str, **Any) -> CertificateOperation
         """Cancels an in-progress certificate operation. Requires the certificates/update permission.
 
         :param str certificate_name: The name of the certificate.
@@ -774,7 +774,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_issuer(self, issuer_name, **kwargs):
-        # type: (str, Any) -> CertificateIssuer
+        # type: (str, **Any) -> CertificateIssuer
         """Gets the specified certificate issuer. Requires certificates/manageissuers/getissuers permission.
 
         :param str issuer_name: The name of the issuer.
@@ -799,7 +799,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def create_issuer(self, issuer_name, provider, **kwargs):
-        # type: (str, str, Any) -> CertificateIssuer
+        # type: (str, str, **Any) -> CertificateIssuer
         """Sets the specified certificate issuer. Requires certificates/setissuers permission.
 
         :param str issuer_name: The name of the issuer.
@@ -869,7 +869,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def update_issuer(self, issuer_name, **kwargs):
-        # type: (str, Any) -> CertificateIssuer
+        # type: (str, **Any) -> CertificateIssuer
         """Updates the specified certificate issuer. Requires certificates/setissuers permission.
 
         :param str issuer_name: The name of the issuer.
@@ -931,7 +931,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def delete_issuer(self, issuer_name, **kwargs):
-        # type: (str, Any) -> CertificateIssuer
+        # type: (str, **Any) -> CertificateIssuer
         """Deletes the specified certificate issuer.
 
         Requires certificates/manageissuers/deleteissuers permission.
@@ -956,7 +956,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_properties_of_issuers(self, **kwargs):
-        # type: (Any) -> Iterable[IssuerProperties]
+        # type: (**Any) -> Iterable[IssuerProperties]
         """Lists properties of the certificate issuers for the key vault.
 
         Requires the certificates/manageissuers/getissuers permission.

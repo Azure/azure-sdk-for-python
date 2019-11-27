@@ -376,7 +376,7 @@ class KeyVaultCertificate(object):
 
 class CertificateOperation(object):
     # pylint:disable=too-many-instance-attributes
-    """A certificate operation is returned in case of server-side asynchronous requests.
+    """A certificate operation is returned in case of long running requests.
 
     :param str cert_operation_id: The certificate id.
     :param issuer_name: Name of the operation's issuer object or reserved names.
@@ -824,10 +824,10 @@ class CertificatePolicy(object):
 
     @property
     def key_type(self):
-        # type: () -> Union[str, KeyType]
+        # type: () -> KeyType
         """The type of key pair to be used for the certificate.
 
-        :rtype: str or ~azure.keyvault.certificates.KeyType
+        :rtype: ~azure.keyvault.certificates.KeyType
         """
         return self._key_type
 
@@ -851,10 +851,10 @@ class CertificatePolicy(object):
 
     @property
     def key_curve_name(self):
-        # type: () -> Union[str, KeyCurveName]
+        # type: () -> KeyCurveName
         """Elliptic curve name.
 
-        :rtype: str or ~azure.keyvault.certificates.KeyCurveName
+        :rtype: ~azure.keyvault.certificates.KeyCurveName
         """
         return self._key_curve_name
 
@@ -869,10 +869,10 @@ class CertificatePolicy(object):
 
     @property
     def key_usage(self):
-        # type: () -> List[Union[str, KeyUsageType]]
+        # type: () -> List[KeyUsageType]
         """List of key usages.
 
-        :rtype: list[str or ~azure.keyvault.certificates.KeyUsageType]
+        :rtype: list[~azure.keyvault.certificates.KeyUsageType]
         """
         return self._key_usage
 
@@ -1319,11 +1319,11 @@ class LifetimeAction(object):
 
     @property
     def action(self):
-        # type: () -> Union[str, CertificatePolicyAction]
+        # type: () -> CertificatePolicyAction
         """The type of the action that will be executed.
         Valid values are "EmailContacts" and "AutoRenew"
 
-        :rtype: str or ~azure.keyvault.certificates.CertificatePolicyAction
+        :rtype: ~azure.keyvault.certificates.CertificatePolicyAction
         """
         return self._action
 

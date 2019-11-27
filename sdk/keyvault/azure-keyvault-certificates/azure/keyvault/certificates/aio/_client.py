@@ -112,8 +112,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
     async def get_certificate(self, certificate_name: str, **kwargs: "Any") -> KeyVaultCertificate:
         """Gets a certificate with its management policy attached. Requires certificates/get permission.
 
-        Does not accept the version of the certificate as a parameter. If you wish to specify version,
-        use the :func:`get_certificate_version` function and specify the desired version.
+        Does not accept the version of the certificate as a parameter. To get a specific version of the
+        certificate, use the :func:`get_certificate_version` function and specify the desired version.
 
         :param str certificate_name: The name of the certificate in the given vault.
         :returns: An instance of KeyVaultCertificate
@@ -145,8 +145,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
         ) -> KeyVaultCertificate:
         """Gets a specific version of a certificate without returning its management policy.
 
-        Requires certificates/get permission. If you wish to get the latest version of your
-        certificate, or to get the certificate's policy as well, use the :func:`get_certificate` function.
+        Requires certificates/get permission. To get the latest version of the certificate,
+        or to get the certificate's policy as well, use the :func:`get_certificate` function.
 
         :param str certificate_name: The name of the certificate in the given vault.
         :param str version: The version of the certificate.
@@ -451,7 +451,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
     async def restore_certificate_backup(self, backup: bytes, **kwargs: "Any") -> KeyVaultCertificate:
         """Restore a certificate backup to the vault. Requires certificates/restore permission.
 
-        This imports all versions of the certificate, with its name, attributes, and access control policies.
+        This restores all versions of the certificate, with its name, attributes, and access control policies.
         If the certificate's name is already in use, restoring it will fail. Also, the target vault must
         be owned by the same Microsoft Azure subscription as the source vault.
 
