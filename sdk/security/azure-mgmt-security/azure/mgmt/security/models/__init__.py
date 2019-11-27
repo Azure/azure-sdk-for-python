@@ -35,7 +35,6 @@ try:
     from ._models_py3 import AutomationActionLogicApp
     from ._models_py3 import AutomationActionLogicAppInput
     from ._models_py3 import AutomationActionLogicAppOutput
-    from ._models_py3 import AutomationActionSecurityEmail
     from ._models_py3 import AutomationActionWorkspace
     from ._models_py3 import AutomationMetadata
     from ._models_py3 import AutomationRuleSet
@@ -158,7 +157,6 @@ except (SyntaxError, ImportError):
     from ._models import AutomationActionLogicApp
     from ._models import AutomationActionLogicAppInput
     from ._models import AutomationActionLogicAppOutput
-    from ._models import AutomationActionSecurityEmail
     from ._models import AutomationActionWorkspace
     from ._models import AutomationMetadata
     from ._models import AutomationRuleSet
@@ -307,7 +305,6 @@ from ._security_center_enums import (
     EventSource,
     PropertyType,
     Operator,
-    SubscriptionRbacRoles,
     ConnectionType,
 )
 
@@ -337,7 +334,6 @@ __all__ = [
     'AutomationActionLogicApp',
     'AutomationActionLogicAppInput',
     'AutomationActionLogicAppOutput',
-    'AutomationActionSecurityEmail',
     'AutomationActionWorkspace',
     'AutomationMetadata',
     'AutomationRuleSet',
@@ -485,6 +481,5 @@ __all__ = [
     'EventSource',
     'PropertyType',
     'Operator',
-    'SubscriptionRbacRoles',
     'ConnectionType',
 ]

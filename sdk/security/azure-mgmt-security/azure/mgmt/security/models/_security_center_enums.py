@@ -203,14 +203,6 @@ class Operator(str, Enum):
     ends_with = "EndsWith"
 
 
-class SubscriptionRbacRoles(str, Enum):
-
-    account_admin = "AccountAdmin"
-    service_admin = "ServiceAdmin"
-    owner = "Owner"
-    contributor = "Contributor"
-
-
 class ConnectionType(str, Enum):
 
     internal = "Internal"

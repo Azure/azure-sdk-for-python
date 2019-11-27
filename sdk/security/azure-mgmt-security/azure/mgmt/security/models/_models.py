@@ -1074,7 +1074,7 @@ class AutomationAction(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AutomationActionLogicApp, AutomationActionEventHub,
-    AutomationActionSecurityEmail, AutomationActionWorkspace
+    AutomationActionWorkspace
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1091,7 +1091,7 @@ class AutomationAction(Model):
     }
 
     _subtype_map = {
-        'action_type': {'LogicApp': 'AutomationActionLogicApp', 'EventHub': 'AutomationActionEventHub', 'SecurityEmail': 'AutomationActionSecurityEmail', 'Workspace': 'AutomationActionWorkspace'}
+        'action_type': {'LogicApp': 'AutomationActionLogicApp', 'EventHub': 'AutomationActionEventHub', 'Workspace': 'AutomationActionWorkspace'}
     }
 
     def __init__(self, **kwargs):
@@ -1283,41 +1283,6 @@ class AutomationActionLogicAppOutput(AutomationActionLogicApp):
     def __init__(self, **kwargs):
         super(AutomationActionLogicAppOutput, self).__init__(**kwargs)
         self.action_type = 'LogicApp'
-
-
-class AutomationActionSecurityEmail(AutomationAction):
-    """An action that triggers sending of Security emails. Emails can be sent to
-    users with specific roles on the subscription (for example, subscription
-    owners) or to user-provided emails.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param action_type: Required. Constant filled by server.
-    :type action_type: str
-    :param subscription_rbac_roles: A list of user roles which indicate the
-     relevant users that will receive the event data via email.
-    :type subscription_rbac_roles: list[str or
-     ~azure.mgmt.security.models.SubscriptionRbacRoles]
-    :param email_addresses: A list of email addresses that should receive the
-     event data.
-    :type email_addresses: list[str]
-    """
-
-    _validation = {
-        'action_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'action_type': {'key': 'actionType', 'type': 'str'},
-        'subscription_rbac_roles': {'key': 'subscriptionRbacRoles', 'type': '[str]'},
-        'email_addresses': {'key': 'emailAddresses', 'type': '[str]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(AutomationActionSecurityEmail, self).__init__(**kwargs)
-        self.subscription_rbac_roles = kwargs.get('subscription_rbac_roles', None)
-        self.email_addresses = kwargs.get('email_addresses', None)
-        self.action_type = 'SecurityEmail'
 
 
 class AutomationActionWorkspace(AutomationAction):
