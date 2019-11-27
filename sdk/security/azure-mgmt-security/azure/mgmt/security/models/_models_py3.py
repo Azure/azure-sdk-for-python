@@ -958,9 +958,7 @@ class TrackedResource(Model):
     :param kind: Kind of the resource
     :type kind: str
     :param etag: Entity tag is used for comparing two or more entities from
-     the same requested resource. ETags may be returned for individual
-     resources, and then sent via If-Match / If-None-Match headers for
-     concurrency control.
+     the same requested resource.
     :type etag: str
     :param tags: A list of key value pairs that describe the resource.
     :type tags: dict[str, str]
@@ -1011,9 +1009,7 @@ class Automation(TrackedResource):
     :param kind: Kind of the resource
     :type kind: str
     :param etag: Entity tag is used for comparing two or more entities from
-     the same requested resource. ETags may be returned for individual
-     resources, and then sent via If-Match / If-None-Match headers for
-     concurrency control.
+     the same requested resource.
     :type etag: str
     :param tags: A list of key value pairs that describe the resource.
     :type tags: dict[str, str]
@@ -2338,13 +2334,10 @@ class DiscoveredSecuritySolution(Model):
 
 class ETag(Model):
     """Entity tag is used for comparing two or more entities from the same
-    requested resource. ETags may be returned for individual resources, and
-    then sent via If-Match / If-None-Match headers for concurrency control. .
+    requested resource.
 
     :param etag: Entity tag is used for comparing two or more entities from
-     the same requested resource. ETags may be returned for individual
-     resources, and then sent via If-Match / If-None-Match headers for
-     concurrency control.
+     the same requested resource.
     :type etag: str
     """
 
