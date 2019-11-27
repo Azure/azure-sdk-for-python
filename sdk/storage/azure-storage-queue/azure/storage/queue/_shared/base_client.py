@@ -209,10 +209,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         if kwargs.get("_pipeline"):
             return config, kwargs["_pipeline"]
         config.transport = kwargs.get("transport")  # type: ignore
-        if "connection_timeout" not in kwargs:
-            kwargs["connection_timeout"] = CONNECTION_TIMEOUT
-        if "read_timeout" not in kwargs:
-            kwargs["read_timeout"] = READ_TIMEOUT
+        kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
+        kwargs.setdefault("read_timeout", READ_TIMEOUT)
         if not config.transport:
             config.transport = RequestsTransport(**kwargs)
         policies = [

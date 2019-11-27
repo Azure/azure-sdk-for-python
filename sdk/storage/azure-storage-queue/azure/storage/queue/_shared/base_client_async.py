@@ -71,10 +71,8 @@ class AsyncStorageAccountHostsMixin(object):
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
         config.transport = kwargs.get('transport')  # type: ignore
-        if 'connection_timeout' not in kwargs:
-            kwargs['connection_timeout'] = CONNECTION_TIMEOUT # type: ignore
-        if 'read_timeout' not in kwargs:
-            kwargs['read_timeout'] = READ_TIMEOUT # type: ignore
+        kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
+        kwargs.setdefault("read_timeout", READ_TIMEOUT)
         if not config.transport:
             try:
                 from azure.core.pipeline.transport import AioHttpTransport
