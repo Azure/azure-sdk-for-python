@@ -48,6 +48,7 @@ class SqlServerLicenseType(str, Enum):
 
     payg = "PAYG"
     ahub = "AHUB"
+    dr = "DR"
 
 
 class SqlManagementMode(str, Enum):
@@ -108,3 +109,10 @@ class DiskConfigurationType(str, Enum):
     new = "NEW"
     extend = "EXTEND"
     add = "ADD"
+
+
+class StorageWorkloadType(str, Enum):
+
+    general = "GENERAL"
+    oltp = "OLTP"
+    dw = "DW"
