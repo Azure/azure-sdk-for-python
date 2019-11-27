@@ -16,6 +16,7 @@ from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting,
 )
+from azure.identity import DefaultAzureCredential
 from consts import (
     KEY,
     LABEL,
@@ -35,10 +36,11 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         super(AppConfigurationClientTest, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
         if self.is_playback():
-            connection_str = "Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=bgyvBgwsQIw0s8myrqJJI3nLrj81M/kzSgSuP4BBoVg="
+            base_url = "https://fake_app_config.azconfig-test.io"
         else:
-            connection_str = os.getenv('APP_CONFIG_CONNECTION')
-        self.app_config_client = AzureAppConfigurationClient.from_connection_string(connection_str)
+            base_url = os.getenv('APP_CONFIG_ENDPOINT')
+        default_credential = DefaultAzureCredential()
+        self.app_config_client = AzureAppConfigurationClient(base_url=base_url, credential=default_credential)
 
     def setUp(self):
         super(AppConfigurationClientTest, self).setUp()
