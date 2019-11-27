@@ -4,6 +4,7 @@
 # ------------------------------------
 import threading
 
+from opencensus.trace import Span, execution_context
 from opencensus.trace.tracer import Tracer
 from opencensus.trace.samplers import AlwaysOnSampler
 
@@ -28,3 +29,5 @@ def test_get_span_from_thread():
         thread.join()
 
         assert span is result[0]
+
+    execution_context.clear()
