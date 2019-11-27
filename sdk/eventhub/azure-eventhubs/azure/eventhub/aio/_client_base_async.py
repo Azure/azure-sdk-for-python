@@ -8,7 +8,7 @@ import logging
 import asyncio
 import time
 import functools
-from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast, TypeVar
+from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast
 
 from uamqp import (
     authentication,
@@ -30,7 +30,6 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
 
 _LOGGER = logging.getLogger(__name__)
-_UAMQP_HANDLER = TypeVar('UAMQP_HANDLER')
 
 
 class EventHubSharedKeyCredential(object):
@@ -246,23 +245,26 @@ class ConsumerProducerMixin(object):
 
         """
         # pylint: disable=protected-access,line-too-long
+        # TODO: Properly resolve type hinting
         if not self.running:  # type: ignore
-            if cast(_UAMQP_HANDLER, self._handler):
-                await cast(_UAMQP_HANDLER, self._handler).close_async()
-            auth = await self._client._create_auth()
+            if self._handler:  # type: ignore
+                await self._handler.close_async()  # type: ignore
+            auth = await self._client._create_auth()  # type: ignore
             self._create_handler(auth)  # type: ignore
-            await cast(_UAMQP_HANDLER, self._handler).open_async(
-                connection=await self._client._conn_manager.get_connection(self._client._address.hostname, auth)
+            await self._handler.open_async(  # type: ignore
+                connection=await self._client._conn_manager.get_connection(self._client._address.hostname, auth)  # type: ignore
             )
-            while not await cast(_UAMQP_HANDLER, self._handler).client_ready_async():
+            while not await self._handler.client_ready_async():  # type: ignore
                 await asyncio.sleep(0.05)
-            self._max_message_size_on_link = cast(_UAMQP_HANDLER, self._handler).message_handler._link.peer_max_message_size \
-                                             or constants.MAX_MESSAGE_LENGTH_BYTES
+            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
+                                             or constants.MAX_MESSAGE_LENGTH_BYTES  # type: ignore
             self.running = True
 
     async def _close_handler(self) -> None:
-        if cast(_UAMQP_HANDLER, self._handler):
-            await cast(_UAMQP_HANDLER, self._handler).close_async()  # close the link (sharing connection) or connection (not sharing)
+        # TODO: Propertly resolve type hinting
+        if self._handler:  # type: ignore
+            # close the link (shared connection) or connection (not shared)
+            await self._handler.close_async()  # type: ignore
         self.running = False
 
     async def _close_connection(self) -> None:
@@ -287,7 +289,7 @@ class ConsumerProducerMixin(object):
         retried_times = 0
         last_exception = kwargs.pop('last_exception', None)
         operation_need_param = kwargs.pop('operation_need_param', True)
-        max_retries = self._client._config.max_retries
+        max_retries = self._client._config.max_retries  # type: ignore
 
         while retried_times <= max_retries:
             try:
@@ -296,15 +298,15 @@ class ConsumerProducerMixin(object):
                 return await operation()
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = await self._handle_exception(exception)
-                await self._client._backoff(
+                await self._client._backoff(  # type: ignore
                     retried_times=retried_times,
                     last_exception=last_exception,
                     timeout_time=timeout_time,
-                    entity_name=self._name
+                    entity_name=self._name  # type: ignore
                 )
                 retried_times += 1
                 if retried_times > max_retries:
-                    _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
+                    _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)  # type: ignore
                     raise last_exception
         return None
 

@@ -74,7 +74,7 @@ def _parse_conn_str(conn_str, kwargs):
     if left_slash_pos != -1:
         host = cast(str, endpoint)[left_slash_pos + 2:]
     else:
-        host = endpoint
+        host = cast(str, endpoint)
     return cast(str, host), cast(str, shared_access_key_name), cast(str, shared_access_key), cast(str, entity)
 
 
