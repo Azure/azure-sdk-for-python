@@ -165,7 +165,7 @@ class EventHubProducerClient(ClientBaseAsync):
                 :dedent: 4
                 :caption: Create a new instance of the EventHubProducerClient from connection string.
         """
-        return cls._from_connection_string(
+        constructor_args = cls._from_connection_string(
             conn_str,
             eventhub_name=eventhub_name,
             logging_enable=logging_enable,
@@ -175,7 +175,8 @@ class EventHubProducerClient(ClientBaseAsync):
             retry_total=retry_total,
             transport_type=transport_type,
             **kwargs
-        )  # type: EventHubProducerClient
+        )
+        return cls(**constructor_args)
 
     async def send_batch(
             self,

@@ -71,25 +71,13 @@ class ClientBaseAsync(ClientBase):
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close()
 
-    @classmethod
-    def _from_connection_string(cls, conn_str: str, **kwargs) -> 'ClientBaseAsync':
-        consumer_group = kwargs.pop("consumer_group", None)
+    @staticmethod
+    def _from_connection_string(conn_str: str, **kwargs) -> Dict[str, Any]:
         host, policy, key, entity = _parse_conn_str(conn_str, kwargs)
-
-        if consumer_group:  # Only consumer has the consumer_group arg
-            return cls(  # pylint:disable=too-many-function-args
-                fully_qualified_namespace=host,
-                eventhub_name=entity,
-                consumer_group=consumer_group,
-                credential=EventHubSharedKeyCredential(policy, key),
-                **kwargs
-            )
-        return cls(
-            fully_qualified_namespace=host,
-            eventhub_name=entity,
-            credential=EventHubSharedKeyCredential(policy, key),
-            **kwargs
-        )
+        kwargs['fully_qualified_namespace'] = host
+        kwargs['eventhub_name'] = entity
+        kwargs['credential'] = EventHubSharedKeyCredential(policy, key)
+        return kwargs
 
     async def _create_auth(self) -> authentication.JWTTokenAsync:
         """

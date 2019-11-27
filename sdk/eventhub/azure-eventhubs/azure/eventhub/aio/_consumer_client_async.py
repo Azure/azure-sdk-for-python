@@ -186,7 +186,7 @@ class EventHubConsumerClient(ClientBaseAsync):
                 :caption: Create a new instance of the EventHubConsumerClient from connection string.
 
         """
-        return cls._from_connection_string(
+        constructor_args = cls._from_connection_string(
             conn_str,
             consumer_group=consumer_group,
             eventhub_name=eventhub_name,
@@ -199,7 +199,8 @@ class EventHubConsumerClient(ClientBaseAsync):
             checkpoint_store=checkpoint_store,
             load_balancing_interval=load_balancing_interval,
             **kwargs
-        )  # type: EventHubConsumerClient
+        )
+        return cls(**constructor_args)
 
     async def receive(
             self,

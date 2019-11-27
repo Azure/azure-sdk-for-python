@@ -161,7 +161,8 @@ class EventHubConsumerClient(ClientBase):
                 :caption: Create a new instance of the EventHubConsumerClient from connection string.
 
         """
-        return cls._from_connection_string(conn_str, consumer_group=consumer_group, **kwargs)  # type: EventHubConsumerClient
+        constructor_args = cls._from_connection_string(conn_str, consumer_group=consumer_group, **kwargs)
+        return cls(**constructor_args)
 
     def receive(self, on_event, **kwargs):
         #  type: (Callable[[PartitionContext, EventData], None], Any) -> None
