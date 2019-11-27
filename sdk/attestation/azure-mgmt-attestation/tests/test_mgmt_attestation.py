@@ -47,13 +47,13 @@ class MgmtAttestationTest(AzureMgmtTestCase):
         #}
 
         azure_operation_poller = self.mgmt_client.attestation_providers.create(resource_group.name, ATTESTATION_PROVIDER_NAME, attestation_policy="SgxDisableDebugMode") # , policy_signing_certificates=certs)
-        result = azure_operation_poller.result()
+        #result = azure_operation_poller.result()
         
         result = self.mgmt_client.attestation_providers.get(resource_group.name, ATTESTATION_PROVIDER_NAME)
         
-        result = self.mgmt_client.attestation_providers.list()
+        #result = self.mgmt_client.attestation_providers.list()
 
-        result = self.mgmt_client.attestation_providers.list_by_resource_group(resource_group.name)
+        #result = self.mgmt_client.attestation_providers.list_by_resource_group(resource_group.name)
 
         result = self.mgmt_client.attestation_providers.delete(resource_group.name, ATTESTATION_PROVIDER_NAME)
 
