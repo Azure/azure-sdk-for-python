@@ -126,8 +126,8 @@ def trace_link_message(message, parent_span=None):
     span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
     if span_impl_type is not None:
         current_span = parent_span or span_impl_type(span_impl_type.get_current_span())
-        if current_span and message.application_properties:
-            traceparent = message.application_properties.get(b"Diagnostic-Id", "").decode('ascii')
+        if current_span and message.properties:
+            traceparent = message.properties.get(b"Diagnostic-Id", "").decode('ascii')
             if traceparent:
                 current_span.link(traceparent)
 
