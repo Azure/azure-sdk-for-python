@@ -8,7 +8,7 @@ import logging
 import asyncio
 import time
 import functools
-from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast, TypeVar
 
 from uamqp import (
     authentication,
@@ -30,6 +30,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # type: ignore
 
 _LOGGER = logging.getLogger(__name__)
+_UAMQP_HANDLER = TypeVar('UAMQP_HANDLER')
 
 
 class EventHubSharedKeyCredential(object):
@@ -208,12 +209,12 @@ class ClientBaseAsync(ClientBase):
                                                    'partition': partition_id})
         response = await self._management_request(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
         partition_info = response.get_data()  # type: Dict[bytes, Union[bytes, int]]
-        output = {}
+        output = {}  # type: Dict[str, Any]
         if partition_info:
             output['eventhub_name'] = cast(bytes, partition_info[b'name']).decode('utf-8')
             output['id'] = cast(bytes, partition_info[b'partition']).decode('utf-8')
-            output['beginning_sequence_number'] = partition_info[b'begin_sequence_number']
-            output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']
+            output['beginning_sequence_number'] = cast(int, partition_info[b'begin_sequence_number'])
+            output['last_enqueued_sequence_number'] = cast(int, partition_info[b'last_enqueued_sequence_number'])
             output['last_enqueued_offset'] = cast(bytes, partition_info[b'last_enqueued_offset']).decode('utf-8')
             output['is_empty'] = partition_info[b'is_partition_empty']
             output['last_enqueued_time_utc'] = utc_from_timestamp(
@@ -245,23 +246,23 @@ class ConsumerProducerMixin(object):
 
         """
         # pylint: disable=protected-access
-        if not cast(bool, self.running):
-            if self._handler:
-                await self._handler.close_async()
+        if not self.running:  # type: ignore
+            if cast(_UAMQP_HANDLER, self._handler):
+                await cast(_UAMQP_HANDLER, self._handler).close_async()
             auth = await self._client._create_auth()
             self._create_handler(auth)  # type: ignore
-            await self._handler.open_async(
+            await cast(_UAMQP_HANDLER, self._handler).open_async(
                 connection=await self._client._conn_manager.get_connection(self._client._address.hostname, auth)  # pylint: disable=protected-access
             )
-            while not await self._handler.client_ready_async():
+            while not await cast(_UAMQP_HANDLER, self._handler).client_ready_async():
                 await asyncio.sleep(0.05)
-            self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
+            self._max_message_size_on_link = cast(_UAMQP_HANDLER, self._handler).message_handler._link.peer_max_message_size \  # pylint: disable=line-too-long
                                              or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
             self.running = True
 
     async def _close_handler(self) -> None:
-        if self._handler:
-            await self._handler.close_async()  # close the link (sharing connection) or connection (not sharing)
+        if cast(_UAMQP_HANDLER, self._handler):
+            await cast(_UAMQP_HANDLER, self._handler).close_async()  # close the link (sharing connection) or connection (not sharing)
         self.running = False
 
     async def _close_connection(self) -> None:

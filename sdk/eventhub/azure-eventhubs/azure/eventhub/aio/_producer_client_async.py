@@ -5,7 +5,7 @@
 import asyncio
 import logging
 
-from typing import Any, Union, TYPE_CHECKING, Iterable, List, Optional, Dict, cast
+from typing import Any, Union, TYPE_CHECKING, List, Optional, Dict, cast
 from uamqp import constants  # type: ignore
 
 from ..exceptions import ConnectError, EventHubError
@@ -74,12 +74,12 @@ class EventHubProducerClient(ClientBaseAsync):
         self._producers = {ALL_PARTITIONS: self._create_producer()}  # type: Dict[str, Optional[EventHubProducer]]
         self._lock = asyncio.Lock()  # sync the creation of self._producers
         self._max_message_size_on_link = 0
-        self._partition_ids = None  # Optional[Iterable[str]]
+        self._partition_ids = None  # Optional[List[str]]
 
     async def _get_partitions(self) -> None:
         if not self._partition_ids:
             self._partition_ids = await self.get_partition_ids()
-            for p_id in cast(Iterable[str], self._partition_ids):
+            for p_id in cast(List[str], self._partition_ids):
                 self._producers[p_id] = None
 
     async def _get_max_mesage_size(self) -> None:
@@ -88,13 +88,13 @@ class EventHubProducerClient(ClientBaseAsync):
             if not self._max_message_size_on_link:
                 await cast(EventHubProducer, self._producers[ALL_PARTITIONS])._open_with_retry()
                 self._max_message_size_on_link = \
-                    cast(EventHubProducer, self._producers[ALL_PARTITIONS])._handler.message_handler._link.peer_max_message_size \
+                    cast(EventHubProducer, self._producers[ALL_PARTITIONS])._handler.message_handler._link.peer_max_message_size \  # pylint: disable=line-too-long
                     or constants.MAX_MESSAGE_LENGTH_BYTES
 
     async def _start_producer(self, partition_id: str, send_timeout: Optional[Union[int, float]]) -> None:
         async with self._lock:
             await self._get_partitions()
-            if partition_id not in cast(Iterable[str], self._partition_ids) and partition_id != ALL_PARTITIONS:
+            if partition_id not in cast(List[str], self._partition_ids) and partition_id != ALL_PARTITIONS:
                 raise ConnectError("Invalid partition {} for the event hub {}".format(partition_id, self.eventhub_name))
 
             if not self._producers[partition_id] or cast(EventHubProducer, self._producers[partition_id]).closed:
