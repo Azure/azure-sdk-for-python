@@ -22,7 +22,7 @@ class EntitiesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-01-preview. Constant value: "2018-03-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-01-preview. Constant value: "2019-11-01".
     """
 
     models = models
@@ -32,7 +32,7 @@ class EntitiesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01-preview"
+        self.api_version = "2019-11-01"
 
         self.config = config
 
@@ -64,19 +64,24 @@ class EntitiesOperations(object):
          $filter parameter to return three different outputs depending on the
          parameter passed in. With $search=AllowedParents the API will return
          the entity info of all groups that the requested entity will be able
-         to reparent to as determined by the user's permissions. With
+         to reparent to as determined by the user's permissions.With
          $search=AllowedChildren the API will return the entity info of all
-         entities that can be added as children of the requested entity. With
+         entities that can be added as children of the requested entity.With
          $search=ParentAndFirstLevelChildren the API will return the parent and
          first level of children that the user has either direct access to or
-         indirect access via one of their descendants. Possible values include:
-         'AllowedParents', 'AllowedChildren', 'ParentAndFirstLevelChildren',
-         'ParentOnly', 'ChildrenOnly'
+         indirect access via one of their descendants.With $search=ParentOnly
+         the API will return only the group if the user has access to at least
+         one of the descendants of the group.With $search=ChildrenOnly the API
+         will return only the first level of children of the group entity info
+         specified in $filter.  The user must have direct access to the
+         children entities or one of it's descendants for it to show up in the
+         results. Possible values include: 'AllowedParents', 'AllowedChildren',
+         'ParentAndFirstLevelChildren', 'ParentOnly', 'ChildrenOnly'
         :type search: str
-        :param filter: The filter parameter allows you to filter on the name
-         or display name fields. You can check for equality on the name field
-         (e.g. name eq '{entityName}')  and you can check for substrings on
-         either the name or display name fields(e.g. contains(name,
+        :param filter: The filter parameter allows you to filter on the the
+         name or display name fields. You can check for equality on the name
+         field (e.g. name eq '{entityName}')  and you can check for substrings
+         on either the name or display name fields(e.g. contains(name,
          '{substringToSearch}'), contains(displayName, '{substringToSearch')).
          Note that the '{entityName}' and '{substringToSearch}' fields are
          checked case insensitively.

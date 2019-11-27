@@ -22,7 +22,7 @@ class EntityHierarchyItem(Model):
      /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000
     :vartype id: str
     :ivar type: The type of the resource.  For example,
-     /providers/Microsoft.Management/managementGroups
+     Microsoft.Management/managementGroups
     :vartype type: str
     :ivar name: The name of the management group. For example,
      00000000-0000-0000-0000-000000000000

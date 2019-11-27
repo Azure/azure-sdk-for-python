@@ -24,7 +24,7 @@ class ManagementGroupsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-01-preview. Constant value: "2018-03-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-01-preview. Constant value: "2019-11-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ManagementGroupsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01-preview"
+        self.api_version = "2019-11-01"
 
         self.config = config
 
@@ -118,7 +118,8 @@ class ManagementGroupsOperations(object):
         :type group_id: str
         :param expand: The $expand=children query string parameter allows
          clients to request inclusion of children in the response payload.
-         Possible values include: 'children'
+         $expand=path includes the path from the root group to the current
+         group. Possible values include: 'children', 'path'
         :type expand: str
         :param recurse: The $recurse=true query string parameter allows
          clients to request inclusion of entire hierarchy in the response
@@ -228,14 +229,24 @@ class ManagementGroupsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
             deserialized = self._deserialize('ManagementGroup', response)
+            header_dict = {
+                'Location': 'str',
+                'Azure-AsyncOperation': 'str',
+            }
         if response.status_code == 202:
             deserialized = self._deserialize('OperationResults', response)
+            header_dict = {
+                'Location': 'str',
+                'Azure-AsyncOperation': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
@@ -277,10 +288,15 @@ class ManagementGroupsOperations(object):
         )
 
         def get_long_running_output(response):
+            header_dict = {
+                'Location': 'str',
+                'Azure-AsyncOperation': 'str',
+            }
             deserialized = self._deserialize('object', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response.add_headers(header_dict)
                 return client_raw_response
 
             return deserialized
@@ -397,12 +413,18 @@ class ManagementGroupsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 202:
             deserialized = self._deserialize('OperationResults', response)
+            header_dict = {
+                'Location': 'str',
+                'Azure-AsyncOperation': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
@@ -440,10 +462,15 @@ class ManagementGroupsOperations(object):
         )
 
         def get_long_running_output(response):
+            header_dict = {
+                'Location': 'str',
+                'Azure-AsyncOperation': 'str',
+            }
             deserialized = self._deserialize('OperationResults', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response.add_headers(header_dict)
                 return client_raw_response
 
             return deserialized
@@ -460,7 +487,6 @@ class ManagementGroupsOperations(object):
     def get_descendants(
             self, group_id, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List all entities that descend from a management group.
-        .
 
         :param group_id: Management Group ID.
         :type group_id: str
@@ -517,7 +543,7 @@ class ManagementGroupsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.post(url, query_parameters, header_parameters)
+            request = self._client.get(url, query_parameters, header_parameters)
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:

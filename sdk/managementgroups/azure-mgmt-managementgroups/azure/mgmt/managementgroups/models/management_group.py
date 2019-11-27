@@ -22,7 +22,7 @@ class ManagementGroup(Model):
      /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000
     :vartype id: str
     :ivar type: The type of the resource.  For example,
-     /providers/Microsoft.Management/managementGroups
+     Microsoft.Management/managementGroups
     :vartype type: str
     :ivar name: The name of the management group. For example,
      00000000-0000-0000-0000-000000000000
@@ -39,6 +39,10 @@ class ManagementGroup(Model):
     :param children: The list of children.
     :type children:
      list[~azure.mgmt.managementgroups.models.ManagementGroupChildInfo]
+    :param path: The hierarchial path from the root group to the current
+     group.
+    :type path:
+     list[~azure.mgmt.managementgroups.models.ManagementGroupPathElement]
     """
 
     _validation = {
@@ -56,6 +60,7 @@ class ManagementGroup(Model):
         'roles': {'key': 'properties.roles', 'type': '[str]'},
         'details': {'key': 'properties.details', 'type': 'ManagementGroupDetails'},
         'children': {'key': 'properties.children', 'type': '[ManagementGroupChildInfo]'},
+        'path': {'key': 'properties.path', 'type': '[ManagementGroupPathElement]'},
     }
 
     def __init__(self, **kwargs):
@@ -68,3 +73,4 @@ class ManagementGroup(Model):
         self.roles = kwargs.get('roles', None)
         self.details = kwargs.get('details', None)
         self.children = kwargs.get('children', None)
+        self.path = kwargs.get('path', None)

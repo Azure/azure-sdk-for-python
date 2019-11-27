@@ -23,7 +23,7 @@ class DescendantInfo(Model):
      or /subscriptions/0000000-0000-0000-0000-000000000000
     :vartype id: str
     :ivar type: The type of the resource. For example,
-     /providers/Microsoft.Management/managementGroups or /subscriptions
+     Microsoft.Management/managementGroups or /subscriptions
     :vartype type: str
     :ivar name: The name of the descendant. For example,
      00000000-0000-0000-0000-000000000000
