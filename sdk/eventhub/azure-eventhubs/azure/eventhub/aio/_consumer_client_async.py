@@ -142,8 +142,8 @@ class EventHubConsumerClient(ClientBaseAsync):
                                auth_timeout: float = 60,
                                user_agent: str = None,
                                retry_total: int = 3,
-                               transport_type: Optional[TransportType] = None,
-                               checkpoint_store: Optional[CheckpointStore] = None,
+                               transport_type: Optional['TransportType'] = None,
+                               checkpoint_store: Optional['CheckpointStore'] = None,
                                load_balancing_interval: float = 10,
                                **kwargs: Any
                                ) -> 'EventHubConsumerClient':  # pylint: disable=arguments-differ
@@ -204,7 +204,7 @@ class EventHubConsumerClient(ClientBaseAsync):
 
     async def receive(
             self,
-            on_event: Callable[[PartitionContext, EventData], None],
+            on_event: Callable[['PartitionContext', 'EventData'], None],
             *,
             partition_id: str = None,
             owner_level: int = None,
@@ -212,9 +212,9 @@ class EventHubConsumerClient(ClientBaseAsync):
             track_last_enqueued_event_properties: bool = False,
             starting_position: Optional[Union[str, int, datetime.datetime, Dict[str, Any]]] = None,
             starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
-            on_error: Optional[Callable[[PartitionContext, Exception], None]] = None,
-            on_partition_initialize: Optional[Callable[[PartitionContext], None]] = None,
-            on_partition_close: Optional[Callable[[PartitionContext, CloseReason], None]] = None
+            on_error: Optional[Callable[['PartitionContext', Exception], None]] = None,
+            on_partition_initialize: Optional[Callable[['PartitionContext'], None]] = None,
+            on_partition_close: Optional[Callable[['PartitionContext', 'CloseReason'], None]] = None
     ) -> None:
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 

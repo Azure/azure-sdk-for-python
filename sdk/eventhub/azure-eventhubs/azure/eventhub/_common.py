@@ -93,7 +93,7 @@ class EventData(object):
             if self.enqueued_time:
                 event_str += ", enqueued_time={!r}".format(self.enqueued_time)
         except:  # pylint: disable=bare-except
-            raise
+            pass
         event_str += ' }'
         return event_str
 

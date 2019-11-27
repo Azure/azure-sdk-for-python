@@ -5,7 +5,7 @@
 import asyncio
 import logging
 
-from typing import Any, Union, TYPE_CHECKING, Iterable, List, Optional
+from typing import Any, Union, TYPE_CHECKING, Iterable, List, Optional, Dict
 from uamqp import constants  # type: ignore
 
 from ..exceptions import ConnectError, EventHubError
@@ -132,7 +132,7 @@ class EventHubProducerClient(ClientBaseAsync):
             auth_timeout: float = 60,
             user_agent: Optional[str] = None,
             retry_total: int = 3,
-            transport_type: Optional[TransportType] = None,
+            transport_type: Optional['TransportType'] = None,
             **kwargs: Any
             ) -> 'EventHubProducerClient':
         # pylint: disable=arguments-differ
