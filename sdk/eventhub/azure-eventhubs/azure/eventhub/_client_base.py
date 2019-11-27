@@ -47,12 +47,12 @@ _AccessToken = collections.namedtuple('AccessToken', 'token expires_on')
 
 
 def _parse_conn_str(conn_str, kwargs):
-    # type: (str, Dict[str, Any]) -> Tuple[str, str, str, Optional[str]]
-    endpoint = None
-    shared_access_key_name = None
-    shared_access_key = None
-    entity_path = None
-    eventhub_name = kwargs.pop("eventhub_name", None)
+    # type: (str, Dict[str, Any]) -> Tuple[str, str, str, str]
+    endpoint = None  # type: str
+    shared_access_key_name = None  # type: str
+    shared_access_key = None  # type: str
+    entity_path = None  # type: Optional[str]
+    eventhub_name = kwargs.pop("eventhub_name", None)  # type: Optional[str]
     for element in conn_str.split(';'):
         key, _, value = element.partition('=')
         if key.lower() == 'endpoint':
@@ -69,7 +69,7 @@ def _parse_conn_str(conn_str, kwargs):
         raise ValueError(
             "Invalid connection string. Should be in the format: "
             "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>")
-    entity = eventhub_name or entity_path
+    entity = eventhub_name or entity_path  # type: str
     left_slash_pos = endpoint.find("//")
     if left_slash_pos != -1:
         host = endpoint[left_slash_pos + 2:]
@@ -120,7 +120,7 @@ class EventHubSharedKeyCredential(object):
         self.token_type = b"servicebus.windows.net:sastoken"
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (Optional[List[str]], Any) -> _AccessToken
+        # type: (str, Any) -> _AccessToken
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
@@ -219,7 +219,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             raise last_exception
 
     def _management_request(self, mgmt_msg, op_type):
-        # type: (Message, str) -> Any
+        # type: (Message, bytes) -> Any
         retried_times = 0
         last_exception = None
         while retried_times <= self._config.max_retries:

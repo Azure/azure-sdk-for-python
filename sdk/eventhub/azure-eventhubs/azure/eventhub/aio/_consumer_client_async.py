@@ -199,7 +199,7 @@ class EventHubConsumerClient(ClientBaseAsync):
             checkpoint_store=checkpoint_store,
             load_balancing_interval=load_balancing_interval,
             **kwargs
-        )
+        )  # type: EventHubConsumerClient
 
     async def receive(
             self,

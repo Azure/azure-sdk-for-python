@@ -193,7 +193,7 @@ class EventData(object):
 
     @property
     def body(self):
-        # type: () -> Iterable[bytes]
+        # type: () -> Union[bytes, Iterable[bytes]]
         """The content of the event.
 
         :rtype: bytes or Generator[bytes]

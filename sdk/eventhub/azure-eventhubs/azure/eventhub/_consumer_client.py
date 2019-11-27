@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import threading
-from typing import Any, Union, Dict, Tuple, TYPE_CHECKING, Callable, List  # pylint: disable=unused-import
+from typing import Any, Union, Dict, Tuple, TYPE_CHECKING, Callable, List, Optional  # pylint: disable=unused-import
 
 from ._common import EventData
 from ._client_base import ClientBase
@@ -14,6 +14,7 @@ from ._eventprocessor.event_processor import EventProcessor
 from ._eventprocessor.partition_context import PartitionContext
 
 if TYPE_CHECKING:
+    import datetime
     from azure.core.credentials import TokenCredential  # type: ignore
 
 _LOGGER = logging.getLogger(__name__)
@@ -160,7 +161,7 @@ class EventHubConsumerClient(ClientBase):
                 :caption: Create a new instance of the EventHubConsumerClient from connection string.
 
         """
-        return cls._from_connection_string(conn_str, consumer_group=consumer_group, **kwargs)
+        return cls._from_connection_string(conn_str, consumer_group=consumer_group, **kwargs)  # type: EventHubConsumerClient
 
     def receive(self, on_event, **kwargs):
         #  type: (Callable[[PartitionContext, EventData], None], Any) -> None

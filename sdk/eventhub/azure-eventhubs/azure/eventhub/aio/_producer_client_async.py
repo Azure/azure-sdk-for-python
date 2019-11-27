@@ -71,14 +71,14 @@ class EventHubProducerClient(ClientBaseAsync):
             network_tracing=kwargs.pop("logging_enable", False),
             **kwargs
         )
-        self._producers = {ALL_PARTITIONS: self._create_producer()}  # type: Dict[str, EventHubProducer]
+        self._producers = {ALL_PARTITIONS: self._create_producer()}  # type: Dict[str, Optional[EventHubProducer]]
         self._lock = asyncio.Lock()  # sync the creation of self._producers
         self._max_message_size_on_link = 0
-        self._partition_ids = None  # Optional[Iterable[str]]
+        self._partition_ids = None  # Iterable[str]
 
     async def _get_partitions(self) -> None:
         if not self._partition_ids:
-            self._partition_ids = await self.get_partition_ids()  # type: Iterable[str]
+            self._partition_ids = await self.get_partition_ids()
             for p_id in self._partition_ids:
                 self._producers[p_id] = None
 
@@ -175,7 +175,7 @@ class EventHubProducerClient(ClientBaseAsync):
             retry_total=retry_total,
             transport_type=transport_type,
             **kwargs
-        )
+        )  # type: EventHubProducerClient
 
     async def send_batch(
             self,

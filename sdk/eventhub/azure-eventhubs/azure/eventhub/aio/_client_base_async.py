@@ -8,7 +8,7 @@ import logging
 import asyncio
 import time
 import functools
-from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union
 
 from uamqp import (
     authentication,
@@ -142,7 +142,7 @@ class ClientBaseAsync(ClientBase):
                      entity_name, last_exception)
             raise last_exception
 
-    async def _management_request(self, mgmt_msg: Message, op_type: str) -> Any:
+    async def _management_request(self, mgmt_msg: Message, op_type: bytes) -> Any:
         retried_times = 0
         last_exception = None
         while retried_times <= self._config.max_retries:
@@ -248,7 +248,7 @@ class ConsumerProducerMixin(object):
     def _check_closed(self) -> None:
         if self.closed:
             raise ClientClosedError(
-                "{} has been closed. Please create a new one to handle event data.".format(self._name)
+                "{} has been closed. Please create a new one to handle event data.".format(self._name)  # type: ignore
             )
 
     async def _open(self) -> None:
@@ -257,8 +257,8 @@ class ConsumerProducerMixin(object):
 
         """
         # pylint: disable=protected-access
-        if not self.running:
-            if self._handler:
+        if not self.running:  # type: ignore
+            if self._handler:  # type: ignore
                 await self._handler.close_async()
             auth = await self._client._create_auth()
             self._create_handler(auth)
@@ -317,6 +317,7 @@ class ConsumerProducerMixin(object):
                 if retried_times > max_retries:
                     _LOGGER.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
                     raise last_exception
+        return None
 
     async def close(self) -> None:
         """

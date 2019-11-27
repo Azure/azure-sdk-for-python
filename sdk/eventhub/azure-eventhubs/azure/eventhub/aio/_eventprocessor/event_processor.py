@@ -31,7 +31,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
     """
     def __init__(
             self, eventhub_client, consumer_group: str,
-            event_handler: Callable[[PartitionContext, List[EventData]], None],
+            event_handler: Callable[[PartitionContext, EventData], None],
             *,
             partition_id: str = None,
             checkpoint_store: CheckpointStore = None,
