@@ -138,7 +138,7 @@ class EventHubConsumerClient(ClientBaseAsync):
                                *,
                                eventhub_name: Optional[str] = None,
                                logging_enable: bool = False,
-                               http_proxy: Optional(Dict[str, Union[str, int]]) = None,
+                               http_proxy: Optional[Dict[str, Union[str, int]]] = None,
                                auth_timeout: float = 60,
                                user_agent: Optional[str] = None,
                                retry_total: int = 3,
