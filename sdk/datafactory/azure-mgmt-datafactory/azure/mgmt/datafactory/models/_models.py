@@ -25577,6 +25577,24 @@ class SapHanaLinkedService(LinkedService):
         self.type = 'SapHana'
 
 
+class SapHanaPartitionSettings(Model):
+    """The settings that will be leveraged for SAP HANA source partitioning.
+
+    :param partition_column_name: The name of the column that will be used for
+     proceeding range partitioning. Type: string (or Expression with resultType
+     string).
+    :type partition_column_name: object
+    """
+
+    _attribute_map = {
+        'partition_column_name': {'key': 'partitionColumnName', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SapHanaPartitionSettings, self).__init__(**kwargs)
+        self.partition_column_name = kwargs.get('partition_column_name', None)
+
+
 class SapHanaSource(TabularSource):
     """A copy activity source for SAP HANA source.
 
@@ -25608,6 +25626,15 @@ class SapHanaSource(TabularSource):
     :param packet_size: The packet size of data read from SAP HANA. Type:
      integer(or Expression with resultType integer).
     :type packet_size: object
+    :param partition_option: The partition mechanism that will be used for SAP
+     HANA read in parallel. Possible values include: 'None',
+     'PhysicalPartitionsOfTable', 'SapHanaDynamicRange'
+    :type partition_option: str or
+     ~azure.mgmt.datafactory.models.SapHanaPartitionOption
+    :param partition_settings: The settings that will be leveraged for SAP
+     HANA source partitioning.
+    :type partition_settings:
+     ~azure.mgmt.datafactory.models.SapHanaPartitionSettings
     """
 
     _validation = {
@@ -25623,12 +25650,16 @@ class SapHanaSource(TabularSource):
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
         'packet_size': {'key': 'packetSize', 'type': 'object'},
+        'partition_option': {'key': 'partitionOption', 'type': 'str'},
+        'partition_settings': {'key': 'partitionSettings', 'type': 'SapHanaPartitionSettings'},
     }
 
     def __init__(self, **kwargs):
         super(SapHanaSource, self).__init__(**kwargs)
         self.query = kwargs.get('query', None)
         self.packet_size = kwargs.get('packet_size', None)
+        self.partition_option = kwargs.get('partition_option', None)
+        self.partition_settings = kwargs.get('partition_settings', None)
         self.type = 'SapHanaSource'
 
 
