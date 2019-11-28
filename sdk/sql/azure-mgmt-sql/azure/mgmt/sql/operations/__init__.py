@@ -22,7 +22,6 @@ from ._databases_operations import DatabasesOperations
 from ._elastic_pools_operations import ElasticPoolsOperations
 from ._recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 from ._replication_links_operations import ReplicationLinksOperations
-from ._server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
 from ._server_communication_links_operations import ServerCommunicationLinksOperations
 from ._service_objectives_operations import ServiceObjectivesOperations
 from ._elastic_pool_activities_operations import ElasticPoolActivitiesOperations
@@ -95,6 +94,9 @@ from ._managed_database_restore_details_operations import ManagedDatabaseRestore
 from ._managed_databases_operations import ManagedDatabasesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
+from ._workload_groups_operations import WorkloadGroupsOperations
+from ._workload_classifiers_operations import WorkloadClassifiersOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -110,7 +112,6 @@ __all__ = [
     'ElasticPoolsOperations',
     'RecommendedElasticPoolsOperations',
     'ReplicationLinksOperations',
-    'ServerAzureADAdministratorsOperations',
     'ServerCommunicationLinksOperations',
     'ServiceObjectivesOperations',
     'ElasticPoolActivitiesOperations',
@@ -183,4 +184,7 @@ __all__ = [
     'ManagedDatabasesOperations',
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
+    'ServerAzureADAdministratorsOperations',
+    'WorkloadGroupsOperations',
+    'WorkloadClassifiersOperations',
 ]
