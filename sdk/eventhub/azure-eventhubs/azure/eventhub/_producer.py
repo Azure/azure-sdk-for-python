@@ -34,7 +34,7 @@ def _set_partition_key(event_datas, partition_key):
 
 def _set_trace_message(event_datas, parent_span=None):
     for ed in iter(event_datas):
-        trace_message(ed.message, parent_span)
+        trace_message(ed, parent_span)
         yield ed
 
 
@@ -162,7 +162,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             if partition_key:
                 set_message_partition_key(event_data.message, partition_key)
             wrapper_event_data = event_data
-            trace_message(wrapper_event_data.message, span)
+            trace_message(wrapper_event_data, span)
         else:
             if isinstance(event_data, EventDataBatch):  # The partition_key in the param will be omitted.
                 if partition_key and partition_key != event_data._partition_key:  # pylint: disable=protected-access
