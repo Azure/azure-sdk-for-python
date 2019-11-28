@@ -74,8 +74,8 @@ def _parse_conn_str(conn_str, kwargs):
     if left_slash_pos != -1:
         host = cast(str, endpoint)[left_slash_pos + 2:]
     else:
-        host = endpoint
-    return str(host), str(shared_access_key_name), str(shared_access_key), entity
+        host = str(endpoint)
+    return host, str(shared_access_key_name), str(shared_access_key), entity
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):
