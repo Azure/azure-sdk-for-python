@@ -40,7 +40,7 @@ class AlertsOperations(object):
         self.config = config
 
     def list(
-            self, filter=None, select=None, expand=None, custom_headers=None, raw=False, **operation_config):
+            self, filter=None, select=None, expand=None, auto_dismiss_rule_name=None, custom_headers=None, raw=False, **operation_config):
         """List all the alerts that are associated with the subscription.
 
         :param filter: OData filter. Optional.
@@ -49,6 +49,11 @@ class AlertsOperations(object):
         :type select: str
         :param expand: OData expand. Optional.
         :type expand: str
+        :param auto_dismiss_rule_name: The name of an existing auto dismiss
+         rule. Use it to simulate the rule on existing alerts and get the
+         alerts that would have been dismissed if the rule was enabled when the
+         alert was created
+        :type auto_dismiss_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -77,6 +82,8 @@ class AlertsOperations(object):
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if expand is not None:
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                if auto_dismiss_rule_name is not None:
+                    query_parameters['autoDismissRuleName'] = self._serialize.query("auto_dismiss_rule_name", auto_dismiss_rule_name, 'str')
 
             else:
                 url = next_link
@@ -118,7 +125,7 @@ class AlertsOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/alerts'}
 
     def list_by_resource_group(
-            self, resource_group_name, filter=None, select=None, expand=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, filter=None, select=None, expand=None, auto_dismiss_rule_name=None, custom_headers=None, raw=False, **operation_config):
         """List all the alerts that are associated with the resource group.
 
         :param resource_group_name: The name of the resource group within the
@@ -130,6 +137,11 @@ class AlertsOperations(object):
         :type select: str
         :param expand: OData expand. Optional.
         :type expand: str
+        :param auto_dismiss_rule_name: The name of an existing auto dismiss
+         rule. Use it to simulate the rule on existing alerts and get the
+         alerts that would have been dismissed if the rule was enabled when the
+         alert was created
+        :type auto_dismiss_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -159,6 +171,8 @@ class AlertsOperations(object):
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if expand is not None:
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                if auto_dismiss_rule_name is not None:
+                    query_parameters['autoDismissRuleName'] = self._serialize.query("auto_dismiss_rule_name", auto_dismiss_rule_name, 'str')
 
             else:
                 url = next_link
@@ -200,7 +214,7 @@ class AlertsOperations(object):
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/alerts'}
 
     def list_subscription_level_alerts_by_region(
-            self, filter=None, select=None, expand=None, custom_headers=None, raw=False, **operation_config):
+            self, filter=None, select=None, expand=None, auto_dismiss_rule_name=None, custom_headers=None, raw=False, **operation_config):
         """List all the alerts that are associated with the subscription that are
         stored in a specific location.
 
@@ -210,6 +224,11 @@ class AlertsOperations(object):
         :type select: str
         :param expand: OData expand. Optional.
         :type expand: str
+        :param auto_dismiss_rule_name: The name of an existing auto dismiss
+         rule. Use it to simulate the rule on existing alerts and get the
+         alerts that would have been dismissed if the rule was enabled when the
+         alert was created
+        :type auto_dismiss_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -239,6 +258,8 @@ class AlertsOperations(object):
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if expand is not None:
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                if auto_dismiss_rule_name is not None:
+                    query_parameters['autoDismissRuleName'] = self._serialize.query("auto_dismiss_rule_name", auto_dismiss_rule_name, 'str')
 
             else:
                 url = next_link
@@ -280,7 +301,7 @@ class AlertsOperations(object):
     list_subscription_level_alerts_by_region.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts'}
 
     def list_resource_group_level_alerts_by_region(
-            self, resource_group_name, filter=None, select=None, expand=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, filter=None, select=None, expand=None, auto_dismiss_rule_name=None, custom_headers=None, raw=False, **operation_config):
         """List all the alerts that are associated with the resource group that
         are stored in a specific location.
 
@@ -293,6 +314,11 @@ class AlertsOperations(object):
         :type select: str
         :param expand: OData expand. Optional.
         :type expand: str
+        :param auto_dismiss_rule_name: The name of an existing auto dismiss
+         rule. Use it to simulate the rule on existing alerts and get the
+         alerts that would have been dismissed if the rule was enabled when the
+         alert was created
+        :type auto_dismiss_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -323,6 +349,8 @@ class AlertsOperations(object):
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if expand is not None:
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                if auto_dismiss_rule_name is not None:
+                    query_parameters['autoDismissRuleName'] = self._serialize.query("auto_dismiss_rule_name", auto_dismiss_rule_name, 'str')
 
             else:
                 url = next_link
