@@ -81,56 +81,6 @@ class AccountSasParameters(Model):
         self.key_to_sign = kwargs.get('key_to_sign', None)
 
 
-class ActiveDirectoryProperties(Model):
-    """Settings properties for Active Directory (AD).
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param domain_name: Required. Specifies the primary domain that the AD DNS
-     server is authoritative for.
-    :type domain_name: str
-    :param net_bios_domain_name: Required. Specifies the NetBIOS domain name.
-    :type net_bios_domain_name: str
-    :param forest_name: Required. Specifies the Active Directory forest to
-     get.
-    :type forest_name: str
-    :param domain_guid: Required. Specifies the domain GUID.
-    :type domain_guid: str
-    :param domain_sid: Required. Specifies the security identifier (SID).
-    :type domain_sid: str
-    :param azure_storage_sid: Required. Specifies the security identifier
-     (SID) for Azure Storage.
-    :type azure_storage_sid: str
-    """
-
-    _validation = {
-        'domain_name': {'required': True},
-        'net_bios_domain_name': {'required': True},
-        'forest_name': {'required': True},
-        'domain_guid': {'required': True},
-        'domain_sid': {'required': True},
-        'azure_storage_sid': {'required': True},
-    }
-
-    _attribute_map = {
-        'domain_name': {'key': 'domainName', 'type': 'str'},
-        'net_bios_domain_name': {'key': 'netBiosDomainName', 'type': 'str'},
-        'forest_name': {'key': 'forestName', 'type': 'str'},
-        'domain_guid': {'key': 'domainGuid', 'type': 'str'},
-        'domain_sid': {'key': 'domainSid', 'type': 'str'},
-        'azure_storage_sid': {'key': 'azureStorageSid', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ActiveDirectoryProperties, self).__init__(**kwargs)
-        self.domain_name = kwargs.get('domain_name', None)
-        self.net_bios_domain_name = kwargs.get('net_bios_domain_name', None)
-        self.forest_name = kwargs.get('forest_name', None)
-        self.domain_guid = kwargs.get('domain_guid', None)
-        self.domain_sid = kwargs.get('domain_sid', None)
-        self.azure_storage_sid = kwargs.get('azure_storage_sid', None)
-
-
 class Resource(Model):
     """Resource.
 
@@ -210,12 +160,9 @@ class AzureFilesIdentityBasedAuthentication(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param directory_service_options: Required. Indicates the directory
-     service used. Possible values include: 'None', 'AADDS', 'AD'
+     service used. Possible values include: 'None', 'AADDS'
     :type directory_service_options: str or
      ~azure.mgmt.storage.v2019_06_01.models.DirectoryServiceOptions
-    :param active_directory_properties: Required if choose AD.
-    :type active_directory_properties:
-     ~azure.mgmt.storage.v2019_06_01.models.ActiveDirectoryProperties
     """
 
     _validation = {
@@ -224,13 +171,11 @@ class AzureFilesIdentityBasedAuthentication(Model):
 
     _attribute_map = {
         'directory_service_options': {'key': 'directoryServiceOptions', 'type': 'str'},
-        'active_directory_properties': {'key': 'activeDirectoryProperties', 'type': 'ActiveDirectoryProperties'},
     }
 
     def __init__(self, **kwargs):
         super(AzureFilesIdentityBasedAuthentication, self).__init__(**kwargs)
         self.directory_service_options = kwargs.get('directory_service_options', None)
-        self.active_directory_properties = kwargs.get('active_directory_properties', None)
 
 
 class BlobContainer(AzureEntityResource):
@@ -1917,6 +1862,128 @@ class NetworkRuleSet(Model):
         self.default_action = kwargs.get('default_action', "Allow")
 
 
+class ObjectReplicationPolicy(Resource):
+    """The replication policy between two storage accounts. Multiple rules can be
+    defined in one policy.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar policy_id: A unique id for object replication policy.
+    :vartype policy_id: str
+    :ivar enabled_time: Indicates when the policy is enabled on the source
+     account.
+    :vartype enabled_time: datetime
+    :param source_account: Required. Required. Source account name.
+    :type source_account: str
+    :param destination_account: Required. Required. Destination account name.
+    :type destination_account: str
+    :param rules: The storage account object replication rules.
+    :type rules:
+     list[~azure.mgmt.storage.v2019_06_01.models.ObjectReplicationPolicyRule]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'policy_id': {'readonly': True},
+        'enabled_time': {'readonly': True},
+        'source_account': {'required': True},
+        'destination_account': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'policy_id': {'key': 'properties.policyId', 'type': 'str'},
+        'enabled_time': {'key': 'properties.enabledTime', 'type': 'iso-8601'},
+        'source_account': {'key': 'properties.sourceAccount', 'type': 'str'},
+        'destination_account': {'key': 'properties.destinationAccount', 'type': 'str'},
+        'rules': {'key': 'properties.rules', 'type': '[ObjectReplicationPolicyRule]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ObjectReplicationPolicy, self).__init__(**kwargs)
+        self.policy_id = None
+        self.enabled_time = None
+        self.source_account = kwargs.get('source_account', None)
+        self.destination_account = kwargs.get('destination_account', None)
+        self.rules = kwargs.get('rules', None)
+
+
+class ObjectReplicationPolicyFilter(Model):
+    """Filters limit replication to a subset of blobs within the storage account.
+    A logical OR is performed on values in the filter. If multiple filters are
+    defined, a logical AND is performed on all filters.
+
+    :param prefix_match: Optional. Filters the results to replicate only blobs
+     whose names begin with the specified prefix.
+    :type prefix_match: list[str]
+    :param tag: Optional. Filters the results to replicate blobs with the tag.
+    :type tag: list[str]
+    """
+
+    _attribute_map = {
+        'prefix_match': {'key': 'prefixMatch', 'type': '[str]'},
+        'tag': {'key': 'tag', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ObjectReplicationPolicyFilter, self).__init__(**kwargs)
+        self.prefix_match = kwargs.get('prefix_match', None)
+        self.tag = kwargs.get('tag', None)
+
+
+class ObjectReplicationPolicyRule(Model):
+    """The replication policy rule between two containers.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param rule_id: Rule Id is auto-generated for each new rule on destination
+     account. It is required for put policy on source account.
+    :type rule_id: str
+    :param source_container: Required. Required. Source container name.
+    :type source_container: str
+    :param destination_container: Required. Required. Destination container
+     name.
+    :type destination_container: str
+    :param filter: Optional. An object that defines the filter set.
+    :type filter:
+     ~azure.mgmt.storage.v2019_06_01.models.ObjectReplicationPolicyFilter
+    """
+
+    _validation = {
+        'source_container': {'required': True},
+        'destination_container': {'required': True},
+    }
+
+    _attribute_map = {
+        'rule_id': {'key': 'ruleId', 'type': 'str'},
+        'source_container': {'key': 'sourceContainer', 'type': 'str'},
+        'destination_container': {'key': 'destinationContainer', 'type': 'str'},
+        'filter': {'key': 'filter', 'type': 'ObjectReplicationPolicyFilter'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ObjectReplicationPolicyRule, self).__init__(**kwargs)
+        self.rule_id = kwargs.get('rule_id', None)
+        self.source_container = kwargs.get('source_container', None)
+        self.destination_container = kwargs.get('destination_container', None)
+        self.filter = kwargs.get('filter', None)
+
+
 class Operation(Model):
     """Storage REST API operation definition.
 
@@ -2876,7 +2943,7 @@ class StorageAccountRegenerateKeyParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param key_name: Required. The name of storage keys that want to be
-     regenerated, possible values are key1, key2, kerb1, kerb2.
+     regenerated, possible values are key1, key2.
     :type key_name: str
     """
 

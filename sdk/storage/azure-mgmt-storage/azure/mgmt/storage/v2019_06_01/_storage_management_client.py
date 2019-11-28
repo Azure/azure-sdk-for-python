@@ -20,6 +20,7 @@ from .operations import UsagesOperations
 from .operations import ManagementPoliciesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
+from .operations import ObjectReplicationPoliciesOperations
 from .operations import BlobServicesOperations
 from .operations import BlobContainersOperations
 from .operations import FileServicesOperations
@@ -47,6 +48,8 @@ class StorageManagementClient(SDKClient):
     :vartype private_endpoint_connections: azure.mgmt.storage.v2019_06_01.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResources operations
     :vartype private_link_resources: azure.mgmt.storage.v2019_06_01.operations.PrivateLinkResourcesOperations
+    :ivar object_replication_policies: ObjectReplicationPolicies operations
+    :vartype object_replication_policies: azure.mgmt.storage.v2019_06_01.operations.ObjectReplicationPoliciesOperations
     :ivar blob_services: BlobServices operations
     :vartype blob_services: azure.mgmt.storage.v2019_06_01.operations.BlobServicesOperations
     :ivar blob_containers: BlobContainers operations
@@ -88,6 +91,8 @@ class StorageManagementClient(SDKClient):
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.object_replication_policies = ObjectReplicationPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.blob_services = BlobServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)

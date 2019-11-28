@@ -89,7 +89,6 @@ class DirectoryServiceOptions(str, Enum):
 
     none = "None"
     aadds = "AADDS"
-    ad = "AD"
 
 
 class AccessTier(str, Enum):
@@ -240,8 +239,3 @@ class ImmutabilityPolicyUpdateType(str, Enum):
 class StorageAccountExpand(str, Enum):
 
     geo_replication_stats = "geoReplicationStats"
-
-
-class ListKeyExpand(str, Enum):
-
-    kerb = "kerb"

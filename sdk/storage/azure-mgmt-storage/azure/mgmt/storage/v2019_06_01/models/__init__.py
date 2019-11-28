@@ -11,7 +11,6 @@
 
 try:
     from ._models_py3 import AccountSasParameters
-    from ._models_py3 import ActiveDirectoryProperties
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import AzureFilesIdentityBasedAuthentication
     from ._models_py3 import BlobContainer
@@ -57,6 +56,9 @@ try:
     from ._models_py3 import ManagementPolicySnapShot
     from ._models_py3 import MetricSpecification
     from ._models_py3 import NetworkRuleSet
+    from ._models_py3 import ObjectReplicationPolicy
+    from ._models_py3 import ObjectReplicationPolicyFilter
+    from ._models_py3 import ObjectReplicationPolicyRule
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import PrivateEndpoint
@@ -86,7 +88,6 @@ try:
     from ._models_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
     from ._models import AccountSasParameters
-    from ._models import ActiveDirectoryProperties
     from ._models import AzureEntityResource
     from ._models import AzureFilesIdentityBasedAuthentication
     from ._models import BlobContainer
@@ -132,6 +133,9 @@ except (SyntaxError, ImportError):
     from ._models import ManagementPolicySnapShot
     from ._models import MetricSpecification
     from ._models import NetworkRuleSet
+    from ._models import ObjectReplicationPolicy
+    from ._models import ObjectReplicationPolicyFilter
+    from ._models import ObjectReplicationPolicyRule
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import PrivateEndpoint
@@ -162,6 +166,7 @@ except (SyntaxError, ImportError):
 from ._paged_models import BlobServicePropertiesPaged
 from ._paged_models import FileShareItemPaged
 from ._paged_models import ListContainerItemPaged
+from ._paged_models import ObjectReplicationPolicyPaged
 from ._paged_models import OperationPaged
 from ._paged_models import SkuPaged
 from ._paged_models import StorageAccountPaged
@@ -199,12 +204,10 @@ from ._storage_management_client_enums import (
     ImmutabilityPolicyState,
     ImmutabilityPolicyUpdateType,
     StorageAccountExpand,
-    ListKeyExpand,
 )
 
 __all__ = [
     'AccountSasParameters',
-    'ActiveDirectoryProperties',
     'AzureEntityResource',
     'AzureFilesIdentityBasedAuthentication',
     'BlobContainer',
@@ -250,6 +253,9 @@ __all__ = [
     'ManagementPolicySnapShot',
     'MetricSpecification',
     'NetworkRuleSet',
+    'ObjectReplicationPolicy',
+    'ObjectReplicationPolicyFilter',
+    'ObjectReplicationPolicyRule',
     'Operation',
     'OperationDisplay',
     'PrivateEndpoint',
@@ -281,6 +287,7 @@ __all__ = [
     'SkuPaged',
     'StorageAccountPaged',
     'UsagePaged',
+    'ObjectReplicationPolicyPaged',
     'BlobServicePropertiesPaged',
     'ListContainerItemPaged',
     'FileShareItemPaged',
@@ -316,5 +323,4 @@ __all__ = [
     'ImmutabilityPolicyState',
     'ImmutabilityPolicyUpdateType',
     'StorageAccountExpand',
-    'ListKeyExpand',
 ]

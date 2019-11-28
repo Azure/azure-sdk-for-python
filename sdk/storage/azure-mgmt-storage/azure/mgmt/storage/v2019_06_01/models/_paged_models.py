@@ -64,6 +64,19 @@ class UsagePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(UsagePaged, self).__init__(*args, **kwargs)
+class ObjectReplicationPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ObjectReplicationPolicy <azure.mgmt.storage.v2019_06_01.models.ObjectReplicationPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ObjectReplicationPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ObjectReplicationPolicyPaged, self).__init__(*args, **kwargs)
 class BlobServicePropertiesPaged(Paged):
     """
     A paging container for iterating over a list of :class:`BlobServiceProperties <azure.mgmt.storage.v2019_06_01.models.BlobServiceProperties>` object
