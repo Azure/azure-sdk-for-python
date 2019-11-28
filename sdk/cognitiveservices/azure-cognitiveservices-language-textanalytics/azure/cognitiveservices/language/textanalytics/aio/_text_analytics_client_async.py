@@ -65,7 +65,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
 
     @distributed_trace_async
-    async def detect_language(
+    async def detect_language(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[LanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
@@ -109,7 +109,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             process_batch_error(error)
 
     @distributed_trace_async
-    async def recognize_entities(
+    async def recognize_entities(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
@@ -152,7 +152,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             process_batch_error(error)
 
     @distributed_trace_async
-    async def recognize_pii_entities(
+    async def recognize_pii_entities(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
@@ -196,7 +196,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             process_batch_error(error)
 
     @distributed_trace_async
-    async def recognize_linked_entities(
+    async def recognize_linked_entities(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
@@ -239,7 +239,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             process_batch_error(error)
 
     @distributed_trace_async
-    async def extract_key_phrases(
+    async def extract_key_phrases(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
@@ -282,7 +282,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             process_batch_error(error)
 
     @distributed_trace_async
-    async def analyze_sentiment(
+    async def analyze_sentiment(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]

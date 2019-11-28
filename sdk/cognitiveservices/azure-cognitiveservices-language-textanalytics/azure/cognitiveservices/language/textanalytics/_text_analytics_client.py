@@ -65,7 +65,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
 
     @distributed_trace
-    def detect_language(
+    def detect_language(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[LanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
@@ -109,7 +109,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_batch_error(error)
 
     @distributed_trace
-    def recognize_entities(
+    def recognize_entities(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
@@ -152,7 +152,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_batch_error(error)
 
     @distributed_trace
-    def recognize_pii_entities(
+    def recognize_pii_entities(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
@@ -196,7 +196,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_batch_error(error)
 
     @distributed_trace
-    def recognize_linked_entities(
+    def recognize_linked_entities(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
@@ -239,7 +239,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_batch_error(error)
 
     @distributed_trace
-    def extract_key_phrases(
+    def extract_key_phrases(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
@@ -282,7 +282,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_batch_error(error)
 
     @distributed_trace
-    def analyze_sentiment(
+    def analyze_sentiment(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[MultiLanguageInput], List[Dict[str, str]]]
         model_version=None,  # type: Optional[str]
