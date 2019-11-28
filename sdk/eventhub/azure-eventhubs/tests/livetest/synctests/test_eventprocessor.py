@@ -60,7 +60,7 @@ def test_loadbalancer_balance():
                                       consumer_group='$default',
                                       checkpoint_store=checkpoint_store,
                                       on_event=event_handler,
-                                      load_balancing_interval=1.5)
+                                      load_balancing_interval=0.3)
 
     thread1 = threading.Thread(target=event_processor1.start)
     thread1.start()
@@ -72,7 +72,7 @@ def test_loadbalancer_balance():
                                       consumer_group='$default',
                                       checkpoint_store=checkpoint_store,
                                       on_event=event_handler,
-                                      load_balancing_interval=1.5)
+                                      load_balancing_interval=0.3)
 
     thread2 = threading.Thread(target=event_processor2.start)
     thread2.start()
