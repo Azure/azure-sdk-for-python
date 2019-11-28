@@ -114,15 +114,22 @@ class AttestationServiceCreationParams(Model):
 
     :param attestation_policy: Name of attestation policy.
     :type attestation_policy: str
+    :param policy_signing_certificates: JSON Web Key Set defining a set of
+     X.509 Certificates that will represent the parent certificate for the
+     signing certificate used for policy operations
+    :type policy_signing_certificates:
+     ~azure.mgmt.attestation.models.JSONWebKeySet
     """
 
     _attribute_map = {
         'attestation_policy': {'key': 'attestationPolicy', 'type': 'str'},
+        'policy_signing_certificates': {'key': 'policySigningCertificates', 'type': 'JSONWebKeySet'},
     }
 
-    def __init__(self, *, attestation_policy: str=None, **kwargs) -> None:
+    def __init__(self, *, attestation_policy: str=None, policy_signing_certificates=None, **kwargs) -> None:
         super(AttestationServiceCreationParams, self).__init__(**kwargs)
         self.attestation_policy = attestation_policy
+        self.policy_signing_certificates = policy_signing_certificates
 
 
 class AzureEntityResource(Resource):
@@ -211,6 +218,146 @@ class CloudErrorBody(Model):
         super(CloudErrorBody, self).__init__(**kwargs)
         self.code = code
         self.message = message
+
+
+class JSONWebKey(Model):
+    """JSONWebKey.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param alg: Required. The "alg" (algorithm) parameter identifies the
+     algorithm intended for
+     use with the key.  The values used should either be registered in the
+     IANA "JSON Web Signature and Encryption Algorithms" registry
+     established by [JWA] or be a value that contains a Collision-
+     Resistant Name.
+    :type alg: str
+    :param crv: The "crv" (curve) parameter identifies the curve type
+    :type crv: str
+    :param d: RSA private exponent or ECC private key
+    :type d: str
+    :param dp: RSA Private Key Parameter
+    :type dp: str
+    :param dq: RSA Private Key Parameter
+    :type dq: str
+    :param e: RSA public exponent, in Base64
+    :type e: str
+    :param k: Symmetric key
+    :type k: str
+    :param kid: Required. The "kid" (key ID) parameter is used to match a
+     specific key.  This
+     is used, for instance, to choose among a set of keys within a JWK Set
+     during key rollover.  The structure of the "kid" value is
+     unspecified.  When "kid" values are used within a JWK Set, different
+     keys within the JWK Set SHOULD use distinct "kid" values.  (One
+     example in which different keys might use the same "kid" value is if
+     they have different "kty" (key type) values but are considered to be
+     equivalent alternatives by the application using them.)  The "kid"
+     value is a case-sensitive string.
+    :type kid: str
+    :param kty: Required. The "kty" (key type) parameter identifies the
+     cryptographic algorithm
+     family used with the key, such as "RSA" or "EC". "kty" values should
+     either be registered in the IANA "JSON Web Key Types" registry
+     established by [JWA] or be a value that contains a Collision-
+     Resistant Name.  The "kty" value is a case-sensitive string.
+    :type kty: str
+    :param n: RSA modulus, in Base64
+    :type n: str
+    :param p: RSA secret prime
+    :type p: str
+    :param q: RSA secret prime, with p < q
+    :type q: str
+    :param qi: RSA Private Key Parameter
+    :type qi: str
+    :param use: Required. Use ("public key use") identifies the intended use
+     of
+     the public key. The "use" parameter is employed to indicate whether
+     a public key is used for encrypting data or verifying the signature
+     on data. Values are commonly "sig" (signature) or "enc" (encryption).
+    :type use: str
+    :param x: X coordinate for the Elliptic Curve point
+    :type x: str
+    :param x5c: The "x5c" (X.509 certificate chain) parameter contains a chain
+     of one
+     or more PKIX certificates [RFC5280].  The certificate chain is
+     represented as a JSON array of certificate value strings.  Each
+     string in the array is a base64-encoded (Section 4 of [RFC4648] --
+     not base64url-encoded) DER [ITU.X690.1994] PKIX certificate value.
+     The PKIX certificate containing the key value MUST be the first
+     certificate.
+    :type x5c: list[str]
+    :param y: Y coordinate for the Elliptic Curve point
+    :type y: str
+    """
+
+    _validation = {
+        'alg': {'required': True},
+        'kid': {'required': True},
+        'kty': {'required': True},
+        'use': {'required': True},
+    }
+
+    _attribute_map = {
+        'alg': {'key': 'alg', 'type': 'str'},
+        'crv': {'key': 'crv', 'type': 'str'},
+        'd': {'key': 'd', 'type': 'str'},
+        'dp': {'key': 'dp', 'type': 'str'},
+        'dq': {'key': 'dq', 'type': 'str'},
+        'e': {'key': 'e', 'type': 'str'},
+        'k': {'key': 'k', 'type': 'str'},
+        'kid': {'key': 'kid', 'type': 'str'},
+        'kty': {'key': 'kty', 'type': 'str'},
+        'n': {'key': 'n', 'type': 'str'},
+        'p': {'key': 'p', 'type': 'str'},
+        'q': {'key': 'q', 'type': 'str'},
+        'qi': {'key': 'qi', 'type': 'str'},
+        'use': {'key': 'use', 'type': 'str'},
+        'x': {'key': 'x', 'type': 'str'},
+        'x5c': {'key': 'x5c', 'type': '[str]'},
+        'y': {'key': 'y', 'type': 'str'},
+    }
+
+    def __init__(self, *, alg: str, kid: str, kty: str, use: str, crv: str=None, d: str=None, dp: str=None, dq: str=None, e: str=None, k: str=None, n: str=None, p: str=None, q: str=None, qi: str=None, x: str=None, x5c=None, y: str=None, **kwargs) -> None:
+        super(JSONWebKey, self).__init__(**kwargs)
+        self.alg = alg
+        self.crv = crv
+        self.d = d
+        self.dp = dp
+        self.dq = dq
+        self.e = e
+        self.k = k
+        self.kid = kid
+        self.kty = kty
+        self.n = n
+        self.p = p
+        self.q = q
+        self.qi = qi
+        self.use = use
+        self.x = x
+        self.x5c = x5c
+        self.y = y
+
+
+class JSONWebKeySet(Model):
+    """JSONWebKeySet.
+
+    :param keys: The value of the "keys" parameter is an array of JWK values.
+     By
+     default, the order of the JWK values within the array does not imply
+     an order of preference among them, although applications of JWK Sets
+     can choose to assign a meaning to the order for their purposes, if
+     desired.
+    :type keys: list[~azure.mgmt.attestation.models.JSONWebKey]
+    """
+
+    _attribute_map = {
+        'keys': {'key': 'keys', 'type': '[JSONWebKey]'},
+    }
+
+    def __init__(self, *, keys=None, **kwargs) -> None:
+        super(JSONWebKeySet, self).__init__(**kwargs)
+        self.keys = keys
 
 
 class OperationList(Model):
