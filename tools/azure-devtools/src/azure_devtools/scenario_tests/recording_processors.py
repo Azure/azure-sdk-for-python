@@ -171,8 +171,7 @@ class GeneralNameReplacer(RecordingProcessor):
 
     def process_request(self, request):
         for old, new in self.names_name:
-            print(str(old) + "xxx" + str(new))
-            request.uri = request.uri.replace(old, str(new))
+            request.uri = request.uri.replace(old, new)
 
             if is_text_payload(request) and request.body:
                 body = str(request.body)
@@ -184,7 +183,7 @@ class GeneralNameReplacer(RecordingProcessor):
     def process_response(self, response):
         for old, new in self.names_name:
             if is_text_payload(response) and response['body']['string']:
-                response['body']['string'] = response['body']['string'].replace(old, str(new))
+                response['body']['string'] = response['body']['string'].replace(old, new)
 
             self.replace_header(response, 'location', old, new)
             self.replace_header(response, 'azure-asyncoperation', old, new)
