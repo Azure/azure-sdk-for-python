@@ -8,6 +8,7 @@ import sys
 import platform
 import datetime
 import calendar
+import logging
 import six
 
 from uamqp import types  # type: ignore
@@ -25,6 +26,8 @@ from ._constants import (
     PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC,
     PROP_LAST_ENQUEUED_OFFSET
 )
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class UTC(datetime.tzinfo):
@@ -107,15 +110,18 @@ def trace_message(message, parent_span=None):
     Will open and close a "Azure.EventHubs.message" span, and
     add the "DiagnosticId" as app properties of the message.
     """
-    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-    if span_impl_type is not None:
-        current_span = parent_span or span_impl_type(span_impl_type.get_current_span())
-        message_span = current_span.span(name="Azure.EventHubs.message")
-        message_span.start()
-        app_prop = dict(message.properties) if message.properties else dict()
-        app_prop.setdefault(b"Diagnostic-Id", message_span.get_trace_parent().encode('ascii'))
-        message.application_properties = app_prop
-        message_span.finish()
+    try:
+        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        if span_impl_type is not None:
+            current_span = parent_span or span_impl_type(span_impl_type.get_current_span())
+            message_span = current_span.span(name="Azure.EventHubs.message")
+            message_span.start()
+            app_prop = dict(message.properties) if message.properties else dict()
+            app_prop.setdefault(b"Diagnostic-Id", message_span.get_trace_parent().encode('ascii'))
+            message.properties = app_prop
+            message_span.finish()
+    except Exception as exp:  # pylint:disable=broad-except
+        _LOGGER.warning("trace_message had an exception %r", exp)
 
 
 def trace_link_message(message, parent_span=None):
@@ -123,13 +129,16 @@ def trace_link_message(message, parent_span=None):
 
     Will extract DiagnosticId if available.
     """
-    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-    if span_impl_type is not None:
-        current_span = parent_span or span_impl_type(span_impl_type.get_current_span())
-        if current_span and message.application_properties:
-            traceparent = message.application_properties.get(b"Diagnostic-Id", "").decode('ascii')
-            if traceparent:
-                current_span.link(traceparent)
+    try:
+        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        if span_impl_type is not None:
+            current_span = parent_span or span_impl_type(span_impl_type.get_current_span())
+            if current_span and message.properties:
+                traceparent = message.properties.get(b"Diagnostic-Id", "").decode('ascii')
+                if traceparent:
+                    current_span.link(traceparent)
+    except Exception as exp:  # pylint:disable=broad-except
+        _LOGGER.warning("trace_link_message had an exception %r", exp)
 
 
 def event_position_selector(value, inclusive=False):
