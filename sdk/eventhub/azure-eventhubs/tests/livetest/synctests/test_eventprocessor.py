@@ -60,8 +60,7 @@ def test_loadbalancer_balance():
                                       consumer_group='$default',
                                       checkpoint_store=checkpoint_store,
                                       on_event=event_handler,
-                                      load_balancing_interval=3,
-                                      receive_timeout=1)
+                                      load_balancing_interval=1.5)
 
     thread1 = threading.Thread(target=event_processor1.start)
     thread1.start()
@@ -73,18 +72,17 @@ def test_loadbalancer_balance():
                                       consumer_group='$default',
                                       checkpoint_store=checkpoint_store,
                                       on_event=event_handler,
-                                      load_balancing_interval=3,
-                                      receive_timeout=1)
+                                      load_balancing_interval=1.5)
 
     thread2 = threading.Thread(target=event_processor2.start)
     thread2.start()
     threads.append(thread2)
-    time.sleep(10)
+    time.sleep(3)
     ep2_after_start = len(event_processor2._consumers)
 
     event_processor1.stop()
     thread1.join()
-    time.sleep(10)
+    time.sleep(3)
     ep2_after_ep1_stopped = len(event_processor2._consumers)
     event_processor2.stop()
     thread2.join()
@@ -467,9 +465,6 @@ def test_ownership_manager_release_partition():
         def __init__(self):
             self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-            return MockEventhubConsumer(**kwargs)
-
         def get_partition_ids(self):
             return ["0", "1"]
 
@@ -570,9 +565,6 @@ def test_balance_ownership_on_init(ownerships, partitions, expected_result):
         def __init__(self):
             self._address = _Address(hostname=TEST_NAMESPACE, path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-            return MockEventhubConsumer(**kwargs)
-
         def get_partition_ids(self):
             return ["0", "1"]
 
@@ -646,9 +638,6 @@ def test_balance_ownership(ownerships, partitions, expected_result):
         def __init__(self):
             self._address = _Address(hostname=TEST_NAMESPACE, path=MockEventHubClient.eventhub_name)
 
-        def _create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-            return MockEventhubConsumer(**kwargs)
-
         def get_partition_ids(self):
             return ["0", "1"]
 
@@ -658,5 +647,3 @@ def test_balance_ownership(ownerships, partitions, expected_result):
     om._initializing = False
     to_claim_ownership = om._balance_ownership(current_ownerships, partitions)
     assert len(to_claim_ownership) == expected_result
-
-
