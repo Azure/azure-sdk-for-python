@@ -22,7 +22,7 @@ class ManagementGroupSubscriptionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-01-preview. Constant value: "2018-03-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-01-preview. Constant value: "2019-11-01".
     """
 
     models = models
@@ -32,7 +32,7 @@ class ManagementGroupSubscriptionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01-preview"
+        self.api_version = "2019-11-01"
 
         self.config = config
 

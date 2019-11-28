@@ -22,7 +22,7 @@ class EntityInfo(Model):
      /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000
     :vartype id: str
     :ivar type: The type of the resource. For example,
-     /providers/Microsoft.Management/managementGroups
+     Microsoft.Management/managementGroups
     :vartype type: str
     :ivar name: The name of the entity. For example,
      00000000-0000-0000-0000-000000000000
@@ -47,9 +47,9 @@ class EntityInfo(Model):
      number of Groups and Subscriptions that are exactly one level underneath
      the current Group.
     :type number_of_children: int
-    :param number_of_child_groups: Number of Child Groups. Number of child
-     groups is the number of Groups that are exactly one level underneath the
-     current Group.
+    :param number_of_child_groups: Number of Child Groups. Number of children
+     is the number of Groups that are exactly one level underneath the current
+     Group.
     :type number_of_child_groups: int
     :param parent_display_name_chain: The parent display name chain from the
      root group to the immediate parent

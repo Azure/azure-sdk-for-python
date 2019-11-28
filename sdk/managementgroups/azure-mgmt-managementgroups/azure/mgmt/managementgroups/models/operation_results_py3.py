@@ -22,32 +22,32 @@ class OperationResults(Model):
      /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000
     :vartype id: str
     :ivar type: The type of the resource.  For example,
-     /providers/Microsoft.Management/managementGroups
+     Microsoft.Management/managementGroups
     :vartype type: str
     :ivar name: The name of the management group. For example,
      00000000-0000-0000-0000-000000000000
     :vartype name: str
-    :param provisioning_state: Provisioning State. Possible values include:
-     'Updating'
-    :type provisioning_state: str or ~azure.mgmt.managementgroups.models.enum
+    :ivar status: The current status of the operation
+    :vartype status: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
+        'status': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
     }
 
-    def __init__(self, *, provisioning_state=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(OperationResults, self).__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
-        self.provisioning_state = provisioning_state
+        self.status = None

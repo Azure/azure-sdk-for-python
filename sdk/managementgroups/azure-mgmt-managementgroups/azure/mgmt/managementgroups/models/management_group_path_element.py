@@ -12,23 +12,21 @@
 from msrest.serialization import Model
 
 
-class CheckNameAvailabilityRequest(Model):
-    """Management group name availability check parameters.
+class ManagementGroupPathElement(Model):
+    """A path element of a management group ancestors.
 
-    :param name: the name to check for availability
+    :param name: The name of the group.
     :type name: str
-    :param type: fully qualified resource type which includes provider
-     namespace. Possible values include:
-     'Microsoft.Management/managementGroups'
-    :type type: str or ~azure.mgmt.managementgroups.models.Type
+    :param display_name: The friendly name of the group.
+    :type display_name: str
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'Type'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, type=None, **kwargs) -> None:
-        super(CheckNameAvailabilityRequest, self).__init__(**kwargs)
-        self.name = name
-        self.type = type
+    def __init__(self, **kwargs):
+        super(ManagementGroupPathElement, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)

@@ -20,6 +20,7 @@ try:
     from .parent_group_info_py3 import ParentGroupInfo
     from .management_group_details_py3 import ManagementGroupDetails
     from .management_group_child_info_py3 import ManagementGroupChildInfo
+    from .management_group_path_element_py3 import ManagementGroupPathElement
     from .management_group_py3 import ManagementGroup
     from .operation_results_py3 import OperationResults
     from .descendant_parent_group_info_py3 import DescendantParentGroupInfo
@@ -44,6 +45,7 @@ except (SyntaxError, ImportError):
     from .parent_group_info import ParentGroupInfo
     from .management_group_details import ManagementGroupDetails
     from .management_group_child_info import ManagementGroupChildInfo
+    from .management_group_path_element import ManagementGroupPathElement
     from .management_group import ManagementGroup
     from .operation_results import OperationResults
     from .descendant_parent_group_info import DescendantParentGroupInfo
@@ -78,6 +80,7 @@ __all__ = [
     'ParentGroupInfo',
     'ManagementGroupDetails',
     'ManagementGroupChildInfo',
+    'ManagementGroupPathElement',
     'ManagementGroup',
     'OperationResults',
     'DescendantParentGroupInfo',

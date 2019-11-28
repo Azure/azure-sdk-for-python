@@ -30,4 +30,4 @@ class Status(str, Enum):
 
 class Type(str, Enum):
 
-    providers_microsoft_managementmanagement_groups = "/providers/Microsoft.Management/managementGroups"
+    microsoft_managementmanagement_groups = "Microsoft.Management/managementGroups"
