@@ -56,26 +56,26 @@ def _parse_conn_str(conn_str, kwargs):
     for element in conn_str.split(';'):
         key, _, value = element.partition('=')
         if key.lower() == 'endpoint':
-            endpoint = value.rstrip('/')
+            endpoint = str(value.rstrip('/'))
         elif key.lower() == 'hostname':
-            endpoint = value.rstrip('/')
+            endpoint = str(value.rstrip('/'))
         elif key.lower() == 'sharedaccesskeyname':
-            shared_access_key_name = value
+            shared_access_key_name = str(value)
         elif key.lower() == 'sharedaccesskey':
-            shared_access_key = value
+            shared_access_key = str(value)
         elif key.lower() == 'entitypath':
-            entity_path = value
+            entity_path = str(value)
     if not all([endpoint, shared_access_key_name, shared_access_key]):
         raise ValueError(
             "Invalid connection string. Should be in the format: "
             "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>")
-    entity = eventhub_name or entity_path
+    entity = cast(str, eventhub_name or entity_path)
     left_slash_pos = cast(str, endpoint).find("//")
     if left_slash_pos != -1:
-        host = cast(str, endpoint)[left_slash_pos + 2:]
+        host = endpoint[left_slash_pos + 2:]
     else:
-        host = cast(str, endpoint)
-    return cast(str, host), cast(str, shared_access_key_name), cast(str, shared_access_key), cast(str, entity)
+        host = endpoint
+    return host, shared_access_key_name, shared_access_key, entity
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):
