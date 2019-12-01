@@ -176,6 +176,33 @@ class Severity(str, Enum):
     high = "High"
 
 
+class EventSource(str, Enum):
+
+    assessments = "Assessments"
+    alerts = "Alerts"
+
+
+class PropertyType(str, Enum):
+
+    string = "String"
+    integer = "Integer"
+    number = "Number"
+    boolean = "Boolean"
+
+
+class Operator(str, Enum):
+
+    equals = "Equals"
+    greater_than = "GreaterThan"
+    greater_than_or_equal_to = "GreaterThanOrEqualTo"
+    lesser_than = "LesserThan"
+    lesser_than_or_equal_to = "LesserThanOrEqualTo"
+    not_equals = "NotEquals"
+    contains = "Contains"
+    starts_with = "StartsWith"
+    ends_with = "EndsWith"
+
+
 class Category(str, Enum):
 
     compute = "Compute"
@@ -183,6 +210,32 @@ class Category(str, Enum):
     data = "Data"
     identity_and_access = "IdentityAndAccess"
     io_t = "IoT"
+
+
+class UserImpact(str, Enum):
+
+    low = "Low"
+    moderate = "Moderate"
+    high = "High"
+
+
+class ImplementationEffort(str, Enum):
+
+    low = "Low"
+    moderate = "Moderate"
+    high = "High"
+
+
+class Threats(str, Enum):
+
+    account_breach = "AccountBreach"
+    data_exfiltration = "DataExfiltration"
+    data_spillage = "DataSpillage"
+    malicious_insider = "MaliciousInsider"
+    elevation_of_privilege = "ElevationOfPrivilege"
+    threat_resistance = "ThreatResistance"
+    missing_coverage = "MissingCoverage"
+    denial_of_service = "DenialOfService"
 
 
 class AssessmentType(str, Enum):
