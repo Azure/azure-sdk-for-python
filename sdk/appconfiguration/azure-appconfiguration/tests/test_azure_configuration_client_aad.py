@@ -36,7 +36,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
     def __init__(self, method_name):
         super(AppConfigurationClientTest, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
-        if False:
+        if self.is_playback():
             base_url = "https://fake_app_config.azconfig-test.io"
         else:
             base_url = os.getenv('APP_CONFIG_ENDPOINT')
