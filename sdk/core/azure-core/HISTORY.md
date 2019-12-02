@@ -3,7 +3,7 @@
 
 -------------------
 ## Version 1.1.1 Unreleased
-- Bearer token authorization requires TLS
+- Bearer token authorization requires HTTPS
 
 ## 2019-11-25 Version 1.1.0
 

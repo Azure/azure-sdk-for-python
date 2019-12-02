@@ -28,6 +28,7 @@ class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOH
 
         :param request: The pipeline request object to be modified.
         :type request: ~azure.core.pipeline.PipelineRequest
+        :raises: :class:`~azure.core.exceptions.ServiceRequestError`
         """
         self._enforce_tls(request)
 

@@ -39,7 +39,7 @@ class _BearerTokenCredentialPolicyBase(object):
     @staticmethod
     def _enforce_tls(request):
         # type: (PipelineRequest) -> None
-        if not request.http_request.url.startswith("https"):
+        if not request.http_request.url.lower().startswith("https"):
             raise ServiceRequestError(
                 "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
             )
@@ -66,6 +66,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPo
     :param credential: The credential.
     :type credential: ~azure.core.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
+    :raises: :class:`~azure.core.exceptions.ServiceRequestError`
     """
 
     def on_request(self, request):
