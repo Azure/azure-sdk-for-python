@@ -228,14 +228,14 @@ class ImplementationEffort(str, Enum):
 
 class Threats(str, Enum):
 
-    account_breach = "AccountBreach"
-    data_exfiltration = "DataExfiltration"
-    data_spillage = "DataSpillage"
-    malicious_insider = "MaliciousInsider"
-    elevation_of_privilege = "ElevationOfPrivilege"
-    threat_resistance = "ThreatResistance"
-    missing_coverage = "MissingCoverage"
-    denial_of_service = "DenialOfService"
+    account_breach = "accountBreach"
+    data_exfiltration = "dataExfiltration"
+    data_spillage = "dataSpillage"
+    malicious_insider = "maliciousInsider"
+    elevation_of_privilege = "elevationOfPrivilege"
+    threat_resistance = "threatResistance"
+    missing_coverage = "missingCoverage"
+    denial_of_service = "denialOfService"
 
 
 class AssessmentType(str, Enum):
