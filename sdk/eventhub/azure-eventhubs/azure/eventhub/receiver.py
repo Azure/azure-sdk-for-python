@@ -47,6 +47,9 @@ class Receiver(object):
         :type prefetch: int
         :param epoch: An optional epoch value.
         :type epoch: int
+        :param idle_timeout: An optionl timeout in seconds after which the underlying connection
+         will close if there is no further activity.  Default is None.
+        :type idle_timeout: int
         """
         self.running = False
         self.client = client
@@ -269,7 +272,7 @@ class Receiver(object):
             return self._handler._received_messages.qsize()
         return 0
 
-    def receive(self, max_batch_size=None, timeout=None, max_reconnect_retries=None):
+    def receive(self, max_batch_size=None, timeout=None, reconnect_timeout=None, max_reconnect_retries=0):
         """
         Receive events from the EventHub.
 
@@ -279,6 +282,16 @@ class Receiver(object):
          retrieve before the time, the result will be empty. If no batch
          size is supplied, the prefetch size will be the maximum.
         :type max_batch_size: int
+        :param timeout: Optional number of seconds after which to stop
+         attempting to receive a batch.
+        :type timeout: int
+        :param reconnect_timeout: Optional number of seconds after which to
+         stop attempting to reconnect if a disconnect occurs during receiving.
+         Raises a TimeoutException if exceeded.
+        :type reconnect_timeout: int
+        :param max_reconnect_retries: Optional number of times to try
+         reconnecting if a disconnect occurs during receiving.
+        :type max_reconnect_retries: int
         :rtype: list[~azure.eventhub.common.EventData]
 
         Example:
@@ -290,11 +303,11 @@ class Receiver(object):
                 :caption: Receive events from the EventHub.
 
         """
-        time_out_at = time.time() + (timeout if timeout else 0)
+        time_out_at = time.time() + (reconnect_timeout if reconnect_timeout else 0)
         num_tries = 0 # If timeout is 0, have to make it run at least once.
         while num_tries == 0 \
                 or ((max_reconnect_retries is None or num_tries <= max_reconnect_retries) \
-                and (timeout is None or time.time() < time_out_at)):
+                and (reconnect_timeout is None or time.time() < time_out_at)):
             num_tries += 1
             if self.error:
                 raise self.error
@@ -338,5 +351,8 @@ class Receiver(object):
                 error = EventHubError("Receive failed: {}".format(e))
                 self.close(exception=error)
                 raise error
+
+        if not reconnect_timeout is None and time.time() > time_out_at:
+            raise TimeoutError("Timeout exceeded when reconnecting receiver")
 
         return data_batch

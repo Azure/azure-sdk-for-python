@@ -6,6 +6,7 @@
 import asyncio
 import uuid
 import logging
+import time
 
 from uamqp import errors, types
 from uamqp import ReceiveClientAsync, Source
@@ -47,6 +48,9 @@ class AsyncReceiver(Receiver):
         :param epoch: An optional epoch value.
         :type epoch: int
         :param loop: An event loop.
+        :param idle_timeout: An optionl timeout in seconds after which the underlying connection
+         will close if there is no further activity.  Default is None.
+        :type idle_timeout: int
         """
         self.loop = loop or asyncio.get_event_loop()
         self.running = False
@@ -253,7 +257,7 @@ class AsyncReceiver(Receiver):
             self.error = EventHubError("This receive handler is now closed.")
         await self._handler.close_async()
 
-    async def receive(self, max_batch_size=None, timeout=None):
+    async def receive(self, max_batch_size=None, timeout=None, reconnect_timeout=None, max_reconnect_retries=0):
         """
         Receive events asynchronously from the EventHub.
 
@@ -264,7 +268,15 @@ class AsyncReceiver(Receiver):
          size is supplied, the prefetch size will be the maximum.
         :type max_batch_size: int
         :rtype: list[~azure.eventhub.common.EventData]
-
+        :param timeout: Optional number of seconds after which to stop
+         attempting to receive a batch.
+        :type timeout: int
+        :param reconnect_timeout: Optional number of seconds after which to
+         stop attempting to reconnect if a disconnect occurs during receiving.
+         Raises a TimeoutException if exceeded.
+        :type reconnect_timeout: int
+        :param max_reconnect_retries: Optional number of times to try reconnecting
+         if a disconnect occurs during receiving.
         Example:
             .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
                 :start-after: [START eventhub_client_async_receive]
@@ -275,45 +287,56 @@ class AsyncReceiver(Receiver):
                  until acknowledgement is received or operation times out.
 
         """
-        if self.error:
-            raise self.error
-        if not self.running:
-            raise ValueError("Unable to receive until client has been started.")
-        data_batch = []
-        try:
-            timeout_ms = 1000 * timeout if timeout else 0
-            message_batch = await self._handler.receive_message_batch_async(
-                max_batch_size=max_batch_size,
-                timeout=timeout_ms)
-            for message in message_batch:
-                event_data = EventData(message=message)
-                self.offset = event_data.offset
-                data_batch.append(event_data)
-            return data_batch
-        except (errors.TokenExpired, errors.AuthenticationException):
-            log.info("AsyncReceiver disconnected due to token error. Attempting reconnect.")
-            await self.reconnect_async()
-            return data_batch
-        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
-            if shutdown.action.retry and self.auto_reconnect:
-                log.info("AsyncReceiver detached. Attempting reconnect.")
-                await self.reconnect_async()
+        time_out_at = time.time() + (reconnect_timeout if reconnect_timeout else 0)
+        num_tries = 0 # If timeout is 0, have to make it run at least once.
+        while num_tries == 0 \
+                or ((max_reconnect_retries is None or num_tries <= max_reconnect_retries) \
+                and (reconnect_timeout is None or time.time() < time_out_at)):
+            num_tries += 1
+            if self.error:
+                raise self.error
+            if not self.running:
+                raise ValueError("Unable to receive until client has been started.")
+            data_batch = []
+            try:
+                timeout_ms = 1000 * timeout if timeout else 0
+                message_batch = await self._handler.receive_message_batch_async(
+                    max_batch_size=max_batch_size,
+                    timeout=timeout_ms)
+                for message in message_batch:
+                    event_data = EventData(message=message)
+                    self.offset = event_data.offset
+                    data_batch.append(event_data)
                 return data_batch
-            log.info("AsyncReceiver detached. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
-            await self.close_async(exception=error)
-            raise error
-        except errors.MessageHandlerError as shutdown:
-            if self.auto_reconnect:
-                log.info("AsyncReceiver detached. Attempting reconnect.")
+            except (errors.TokenExpired, errors.AuthenticationException):
+                log.info("AsyncReceiver disconnected due to token error. Attempting reconnect.")
                 await self.reconnect_async()
-                return data_batch
-            log.info("AsyncReceiver detached. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
-            await self.close_async(exception=error)
-            raise error
-        except Exception as e:
-            log.info("Unexpected error occurred (%r). Shutting down.", e)
-            error = EventHubError("Receive failed: {}".format(e))
-            await self.close_async(exception=error)
-            raise error
+                continue
+            except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+                if shutdown.action.retry and self.auto_reconnect:
+                    log.info("AsyncReceiver detached. Attempting reconnect.")
+                    await self.reconnect_async()
+                    continue
+                log.info("AsyncReceiver detached. Shutting down.")
+                error = EventHubError(str(shutdown), shutdown)
+                await self.close_async(exception=error)
+                raise error
+            except errors.MessageHandlerError as shutdown:
+                if self.auto_reconnect:
+                    log.info("AsyncReceiver detached. Attempting reconnect.")
+                    await self.reconnect_async()
+                    continue
+                log.info("AsyncReceiver detached. Shutting down.")
+                error = EventHubError(str(shutdown), shutdown)
+                await self.close_async(exception=error)
+                raise error
+            except Exception as e:
+                log.info("Unexpected error occurred (%r). Shutting down.", e)
+                error = EventHubError("Receive failed: {}".format(e))
+                await self.close_async(exception=error)
+                raise error
+
+        if not reconnect_timeout is None and time.time() > time_out_at:
+            raise TimeoutError("Timeout exceeded when reconnecting receiver")      
+
+        return data_batch

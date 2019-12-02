@@ -217,9 +217,12 @@ class EventHubClientAsync(EventHubClient):
         :type offset: ~azure.eventhub.common.Offset
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
-        :operation: An optional operation to be appended to the hostname in the source URL.
+        :param operation: An optional operation to be appended to the hostname in the source URL.
          The value must start with `/` character.
         :type operation: str
+        :param idle_timeout: An optionl timeout in seconds after which the underlying connection
+         will close if there is no further activity.  Default is None.
+        :type idle_timeout: int
         :rtype: ~azure.eventhub.async_ops.receiver_async.ReceiverAsync
 
         Example:
