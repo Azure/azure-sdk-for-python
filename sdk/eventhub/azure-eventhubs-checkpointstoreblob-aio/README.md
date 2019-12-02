@@ -56,7 +56,7 @@ sequence number and the timestamp of when it was enqueued.
 The easiest way to create a `EventHubConsumerClient` is to use a connection string.
 ```python
 from azure.eventhub.aio import EventHubConsumerClient
-eventhub_client = EventHubConsumerClient.from_connection_string("my_eventhub_namespace_connection_string", event_hub_path="myeventhub")
+eventhub_client = EventHubConsumerClient.from_connection_string("my_eventhub_namespace_connection_string", "my_consumer_group", eventhub_name="my_eventhub")
 ```
 For other ways of creating a `EventHubConsumerClient`, refer to [EventHubs library](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) for more details.
 
@@ -65,31 +65,32 @@ For other ways of creating a `EventHubConsumerClient`, refer to [EventHubs libra
 import asyncio
 
 from azure.eventhub.aio import EventHubConsumerClient
-from azure.storage.blob.aio import ContainerClient
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
-storage_container_connection_str = '<< CONNECTION STRING OF THE STORAGE >>'
-storage_container_name = '<< STORAGE CONTAINER NAME>>'
+storage_connection_str = '<< CONNECTION STRING OF THE STORAGE >>'
+container_name = '<< STORAGE CONTAINER NAME>>'
 
-async def process_event(partition_context, event):
+async def on_event(partition_context, event):
     # do something
     await partition_context.update_checkpoint(event)  # Or update_checkpoint every N events for better performance.
 
 async def main():
     checkpoint_store = BlobCheckpointStore.from_connection_string(
-        storage_container_connection_str,
-        storage_container_name
+        storage_connection_str,
+        container_name
     )
     client = EventHubConsumerClient.from_connection_string(
         connection_str,
+        consumer_group,
         eventhub_name=eventhub_name,
         checkpoint_store=checkpoint_store,
     )
 
     try:
-        await client.receive(process_event, "$default")
+        await client.receive(on_event)
     except KeyboardInterrupt:
         await client.close()
 
