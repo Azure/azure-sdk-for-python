@@ -5,7 +5,7 @@
 import asyncio
 import logging
 
-from typing import Any, Union, TYPE_CHECKING, Iterable, List
+from typing import Any, Union, TYPE_CHECKING, List, Optional, Dict, cast
 from uamqp import constants  # type: ignore
 
 from ..exceptions import ConnectError, EventHubError
@@ -15,6 +15,7 @@ from .._constants import ALL_PARTITIONS
 from .._common import EventData, EventDataBatch
 
 if TYPE_CHECKING:
+    from uamqp.constants import TransportType
     from azure.core.credentials import TokenCredential  # type: ignore
 
 _LOGGER = logging.getLogger(__name__)
@@ -70,33 +71,33 @@ class EventHubProducerClient(ClientBaseAsync):
             network_tracing=kwargs.pop("logging_enable", False),
             **kwargs
         )
-        self._producers = {ALL_PARTITIONS: self._create_producer()}  # type: Dict[str, EventHubProducer]
+        self._producers = {ALL_PARTITIONS: self._create_producer()}  # type: Dict[str, Optional[EventHubProducer]]
         self._lock = asyncio.Lock()  # sync the creation of self._producers
         self._max_message_size_on_link = 0
-        self._partition_ids = None
+        self._partition_ids = None  # Optional[List[str]]
 
-    async def _get_partitions(self):
+    async def _get_partitions(self) -> None:
         if not self._partition_ids:
-            self._partition_ids = await self.get_partition_ids()
-            for p_id in self._partition_ids:
+            self._partition_ids = await self.get_partition_ids()  # type: ignore
+            for p_id in cast(List[str], self._partition_ids):
                 self._producers[p_id] = None
 
-    async def _get_max_mesage_size(self):
-        # pylint: disable=protected-access
+    async def _get_max_mesage_size(self) -> None:
+        # pylint: disable=protected-access,line-too-long
         async with self._lock:
             if not self._max_message_size_on_link:
-                await self._producers[ALL_PARTITIONS]._open_with_retry()
+                await cast(EventHubProducer, self._producers[ALL_PARTITIONS])._open_with_retry()
                 self._max_message_size_on_link = \
-                    self._producers[ALL_PARTITIONS]._handler.message_handler._link.peer_max_message_size \
+                    cast(EventHubProducer, self._producers[ALL_PARTITIONS])._handler.message_handler._link.peer_max_message_size \
                     or constants.MAX_MESSAGE_LENGTH_BYTES
 
-    async def _start_producer(self, partition_id, send_timeout):
+    async def _start_producer(self, partition_id: str, send_timeout: Optional[Union[int, float]]) -> None:
         async with self._lock:
             await self._get_partitions()
-            if partition_id not in self._partition_ids and partition_id != ALL_PARTITIONS:
+            if partition_id not in cast(List[str], self._partition_ids) and partition_id != ALL_PARTITIONS:
                 raise ConnectError("Invalid partition {} for the event hub {}".format(partition_id, self.eventhub_name))
 
-            if not self._producers[partition_id] or self._producers[partition_id].closed:
+            if not self._producers[partition_id] or cast(EventHubProducer, self._producers[partition_id]).closed:
                 self._producers[partition_id] = self._create_producer(
                     partition_id=partition_id,
                     send_timeout=send_timeout
@@ -104,9 +105,9 @@ class EventHubProducerClient(ClientBaseAsync):
 
     def _create_producer(
             self, *,
-            partition_id: str = None,
-            send_timeout: float = None,
-            loop: asyncio.AbstractEventLoop = None
+            partition_id: Optional[str] = None,
+            send_timeout: Optional[Union[int, float]] = None,
+            loop: Optional[asyncio.AbstractEventLoop] = None
     ) -> EventHubProducer:
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
         send_timeout = self._config.send_timeout if send_timeout is None else send_timeout
@@ -125,16 +126,15 @@ class EventHubProducerClient(ClientBaseAsync):
     def from_connection_string(
             cls, conn_str: str,
             *,
-            eventhub_name: str = None,
+            eventhub_name: Optional[str] = None,
             logging_enable: bool = False,
-            http_proxy: dict = None,
+            http_proxy: Optional[Dict[str, Union[str, int]]] = None,
             auth_timeout: float = 60,
-            user_agent: str = None,
+            user_agent: Optional[str] = None,
             retry_total: int = 3,
-            transport_type=None,
-            **kwargs):
-        # type: (str, Any) -> EventHubProducerClient
-        # pylint: disable=arguments-differ
+            transport_type: Optional['TransportType'] = None,
+            **kwargs: Any
+            ) -> 'EventHubProducerClient':
         """Create an EventHubProducerClient from a connection string.
 
         :param str conn_str: The connection string of an Event Hub.
@@ -165,7 +165,7 @@ class EventHubProducerClient(ClientBaseAsync):
                 :dedent: 4
                 :caption: Create a new instance of the EventHubProducerClient from connection string.
         """
-        return super(EventHubProducerClient, cls).from_connection_string(
+        constructor_args = cls._from_connection_string(
             conn_str,
             eventhub_name=eventhub_name,
             logging_enable=logging_enable,
@@ -176,13 +176,13 @@ class EventHubProducerClient(ClientBaseAsync):
             transport_type=transport_type,
             **kwargs
         )
+        return cls(**constructor_args)
 
     async def send_batch(
             self,
             event_data_batch: EventDataBatch,
             *,
-            timeout: float = None) -> None:
-        # type: (Union[EventData, EventDataBatch, Iterable[EventData]], ...) -> None
+            timeout: Optional[Union[int, float]] = None) -> None:
         """Sends event data and blocks until acknowledgement is received or operation times out.
 
         :param event_data_batch: The EventDataBatch object to be sent.
@@ -209,17 +209,17 @@ class EventHubProducerClient(ClientBaseAsync):
         """
         partition_id = event_data_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
         try:
-            await self._producers[partition_id].send(event_data_batch, timeout=timeout)
+            await cast(EventHubProducer, self._producers[partition_id]).send(event_data_batch, timeout=timeout)
         except (KeyError, AttributeError, EventHubError):
             await self._start_producer(partition_id, timeout)
-            await self._producers[partition_id].send(event_data_batch, timeout=timeout)
+            await cast(EventHubProducer, self._producers[partition_id]).send(event_data_batch, timeout=timeout)
 
     async def create_batch(
             self,
             *,
-            partition_id: str = None,
-            partition_key: str = None,
-            max_size_in_bytes: int = None) -> EventDataBatch:
+            partition_id: Optional[str] = None,
+            partition_key: Optional[str] = None,
+            max_size_in_bytes: Optional[int] = None) -> EventDataBatch:
         """Create an EventDataBatch object with the max size of all content being constrained by max_size_in_bytes.
 
         The max_size should be no greater than the max allowed message size defined by the service.
@@ -256,8 +256,7 @@ class EventHubProducerClient(ClientBaseAsync):
 
         return event_data_batch
 
-    async def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         """Close the Producer client underlying AMQP connection and links.
 
         :rtype: None

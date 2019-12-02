@@ -5,7 +5,7 @@
 import logging
 import threading
 
-from typing import Any, Union, TYPE_CHECKING, Iterable
+from typing import Any, Union, TYPE_CHECKING, Iterable, Dict
 from uamqp import constants  # type:ignore
 
 from .exceptions import ConnectError, EventHubError
@@ -149,7 +149,8 @@ class EventHubProducerClient(ClientBase):
                 :dedent: 4
                 :caption: Create a new instance of the EventHubProducerClient from connection string.
         """
-        return super(EventHubProducerClient, cls).from_connection_string(conn_str, **kwargs)
+        constructor_args = cls._from_connection_string(conn_str, **kwargs)
+        return cls(**constructor_args)
 
     def send_batch(self, event_data_batch, **kwargs):
         # type: (EventDataBatch, Any) -> None

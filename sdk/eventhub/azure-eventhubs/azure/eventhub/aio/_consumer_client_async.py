@@ -6,8 +6,7 @@
 import asyncio
 import logging
 import datetime
-from typing import Any, Union, TYPE_CHECKING, Dict, Tuple
-
+from typing import Any, Union, TYPE_CHECKING, Dict, Tuple, Callable, Optional
 
 from ._eventprocessor.event_processor import EventProcessor
 from ._consumer_async import EventHubConsumer
@@ -16,7 +15,12 @@ from .._constants import ALL_PARTITIONS
 
 
 if TYPE_CHECKING:
+    from uamqp.constants import TransportType
     from azure.core.credentials import TokenCredential  # type: ignore
+    from ._eventprocessor.partition_context import PartitionContext
+    from ._eventprocessor.checkpoint_store import CheckpointStore
+    from .._common import EventData
+    from .._eventprocessor.common import CloseReason
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -132,18 +136,17 @@ class EventHubConsumerClient(ClientBaseAsync):
     def from_connection_string(cls, conn_str: str,
                                consumer_group: str,
                                *,
-                               eventhub_name: str = None,
+                               eventhub_name: Optional[str] = None,
                                logging_enable: bool = False,
-                               http_proxy: dict = None,
+                               http_proxy: Optional[Dict[str, Union[str, int]]] = None,
                                auth_timeout: float = 60,
-                               user_agent: str = None,
+                               user_agent: Optional[str] = None,
                                retry_total: int = 3,
-                               transport_type=None,
-                               checkpoint_store=None,
+                               transport_type: Optional['TransportType'] = None,
+                               checkpoint_store: Optional['CheckpointStore'] = None,
                                load_balancing_interval: float = 10,
-                               **kwargs
-                               ) -> 'EventHubConsumerClient':  # pylint: disable=arguments-differ
-        # pylint: disable=arguments-differ
+                               **kwargs: Any
+                               ) -> 'EventHubConsumerClient':
         """Create an EventHubConsumerClient from a connection string.
 
         :param str conn_str: The connection string of an Event Hub.
@@ -183,7 +186,7 @@ class EventHubConsumerClient(ClientBaseAsync):
                 :caption: Create a new instance of the EventHubConsumerClient from connection string.
 
         """
-        return super(EventHubConsumerClient, cls).from_connection_string(
+        constructor_args = cls._from_connection_string(
             conn_str,
             consumer_group=consumer_group,
             eventhub_name=eventhub_name,
@@ -197,21 +200,22 @@ class EventHubConsumerClient(ClientBaseAsync):
             load_balancing_interval=load_balancing_interval,
             **kwargs
         )
+        return cls(**constructor_args)
 
     async def receive(
-            self, on_event,
+            self,
+            on_event: Callable[['PartitionContext', 'EventData'], None],
             *,
-            partition_id: str = None,
-            owner_level: int = None,
+            partition_id: Optional[str] = None,
+            owner_level: Optional[int] = None,
             prefetch: int = 300,
             track_last_enqueued_event_properties: bool = False,
-            starting_position=None,
-            starting_position_inclusive=False,
-            on_error=None,
-            on_partition_initialize=None,
-            on_partition_close=None
+            starting_position: Optional[Union[str, int, datetime.datetime, Dict[str, Any]]] = None,
+            starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
+            on_error: Optional[Callable[['PartitionContext', Exception], None]] = None,
+            on_partition_initialize: Optional[Callable[['PartitionContext'], None]] = None,
+            on_partition_close: Optional[Callable[['PartitionContext', 'CloseReason'], None]] = None
     ) -> None:
-        # type: (Any) -> None
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
         :param on_event: The callback function for handling a received event. The callback takes two
@@ -313,8 +317,7 @@ class EventHubConsumerClient(ClientBaseAsync):
                 except KeyError:
                     pass
 
-    async def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         """Stop retrieving events from the Event Hub and close the underlying AMQP connection and links.
 
         :rtype: None
