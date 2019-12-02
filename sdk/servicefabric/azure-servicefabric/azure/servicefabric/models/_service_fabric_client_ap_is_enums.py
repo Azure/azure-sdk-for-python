@@ -528,6 +528,8 @@ class DeploymentStatus(str, Enum):
     active = "Active"  #: Indicates the application or service package is active the node. The value is 3.
     upgrading = "Upgrading"  #: Indicates the application or service package is being upgraded. The value is 4.
     deactivating = "Deactivating"  #: Indicates the application or service package is being deactivated. The value is 5.
+    ran_to_completion = "RanToCompletion"  #: Indicates the application or service package has ran to completion successfully. The value is 6.
+    failed = "Failed"  #: Indicates the application or service package has failed to run to completion. The value is 7.
 
 
 class EntryPointStatus(str, Enum):
@@ -607,6 +609,7 @@ class MoveCost(str, Enum):
     low = "Low"  #: Specifies the move cost of the service as Low. The value is 1.
     medium = "Medium"  #: Specifies the move cost of the service as Medium. The value is 2.
     high = "High"  #: Specifies the move cost of the service as High. The value is 3.
+    very_high = "VeryHigh"  #: Specifies the move cost of the service as VeryHigh. The value is 4.
 
 
 class PartitionScheme(str, Enum):
@@ -904,6 +907,7 @@ class ResourceStatus(str, Enum):
 class SecretKind(str, Enum):
 
     inlined_value = "inlinedValue"  #: A simple secret resource whose plaintext value is provided by the user.
+    key_vault_versioned_reference = "keyVaultVersionedReference"  #: A secret resource that references a specific version of a secret stored in Azure Key Vault; the expected value is a versioned KeyVault URI corresponding to the version of the secret being referenced.
 
 
 class VolumeProvider(str, Enum):
@@ -939,6 +943,54 @@ class OperatingSystemType(str, Enum):
     windows = "Windows"  #: The required operating system is Windows.
 
 
+class ImageRegistryPasswordType(str, Enum):
+
+    clear_text = "ClearText"  #: The image registry password in clear text, will not be processed in any way and used directly
+    key_vault_reference = "KeyVaultReference"  #: The URI to a KeyVault secret version, will be resolved using the application's managed identity (this type is only valid if the app was assigned a managed identity) before getting used
+    secret_value_reference = "SecretValueReference"  #: The reference to a SecretValue resource, will be resolved before getting used
+
+
+class EnvironmentVariableType(str, Enum):
+
+    clear_text = "ClearText"  #: The environment variable in clear text, will not be processed in any way and passed in as is
+    key_vault_reference = "KeyVaultReference"  #: The URI to a KeyVault secret version, will be resolved using the application's managed identity (this type is only valid if the app was assigned a managed identity) before getting passed in
+    secret_value_reference = "SecretValueReference"  #: The reference to a SecretValue resource, will be resolved before getting passed in
+
+
+class SettingType(str, Enum):
+
+    clear_text = "ClearText"  #: The setting in clear text, will not be processed in any way and passed in as is
+    key_vault_reference = "KeyVaultReference"  #: The URI to a KeyVault secret version, will be resolved using the application's managed identity (this type is only valid if the app was assigned a managed identity) before getting passed in
+    secret_value_reference = "SecretValueReference"  #: The reference to a SecretValue resource, will be resolved before getting passed in
+
+
+class Scheme(str, Enum):
+
+    http = "http"  #: Indicates that the probe is http.
+    https = "https"  #: Indicates that the probe is https. No cert validation.
+
+
+class ApplicationResourceUpgradeState(str, Enum):
+
+    invalid = "Invalid"  #: Indicates the upgrade state is invalid. All Service Fabric enumerations have the invalid type. The value is 0.
+    provisioning_target = "ProvisioningTarget"  #: The upgrade is in the progress of provisioning target application type version. The value is 1.
+    rolling_forward = "RollingForward"  #: The upgrade is rolling forward to the target version but is not complete yet. The value is 2.
+    unprovisioning_current = "UnprovisioningCurrent"  #: The upgrade is in the progress of unprovisioning current application type version and rolling forward to the target version is completed. The value is 3.
+    completed_rollforward = "CompletedRollforward"  #: The upgrade has finished rolling forward. The value is 4.
+    rolling_back = "RollingBack"  #: The upgrade is rolling back to the previous version but is not complete yet. The value is 5.
+    unprovisioning_target = "UnprovisioningTarget"  #: The upgrade is in the progress of unprovisioning target application type version and rolling back to the current version is completed. The value is 6.
+    completed_rollback = "CompletedRollback"  #: The upgrade has finished rolling back. The value is 7.
+    failed = "Failed"  #: The upgrade has failed and is unable to execute FailureAction. The value is 8.
+
+
+class RollingUpgradeMode(str, Enum):
+
+    invalid = "Invalid"  #: Indicates the upgrade mode is invalid. All Service Fabric enumerations have the invalid type. The value is zero.
+    unmonitored_auto = "UnmonitoredAuto"  #: The upgrade will proceed automatically without performing any health monitoring. The value is 1
+    unmonitored_manual = "UnmonitoredManual"  #: The upgrade will stop after completing each upgrade domain, giving the opportunity to manually monitor health before proceeding. The value is 2
+    monitored = "Monitored"  #: The upgrade will stop after completing each upgrade domain and automatically monitor health before proceeding. The value is 3
+
+
 class DiagnosticsSinkKind(str, Enum):
 
     invalid = "Invalid"  #: Indicates an invalid sink kind. All Service Fabric enumerations have the invalid type.
@@ -964,6 +1016,17 @@ class AutoScalingResourceMetricName(str, Enum):
 class AutoScalingTriggerKind(str, Enum):
 
     average_load = "AverageLoad"  #: Indicates that scaling should be performed based on average load of all replicas in the service.
+
+
+class ExecutionPolicyType(str, Enum):
+
+    run_to_completion = "runToCompletion"  #: Indicates that the service will perform its desired operation and complete successfully. If the service encounters failure, it will restarted based on restart policy specified. If the service completes its operation successfully, it will not be restarted again.
+
+
+class RestartPolicy(str, Enum):
+
+    on_failure = "onFailure"  #: Service will be restarted when it encounters a failure.
+    never = "never"  #: Service will never be restarted. If the service encounters a failure, it will move to Failed state.
 
 
 class NodeStatusFilter(str, Enum):
