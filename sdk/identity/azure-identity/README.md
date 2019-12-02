@@ -87,7 +87,8 @@ principal, managed identity, or user, and can be configured for local
 development and production environments without code changes.
 
 To authenticate as a service principal, provide configuration in
-[environment variables](#environment-variables "environment variables") as described in the next section.
+[environment variables](#environment-variables "environment variables") as
+described in the next section.
 
 Authenticating as a managed identity requires no configuration but is only
 possible in a supported hosting environment. See Azure Active Directory's
@@ -99,8 +100,8 @@ During local development on Windows, [DefaultAzureCredential][default_cred_ref]
 can authenticate using a single sign-on shared with Microsoft applications, for
 example Visual Studio 2019. This may require additional configuration when
 multiple identities have signed in. In that case, set the environment variables
-`AZURE_USERNAME` and `AZURE_TENANT_ID` to select the desired identity. Either,
-or both, may be set.
+`AZURE_USERNAME` (typically an email address) and `AZURE_TENANT_ID` to select
+the desired identity. Either, or both, may be set.
 
 ## Environment variables
 [DefaultAzureCredential][default_cred_ref] and
