@@ -10,6 +10,7 @@ from opencensus.trace.tracer import Tracer
 from opencensus.trace.span import SpanKind as OpenCensusSpanKind
 from opencensus.trace.link import Link
 from opencensus.trace.propagation import trace_context_http_header_format
+from opencensus.trace import config_integration as _config_integration
 
 from azure.core.tracing import SpanKind, HttpSpanMixin  # pylint: disable=no-name-in-module
 
@@ -27,6 +28,9 @@ if TYPE_CHECKING:
 
 
 __version__ = VERSION
+
+_config_integration.trace_integrations(['threading'])
+
 
 class OpenCensusSpan(HttpSpanMixin, object):
     """Wraps a given OpenCensus Span so that it implements azure.core.tracing.AbstractSpan"""
