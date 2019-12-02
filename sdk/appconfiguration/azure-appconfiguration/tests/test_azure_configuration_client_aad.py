@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core import MatchConditions
+from devtools_testutils import AzureMgmtTestCase
 from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotFoundError,
@@ -16,9 +17,7 @@ from azure.appconfiguration import (
     ConfigurationSetting,
 )
 from azure.identity import DefaultAzureCredential
-from app_config_test_base import (
-    AzureAppConfigurationClientTestBase,
-    AzureAppConfigurationClient,
+from consts import (
     KEY,
     LABEL,
     TEST_VALUE,
@@ -32,7 +31,7 @@ import datetime
 import os
 import logging
 
-class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
+class AppConfigurationClientTest(AzureMgmtTestCase):
     def __init__(self, method_name):
         super(AppConfigurationClientTest, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
