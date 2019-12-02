@@ -59,11 +59,14 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         return [x["partition_id"] for x in self.owned_partitions]
 
     def release_ownership(self, partition_id):
+        # type: (str) -> None
         """Explicitly release ownership of a partition if we still have it.
 
         This is called when a consumer is shutdown, and is achieved by resetting the associated
         owner ID.
         """
+        if not self.checkpoint_store:
+            return
         now = time.time()
         partition_ownership = [
             o for o in self.owned_partitions \

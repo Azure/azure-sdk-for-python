@@ -9,7 +9,7 @@ import uuid
 import time
 import functools
 import collections
-from typing import Any
+from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast
 from datetime import timedelta
 try:
     from urlparse import urlparse  # type: ignore
@@ -38,17 +38,21 @@ from ._constants import (
     MGMT_PARTITION_OPERATION
 )
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential  # type: ignore
+
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple('Address', 'hostname path')
 _AccessToken = collections.namedtuple('AccessToken', 'token expires_on')
 
 
 def _parse_conn_str(conn_str, kwargs):
+    # type: (str, Dict[str, Any]) -> Tuple[str, str, str, str]
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
-    entity_path = None
-    eventhub_name = kwargs.pop("eventhub_name", None)
+    entity_path = None  # type: Optional[str]
+    eventhub_name = kwargs.pop("eventhub_name", None)  # type: Optional[str]
     for element in conn_str.split(';'):
         key, _, value = element.partition('=')
         if key.lower() == 'endpoint':
@@ -65,16 +69,17 @@ def _parse_conn_str(conn_str, kwargs):
         raise ValueError(
             "Invalid connection string. Should be in the format: "
             "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>")
-    entity = eventhub_name or entity_path
-    left_slash_pos = endpoint.find("//")
+    entity = cast(str, eventhub_name or entity_path)
+    left_slash_pos = cast(str, endpoint).find("//")
     if left_slash_pos != -1:
-        host = endpoint[left_slash_pos + 2:]
+        host = cast(str, endpoint)[left_slash_pos + 2:]
     else:
-        host = endpoint
-    return host, shared_access_key_name, shared_access_key, entity
+        host = str(endpoint)
+    return host, str(shared_access_key_name), str(shared_access_key), entity
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):
+    # type: (str, str, str, Optional[timedelta]) -> _AccessToken
     """Create a shared access signiture token as a string literal.
     :returns: SAS token as string literal.
     :rtype: str
@@ -92,6 +97,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
 
 
 def _build_uri(address, entity):
+    # type: (str, Optional[str]) -> str
     parsed = urlparse(address)
     if parsed.path:
         return address
@@ -108,11 +114,13 @@ class EventHubSharedKeyCredential(object):
     :param str key: The shared access key.
     """
     def __init__(self, policy, key):
+        # type: (str, str) -> None
         self.policy = policy
         self.key = key
         self.token_type = b"servicebus.windows.net:sastoken"
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (str, Any) -> _AccessToken
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
@@ -120,6 +128,7 @@ class EventHubSharedKeyCredential(object):
 
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
+        # type: (str, str, TokenCredential, Any) -> None
         self.eventhub_name = eventhub_name
         if not eventhub_name:
             raise ValueError("The eventhub name can not be None or empty.")
@@ -142,26 +151,17 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __exit__(self, *args):
         self.close()
 
-    @classmethod
-    def from_connection_string(cls, conn_str, **kwargs):
-        consumer_group = kwargs.pop("consumer_group", None)
+    @staticmethod
+    def _from_connection_string(conn_str, **kwargs):
+        # type: (str, Any) -> Dict[str, Any]
         host, policy, key, entity = _parse_conn_str(conn_str, kwargs)
-        if consumer_group:  # Only consumer has the consumer_group arg
-            return cls(  # pylint:disable=too-many-function-args
-                fully_qualified_namespace=host,
-                eventhub_name=entity,
-                consumer_group=consumer_group,
-                credential=EventHubSharedKeyCredential(policy, key),
-                **kwargs
-            )
-        return cls(
-            fully_qualified_namespace=host,
-            eventhub_name=entity,
-            credential=EventHubSharedKeyCredential(policy, key),
-            **kwargs
-        )
+        kwargs['fully_qualified_namespace'] = host
+        kwargs['eventhub_name'] = entity
+        kwargs['credential'] = EventHubSharedKeyCredential(policy, key)
+        return kwargs
 
     def _create_auth(self):
+        # type: () -> authentication.JWTTokenAuth
         """
         Create an ~uamqp.authentication.SASTokenAuth instance to authenticate
         the session.
@@ -191,9 +191,11 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             transport_type=self._config.transport_type)
 
     def _close_connection(self):
+        # type: () -> None
         self._conn_manager.reset_connection_if_broken()
 
     def _backoff(self, retried_times, last_exception, timeout_time=None, entity_name=None):
+        # type: (int, Exception, Optional[int], Optional[str]) -> None
         entity_name = entity_name or self._container_id
         backoff = self._config.backoff_factor * 2 ** retried_times
         if backoff <= self._config.backoff_max and (
@@ -206,6 +208,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             raise last_exception
 
     def _management_request(self, mgmt_msg, op_type):
+        # type: (Message, bytes) -> Any
         retried_times = 0
         last_exception = None
         while retried_times <= self._config.max_retries:
@@ -252,7 +255,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         mgmt_msg = Message(application_properties={'name': self.eventhub_name})
         response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
         output = {}
-        eh_info = response.get_data()
+        eh_info = response.get_data()  # type: Dict[bytes, Any]
         if eh_info:
             output['eventhub_name'] = eh_info[b'name'].decode('utf-8')
             output['created_at'] = utc_from_timestamp(float(eh_info[b'created_at']) / 1000)
@@ -290,7 +293,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         mgmt_msg = Message(application_properties={'name': self.eventhub_name,
                                                    'partition': partition_id})
         response = self._management_request(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
-        partition_info = response.get_data()
+        partition_info = response.get_data()  # type: Dict[bytes, Any]
         output = {}
         if partition_info:
             output['eventhub_name'] = partition_info[b'name'].decode('utf-8')
