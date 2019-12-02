@@ -11,6 +11,7 @@
 
 try:
     from ._models_py3 import AccountSasParameters
+    from ._models_py3 import ActiveDirectoryProperties
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import AzureFilesIdentityBasedAuthentication
     from ._models_py3 import BlobContainer
@@ -69,15 +70,19 @@ try:
     from ._models_py3 import ProxyResource
     from ._models_py3 import Resource
     from ._models_py3 import Restriction
+    from ._models_py3 import RoutingPreference
     from ._models_py3 import ServiceSasParameters
     from ._models_py3 import ServiceSpecification
     from ._models_py3 import Sku
     from ._models_py3 import SKUCapability
+    from ._models_py3 import SkuInformation
     from ._models_py3 import StorageAccount
     from ._models_py3 import StorageAccountCheckNameAvailabilityParameters
     from ._models_py3 import StorageAccountCreateParameters
+    from ._models_py3 import StorageAccountInternetEndpoints
     from ._models_py3 import StorageAccountKey
     from ._models_py3 import StorageAccountListKeysResult
+    from ._models_py3 import StorageAccountMicrosoftEndpoints
     from ._models_py3 import StorageAccountRegenerateKeyParameters
     from ._models_py3 import StorageAccountUpdateParameters
     from ._models_py3 import TagProperty
@@ -88,6 +93,7 @@ try:
     from ._models_py3 import VirtualNetworkRule
 except (SyntaxError, ImportError):
     from ._models import AccountSasParameters
+    from ._models import ActiveDirectoryProperties
     from ._models import AzureEntityResource
     from ._models import AzureFilesIdentityBasedAuthentication
     from ._models import BlobContainer
@@ -146,15 +152,19 @@ except (SyntaxError, ImportError):
     from ._models import ProxyResource
     from ._models import Resource
     from ._models import Restriction
+    from ._models import RoutingPreference
     from ._models import ServiceSasParameters
     from ._models import ServiceSpecification
     from ._models import Sku
     from ._models import SKUCapability
+    from ._models import SkuInformation
     from ._models import StorageAccount
     from ._models import StorageAccountCheckNameAvailabilityParameters
     from ._models import StorageAccountCreateParameters
+    from ._models import StorageAccountInternetEndpoints
     from ._models import StorageAccountKey
     from ._models import StorageAccountListKeysResult
+    from ._models import StorageAccountMicrosoftEndpoints
     from ._models import StorageAccountRegenerateKeyParameters
     from ._models import StorageAccountUpdateParameters
     from ._models import TagProperty
@@ -168,7 +178,7 @@ from ._paged_models import FileShareItemPaged
 from ._paged_models import ListContainerItemPaged
 from ._paged_models import ObjectReplicationPolicyPaged
 from ._paged_models import OperationPaged
-from ._paged_models import SkuPaged
+from ._paged_models import SkuInformationPaged
 from ._paged_models import StorageAccountPaged
 from ._paged_models import UsagePaged
 from ._storage_management_client_enums import (
@@ -185,6 +195,7 @@ from ._storage_management_client_enums import (
     DirectoryServiceOptions,
     AccessTier,
     LargeFileSharesState,
+    RoutingChoice,
     GeoReplicationStatus,
     ProvisioningState,
     AccountStatus,
@@ -204,10 +215,12 @@ from ._storage_management_client_enums import (
     ImmutabilityPolicyState,
     ImmutabilityPolicyUpdateType,
     StorageAccountExpand,
+    ListKeyExpand,
 )
 
 __all__ = [
     'AccountSasParameters',
+    'ActiveDirectoryProperties',
     'AzureEntityResource',
     'AzureFilesIdentityBasedAuthentication',
     'BlobContainer',
@@ -266,15 +279,19 @@ __all__ = [
     'ProxyResource',
     'Resource',
     'Restriction',
+    'RoutingPreference',
     'ServiceSasParameters',
     'ServiceSpecification',
     'Sku',
     'SKUCapability',
+    'SkuInformation',
     'StorageAccount',
     'StorageAccountCheckNameAvailabilityParameters',
     'StorageAccountCreateParameters',
+    'StorageAccountInternetEndpoints',
     'StorageAccountKey',
     'StorageAccountListKeysResult',
+    'StorageAccountMicrosoftEndpoints',
     'StorageAccountRegenerateKeyParameters',
     'StorageAccountUpdateParameters',
     'TagProperty',
@@ -284,7 +301,7 @@ __all__ = [
     'UsageName',
     'VirtualNetworkRule',
     'OperationPaged',
-    'SkuPaged',
+    'SkuInformationPaged',
     'StorageAccountPaged',
     'UsagePaged',
     'ObjectReplicationPolicyPaged',
@@ -304,6 +321,7 @@ __all__ = [
     'DirectoryServiceOptions',
     'AccessTier',
     'LargeFileSharesState',
+    'RoutingChoice',
     'GeoReplicationStatus',
     'ProvisioningState',
     'AccountStatus',
@@ -323,4 +341,5 @@ __all__ = [
     'ImmutabilityPolicyState',
     'ImmutabilityPolicyUpdateType',
     'StorageAccountExpand',
+    'ListKeyExpand',
 ]

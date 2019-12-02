@@ -49,9 +49,9 @@ class SkusOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Sku
+        :return: An iterator like instance of SkuInformation
         :rtype:
-         ~azure.mgmt.storage.v2019_06_01.models.SkuPaged[~azure.mgmt.storage.v2019_06_01.models.Sku]
+         ~azure.mgmt.storage.v2019_06_01.models.SkuInformationPaged[~azure.mgmt.storage.v2019_06_01.models.SkuInformation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -101,7 +101,7 @@ class SkusOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.SkuPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.SkuInformationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Storage/skus'}

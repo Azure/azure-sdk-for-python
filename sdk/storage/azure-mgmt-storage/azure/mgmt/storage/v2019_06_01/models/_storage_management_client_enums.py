@@ -89,6 +89,7 @@ class DirectoryServiceOptions(str, Enum):
 
     none = "None"
     aadds = "AADDS"
+    ad = "AD"
 
 
 class AccessTier(str, Enum):
@@ -101,6 +102,12 @@ class LargeFileSharesState(str, Enum):
 
     disabled = "Disabled"
     enabled = "Enabled"
+
+
+class RoutingChoice(str, Enum):
+
+    microsoft_routing = "MicrosoftRouting"
+    internet_routing = "InternetRouting"
 
 
 class GeoReplicationStatus(str, Enum):
@@ -239,3 +246,8 @@ class ImmutabilityPolicyUpdateType(str, Enum):
 class StorageAccountExpand(str, Enum):
 
     geo_replication_stats = "geoReplicationStats"
+
+
+class ListKeyExpand(str, Enum):
+
+    kerb = "kerb"
