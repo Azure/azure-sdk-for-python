@@ -96,7 +96,7 @@ class FileServicesOperations(object):
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices'}
 
-    def set_service_properties(self, resource_group_name, account_name, cors=None, share_delete_retention_policy=None, cls=None, **kwargs):
+    def set_service_properties(self, resource_group_name, account_name, parameters, cls=None, **kwargs):
         """Sets the properties of file services in storage accounts, including
         CORS (Cross-Origin Resource Sharing) rules. .
 
@@ -107,15 +107,10 @@ class FileServicesOperations(object):
          specified resource group. Storage account names must be between 3 and
          24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
-        :param cors: Specifies CORS rules for the File service. You can
-         include up to five CorsRule elements in the request. If no CorsRule
-         elements are included in the request body, all CORS rules will be
-         deleted, and CORS will be disabled for the File service.
-        :type cors: ~azure.mgmt.storage.v2019_06_01.models.CorsRules
-        :param share_delete_retention_policy: The file service properties for
-         share soft delete.
-        :type share_delete_retention_policy:
-         ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
+        :param parameters: The properties of file services in storage
+         accounts, including CORS (Cross-Origin Resource Sharing) rules.
+        :type parameters:
+         ~azure.mgmt.storage.v2019_06_01.models.FileServiceProperties
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: FileServiceProperties or the result of cls(response)
@@ -123,8 +118,6 @@ class FileServicesOperations(object):
         :raises: :class:`ARMError<azure.mgmt.core.ARMError>`
         """
         error_map = kwargs.pop('error_map', None)
-        parameters = models.FileServiceProperties(cors=cors, share_delete_retention_policy=share_delete_retention_policy)
-
         # Construct URL
         url = self.set_service_properties.metadata['url']
         path_format_arguments = {

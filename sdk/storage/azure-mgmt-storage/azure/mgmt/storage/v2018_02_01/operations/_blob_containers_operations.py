@@ -97,7 +97,7 @@ class BlobContainersOperations(object):
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers'}
 
-    def create(self, resource_group_name, account_name, container_name, public_access=None, metadata=None, cls=None, **kwargs):
+    def create(self, resource_group_name, account_name, container_name, blob_container, cls=None, **kwargs):
         """Creates a new container under the specified account as described by
         request body. The container resource includes metadata and properties
         for that container. It does not include a list of the blobs contained
@@ -116,14 +116,9 @@ class BlobContainersOperations(object):
          (-) only. Every dash (-) character must be immediately preceded and
          followed by a letter or number.
         :type container_name: str
-        :param public_access: Specifies whether data in the container may be
-         accessed publicly and the level of access. Possible values include:
-         'Container', 'Blob', 'None'
-        :type public_access: str or
-         ~azure.mgmt.storage.v2018_02_01.models.PublicAccess
-        :param metadata: A name-value pair to associate with the container as
-         metadata.
-        :type metadata: dict[str, str]
+        :param blob_container: Properties of the blob container to create.
+        :type blob_container:
+         ~azure.mgmt.storage.v2018_02_01.models.BlobContainer
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: BlobContainer or the result of cls(response)
@@ -131,8 +126,6 @@ class BlobContainersOperations(object):
         :raises: :class:`ARMError<azure.mgmt.core.ARMError>`
         """
         error_map = kwargs.pop('error_map', None)
-        blob_container = models.BlobContainer(public_access=public_access, metadata=metadata)
-
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -176,7 +169,7 @@ class BlobContainersOperations(object):
         return deserialized
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}'}
 
-    def update(self, resource_group_name, account_name, container_name, public_access=None, metadata=None, cls=None, **kwargs):
+    def update(self, resource_group_name, account_name, container_name, blob_container, cls=None, **kwargs):
         """Updates container properties as specified in request body. Properties
         not mentioned in the request will be unchanged. Update fails if the
         specified container doesn't already exist. .
@@ -194,14 +187,9 @@ class BlobContainersOperations(object):
          (-) only. Every dash (-) character must be immediately preceded and
          followed by a letter or number.
         :type container_name: str
-        :param public_access: Specifies whether data in the container may be
-         accessed publicly and the level of access. Possible values include:
-         'Container', 'Blob', 'None'
-        :type public_access: str or
-         ~azure.mgmt.storage.v2018_02_01.models.PublicAccess
-        :param metadata: A name-value pair to associate with the container as
-         metadata.
-        :type metadata: dict[str, str]
+        :param blob_container: Properties to update for the blob container.
+        :type blob_container:
+         ~azure.mgmt.storage.v2018_02_01.models.BlobContainer
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: BlobContainer or the result of cls(response)
@@ -209,8 +197,6 @@ class BlobContainersOperations(object):
         :raises: :class:`ARMError<azure.mgmt.core.ARMError>`
         """
         error_map = kwargs.pop('error_map', None)
-        blob_container = models.BlobContainer(public_access=public_access, metadata=metadata)
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

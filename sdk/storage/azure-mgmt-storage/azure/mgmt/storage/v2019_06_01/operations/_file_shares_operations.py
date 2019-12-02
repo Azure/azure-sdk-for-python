@@ -117,7 +117,7 @@ class FileSharesOperations(object):
         )
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/default/shares'}
 
-    def create(self, resource_group_name, account_name, share_name, metadata=None, share_quota=None, cls=None, **kwargs):
+    def create(self, resource_group_name, account_name, share_name, file_share, cls=None, **kwargs):
         """Creates a new share under the specified account as described by request
         body. The share resource includes metadata and properties for that
         share. It does not include a list of the files contained by the share.
@@ -136,13 +136,8 @@ class FileSharesOperations(object):
          dash (-) character must be immediately preceded and followed by a
          letter or number.
         :type share_name: str
-        :param metadata: A name-value pair to associate with the share as
-         metadata.
-        :type metadata: dict[str, str]
-        :param share_quota: The maximum size of the share, in gigabytes. Must
-         be greater than 0, and less than or equal to 5TB (5120). For Large
-         File Shares, the maximum size is 100000.
-        :type share_quota: int
+        :param file_share: Properties of the file share to create.
+        :type file_share: ~azure.mgmt.storage.v2019_06_01.models.FileShare
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: FileShare or the result of cls(response)
@@ -150,8 +145,6 @@ class FileSharesOperations(object):
         :raises: :class:`ARMError<azure.mgmt.core.ARMError>`
         """
         error_map = kwargs.pop('error_map', None)
-        file_share = models.FileShare(metadata=metadata, share_quota=share_quota)
-
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -197,7 +190,7 @@ class FileSharesOperations(object):
         return deserialized
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/default/shares/{shareName}'}
 
-    def update(self, resource_group_name, account_name, share_name, metadata=None, share_quota=None, cls=None, **kwargs):
+    def update(self, resource_group_name, account_name, share_name, file_share, cls=None, **kwargs):
         """Updates share properties as specified in request body. Properties not
         mentioned in the request will not be changed. Update fails if the
         specified share does not already exist. .
@@ -215,13 +208,8 @@ class FileSharesOperations(object):
          dash (-) character must be immediately preceded and followed by a
          letter or number.
         :type share_name: str
-        :param metadata: A name-value pair to associate with the share as
-         metadata.
-        :type metadata: dict[str, str]
-        :param share_quota: The maximum size of the share, in gigabytes. Must
-         be greater than 0, and less than or equal to 5TB (5120). For Large
-         File Shares, the maximum size is 100000.
-        :type share_quota: int
+        :param file_share: Properties to update for the file share.
+        :type file_share: ~azure.mgmt.storage.v2019_06_01.models.FileShare
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: FileShare or the result of cls(response)
@@ -229,8 +217,6 @@ class FileSharesOperations(object):
         :raises: :class:`ARMError<azure.mgmt.core.ARMError>`
         """
         error_map = kwargs.pop('error_map', None)
-        file_share = models.FileShare(metadata=metadata, share_quota=share_quota)
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

@@ -42,14 +42,15 @@ class StorageAccountsOperations(object):
 
         self._config = config
 
-    def check_name_availability(self, name, type="Microsoft.Storage/storageAccounts", cls=None, **kwargs):
+    def check_name_availability(self, account_name, cls=None, **kwargs):
         """Checks that the storage account name is valid and is not already in
         use.
 
-        :param name:
-        :type name: str
-        :param type:
-        :type type: str
+        :param account_name: The name of the storage account within the
+         specified resource group. Storage account names must be between 3 and
+         24 characters in length and use numbers and lower-case letters only.
+        :type account_name:
+         ~azure.mgmt.storage.v2015_06_15.models.StorageAccountCheckNameAvailabilityParameters
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: CheckNameAvailabilityResult or the result of cls(response)
@@ -58,8 +59,6 @@ class StorageAccountsOperations(object):
         :raises: :class:`ARMError<azure.mgmt.core.ARMError>`
         """
         error_map = kwargs.pop('error_map', None)
-        account_name = models.StorageAccountCheckNameAvailabilityParameters(name=name, type=type)
-
         # Construct URL
         url = self.check_name_availability.metadata['url']
         path_format_arguments = {
