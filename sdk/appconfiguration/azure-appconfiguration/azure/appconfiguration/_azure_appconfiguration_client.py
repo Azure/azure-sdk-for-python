@@ -9,7 +9,7 @@ from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
     DistributedTracingPolicy,
-    HttpLoggingPolicy
+    HttpLoggingPolicy,
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.transport import RequestsTransport
@@ -54,7 +54,13 @@ class AzureAppConfigurationClient:
     # pylint:disable=protected-access
 
     def __init__(self, base_url, credential, **kwargs):
-        # type: (str, AppConfigConnectionStringCredential, dict) -> None
+        # type: (str, any, dict) -> None
+        try:
+            if not base_url.lower().startswith('http'):
+                base_url = "https://" + base_url
+        except AttributeError:
+            raise ValueError("Base URL must be a string.")
+
         self._config = AzureAppConfigurationConfiguration(credential, base_url, **kwargs)
         self._config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs
@@ -63,7 +69,10 @@ class AzureAppConfigurationClient:
         pipeline = kwargs.get("pipeline")
 
         if pipeline is None:
-            pipeline = self._create_appconfig_pipeline(**kwargs)
+            if isinstance(credential, AppConfigConnectionStringCredential):
+                pipeline = self._create_appconfig_pipeline(**kwargs)
+            else:
+                pipeline = self._create_appconfig_aad_pipeline(**kwargs)
 
         self._impl = AzureAppConfiguration(
             credentials=credential, endpoint=base_url, pipeline=pipeline
@@ -107,8 +116,29 @@ class AzureAppConfigurationClient:
                 self._config.headers_policy,
                 self._config.user_agent_policy,
                 AppConfigRequestsCredentialsPolicy(self._config.credentials),
-                SyncTokenPolicy(),
                 self._config.retry_policy,
+                SyncTokenPolicy(),
+                self._config.logging_policy,  # HTTP request/response log
+                DistributedTracingPolicy(**kwargs),
+                HttpLoggingPolicy(**kwargs)
+            ]
+
+        if not transport:
+            transport = RequestsTransport(**kwargs)
+
+        return Pipeline(transport, policies)
+
+    def _create_appconfig_aad_pipeline(self, **kwargs):
+        transport = kwargs.get('transport')
+        policies = kwargs.get('policies')
+
+        if policies is None:  # [] is a valid policy list
+            policies = [
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                SyncTokenPolicy(),
                 self._config.logging_policy,  # HTTP request/response log
                 DistributedTracingPolicy(**kwargs),
                 HttpLoggingPolicy(**kwargs)

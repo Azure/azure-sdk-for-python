@@ -19,7 +19,6 @@ from azure.appconfiguration import ResourceReadOnlyError
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.appconfiguration import ConfigurationSetting
 from devtools_testutils import AzureMgmtTestCase
-from app_config_test_settings_fake import FAKE_APP_CONFIG_CONNECTION
 
 PAGE_SIZE = 100
 KEY_UUID = "test_key_a6af8952-54a6-11e9-b600-2816a84d0309"
@@ -31,16 +30,9 @@ TEST_CONTENT_TYPE = "test content type"
 TEST_VALUE = "test value"
 
 class AzureAppConfigurationClientTestBase(AzureMgmtTestCase):
-    def __init__(self, method_name, client_class):
+    def __init__(self, method_name):
         super(AzureAppConfigurationClientTestBase, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
-        if self.is_playback():
-            connection_str = FAKE_APP_CONFIG_CONNECTION
-        else:
-            from app_config_test_settings_real import REAL_APP_CONFIG_CONNECTION
-
-            connection_str = REAL_APP_CONFIG_CONNECTION
-        self.app_config_client = client_class.from_connection_string(connection_str)
 
     def setUp(self):
         super(AzureAppConfigurationClientTestBase, self).setUp()
