@@ -576,7 +576,8 @@ class Server(TrackedResource):
      Can only be specified when the server is being created (and is required
      for creation).
     :type administrator_login: str
-    :param version: Server version. Possible values include: '5.6', '5.7'
+    :param version: Server version. Possible values include: '5.6', '5.7',
+     '8.0'
     :type version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'
@@ -690,7 +691,8 @@ class ServerPropertiesForCreate(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Server version. Possible values include: '5.6', '5.7'
+    :param version: Server version. Possible values include: '5.6', '5.7',
+     '8.0'
     :type version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'
@@ -730,7 +732,8 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Server version. Possible values include: '5.6', '5.7'
+    :param version: Server version. Possible values include: '5.6', '5.7',
+     '8.0'
     :type version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'
@@ -777,7 +780,8 @@ class ServerPropertiesForGeoRestore(ServerPropertiesForCreate):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Server version. Possible values include: '5.6', '5.7'
+    :param version: Server version. Possible values include: '5.6', '5.7',
+     '8.0'
     :type version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'
@@ -815,7 +819,8 @@ class ServerPropertiesForReplica(ServerPropertiesForCreate):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Server version. Possible values include: '5.6', '5.7'
+    :param version: Server version. Possible values include: '5.6', '5.7',
+     '8.0'
     :type version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'
@@ -854,7 +859,8 @@ class ServerPropertiesForRestore(ServerPropertiesForCreate):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Server version. Possible values include: '5.6', '5.7'
+    :param version: Server version. Possible values include: '5.6', '5.7',
+     '8.0'
     :type version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'
@@ -975,7 +981,7 @@ class ServerUpdateParameters(Model):
      login.
     :type administrator_login_password: str
     :param version: The version of a server. Possible values include: '5.6',
-     '5.7'
+     '5.7', '8.0'
     :type version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'

@@ -16,6 +16,7 @@ class ServerVersion(str, Enum):
 
     five_full_stop_six = "5.6"
     five_full_stop_seven = "5.7"
+    eight_full_stop_zero = "8.0"
 
 
 class SslEnforcementEnum(str, Enum):
