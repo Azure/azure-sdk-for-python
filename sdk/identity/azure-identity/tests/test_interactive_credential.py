@@ -8,17 +8,46 @@ import threading
 import time
 
 from azure.core.exceptions import ClientAuthenticationError
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import InteractiveBrowserCredential
 from azure.identity._internal import AuthCodeRedirectServer
 import pytest
 from six.moves import urllib, urllib_parse
 
-from helpers import build_aad_response, mock_response, Request, validating_transport
+from helpers import (
+    build_aad_response,
+    get_discovery_response,
+    mock_response,
+    Request,
+    validating_transport,
+)
 
 try:
     from unittest.mock import Mock, patch
 except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
+
+
+@patch("azure.identity._credentials.browser.webbrowser.open", lambda _: True)
+def test_policies_configurable():
+    policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
+
+    transport = validating_transport(
+        requests=[Request()] * 2,
+        responses=[get_discovery_response(), mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
+
+    # mock local server fakes successful authentication by immediately returning a well-formed response
+    oauth_state = "oauth-state"
+    auth_code_response = {"code": "authorization-code", "state": [oauth_state]}
+    server_class = Mock(return_value=Mock(wait_for_redirect=lambda: auth_code_response))
+
+    credential = InteractiveBrowserCredential(policies=[policy], transport=transport, server_class=server_class)
+
+    with patch("azure.identity._credentials.browser.uuid.uuid4", lambda: oauth_state):
+        credential.get_token("scope")
+
+    assert policy.on_request.called
 
 
 @patch("azure.identity._credentials.browser.webbrowser.open")
@@ -33,14 +62,14 @@ def test_interactive_credential(mock_open):
     tenant_id = "tenant_id"
     endpoint = "https://{}/{}".format(authority, tenant_id)
 
-    discovery_response = mock_response(
-        json_payload={
-            name: endpoint for name in ("authorization_endpoint", "token_endpoint", "tenant_discovery_endpoint")
-        }
-    )
+    discovery_response = get_discovery_response(endpoint=endpoint)
     transport = validating_transport(
         requests=[Request(url_substring=endpoint)] * 3
-        + [Request(authority=authority, url_substring=endpoint, required_data={"refresh_token": expected_refresh_token})],
+        + [
+            Request(
+                authority=authority, url_substring=endpoint, required_data={"refresh_token": expected_refresh_token}
+            )
+        ],
         responses=[
             discovery_response,  # instance discovery
             discovery_response,  # tenant discovery
@@ -159,13 +188,7 @@ def test_redirect_server():
 
 @patch("azure.identity._credentials.browser.webbrowser.open", lambda _: False)
 def test_no_browser():
-    discovery_response = mock_response(
-        json_payload={
-            name: "https://foo/bar"
-            for name in ("authorization_endpoint", "token_endpoint", "tenant_discovery_endpoint")
-        }
-    )
-    transport = validating_transport(requests=[Request()] * 2, responses=[discovery_response, discovery_response])
+    transport = validating_transport(requests=[Request()] * 2, responses=[get_discovery_response()] * 2)
     credential = InteractiveBrowserCredential(
         client_id="client-id", client_secret="secret", server_class=Mock(), transport=transport
     )
