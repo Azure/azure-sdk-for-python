@@ -60,6 +60,19 @@ if __name__ == "__main__":
         default=False
     )
 
+    parser.add_argument(
+        "-e",
+        "--extra-index-url",
+        dest="extra_index_url",
+        help="Index URL to search for packages. This can be set to install package from azure devops feed"
+    )
+
+    parser.add_argument(
+         "--install-preview",
+        dest="install_preview",
+        help="Install preview version of dependent packages. This is helpful when installing dev build version of packages from alternate package location"
+    )
+
     args = parser.parse_args()
 
     check_call(
@@ -84,21 +97,13 @@ if __name__ == "__main__":
         for wheel in discovered_wheels:
             # if the environment variable is set, that means that this is running where we
             # want to use the pre-built wheels
+            pkg_wheel_path =''
             if os.getenv("PREBUILT_WHEEL_DIR") is not None:
                 # find the wheel in the set of prebuilt wheels
-                if os.path.isfile(os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)):
-                    check_call(
-                        [
-                            sys.executable,
-                            "-m",
-                            "pip",
-                            "install",
-                            os.path.join(
-                                os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)
-                            ),
-                        ]
-                    )
-                    logging.info("Installed {w} from wheel directory".format(w=wheel))
+                whl_path = os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)
+                if os.path.isfile(whl_path):
+                    pkg_wheel_path = whl_path
+                    logging.info("Installing {w} from wheel directory".format(w=wheel))
                 # it does't exist, so we need to error out
                 else:
                     logging.error(
@@ -108,13 +113,24 @@ if __name__ == "__main__":
                     )
                     exit(1)
             else:
-                check_call(
-                    [
-                        sys.executable,
-                        "-m",
-                        "pip",
-                        "install",
-                        os.path.join(args.distribution_directory, wheel),
-                    ]
-                )
-                logging.info("Installed {w} from fresh wheel.".format(w=wheel))
+                pkg_wheel_path = os.path.join(args.distribution_directory, wheel)                
+                logging.info("Installing {w} from fresh wheel.".format(w=wheel))
+
+            commands =  [
+                            sys.executable,
+                            "-m",
+                            "pip",
+                            "install",
+                            pkg_wheel_path,
+                        ]
+
+            # If extra index URL is passed then set it as argument to pip command
+            if args.extra_index_url:
+                commands.extend(["--extra-index-url", args.extra_index_url])
+
+            # preview version is enabled when installing dev build so pip will install dev build version from devpos feed
+            if args.install_preview:
+                commands.append("--pre")
+
+            check_call(commands)
+            logging.info("Installed {w}".format(w=wheel))
