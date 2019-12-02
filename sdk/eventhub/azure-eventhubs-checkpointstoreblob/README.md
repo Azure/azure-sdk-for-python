@@ -55,7 +55,7 @@ sequence number and the timestamp of when it was enqueued.
 The easiest way to create a `EventHubConsumerClient` is to use a connection string.
 ```python
 from azure.eventhub import EventHubConsumerClient
-eventhub_client = EventHubConsumerClient.from_connection_string("my_eventhub_namespace_connection_string", event_hub_path="myeventhub")
+eventhub_client = EventHubConsumerClient.from_connection_string("my_eventhub_namespace_connection_string", "my_consumer_group", eventhub_name="my_eventhub")
 ```
 For other ways of creating a `EventHubConsumerClient`, refer to [EventHubs library](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) for more details.
 
@@ -66,9 +66,10 @@ from azure.eventhub import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+consumer_group = '<< CONSUMER GROUP >>'
 eventhub_name = '<< NAME OF THE EVENT HUB >>'
-storage_container_connection_str = '<< CONNECTION STRING OF THE STORAGE >>'
-storage_container_name = '<< STORAGE CONTAINER NAME>>'
+storage_connection_str = '<< CONNECTION STRING OF THE STORAGE >>'
+container_name = '<< STORAGE CONTAINER NAME>>'
 
 
 def process_events(partition_context, event):
@@ -77,17 +78,18 @@ def process_events(partition_context, event):
 
 def main():
     checkpoint_store = BlobCheckpointStore.from_connection_string(
-        storage_container_connection_str,
-        storage_container_name
+        storage_connection_str,
+        container_name
     )
     client = EventHubConsumerClient.from_connection_string(
         connection_str,
+        consumer_group,
         eventhub_name = eventhub_name,
         checkpoint_store=checkpoint_store,
     )
 
     try:
-        client.receive(process_events, "$default")
+        client.receive(process_events)
     except KeyboardInterrupt:
         client.close()
 
