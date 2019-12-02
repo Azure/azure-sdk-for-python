@@ -1003,8 +1003,8 @@ class FileShare(AzureEntityResource):
      greater than 0, and less than or equal to 5TB (5120). For Large File
      Shares, the maximum size is 100000.
     :type share_quota: int
-    :param enabled_protocols: Protocols for file shares. Possible values
-     include: 'SMB', 'NFS'
+    :param enabled_protocols: Immutable property for file shares protocol.
+     Possible values include: 'SMB', 'NFS'
     :type enabled_protocols: str or
      ~azure.mgmt.storage.v2019_06_01.models.EnabledProtocols
     :param root_squash: Reduction of the access rights for the remote
@@ -1070,8 +1070,8 @@ class FileShareItem(AzureEntityResource):
      greater than 0, and less than or equal to 5TB (5120). For Large File
      Shares, the maximum size is 100000.
     :type share_quota: int
-    :param enabled_protocols: Protocols for file shares. Possible values
-     include: 'SMB', 'NFS'
+    :param enabled_protocols: Immutable property for file shares protocol.
+     Possible values include: 'SMB', 'NFS'
     :type enabled_protocols: str or
      ~azure.mgmt.storage.v2019_06_01.models.EnabledProtocols
     :param root_squash: Reduction of the access rights for the remote
