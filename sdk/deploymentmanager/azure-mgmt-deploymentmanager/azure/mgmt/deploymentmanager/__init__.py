@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .deployment_manager_client import DeploymentManagerClient
-from .version import VERSION
+from ._configuration import DeploymentManagerClientConfiguration
+from ._deployment_manager_client import DeploymentManagerClient
+__all__ = ['DeploymentManagerClient', 'DeploymentManagerClientConfiguration']
 
-__all__ = ['DeploymentManagerClient']
+from .version import VERSION
 
 __version__ = VERSION
 
