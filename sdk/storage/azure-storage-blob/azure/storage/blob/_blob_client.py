@@ -1807,7 +1807,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'cls': return_response_headers,
             'validate_content': validate_content,
             'cpk_info': cpk_info,
-            'tier': tier.value if tier else None
+            'tier': tier.value if tier else None,
+            'headers': headers
         }
         options.update(kwargs)
         return options
