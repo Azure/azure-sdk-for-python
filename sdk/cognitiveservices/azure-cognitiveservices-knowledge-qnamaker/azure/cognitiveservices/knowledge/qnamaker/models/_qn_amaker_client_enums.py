@@ -12,12 +12,6 @@
 from enum import Enum
 
 
-class KnowledgebaseEnvironmentType(str, Enum):
-
-    prod = "Prod"
-    test = "Test"
-
-
 class ErrorCodeType(str, Enum):
 
     bad_argument = "BadArgument"
