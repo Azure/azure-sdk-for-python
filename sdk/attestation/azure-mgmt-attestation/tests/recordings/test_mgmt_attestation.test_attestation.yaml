@@ -1,0 +1,148 @@
+interactions:
+- request:
+    body: '{"attestationPolicy": "SgxDisableDebugMode"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '44'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.8 (Linux-4.19.84-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-attestation/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_attestation_test_attestation35c20fe1/providers/Microsoft.Attestation/attestationProviders/myattestationproviderq?api-version=2018-09-01-preview
+  response:
+    body:
+      string: '{"id":"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_attestation_test_attestation35c20fe1/providers/Microsoft.Attestation/attestationProviders/myattestationproviderq","name":"myattestationproviderq","type":"Microsoft.Attestation/attestationProviders","properties":{"status":"NotReady","attestUri":"https://myattestationproviderq.us.attest.azure.net"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '381'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 28 Nov 2019 10:38:22 GMT
+      expires:
+      - '-1'
+      location:
+      - fabric:/AttestationService/Tenant/myattestationproviderq
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      www-authenticate:
+      - Bearer authorization_uri="https://login.windows.net/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a",
+        resource="https://attest.azure.net"
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.8 (Linux-4.19.84-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-attestation/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_attestation_test_attestation35c20fe1/providers/Microsoft.Attestation/attestationProviders/myattestationproviderq?api-version=2018-09-01-preview
+  response:
+    body:
+      string: '{"id":"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_attestation_test_attestation35c20fe1/providers/Microsoft.Attestation/attestationProviders/myattestationproviderq","name":"myattestationproviderq","type":"Microsoft.Attestation/attestationProviders","properties":{"status":"NotReady","attestUri":"https://myattestationproviderq.us.attest.azure.net"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '381'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 28 Nov 2019 10:38:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      www-authenticate:
+      - Bearer authorization_uri="https://login.windows.net/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a",
+        resource="https://attest.azure.net"
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.8 (Linux-4.19.84-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.10 msrest_azure/0.6.2 azure-mgmt-attestation/0.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_attestation_test_attestation35c20fe1/providers/Microsoft.Attestation/attestationProviders/myattestationproviderq?api-version=2018-09-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 28 Nov 2019 10:38:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      www-authenticate:
+      - Bearer authorization_uri="https://login.windows.net/54826b22-38d6-4fb2-bad9-b7b93a3e9c5a",
+        resource="https://attest.azure.net"
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 202
+      message: Accepted
+version: 1

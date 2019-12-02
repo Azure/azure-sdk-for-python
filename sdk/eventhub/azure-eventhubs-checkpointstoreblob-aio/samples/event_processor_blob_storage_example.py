@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import os
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
@@ -7,9 +6,8 @@ from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 
-logging.basicConfig(level=logging.INFO)
 
-async def process_event(partition_context, event):
+async def on_event(partition_context, event):
     # Put your code here.
     # Do some sync or async operations. If the operation is i/o intensive, async will have better performance
     print(event)
@@ -18,7 +16,7 @@ async def process_event(partition_context, event):
 
 async def main(client):
     async with client:
-        await client.receive(process_event, "$default")
+        await client.receive(on_event)
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
@@ -28,6 +26,7 @@ if __name__ == '__main__':
     )
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
+        "$Default",
         checkpoint_store=checkpoint_store
     )
     try:

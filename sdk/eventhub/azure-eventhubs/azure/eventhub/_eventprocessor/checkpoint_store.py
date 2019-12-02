@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import Iterable, Dict, Any
+from typing import Iterable, Dict, Any, Union
 from abc import abstractmethod
 
 

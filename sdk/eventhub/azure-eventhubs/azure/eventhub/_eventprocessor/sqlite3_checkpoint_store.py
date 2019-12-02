@@ -80,15 +80,16 @@ class Sqlite3CheckpointStore(CheckpointStore):
         self.conn = conn
 
     def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group):
-        cursor = self.conn.cursor()
-        try:
-            cursor.execute("select " + ",".join(self.ownership_fields) +
-                           " from "+_check_table_name(self.ownership_table) +
-                           " where fully_qualified_namespace=? and eventhub_name=? and consumer_group=?",
-                           (fully_qualified_namespace, eventhub_name, consumer_group))
-            return [dict(zip(self.ownership_fields, row)) for row in cursor.fetchall()]
-        finally:
-            cursor.close()
+        with self._lock:
+            cursor = self.conn.cursor()
+            try:
+                cursor.execute("select " + ",".join(self.ownership_fields) +
+                               " from "+_check_table_name(self.ownership_table) +
+                               " where fully_qualified_namespace=? and eventhub_name=? and consumer_group=?",
+                               (fully_qualified_namespace, eventhub_name, consumer_group))
+                return [dict(zip(self.ownership_fields, row)) for row in cursor.fetchall()]
+            finally:
+                cursor.close()
 
     def claim_ownership(self, ownership_list):
         with self._lock:
@@ -153,19 +154,20 @@ class Sqlite3CheckpointStore(CheckpointStore):
                 cursor.close()
 
     def list_checkpoints(self, fully_qualified_namespace, eventhub_name, consumer_group):
-        cursor = self.conn.cursor()
-        try:
-            cursor.execute("select "
-                           + ",".join(self.checkpoint_fields)
-                           + " from "
-                           + self.checkpoint_table
-                           + " where fully_qualified_namespace=? and eventhub_name=? and consumer_group=?",
-                           (fully_qualified_namespace, eventhub_name, consumer_group)
-                           )
-            return [dict(zip(self.checkpoint_fields, row)) for row in cursor.fetchall()]
+        with self._lock:
+            cursor = self.conn.cursor()
+            try:
+                cursor.execute("select "
+                               + ",".join(self.checkpoint_fields)
+                               + " from "
+                               + self.checkpoint_table
+                               + " where fully_qualified_namespace=? and eventhub_name=? and consumer_group=?",
+                               (fully_qualified_namespace, eventhub_name, consumer_group)
+                               )
+                return [dict(zip(self.checkpoint_fields, row)) for row in cursor.fetchall()]
 
-        finally:
-            cursor.close()
+            finally:
+                cursor.close()
 
     def close(self):
         with self._lock:

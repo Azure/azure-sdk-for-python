@@ -5,7 +5,7 @@
 
 import time
 import random
-from typing import List
+from typing import List, Iterable, Optional, Dict, Any
 from collections import Counter, defaultdict
 from .checkpoint_store import CheckpointStore
 
@@ -22,11 +22,11 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
     """
     def __init__(
             self, eventhub_client, consumer_group: str, owner_id: str,
-            checkpoint_store: CheckpointStore, ownership_timeout: float,
-            partition_id: str
+            checkpoint_store: Optional[CheckpointStore], ownership_timeout: float,
+            partition_id: Optional[str]
     ):
         self.cached_parition_ids = []  # type: List[str]
-        self.owned_partitions = {}
+        self.owned_partitions = []  # type: Iterable[Dict[str, Any]]
         self.eventhub_client = eventhub_client
         self.fully_qualified_namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
         self.eventhub_name = eventhub_client.eventhub_name
@@ -60,12 +60,14 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         self.owned_partitions = await self.checkpoint_store.claim_ownership(to_claim) if to_claim else []
         return [x["partition_id"] for x in self.owned_partitions]
 
-    async def release_ownership(self, partition_id):
+    async def release_ownership(self, partition_id: str) -> None:
         """Explicitly release ownership of a partition if we still have it.
 
         This is called when a consumer is shutdown, and is achieved by resetting the associated
         owner ID.
         """
+        if not self.checkpoint_store:
+            return
         now = time.time()
         partition_ownership = [
             o for o in self.owned_partitions \
@@ -78,7 +80,7 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         partition_ownership[0]["owner_id"] = ""
         await self.checkpoint_store.claim_ownership(partition_ownership)
 
-    async def _retrieve_partition_ids(self):
+    async def _retrieve_partition_ids(self) -> None:
         """List all partition ids of the event hub that the EventProcessor is working on.
         """
         self.cached_parition_ids = await self.eventhub_client.get_partition_ids()

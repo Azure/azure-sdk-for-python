@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 import logging
+from typing import Optional
 from .._utils import get_last_enqueued_event_properties
 from .checkpoint_store import CheckpointStore
 
@@ -19,7 +20,7 @@ class PartitionContext(object):
     """
     def __init__(self, fully_qualified_namespace, eventhub_name, consumer_group,
                  partition_id, checkpoint_store=None):
-        # type: (str, str, str, str, str, CheckpointStore) -> None
+        # type: (str, str, str, str, Optional[CheckpointStore]) -> None
         self.fully_qualified_namespace = fully_qualified_namespace
         self.partition_id = partition_id
         self.eventhub_name = eventhub_name

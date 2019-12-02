@@ -6,6 +6,8 @@ from __future__ import unicode_literals
 
 import json
 import logging
+from typing import Union, Dict, Any, Iterable, Optional, List, TYPE_CHECKING, cast
+
 import six
 
 from uamqp import BatchMessage, Message, constants  # type: ignore
@@ -18,6 +20,9 @@ from ._constants import (
     PROP_PARTITION_KEY_AMQP_SYMBOL,
     PROP_TIMESTAMP
 )
+
+if TYPE_CHECKING:
+    import datetime
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -43,7 +48,8 @@ class EventData(object):
     """
 
     def __init__(self, body=None):
-        self._last_enqueued_event_properties = {}
+        # type: (Union[str, bytes, List[Union[str, bytes]]]) -> None
+        self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         if body and isinstance(body, list):
             self.message = Message(body[0])
             for more in body[1:]:
@@ -55,30 +61,61 @@ class EventData(object):
         self.message.annotations = {}
         self.message.application_properties = {}
 
+    def __repr__(self):
+        # type: () -> str
+        # pylint: disable=bare-except
+        try:
+            body_str = self.body_as_str()
+        except:
+            body_str = "<read-error>"
+        event_repr = "body='{}'".format(body_str)
+        try:
+            event_repr += ", properties={}".format(self.properties)
+        except:
+            event_repr += ", properties=<read-error>"
+        try:
+            event_repr += ", offset={}".format(self.offset)
+        except:
+            event_repr += ", offset=<read-error>"
+        try:
+            event_repr += ", sequence_number={}".format(self.sequence_number)
+        except:
+            event_repr += ", sequence_number=<read-error>"
+        try:
+            event_repr += ", partition_key={!r}".format(self.partition_key)
+        except:
+            event_repr += ", partition_key=<read-error>"
+        try:
+            event_repr += ", enqueued_time={!r}".format(self.enqueued_time)
+        except:
+            event_repr += ", enqueued_time=<read-error>"
+        return "EventData({})".format(event_repr)
+
     def __str__(self):
+        # type: () -> str
         try:
-            body = self.body_as_str()
+            body_str = self.body_as_str()
         except:  # pylint: disable=bare-except
-            body = "<read-error>"
-        message_as_dict = {
-            'body': body,
-            'application_properties': str(self.properties)
-        }
+            body_str = "<read-error>"
+        event_str = "{{ body: '{}'".format(body_str)
         try:
-            if self.sequence_number:
-                message_as_dict['sequence_number'] = str(self.sequence_number)
+            event_str += ", properties: {}".format(self.properties)
             if self.offset:
-                message_as_dict['offset'] = str(self.offset)
-            if self.enqueued_time:
-                message_as_dict['enqueued_time'] = str(self.enqueued_time)
+                event_str += ", offset: {}".format(self.offset)
+            if self.sequence_number:
+                event_str += ", sequence_number: {}".format(self.sequence_number)
             if self.partition_key:
-                message_as_dict['partition_key'] = str(self.partition_key)
+                event_str += ", partition_key={!r}".format(self.partition_key)
+            if self.enqueued_time:
+                event_str += ", enqueued_time={!r}".format(self.enqueued_time)
         except:  # pylint: disable=bare-except
             pass
-        return str(message_as_dict)
+        event_str += ' }'
+        return event_str
 
     @classmethod
     def _from_message(cls, message):
+        # type: (Message) -> EventData
         """Internal use only.
 
         Creates an EventData object from a raw uamqp message.
@@ -91,10 +128,12 @@ class EventData(object):
         return event_data
 
     def _encode_message(self):
+        # type: () -> bytes
         return self.message.encode_message()
 
     @property
     def sequence_number(self):
+        # type: () -> Optional[int]
         """The sequence number of the event.
 
         :rtype: int or long
@@ -103,6 +142,7 @@ class EventData(object):
 
     @property
     def offset(self):
+        # type: () -> Optional[str]
         """The offset of the event.
 
         :rtype: str
@@ -114,6 +154,7 @@ class EventData(object):
 
     @property
     def enqueued_time(self):
+        # type: () -> Optional[datetime.datetime]
         """The enqueued timestamp of the event.
 
         :rtype: datetime.datetime
@@ -125,6 +166,7 @@ class EventData(object):
 
     @property
     def partition_key(self):
+        # type: () -> Optional[bytes]
         """The partition key of the event.
 
         :rtype: bytes
@@ -136,6 +178,7 @@ class EventData(object):
 
     @property
     def properties(self):
+        # type: () -> Dict[str, Any]
         """Application-defined properties on the event.
 
         :rtype: dict
@@ -144,6 +187,7 @@ class EventData(object):
 
     @properties.setter
     def properties(self, value):
+        # type: (Dict[str, Any]) -> None
         """Application-defined properties on the event.
 
         :param dict value: The application properties for the EventData.
@@ -153,6 +197,7 @@ class EventData(object):
 
     @property
     def system_properties(self):
+        # type: () -> Dict[str, Any]
         """Metadata set by the Event Hubs Service associated with the event
 
         :rtype: dict
@@ -161,6 +206,7 @@ class EventData(object):
 
     @property
     def body(self):
+        # type: () -> Union[bytes, Iterable[bytes]]
         """The content of the event.
 
         :rtype: bytes or Generator[bytes]
@@ -171,6 +217,7 @@ class EventData(object):
             raise ValueError("Event content empty.")
 
     def body_as_str(self, encoding='UTF-8'):
+        # type: (str) -> str
         """The content of the event as a string, if the data is of a compatible type.
 
         :param encoding: The encoding to use for decoding event data.
@@ -179,17 +226,18 @@ class EventData(object):
         """
         data = self.body
         try:
-            return "".join(b.decode(encoding) for b in data)
+            return "".join(b.decode(encoding) for b in cast(Iterable[bytes], data))
         except TypeError:
             return six.text_type(data)
         except:  # pylint: disable=bare-except
             pass
         try:
-            return data.decode(encoding)
+            return cast(bytes, data).decode(encoding)
         except Exception as e:
             raise TypeError("Message data is not compatible with string type: {}".format(e))
 
     def body_as_json(self, encoding='UTF-8'):
+        # type: (str) -> Dict[str, Any]
         """The content of the event loaded as a JSON object, if the data is compatible.
 
         :param encoding: The encoding to use for decoding event data.
@@ -204,6 +252,7 @@ class EventData(object):
 
     @property
     def application_properties(self):
+        # type: () -> Dict[str, Any]
         # TODO: This method is for the purpose of livetest, because uamqp v.1.2.4 hasn't been released
         # The gather() in uamqp.message of v1.2.3 depends on application_properties attribute,
         # the livetest would all break if removing this property.
@@ -211,6 +260,7 @@ class EventData(object):
         return self.properties
 
     def encode_message(self):
+        # type: () -> bytes
         # TODO: This method is for the purpose of livetest, because uamqp v.1.2.4 hasn't been released
         # The gather() in uamqp.message of v1.2.3 depends on encode_message method,
         # the livetest would all break if removing this method.
@@ -240,6 +290,7 @@ class EventDataBatch(object):
     """
 
     def __init__(self, max_size_in_bytes=None, partition_id=None, partition_key=None):
+        # type: (Optional[int], Optional[str], Optional[str]) -> None
         self.max_size_in_bytes = max_size_in_bytes or constants.MAX_MESSAGE_LENGTH_BYTES
         self.message = BatchMessage(data=[], multi_messages=False, properties=None)
         self._partition_id = partition_id
@@ -248,6 +299,16 @@ class EventDataBatch(object):
         set_message_partition_key(self.message, self._partition_key)
         self._size = self.message.gather()[0].get_message_encoded_size()
         self._count = 0
+
+    def __repr__(self):
+        # type: () -> str
+        batch_repr = "max_size_in_bytes={}, partition_id={}, partition_key={}, event_count={}".format(
+            self.max_size_in_bytes,
+            self._partition_id,
+            self._partition_key,
+            self._count
+        )
+        return "EventDataBatch({})".format(batch_repr)
 
     def __len__(self):
         return self._count
@@ -260,6 +321,7 @@ class EventDataBatch(object):
 
     @property
     def size_in_bytes(self):
+        # type: () -> int
         """The combined size of the events in the batch, in bytes.
 
         :rtype: int
@@ -267,6 +329,7 @@ class EventDataBatch(object):
         return self._size
 
     def add(self, event_data):
+        # type: (EventData) -> None
         """Try to add an EventData to the batch.
 
         The total size of an added event is the sum of its body, properties, etc.
