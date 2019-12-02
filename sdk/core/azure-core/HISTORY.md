@@ -2,6 +2,8 @@
 # Release History
 
 -------------------
+## Version 1.1.1 Unreleased
+
 ## 2019-11-25 Version 1.1.0
 
 ### Features
