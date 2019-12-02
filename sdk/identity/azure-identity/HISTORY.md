@@ -1,6 +1,5 @@
-# Release History
+# 2019-11-27 1.1.0
 
-### 1.1.0 Unreleased
 - Constructing `DefaultAzureCredential` no longer raises `ImportError` on Python
 3.8 on Windows ([8294](https://github.com/Azure/azure-sdk-for-python/pull/8294))
 - `InteractiveBrowserCredential` raises when unable to open a web browser
@@ -13,7 +12,7 @@ arguments ([8514](https://github.com/Azure/azure-sdk-for-python/pull/8514))
 ([8689](https://github.com/Azure/azure-sdk-for-python/pull/8689))
 
 
-### 2019-11-05 1.0.1
+# 2019-11-05 1.0.1
 
 - `ClientCertificateCredential` uses application and tenant IDs correctly
 ([8315](https://github.com/Azure/azure-sdk-for-python/pull/8315))
