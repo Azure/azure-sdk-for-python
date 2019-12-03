@@ -291,7 +291,7 @@ class ServicesOperations(object):
 
 
     def _update_initial(
-            self, resource, resource_group_name, service_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, resource, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -342,17 +342,17 @@ class ServicesOperations(object):
         return deserialized
 
     def update(
-            self, resource, resource_group_name, service_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, service_name, resource, custom_headers=None, raw=False, polling=True, **operation_config):
         """Operation to update an exiting Service.
 
-        :param resource: Parameters for the update operation
-        :type resource: ~azure.mgmt.appplatform.models.ServiceResource
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
         :param service_name: The name of the Service resource.
         :type service_name: str
+        :param resource: Parameters for the update operation
+        :type resource: ~azure.mgmt.appplatform.models.ServiceResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -367,9 +367,9 @@ class ServicesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
-            resource=resource,
             resource_group_name=resource_group_name,
             service_name=service_name,
+            resource=resource,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
