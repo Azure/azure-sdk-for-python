@@ -16,6 +16,7 @@ from ._credentials import (
     InteractiveBrowserCredential,
     ManagedIdentityCredential,
     SharedTokenCacheCredential,
+    CliCredential,
     UsernamePasswordCredential,
 )
 
@@ -32,6 +33,7 @@ __all__ = [
     "KnownAuthorities",
     "ManagedIdentityCredential",
     "SharedTokenCacheCredential",
+    "CliCredential",
     "UsernamePasswordCredential",
 ]
 

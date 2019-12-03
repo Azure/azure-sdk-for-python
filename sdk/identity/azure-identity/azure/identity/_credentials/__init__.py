@@ -10,6 +10,7 @@ from .default import DefaultAzureCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
+from .cli_credential import CliCredential
 from .user import DeviceCodeCredential, UsernamePasswordCredential
 
 
@@ -24,5 +25,6 @@ __all__ = [
     "InteractiveBrowserCredential",
     "ManagedIdentityCredential",
     "SharedTokenCacheCredential",
+    "CliCredential",
     "UsernamePasswordCredential",
 ]
