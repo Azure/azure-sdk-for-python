@@ -487,6 +487,7 @@ try:
     from ._models_py3 import SftpLocation
     from ._models_py3 import SftpReadSettings
     from ._models_py3 import SftpServerLinkedService
+    from ._models_py3 import SftpWriteSettings
     from ._models_py3 import ShopifyLinkedService
     from ._models_py3 import ShopifyObjectDataset
     from ._models_py3 import ShopifySource
@@ -1057,6 +1058,7 @@ except (SyntaxError, ImportError):
     from ._models import SftpLocation
     from ._models import SftpReadSettings
     from ._models import SftpServerLinkedService
+    from ._models import SftpWriteSettings
     from ._models import ShopifyLinkedService
     from ._models import ShopifyObjectDataset
     from ._models import ShopifySource
@@ -1716,6 +1718,7 @@ __all__ = [
     'SftpLocation',
     'SftpReadSettings',
     'SftpServerLinkedService',
+    'SftpWriteSettings',
     'ShopifyLinkedService',
     'ShopifyObjectDataset',
     'ShopifySource',

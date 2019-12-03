@@ -2367,7 +2367,7 @@ class StoreWriteSettings(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: FileServerWriteSettings, AzureDataLakeStoreWriteSettings,
-    AzureBlobFSWriteSettings, AzureBlobStorageWriteSettings
+    AzureBlobFSWriteSettings, AzureBlobStorageWriteSettings, SftpWriteSettings
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2396,7 +2396,7 @@ class StoreWriteSettings(Model):
     }
 
     _subtype_map = {
-        'type': {'FileServerWriteSettings': 'FileServerWriteSettings', 'AzureDataLakeStoreWriteSettings': 'AzureDataLakeStoreWriteSettings', 'AzureBlobFSWriteSettings': 'AzureBlobFSWriteSettings', 'AzureBlobStorageWriteSettings': 'AzureBlobStorageWriteSettings'}
+        'type': {'FileServerWriteSettings': 'FileServerWriteSettings', 'AzureDataLakeStoreWriteSettings': 'AzureDataLakeStoreWriteSettings', 'AzureBlobFSWriteSettings': 'AzureBlobFSWriteSettings', 'AzureBlobStorageWriteSettings': 'AzureBlobStorageWriteSettings', 'SftpWriteSettings': 'SftpWriteSettings'}
     }
 
     def __init__(self, **kwargs):
@@ -27209,6 +27209,46 @@ class SftpServerLinkedService(LinkedService):
         self.skip_host_key_validation = kwargs.get('skip_host_key_validation', None)
         self.host_key_fingerprint = kwargs.get('host_key_fingerprint', None)
         self.type = 'Sftp'
+
+
+class SftpWriteSettings(StoreWriteSettings):
+    """Sftp write settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param operation_timeout: Specifies the timeout for writing each chunk to
+     SFTP server. Default value: 01:00:00 (one hour). Type: string (or
+     Expression with resultType string).
+    :type operation_timeout: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+        'operation_timeout': {'key': 'operationTimeout', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SftpWriteSettings, self).__init__(**kwargs)
+        self.operation_timeout = kwargs.get('operation_timeout', None)
+        self.type = 'SftpWriteSettings'
 
 
 class ShopifyLinkedService(LinkedService):
