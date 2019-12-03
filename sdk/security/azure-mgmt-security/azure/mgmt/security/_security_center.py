@@ -42,6 +42,7 @@ from .operations import RegulatoryComplianceControlsOperations
 from .operations import RegulatoryComplianceAssessmentsOperations
 from .operations import ServerVulnerabilityAssessmentOperations
 from .operations import SubAssessmentsOperations
+from .operations import AutomationsOperations
 from .operations import AssessmentsOperations
 from . import models
 
@@ -110,6 +111,8 @@ class SecurityCenter(SDKClient):
     :vartype server_vulnerability_assessment: azure.mgmt.security.operations.ServerVulnerabilityAssessmentOperations
     :ivar sub_assessments: SubAssessments operations
     :vartype sub_assessments: azure.mgmt.security.operations.SubAssessmentsOperations
+    :ivar automations: Automations operations
+    :vartype automations: azure.mgmt.security.operations.AutomationsOperations
     :ivar assessments: Assessments operations
     :vartype assessments: azure.mgmt.security.operations.AssessmentsOperations
 
@@ -191,6 +194,8 @@ class SecurityCenter(SDKClient):
         self.server_vulnerability_assessment = ServerVulnerabilityAssessmentOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.sub_assessments = SubAssessmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.automations = AutomationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.assessments = AssessmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -244,3 +244,58 @@ class AssessmentsOperations(object):
 
         return deserialized
     create.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/assessments/{assessmentName}'}
+
+    def delete(
+            self, resource_id, assessment_name, custom_headers=None, raw=False, **operation_config):
+        """Delete a security assessment on your resource. An assessment metadata
+        that describes this assessment must be predefined with the same name
+        before inserting the assessment result.
+
+        :param resource_id: The identifier of the resource.
+        :type resource_id: str
+        :param assessment_name: The Assessment Key - Unique key for the
+         assessment type
+        :type assessment_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.delete.metadata['url']
+        path_format_arguments = {
+            'resourceId': self._serialize.url("resource_id", resource_id, 'str'),
+            'assessmentName': self._serialize.url("assessment_name", assessment_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/assessments/{assessmentName}'}
