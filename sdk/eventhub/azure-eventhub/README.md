@@ -182,7 +182,7 @@ def on_event(partition_context, event):
 with client:
     client.receive(on_event=on_event)
     # receive events from specified partition:
-    # client.receive(on_event=on_event, consumer_group="$Default", partition_id='0')
+    # client.receive(on_event=on_event, partition_id='0')
 ```
 
 ### Publish events to an Event Hub asynchronously
