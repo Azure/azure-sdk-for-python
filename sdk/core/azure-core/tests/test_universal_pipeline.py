@@ -432,7 +432,7 @@ def test_retry_seekable_stream():
                 request.body.seek(0,2)
                 raise AzureError('fail on first')
             position = request.body.tell()
-            assert not position
+            assert position == 0
             return HttpResponse(request, None)
 
     data = BytesIO(b"Lots of dataaaa")
@@ -469,9 +469,8 @@ def test_retry_seekable_file():
                     return HttpResponse(request, None)
 
     file_name = 'test_retry_seekable_file'
-    f = open(file_name, "w+")
-    f.write('Lots of dataaaa')
-    f.close()
+    with open(file_name, "w+") as f:
+        f.write('Lots of dataaaa')
     http_request = HttpRequest('GET', 'http://127.0.0.1/')
     headers = {'Content-Type': "multipart/form-data"}
     http_request.headers = headers
