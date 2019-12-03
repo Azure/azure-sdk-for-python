@@ -17,6 +17,8 @@ Release History
   instruct the EventProcessorHost to fail fast on a checkpoint failure and proactively release the partition.
   This should reduce spurious reprocessing of non-checkpointed events, at the cost of a small amount of 
   additional latency if the checkpoint interruption was actually transient.
+- Demoted error-level logging in the cases of EPH existing leases not found or out-of-date leases being ignored.
+  These will now be logged at info-level.
 
 
 1.3.2 (2019-09-18)

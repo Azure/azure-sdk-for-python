@@ -137,7 +137,7 @@ class PartitionContext:
                 self.lease.offset = checkpoint.offset
                 self.lease.sequence_number = checkpoint.sequence_number
             else:
-                _logger.error(  # pylint: disable=logging-not-lazy
+                _logger.info(  # pylint: disable=logging-not-lazy
                     "Ignoring out of date checkpoint with offset %r/sequence number %r because " +
                     "current persisted checkpoint has higher offset %r/sequence number %r",
                     checkpoint.offset,

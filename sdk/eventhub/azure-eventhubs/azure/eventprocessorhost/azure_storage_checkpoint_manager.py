@@ -12,6 +12,7 @@ import functools
 import asyncio
 import requests
 
+from azure.common import AzureMissingResourceHttpError
 from azure.storage.blob import BlockBlobService
 from azure.eventprocessorhost.azure_blob_lease import AzureBlobLease
 from azure.eventprocessorhost.checkpoint import Checkpoint
@@ -237,6 +238,8 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
 
             lease.state = state
             return lease
+        except AzureMissingResourceHttpError:
+            _logger.info("Existing lease for parition %r not found. %r", partition_id, err)
         except Exception as err:  # pylint: disable=broad-except
             _logger.error("Failed to get lease %r %r", err, partition_id)
 
