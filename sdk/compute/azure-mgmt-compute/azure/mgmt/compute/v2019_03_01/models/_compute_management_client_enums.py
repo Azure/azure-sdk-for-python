@@ -236,10 +236,10 @@ class DiskCreateOptionTypes(str, Enum):
 
 class StorageAccountTypes(str, Enum):
 
-    standard_lrs = "Standard_LRS"  #: Standard_LRS for StorageAccountType.
-    premium_lrs = "Premium_LRS"  #: Premium_LRS for StorageAccountType.
-    standard_ssd_lrs = "StandardSSD_LRS"  #: StandardSSD_LRS for StorageAccountType.
-    ultra_ssd_lrs = "UltraSSD_LRS"  #: UltraSSD_LRS for StorageAccountType.
+    standard_lrs = "Standard_LRS"
+    premium_lrs = "Premium_LRS"
+    standard_ssd_lrs = "StandardSSD_LRS"
+    ultra_ssd_lrs = "UltraSSD_LRS"
 
 
 class DiffDiskOptions(str, Enum):
