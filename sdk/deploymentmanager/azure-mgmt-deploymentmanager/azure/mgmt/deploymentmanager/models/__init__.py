@@ -47,7 +47,7 @@ try:
     from ._models_py3 import ServiceUnitArtifacts
     from ._models_py3 import ServiceUnitProperties
     from ._models_py3 import ServiceUnitResource
-    from ._models_py3 import Step
+    from ._models_py3 import StepGroup
     from ._models_py3 import StepOperationInfo
     from ._models_py3 import StepProperties
     from ._models_py3 import StepResource
@@ -92,7 +92,7 @@ except (SyntaxError, ImportError):
     from ._models import ServiceUnitArtifacts
     from ._models import ServiceUnitProperties
     from ._models import ServiceUnitResource
-    from ._models import Step
+    from ._models import StepGroup
     from ._models import StepOperationInfo
     from ._models import StepProperties
     from ._models import StepResource
@@ -144,7 +144,7 @@ __all__ = [
     'ServiceUnitArtifacts',
     'ServiceUnitProperties',
     'ServiceUnitResource',
-    'Step',
+    'StepGroup',
     'StepOperationInfo',
     'StepProperties',
     'StepResource',

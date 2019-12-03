@@ -905,7 +905,7 @@ class Rollout(TrackedResource):
     :type target_service_topology_id: str
     :param step_groups: Required. The list of step groups that define the
      orchestration.
-    :type step_groups: list[~azure.mgmt.deploymentmanager.models.Step]
+    :type step_groups: list[~azure.mgmt.deploymentmanager.models.StepGroup]
     :ivar status: The current status of the rollout.
     :vartype status: str
     :ivar total_retry_attempts: The cardinal count of total number of retries
@@ -942,7 +942,7 @@ class Rollout(TrackedResource):
         'build_version': {'key': 'properties.buildVersion', 'type': 'str'},
         'artifact_source_id': {'key': 'properties.artifactSourceId', 'type': 'str'},
         'target_service_topology_id': {'key': 'properties.targetServiceTopologyId', 'type': 'str'},
-        'step_groups': {'key': 'properties.stepGroups', 'type': '[Step]'},
+        'step_groups': {'key': 'properties.stepGroups', 'type': '[StepGroup]'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'total_retry_attempts': {'key': 'properties.totalRetryAttempts', 'type': 'int'},
         'operation_info': {'key': 'properties.operationInfo', 'type': 'RolloutOperationInfo'},
@@ -1083,7 +1083,7 @@ class RolloutRequest(TrackedResource):
     :type target_service_topology_id: str
     :param step_groups: Required. The list of step groups that define the
      orchestration.
-    :type step_groups: list[~azure.mgmt.deploymentmanager.models.Step]
+    :type step_groups: list[~azure.mgmt.deploymentmanager.models.StepGroup]
     """
 
     _validation = {
@@ -1107,7 +1107,7 @@ class RolloutRequest(TrackedResource):
         'build_version': {'key': 'properties.buildVersion', 'type': 'str'},
         'artifact_source_id': {'key': 'properties.artifactSourceId', 'type': 'str'},
         'target_service_topology_id': {'key': 'properties.targetServiceTopologyId', 'type': 'str'},
-        'step_groups': {'key': 'properties.stepGroups', 'type': '[Step]'},
+        'step_groups': {'key': 'properties.stepGroups', 'type': '[StepGroup]'},
     }
 
     def __init__(self, *, location: str, identity, build_version: str, target_service_topology_id: str, step_groups, tags=None, artifact_source_id: str=None, **kwargs) -> None:
@@ -1549,8 +1549,8 @@ class ServiceUnitResource(TrackedResource):
         self.artifacts = artifacts
 
 
-class Step(Model):
-    """The properties that define an Azure Deployment Manager step.
+class StepGroup(Model):
+    """The properties that define a Step group in a rollout.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1587,7 +1587,7 @@ class Step(Model):
     }
 
     def __init__(self, *, name: str, deployment_target_id: str, depends_on_step_groups=None, pre_deployment_steps=None, post_deployment_steps=None, **kwargs) -> None:
-        super(Step, self).__init__(**kwargs)
+        super(StepGroup, self).__init__(**kwargs)
         self.name = name
         self.depends_on_step_groups = depends_on_step_groups
         self.pre_deployment_steps = pre_deployment_steps
