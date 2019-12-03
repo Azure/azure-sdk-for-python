@@ -52,6 +52,8 @@ class AppResourceProvisioningState(str, Enum):
 
     succeeded = "Succeeded"
     failed = "Failed"
+    creating = "Creating"
+    updating = "Updating"
 
 
 class UserSourceType(str, Enum):
@@ -60,18 +62,18 @@ class UserSourceType(str, Enum):
     source = "Source"
 
 
+class DeploymentResourceProvisioningState(str, Enum):
+
+    creating = "Creating"
+    updating = "Updating"
+    succeeded = "Succeeded"
+    failed = "Failed"
+
+
 class RuntimeVersion(str, Enum):
 
     java_8 = "Java_8"
     java_11 = "Java_11"
-
-
-class DeploymentResourceProvisioningState(str, Enum):
-
-    creating = "Creating"
-    processing = "Processing"
-    succeeded = "Succeeded"
-    failed = "Failed"
 
 
 class DeploymentResourceStatus(str, Enum):
@@ -80,4 +82,6 @@ class DeploymentResourceStatus(str, Enum):
     stopped = "Stopped"
     running = "Running"
     failed = "Failed"
-    processing = "Processing"
+    allocating = "Allocating"
+    upgrading = "Upgrading"
+    compiling = "Compiling"
