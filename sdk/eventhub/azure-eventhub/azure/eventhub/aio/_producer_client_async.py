@@ -76,6 +76,12 @@ class EventHubProducerClient(ClientBaseAsync):
         self._max_message_size_on_link = 0
         self._partition_ids = None  # Optional[List[str]]
 
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        await self.close()
+
     async def _get_partitions(self) -> None:
         if not self._partition_ids:
             self._partition_ids = await self.get_partition_ids()  # type: ignore
@@ -256,6 +262,48 @@ class EventHubProducerClient(ClientBaseAsync):
 
         return event_data_batch
 
+    async def get_eventhub_properties(self) -> Dict[str, Any]:
+        """Get properties of the Event Hub.
+
+        Keys in the returned dictionary include:
+
+            - `eventhub_name` (str)
+            - `created_at` (UTC datetime.datetime)
+            - `partition_ids` (list[str])
+
+        :rtype: dict
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return await super(EventHubProducerClient, self)._get_eventhub_properties_async()
+
+    async def get_partition_ids(self) -> List[str]:
+        """Get partition IDs of the Event Hub.
+
+        :rtype: list[str]
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return await super(EventHubProducerClient, self)._get_partition_ids_async()
+
+    async def get_partition_properties(self, partition_id: str) -> Dict[str, Any]:
+        """Get properties of the specified partition.
+
+        Keys in the properties dictionary include:
+
+            - `eventhub_name` (str)
+            - `id` (str)
+            - `beginning_sequence_number` (int)
+            - `last_enqueued_sequence_number` (int)
+            - `last_enqueued_offset` (str)
+            - `last_enqueued_time_utc` (UTC datetime.datetime)
+            - `is_empty` (bool)
+
+        :param partition_id: The target partition ID.
+        :type partition_id: str
+        :rtype: dict
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return await super(EventHubProducerClient, self)._get_partition_properties_async(partition_id)
+
     async def close(self) -> None:
         """Close the Producer client underlying AMQP connection and links.
 
@@ -275,4 +323,4 @@ class EventHubProducerClient(ClientBaseAsync):
             for producer in self._producers.values():
                 if producer:
                     await producer.close()
-        await self._conn_manager.close_connection()
+        await super(EventHubProducerClient, self)._close_async()

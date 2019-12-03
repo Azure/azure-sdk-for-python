@@ -5,7 +5,7 @@
 import logging
 import threading
 
-from typing import Any, Union, TYPE_CHECKING, Iterable, Dict
+from typing import Any, Union, TYPE_CHECKING, Iterable, Dict, List
 from uamqp import constants  # type:ignore
 
 from .exceptions import ConnectError, EventHubError
@@ -75,6 +75,12 @@ class EventHubProducerClient(ClientBase):
         self._max_message_size_on_link = 0
         self._partition_ids = None
         self._lock = threading.Lock()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.close()
 
     def _get_partitions(self):
         if not self._partition_ids:
@@ -228,6 +234,51 @@ class EventHubProducerClient(ClientBase):
 
         return event_data_batch
 
+    def get_eventhub_properties(self):
+        # type:() -> Dict[str, Any]
+        """Get properties of the Event Hub.
+
+        Keys in the returned dictionary include:
+
+            - `eventhub_name` (str)
+            - `created_at` (UTC datetime.datetime)
+            - `partition_ids` (list[str])
+
+        :rtype: dict
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return super(EventHubProducerClient, self)._get_eventhub_properties()
+
+    def get_partition_ids(self):
+        # type:() -> List[str]
+        """Get partition IDs of the Event Hub.
+
+        :rtype: list[str]
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return super(EventHubProducerClient, self)._get_partition_ids()
+
+    def get_partition_properties(self, partition_id):
+        # type:(str) -> Dict[str, Any]
+        """Get properties of the specified partition.
+
+        Keys in the properties dictionary include:
+
+            - `eventhub_name` (str)
+            - `id` (str)
+            - `beginning_sequence_number` (int)
+            - `last_enqueued_sequence_number` (int)
+            - `last_enqueued_offset` (str)
+            - `last_enqueued_time_utc` (UTC datetime.datetime)
+            - `is_empty` (bool)
+
+        :param partition_id: The target partition ID.
+        :type partition_id: str
+        :rtype: dict
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return super(EventHubProducerClient, self)._get_partition_properties(partition_id)
+
     def close(self):
         # type: () -> None
         """Close the Producer client underlying AMQP connection and links.
@@ -249,4 +300,4 @@ class EventHubProducerClient(ClientBase):
                 if producer:
                     producer.close()
             self._producers = {}
-        self._conn_manager.close_connection()
+        super(EventHubProducerClient, self)._close()

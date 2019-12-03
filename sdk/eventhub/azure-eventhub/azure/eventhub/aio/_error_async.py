@@ -48,23 +48,23 @@ async def _handle_exception(exception, closable):  # pylint:disable=too-many-bra
         raise error
     else:
         if isinstance(exception, errors.AuthenticationException):
-            if hasattr(closable, "_close_connection"):
-                await closable._close_connection()  # pylint:disable=protected-access
+            if hasattr(closable, "_close_connection_async"):
+                await closable._close_connection_async()  # pylint:disable=protected-access
         elif isinstance(exception, errors.LinkDetach):
-            if hasattr(closable, "_close_handler"):
-                await closable._close_handler()  # pylint:disable=protected-access
+            if hasattr(closable, "_close_handler_async"):
+                await closable._close_handler_async()  # pylint:disable=protected-access
         elif isinstance(exception, errors.ConnectionClose):
-            if hasattr(closable, "_close_connection"):
-                await closable._close_connection()  # pylint:disable=protected-access
+            if hasattr(closable, "_close_connection_async"):
+                await closable._close_connection_async()  # pylint:disable=protected-access
         elif isinstance(exception, errors.MessageHandlerError):
-            if hasattr(closable, "_close_handler"):
-                await closable._close_handler()  # pylint:disable=protected-access
+            if hasattr(closable, "_close_handler_async"):
+                await closable._close_handler_async()  # pylint:disable=protected-access
         elif isinstance(exception, errors.AMQPConnectionError):
-            if hasattr(closable, "_close_connection"):
-                await closable._close_connection()  # pylint:disable=protected-access
+            if hasattr(closable, "_close_connection_async"):
+                await closable._close_connection_async()  # pylint:disable=protected-access
         elif isinstance(exception, compat.TimeoutException):
             pass  # Timeout doesn't need to recreate link or connection to retry
         else:
-            if hasattr(closable, "_close_connection"):
-                await closable._close_connection()  # pylint:disable=protected-access
+            if hasattr(closable, "_close_connection_async"):
+                await closable._close_connection_async()  # pylint:disable=protected-access
         return _create_eventhub_exception(exception)

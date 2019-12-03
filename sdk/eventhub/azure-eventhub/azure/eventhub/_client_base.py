@@ -145,12 +145,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._conn_manager = get_connection_manager(**kwargs)
         self._idle_timeout = kwargs.get("idle_timeout", None)
 
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *args):
-        self.close()
-
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):
         # type: (str, Any) -> Dict[str, Any]
@@ -239,19 +233,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         span.add_attribute("message_bus.destination", self._address.path)
         span.add_attribute("peer.address", self._address.hostname)
 
-    def get_eventhub_properties(self):
+    def _get_eventhub_properties(self):
         # type:() -> Dict[str, Any]
-        """Get properties of the Event Hub.
-
-        Keys in the returned dictionary include:
-
-            - `eventhub_name` (str)
-            - `created_at` (UTC datetime.datetime)
-            - `partition_ids` (list[str])
-
-        :rtype: dict
-        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
-        """
         mgmt_msg = Message(application_properties={'name': self.eventhub_name})
         response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
         output = {}
@@ -262,34 +245,12 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
         return output
 
-    def get_partition_ids(self):
+    def _get_partition_ids(self):
         # type:() -> List[str]
-        """Get partition IDs of the Event Hub.
+        return self._get_eventhub_properties()['partition_ids']
 
-        :rtype: list[str]
-        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
-        """
-        return self.get_eventhub_properties()['partition_ids']
-
-    def get_partition_properties(self, partition_id):
+    def _get_partition_properties(self, partition_id):
         # type:(str) -> Dict[str, Any]
-        """Get properties of the specified partition.
-
-        Keys in the properties dictionary include:
-
-            - `eventhub_name` (str)
-            - `id` (str)
-            - `beginning_sequence_number` (int)
-            - `last_enqueued_sequence_number` (int)
-            - `last_enqueued_offset` (str)
-            - `last_enqueued_time_utc` (UTC datetime.datetime)
-            - `is_empty` (bool)
-
-        :param partition_id: The target partition ID.
-        :type partition_id: str
-        :rtype: dict
-        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
-        """
         mgmt_msg = Message(application_properties={'name': self.eventhub_name,
                                                    'partition': partition_id})
         response = self._management_request(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
@@ -307,7 +268,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             )
         return output
 
-    def close(self):
+    def _close(self):
         # type:() -> None
         self._conn_manager.close_connection()
 

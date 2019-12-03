@@ -6,7 +6,7 @@
 import asyncio
 import logging
 import datetime
-from typing import Any, Union, TYPE_CHECKING, Dict, Tuple, Callable, Optional
+from typing import Any, Union, TYPE_CHECKING, Dict, Tuple, Callable, Optional, List
 
 from ._eventprocessor.event_processor import EventProcessor
 from ._consumer_async import EventHubConsumer
@@ -102,6 +102,12 @@ class EventHubConsumerClient(ClientBaseAsync):
         )
         self._lock = asyncio.Lock()
         self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        await self.close()
 
     def _create_consumer(
             self,
@@ -317,6 +323,48 @@ class EventHubConsumerClient(ClientBaseAsync):
                 except KeyError:
                     pass
 
+    async def get_eventhub_properties(self) -> Dict[str, Any]:
+        """Get properties of the Event Hub.
+
+        Keys in the returned dictionary include:
+
+            - `eventhub_name` (str)
+            - `created_at` (UTC datetime.datetime)
+            - `partition_ids` (list[str])
+
+        :rtype: dict
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return await super(EventHubConsumerClient, self)._get_eventhub_properties_async()
+
+    async def get_partition_ids(self) -> List[str]:
+        """Get partition IDs of the Event Hub.
+
+        :rtype: list[str]
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return await super(EventHubConsumerClient, self)._get_partition_ids_async()
+
+    async def get_partition_properties(self, partition_id: str) -> Dict[str, Any]:
+        """Get properties of the specified partition.
+
+        Keys in the properties dictionary include:
+
+            - `eventhub_name` (str)
+            - `id` (str)
+            - `beginning_sequence_number` (int)
+            - `last_enqueued_sequence_number` (int)
+            - `last_enqueued_offset` (str)
+            - `last_enqueued_time_utc` (UTC datetime.datetime)
+            - `is_empty` (bool)
+
+        :param partition_id: The target partition ID.
+        :type partition_id: str
+        :rtype: dict
+        :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
+        """
+        return await super(EventHubConsumerClient, self)._get_partition_properties_async(partition_id)
+
     async def close(self) -> None:
         """Stop retrieving events from the Event Hub and close the underlying AMQP connection and links.
 
@@ -335,4 +383,4 @@ class EventHubConsumerClient(ClientBaseAsync):
         async with self._lock:
             await asyncio.gather(*[p.stop() for p in self._event_processors.values()], return_exceptions=True)
             self._event_processors = {}
-            await super().close()
+            await super(EventHubConsumerClient, self)._close_async()
