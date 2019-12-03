@@ -87,7 +87,7 @@ async def test_send_with_prior_events_long_interval_async(short_idle_connstr_rec
         await client.stop_async()
 
     for r in receivers:
-       received.extend(r.receive(timeout=5))
+       received.extend(r.receive(timeout=5, max_reconnect_retries=1)) # setting max retries > 0 is important so that it tries reconnecting more than never.
 
     assert len(received) == 4
 
