@@ -11,6 +11,7 @@ from ._shared.response_handlers import return_response_headers
 from ._generated.models import StorageErrorException
 from ._path_client import PathClient
 from ._serialize import get_mod_conditions, get_path_http_headers, get_access_conditions
+from ._deserialize import process_storage_error
 from ._models import FileProperties
 
 
@@ -290,7 +291,7 @@ class DataLakeFileClient(PathClient):
         try:
             return self._client.path.append_data(**options)
         except StorageErrorException as error:
-            raise error
+            process_storage_error(error)
 
     @staticmethod
     def _flush_data_options(offset, content_settings=None, retain_uncommitted_data=False, **kwargs):
@@ -374,7 +375,7 @@ class DataLakeFileClient(PathClient):
         try:
             return self._client.path.flush_data(**options)
         except StorageErrorException as error:
-            raise error
+            process_storage_error(error)
 
     def read_file(self, offset=None,   # type: Optional[int]
                   length=None,   # type: Optional[int]

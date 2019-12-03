@@ -212,7 +212,7 @@ class FileProperties(DictMixin):
 class PathProperties(object):
     """Path properties listed by get_paths api.
 
-    :ivar str name: name of the listed path, could be a file or directory
+    :ivar str name: the full path for a file or directory.
     :ivar str owner: The owner of the file or directory.
     :ivar str group: he owning group of the file or directory.
     :ivar str permissions: Sets POSIX access permissions for the file
