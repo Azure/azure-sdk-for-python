@@ -65,13 +65,11 @@ def test_send_with_prior_messages_long_interval_sync(short_idle_connstr_receiver
         sender_1.send(EventData(b"A single event"))
     finally:
         client.stop()
-
     received = []
     for r in receivers:
         received.extend(r.receive(timeout=1))
 
     assert len(received) == 2
-
     client = EventHubClient.from_connection_string(connection_str, debug=True)
     sender = client.add_sender()
     client.run()
@@ -79,9 +77,8 @@ def test_send_with_prior_messages_long_interval_sync(short_idle_connstr_receiver
         time.sleep(6)
         sender.send(EventData(b"A single event"))
     client.stop()
-
     for r in receivers:
-        received.extend(r.receive(timeout=5))
+        received.extend(r.receive(timeout=5, max_reconnect_retries=1)) #setting max retries > 0 is important so that it tries reconnecting more than never.
 
     assert len(received) == 4
     assert list(received[0].body)[0] == b"A single event"

@@ -353,6 +353,9 @@ class Receiver(object):
                 raise error
 
         if reconnect_timeout is not None and time.time() > time_out_at:
+            log.warn("Timeout exceeded when reconnecting receiver")
             raise TimeoutError("Timeout exceeded when reconnecting receiver")
+        if num_tries > max_reconnect_retries:
+            log.warn("Max retries exceeded when reconnecting receiver")        
 
         return data_batch
