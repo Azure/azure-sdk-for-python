@@ -34,6 +34,9 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
         response = await self.next.send(request)
 
         if response.http_response.status_code == 401:
+            # any cached token must be invalid
+            self._token = None
+
             # cached challenge could be outdated; maybe this response has a new one?
             try:
                 challenge = self._update_challenge(request, response)
@@ -53,5 +56,8 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
         if not scope.endswith("/.default"):
             scope += "/.default"
 
-        access_token = await self._credential.get_token(scope)
-        self._update_headers(request.http_request.headers, access_token.token)
+        if self._need_new_token:
+            self._token = await self._credential.get_token(scope)
+
+        # ignore mypy's warning because although self._token is Optional, get_token raises when it fails to get a token
+        self._update_headers(request.http_request.headers, self._token.token)  # type: ignore

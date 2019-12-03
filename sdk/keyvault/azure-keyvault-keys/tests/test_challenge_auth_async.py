@@ -6,12 +6,12 @@
 Tests for the HTTP challenge authentication implementation. These tests aren't parallelizable, because
 the challenge cache is global to the process.
 """
-import asyncio
+import time
 
 try:
-    from unittest.mock import Mock
+    from unittest.mock import Mock, patch
 except ImportError:  # python < 3.3
-    from mock import Mock
+    from mock import Mock, patch  # type: ignore
 
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline
@@ -20,13 +20,12 @@ from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy, HttpChallenge,
 import pytest
 
 from keys_helpers import async_validating_transport, mock_response, Request
+from test_challenge_auth import empty_challenge_cache
 
 
 @pytest.mark.asyncio
+@empty_challenge_cache
 async def test_policy():
-    # ensure the test starts with an empty cache
-    HttpChallengeCache.clear()
-
     expected_scope = "https://challenge.resource/.default"
     expected_token = "expected_token"
     challenge = Mock(
@@ -66,14 +65,12 @@ async def test_policy():
 
 
 @pytest.mark.asyncio
+@empty_challenge_cache
 async def test_policy_updates_cache():
     """
     It's possible for the challenge returned for a request to change, e.g. when a vault is moved to a new tenant.
     When the policy receives a 401, it should update the cached challenge for the requested URL, if one exists.
     """
-
-    # ensure the test starts with an empty cache
-    HttpChallengeCache.clear()
 
     url = "https://azure.service/path"
     first_scope = "https://first-scope"
@@ -84,13 +81,15 @@ async def test_policy_updates_cache():
 
     # mocking a tenant change:
     # 1. first request -> respond with challenge
-    # 2. second request should be authorized according to the challenge -> respond with success
-    # 3. third request should match the second -> respond with a new challenge
-    # 4. fourth request should be authorized according to the new challenge -> respond with success
-    # 5. fifth request should match the fourth -> respond with success
+    # 2. second request should be authorized according to the challenge
+    # 3. third request should match the second (using a cached access token)
+    # 4. fourth request should also match the second -> respond with a new challenge
+    # 4. fifth request should be authorized according to the new challenge
+    # 5. sixth request should match the fifth
     transport = async_validating_transport(
         requests=(
             Request(url),
+            Request(url, required_headers={"Authorization": "Bearer {}".format(first_token)}),
             Request(url, required_headers={"Authorization": "Bearer {}".format(first_token)}),
             Request(url, required_headers={"Authorization": "Bearer {}".format(first_token)}),
             Request(url, required_headers={"Authorization": "Bearer {}".format(second_token)}),
@@ -99,18 +98,69 @@ async def test_policy_updates_cache():
         responses=(
             mock_response(status_code=401, headers={"WWW-Authenticate": challenge_fmt.format(first_scope)}),
             mock_response(status_code=200),
+            mock_response(status_code=200),
             mock_response(status_code=401, headers={"WWW-Authenticate": challenge_fmt.format(second_scope)}),
             mock_response(status_code=200),
             mock_response(status_code=200),
         ),
     )
 
-    tokens = (t for t in [first_token] * 2 + [second_token] * 2)
-    credential = Mock(get_token=asyncio.coroutine(lambda _: AccessToken(next(tokens), 0)))
+    token = AccessToken(first_token, time.time() + 3600)
+
+    async def get_token(*_, **__):
+        return token
+
+    credential = Mock(get_token=Mock(wraps=get_token))
     pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=transport)
 
-    # policy should complete and cache the first challenge
-    await pipeline.run(HttpRequest("GET", url))
+    # policy should complete and cache the first challenge and access token
+    for _ in range(2):
+        await pipeline.run(HttpRequest("GET", url))
+        assert credential.get_token.call_count == 1
 
-    # The next request will receive a challenge. The policy should handle it and update the cache entry.
-    await pipeline.run(HttpRequest("GET", url))
+    # The next request will receive a new challenge. The policy should handle it and update caches.
+    token = AccessToken(second_token, time.time() + 3600)
+    for _ in range(2):
+        await pipeline.run(HttpRequest("GET", url))
+        assert credential.get_token.call_count == 2
+
+
+@pytest.mark.asyncio
+@empty_challenge_cache
+async def test_token_expiration():
+    """policy should not use a cached token which has expired"""
+
+    expires_on = time.time() + 3600
+    first_token = "*"
+    second_token = "**"
+
+    token = AccessToken(first_token, expires_on)
+
+    async def get_token(*_, **__):
+        return token
+
+    credential = Mock(get_token=Mock(wraps=get_token))
+    transport = async_validating_transport(
+        requests=[
+            Request(),
+            Request(required_headers={"Authorization": "Bearer " + first_token}),
+            Request(required_headers={"Authorization": "Bearer " + first_token}),
+            Request(required_headers={"Authorization": "Bearer " + second_token}),
+        ],
+        responses=[
+            mock_response(
+                status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="https://a/b", resource=foo'}
+            )
+        ]
+        + [mock_response()] * 3,
+    )
+    pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=transport)
+
+    for _ in range(2):
+        await pipeline.run(HttpRequest("GET", "https://a/b"))
+        assert credential.get_token.call_count == 1
+
+    token = AccessToken(second_token, time.time() + 3600)
+    with patch("time.time", lambda: expires_on):
+        await pipeline.run(HttpRequest("GET", "https://a/b"))
+    assert credential.get_token.call_count == 2
