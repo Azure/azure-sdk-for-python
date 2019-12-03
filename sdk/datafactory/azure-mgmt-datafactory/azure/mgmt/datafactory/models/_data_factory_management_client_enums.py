@@ -447,6 +447,13 @@ class SapTablePartitionOption(str, Enum):
     partition_on_time = "PartitionOnTime"
 
 
+class SapHanaPartitionOption(str, Enum):
+
+    none = "None"
+    physical_partitions_of_table = "PhysicalPartitionsOfTable"
+    sap_hana_dynamic_range = "SapHanaDynamicRange"
+
+
 class SsisPackageLocationType(str, Enum):
 
     ssisdb = "SSISDB"

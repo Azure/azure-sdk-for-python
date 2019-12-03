@@ -461,6 +461,7 @@ try:
     from ._models_py3 import SapEccResourceDataset
     from ._models_py3 import SapEccSource
     from ._models_py3 import SapHanaLinkedService
+    from ._models_py3 import SapHanaPartitionSettings
     from ._models_py3 import SapHanaSource
     from ._models_py3 import SapHanaTableDataset
     from ._models_py3 import SapOpenHubLinkedService
@@ -1030,6 +1031,7 @@ except (SyntaxError, ImportError):
     from ._models import SapEccResourceDataset
     from ._models import SapEccSource
     from ._models import SapHanaLinkedService
+    from ._models import SapHanaPartitionSettings
     from ._models import SapHanaSource
     from ._models import SapHanaTableDataset
     from ._models import SapOpenHubLinkedService
@@ -1213,6 +1215,7 @@ from ._data_factory_management_client_enums import (
     TeradataPartitionOption,
     StoredProcedureParameterType,
     SapTablePartitionOption,
+    SapHanaPartitionOption,
     SsisPackageLocationType,
     HDInsightActivityDebugInfoOption,
     SalesforceSinkWriteBehavior,
@@ -1687,6 +1690,7 @@ __all__ = [
     'SapEccResourceDataset',
     'SapEccSource',
     'SapHanaLinkedService',
+    'SapHanaPartitionSettings',
     'SapHanaSource',
     'SapHanaTableDataset',
     'SapOpenHubLinkedService',
@@ -1869,6 +1873,7 @@ __all__ = [
     'TeradataPartitionOption',
     'StoredProcedureParameterType',
     'SapTablePartitionOption',
+    'SapHanaPartitionOption',
     'SsisPackageLocationType',
     'HDInsightActivityDebugInfoOption',
     'SalesforceSinkWriteBehavior',
