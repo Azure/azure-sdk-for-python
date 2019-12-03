@@ -33,7 +33,8 @@ class Receiver(object):
     timeout = 0
     _epoch = b'com.microsoft:epoch'
 
-    def __init__(self, client, source, offset=None, prefetch=300, epoch=None, keep_alive=None, auto_reconnect=True):
+    def __init__(self, client, source, offset=None, prefetch=300, epoch=None, keep_alive=None, auto_reconnect=True,
+                 idle_timeout=None):
         """
         Instantiate a receiver.
 
@@ -46,6 +47,9 @@ class Receiver(object):
         :type prefetch: int
         :param epoch: An optional epoch value.
         :type epoch: int
+        :param idle_timeout: An optionl timeout in seconds after which the underlying connection
+         will close if there is no further activity.  Default is None.
+        :type idle_timeout: int
         """
         self.running = False
         self.client = client
@@ -60,6 +64,7 @@ class Receiver(object):
         self.properties = None
         self.redirected = None
         self.error = None
+        self.idle_timeout = (idle_timeout * 1000) if idle_timeout else None
         partition = self.source.split('/')[-1]
         self.name = "EHReceiver-{}-partition{}".format(uuid.uuid4(), partition)
         source = Source(self.source)
@@ -74,6 +79,7 @@ class Receiver(object):
             prefetch=self.prefetch,
             link_properties=self.properties,
             timeout=self.timeout,
+            idle_timeout=self.idle_timeout,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
@@ -114,6 +120,7 @@ class Receiver(object):
                 prefetch=self.prefetch,
                 link_properties=self.properties,
                 timeout=self.timeout,
+                idle_timeout=self.idle_timeout,
                 error_policy=self.retry_policy,
                 keep_alive_interval=self.keep_alive,
                 client_name=self.name,
@@ -138,6 +145,7 @@ class Receiver(object):
             prefetch=self.prefetch,
             link_properties=self.properties,
             timeout=self.timeout,
+            idle_timeout=self.idle_timeout,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
@@ -264,7 +272,7 @@ class Receiver(object):
             return self._handler._received_messages.qsize()
         return 0
 
-    def receive(self, max_batch_size=None, timeout=None):
+    def receive(self, max_batch_size=None, timeout=None, reconnect_timeout=None, max_reconnect_retries=0):
         """
         Receive events from the EventHub.
 
@@ -274,6 +282,16 @@ class Receiver(object):
          retrieve before the time, the result will be empty. If no batch
          size is supplied, the prefetch size will be the maximum.
         :type max_batch_size: int
+        :param timeout: Optional number of seconds after which to stop
+         attempting to receive a batch.
+        :type timeout: int
+        :param reconnect_timeout: Optional number of seconds after which to
+         stop attempting to reconnect if a disconnect occurs during receiving.
+         Raises a TimeoutException if exceeded.
+        :type reconnect_timeout: int
+        :param max_reconnect_retries: Optional number of times to try
+         reconnecting if a disconnect occurs during receiving.
+        :type max_reconnect_retries: int
         :rtype: list[~azure.eventhub.common.EventData]
 
         Example:
@@ -285,45 +303,59 @@ class Receiver(object):
                 :caption: Receive events from the EventHub.
 
         """
-        if self.error:
-            raise self.error
-        if not self.running:
-            raise ValueError("Unable to receive until client has been started.")
-        data_batch = []
-        try:
-            timeout_ms = 1000 * timeout if timeout else 0
-            message_batch = self._handler.receive_message_batch(
-                max_batch_size=max_batch_size,
-                timeout=timeout_ms)
-            for message in message_batch:
-                event_data = EventData(message=message)
-                self.offset = event_data.offset
-                data_batch.append(event_data)
-            return data_batch
-        except (errors.TokenExpired, errors.AuthenticationException):
-            log.info("Receiver disconnected due to token error. Attempting reconnect.")
-            self.reconnect()
-            return data_batch
-        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
-            if shutdown.action.retry and self.auto_reconnect:
-                log.info("Receiver detached. Attempting reconnect.")
-                self.reconnect()
+        time_out_at = time.time() + (reconnect_timeout if reconnect_timeout else 0)
+        num_tries = 0 # If timeout is 0, have to make it run at least once.
+        while num_tries == 0 \
+                or ((max_reconnect_retries is None or num_tries <= max_reconnect_retries) \
+                and (reconnect_timeout is None or time.time() < time_out_at)):
+            num_tries += 1
+            if self.error:
+                raise self.error
+            if not self.running:
+                raise ValueError("Unable to receive until client has been started.")
+            data_batch = []
+            try:
+                timeout_ms = 1000 * timeout if timeout else 0
+                message_batch = self._handler.receive_message_batch(
+                    max_batch_size=max_batch_size,
+                    timeout=timeout_ms)
+                for message in message_batch:
+                    event_data = EventData(message=message)
+                    self.offset = event_data.offset
+                    data_batch.append(event_data)
                 return data_batch
-            log.info("Receiver detached. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
-            self.close(exception=error)
-            raise error
-        except errors.MessageHandlerError as shutdown:
-            if self.auto_reconnect:
-                log.info("Receiver detached. Attempting reconnect.")
+            except (errors.TokenExpired, errors.AuthenticationException):
+                log.info("Receiver disconnected due to token error. Attempting reconnect.")
                 self.reconnect()
-                return data_batch
-            log.info("Receiver detached. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
-            self.close(exception=error)
-            raise error
-        except Exception as e:
-            log.info("Unexpected error occurred (%r). Shutting down.", e)
-            error = EventHubError("Receive failed: {}".format(e))
-            self.close(exception=error)
-            raise error
+                continue
+            except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+                if shutdown.action.retry and self.auto_reconnect:
+                    log.info("Receiver detached. Attempting reconnect.")
+                    self.reconnect()
+                    continue
+                log.info("Receiver detached. Shutting down.")
+                error = EventHubError(str(shutdown), shutdown)
+                self.close(exception=error)
+                raise error
+            except errors.MessageHandlerError as shutdown:
+                if self.auto_reconnect:
+                    log.info("Receiver detached. Attempting reconnect.")
+                    self.reconnect()
+                    continue
+                log.info("Receiver detached. Shutting down.")
+                error = EventHubError(str(shutdown), shutdown)
+                self.close(exception=error)
+                raise error
+            except Exception as e:
+                log.info("Unexpected error occurred (%r). Shutting down.", e)
+                error = EventHubError("Receive failed: {}".format(e))
+                self.close(exception=error)
+                raise error
+
+        if reconnect_timeout is not None and time.time() > time_out_at:
+            log.warn("Timeout exceeded when reconnecting receiver")
+            raise TimeoutError("Timeout exceeded when reconnecting receiver")
+        if num_tries > max_reconnect_retries:
+            log.warn("Max retries exceeded when reconnecting receiver")        
+
+        return data_batch

@@ -435,7 +435,7 @@ class EventHubClient(object):
 
     def add_receiver(
             self, consumer_group, partition, offset=None, prefetch=300,
-            operation=None, keep_alive=30, auto_reconnect=True):
+            operation=None, keep_alive=30, auto_reconnect=True, idle_timeout=None):
         """
         Add a receiver to the client for a particular consumer group and partition.
 
@@ -447,9 +447,12 @@ class EventHubClient(object):
         :type offset: ~azure.eventhub.common.Offset
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
-        :operation: An optional operation to be appended to the hostname in the source URL.
+        :param operation: An optional operation to be appended to the hostname in the source URL.
          The value must start with `/` character.
         :type operation: str
+        :param idle_timeout: An optional timeout in seconds after which the underlying connection
+         will close if there is no further activity.  Default is None.
+        :type idle_timeout: int
         :rtype: ~azure.eventhub.receiver.Receiver
 
         Example:
@@ -466,13 +469,15 @@ class EventHubClient(object):
             self.address.hostname, path, consumer_group, partition)
         handler = Receiver(
             self, source_url, offset=offset, prefetch=prefetch,
-            keep_alive=keep_alive, auto_reconnect=auto_reconnect)
+            keep_alive=keep_alive, auto_reconnect=auto_reconnect,
+            idle_timeout=idle_timeout)
         self.clients.append(handler)
         return handler
 
     def add_epoch_receiver(
             self, consumer_group, partition, epoch, prefetch=300,
-            operation=None, keep_alive=30, auto_reconnect=True):
+            operation=None, keep_alive=30, auto_reconnect=True,
+            idle_timeout=None):
         """
         Add a receiver to the client with an epoch value. Only a single epoch receiver
         can connect to a partition at any given time - additional epoch receivers must have
@@ -490,6 +495,9 @@ class EventHubClient(object):
         :operation: An optional operation to be appended to the hostname in the source URL.
          The value must start with `/` character.
         :type operation: str
+        :param idle_timeout: An optional timeout in seconds after which the underlying connection
+         will close if there is no further activity.  Default is None.
+        :type idle_timeout: int
         :rtype: ~azure.eventhub.receiver.Receiver
 
         Example:
@@ -506,7 +514,8 @@ class EventHubClient(object):
             self.address.hostname, path, consumer_group, partition)
         handler = Receiver(
             self, source_url, prefetch=prefetch, epoch=epoch,
-            keep_alive=keep_alive, auto_reconnect=auto_reconnect)
+            keep_alive=keep_alive, auto_reconnect=auto_reconnect,
+            idle_timeout=idle_timeout)
         self.clients.append(handler)
         return handler
 
