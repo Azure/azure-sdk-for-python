@@ -104,6 +104,7 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
             'resource_group': StorageTestCase._RESOURCE_GROUP,
             'storage_account': storage_account,
             'storage_account_key': StorageTestCase._STORAGE_KEY,
+            'storage_account_cs': StorageTestCase._STORAGE_CONNECTION_STRING,
         }
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
@@ -385,6 +386,14 @@ def storage_account():
 
         try:
             if got_storage_info_from_env:
+
+                if storage_connection_string:
+                    storage_connection_string_parts = dict([
+                        part.split('=', 1)
+                        for part in storage_connection_string.split(";")
+                    ])
+
+                storage_account = None
                 if existing_storage_name:
                     storage_name = existing_storage_name
                     storage_account = StorageAccount(
@@ -403,12 +412,27 @@ def storage_account():
                     storage_connection_string=";".join([
                         "DefaultEndpointsProtocol=https",
                         "AccountName={}".format(name),
-                        "AccountKey={}".format(self.storage_key),
-                        "BlobEndpoint={}".format(self.resource.primary_endpoints.blob),
-                        "TableEndpoint={}".format(self.resource.primary_endpoints.table),
-                        "QueueEndpoint={}".format(self.resource.primary_endpoints.queue),
-                        "FileEndpoint={}".format(self.resource.primary_endpoints.file),
+                        "AccountKey={}".format(storage_key),
+                        "BlobEndpoint={}".format(storage_account.primary_endpoints.blob),
+                        "TableEndpoint={}".format(storage_account.primary_endpoints.table),
+                        "QueueEndpoint={}".format(storage_account.primary_endpoints.queue),
+                        "FileEndpoint={}".format(storage_account.primary_endpoints.file),
                     ])
+
+                if not storage_account:
+                    storage_name = storage_connection_string_parts["AccountName"]
+                    storage_account = StorageAccount(
+                        location=location,
+                    )
+                    storage_account.name = storage_name
+                    storage_account.id = storage_name
+                    storage_account.primary_endpoints=Endpoints()
+                    storage_account.primary_endpoints.blob = storage_connection_string_parts.get("BlobEndpoint", None)
+                    storage_account.primary_endpoints.queue = storage_connection_string_parts.get("QueueEndpoint", None)
+                    storage_account.primary_endpoints.table = storage_connection_string_parts.get("TableEndpoint", None)
+                    storage_account.primary_endpoints.file = storage_connection_string_parts.get("FileEndpoint", None)
+                    storage_key = storage_connection_string_parts["AccountKey"]
+
             else:
                 storage_name = create_random_name("pyacrstorage", 24)
                 storage_dict = storage_preparer.create_resource(
