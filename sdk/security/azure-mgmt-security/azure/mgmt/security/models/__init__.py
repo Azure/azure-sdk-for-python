@@ -25,25 +25,11 @@ try:
     from ._models_py3 import AppWhitelistingIssueSummary
     from ._models_py3 import AppWhitelistingPutGroupData
     from ._models_py3 import AscLocation
+    from ._models_py3 import AssessmentLinks
+    from ._models_py3 import AssessmentStatus
     from ._models_py3 import AtaExternalSecuritySolution
     from ._models_py3 import AtaSolutionProperties
-    from ._models_py3 import Automation
-    from ._models_py3 import AutomationAction
-    from ._models_py3 import AutomationActionEventHub
-    from ._models_py3 import AutomationActionEventHubInput
-    from ._models_py3 import AutomationActionEventHubOutput
-    from ._models_py3 import AutomationActionLogicApp
-    from ._models_py3 import AutomationActionLogicAppInput
-    from ._models_py3 import AutomationActionLogicAppOutput
-    from ._models_py3 import AutomationActionWorkspace
-    from ._models_py3 import AutomationMetadata
-    from ._models_py3 import AutomationRuleSet
-    from ._models_py3 import AutomationScope
-    from ._models_py3 import AutomationSource
-    from ._models_py3 import AutomationTriggeringRule
-    from ._models_py3 import AutomationValidationStatus
     from ._models_py3 import AutoProvisioningSetting
-    from ._models_py3 import AwsResourceDetails
     from ._models_py3 import AzureResourceDetails
     from ._models_py3 import CefExternalSecuritySolution
     from ._models_py3 import CefSolutionProperties
@@ -61,7 +47,6 @@ try:
     from ._models_py3 import DenylistCustomAlertRule
     from ._models_py3 import DeviceSecurityGroup
     from ._models_py3 import DiscoveredSecuritySolution
-    from ._models_py3 import ETag
     from ._models_py3 import ExternalSecuritySolution
     from ._models_py3 import ExternalSecuritySolutionKind1
     from ._models_py3 import ExternalSecuritySolutionProperties
@@ -91,6 +76,7 @@ try:
     from ._models_py3 import Kind
     from ._models_py3 import ListCustomAlertRule
     from ._models_py3 import Location
+    from ._models_py3 import OnPremiseResourceDetails
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import PathRecommendation
@@ -104,6 +90,7 @@ try:
     from ._models_py3 import RegulatoryComplianceStandard
     from ._models_py3 import Resource
     from ._models_py3 import ResourceDetails
+    from ._models_py3 import SecurityAssessment
     from ._models_py3 import SecurityContact
     from ._models_py3 import SecuritySubAssessment
     from ._models_py3 import SecurityTask
@@ -116,7 +103,6 @@ try:
     from ._models_py3 import SettingResource
     from ._models_py3 import SqlServerVulnerabilityProperties
     from ._models_py3 import SubAssessmentStatus
-    from ._models_py3 import Tags
     from ._models_py3 import TagsResource
     from ._models_py3 import ThresholdCustomAlertRule
     from ._models_py3 import TimeWindowCustomAlertRule
@@ -124,7 +110,6 @@ try:
     from ._models_py3 import TopologySingleResource
     from ._models_py3 import TopologySingleResourceChild
     from ._models_py3 import TopologySingleResourceParent
-    from ._models_py3 import TrackedResource
     from ._models_py3 import UpdateIotSecuritySolutionData
     from ._models_py3 import UserDefinedResourcesProperties
     from ._models_py3 import UserRecommendation
@@ -147,25 +132,11 @@ except (SyntaxError, ImportError):
     from ._models import AppWhitelistingIssueSummary
     from ._models import AppWhitelistingPutGroupData
     from ._models import AscLocation
+    from ._models import AssessmentLinks
+    from ._models import AssessmentStatus
     from ._models import AtaExternalSecuritySolution
     from ._models import AtaSolutionProperties
-    from ._models import Automation
-    from ._models import AutomationAction
-    from ._models import AutomationActionEventHub
-    from ._models import AutomationActionEventHubInput
-    from ._models import AutomationActionEventHubOutput
-    from ._models import AutomationActionLogicApp
-    from ._models import AutomationActionLogicAppInput
-    from ._models import AutomationActionLogicAppOutput
-    from ._models import AutomationActionWorkspace
-    from ._models import AutomationMetadata
-    from ._models import AutomationRuleSet
-    from ._models import AutomationScope
-    from ._models import AutomationSource
-    from ._models import AutomationTriggeringRule
-    from ._models import AutomationValidationStatus
     from ._models import AutoProvisioningSetting
-    from ._models import AwsResourceDetails
     from ._models import AzureResourceDetails
     from ._models import CefExternalSecuritySolution
     from ._models import CefSolutionProperties
@@ -183,7 +154,6 @@ except (SyntaxError, ImportError):
     from ._models import DenylistCustomAlertRule
     from ._models import DeviceSecurityGroup
     from ._models import DiscoveredSecuritySolution
-    from ._models import ETag
     from ._models import ExternalSecuritySolution
     from ._models import ExternalSecuritySolutionKind1
     from ._models import ExternalSecuritySolutionProperties
@@ -213,6 +183,7 @@ except (SyntaxError, ImportError):
     from ._models import Kind
     from ._models import ListCustomAlertRule
     from ._models import Location
+    from ._models import OnPremiseResourceDetails
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import PathRecommendation
@@ -226,6 +197,7 @@ except (SyntaxError, ImportError):
     from ._models import RegulatoryComplianceStandard
     from ._models import Resource
     from ._models import ResourceDetails
+    from ._models import SecurityAssessment
     from ._models import SecurityContact
     from ._models import SecuritySubAssessment
     from ._models import SecurityTask
@@ -238,7 +210,6 @@ except (SyntaxError, ImportError):
     from ._models import SettingResource
     from ._models import SqlServerVulnerabilityProperties
     from ._models import SubAssessmentStatus
-    from ._models import Tags
     from ._models import TagsResource
     from ._models import ThresholdCustomAlertRule
     from ._models import TimeWindowCustomAlertRule
@@ -246,7 +217,6 @@ except (SyntaxError, ImportError):
     from ._models import TopologySingleResource
     from ._models import TopologySingleResourceChild
     from ._models import TopologySingleResourceParent
-    from ._models import TrackedResource
     from ._models import UpdateIotSecuritySolutionData
     from ._models import UserDefinedResourcesProperties
     from ._models import UserRecommendation
@@ -256,7 +226,6 @@ except (SyntaxError, ImportError):
 from ._paged_models import AlertPaged
 from ._paged_models import AllowedConnectionsResourcePaged
 from ._paged_models import AscLocationPaged
-from ._paged_models import AutomationPaged
 from ._paged_models import AutoProvisioningSettingPaged
 from ._paged_models import CompliancePaged
 from ._paged_models import ComplianceResultPaged
@@ -272,6 +241,7 @@ from ._paged_models import OperationPaged
 from ._paged_models import RegulatoryComplianceAssessmentPaged
 from ._paged_models import RegulatoryComplianceControlPaged
 from ._paged_models import RegulatoryComplianceStandardPaged
+from ._paged_models import SecurityAssessmentPaged
 from ._paged_models import SecurityContactPaged
 from ._paged_models import SecuritySubAssessmentPaged
 from ._paged_models import SecurityTaskPaged
@@ -302,10 +272,9 @@ from ._security_center_enums import (
     State,
     SubAssessmentStatusCode,
     Severity,
-    EventSource,
-    PropertyType,
-    Operator,
+    AssessmentStatusCode,
     ConnectionType,
+    ExpandEnum,
 )
 
 __all__ = [
@@ -324,25 +293,11 @@ __all__ = [
     'AppWhitelistingIssueSummary',
     'AppWhitelistingPutGroupData',
     'AscLocation',
+    'AssessmentLinks',
+    'AssessmentStatus',
     'AtaExternalSecuritySolution',
     'AtaSolutionProperties',
-    'Automation',
-    'AutomationAction',
-    'AutomationActionEventHub',
-    'AutomationActionEventHubInput',
-    'AutomationActionEventHubOutput',
-    'AutomationActionLogicApp',
-    'AutomationActionLogicAppInput',
-    'AutomationActionLogicAppOutput',
-    'AutomationActionWorkspace',
-    'AutomationMetadata',
-    'AutomationRuleSet',
-    'AutomationScope',
-    'AutomationSource',
-    'AutomationTriggeringRule',
-    'AutomationValidationStatus',
     'AutoProvisioningSetting',
-    'AwsResourceDetails',
     'AzureResourceDetails',
     'CefExternalSecuritySolution',
     'CefSolutionProperties',
@@ -360,7 +315,6 @@ __all__ = [
     'DenylistCustomAlertRule',
     'DeviceSecurityGroup',
     'DiscoveredSecuritySolution',
-    'ETag',
     'ExternalSecuritySolution',
     'ExternalSecuritySolutionKind1',
     'ExternalSecuritySolutionProperties',
@@ -390,6 +344,7 @@ __all__ = [
     'Kind',
     'ListCustomAlertRule',
     'Location',
+    'OnPremiseResourceDetails',
     'Operation',
     'OperationDisplay',
     'PathRecommendation',
@@ -403,6 +358,7 @@ __all__ = [
     'RegulatoryComplianceStandard',
     'Resource',
     'ResourceDetails',
+    'SecurityAssessment',
     'SecurityContact',
     'SecuritySubAssessment',
     'SecurityTask',
@@ -415,7 +371,6 @@ __all__ = [
     'SettingResource',
     'SqlServerVulnerabilityProperties',
     'SubAssessmentStatus',
-    'Tags',
     'TagsResource',
     'ThresholdCustomAlertRule',
     'TimeWindowCustomAlertRule',
@@ -423,7 +378,6 @@ __all__ = [
     'TopologySingleResource',
     'TopologySingleResourceChild',
     'TopologySingleResourceParent',
-    'TrackedResource',
     'UpdateIotSecuritySolutionData',
     'UserDefinedResourcesProperties',
     'UserRecommendation',
@@ -454,7 +408,7 @@ __all__ = [
     'RegulatoryComplianceControlPaged',
     'RegulatoryComplianceAssessmentPaged',
     'SecuritySubAssessmentPaged',
-    'AutomationPaged',
+    'SecurityAssessmentPaged',
     'ResourceStatus',
     'PricingTier',
     'ReportedSeverity',
@@ -478,8 +432,7 @@ __all__ = [
     'State',
     'SubAssessmentStatusCode',
     'Severity',
-    'EventSource',
-    'PropertyType',
-    'Operator',
+    'AssessmentStatusCode',
     'ConnectionType',
+    'ExpandEnum',
 ]

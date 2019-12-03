@@ -324,16 +324,16 @@ class SecuritySubAssessmentPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SecuritySubAssessmentPaged, self).__init__(*args, **kwargs)
-class AutomationPaged(Paged):
+class SecurityAssessmentPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Automation <azure.mgmt.security.models.Automation>` object
+    A paging container for iterating over a list of :class:`SecurityAssessment <azure.mgmt.security.models.SecurityAssessment>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Automation]'}
+        'current_page': {'key': 'value', 'type': '[SecurityAssessment]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(AutomationPaged, self).__init__(*args, **kwargs)
+        super(SecurityAssessmentPaged, self).__init__(*args, **kwargs)
