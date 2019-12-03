@@ -1,6 +1,9 @@
 # Change Log azure-storage-queue
 
-## 12.1.0b1 Unreleased
+## 12.1.0
+
+ **New features**
+- All the clients now have a `close()` method to close the sockets opened by the client.
 
 ## 2019-10-31 12.0.0
 
