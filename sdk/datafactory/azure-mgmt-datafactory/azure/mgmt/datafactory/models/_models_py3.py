@@ -17392,19 +17392,24 @@ class IntegrationRuntimeVNetProperties(Model):
     :type v_net_id: str
     :param subnet: The name of the subnet this integration runtime will join.
     :type subnet: str
+    :param public_ips: Resource IDs of the public IP addresses that this
+     integration runtime will use.
+    :type public_ips: list[str]
     """
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'v_net_id': {'key': 'vNetId', 'type': 'str'},
         'subnet': {'key': 'subnet', 'type': 'str'},
+        'public_ips': {'key': 'publicIPs', 'type': '[str]'},
     }
 
-    def __init__(self, *, additional_properties=None, v_net_id: str=None, subnet: str=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, v_net_id: str=None, subnet: str=None, public_ips=None, **kwargs) -> None:
         super(IntegrationRuntimeVNetProperties, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.v_net_id = v_net_id
         self.subnet = subnet
+        self.public_ips = public_ips
 
 
 class JiraLinkedService(LinkedService):
