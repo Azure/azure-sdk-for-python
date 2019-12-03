@@ -10,7 +10,7 @@ from .._internal import AadClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Collection, Optional
+    from typing import Any, Iterable, Optional
     from azure.core.credentials import AccessToken
 
 
@@ -82,7 +82,7 @@ class AuthorizationCodeCredential(object):
 
         return token
 
-    async def _redeem_refresh_token(self, scopes: "Collection[str]", **kwargs: "Any") -> "Optional[AccessToken]":
+    async def _redeem_refresh_token(self, scopes: "Iterable[str]", **kwargs: "Any") -> "Optional[AccessToken]":
         loop = kwargs.pop("loop", None) or asyncio.get_event_loop()
         for refresh_token in self._client.get_cached_refresh_tokens(scopes):
             token = await self._client.obtain_token_by_refresh_token(refresh_token, scopes, loop=loop, **kwargs)
