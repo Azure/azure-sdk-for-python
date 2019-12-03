@@ -148,6 +148,18 @@ class StorageTestCase(AzureMgmtTestCase):
         :param str name: Storage account name
         :param str storage_type: The Storage type part of the URL. Should be "blob", or "queue", etc.
         """
+        if "StorageAccount" in str(type(name)):
+            if storage_type == "blob":
+                return name.primary_endpoints.blob
+            if storage_type == "queue":
+                return name.primary_endpoints.queue
+            if storage_type == "file":
+                return name.primary_endpoints.file
+            if storage_type == "table":
+                return name.primary_endpoints.table
+            else:
+                raise ValueError("Unknown storage type {}".format(storage_type))
+
         return 'https://{}.{}.core.windows.net'.format(name, storage_type)
 
     def configure_logging(self):
