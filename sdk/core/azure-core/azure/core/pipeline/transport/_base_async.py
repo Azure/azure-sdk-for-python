@@ -190,3 +190,16 @@ class AsyncHttpTransport(
     def __exit__(self, exc_type, exc_val, exc_tb):
         # __exit__ should exist in pair with __enter__ but never executed
         pass  # pragma: no cover
+
+    async def _retrieve_request_data(self, request):
+        if hasattr(request.data, '__aiter__'):
+            # Need to consume that async generator, since requests can't do anything with it
+            # That's not ideal, but a list is our only choice. Memory not optimal here,
+            # but providing an async generator to a requests based transport is not optimal too
+            new_data = []
+            async for part in request.data:  # type: ignore
+                new_data.append(part)
+            data_to_send = iter(new_data)
+        else:
+            data_to_send = request.data  # type: ignore
+        return data_to_send

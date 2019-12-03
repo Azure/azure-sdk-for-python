@@ -98,16 +98,7 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
         loop = kwargs.get("loop", _get_running_loop())
         response = None
         error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
-        if hasattr(request.data, '__aiter__'):
-            # Need to consume that async generator, since requests can't do anything with it
-            # That's not ideal, but a list is our only choice. Memory not optimal here,
-            # but providing an async generator to a requests based transport is not optimal too
-            new_data = []
-            async for part in request.data:  # type: ignore
-                new_data.append(part)
-            data_to_send = iter(new_data)
-        else:
-            data_to_send = request.data  # type: ignore
+        data_to_send = await self._retrieve_request_data(request)
         try:
             response = await loop.run_in_executor(
                 None,
